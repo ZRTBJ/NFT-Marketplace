@@ -1,0 +1,90 @@
+.profilePageContainer {
+  text-align: center;
+}
+.banner {
+  height: 240px;
+  width: 100%;
+  background-color: #fafafb;
+}
+.userProfilePicture {
+  border: 3px solid #e2e2e3;
+  border-radius: 50%;
+  height: 140px;
+  width: 140px;
+  object-fit: contain;
+  margin-top: -70px;
+}
+.userName {
+  color: #192434;
+  font-size: 28px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  margin-top: 5px;
+}
+.profession {
+  font-size: 20px;
+  color: #192434;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+}
+.locationIcon {
+  height: 24px;
+  width: 24px;
+}
+.address {
+  color: #192434;
+  font-size: 16px;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+}
+.intro {
+  padding: 0px 100px;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  color: #192434;
+  font-size: 16px;
+  margin-top: 5px;
+}
+.statsContainer {
+  margin-top: 20px;
+}
+.stat {
+  width: 123px;
+  height: 80px;
+  border-top: 1px solid #cccccc;
+  border-right: 1px solid #cccccc;
+  border-bottom: 1px solid #cccccc;
+  text-align: center;
+  align-items: center;
+}
+.amount {
+  color: #192434;
+  font-size: 24px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  margin-top: 18px;
+}
+.title {
+  color: #192434;
+  font-size: 12px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+}
+.stat:first-child {
+  border-left: 1px solid #cccccc;
+}
+.followButton {
+  width: 296px;
+  height: 40px;
+  background: #0ab4af;
+  color: white;
+  border-radius: 20px;
+  border: 0px;
+  margin-top: 20px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+}
+.followButton:hover {
+  cursor: pointer;
+  background: #192434;
+}

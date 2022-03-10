@@ -1,0 +1,11 @@
+body{
+    margin: 0 !important;
+    padding: 0;
+}
+.cp{
+    cursor: pointer;
+    transition: 0.3s;
+}
+.cp:hover{
+    opacity: 60%;
+}
