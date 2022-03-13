@@ -1,5 +1,5 @@
 import "assets/css/profile.css";
-import meetUp from "assets/images/sidebar/meetUp.png";
+import profile from "assets/images/profile/profile.svg";
 import locationIcon from "assets/images/profile/locationIcon.svg";
 import { useState } from "react";
 const Profile = () => {
@@ -16,7 +16,7 @@ const Profile = () => {
   return (
     <div className="profilePageContainer">
       <div className="banner"></div>
-      <img src={meetUp} className="userProfilePicture" alt="User profile" />
+      <img src={profile} className="userProfilePicture" alt="User profile" />
       <div className="userName">USER NAME</div>
       <div className="profession">Designer, Web Analytics Consultant</div>
       <div className="d-inline-flex align-items-center mt-2">

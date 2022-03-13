@@ -54,6 +54,7 @@
   border-top: 1px solid #cccccc;
   border-right: 1px solid #cccccc;
   border-bottom: 1px solid #cccccc;
+  border-left: 1px solid #cccccc;
   text-align: center;
   align-items: center;
 }
@@ -70,9 +71,9 @@
   font-family: "Montserrat", sans-serif;
   font-weight: 500;
 }
-.stat:first-child {
+/* .stat:first-child {
   border-left: 1px solid #cccccc;
-}
+} */
 .followButton {
   width: 296px;
   height: 40px;
