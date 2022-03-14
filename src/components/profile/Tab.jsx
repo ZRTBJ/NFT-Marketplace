@@ -27,7 +27,9 @@ const Tab = (props) => {
             <div className="row px-md-5">
               {active.cardList.map((cardlist) => (
                 <div className="col-md-3 mb-4">
-                  <ProjectCard cardInfo={cardlist} />
+                  <div className="projectCardLayout">
+                    <ProjectCard cardInfo={cardlist} />
+                  </div>
                 </div>
               ))}
             </div>
@@ -35,17 +37,27 @@ const Tab = (props) => {
         )}
         {active.name === "WORK" && (
           <div className="container ">
-            <div className="row px-md-5">
+            <div className="row">
               {active.cardList.map((cardlist) => (
                 <div className="col-md-4 mb-4">
-                  <WorkCard cardInfo={cardlist} />
+                  <div className="workCardLayout">
+                    <WorkCard cardInfo={cardlist} />
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         )}
         {active.name === "COLLECTION" && (
-          <CollectionCard cardInfo={active.cardList} />
+          <div className="container ">
+            <div className="d-flex flex-wrap">
+              {active.cardList.map((cardlist) => (
+                <div className="collectionCardLayout">
+                  <CollectionCard cardInfo={cardlist} />
+                </div>
+              ))}
+            </div>
+          </div>
         )}
       </div>
     </div>

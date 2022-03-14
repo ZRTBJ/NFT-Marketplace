@@ -106,7 +106,7 @@ const Profile = () => {
       cardList: [
         {
           id: 0,
-          img: profile,
+          img: dummy2,
           type: "FUNDRAISING",
           title: "CAT foot print artwork",
           bookmark: 200,
@@ -115,7 +115,7 @@ const Profile = () => {
         },
         {
           id: 1,
-          img: profile,
+          img: dummy2,
           type: "FUNDRAISING",
           title: "CAT foot print artwork",
           bookmark: 200,
@@ -124,7 +124,7 @@ const Profile = () => {
         },
         {
           id: 2,
-          img: profile,
+          img: dummy2,
           type: "FUNDRAISING",
           title: "CAT foot print artwork",
           bookmark: 200,
@@ -133,7 +133,7 @@ const Profile = () => {
         },
         {
           id: 3,
-          img: profile,
+          img: dummy2,
           type: "FUNDRAISING",
           title: "CAT foot print artwork",
           bookmark: 200,
@@ -142,7 +142,7 @@ const Profile = () => {
         },
         {
           id: 4,
-          img: profile,
+          img: dummy2,
           type: "FUNDRAISING",
           title: "CAT foot print artwork",
           bookmark: 200,
@@ -151,7 +151,7 @@ const Profile = () => {
         },
         {
           id: 5,
-          img: profile,
+          img: dummy2,
           type: "FUNDRAISING",
           title: "CAT foot print artwork",
           bookmark: 200,
@@ -160,7 +160,7 @@ const Profile = () => {
         },
         {
           id: 6,
-          img: profile,
+          img: dummy2,
           type: "FUNDRAISING",
           title: "CAT foot print artwork",
           bookmark: 200,
@@ -169,7 +169,7 @@ const Profile = () => {
         },
         {
           id: 7,
-          img: profile,
+          img: dummy2,
           type: "FUNDRAISING",
           title: "CAT foot print artwork",
           bookmark: 200,

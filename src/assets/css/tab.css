@@ -1,6 +1,7 @@
 .buttonGroup {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
 }
 .buttonGroup button {
   height: 54px;
@@ -24,4 +25,20 @@
   height: 4px;
   background-color: #192434;
   margin-bottom: 100px;
+}
+.projectCardLayout {
+  text-align: center;
+  color: white;
+  margin: auto;
+  width: 240px;
+}
+.workCardLayout {
+  text-align: center;
+  color: white;
+  margin: auto;
+  width: 400px;
+  height: 249px;
+}
+.collectionCardLayout {
+  width: 20%;
 }

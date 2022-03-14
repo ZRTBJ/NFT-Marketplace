@@ -4,6 +4,7 @@ import Sidebar from "./Sidebar/Sidebar";
 import logo from "assets/images/header/logo.svg";
 import metamaskIcon from "assets/images/modal/metamask.png";
 import torusIcon from "assets/images/modal/torus.png";
+// import TorusWallet from "./auth/TorusWallet";
 const Header = () => {
   const [showModal, setShowModal] = useState(false);
   const [showSideBar, setShowSideBar] = useState(false);
@@ -35,6 +36,7 @@ const Header = () => {
             WALLET LOGIN
           </button>
         </div>
+        {/* <TorusWallet /> */}
 
         {/* <ul>
           <li>
