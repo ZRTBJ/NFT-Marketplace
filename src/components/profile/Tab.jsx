@@ -26,7 +26,7 @@ const Tab = (props) => {
           <div className="container ">
             <div className="row px-md-5">
               {active.cardList.map((cardlist) => (
-                <div className="col-md-3 mb-4">
+                <div className="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 mb-4">
                   <div className="projectCardLayout">
                     <ProjectCard cardInfo={cardlist} />
                   </div>
@@ -39,7 +39,7 @@ const Tab = (props) => {
           <div className="container ">
             <div className="row">
               {active.cardList.map((cardlist) => (
-                <div className="col-md-4 mb-4">
+                <div className="col-12 col-sm-12 col-md-6  col-lg-4 col-xl-4 mb-4">
                   <div className="workCardLayout">
                     <WorkCard cardInfo={cardlist} />
                   </div>

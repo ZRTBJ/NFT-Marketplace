@@ -5,7 +5,7 @@
 }
 .buttonGroup button {
   height: 54px;
-  width: 418px;
+  flex-grow: 1;
   margin: 0px 3px;
   background-color: #cccccc;
   color: #ffffff;
@@ -38,6 +38,7 @@
   margin: auto;
   width: 400px;
   height: 249px;
+  margin-bottom: 70px;
 }
 .collectionCardLayout {
   width: 20%;
