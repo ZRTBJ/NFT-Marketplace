@@ -54,6 +54,7 @@
   border-top: 1px solid #cccccc;
   border-right: 1px solid #cccccc;
   border-bottom: 1px solid #cccccc;
+  border-left: 1px solid #cccccc;
   text-align: center;
   align-items: center;
 }
@@ -70,9 +71,9 @@
   font-family: "Montserrat", sans-serif;
   font-weight: 500;
 }
-.stat:first-child {
+/* .stat:first-child {
   border-left: 1px solid #cccccc;
-}
+} */
 .followButton {
   width: 296px;
   height: 40px;
@@ -87,4 +88,35 @@
 .followButton:hover {
   cursor: pointer;
   background: #192434;
+}
+.socialIconsContqainer {
+  margin-top: 20px;
+}
+.socialIconsContqainer img {
+  height: 34px;
+  width: 34px;
+  margin: 0px 8px;
+}
+
+.portfolioButtonContainer {
+  margin-top: 15px;
+  margin-bottom: 50px;
+}
+.portfolioButtonContainer button {
+  border-radius: 6px;
+  border: 0px;
+  padding: 10px 25px;
+  color: #ffffff;
+  background-color: #cccccc;
+  font-family: "Montserrat", sans-serif;
+  margin: 5px 10px;
+}
+.portfolioButtonContainer button:hover {
+  background: #0ab4af;
+  cursor: pointer;
+}
+.profileDivider {
+  height: 1px;
+  background-color: #cccccc;
+  margin-bottom: 40px;
 }
