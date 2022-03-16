@@ -4,10 +4,50 @@ import Sidebar from "./Sidebar/Sidebar";
 import logo from "assets/images/header/logo.svg";
 import metamaskIcon from "assets/images/modal/metamask.png";
 import torusIcon from "assets/images/modal/torus.png";
+import { useEthers, useEtherBalance } from "@usedapp/core";
+import {
+  connectWallet,
+  getWalletAccount,
+  isWalletConnected,
+} from "../util/wallet";
+import MetaMaskOnboarding from "@metamask/onboarding";
+
 // import TorusWallet from "./auth/TorusWallet";
 const Header = () => {
+  const { activateBrowserWallet, account } = useEthers();
+  const etherBalance = useEtherBalance(account);
   const [showModal, setShowModal] = useState(false);
   const [showSideBar, setShowSideBar] = useState(false);
+  const currentUrl = new URL(window.location.href);
+  const forwarderOrigin =
+    currentUrl.hostname === "localhost" ? "http://localhost:3000" : undefined;
+
+  async function handleConnectWallet() {
+    let onboarding;
+
+    const isConnected = await isWalletConnected();
+    if (isConnected == false) {
+      try {
+        onboarding = new MetaMaskOnboarding({ forwarderOrigin });
+        onboarding.startOnboarding();
+      } catch (error) {
+        console.error(error);
+      }
+      await connectWallet();
+      activateBrowserWallet();
+    } else {
+      if (onboarding) {
+        onboarding.stopOnboarding();
+      }
+    }
+
+    const account = await getWalletAccount();
+    if (account) {
+      alert(`Account: ${account}`);
+      setShowModal(false);
+    }
+  }
+
   return (
     <div>
       <Sidebar show={showSideBar} handleClose={() => setShowSideBar(false)} />
@@ -26,13 +66,13 @@ const Header = () => {
           </div>
         </div>
         <div className="ms-auto me-4">
-          <button
-            onClick={() => setShowModal(true)}
-            className="cp createProjectButtonConatiner"
-          >
+          <button className="cp createProjectButtonConatiner">
             CREATE PROJECT
           </button>
-          <button className="cp walletLoginButtonConatiner">
+          <button
+            onClick={() => setShowModal(true)}
+            className="cp walletLoginButtonConatiner"
+          >
             WALLET LOGIN
           </button>
         </div>
@@ -65,7 +105,10 @@ const Header = () => {
             one.
           </div>
           <div className="d-flex w-100 justify-content-center mt-4 walletLoginButtonModalContainer">
-            <div className="metamaskButtonContainer cp">
+            <div
+              className="metamaskButtonContainer cp"
+              onClick={handleConnectWallet}
+            >
               <img
                 className="metamaskIcon"
                 src={metamaskIcon}
