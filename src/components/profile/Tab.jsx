@@ -3,6 +3,7 @@ import "assets/css/tab.css";
 import ProjectCard from "./ProjectCard";
 import WorkCard from "./WorkCard";
 import CollectionCard from "./CollectionCard";
+
 const Tab = (props) => {
   const [active, setActive] = useState(props.tabs[0]);
   return (
@@ -11,7 +12,7 @@ const Tab = (props) => {
         <div className="buttonGroup">
           {props.tabs.map((type) => (
             <button
-              className={active === type ? "active" : ""}
+              className={active === type ? 'active' : ''}
               key={type.id}
               onClick={() => setActive(type)}
             >
@@ -26,7 +27,7 @@ const Tab = (props) => {
           <div className="container ">
             <div className="row px-md-5">
               {active.cardList.map((cardlist) => (
-                <div className="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 mb-4">
+                <div key={cardlist.id} className="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 mb-4">
                   <div className="projectCardLayout">
                     <ProjectCard cardInfo={cardlist} />
                   </div>
@@ -39,7 +40,7 @@ const Tab = (props) => {
           <div className="container ">
             <div className="row">
               {active.cardList.map((cardlist) => (
-                <div className="col-12 col-sm-12 col-md-6  col-lg-4 col-xl-4 mb-4">
+                <div key={cardlist.id} className="col-12 col-sm-12 col-md-6  col-lg-4 col-xl-4 mb-4">
                   <div className="workCardLayout">
                     <WorkCard cardInfo={cardlist} />
                   </div>
@@ -52,7 +53,7 @@ const Tab = (props) => {
           <div className="container ">
             <div className="d-flex flex-wrap">
               {active.cardList.map((cardlist) => (
-                <div className="collectionCardLayout">
+                <div key={cardlist.id} className="collectionCardLayout">
                   <CollectionCard cardInfo={cardlist} />
                 </div>
               ))}
