@@ -7,11 +7,14 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { store } from "./store/store";
 import { Provider } from "react-redux";
+import { DAppProvider } from "@usedapp/core";
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <DAppProvider config={{}}>
+        <App />
+      </DAppProvider>
     </Provider>
   </React.StrictMode>,
   document.getElementById("root")
