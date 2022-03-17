@@ -1,4 +1,10 @@
 import Config from "../config";
+import MetaMaskOnboarding from "@metamask/onboarding";
+
+const currentUrl = new URL(window.location.href);
+const forwarderOrigin =
+  currentUrl.hostname === "localhost" ? "http://localhost:3000" : undefined;
+let onboarding = new MetaMaskOnboarding({ forwarderOrigin });
 
 export async function connectWallet() {
   // Check if MetaMask is installed
@@ -32,6 +38,7 @@ export async function connectWallet() {
     }
   } else {
     // if no window.ethereum then MetaMask is not installed
+    onBoardBrowserPlugin();
   }
 }
 
@@ -47,8 +54,12 @@ export async function getWalletAccount() {
       const account = accounts[0];
       return account;
     } catch (error) {
-      console.error(error);
+      alert(error.message);
+      return;
     }
+  } else {
+    onBoardBrowserPlugin();
+    return;
   }
 }
 
@@ -64,10 +75,38 @@ export async function isWalletConnected() {
       console.error(error);
     }
   } else {
-    // if no window.ethereum then MetaMask is not installed
-    // alert(
-    //   "MetaMask is not installed. Please consider installing it: https://metamask.io/download.html"
-    // );
+    onBoardBrowserPlugin();
     return false;
+  }
+}
+
+export function registerChainChnageEvent() {
+  // Check if MetaMask is installed
+  // MetaMask injects the global API into window.ethereum
+  if (window.ethereum) {
+    try {
+      // check if the chain to connect to is installed
+      window.ethereum.on("chainChanged", (chainId) => {
+        // Handle the new chain.
+        // Correctly handling chain changes can be complicated.
+        // We recommend reloading the page unless you have good reason not to.
+        window.location.reload();
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  } else {
+    onBoardBrowserPlugin();
+  }
+}
+
+function onBoardBrowserPlugin() {
+  try {
+    onboarding.startOnboarding();
+  } catch (error) {
+    console.error(error);
+  }
+  if (onboarding) {
+    onboarding.stopOnboarding();
   }
 }

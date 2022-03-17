@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "./Modal";
 import Sidebar from "./Sidebar/Sidebar";
 import logo from "assets/images/header/logo.svg";
@@ -7,44 +7,39 @@ import torusIcon from "assets/images/modal/torus.png";
 import { useEthers, useEtherBalance } from "@usedapp/core";
 import {
   connectWallet,
-  getWalletAccount,
+  registerChainChnageEvent,
   isWalletConnected,
 } from "../util/wallet";
-import MetaMaskOnboarding from "@metamask/onboarding";
-
 // import TorusWallet from "./auth/TorusWallet";
 const Header = () => {
-  const { activateBrowserWallet, account } = useEthers();
+  const { activateBrowserWallet, account, active, activate } = useEthers();
   const etherBalance = useEtherBalance(account);
   const [showModal, setShowModal] = useState(false);
   const [showSideBar, setShowSideBar] = useState(false);
-  const currentUrl = new URL(window.location.href);
-  const forwarderOrigin =
-    currentUrl.hostname === "localhost" ? "http://localhost:3000" : undefined;
+  const [metamushAccount, setMetamushAccount] = useState(account);
 
-  async function handleConnectWallet() {
-    let onboarding;
-
-    const isConnected = await isWalletConnected();
-    if (isConnected == false) {
-      try {
-        onboarding = new MetaMaskOnboarding({ forwarderOrigin });
-        onboarding.startOnboarding();
-      } catch (error) {
-        console.error(error);
-      }
-      await connectWallet();
-      activateBrowserWallet();
-    } else {
-      if (onboarding) {
-        onboarding.stopOnboarding();
+  useEffect(() => {
+    if (active) {
+      if (account) {
+        setMetamushAccount(account);
       }
     }
+  }, [account]);
 
-    const account = await getWalletAccount();
-    if (account) {
-      alert(`Account: ${account}`);
-      setShowModal(false);
+  async function handleConnectWallet() {
+    const isConnected = await isWalletConnected();
+    if (isConnected && metamushAccount && metamushAccount.length > 5) {
+      return;
+    } else {
+      try {
+        await activate();
+        activateBrowserWallet();
+        await connectWallet();
+      } catch (error) {
+        if (!isConnected && !metamushAccount) {
+          window.location.reload();
+        }
+      }
     }
   }
 
@@ -114,7 +109,15 @@ const Header = () => {
                 src={metamaskIcon}
                 alt="metamask wallet login button"
               />
-              <div className="metamaskButtonLabel">MetaMask</div>
+              <div className="metamaskButtonLabel">
+                {metamushAccount ? (
+                  <span>
+                    <p>Account: {metamushAccount.substring(0, 8)}... </p>
+                  </span>
+                ) : (
+                  <span>MetaMask</span>
+                )}
+              </div>
             </div>
             <div className="torusButtonContainer cp">
               <img
