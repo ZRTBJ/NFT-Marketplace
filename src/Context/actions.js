@@ -1,4 +1,6 @@
-const ROOT_URL = "https://reqres.in/api";
+import Config from "../config";
+
+const ROOT_URL = Config.API_ENDPOINT; //"https://reqres.in/api";
 
 export async function loginUser(dispatch, loginPayload) {
   const requestOptions = {
