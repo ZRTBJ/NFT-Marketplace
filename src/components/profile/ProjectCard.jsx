@@ -7,7 +7,7 @@ const ProjectCard = ({ cardInfo }) => {
   return (
     <div>
       <div className="projectCardContainer">
-        <img src={cardInfo.img} className alt="" />
+        <img src={cardInfo.img} alt="" />
       </div>
       <div className="projectCardType">{cardInfo.type}</div>
       <div className="projectCardTitle cp">{cardInfo.title}</div>

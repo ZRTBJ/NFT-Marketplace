@@ -5,11 +5,13 @@ import logo from "assets/images/header/logo.svg";
 import metamaskIcon from "assets/images/modal/metamask.png";
 import torusIcon from "assets/images/modal/torus.png";
 import { useEthers, useEtherBalance } from "@usedapp/core";
+import { loginUser, useAuthState, useAuthDispatch } from "Context";
 import {
   connectWallet,
   registerChainChnageEvent,
   isWalletConnected,
 } from "../util/wallet";
+import { torusInit, torusWalletLogin, torusLogout } from "../util/Torus";
 // import TorusWallet from "./auth/TorusWallet";
 const Header = () => {
   const { activateBrowserWallet, account, active, activate } = useEthers();
@@ -17,6 +19,9 @@ const Header = () => {
   const [showModal, setShowModal] = useState(false);
   const [showSideBar, setShowSideBar] = useState(false);
   const [metamushAccount, setMetamushAccount] = useState(account);
+  const [torusAccountInfo, setTorusAccountInfo] = useState(null);
+  const dispatch = useAuthDispatch();
+  const { loading, errorMessage } = useAuthState();
 
   useEffect(() => {
     if (active) {
@@ -25,6 +30,12 @@ const Header = () => {
       }
     }
   }, [account]);
+  useEffect(() => {
+    torusInit().then((e) => {
+      setTorusAccountInfo(e);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function handleConnectWallet() {
     const isConnected = await isWalletConnected();
@@ -42,7 +53,21 @@ const Header = () => {
       }
     }
   }
-
+  async function loginTorus(e) {
+    await torusWalletLogin(e).then((e) => {
+      setTorusAccountInfo(e);
+      const data = {
+        address: e.address,
+        signature: "Hello",
+      };
+      try {
+        let response = loginUser(dispatch, data);
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
+    });
+  }
   return (
     <div>
       <Sidebar show={showSideBar} handleClose={() => setShowSideBar(false)} />
@@ -61,7 +86,10 @@ const Header = () => {
           </div>
         </div>
         <div className="ms-auto me-4">
-          <button className="cp createProjectButtonConatiner">
+          <button
+            onClick={torusLogout}
+            className="cp createProjectButtonConatiner"
+          >
             CREATE PROJECT
           </button>
           <button
@@ -71,27 +99,7 @@ const Header = () => {
             WALLET LOGIN
           </button>
         </div>
-        {/* <TorusWallet /> */}
-
-        {/* <ul>
-          <li>
-            <NavLink to="/">Home</NavLink>
-          </li>
-          <li>
-            <NavLink to="/projects">projects</NavLink>
-          </li>
-          <li>
-            <NavLink to="/profile">Profile</NavLink>
-          </li>
-          <li>
-            <NavLink to="/nothing-here">Nothing Here</NavLink>
-          </li>
-          <button onClick={() => navigate("/", { replace: false })}>
-            Navigate
-          </button>
-        </ul> */}
       </nav>
-      {/* <hr /> */}
       <Modal show={showModal} handleClose={() => setShowModal(false)}>
         <div className="walletContainer">
           <div className="walletTitle">WALLET</div>
@@ -125,7 +133,15 @@ const Header = () => {
                 src={torusIcon}
                 alt="Touras wallet login button"
               />
-              <div className="torusButtonLabel">Torus</div>
+              {torusAccountInfo == null ? (
+                <div className="torusButtonLabel" onClick={loginTorus}>
+                  Torus
+                </div>
+              ) : (
+                <div className="torusButtonLabel">
+                  Acccount : {torusAccountInfo.address.substring(0, 8)}
+                </div>
+              )}
             </div>
           </div>
         </div>

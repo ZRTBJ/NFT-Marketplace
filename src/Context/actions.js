@@ -3,16 +3,19 @@ import Config from "../config";
 const ROOT_URL = Config.API_ENDPOINT; //"https://reqres.in/api";
 
 export async function loginUser(dispatch, loginPayload) {
+  const bodyFormData = new FormData();
+  bodyFormData.append("address", loginPayload.address);
+  bodyFormData.append("signature", loginPayload.signature);
   const requestOptions = {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(loginPayload),
+    body: bodyFormData,
   };
 
   try {
     dispatch({ type: "REQUEST_LOGIN" });
-    let response = await fetch(`${ROOT_URL}/login`, requestOptions);
+    let response = await fetch(`${ROOT_URL}/auth/login`, requestOptions);
     let data = await response.json();
+    console.log(data);
 
     if (data.token) {
       dispatch({ type: "LOGIN_SUCCESS", payload: data });
