@@ -56,16 +56,16 @@ const Header = () => {
   async function loginTorus(e) {
     await torusWalletLogin(e).then((e) => {
       setTorusAccountInfo(e);
-      // const data = {
-      //   address: e.address,
-      //   signature: "Hello",
-      // };
-      // try {
-      //   let response = loginUser(dispatch, data);
-      //   console.log(response);
-      // } catch (error) {
-      //   console.log(error);
-      // }
+      const data = {
+        address: e.address,
+        signature: "Hello",
+      };
+      try {
+        let response = loginUser(dispatch, data);
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
     });
   }
   return (
