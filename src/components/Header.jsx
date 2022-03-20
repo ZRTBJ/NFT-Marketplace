@@ -1,13 +1,48 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "./Modal";
 import Sidebar from "./Sidebar/Sidebar";
 import logo from "assets/images/header/logo.svg";
 import metamaskIcon from "assets/images/modal/metamask.png";
 import torusIcon from "assets/images/modal/torus.png";
+import { useEthers, useEtherBalance } from "@usedapp/core";
+import {
+  connectWallet,
+  registerChainChnageEvent,
+  isWalletConnected,
+} from "../util/wallet";
 // import TorusWallet from "./auth/TorusWallet";
 const Header = () => {
+  const { activateBrowserWallet, account, active, activate } = useEthers();
+  const etherBalance = useEtherBalance(account);
   const [showModal, setShowModal] = useState(false);
   const [showSideBar, setShowSideBar] = useState(false);
+  const [metamushAccount, setMetamushAccount] = useState(account);
+
+  useEffect(() => {
+    if (active) {
+      if (account) {
+        setMetamushAccount(account);
+      }
+    }
+  }, [account]);
+
+  async function handleConnectWallet() {
+    const isConnected = await isWalletConnected();
+    if (isConnected && metamushAccount && metamushAccount.length > 5) {
+      return;
+    } else {
+      try {
+        await activate();
+        activateBrowserWallet();
+        await connectWallet();
+      } catch (error) {
+        if (!isConnected && !metamushAccount) {
+          window.location.reload();
+        }
+      }
+    }
+  }
+
   return (
     <div>
       <Sidebar show={showSideBar} handleClose={() => setShowSideBar(false)} />
@@ -26,13 +61,13 @@ const Header = () => {
           </div>
         </div>
         <div className="ms-auto me-4">
-          <button
-            onClick={() => setShowModal(true)}
-            className="cp createProjectButtonConatiner"
-          >
+          <button className="cp createProjectButtonConatiner">
             CREATE PROJECT
           </button>
-          <button className="cp walletLoginButtonConatiner">
+          <button
+            onClick={() => setShowModal(true)}
+            className="cp walletLoginButtonConatiner"
+          >
             WALLET LOGIN
           </button>
         </div>
@@ -65,13 +100,24 @@ const Header = () => {
             one.
           </div>
           <div className="d-flex w-100 justify-content-center mt-4 walletLoginButtonModalContainer">
-            <div className="metamaskButtonContainer cp">
+            <div
+              className="metamaskButtonContainer cp"
+              onClick={handleConnectWallet}
+            >
               <img
                 className="metamaskIcon"
                 src={metamaskIcon}
                 alt="metamask wallet login button"
               />
-              <div className="metamaskButtonLabel">MetaMask</div>
+              <div className="metamaskButtonLabel">
+                {metamushAccount ? (
+                  <span>
+                    <p>Account: {metamushAccount.substring(0, 8)}... </p>
+                  </span>
+                ) : (
+                  <span>MetaMask</span>
+                )}
+              </div>
             </div>
             <div className="torusButtonContainer cp">
               <img
