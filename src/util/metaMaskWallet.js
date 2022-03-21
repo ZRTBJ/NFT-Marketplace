@@ -100,6 +100,34 @@ export function registerChainChnageEvent() {
   }
 }
 
+export async function getPersonalSign() {
+  // Check if MetaMask is installed
+  // MetaMask injects the global API into window.ethereum
+  if (window.ethereum) {
+    let signedResult = "";
+    try {
+      signedResult = await window.ethereum.request({
+        method: "personal_sign",
+        params: [
+          "This is Creabo sign message.",
+          window.ethereum.selectedAddress,
+        ],
+      });
+    } catch (error) {
+      if (error.code === 4001) {
+        // EIP-1193 userRejectedRequest error
+        window.alert("Please connect to MetaMask.");
+      } else {
+        console.error(error.message);
+      }
+    }
+    return signedResult;
+  } else {
+    onBoardBrowserPlugin();
+    return;
+  }
+}
+
 function onBoardBrowserPlugin() {
   try {
     onboarding.startOnboarding();
