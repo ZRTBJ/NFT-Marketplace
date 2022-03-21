@@ -39,7 +39,7 @@ const Header = () => {
 
   async function handleConnectWallet() {
     const isConnected = await isWalletConnected();
-    if (isConnected && metamushAccount && metamushAccount.length > 50000) {
+    if (isConnected && metamushAccount && metamushAccount.length > 5) {
       return;
     } else {
       try {
