@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import Modal from "./Modal";
 import Sidebar from "./Sidebar/Sidebar";
 import logo from "assets/images/header/logo.svg";
@@ -12,7 +12,6 @@ import {
   isWalletConnected,
 } from "../util/metaMaskWallet";
 import { torusInit, torusWalletLogin, torusLogout } from "../util/Torus";
-import { SocketContext } from "Context/socket";
 const Header = () => {
   const { activateBrowserWallet, account, active, activate } = useEthers();
   const etherBalance = useEtherBalance(account);
@@ -21,7 +20,6 @@ const Header = () => {
   const [metamushAccount, setMetamushAccount] = useState(account);
   const [torusAccountInfo, setTorusAccountInfo] = useState(null);
   const dispatch = useAuthDispatch();
-  const socket = useContext(SocketContext);
   useEffect(() => {
     if (active) {
       if (account) {
@@ -34,13 +32,6 @@ const Header = () => {
       setTorusAccountInfo(e);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  useEffect(() => {
-    socket.on("connect", () => {
-      console.log(socket.connected); // true
-    });
-
-    return () => socket.disconnect();
   }, []);
 
   async function handleConnectWallet() {
@@ -65,7 +56,7 @@ const Header = () => {
     await torusWalletLogin().then((e) => {
       console.log("got response", e);
       setTorusAccountInfo(e);
-      userLogin(e.address, "Hello");
+      userLogin(e.address, e.signature);
     });
   }
 
