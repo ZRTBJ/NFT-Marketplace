@@ -13,6 +13,10 @@
   width: 140px;
   object-fit: contain;
   margin-top: -70px;
+  margin-right: auto;
+  margin-left: auto;
+  display: block;
+  align-items: center;
 }
 .userName {
   color: #192434;
@@ -91,6 +95,9 @@
 }
 .socialIconsContqainer {
   margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 .socialIconsContqainer img {
   height: 34px;

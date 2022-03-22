@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "assets/css/profile.css";
 import profile from "assets/images/profile/profile.svg";
 import dummy from "assets/images/profile/dummy.jpg";
 import dummy2 from "assets/images/profile/dummy2.jpg";
 import locationIcon from "assets/images/profile/locationIcon.svg";
 import Tab from "components/profile/Tab";
+import getUserProjectListById from "services/profile";
 const Profile = () => {
   const tabs = [
     {
@@ -203,6 +204,16 @@ const Profile = () => {
   ];
   let [stats] = useState(initialStats);
   let [isFollowing, setIsFollowing] = useState(false);
+  useEffect(() => {
+    let payload = {
+      id: "8ca0c405-e120-4ec6-a87c-a0588163f42c",
+      page: 1,
+      perPage: 10,
+    };
+    getUserProjectListById(payload).then((e) => {
+      console.log(e);
+    });
+  }, []);
 
   return (
     <div className="profilePageContainer">
