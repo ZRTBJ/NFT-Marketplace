@@ -18,14 +18,14 @@ const Header = () => {
   const etherBalance = useEtherBalance(account);
   const [showModal, setShowModal] = useState(false);
   const [showSideBar, setShowSideBar] = useState(false);
-  const [metamushAccount, setMetamushAccount] = useState(account);
+  const [metamuskAccount, setMetamushAccount] = useState(account);
   const [torusAccountInfo, setTorusAccountInfo] = useState(null);
   const dispatch = useAuthDispatch();
   const { loading, errorMessage } = useAuthState();
 
   useEffect(() => {
     if (active) {
-      if (account) {
+      if (account && account.length > 5) {
         setMetamushAccount(account);
       }
     }
@@ -39,21 +39,34 @@ const Header = () => {
 
   async function handleConnectWallet() {
     const isConnected = await isWalletConnected();
-    let signature = "";
-    if (isConnected && metamushAccount && metamushAccount.length > 5000) {
-      return;
+
+    if (isConnected && metamuskAccount && metamuskAccount.length > 5) {
+      getPersonalSign()
+        .then((signature) => {
+          userLogin(metamuskAccount, signature);
+        })
+        .catch((error) => {
+          alert(error.message);
+        });
     } else {
       try {
         await activate();
         activateBrowserWallet();
         await connectWallet();
-        signature = await getPersonalSign();
       } catch (error) {
-        if (!isConnected && !metamushAccount) {
+        if (!isConnected && !metamuskAccount) {
           window.location.reload();
         }
       }
-      userLogin(metamushAccount, signature);
+      if (metamuskAccount && metamuskAccount.length > 5) {
+        getPersonalSign()
+          .then((signature) => {
+            userLogin(metamuskAccount, signature);
+          })
+          .catch((error) => {
+            alert(error.message);
+          });
+      }
     }
   }
   async function loginTorus(e) {
@@ -201,12 +214,14 @@ const Header = () => {
                 alt="metamask wallet login button"
               />
               <div className="metamaskButtonLabel">
-                {metamushAccount ? (
+                {metamuskAccount ? (
                   <span>
-                    <p>Account: {metamushAccount.substring(0, 8)}... </p>
+                    <p>
+                      Login with Address: {metamuskAccount.substring(0, 5)}...{" "}
+                    </p>
                   </span>
                 ) : (
-                  <span>MetaMask</span>
+                  <span>Connect MetaMask</span>
                 )}
               </div>
             </div>
