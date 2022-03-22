@@ -8,9 +8,9 @@ import { useEthers, useEtherBalance } from "@usedapp/core";
 import { loginUser, useAuthState, useAuthDispatch } from "Context";
 import {
   connectWallet,
-  registerChainChnageEvent,
+  getPersonalSign,
   isWalletConnected,
-} from "../util/wallet";
+} from "../util/metaMaskWallet";
 import { torusInit, torusWalletLogin, torusLogout } from "../util/Torus";
 import { SocketContext } from "Context/socket";
 const Header = () => {
@@ -52,6 +52,8 @@ const Header = () => {
         await activate();
         activateBrowserWallet();
         await connectWallet();
+        const signature = await getPersonalSign();
+        userLogin(metamushAccount, signature);
       } catch (error) {
         if (!isConnected && !metamushAccount) {
           window.location.reload();
@@ -63,18 +65,23 @@ const Header = () => {
     await torusWalletLogin().then((e) => {
       console.log("got response", e);
       setTorusAccountInfo(e);
-      const data = {
-        address: e.address,
-        signature: e.signature,
-      };
-      try {
-        let response = loginUser(dispatch, data);
-        console.log(response);
-      } catch (error) {
-        console.log(error);
-      }
+      userLogin(e.address, "Hello");
     });
   }
+
+  function userLogin(address, signature) {
+    const request = {
+      address,
+      signature,
+    };
+    try {
+      let response = loginUser(dispatch, request);
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <div>
       <Sidebar show={showSideBar} handleClose={() => setShowSideBar(false)} />
