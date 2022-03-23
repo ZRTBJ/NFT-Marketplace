@@ -6,7 +6,12 @@ import dummy2 from "assets/images/profile/dummy2.jpg";
 import locationIcon from "assets/images/profile/locationIcon.svg";
 import Tab from "components/profile/Tab";
 import getUserProjectListById from "services/profile";
+import { useSelector, useDispatch } from "react-redux";
+import { getUserProjects } from "../../Slice/projectSlice";
+
 const Profile = () => {
+  const dispatch = useDispatch();
+
   const tabs = [
     {
       id: 1,
@@ -99,7 +104,7 @@ const Profile = () => {
           like: 346,
           view: 346,
         },
-          {
+        {
           id: 3,
           img: dummy2,
           type: "FUNDRAISING",
@@ -213,15 +218,18 @@ const Profile = () => {
   ];
   let [stats] = useState(initialStats);
   let [isFollowing, setIsFollowing] = useState(false);
+  const loadingStatus = useSelector((state) => state.projects.status);
+
   useEffect(() => {
     let payload = {
       id: "8ca0c405-e120-4ec6-a87c-a0588163f42c",
       page: 1,
       perPage: 10,
     };
-    getUserProjectListById(payload).then((e) => {
-      console.log(e);
-    });
+    dispatch(getUserProjects(payload));
+    // getUserProjectListById(payload).then((e) => {
+    //   console.log(e);
+    // });
   }, []);
 
   return (
