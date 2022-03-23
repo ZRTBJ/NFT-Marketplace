@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "assets/css/profile.css";
 import profile from "assets/images/profile/profile.svg";
 import dummy from "assets/images/profile/dummy.jpg";
 import dummy2 from "assets/images/profile/dummy2.jpg";
 import locationIcon from "assets/images/profile/locationIcon.svg";
 import Tab from "components/profile/Tab";
+import getUserProjectListById from "services/profile";
 const Profile = () => {
   const tabs = [
     {
@@ -73,7 +74,7 @@ const Profile = () => {
       cardList: [
         {
           id: 0,
-          img: dummy2,
+          img: dummy,
           type: "FUNDRAISING",
           title: "CAT foot print artwork",
           bookmark: 200,
@@ -82,7 +83,7 @@ const Profile = () => {
         },
         {
           id: 1,
-          img: dummy2,
+          img: dummy,
           type: "FUNDRAISING",
           title: "CAT foot print artwork",
           bookmark: 200,
@@ -91,6 +92,15 @@ const Profile = () => {
         },
         {
           id: 2,
+          img: dummy,
+          type: "FUNDRAISING",
+          title: "CAT foot print artwork",
+          bookmark: 200,
+          like: 346,
+          view: 346,
+        },
+          {
+          id: 3,
           img: dummy2,
           type: "FUNDRAISING",
           title: "CAT foot print artwork",
@@ -203,6 +213,16 @@ const Profile = () => {
   ];
   let [stats] = useState(initialStats);
   let [isFollowing, setIsFollowing] = useState(false);
+  useEffect(() => {
+    let payload = {
+      id: "8ca0c405-e120-4ec6-a87c-a0588163f42c",
+      page: 1,
+      perPage: 10,
+    };
+    getUserProjectListById(payload).then((e) => {
+      console.log(e);
+    });
+  }, []);
 
   return (
     <div className="profilePageContainer">
@@ -210,7 +230,7 @@ const Profile = () => {
       <img src={profile} className="userProfilePicture" alt="User profile" />
       <div className="userName">USER NAME</div>
       <div className="profession">Designer, Web Analytics Consultant</div>
-      <div className="d-inline-flex align-items-center mt-2">
+      <div className="mt-2 flex justify-center">
         <img className="locationIcon" src={locationIcon} alt="" />
         <div className="address">Tokyo, Japan</div>
       </div>
@@ -218,7 +238,7 @@ const Profile = () => {
         Hello Everyone! Thanks for coming my page. Please offer collaboration
         your project to me if you favorite my work. Thank you.
       </div>
-      <div className="statsContainer d-flex justify-content-center">
+      <div className="statsContainer flex justify-center flex-wrap">
         {stats.map((i) => (
           <div key={i.id} className="stat">
             <div className="amount">{i.amount}</div>

@@ -17,7 +17,8 @@
   padding: 4px 35px;
   margin-top: -14px;
   width: fit-content;
-  margin-left: 20%;
+  margin-left: auto;
+  margin-right: auto;
 }
 .projectCardTitle {
   color: #192434;
@@ -56,15 +57,16 @@
 }
 .workCardImage {
   border-radius: 6px;
-  width: 100%;
+  width: 400px;
   height: 249px;
+  object-fit: contain;
 }
 .collectionCardContainer {
-  width: 230px;
+  /* width: 230px; */
   box-shadow: 1px 3px 8px #0000004d;
   border-radius: 14px;
   margin-bottom: 30px;
-  padding: 8px;
+  /* padding: 8px; */
 }
 .collectionCardInnerContainer {
   height: 100%;
@@ -101,6 +103,8 @@
   width: 150px;
   border-radius: 50%;
   margin-top: 15px;
+  margin-left: auto;
+  margin-right: auto;
 }
 .collectionCardTitle {
   font-size: 14px;
@@ -108,4 +112,133 @@
   font-weight: 600;
   color: #192434;
   margin: 30px 0px;
+}
+.projectCardLayout {
+  text-align: center;
+  color: white;
+  margin-bottom: 40px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 240px;
+}
+@media (max-width: 640px) {
+  .projectCardLayout {
+    width: 130px;
+  }
+  .projectCardContainer img {
+    height: 106px;
+    border-radius: 14px;
+  }
+  .projectCardContainer {
+    padding: 10px;
+  }
+  .projectCardType {
+    font-size: 11px;
+    padding: 2px 10px 0px 10px;
+    margin-top: -8px;
+    width: fit-content;
+  }
+  .tabDivider {
+    margin-bottom: 20px;
+  }
+  .projectCardTitle {
+    font-size: 16px;
+  }
+  .projectCardStatsIcon {
+    font-size: 12px;
+    margin-top: 0px;
+  }
+  .banner {
+    height: 160px;
+  }
+  .userProfilePicture {
+    height: 80px;
+    width: 80px;
+  }
+  .userName {
+    font-size: 18px;
+  }
+  .profession {
+    font-size: 14px;
+  }
+  .address {
+    font-size: 14px;
+  }
+  .intro {
+    font-size: 12px;
+  }
+  .stat {
+    height: 44px;
+    width: 80px;
+  }
+  .amount {
+    font-size: 15px;
+    margin-top: 4px;
+  }
+  .title {
+    font-size: 8px;
+  }
+  .statsContainer {
+    margin: 5px 28px;
+  }
+  .portfolioButtonContainer button {
+    padding: 5px 15px;
+    margin: 2px 5px;
+    font-size: 12px;
+  }
+  .followButton {
+    width: 160px;
+    height: 28px;
+    font-size: 12px;
+  }
+  .buttonGroup button {
+    font-size: 12px;
+    height: 40;
+  }
+  .tabDivider {
+    height: 3px;
+  }
+  .portfolioButtonContainer {
+    margin-bottom: 15px;
+  }
+  .profileDivider {
+    margin-bottom: 25px;
+  }
+  .workCardImage {
+    width: 166px;
+    height: 104px;
+    margin: auto;
+  }
+  .workCardTittle {
+    font-size: 16px;
+  }
+  .workCardLayout {
+    text-align: center;
+    margin-bottom: 30px !important;
+  }
+  .collectionCardLayout {
+    width: 166px !important;
+  }
+  .collectionCardRadialContainer {
+    width: 154px;
+    height: 154px;
+  }
+  .collectionCardRadialContainer img {
+    height: 130px;
+    width: 130px;
+    margin-top: 11px;
+  }
+}
+.workCardLayout {
+  margin-left: 10px;
+  text-align: center;
+  color: white;
+  /* width: 100%; */
+  /* height: 249px; */
+  margin-bottom: 70px;
+}
+.collectionCardLayout {
+  width: 230px;
+  /* border: 1px solid black; */
+  margin: auto;
 }

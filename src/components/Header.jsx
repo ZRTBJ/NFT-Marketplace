@@ -12,7 +12,6 @@ import {
   isWalletConnected,
 } from "../util/metaMaskWallet";
 import { torusInit, torusWalletLogin, torusLogout } from "../util/Torus";
-// import TorusWallet from "./auth/TorusWallet";
 const Header = () => {
   const { activateBrowserWallet, account, active, activate } = useEthers();
   const etherBalance = useEtherBalance(account);
@@ -21,8 +20,6 @@ const Header = () => {
   const [metamuskAccount, setMetamushAccount] = useState(account);
   const [torusAccountInfo, setTorusAccountInfo] = useState(null);
   const dispatch = useAuthDispatch();
-  const { loading, errorMessage } = useAuthState();
-
   useEffect(() => {
     if (active) {
       if (account && account.length > 5) {
@@ -69,10 +66,11 @@ const Header = () => {
       }
     }
   }
-  async function loginTorus(e) {
-    await torusWalletLogin(e).then((e) => {
+  async function loginTorus() {
+    await torusWalletLogin().then((e) => {
+      console.log("got response", e);
       setTorusAccountInfo(e);
-      userLogin(e.address, "Hello");
+      userLogin(e.address, e.signature);
     });
   }
 

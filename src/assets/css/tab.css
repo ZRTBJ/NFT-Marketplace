@@ -26,20 +26,3 @@
   background-color: #192434;
   margin-bottom: 100px;
 }
-.projectCardLayout {
-  text-align: center;
-  color: white;
-  margin: auto;
-  width: 240px;
-}
-.workCardLayout {
-  text-align: center;
-  color: white;
-  margin: auto;
-  /* width: 400px; */
-  height: 249px;
-  margin-bottom: 70px;
-}
-.collectionCardLayout {
-  width: 20%;
-}

@@ -14,7 +14,7 @@ function Login(props) {
 
     try {
       let response = await loginUser(dispatch, { email, password });
-	  console.log(response);
+      console.log(response);
       props.history.push("/dashboard");
     } catch (error) {
       console.log(error);
@@ -23,7 +23,7 @@ function Login(props) {
 
   return (
     <div className={styles.container}>
-      <div className={{ width: 200 }}>
+      {/* <div className={{ width: 200 }}>
         <h1>Login Page</h1>
         {errorMessage ? <p className={styles.error}>{errorMessage}</p> : null}
         <form>
@@ -53,7 +53,7 @@ function Login(props) {
             login
           </button>
         </form>
-      </div>
+      </div> */}
     </div>
   );
 }
