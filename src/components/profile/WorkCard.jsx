@@ -5,7 +5,7 @@ const WorkCard = ({ cardInfo }) => {
     <div className="workCardContainer ">
       <img className="workCardImage cp" src={cardInfo.img} alt="" />
       <div className="workCardTittle cp">{cardInfo.title}</div>
-      <div className="d-flex justify-content-center mt-3">
+      <div className="flex justify-center mt-3">
         <img className="workCardIcon cp" src={openSeaIcon} alt="" />
         <img className="workCardIcon cp" src={raribleIcon} alt="" />
       </div>

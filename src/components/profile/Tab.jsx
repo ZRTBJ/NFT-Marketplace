@@ -8,7 +8,7 @@ const Tab = (props) => {
   const [active, setActive] = useState(props.tabs[0]);
   return (
     <div>
-      <div className="container">
+      <div className="container px-4 mx-auto">
         <div className="buttonGroup">
           {props.tabs.map((type) => (
             <button
@@ -24,10 +24,10 @@ const Tab = (props) => {
       <div className="tabDivider"></div>
       <div className="tabContent">
         {active.name === "PROJECT" && (
-          <div className="container ">
-            <div className="row px-md-5">
+          <div className="container mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
               {active.cardList.map((cardlist) => (
-                <div key={cardlist.id} className="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 mb-4">
+                <div key={cardlist.id}>
                   <div className="projectCardLayout">
                     <ProjectCard cardInfo={cardlist} />
                   </div>
@@ -37,10 +37,10 @@ const Tab = (props) => {
           </div>
         )}
         {active.name === "WORK" && (
-          <div className="container ">
-            <div className="row">
+          <div className="container mx-auto md:px-4">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 md:gap-4">
               {active.cardList.map((cardlist) => (
-                <div key={cardlist.id} className="col-12 col-sm-12 col-md-6  col-lg-4 col-xl-4 mb-4">
+                <div key={cardlist.id} >
                   <div className="workCardLayout">
                     <WorkCard cardInfo={cardlist} />
                   </div>
@@ -50,8 +50,8 @@ const Tab = (props) => {
           </div>
         )}
         {active.name === "COLLECTION" && (
-          <div className="container ">
-            <div className="d-flex flex-wrap">
+          <div className="container mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 md:px-5 ">
               {active.cardList.map((cardlist) => (
                 <div key={cardlist.id} className="collectionCardLayout">
                   <CollectionCard cardInfo={cardlist} />
