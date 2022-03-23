@@ -13,7 +13,7 @@ const list = [
 ];
 const SidebarNavigationCard = () => {
   return (
-    <div className="sidebarContainer d-flex flex-wrap ">
+    <div className="sidebarContainer flex flex-wrap ">
       {list.map((i) => (
         <div key={i.id} className="sidebarCardContainer cp m-1">
           <div className={i.class}>

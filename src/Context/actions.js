@@ -8,6 +8,11 @@ export async function loginUser(dispatch, loginPayload) {
   bodyFormData.append("signature", loginPayload.signature);
   const requestOptions = {
     method: "POST",
+    headers: {
+      "Access-Control-Allow-Origin": "http://127.0.0.1:3000/",
+      "Access-Control-Allow-Methods": "GET, POST",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    },
     body: bodyFormData,
   };
 
