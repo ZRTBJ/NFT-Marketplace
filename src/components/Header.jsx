@@ -12,6 +12,8 @@ import {
   isWalletConnected,
 } from "../util/metaMaskWallet";
 import { torusInit, torusWalletLogin, torusLogout } from "../util/Torus";
+import notificationIcon from "assets/images/header/ico_notification@2x.png";
+
 const Header = () => {
   const { activateBrowserWallet, account, active, activate } = useEthers();
   const etherBalance = useEtherBalance(account);
@@ -20,7 +22,9 @@ const Header = () => {
   const [metamuskAccount, setMetamushAccount] = useState(account);
   const [torusAccountInfo, setTorusAccountInfo] = useState(null);
   const dispatch = useAuthDispatch();
+  const context = useAuthState();
   const [isLoading, setIsLoading] = useState(false);
+  const [userId, setUserId] = useState(context ? context.user : "");
 
   useEffect(() => {
     if (active) {
@@ -84,8 +88,9 @@ const Header = () => {
     try {
       setIsLoading(true);
       let response = await loginUser(dispatch, request);
+      setUserId(response["user_id"]);
       setIsLoading(false);
-      console.log(response);
+      setShowModal(false);
     } catch (error) {
       setIsLoading(false);
       console.log(error);
@@ -95,8 +100,12 @@ const Header = () => {
   return (
     <div>
       <Sidebar show={showSideBar} handleClose={() => setShowSideBar(false)} />
-      <nav className="bg-white border border-gray-200 sm:py-2.5 dark:bg-gray-800">
-        <div className="flex flex-wrap justify-between">
+      <nav
+        className={`bg-white border border-gray-200 py-2 ${
+          userId ? "sm:py-0" : ""
+        } dark:bg-gray-800`}
+      >
+        <div className="flex flex-wrap justify-between items-center">
           <div
             onClick={() => setShowSideBar(true)}
             className="flex flex-wrap cp"
@@ -177,7 +186,7 @@ const Header = () => {
             className="hidden w-full md:block md:w-auto mr-0 sm:mr-4"
             id="mobile-menu"
           >
-            <ul className="flex justify-center mt-4 pb-4 sm:pb-0 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium">
+            <ul className="flex items-center justify-center mt-4 pb-4 sm:pb-0 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium">
               <li>
                 <button
                   onClick={torusLogout}
@@ -187,19 +196,42 @@ const Header = () => {
                 </button>
               </li>
               <li className="md:!ml-2">
-                <button
-                  onClick={() => setShowModal(true)}
-                  className="cp walletLoginButtonConatiner"
-                >
-                  WALLET LOGIN
-                </button>
+                {userId ? (
+                  <div class="flex space-x-2">
+                    <div class="relative w-16 h-16 pt-2">
+                      <img
+                        src={notificationIcon}
+                        width={42}
+                        height={42}
+                        alt="user image"
+                      />
+                      <span class="absolute top-1 right-1 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full z-2">
+                        99+
+                      </span>
+                    </div>
+                    <div className="relative w-16 h-16 pt-2">
+                      <img
+                        className="rounded-full border border-gray-100 shadow-sm"
+                        src="/static/media/profile.a33a86e1109f4271bbfa9f4bab01ec4b.svg"
+                        alt="user image"
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setShowModal(true)}
+                    className="cp walletLoginButtonConatiner"
+                  >
+                    WALLET LOGIN
+                  </button>
+                )}
               </li>
             </ul>
           </div>
         </div>
       </nav>
       <Modal show={showModal} handleClose={() => setShowModal(false)}>
-        <div className={`walletContainer ${!isLoading ? "loading" : ""}`}>
+        <div className={`walletContainer ${isLoading ? "loading" : ""}`}>
           <div className="walletTitle">WALLET</div>
           <div className="walletDescription">
             Connect with one of our available wallet providers or create a new
