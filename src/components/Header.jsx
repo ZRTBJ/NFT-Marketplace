@@ -20,6 +20,8 @@ const Header = () => {
   const [metamuskAccount, setMetamushAccount] = useState(account);
   const [torusAccountInfo, setTorusAccountInfo] = useState(null);
   const dispatch = useAuthDispatch();
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
     if (active) {
       if (account && account.length > 5) {
@@ -74,15 +76,18 @@ const Header = () => {
     });
   }
 
-  function userLogin(address, signature) {
+  async function userLogin(address, signature) {
     const request = {
       address,
       signature,
     };
     try {
-      let response = loginUser(dispatch, request);
+      setIsLoading(true);
+      let response = await loginUser(dispatch, request);
+      setIsLoading(false);
       console.log(response);
     } catch (error) {
+      setIsLoading(false);
       console.log(error);
     }
   }
@@ -193,9 +198,8 @@ const Header = () => {
           </div>
         </div>
       </nav>
-
       <Modal show={showModal} handleClose={() => setShowModal(false)}>
-        <div className="walletContainer">
+        <div className={`walletContainer ${!isLoading ? "loading" : ""}`}>
           <div className="walletTitle">WALLET</div>
           <div className="walletDescription">
             Connect with one of our available wallet providers or create a new
@@ -215,7 +219,8 @@ const Header = () => {
                 {metamuskAccount ? (
                   <span>
                     <p>
-                      Login with Address: {metamuskAccount.substring(0, 5)}...{" "}
+                      Login with Address: {metamuskAccount.substring(0, 5)}
+                      ...{" "}
                     </p>
                   </span>
                 ) : (

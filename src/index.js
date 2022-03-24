@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import "./assets/css/Header.css";
+import "./assets/css/common.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import store from "./store/store";
