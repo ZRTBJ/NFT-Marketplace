@@ -1,18 +1,19 @@
 import { useState, useEffect } from "react";
-import Modal from "./Modal";
-import Sidebar from "./Sidebar/Sidebar";
+import Modal from "../Modal";
+import Sidebar from "../Sidebar/Sidebar";
 import logo from "assets/images/header/logo.svg";
 import metamaskIcon from "assets/images/modal/metamask.png";
 import torusIcon from "assets/images/modal/torus.png";
+import notificationIcon from "assets/images/header/ico_notification@2x.png";
 import { useEthers, useEtherBalance } from "@usedapp/core";
-import { loginUser, useAuthState, useAuthDispatch } from "Context";
+import { loginUser, useAuthState, useAuthDispatch, logout } from "Context";
 import {
   connectWallet,
   getPersonalSign,
   isWalletConnected,
-} from "../util/metaMaskWallet";
-import { torusInit, torusWalletLogin, torusLogout } from "../util/Torus";
-import notificationIcon from "assets/images/header/ico_notification@2x.png";
+} from "../../util/metaMaskWallet";
+import { torusInit, torusWalletLogin, torusLogout } from "../../util/Torus";
+import UserDropDownMenu from "./UserDropDownMenu";
 
 const Header = () => {
   const { activateBrowserWallet, account, active, activate } = useEthers();
@@ -95,6 +96,11 @@ const Header = () => {
       setIsLoading(false);
       console.log(error);
     }
+  }
+
+  function showHideUserPopup() {
+    const userDropDown = document.getElementById("userDropDown");
+    userDropDown.classList.toggle("hidden");
   }
 
   return (
@@ -197,24 +203,34 @@ const Header = () => {
               </li>
               <li className="md:!ml-2">
                 {userId ? (
-                  <div class="flex space-x-2">
-                    <div class="relative w-16 h-16 pt-2">
-                      <img
-                        src={notificationIcon}
-                        width={42}
-                        height={42}
-                        alt="user image"
-                      />
-                      <span class="absolute top-1 right-1 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full z-2">
+                  <div className="flex space-x-2">
+                    <div className="relative w-16 h-16 pt-2">
+                      <span className="cursor-pointer">
+                        <img
+                          src={notificationIcon}
+                          width={42}
+                          height={42}
+                          alt="Notification icon"
+                        />
+                      </span>
+                      <span className="absolute top-1 right-1 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full z-2">
                         99+
                       </span>
                     </div>
-                    <div className="relative w-16 h-16 pt-2">
+                    <div className="relative w-16 h-16 pt-2 cursor-pointer">
                       <img
                         className="rounded-full border border-gray-100 shadow-sm"
                         src="/static/media/profile.a33a86e1109f4271bbfa9f4bab01ec4b.svg"
-                        alt="user image"
+                        alt="user icon"
+                        onClick={() => showHideUserPopup()}
                       />
+                      {/* Dropdown menu */}
+                      <div
+                        id="userDropDown"
+                        className="hidden z-10 w-72 bg-white text-base rounded divide-y divide-gray-100 shadow-xl dark:bg-gray-700 dark:divide-gray-600 float-right mt-4"
+                      >
+                        <UserDropDownMenu />
+                      </div>
                     </div>
                   </div>
                 ) : (

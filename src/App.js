@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Switch } from "react-router-dom";
 import routes from "routes/routes.js";
 import { AuthProvider } from "./Context";
 import AppRoute from "components/AppRoute";
-import Header from "components/Header";
+import Header from "components/TopHeader/Header";
 
 function App() {
   return (
