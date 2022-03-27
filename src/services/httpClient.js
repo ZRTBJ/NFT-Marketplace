@@ -16,7 +16,7 @@ export async function client(method, url, body) {
       return response;
     },
     (error) => {
-      if (error.response.status == 403) {
+      if (error.response.status === 403) {
         refreshToken();
       }
     }

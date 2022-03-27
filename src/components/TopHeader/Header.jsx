@@ -14,15 +14,21 @@ import {
 } from "../../util/metaMaskWallet";
 import { torusInit, torusWalletLogin, torusLogout } from "../../util/Torus";
 import UserDropDownMenu from "./UserDropDownMenu";
+import { getUserInfo } from "../../services/User/userService";
+import { useHistory } from "react-router-dom";
+import { setUserInfo } from "../../Slice/userSlice";
+import { useDispatch } from "react-redux";
 
 const Header = () => {
+  const history = useHistory();
+  const dispatch = useDispatch();
   const { activateBrowserWallet, account, active, activate } = useEthers();
   const etherBalance = useEtherBalance(account);
   const [showModal, setShowModal] = useState(false);
   const [showSideBar, setShowSideBar] = useState(false);
   const [metamuskAccount, setMetamushAccount] = useState(account);
   const [torusAccountInfo, setTorusAccountInfo] = useState(null);
-  const dispatch = useAuthDispatch();
+  const authDispatch = useAuthDispatch();
   const context = useAuthState();
   const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState(context ? context.user : "");
@@ -88,14 +94,33 @@ const Header = () => {
     };
     try {
       setIsLoading(true);
-      let response = await loginUser(dispatch, request);
+      let response = await loginUser(authDispatch, request);
       setUserId(response["user_id"]);
-      setIsLoading(false);
-      setShowModal(false);
+      getUserDetails(response["user_id"]);
     } catch (error) {
       setIsLoading(false);
       console.log(error);
     }
+  }
+
+  async function getUserDetails(userID) {
+    const response = await getUserInfo(userID);
+    let userinfo;
+    try {
+      userinfo = response["data"]["user"];
+    } catch {}
+    dispatch(setUserInfo(userinfo));
+    setIsLoading(false);
+    if (
+      userinfo &&
+      userinfo["display_name"] &&
+      userinfo["display_name"].length > 0
+    ) {
+      history.push("/profile");
+    } else {
+      history.push("/");
+    }
+    setShowModal(false);
   }
 
   function showHideUserPopup() {

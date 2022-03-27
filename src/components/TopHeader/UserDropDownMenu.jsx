@@ -1,10 +1,12 @@
-import { useAuthState, useAuthDispatch, logout } from "Context";
+import { useAuthDispatch, logout } from "Context";
 import { useHistory } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const UserDropDownMenu = () => {
   let history = useHistory();
   const dispatch = useAuthDispatch();
-  const context = useAuthState();
+  const loadingStatus = useSelector((state) => state.user.status);
+  const userinfo = useSelector((state) => state.user.userinfo);
 
   function showHideUserPopup() {
     const userDropDown = document.getElementById("userDropDown");
@@ -27,7 +29,11 @@ const UserDropDownMenu = () => {
             src="/static/media/profile.a33a86e1109f4271bbfa9f4bab01ec4b.svg"
             alt="user icon"
           />
-          <div className="ml-2">USER NAME</div>
+          <div className="ml-2 uppercase">
+            {userinfo && userinfo["display_name"]
+              ? userinfo["display_name"]
+              : "USER NAME"}
+          </div>
         </div>
       </div>
       <div className="py-3 px-4 text-gray-900 dark:text-white">
