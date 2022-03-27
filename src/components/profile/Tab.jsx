@@ -12,7 +12,7 @@ const Tab = (props) => {
         <div className="buttonGroup">
           {props.tabs.map((type) => (
             <button
-              className={active === type ? 'active' : ''}
+              className={active.name === type.name ? "active" : ""}
               key={type.id}
               onClick={() => setActive(type)}
             >
@@ -40,7 +40,7 @@ const Tab = (props) => {
           <div className="container mx-auto md:px-4">
             <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 md:gap-4">
               {active.cardList.map((cardlist) => (
-                <div key={cardlist.id} >
+                <div key={cardlist.id}>
                   <div className="workCardLayout">
                     <WorkCard cardInfo={cardlist} />
                   </div>
