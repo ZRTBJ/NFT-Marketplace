@@ -1,0 +1,49 @@
+.buttonContainer button {
+  border-radius: 4px;
+}
+.backButton,
+.nextButton {
+  background-color: #0ab4af;
+  color: white;
+  padding: 8px 37px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  margin-bottom: 30px;
+}
+
+.backButton:hover,
+.nextButton:hover {
+  background: #192434;
+}
+.buttonContainer .saveDraft {
+  display: block;
+  margin: auto;
+}
+.saveDraft {
+  background-color: #b9ccd5;
+  color: white;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  width: 200px;
+  height: 54px;
+}
+.buttonContainer {
+  margin-top: 42px;
+  margin-bottom: 80px;
+}
+.cardContainer {
+  max-width: 630px;
+  /* border: 1px solid black; */
+  display: block;
+  margin: 0px auto;
+  padding-top: 50px;
+}
+.dragAndDropLable {
+  color: #8b9199;
+  font-family: "Roboto", sans-serif;
+  font-weight: 600;
+}
+.photoPreviewContainer {
+  border: 1px solid black;
+  height: 192px;
+}

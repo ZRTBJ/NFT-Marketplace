@@ -1,0 +1,32 @@
+.createProjectLeftSideBarContainer {
+  background-color: #f6f6f7;
+  min-height: 100vh;
+}
+.progressBar {
+  padding: 50px 80px 30px 80px;
+}
+
+.steps {
+  margin: 25px;
+}
+.stepsTitle {
+  color: #192434;
+  font-size: 16px;
+  font-family: "Roboto", sans-serif;
+  font-weight: 600;
+}
+.stepsIcon {
+  background-color: #d5d5d5;
+  height: 32px;
+  width: 32px;
+  border-radius: 50%;
+  text-align: center;
+  color: #ffffff;
+  font-size: 16px;
+  font-family: "Roboto", sans-serif;
+  font-weight: 600;
+  padding-top: 5px;
+}
+.active {
+  background-color: #0ab4af !important;
+}
