@@ -8,12 +8,14 @@
   border-style: solid;
   border-color: #ebe1e1;
 }
+
 .menuIconContainer div {
   width: 20px;
   height: 2px;
   background-color: #192434;
   margin-bottom: 5px;
 }
+
 .menuIconContainer:hover div {
   background-color: #07d5ce;
 }
@@ -29,6 +31,7 @@
   font-family: "Montserrat", sans-serif;
   margin-right: 15px;
 }
+
 .walletLoginButtonConatiner {
   width: 168px;
   height: 40px;
@@ -39,10 +42,26 @@
   font-size: 16px;
   font-family: "Montserrat", sans-serif;
 }
+
 .createProjectButtonConatiner:hover {
   background: #192434;
 }
 
 .walletLoginButtonConatiner:hover {
   background: linear-gradient(180deg, #07d5ce 0%, #0ea09c 100%);
+}
+
+/* For mobile view  */
+@media only screen and (max-width: 600px) {
+  .walletLoginButtonConatiner {
+    width: 130px;
+    height: 30px;
+    background: #192434;
+    border-radius: 20px;
+    color: #ffffff;
+    border: 0px;
+    font-size: 12px;
+    font-family: "Montserrat", sans-serif;
+    margin-right: 20px;
+  }
 }
