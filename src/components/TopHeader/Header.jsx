@@ -174,7 +174,11 @@ const Header = () => {
             </div>
           </div>
           <div className="w-auto mr-0 sm:mr-4" id="mobile-menu">
-            <ul className="flex items-center justify-center md:flex-row md:space-x-8 md:text-sm md:font-medium">
+            <ul
+              className={`flex items-center justify-center md:flex-row md:space-x-8 md:text-sm md:font-medium ${
+                userId ? "" : "sm:py-2"
+              }`}
+            >
               <li className="hidden sm:block">
                 <button
                   onClick={torusLogout}
