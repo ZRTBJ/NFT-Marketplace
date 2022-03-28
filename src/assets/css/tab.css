@@ -15,7 +15,7 @@
   font-weight: 600;
   cursor: pointer;
 }
-.buttonGroup .active {
+.buttonGroup .activeBUttonTab {
   background-color: #192434;
 }
 .buttonGroup button:hover {

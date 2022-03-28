@@ -250,7 +250,7 @@ const Profile = () => {
         {stats.map((i) => (
           <div key={i.id} className="stat">
             <div className="amount">{i.amount}</div>
-            <div className="title">{i.title}</div>
+            <div className="statsTitle">{i.title}</div>
           </div>
         ))}
       </div>

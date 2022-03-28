@@ -12,7 +12,7 @@ const Tab = (props) => {
         <div className="buttonGroup">
           {props.tabs.map((type) => (
             <button
-              className={active.name === type.name ? "active" : ""}
+              className={active.name === type.name ? "activeBUttonTab" : ""}
               key={type.id}
               onClick={() => setActive(type)}
             >

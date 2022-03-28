@@ -4,7 +4,7 @@ import Outline from "components/ProjectCreate/Outline";
 import SelectType from "components/ProjectCreate/SelectType";
 import { useState } from "react";
 export default function CreateProjectLayout() {
-  const [currentStep, setcurrentStep] = useState(2);
+  const [currentStep, setcurrentStep] = useState(1);
   return (
     <div className="flex flex-col md:flex-row ">
       <div className="hidden md:block md:relative  w-full md:w-64 lg:w-80  content-center">
