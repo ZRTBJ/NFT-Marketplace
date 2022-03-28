@@ -1,6 +1,7 @@
 import { useAuthDispatch, logout } from "Context";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 const UserDropDownMenu = () => {
   let history = useHistory();
@@ -68,7 +69,9 @@ const UserDropDownMenu = () => {
               fill="#192434"
             />
           </svg>
-          <div className="ml-2">PROFILE</div>
+          <Link to="/profile" className="ml-2" onClick={showHideUserPopup}>
+            PROFILE
+          </Link>
         </div>
       </div>
       <div className="py-3 px-4 text-gray-900 dark:text-white">
