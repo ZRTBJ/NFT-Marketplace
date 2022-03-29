@@ -1,4 +1,5 @@
 import Config from "../config";
+import { torusLogout } from "util/Torus";
 
 const ROOT_URL = Config.API_ENDPOINT; //"https://reqres.in/api";
 
@@ -20,11 +21,10 @@ export async function loginUser(dispatch, loginPayload) {
     dispatch({ type: "REQUEST_LOGIN" });
     let response = await fetch(`${ROOT_URL}/auth/login`, requestOptions);
     let data = await response.json();
-    console.log(data);
-
     if (data.token) {
       dispatch({ type: "LOGIN_SUCCESS", payload: data });
       localStorage.setItem("currentUser", JSON.stringify(data.token));
+      localStorage.setItem("user_id", data.user_id);
       localStorage.setItem("tokenDate", new Date());
       return data;
     }
@@ -39,8 +39,7 @@ export async function loginUser(dispatch, loginPayload) {
 }
 
 export async function logout(dispatch) {
+  torusLogout();
   dispatch({ type: "LOGOUT" });
-  localStorage.removeItem("currentUser");
-  localStorage.removeItem("token");
-  localStorage.removeItem("tokenDate");
+  localStorage.clear();
 }
