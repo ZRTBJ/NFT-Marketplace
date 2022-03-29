@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import "assets/css/profile.css";
 import profile from "assets/images/profile/profile.svg";
-import dummy from "assets/images/profile/dummy.jpg";
-import dummy2 from "assets/images/profile/dummy2.jpg";
 import locationIcon from "assets/images/profile/locationIcon.svg";
 import Tab from "components/profile/Tab";
 import { getUserProjectListById } from "services/project/projectService";
