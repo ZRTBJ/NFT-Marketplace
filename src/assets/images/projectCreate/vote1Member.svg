@@ -1,0 +1,34 @@
+<svg id="ico_onevote" xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44">
+  <g id="グループ_1258" data-name="グループ 1258" transform="translate(-542 -928)">
+    <g id="グループ_1249" data-name="グループ 1249" transform="translate(0 279)">
+      <rect id="長方形_507" data-name="長方形 507" width="44" height="44" transform="translate(542 649)" fill="none"/>
+    </g>
+  </g>
+  <g id="グループ_1288" data-name="グループ 1288" transform="translate(-862 -784)">
+    <g id="グループ_1260" data-name="グループ 1260" transform="translate(0 3.028)">
+      <g id="グループ_1284" data-name="グループ 1284" transform="translate(0 1.972)">
+        <g id="グループ_1257" data-name="グループ 1257" transform="translate(330 -131.999)">
+          <g id="グループ_1250" data-name="グループ 1250" transform="translate(548 934)">
+            <circle id="楕円形_101" data-name="楕円形 101" cx="4" cy="4" r="4" transform="translate(2 -0.001)" fill="#8b9199"/>
+            <path id="長方形_506" data-name="長方形 506" d="M6,0H6a6,6,0,0,1,6,6V9a0,0,0,0,1,0,0H0A0,0,0,0,1,0,9V6A6,6,0,0,1,6,0Z" transform="translate(0 8.999)" fill="#8b9199"/>
+          </g>
+        </g>
+        <g id="グループ_1261" data-name="グループ 1261" transform="translate(317 -140.999)">
+          <g id="グループ_1250-2" data-name="グループ 1250" transform="translate(548 934)">
+            <circle id="楕円形_101-2" data-name="楕円形 101" cx="4" cy="4" r="4" transform="translate(2 -0.001)" fill="#8b9199"/>
+            <path id="長方形_506-2" data-name="長方形 506" d="M6,0H6a6,6,0,0,1,6,6V9a0,0,0,0,1,0,0H0A0,0,0,0,1,0,9V6A6,6,0,0,1,6,0Z" transform="translate(0 8.999)" fill="#8b9199"/>
+          </g>
+        </g>
+        <g id="グループ_1262" data-name="グループ 1262" transform="translate(343 -140.999)">
+          <g id="グループ_1250-3" data-name="グループ 1250" transform="translate(548 934)">
+            <circle id="楕円形_101-3" data-name="楕円形 101" cx="4" cy="4" r="4" transform="translate(2 -0.001)" fill="#8b9199"/>
+            <path id="長方形_506-3" data-name="長方形 506" d="M6,0H6a6,6,0,0,1,6,6V9a0,0,0,0,1,0,0H0A0,0,0,0,1,0,9V6A6,6,0,0,1,6,0Z" transform="translate(0 8.999)" fill="#8b9199"/>
+          </g>
+        </g>
+      </g>
+    </g>
+    <text id="_" data-name="" transform="translate(884 803)" fill="#8b9199" font-size="8" font-family="FontAwesome5FreeRegular, 'Font Awesome \35  Free'"><tspan x="-4" y="0"></tspan></text>
+    <text id="_2" data-name="" transform="translate(872 794)" fill="#8b9199" font-size="8" font-family="FontAwesome5FreeRegular, 'Font Awesome \35  Free'"><tspan x="-4" y="0"></tspan></text>
+    <text id="_3" data-name="" transform="translate(897 794)" fill="#8b9199" font-size="8" font-family="FontAwesome5FreeRegular, 'Font Awesome \35  Free'"><tspan x="-4" y="0"></tspan></text>
+  </g>
+</svg>
