@@ -23,9 +23,9 @@ export async function loginUser(dispatch, loginPayload) {
     let data = await response.json();
     if (data.token) {
       dispatch({ type: "LOGIN_SUCCESS", payload: data });
-      localStorage.setItem("currentUser", JSON.stringify(data.token));
+      localStorage.setItem("currentUser", data.token);
       localStorage.setItem("user_id", data.user_id);
-      localStorage.setItem("tokenDate", new Date());
+      localStorage.setItem("refresh_token", data["refresh_token"]);
       return data;
     }
 

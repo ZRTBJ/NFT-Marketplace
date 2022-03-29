@@ -42,18 +42,22 @@ const Profile = () => {
       };
       let projectListCards = [];
       await getUserProjectListById(payload).then((e) => {
-        e.data.data.forEach((element) => {
-          let assets = element.assets.find((x) => x.asset_purpose === "cover");
-          projectListCards.push({
-            id: element.id,
-            img: assets ? assets.path : "",
-            title: element.name,
-            type: element.project_type,
-            bookmark: element.project_mark_count,
-            like: element.project_like_count,
-            view: element.project_view_count,
+        if (e && e.data && e.data.data) {
+          e.data.data.forEach((element) => {
+            let assets = element.assets.find(
+              (x) => x.asset_purpose === "cover"
+            );
+            projectListCards.push({
+              id: element.id,
+              img: assets ? assets.path : "",
+              title: element.name,
+              type: element.project_type,
+              bookmark: element.project_mark_count,
+              like: element.project_like_count,
+              view: element.project_view_count,
+            });
           });
-        });
+        }
         setUserProjectList(projectListCards);
       });
       setisLoading(false);
