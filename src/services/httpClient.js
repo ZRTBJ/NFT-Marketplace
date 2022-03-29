@@ -3,27 +3,21 @@ import Config from "../config";
 import jwt from "jwt-decode";
 
 const ROOT_URL = Config.API_ENDPOINT;
-let token;
 
 export async function client(method, url, body) {
+  let token = localStorage.getItem("currentUser");
+  const refreshTkn = localStorage.getItem("refresh_token");
+
+  if (refreshTkn && refreshTkn.length > 0) {
+    token = await refreshToken(refreshTkn);
+  }
+
+  // headers
   const headers = { "Content-Type": "application/json" };
-
-  token = localStorage.getItem("currentUser");
-
   if (token && token.length > 0) {
     headers["token"] = token;
   }
 
-  axios.interceptors.response.use(
-    (response) => {
-      return response;
-    },
-    (error) => {
-      if (error.response.status === 403) {
-        refreshToken();
-      }
-    }
-  );
   return await axios({
     method: method,
     url: `${ROOT_URL + url}`,
@@ -32,34 +26,30 @@ export async function client(method, url, body) {
   });
 }
 
-async function refreshToken(token) {
-  const tokenDate = !!localStorage.getItem("tokenDate")
-    ? new Date(localStorage.getItem("tokenDate"))
-    : new Date();
-  const user = jwt(token);
-  const expDay = Math.floor(user.exp / 1000 / 60 / 60 / 24);
+async function refreshToken(refreshTkn) {
+  const user = jwt(refreshTkn);
+  const tknExpDate = new Date(user.exp * 1000);
   const today = new Date();
-  const diff = Math.ceil((today - tokenDate) / (1000 * 60 * 60 * 24));
-  if (diff >= 18) {
+  const diff = Math.ceil((tknExpDate - today) / (1000 * 60 * 60 * 24));
+
+  if (diff <= 1) {
     const headers = {
       "Content-Type": "multipart/form-data",
-      refresh_token: token,
+      refresh_token: refreshTkn,
     };
     const bodyFormData = new FormData();
-    bodyFormData.append(
-      "address",
-      "0xebA7aDFe2B4364B1cE9D64cCf73ba73595347968"
-    );
-    bodyFormData.append(
-      "signature",
-      "0xa7210c38b50fd949d6a1039671ffcb4485792a3473de01899d613b8d230bdcaf133b6fa0a2915be66308da2601aeb2e9bdf450444ccb82153588901b2d46d26c1b"
-    );
+
     const response = await axios({
       method: "POST",
       url: `${ROOT_URL + "/auth/refresh"}`,
       data: bodyFormData,
       headers: headers,
     });
-    debugger;
+
+    localStorage.setItem("currentUser", response.data.token);
+    localStorage.setItem("user_id", response.data.user_id);
+    localStorage.setItem("refresh_token", response.data["refresh_token"]);
+
+    return response.data.token;
   }
 }
