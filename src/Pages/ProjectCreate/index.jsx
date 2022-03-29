@@ -11,6 +11,7 @@ export default function CreateProjectLayout() {
         <LeftSideBar currentStep={currentStep} key={currentStep} />
       </div>
       <div className="flex-1">
+        <div className="stepTitleName">STEP{currentStep}</div>
         <div className="cardContainer px-5">
           {currentStep === 1 && <SelectType />}
           {currentStep === 2 && <Outline />}
