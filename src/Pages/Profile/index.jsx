@@ -11,7 +11,7 @@ import { getUserProjects } from "../../Slice/projectSlice";
 
 const Profile = () => {
   const dispatch = useDispatch();
-
+  const [isLoading, setIsLoading] = useState(true);
   const tabs = [
     {
       id: 1,
@@ -219,21 +219,24 @@ const Profile = () => {
   let [stats] = useState(initialStats);
   let [isFollowing, setIsFollowing] = useState(false);
   const loadingStatus = useSelector((state) => state.projects.status);
-
+  const entities = useSelector((state) => state.projects.entities);
   useEffect(() => {
+    getUserData();
+  }, []);
+  async function getUserData() {
     let payload = {
-      id: "8ca0c405-e120-4ec6-a87c-a0588163f42c",
+      id: localStorage.getItem("user_id"),
       page: 1,
       perPage: 10,
     };
-    dispatch(getUserProjects(payload));
-    // getUserProjectListById(payload).then((e) => {
-    //   console.log(e);
-    // });
-  }, []);
-
+    dispatch(await getUserProjects(payload));
+  }
   return (
-    <div className="profilePageContainer">
+    <div
+      className={`profilePageContainer ${
+        loadingStatus === "complete" ? "" : "loading"
+      }`}
+    >
       <div className="banner"></div>
       <img src={profile} className="userProfilePicture" alt="User profile" />
       <div className="userName">USER NAME</div>
@@ -279,7 +282,7 @@ const Profile = () => {
         <button>Online Shop</button>
       </div>
       <div className="profileDivider"></div>
-      <Tab tabs={tabs} />
+      {loadingStatus === "complete" && <Tab tabs={tabs} />}
     </div>
   );
 };

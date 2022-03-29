@@ -14,7 +14,7 @@ const projectSlice = createSlice({
     },
     getUserProjectList(state, action) {
       state.entities = action.payload;
-      state.status = "idle";
+      state.status = "complete";
     },
   },
 });
