@@ -18,7 +18,10 @@ export default function LeftSideBar(props) {
         {stepsList.map((i) => (
           <li className="steps flex items-center" key={i.id}>
             <span
-              className={"stepsIcon " + (currentStep === i.id ? "active" : "")}
+              className={
+                "stepsIcon " +
+                (currentStep.find((x) => x === i.id) ? "active" : "")
+              }
             >
               {i.id}
             </span>

@@ -99,7 +99,63 @@
   font-size: 12px;
   font-family: "Roboto", sans-serif;
 }
+.projectselectedType {
+  border: 2px solid #0ab4af;
+}
 .projectTypeCardcontainer:hover {
   border: 2px solid #0ab4af;
   cursor: pointer;
+}
+@media only screen and (max-width: 767px) {
+  .selectProjectTypeTitle {
+    font-size: 24px;
+  }
+  .projectTypeSelect {
+    margin-top: 22px;
+    margin-bottom: 14px;
+  }
+  .selectProjectTypeTab button {
+    font-size: 12px;
+    margin: 0px;
+    padding: 5px 11px;
+  }
+  .selectProjectTypeTab {
+    margin-bottom: 18px;
+  }
+  .selectedTabTitle {
+    margin-bottom: 26px;
+  }
+  .drivenByTitle {
+    font-size: 14px;
+  }
+  .staticTitle {
+    font-size: 14px;
+  }
+  .staticDescription {
+    font-size: 10px;
+  }
+  .selecTypeContainer {
+    font-size: 14px;
+  }
+  .projectTypeCardcontainer {
+    height: 130px;
+    display: block;
+    text-align: center;
+    align-items: center;
+    margin: auto;
+  }
+  .projectTypeCardIcon {
+    margin-top: 17px;
+    margin-bottom: 0px;
+    margin: 17px auto 0px auto;
+  }
+  .projectTypeCardTitle {
+    padding: 0px 40px;
+  }
+  .projectTypeCardDescription {
+    font-size: 10px;
+  }
+  .selectProjectTypeCardHeader {
+    margin-top: 24px;
+  }
 }
