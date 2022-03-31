@@ -51,6 +51,18 @@
   background: linear-gradient(180deg, #07d5ce 0%, #0ea09c 100%);
 }
 
+.profile-icon {
+  margin-left: 15px;
+  background-image: url('../images/header/ico_personal.svg');
+  background-repeat: no-repeat;
+  background-position: left;
+}
+
+.profile-icon:hover,
+.profile-icon:focus {
+  background-image: url('../images/header/ico_personal_white.svg');
+}
+
 /* For mobile view  */
 @media only screen and (max-width: 600px) {
   .walletLoginButtonConatiner {
