@@ -26,6 +26,7 @@ export async function loginUser(dispatch, loginPayload) {
       localStorage.setItem("currentUser", data.token);
       localStorage.setItem("user_id", data.user_id);
       localStorage.setItem("refresh_token", data["refresh_token"]);
+      localStorage.setItem("wallet", loginPayload["wallet"]);
       return data;
     }
 

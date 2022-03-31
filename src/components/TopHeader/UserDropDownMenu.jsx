@@ -1,4 +1,4 @@
-import { useAuthDispatch, logout } from "Context";
+import { useAuthState, useAuthDispatch, logout } from "Context";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -7,6 +7,7 @@ import ico_project from "../../assets/images/header/ico_project.svg";
 import ico_setting from "../../assets/images/header/ico_setting.svg";
 import ico_logout from "../../assets/images/header/ico_logout.svg";
 import ico_torus from "../../assets/images/header/ico_torus.svg";
+import ico_metamask from "../../assets/images/header/ico_metamask.svg";
 
 import { useState } from "react";
 const UserDropDownMenu = () => {
@@ -15,6 +16,10 @@ const UserDropDownMenu = () => {
   const loadingStatus = useSelector((state) => state.user.status);
   const userinfo = useSelector((state) => state.user.userinfo);
   const [showWallet, setShowWallet] = useState(false);
+  const context = useAuthState();
+  const [selectedWallet, setSelectedWallet] = useState(
+    context ? context.wallet : ""
+  );
 
   function showHideUserPopup() {
     const userDropDown = document.getElementById("userDropDown");
@@ -63,30 +68,44 @@ const UserDropDownMenu = () => {
             </span>
           </div>
           {showWallet && (
-            <div className="bg-[#F4F4F4]">
-              <div className="inline-flex p-4">
-                <div className="pt-4">
-                  <img
-                    src={ico_torus}
-                    alt="profile ico"
-                    height={16}
-                    width={16}
-                  />
-                </div>
-                <div className="pl-2">
-                  <small className="text-[#192434] opacity-70 font-['Montserrat']">
-                    Total balance
-                  </small>
-                  <div className="text-[20px]">$12.00 USD</div>
-                  <div className="mt-1">
-                    <span className="inline-flex items-center justify-center px-2.5 py-1.5 text-xs font-bold leading-none text-slate-500 bg-white rounded-full border-x">
-                      <div class="w-2 h-2 rounded-full bg-[#0AB4AF] mr-1"></div>
-                      ETHRIAM Mainnet
-                    </span>
+            <>
+              <div className="bg-[#F4F4F4]">
+                <div className="inline-flex p-4">
+                  <div className="pt-4">
+                    {selectedWallet === "metamask" ? (
+                      <img
+                        src={ico_torus}
+                        alt="profile ico"
+                        height={16}
+                        width={16}
+                      />
+                    ) : (
+                      <img
+                        src={ico_metamask}
+                        alt="profile ico"
+                        height={16}
+                        width={16}
+                      />
+                    )}
+                  </div>
+                  <div className="pl-2">
+                    <small className="text-[#192434] opacity-70 font-['Montserrat']">
+                      Total balance
+                    </small>
+                    <div className="text-[20px]">$12.00 USD</div>
+                    <div className="mt-1">
+                      <span className="inline-flex items-center justify-center px-2.5 py-1.5 text-xs font-bold leading-none text-slate-500 bg-white rounded-full border-x">
+                        <div class="w-2 h-2 rounded-full bg-[#0AB4AF] mr-1"></div>
+                        ETHRIAM Mainnet
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+              <div className="w-full h-10 text-center text-white bg-[#192434]">
+                <div className="py-2">Add Funds</div>
+              </div>
+            </>
           )}
         </div>
       </div>

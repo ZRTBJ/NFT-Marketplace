@@ -1,11 +1,13 @@
 let user = localStorage.getItem("currentUser");
 let token = localStorage.getItem("currentUser");
+let wallet = localStorage.getItem("wallet");
 
 export const initialState = {
   user: "" || user,
   token: "" || token,
   loading: false,
   errorMessage: null,
+  wallet: "" || wallet,
 };
 
 export const AuthReducer = (initialState, action) => {
