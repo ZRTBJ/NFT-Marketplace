@@ -2,10 +2,10 @@ import { useAuthState, useAuthDispatch, logout } from "Context";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import ico_personal from "../../assets/images/header/ico_personal.svg";
-import ico_project from "../../assets/images/header/ico_project.svg";
-import ico_setting from "../../assets/images/header/ico_setting.svg";
-import ico_logout from "../../assets/images/header/ico_logout.svg";
+import { ReactComponent as ProfileLogo } from "../../assets/images/profileSettings/ico_personal.svg";
+import { ReactComponent as ProjectLogo } from "../../assets/images/header/ico_project.svg";
+import { ReactComponent as SettingLogo } from "../../assets/images/header/ico_setting.svg";
+import { ReactComponent as LogoutLogo } from "../../assets/images/header/ico_logout.svg";
 import ico_torus from "../../assets/images/header/ico_torus.svg";
 import ico_metamask from "../../assets/images/header/ico_metamask.svg";
 
@@ -112,37 +112,45 @@ const UserDropDownMenu = () => {
       <div className="text-gray-900 hover:bg-[#0AB4AF] hover:text-white">
         <Link
           to="/profile"
-          className="inline-flex py-3 px-4 w-full"
+          className="inline-flex user-dropdown-item"
           onClick={showHideUserPopup}
         >
-          <img src={ico_personal} alt="profile ico" />
+          <ProfileLogo />
           <div className="ml-2"> PROFILE</div>
         </Link>
       </div>
       <div className="text-gray-900 hover:bg-[#0AB4AF] hover:text-white">
         <Link
-          to="/profile-setting"
-          className="inline-flex py-3 px-4 w-full"
+          to="/profile-settings"
+          className="inline-flex user-dropdown-item"
           onClick={showHideUserPopup}
         >
-          <img src={ico_setting} alt="setting ico" />
+          <SettingLogo />
           <div className="ml-2">SETTING</div>
         </Link>
       </div>
-      <div className="py-3 px-4 text-gray-900 hover:bg-[#0AB4AF] hover:text-white">
-        <div className="inline-flex">
-          <img src={ico_project} alt="project ico" />
+      <div className="text-gray-900 hover:bg-[#0AB4AF] hover:text-white">
+        <Link
+          to=""
+          className="inline-flex user-dropdown-item"
+          onClick={showHideUserPopup}
+        >
+          <ProjectLogo />
           <div className="ml-2">PROJECT</div>
-        </div>
+        </Link>
       </div>
       <div
-        className="py-3 px-4 text-gray-900 hover:bg-[#0AB4AF] hover:text-white"
+        className="text-gray-900 hover:bg-[#0AB4AF] hover:text-white"
         onClick={handleLogout}
       >
-        <div className="inline-flex w-full">
-          <img src={ico_logout} alt="logout ico" />
+        <Link
+          to=""
+          className="inline-flex user-dropdown-item"
+          onClick={showHideUserPopup}
+        >
+          <LogoutLogo />
           <div className="ml-2">SIGN OUT</div>
-        </div>
+        </Link>
       </div>
     </>
   );
