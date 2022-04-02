@@ -23,7 +23,9 @@
   cursor: pointer;
 }
 .topNavigationCardImageContainer svg {
-  margin-top: 8px;
+  position: relative;
+  top: 8px;
+  left: 7.5px;
 }
 .topNavigationCardTitle {
   font-size: 10px;

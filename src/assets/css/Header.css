@@ -51,16 +51,17 @@
   background: linear-gradient(180deg, #07d5ce 0%, #0ea09c 100%);
 }
 
-.profile-icon {
-  margin-left: 15px;
-  background-image: url('../images/header/ico_personal.svg');
-  background-repeat: no-repeat;
-  background-position: left;
+.user-dropdown-item {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  width: 100%;
 }
-
-.profile-icon:hover,
-.profile-icon:focus {
-  background-image: url('../images/header/ico_personal_white.svg');
+.user-dropdown-item:hover {
+  background-color: #0ab4af;
+  fill: white;
+  cursor: pointer;
 }
 
 /* For mobile view  */

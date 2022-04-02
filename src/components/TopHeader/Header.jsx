@@ -116,7 +116,7 @@ const Header = () => {
     ) {
       history.push("/profile");
     } else {
-      history.push("/profile-setting");
+      history.push("/profile-settings");
     }
     setShowModal(false);
   }
