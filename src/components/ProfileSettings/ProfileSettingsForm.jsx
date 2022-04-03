@@ -1,14 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import FileDragAndDrop from "../ProjectCreate/FileDragAndDrop";
-
+import data from "../../data/countries";
 const ProfileSettingsForm = () => {
+  const countryList = data ? JSON.parse(JSON.stringify(data.countries)) : [];
+  const [stateList, setStateList] = useState(countryList[0].states);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
   const onSubmit = (data) => console.log(data);
+
+  function handleCountrySelect(event) {
+    const selectedCountry = event.target.value;
+    const country = countryList.find((x) => x.country === selectedCountry);
+    if (country) {
+      setStateList(country.states);
+    } else {
+      setStateList([]);
+    }
+  }
   return (
     /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
     <div class="grid justify-items-center my-24">
@@ -19,12 +31,17 @@ const ProfileSettingsForm = () => {
             <div></div>
             <div className="flex justify-center">
               <img
-                className="rounded-full border border-gray-100 shadow-sm"
+                className="rounded-full border-4 border-gray-300 shadow-sm"
                 src="/static/media/profile.a33a86e1109f4271bbfa9f4bab01ec4b.svg"
                 alt="user icon"
                 height={140}
                 width={140}
               />
+              <div class="relative z-2 top-24 right-8 w-12 h-12 rounded-full bg-[#0AB4AF] mr-1">
+                <div className="text-center justify-center text-white pt-3">
+                  <i class="fa fa-camera fa-lg" aria-hidden="true"></i>
+                </div>
+              </div>
             </div>
             <div></div>
           </div>
@@ -125,6 +142,16 @@ const ProfileSettingsForm = () => {
               placeholder=""
             />
           </div>
+          <div className="px-3">
+            <div className="h-8 w-auto boarder rounded bg-gray-100">
+              <div className="flex flex-row">
+                <div className="pr-4 pl-2 pt-1">ROLL</div>
+                <div className="border-l border-white px-1">
+                  <i class="fa fa-times-thin fa-2x" aria-hidden="true"></i>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <div className="flex flex-wrap mb-6">
           <div className="w-full md:w-1/2 px-3">
@@ -139,10 +166,12 @@ const ProfileSettingsForm = () => {
                 className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                 id="location-country"
                 name="locationCountry"
+                onChange={handleCountrySelect}
               >
-                <option>New Mexico</option>
-                <option>Missouri</option>
-                <option>Texas</option>
+                {countryList &&
+                  countryList.map((data, index) => (
+                    <option value={data.country}>{data.country}</option>
+                  ))}
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"></div>
             </div>
@@ -160,9 +189,8 @@ const ProfileSettingsForm = () => {
                 id="location-area"
                 name="locationArea"
               >
-                <option>New Mexico</option>
-                <option>Missouri</option>
-                <option>Texas</option>
+                {stateList &&
+                  stateList.map((stat) => <option value={stat}>{stat}</option>)}
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"></div>
             </div>
