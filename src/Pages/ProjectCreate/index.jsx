@@ -2,6 +2,7 @@ import "assets/css/CreateProject/mainView.css";
 import LeftSideBar from "components/ProjectCreate/LeftSideBar";
 import Outline from "components/ProjectCreate/Outline";
 import SelectType from "components/ProjectCreate/SelectType";
+import Token from "components/ProjectCreate/Token";
 import { useState } from "react";
 export default function CreateProjectLayout() {
   const [currentStep, setcurrentStep] = useState(1);
@@ -15,8 +16,8 @@ export default function CreateProjectLayout() {
         <div className="cardContainer px-5">
           {currentStep === 1 && <SelectType />}
           {currentStep === 2 && <Outline />}
+          {currentStep === 3 && <Token />}
           {/* {currentStep === 1 && <SelectType />}
-        {currentStep === 1 && <SelectType />}
         {currentStep === 1 && <SelectType />}
         {currentStep === 1 && <SelectType />}
         {currentStep === 1 && <SelectType />} */}
