@@ -28,6 +28,7 @@ const TopNavigationCard = () => {
         <NavLink
           key={i.id}
           to={i.to}
+          onClick={(e) => e.preventDefault()}
           className="topNavigationCardLinks"
           activeClassName="selectedTopNavigation"
         >

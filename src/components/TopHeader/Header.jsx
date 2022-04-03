@@ -26,7 +26,7 @@ const Header = () => {
   const etherBalance = useEtherBalance(account);
   const [showModal, setShowModal] = useState(false);
   const [showSideBar, setShowSideBar] = useState(false);
-  const [metamuskAccount, setMetamushAccount] = useState(account);
+  const [metamaskAccount, setMetamaskAccount] = useState(account);
   const [torusAccountInfo, setTorusAccountInfo] = useState(null);
   const authDispatch = useAuthDispatch();
   const context = useAuthState();
@@ -36,7 +36,7 @@ const Header = () => {
   useEffect(() => {
     if (active) {
       if (account && account.length > 5) {
-        setMetamushAccount(account);
+        setMetamaskAccount(account);
       }
     }
   }, [account]);
@@ -47,13 +47,19 @@ const Header = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (window.ethereum) {
+      window.ethereum.on("accountsChanged", handleAccountsChanged);
+    }
+  }, []);
+
   async function handleConnectWallet() {
     const isConnected = await isWalletConnected();
 
-    if (isConnected && metamuskAccount && metamuskAccount.length > 5) {
+    if (isConnected && metamaskAccount && metamaskAccount.length > 5) {
       getPersonalSign()
         .then((signature) => {
-          userLogin(metamuskAccount, signature);
+          userLogin(metamaskAccount, signature, "metamask");
         })
         .catch((error) => {
           alert(error.message);
@@ -64,18 +70,9 @@ const Header = () => {
         activateBrowserWallet();
         await connectWallet();
       } catch (error) {
-        if (!isConnected && !metamuskAccount) {
+        if (!isConnected && !metamaskAccount) {
           window.location.reload();
         }
-      }
-      if (metamuskAccount && metamuskAccount.length > 5) {
-        getPersonalSign()
-          .then((signature) => {
-            userLogin(metamuskAccount, signature);
-          })
-          .catch((error) => {
-            alert(error.message);
-          });
       }
     }
   }
@@ -83,14 +80,15 @@ const Header = () => {
     await torusWalletLogin().then((e) => {
       console.log("got response", e);
       setTorusAccountInfo(e);
-      userLogin(e.address, e.signature);
+      userLogin(e.address, e.signature, "torus");
     });
   }
 
-  async function userLogin(address, signature) {
+  async function userLogin(address, signature, wallet) {
     const request = {
       address,
       signature,
+      wallet,
     };
     try {
       setIsLoading(true);
@@ -118,7 +116,7 @@ const Header = () => {
     ) {
       history.push("/profile");
     } else {
-      history.push("/profile");
+      history.push("/profile-settings");
     }
     setShowModal(false);
   }
@@ -126,6 +124,23 @@ const Header = () => {
   function showHideUserPopup() {
     const userDropDown = document.getElementById("userDropDown");
     userDropDown.classList.toggle("hidden");
+  }
+
+  function handleAccountsChanged(accounts) {
+    if (accounts.length === 0) {
+      console.log("Please connect to MetaMask.");
+    } else if (accounts[0] !== metamaskAccount) {
+      const currentAccount = accounts[0];
+      if (currentAccount && currentAccount.length > 5) {
+        getPersonalSign()
+          .then((signature) => {
+            userLogin(currentAccount, signature, "metamask");
+          })
+          .catch((error) => {
+            alert(error.message);
+          });
+      }
+    }
   }
 
   return (
@@ -250,10 +265,10 @@ const Header = () => {
                 alt="metamask wallet login button"
               />
               <div className="metamaskButtonLabel">
-                {metamuskAccount ? (
+                {metamaskAccount ? (
                   <span>
                     <p>
-                      Login with Address: {metamuskAccount.substring(0, 5)}
+                      Login with Address: {metamaskAccount.substring(0, 5)}
                       ...{" "}
                     </p>
                   </span>
