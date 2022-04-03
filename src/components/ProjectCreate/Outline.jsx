@@ -6,6 +6,7 @@ export default function Outline({
   coverPhotoProps,
   closeCoverPhotoReview,
   onCoverDrop,
+  coverPhotoPreview
 }) {
   const [cover] = useState(coverPhotoProps);
   useEffect(() => {}, [cover]);
@@ -33,7 +34,10 @@ export default function Outline({
             />
           </div>
         ) : (
-          <button onClick={() => closeCoverPhotoReview}>Close</button>
+          <div>
+            <button onClick={() => closeCoverPhotoReview()}>Close</button>
+            <img src={coverPhotoPreview} alt="" />
+          </div>
         )}
         <div>
           <div className="lable">photos (upto 4)</div>

@@ -2,7 +2,7 @@ import "assets/css/CreateProject/mainView.css";
 import LeftSideBar from "components/ProjectCreate/LeftSideBar";
 import Outline from "components/ProjectCreate/Outline";
 import SelectType from "components/ProjectCreate/SelectType";
-import { useState, useCallback } from "react";
+import { useState, useCallback,useEffect } from "react";
 import selectTypeTabData from "Pages/ProjectCreate/projectCreateData";
 export default function CreateProjectLayout() {
   // project type start
@@ -14,13 +14,27 @@ export default function CreateProjectLayout() {
   // Outline start
   let [outlineKey, setOutlineKey] = useState(0);
   const [coverPhoto, setCoverPhoto] = useState("");
+    const [coverPhotoPreview, setCoverPhotoPreview] = useState()
   function closeCoverPhotoPreview() {
     console.log("close");
   }
   const onCoverDrop = useCallback((acceptedFiles) => {
-    setCoverPhoto(acceptedFiles);
+    setCoverPhoto(acceptedFiles[0]);
     setOutlineKey((outlineKey = outlineKey) + 1);
   }, []);
+      useEffect(() => {
+        if (coverPhoto === '') {
+            setCoverPhotoPreview(undefined)
+            return
+        }
+
+        const objectUrl = URL.createObjectURL(coverPhoto[0])
+        setCoverPhotoPreview(objectUrl)
+
+
+        // free memory when ever this component is unmounted
+        return () => URL.revokeObjectURL(objectUrl)
+    }, [coverPhoto])
   // Outline End
 
   const [currentStep, setcurrentStep] = useState([1]);
@@ -54,6 +68,7 @@ export default function CreateProjectLayout() {
               closeCoverPhotoReview={() => closeCoverPhotoPreview()}
               coverPhotoProps={coverPhoto}
               onCoverDrop={onCoverDrop}
+              coverPhotoPreview={coverPhotoPreview}
               key={outlineKey}
             />
           )}
