@@ -6,10 +6,23 @@ import selectTypeTabData from "Pages/ProjectCreate/projectCreateData";
 
 export default function SelectType(props) {
   const [active, setActive] = useState(selectTypeTabData[0]);
-
   function setActiveTab(type) {
     setActive(type);
     props.setActiveTab(type);
+  }
+  function votingPowerCardClick(active, params) {
+    if (active.title === "CUSTOM") {
+      let inactive = active.votingPower.find((x) => x.title !== params.title);
+      inactive.active = false;
+      props.votingPowerProps(params);
+    }
+  }
+  function canVoteCardClick(active, params) {
+    if (active.title === "CUSTOM") {
+      let inactive = active.canVote.find((x) => x.title !== params.title);
+      inactive.active = false;
+      props.canVoteProps(params);
+    }
   }
   return (
     <div className="selecTypeContainer">
@@ -44,7 +57,10 @@ export default function SelectType(props) {
         <div className="grid grid-cols-2 gap-4">
           {active.votingPower.map((cardlist) => (
             <div key={cardlist.id}>
-              <SelectTypeCard info={cardlist} />
+              <SelectTypeCard
+                info={cardlist}
+                cardClick={() => votingPowerCardClick(active, cardlist)}
+              />
             </div>
           ))}
         </div>
@@ -52,7 +68,10 @@ export default function SelectType(props) {
         <div className="grid grid-cols-2 gap-4">
           {active.canVote.map((cardlist) => (
             <div key={cardlist.id}>
-              <SelectTypeCard info={cardlist} />
+              <SelectTypeCard
+                info={cardlist}
+                cardClick={() => canVoteCardClick(active, cardlist)}
+              />
             </div>
           ))}
         </div>

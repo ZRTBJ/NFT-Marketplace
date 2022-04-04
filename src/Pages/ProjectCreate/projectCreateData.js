@@ -12,12 +12,14 @@ const selectTypeTabData = [
         icon: token,
         title: "TOKEN WEIGHTED",
         description: "More tokens more voting power.",
+        active:false
       },
       {
         id: 2,
         icon: vote1Member,
         title: "1 VOTE PER 1 MEMBER",
         description: "Every member gets 1 vote.",
+        active:false
       },
     ],
     canVote: [
@@ -26,12 +28,14 @@ const selectTypeTabData = [
         icon: owner,
         title: "OWNERS",
         description: "The owners who have the governance token.",
+        active:false
       },
       {
         id: 2,
         icon: allMember,
         title: "ALL MEMBERS",
         description: "Every member can vote.",
+        active:false
       },
     ],
   },
@@ -44,6 +48,7 @@ const selectTypeTabData = [
         icon: token,
         title: "TOKEN WEIGHTED",
         description: "More tokens more voting power.",
+        active:true
       },
     ],
     canVote: [
@@ -52,6 +57,7 @@ const selectTypeTabData = [
         icon: owner,
         title: "OWNERS",
         description: "The owners who have the governance token.",
+        active:true
       },
     ],
   },
@@ -64,6 +70,7 @@ const selectTypeTabData = [
         icon: vote1Member,
         title: "1 VOTE PER 1 MEMBER",
         description: "Every member gets 1 vote.",
+        active:true
       },
     ],
     canVote: [
@@ -72,6 +79,7 @@ const selectTypeTabData = [
         icon: allMember,
         title: "ALL MEMBERS",
         description: "Every member can vote.",
+        active:true
       },
     ],
   },
@@ -84,6 +92,7 @@ const selectTypeTabData = [
         icon: token,
         title: "TOKEN WEIGHTED",
         description: "More tokens more voting power.",
+        active:true
       },
     ],
     canVote: [
@@ -92,6 +101,7 @@ const selectTypeTabData = [
         icon: allMember,
         title: "ALL MEMBERS",
         description: "Every member can vote.",
+        active:true
       },
     ],
   },

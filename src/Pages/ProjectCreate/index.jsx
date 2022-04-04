@@ -1,9 +1,10 @@
-import "assets/css/CreateProject/mainView.css";
-import LeftSideBar from "components/ProjectCreate/LeftSideBar";
-import Outline from "components/ProjectCreate/Outline";
-import SelectType from "components/ProjectCreate/SelectType";
-import Token from "components/ProjectCreate/Token";
 import { useState, useCallback, useEffect } from "react";
+import "assets/css/CreateProject/mainView.css";
+import selectTypeTabData from "Pages/ProjectCreate/projectCreateData";
+import LeftSideBar from "components/ProjectCreate/LeftSideBar";
+import SelectType from "components/ProjectCreate/SelectType";
+import Outline from "components/ProjectCreate/Outline";
+import Token from "components/ProjectCreate/Token";
 
 export default function CreateProjectLayout() {
   /**
@@ -11,9 +12,17 @@ export default function CreateProjectLayout() {
    * Project Type Start
    * ==============================================
    */
-  const [selectedTab, setSelectedTab] = useState("");
+  const [selectedTab, setSelectedTab] = useState(selectTypeTabData[0]);
+  const [votingPower, setVotingPower] = useState("");
+  const [canVote, setCanVote] = useState("");
   function setActiveTab(arg) {
     setSelectedTab(arg);
+  }
+  function votingPowerProps(params) {
+    setVotingPower(params);
+  }
+  function canVoteProps(params) {
+    setCanVote(params);
   }
 
   /**
@@ -62,13 +71,31 @@ export default function CreateProjectLayout() {
    * Outline ENd
    * ==============================================
    */
-
   const [currentStep, setcurrentStep] = useState([1]);
   function handelClickNext() {
     // Select type start
     if (currentStep.length === 1) {
-      console.log(selectedTab);
-      setcurrentStep([1, 2]);
+      if (selectedTab.title === "CUSTOM") {
+        if (votingPower === "" && canVote === "") {
+          alert("Chosse 1 who have voting power and who can vote");
+        } else if (votingPower === "") {
+          alert("Chosse 1 who have voting power");
+        } else if (canVote === "") {
+          alert("Chosse 1 who can vote");
+        } else if (votingPower !== "" && canVote !== "") {
+          let finalSelectedTab = {
+            id: 1,
+            title: "CUSTOM",
+            canVote: [canVote],
+            votingPower: [votingPower],
+          };
+          setSelectedTab(finalSelectedTab);
+          setcurrentStep([1, 2]);
+        }
+      } else {
+        console.log(selectedTab);
+        setcurrentStep([1, 2]);
+      }
     }
     // Select type end
 
@@ -97,7 +124,11 @@ export default function CreateProjectLayout() {
         <div className="stepTitleName">STEP{currentStep.length}</div>
         <div className="cardContainer px-3 md:px-5">
           {currentStep.length === 1 && (
-            <SelectType setActiveTab={setActiveTab} />
+            <SelectType
+              setActiveTab={setActiveTab}
+              votingPowerProps={votingPowerProps}
+              canVoteProps={canVoteProps}
+            />
           )}
           {currentStep.length === 2 && (
             <Outline
