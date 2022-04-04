@@ -3,12 +3,15 @@ import FileDragAndDrop from "./FileDragAndDrop";
 import { useState, useEffect } from "react";
 
 export default function Outline({
+  projectName,
   coverPhotoProps,
   closeCoverPhotoReview,
   onCoverDrop,
-  coverPhotoPreview
+  coverPhotoPreview,
+  onProjectNameChange,
 }) {
   const [cover] = useState(coverPhotoProps);
+  const [name] = useState(projectName);
   useEffect(() => {}, [cover]);
 
   return (
@@ -22,6 +25,8 @@ export default function Outline({
             className="projectNameInput"
             name="projectNameLable"
             id="projectNameLable"
+            value={name}
+            onChange={(e) => onProjectNameChange(e.target.value)}
           />
         </div>
         {typeof cover === "string" ? (

@@ -2,46 +2,71 @@ import "assets/css/CreateProject/mainView.css";
 import LeftSideBar from "components/ProjectCreate/LeftSideBar";
 import Outline from "components/ProjectCreate/Outline";
 import SelectType from "components/ProjectCreate/SelectType";
-import { useState, useCallback,useEffect } from "react";
-import selectTypeTabData from "Pages/ProjectCreate/projectCreateData";
-export default function CreateProjectLayout() {
-  // project type start
-  const [selectProjectActiveTab, SetSelectProjectActiveTab] = useState(
-    selectTypeTabData[0]
-  );
-  // project type end
+import { useState, useCallback, useEffect } from "react";
 
-  // Outline start
+export default function CreateProjectLayout() {
+  /**
+   * ==============================================
+   * Project Type Start
+   * ==============================================
+   */
+  const [selectedTab, setSelectedTab] = useState("");
+  function setActiveTab(arg) {
+    setSelectedTab(arg);
+  }
+
+  /**
+   * ==============================================
+   * Project Type End
+   * ==============================================
+   */
+
+  /**
+   * ==============================================
+   * Outline Start
+   * ==============================================
+   */
+  const [projectName, setProjectName] = useState("");
   let [outlineKey, setOutlineKey] = useState(0);
   const [coverPhoto, setCoverPhoto] = useState("");
-    const [coverPhotoPreview, setCoverPhotoPreview] = useState()
+  const [coverPhotoPreview, setCoverPhotoPreview] = useState();
+
+  function onProjectNameChange(e) {
+    setProjectName(e);
+    console.log(projectName);
+  }
   function closeCoverPhotoPreview() {
     console.log("close");
   }
   const onCoverDrop = useCallback((acceptedFiles) => {
-    setCoverPhoto(acceptedFiles[0]);
-    setOutlineKey((outlineKey = outlineKey) + 1);
+    setCoverPhoto(acceptedFiles);
+    setOutlineKey(outlineKey++);
   }, []);
-      useEffect(() => {
-        if (coverPhoto === '') {
-            setCoverPhotoPreview(undefined)
-            return
-        }
+  useEffect(() => {
+    if (coverPhoto === "") {
+      setCoverPhotoPreview(undefined);
+      return;
+    }
 
-        const objectUrl = URL.createObjectURL(coverPhoto[0])
-        setCoverPhotoPreview(objectUrl)
+    const objectUrl = URL.createObjectURL(coverPhoto[0]);
+    setCoverPhotoPreview(objectUrl);
+    console.log();
 
-
-        // free memory when ever this component is unmounted
-        return () => URL.revokeObjectURL(objectUrl)
-    }, [coverPhoto])
-  // Outline End
+    // free memory when ever this component is unmounted
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [coverPhoto]);
+  /**
+   * ==============================================
+   * Outline ENd
+   * ==============================================
+   */
 
   const [currentStep, setcurrentStep] = useState([1]);
   function handelClickNext() {
     // Select type start
     if (currentStep.length === 1) {
-      setcurrentStep([1, 2]);
+      console.log(selectedTab);
+      // setcurrentStep([1, 2]);
     }
     // Select type end
   }
@@ -58,13 +83,12 @@ export default function CreateProjectLayout() {
         <div className="stepTitleName">STEP{currentStep.length}</div>
         <div className="cardContainer px-3 md:px-5">
           {currentStep.length === 1 && (
-            <SelectType
-              tabData={selectTypeTabData}
-              activeTab={selectProjectActiveTab}
-            />
+            <SelectType setActiveTab={setActiveTab} />
           )}
           {currentStep.length === 2 && (
             <Outline
+              projectName={projectName}
+              onProjectNameChange={onProjectNameChange}
               closeCoverPhotoReview={() => closeCoverPhotoPreview()}
               coverPhotoProps={coverPhoto}
               onCoverDrop={onCoverDrop}

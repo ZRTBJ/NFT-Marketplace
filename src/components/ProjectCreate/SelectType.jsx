@@ -2,22 +2,28 @@ import { useState } from "react";
 import SelectTypeCard from "./SelectTypeCard";
 import "assets/css/CreateProject/SelectType.css";
 import userIcon from "assets/images/projectCreate/ico_owners.svg";
+import selectTypeTabData from "Pages/ProjectCreate/projectCreateData";
 
 export default function SelectType(props) {
-  const [active, setActive] = useState(props.activeTab);
+  const [active, setActive] = useState(selectTypeTabData[0]);
+
+  function setActiveTab(type) {
+    setActive(type);
+    props.setActiveTab(type);
+  }
   return (
     <div className="selecTypeContainer">
       <div className="selectProjectTypeTitle">SELECT PROJECT TYPE</div>
       <div className="projectTypeSelect">Please select your project type.</div>
       <div>
         <div className="selectProjectTypeTab">
-          {props.tabData.map((type) => (
+          {selectTypeTabData.map((type) => (
             <button
               className={
                 active.title === type.title ? "activeSelectProjectTab" : ""
               }
               key={type.id}
-              onClick={() => setActive(type)}
+              onClick={() => setActiveTab(type)}
             >
               {type.title}
             </button>
