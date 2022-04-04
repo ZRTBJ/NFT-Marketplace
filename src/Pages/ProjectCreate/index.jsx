@@ -2,6 +2,7 @@ import "assets/css/CreateProject/mainView.css";
 import LeftSideBar from "components/ProjectCreate/LeftSideBar";
 import Outline from "components/ProjectCreate/Outline";
 import SelectType from "components/ProjectCreate/SelectType";
+import Token from "components/ProjectCreate/Token";
 import { useState, useCallback, useEffect } from "react";
 
 export default function CreateProjectLayout() {
@@ -41,6 +42,7 @@ export default function CreateProjectLayout() {
   const onCoverDrop = useCallback((acceptedFiles) => {
     setCoverPhoto(acceptedFiles);
     setOutlineKey(outlineKey++);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     if (coverPhoto === "") {
@@ -66,9 +68,21 @@ export default function CreateProjectLayout() {
     // Select type start
     if (currentStep.length === 1) {
       console.log(selectedTab);
-      // setcurrentStep([1, 2]);
+      setcurrentStep([1, 2]);
     }
     // Select type end
+
+    // Outline start
+    if (currentStep.length === 2) {
+      setcurrentStep([1, 2, 3]);
+    }
+    // Outline end
+
+    // Token  start
+    if (currentStep.length === 3) {
+      setcurrentStep([1, 2, 3, 4]);
+    }
+    // Token end
   }
   function handelClickBack() {
     let currentIndex = currentStep.pop();
@@ -96,8 +110,8 @@ export default function CreateProjectLayout() {
               key={outlineKey}
             />
           )}
+          {currentStep.length === 3 && <Token />}
           {/* {currentStep === 1 && <SelectType />}
-        {currentStep === 1 && <SelectType />}
         {currentStep === 1 && <SelectType />}
         {currentStep === 1 && <SelectType />}
         {currentStep === 1 && <SelectType />} */}
