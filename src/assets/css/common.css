@@ -122,13 +122,28 @@
  * Input
  * ==============================================
  */
-input {
+input,textarea {
   padding-left: 15px;
 }
-input:focus-visible {
+input:focus-visible, textarea:focus-visible, select:focus-visible{
   border: 1px solid #0ab4af;
   outline: #0ab4af;
   padding-left: 15px;
+}
+textarea{
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    width: 100%;
+    padding-top: 15px;
+    padding-top: 15px;
+}
+select {
+  width: 100%;
+  height: 44px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  padding-left: 15px;
+  background-color: white;
 }
 
 /**
