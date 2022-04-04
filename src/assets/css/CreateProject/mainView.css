@@ -12,7 +12,8 @@
 }
 
 .backButton:hover,
-.nextButton:hover {
+.nextButton:hover,
+.saveDraft:hover {
   background: #192434;
 }
 .buttonContainer .saveDraft {
@@ -54,4 +55,31 @@
   font-family: "Roboto", sans-serif;
   font-weight: 700;
   margin-top: -30px;
+}
+@media only screen and (max-width: 767px) {
+  .stepTitleName {
+    font-size: 40px;
+    margin-top: -10px;
+  }
+  .cardContainer {
+    padding-top: 0px;
+  }
+  .backButton,
+  .nextButton {
+    padding: 0px;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 500;
+    margin-bottom: 30px;
+    height: 34px;
+    width: 102px;
+    font-size: 14px;
+  }
+  .buttonContainer {
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
+  .saveDraft {
+    width: 160px;
+    height: 44px;
+  }
 }

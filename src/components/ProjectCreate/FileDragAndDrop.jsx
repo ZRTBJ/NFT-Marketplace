@@ -1,14 +1,14 @@
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { useDropzone } from "react-dropzone";
 import dragSvg from "assets/images/projectCreate/dragSvg.svg";
 
-export default function FileDragAndDrop(props) {
+export default function FileDragAndDrop({ height, maxFiles, onDrop }) {
   const baseStyle = {
     flex: 1,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    height: props.height,
+    height: height,
     borderWidth: 1,
     borderRadius: 4,
     borderColor: "#CCCCCC",
@@ -32,15 +32,11 @@ export default function FileDragAndDrop(props) {
     borderColor: "#ff1744",
   };
 
-  const onDrop = useCallback((acceptedFiles) => {
-    // Do something with the files
-    console.log(acceptedFiles);
-  }, []);
   const { isFocused, isDragAccept, isDragReject, getRootProps, getInputProps } =
     useDropzone({
       onDrop,
       accept: "image/*",
-      maxFiles: 1,
+      maxFiles: maxFiles,
       noClick: false,
     });
   const style = useMemo(
@@ -53,10 +49,8 @@ export default function FileDragAndDrop(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [isFocused, isDragAccept, isDragReject]
   );
-
   return (
     <div>
-      {" "}
       <div className="container">
         <div {...getRootProps({ style })}>
           <input {...getInputProps()} />
