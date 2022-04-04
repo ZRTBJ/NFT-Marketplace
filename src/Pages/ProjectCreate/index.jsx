@@ -93,7 +93,6 @@ export default function CreateProjectLayout() {
           setcurrentStep([1, 2]);
         }
       } else {
-        console.log(selectedTab);
         setcurrentStep([1, 2]);
       }
     }
