@@ -2,15 +2,29 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import FileDragAndDrop from "../ProjectCreate/FileDragAndDrop";
 import data from "../../data/countries";
+import { updateUserInfo } from "../../services/User/userService";
+import { useAuthState } from "Context";
+
 const ProfileSettingsForm = () => {
   const countryList = data ? JSON.parse(JSON.stringify(data.countries)) : [];
   const [stateList, setStateList] = useState(countryList[0].states);
+  const [roleList, setRoleList] = useState([]);
+  const context = useAuthState();
+  const [userId, setUserId] = useState(context ? context.user : "");
+
   const {
     register,
+    errors,
+    formState,
     handleSubmit,
-    formState: { errors },
-  } = useForm();
-  const onSubmit = (data) => console.log(data);
+    watch,
+    clearErrors,
+    setValue,
+    control,
+  } = useForm({
+    mode: "onBlur",
+    reValidateMode: "onChange",
+  });
 
   function handleCountrySelect(event) {
     const selectedCountry = event.target.value;
@@ -21,11 +35,40 @@ const ProfileSettingsForm = () => {
       setStateList([]);
     }
   }
+
+  function handleRoleChange(event) {
+    const value = event.target.value;
+    if (event.code === "Enter" && value.length > 0) {
+      setRoleList([...roleList, value]);
+      event.target.value = "";
+    }
+  }
+
+  const handleRemoveRole = (index) => {
+    if (index >= 0) {
+      const newRoleList = [...roleList];
+      newRoleList.splice(index, 1);
+      setRoleList(newRoleList);
+    }
+  };
+
+  async function updateUserData(data) {
+    const request = new FormData();
+    debugger;
+    request.append("first_name", data["firstName"]);
+    request.append("last_name", data["lastName"]);
+    const response = await updateUserInfo(userId, request);
+  }
+
   return (
     /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
     <div class="grid justify-items-center my-24">
       <h1 className="text-5xl font-bold mb-16">PROFILE</h1>
-      <form className="w-full max-w-2xl" onSubmit={handleSubmit(onSubmit)}>
+      <form
+        id="profile-setting"
+        className="w-full max-w-2xl"
+        onSubmit={handleSubmit(updateUserData)}
+      >
         <div className="flex flex-wrap mb-12">
           <div className="w-full grid grid-cols-3">
             <div></div>
@@ -132,26 +175,35 @@ const ProfileSettingsForm = () => {
               className="block  tracking-wide text-gray-700 text-s font-bold mb-2"
               for="roll"
             >
-              Roll
+              Role
             </label>
             <input
               className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
               id="roll"
               name="roll"
               type="text"
-              placeholder=""
+              placeholder="Type and press enter"
+              onKeyUp={handleRoleChange}
             />
           </div>
-          <div className="px-3">
-            <div className="h-8 w-auto boarder rounded bg-gray-100">
-              <div className="flex flex-row">
-                <div className="pr-4 pl-2 pt-1">ROLL</div>
-                <div className="border-l border-white px-1">
-                  <i class="fa fa-times-thin fa-2x" aria-hidden="true"></i>
+          {roleList &&
+            roleList.length > 0 &&
+            roleList.map((role, index) => (
+              <div className="px-3 pb-4">
+                <div className="h-8 w-auto boarder rounded bg-gray-100">
+                  <div className="flex flex-row">
+                    <div className="pr-4 pl-2 pt-1">{role}</div>
+                    <div className="border-l border-white px-1">
+                      <i
+                        onClick={() => handleRemoveRole(index)}
+                        className="fa fa-times-thin fa-2x cursor-pointer"
+                        aria-hidden="true"
+                      ></i>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
+            ))}
         </div>
         <div className="flex flex-wrap mb-6">
           <div className="w-full md:w-1/2 px-3">
@@ -163,7 +215,7 @@ const ProfileSettingsForm = () => {
             </label>
             <div className="relative">
               <select
-                className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                className="block w-full border border-zinc-300 rounded focus:outline-none focus:bg-white"
                 id="location-country"
                 name="locationCountry"
                 onChange={handleCountrySelect}
@@ -185,7 +237,7 @@ const ProfileSettingsForm = () => {
             </label>
             <div className="relative">
               <select
-                className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                className="block w-full border border-zinc-300 rounded focus:outline-none focus:bg-white"
                 id="location-area"
                 name="locationArea"
               >
@@ -211,40 +263,87 @@ const ProfileSettingsForm = () => {
           </div>
         </div>
         <div className="flex flex-wrap mb-6">
-          <div className="w-full md:w-1/4 px-3">
-            <label
-              className="block  tracking-wide text-gray-700 text-s font-bold mb-2"
-              for="snc"
+          <div className="w-full">
+            <div
+              id="userDropDown"
+              className="w-full rounded divide-y divide-zinc-300 float-right px-3"
             >
-              SNC
-            </label>
-            <div className="relative">
-              <select
-                className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                id="snc"
-                name="snc"
-              >
-                <option>Facebook</option>
-                <option>Twitter</option>
-                <option>Insta</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"></div>
+              <div className="flex flex-wrap w-full pb-2 sm:pb-0">
+                <div className="w-full md:w-3/12 sm:pr-3">
+                  <label
+                    className="block tracking-wide text-gray-700 text-s font-bold mb-2"
+                    for="snc"
+                  >
+                    SNC
+                  </label>
+                  <div className="relative">
+                    <select
+                      className="block w-full border border-zinc-300 rounded focus:outline-none focus:bg-white"
+                      id="snc"
+                      name="snc"
+                    >
+                      <option>Discord</option>
+                      <option>Twitter</option>
+                      <option>&#9429;</option>
+                      <option>Instagram</option>
+                      <option>Youtube</option>
+                      <option>Tumblr</option>
+                      <option>Weibo</option>
+                      <option>Spotify</option>
+                      <option>Github</option>
+                      <option>Behance</option>
+                      <option>Dribbble</option>
+                      <option>Opensea</option>
+                      <option>Rarible</option>
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"></div>
+                  </div>
+                </div>
+                <div className="w-full md:w-8/12">
+                  <label
+                    className="block  tracking-wide text-gray-700 text-s font-bold mb-2"
+                    for="snc-url"
+                  >
+                    &nbsp;
+                  </label>
+                  <input
+                    className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                    id="snc-url"
+                    name="sncUrl"
+                    type="text"
+                    placeholder="URL"
+                  />
+                </div>
+                <div className="w-full md:w-1/12">
+                  <label
+                    className="hidden sm:block tracking-wide text-gray-700 text-s font-bold mb-2"
+                    for="snc-add"
+                  >
+                    &nbsp;
+                  </label>
+                  <div className="text-center justify-center pt-1.5">
+                    <i
+                      class="fa fa-plus-circle fa-2x text-gray-300 font-thin"
+                      aria-hidden="true"
+                    ></i>
+                  </div>
+                </div>
+              </div>
+              <div className="w-full py-4 grid grid-cols-3">
+                <div>Facebook</div>
+                <div>https://www.123456789.com/</div>
+                <div className="text-gray-500 text-right">
+                  <i class="fa fa-times" aria-hidden="true"></i>
+                </div>
+              </div>
+              <div className="w-full py-4 grid grid-cols-3">
+                <div>Insta</div>
+                <div>https://www.iwanttoonuts.net/</div>
+                <div className="text-gray-500 text-right">
+                  <i class="fa fa-times" aria-hidden="true"></i>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="w-full md:w-3/4 px-3">
-            <label
-              className="block  tracking-wide text-gray-700 text-s font-bold mb-2"
-              for="snc-url"
-            >
-              &nbsp;
-            </label>
-            <input
-              className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-              id="snc-url"
-              name="sncUrl"
-              type="text"
-              placeholder="URL"
-            />
           </div>
         </div>
 
@@ -254,8 +353,8 @@ const ProfileSettingsForm = () => {
               id="userDropDown"
               className="w-full rounded divide-y divide-zinc-300 float-right px-3"
             >
-              <div className="flex flex-wrap w-full">
-                <div className="w-full md:w-2/6">
+              <div className="flex flex-wrap w-full pb-2 sm:pb-0">
+                <div className="w-full md:w-3/12 sm:pr-5">
                   <label
                     className="block  tracking-wide text-gray-700 text-s font-bold mb-2"
                     for="website"
@@ -270,7 +369,7 @@ const ProfileSettingsForm = () => {
                     placeholder="Link Title"
                   />
                 </div>
-                <div className="w-full md:w-4/6 pl-5">
+                <div className="w-full md:w-8/12">
                   <label
                     className="block  tracking-wide text-gray-700 text-s font-bold mb-2"
                     for="website-url"
@@ -284,6 +383,20 @@ const ProfileSettingsForm = () => {
                     type="text"
                     placeholder="URL"
                   />
+                </div>
+                <div className="w-full md:w-1/12">
+                  <label
+                    className="hidden sm:block tracking-wide text-gray-700 text-s font-bold mb-2"
+                    for="snc-add"
+                  >
+                    &nbsp;
+                  </label>
+                  <div className="text-center justify-center pt-1.5">
+                    <i
+                      class="fa fa-plus-circle fa-2x text-gray-300 font-thin"
+                      aria-hidden="true"
+                    ></i>
+                  </div>
                 </div>
               </div>
               <div className="w-full py-4 grid grid-cols-3">
@@ -315,8 +428,8 @@ const ProfileSettingsForm = () => {
             <div></div>
             <div>
               <input
-                type="button"
-                className="h-12 w-48 rounded bg-[#0ab4af] text-white pl-0 hover:bg-[#192434] cursor-pointer"
+                type="submit"
+                className="h-12 w-32 sm:w-48  rounded bg-[#0ab4af] text-white pl-0 hover:bg-[#192434] cursor-pointer"
                 value="SAVE"
               />
             </div>
