@@ -1,49 +1,88 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import "assets/css/CreateProject/Outline.css";
 import FileDragAndDrop from "./FileDragAndDrop";
 import { useState, useEffect } from "react";
+import { DebounceInput } from "react-debounce-input";
 
 export default function Outline({
-  projectName,
-  coverPhotoProps,
-  closeCoverPhotoReview,
-  onCoverDrop,
-  coverPhotoPreview,
+  emptyProjectName,
+  alreadyTakenProjectName,
   onProjectNameChange,
+  onCoverDrop,
 }) {
-  const [cover] = useState(coverPhotoProps);
-  const [name] = useState(projectName);
-  useEffect(() => {}, [cover]);
+  const [projectName, SetProjectName] = useState("");
+  let [coverPhoto, setCoverPhoto] = useState([]);
+  let [coverPhotoUrl, setCoverPhotoUrl] = useState("");
+  async function changeProjectName(value) {
+    SetProjectName(value);
+    onProjectNameChange(value);
+  }
+  async function coverPhotoSelect(params) {
+    if (params.length === 1) {
+      setCoverPhoto(params);
+      onCoverDrop(params);
+    }
+  }
+  useEffect(() => {
+    let objectUrl = "";
+    if (coverPhoto.length === 1) {
+      objectUrl = URL.createObjectURL(coverPhoto[0]);
+      setCoverPhotoUrl(objectUrl);
+    }
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [coverPhoto]);
 
   return (
-    <div>
+    <form>
       <div className="outlineContainer">
-        <div className="title">OUTLINE</div>
-        <div>
+        <div className="OutlineTitle">OUTLINE</div>
+        <div className="mb-6">
           <div className="lable">Project Name</div>
-          <input
+          <DebounceInput
+            minLength={1}
+            debounceTimeout={300}
+            onChange={(e) => changeProjectName(e.target.value)}
             type="text"
             className="projectNameInput"
             name="projectNameLable"
             id="projectNameLable"
-            value={name}
-            onChange={(e) => onProjectNameChange(e.target.value)}
+            value={projectName}
           />
+          {/* <input
+            type="text"
+            className="projectNameInput"
+            name="projectNameLable"
+            id="projectNameLable"
+            value={projectName}
+            onChange={(e) => changeProjectName(e.target.value)}
+          /> */}
+          {emptyProjectName && (
+            <div className="validationTag">Unique project name is required</div>
+          )}
+          {alreadyTakenProjectName && (
+            <div className="validationTag">Project name has already taken</div>
+          )}
         </div>
-        {typeof cover === "string" ? (
-          <div className="mb-6">
-            <div className="lable">Cover photo</div>
+        <div className="mb-6">
+          <div className="lable">Cover photo</div>
+          {coverPhotoUrl === "" ? (
             <FileDragAndDrop
-              maxFiles={1}
+              maxFiles={2}
               height="230px"
-              onDrop={(e) => onCoverDrop(e)}
+              onDrop={(e) => coverPhotoSelect(e)}
             />
-          </div>
+          ) : (
+            <img src={coverPhotoUrl} alt="" />
+          )}
+        </div>
+        {/* {typeof coverPhoto === "arra" ? (
+         
         ) : (
           <div>
             <button onClick={() => closeCoverPhotoReview()}>Close</button>
-            <img src={coverPhotoPreview} alt="" />
+           
           </div>
-        )}
+        )} */}
         <div>
           <div className="lable">photos (upto 4)</div>
           <div className="grid grid-flow-col mb-6">
@@ -82,7 +121,7 @@ export default function Outline({
             <div className="flex flex-row">
               <div className="pr-4 pl-2 pt-1">ROLL</div>
               <div className="border-l border-white px-1">
-                <i class="fa fa-times-thin fa-2x" aria-hidden="true"></i>
+                <i className="fa fa-times-thin fa-2x" aria-hidden="true"></i>
               </div>
             </div>
           </div>
@@ -106,13 +145,13 @@ export default function Outline({
               <div className="flex flex-row">
                 <div className="pr-4 pl-2 pt-1">ROLL</div>
                 <div className="border-l border-white px-1">
-                  <i class="fa fa-times-thin fa-2x" aria-hidden="true"></i>
+                  <i className="fa fa-times-thin fa-2x" aria-hidden="true"></i>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </form>
   );
 }

@@ -122,20 +122,23 @@
  * Input
  * ==============================================
  */
-input,textarea {
+input,
+textarea {
   padding-left: 15px;
 }
-input:focus-visible, textarea:focus-visible, select:focus-visible{
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
   border: 1px solid #0ab4af;
   outline: #0ab4af;
   padding-left: 15px;
 }
-textarea{
-    border: 1px solid #cccccc;
-    border-radius: 4px;
-    width: 100%;
-    padding-top: 15px;
-    padding-top: 15px;
+textarea {
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  width: 100%;
+  padding-top: 15px;
+  padding-top: 15px;
 }
 select {
   width: 100%;
@@ -154,4 +157,8 @@ select {
 
 .fa-times-thin:before {
   content: "\00d7";
+}
+.validationTag {
+  font-family: "Roboto", sans-serif;
+  color: red;
 }

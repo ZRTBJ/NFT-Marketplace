@@ -15,6 +15,7 @@
     "jwt-decode": "^3.1.2",
     "react": "^17.0.2",
     "react-circular-progressbar": "^2.0.4",
+    "react-debounce-input": "^3.2.5",
     "react-dom": "^17.0.2",
     "react-dropzone": "^12.0.4",
     "react-hook-form": "^7.28.0",
