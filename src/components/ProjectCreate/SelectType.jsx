@@ -5,7 +5,7 @@ import userIcon from "assets/images/projectCreate/ico_owners.svg";
 import selectTypeTabData from "Pages/ProjectCreate/projectCreateData";
 
 export default function SelectType(props) {
-  const [active, setActive] = useState(selectTypeTabData[0]);
+  const [active, setActive] = useState(selectTypeTabData[1]);
   function setActiveTab(type) {
     setActive(type);
     props.setActiveTab(type);

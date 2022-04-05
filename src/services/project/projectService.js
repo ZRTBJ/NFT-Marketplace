@@ -6,3 +6,14 @@ export async function getUserProjectListById(payload) {
     `/user/${payload.id}/project?page=${payload.page}&per_page=${payload.perPage}`
   );
 }
+
+export async function checkUniqueProjectName(payload) {
+   const bodyFormData = new FormData();
+   bodyFormData.append("project_name", payload.projectName);
+  return await client(
+    "POST",
+    `/project/validate`,
+    bodyFormData
+  );
+}
+

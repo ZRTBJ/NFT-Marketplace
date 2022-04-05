@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import "assets/css/CreateProject/mainView.css";
+import { checkUniqueProjectName } from "services/project/projectService";
 import selectTypeTabData from "Pages/ProjectCreate/projectCreateData";
 import LeftSideBar from "components/ProjectCreate/LeftSideBar";
 import SelectType from "components/ProjectCreate/SelectType";
@@ -12,7 +13,7 @@ export default function CreateProjectLayout() {
    * Project Type Start
    * ==============================================
    */
-  const [selectedTab, setSelectedTab] = useState(selectTypeTabData[0]);
+  const [selectedTab, setSelectedTab] = useState(selectTypeTabData[1]);
   const [votingPower, setVotingPower] = useState("");
   const [canVote, setCanVote] = useState("");
   function setActiveTab(arg) {
@@ -36,36 +37,53 @@ export default function CreateProjectLayout() {
    * Outline Start
    * ==============================================
    */
+  let outlineObject = {
+    projectName: "",
+    coverPhoto: "",
+  };
   const [projectName, setProjectName] = useState("");
+  const [coverPhoto, setCoverPhoto] = useState([]);
+  const [emptyProjectName, setemptyProjectName] = useState(false);
+  const [alreadyTakenProjectName, setAlreadyTakenProjectName] = useState(false);
   let [outlineKey, setOutlineKey] = useState(0);
-  const [coverPhoto, setCoverPhoto] = useState("");
-  const [coverPhotoPreview, setCoverPhotoPreview] = useState();
-
-  function onProjectNameChange(e) {
-    setProjectName(e);
-    console.log(projectName);
+  async function onProjectNameChange(e) {
+    let payload = {
+      projectName: e,
+    };
+    await checkUniqueProjectName(payload)
+      .then((e) => {
+        if (e.data.code === 0) {
+          setProjectName(e);
+          setemptyProjectName(false);
+          setAlreadyTakenProjectName(false);
+        } else {
+          setAlreadyTakenProjectName(true);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
   function closeCoverPhotoPreview() {
     console.log("close");
   }
   const onCoverDrop = useCallback((acceptedFiles) => {
+    console.log(acceptedFiles);
     setCoverPhoto(acceptedFiles);
-    setOutlineKey(outlineKey++);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  useEffect(() => {
-    if (coverPhoto === "") {
-      setCoverPhotoPreview(undefined);
-      return;
-    }
+  // useEffect(() => {
+  //   if (coverPhoto === "") {
+  //     setCoverPhotoPreview(undefined);
+  //     return;
+  //   }
 
-    const objectUrl = URL.createObjectURL(coverPhoto[0]);
-    setCoverPhotoPreview(objectUrl);
-    console.log();
+  //   const objectUrl = URL.createObjectURL(coverPhoto[0]);
+  //   setCoverPhotoPreview(objectUrl);
+  //   console.log();
 
-    // free memory when ever this component is unmounted
-    return () => URL.revokeObjectURL(objectUrl);
-  }, [coverPhoto]);
+  //   // free memory when ever this component is unmounted
+  //   return () => URL.revokeObjectURL(objectUrl);
+  // }, [coverPhoto]);
   /**
    * ==============================================
    * Outline ENd
@@ -100,7 +118,12 @@ export default function CreateProjectLayout() {
 
     // Outline start
     if (currentStep.length === 2) {
-      setcurrentStep([1, 2, 3]);
+      if (projectName === "") {
+        setemptyProjectName(true);
+      } else {
+        console.log(projectName, coverPhoto);
+      }
+      // setcurrentStep([1, 2, 3]);
     }
     // Outline end
 
@@ -131,12 +154,11 @@ export default function CreateProjectLayout() {
           )}
           {currentStep.length === 2 && (
             <Outline
-              projectName={projectName}
               onProjectNameChange={onProjectNameChange}
+              emptyProjectName={emptyProjectName}
+              alreadyTakenProjectName={alreadyTakenProjectName}
               closeCoverPhotoReview={() => closeCoverPhotoPreview()}
-              coverPhotoProps={coverPhoto}
               onCoverDrop={onCoverDrop}
-              coverPhotoPreview={coverPhotoPreview}
               key={outlineKey}
             />
           )}

@@ -58,4 +58,7 @@ async function refreshToken(refreshTkn) {
 
     return response.data.token;
   }
+  else{
+    return localStorage.getItem("currentUser");
+  }
 }
