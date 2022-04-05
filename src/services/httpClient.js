@@ -5,7 +5,7 @@ import jwt from "jwt-decode";
 const ROOT_URL = Config.API_ENDPOINT;
 
 export async function client(method, url, body, contentType) {
-  let token = localStorage.getItem("currentUser");
+  let token;
   const refreshTkn = localStorage.getItem("refresh_token");
 
   if (refreshTkn && refreshTkn.length > 0) {
@@ -14,7 +14,7 @@ export async function client(method, url, body, contentType) {
 
   // headers
   let headers;
-  debugger;
+
   if (contentType === "formdata") {
     headers = { "Content-Type": "multipart/form-data" };
   } else {
@@ -37,7 +37,7 @@ async function refreshToken(refreshTkn) {
   const tknExpDate = new Date(user.exp * 1000);
   const today = new Date();
   const diff = Math.ceil((tknExpDate - today) / (1000 * 60 * 60 * 24));
-
+  let token = localStorage.getItem("currentUser");
   if (diff <= 1) {
     const headers = {
       "Content-Type": "multipart/form-data",
@@ -56,9 +56,7 @@ async function refreshToken(refreshTkn) {
     localStorage.setItem("user_id", response.data.user_id);
     localStorage.setItem("refresh_token", response.data["refresh_token"]);
 
-    return response.data.token;
+    token = response.data.token;
   }
-  else{
-    return localStorage.getItem("currentUser");
-  }
+  return token;
 }

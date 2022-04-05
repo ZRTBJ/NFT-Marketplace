@@ -1,4 +1,4 @@
-let user = localStorage.getItem("currentUser");
+let user = localStorage.getItem("user_id");
 let token = localStorage.getItem("currentUser");
 let wallet = localStorage.getItem("wallet");
 
@@ -20,7 +20,7 @@ export const AuthReducer = (initialState, action) => {
     case "LOGIN_SUCCESS":
       return {
         ...initialState,
-        user: action.payload.token,
+        user: action.payload.user_id,
         token: action.payload.token,
         loading: false,
       };
