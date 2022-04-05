@@ -42,8 +42,8 @@ const Profile = () => {
       };
       let projectListCards = [];
       await getUserProjectListById(payload).then((e) => {
-        if (e && e.data && e.data.data) {
-          e.data.data.forEach((element) => {
+        if (e && e.data) {
+          e.data.forEach((element) => {
             let assets = element.assets.find(
               (x) => x.asset_purpose === "cover"
             );

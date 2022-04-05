@@ -43,7 +43,13 @@ const UserDropDownMenu = () => {
         <div className="inline-flex items-center justify-center">
           <img
             className="rounded-full border border-gray-100 shadow-sm"
-            src="/static/media/profile.a33a86e1109f4271bbfa9f4bab01ec4b.svg"
+            src={
+              userinfo["avatar"]
+                ? userinfo["avatar"]
+                : "/static/media/profile.a33a86e1109f4271bbfa9f4bab01ec4b.svg"
+            }
+            height={42}
+            width={42}
             alt="user icon"
           />
           <div className="ml-2 uppercase">

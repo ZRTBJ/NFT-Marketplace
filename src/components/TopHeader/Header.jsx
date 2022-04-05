@@ -18,6 +18,7 @@ import { getUserInfo } from "../../services/User/userService";
 import { useHistory } from "react-router-dom";
 import { setUserInfo } from "../../Slice/userSlice";
 import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 const Header = () => {
   const history = useHistory();
@@ -32,6 +33,7 @@ const Header = () => {
   const context = useAuthState();
   const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState(context ? context.user : "");
+  const userinfo = useSelector((state) => state.user.userinfo);
 
   useEffect(() => {
     if (active) {
@@ -105,7 +107,7 @@ const Header = () => {
     const response = await getUserInfo(userID);
     let userinfo;
     try {
-      userinfo = response["data"]["user"];
+      userinfo = response["user"];
     } catch {}
     dispatch(setUserInfo(userinfo));
     setIsLoading(false);
@@ -221,7 +223,13 @@ const Header = () => {
                     <div className="relative w-16 h-16 pt-2 cursor-pointer">
                       <img
                         className="rounded-full border border-gray-100 shadow-sm"
-                        src="/static/media/profile.a33a86e1109f4271bbfa9f4bab01ec4b.svg"
+                        src={
+                          userinfo["avatar"]
+                            ? userinfo["avatar"]
+                            : "/static/media/profile.a33a86e1109f4271bbfa9f4bab01ec4b.svg"
+                        }
+                        height={42}
+                        width={42}
                         alt="user icon"
                         onClick={() => showHideUserPopup()}
                       />

@@ -9,7 +9,7 @@ export async function client(method, url, body, contentType) {
   const refreshTkn = localStorage.getItem("refresh_token");
 
   if (refreshTkn && refreshTkn.length > 0) {
-    token = await refreshToken(refreshTkn);
+    token = await refreshToken();
   }
 
   // headers
@@ -32,31 +32,53 @@ export async function client(method, url, body, contentType) {
   });
 }
 
-async function refreshToken(refreshTkn) {
-  const user = jwt(refreshTkn);
-  const tknExpDate = new Date(user.exp * 1000);
-  const today = new Date();
-  const diff = Math.ceil((tknExpDate - today) / (1000 * 60 * 60 * 24));
+async function refreshToken() {
+  const refreshTkn = localStorage.getItem("refresh_token");
   let token = localStorage.getItem("currentUser");
-  if (diff <= 1) {
-    const headers = {
-      "Content-Type": "multipart/form-data",
-      refresh_token: refreshTkn,
-    };
-    const bodyFormData = new FormData();
 
-    const response = await axios({
-      method: "POST",
-      url: `${ROOT_URL + "/auth/refresh"}`,
-      data: bodyFormData,
-      headers: headers,
-    });
+  if (refreshTkn) {
+    const user = jwt(refreshTkn);
+    const tknExpDate = new Date(user.exp * 1000);
+    const today = new Date();
+    const diff = Math.ceil((tknExpDate - today) / (1000 * 60 * 60 * 24));
+    if (diff <= 1) {
+      const headers = {
+        "Content-Type": "multipart/form-data",
+        refresh_token: refreshTkn,
+      };
+      const bodyFormData = new FormData();
 
-    localStorage.setItem("currentUser", response.data.token);
-    localStorage.setItem("user_id", response.data.user_id);
-    localStorage.setItem("refresh_token", response.data["refresh_token"]);
+      const response = await axios({
+        method: "POST",
+        url: `${ROOT_URL + "/auth/refresh"}`,
+        data: bodyFormData,
+        headers: headers,
+      });
 
-    token = response.data.token;
+      localStorage.setItem("currentUser", response.data.token);
+      localStorage.setItem("user_id", response.data.user_id);
+      localStorage.setItem("refresh_token", response.data["refresh_token"]);
+
+      token = response.data.token;
+    }
   }
   return token;
 }
+
+async function tokenExpired() {
+  await refreshToken();
+}
+
+axios.interceptors.response.use(
+  (response) => {
+    if (response["data"]["code"] === 4031) {
+      tokenExpired();
+    }
+    return response.data;
+  },
+  (error) => {
+    if (error.response.status === 403) {
+      tokenExpired();
+    }
+  }
+);
