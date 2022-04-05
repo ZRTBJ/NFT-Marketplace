@@ -1,30 +1,45 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import FileDragAndDrop from "../ProjectCreate/FileDragAndDrop";
 import data from "../../data/countries";
 import { updateUserInfo } from "../../services/User/userService";
 import { useAuthState } from "Context";
+import { useSelector } from "react-redux";
+import { setUserInfo } from "../../Slice/userSlice";
+import { useDispatch } from "react-redux";
+import { getUserInfo } from "../../services/User/userService";
 
 const ProfileSettingsForm = () => {
+  const dispatch = useDispatch();
+  const context = useAuthState();
   const countryList = data ? JSON.parse(JSON.stringify(data.countries)) : [];
   const [stateList, setStateList] = useState(countryList[0].states);
   const [roleList, setRoleList] = useState([]);
-  const context = useAuthState();
   const [userId, setUserId] = useState(context ? context.user : "");
+  const userinfo = useSelector((state) => state.user.userinfo);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const {
-    register,
-    errors,
-    formState,
-    handleSubmit,
-    watch,
-    clearErrors,
-    setValue,
-    control,
-  } = useForm({
+  const { register, handleSubmit } = useForm({
     mode: "onBlur",
     reValidateMode: "onChange",
   });
+
+  useEffect(() => {
+    if (userId && !userinfo["first_name"]) {
+      getUserDetails(userId);
+    }
+  }, []);
+
+  async function getUserDetails(userID) {
+    setIsLoading(true);
+    const response = await getUserInfo(userID);
+    let userinfo;
+    try {
+      userinfo = response["data"]["user"];
+    } catch {}
+    dispatch(setUserInfo(userinfo));
+    setIsLoading(false);
+  }
 
   function handleCountrySelect(event) {
     const selectedCountry = event.target.value;
@@ -52,22 +67,33 @@ const ProfileSettingsForm = () => {
     }
   };
 
-  async function updateUserData(data) {
+  const onSubmit = (data) => {
     const request = new FormData();
     debugger;
     request.append("first_name", data["firstName"]);
     request.append("last_name", data["lastName"]);
-    const response = await updateUserInfo(userId, request);
-  }
+    request.append("display_name", data["displayName"]);
+    updateUserInfo(userId, request)
+      .then((res) => {
+        const temp = res;
+        debugger;
+      })
+      .catch((err) => {});
+  };
 
   return (
     /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
-    <div class="grid justify-items-center my-24">
+    <div
+      className={`grid justify-items-center my-24 ${
+        isLoading ? "loading" : ""
+      }`}
+    >
       <h1 className="text-5xl font-bold mb-16">PROFILE</h1>
       <form
         id="profile-setting"
+        name="profileSettingForm"
         className="w-full max-w-2xl"
-        onSubmit={handleSubmit(updateUserData)}
+        onSubmit={handleSubmit(onSubmit)}
       >
         <div className="flex flex-wrap mb-12">
           <div className="w-full grid grid-cols-3">
@@ -80,9 +106,9 @@ const ProfileSettingsForm = () => {
                 height={140}
                 width={140}
               />
-              <div class="relative z-2 top-24 right-8 w-12 h-12 rounded-full bg-[#0AB4AF] mr-1">
+              <div className="relative z-2 top-24 right-8 w-12 h-12 rounded-full bg-[#0AB4AF] mr-1">
                 <div className="text-center justify-center text-white pt-3">
-                  <i class="fa fa-camera fa-lg" aria-hidden="true"></i>
+                  <i className="fa fa-camera fa-lg" aria-hidden="true"></i>
                 </div>
               </div>
             </div>
@@ -93,7 +119,7 @@ const ProfileSettingsForm = () => {
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
             <label
               className="block tracking-wide text-gray-700 text-s font-bold mb-2"
-              for="grid-first-name"
+              htmlFor="first-name"
             >
               First Name
             </label>
@@ -103,6 +129,8 @@ const ProfileSettingsForm = () => {
               name="firstName"
               type="text"
               placeholder=""
+              {...register("firstName")}
+              defaultValue={userinfo ? userinfo["first_name"] : ""}
             />
             <p className="hidden text-red-500 text-xs italic">
               Please fill out this field.
@@ -111,7 +139,7 @@ const ProfileSettingsForm = () => {
           <div className="w-full md:w-1/2 px-3">
             <label
               className="block tracking-wide text-gray-700 text-s font-bold mb-2"
-              for="last-name"
+              htmlFor="last-name"
             >
               Last Name
             </label>
@@ -121,6 +149,8 @@ const ProfileSettingsForm = () => {
               name="lastName"
               type="text"
               placeholder=""
+              {...register("lastName")}
+              defaultValue={userinfo ? userinfo["last_name"] : ""}
             />
           </div>
         </div>
@@ -128,7 +158,7 @@ const ProfileSettingsForm = () => {
           <div className="w-full px-3">
             <label
               className="block tracking-wide text-gray-700 text-s font-bold mb-2"
-              for="display-name"
+              htmlFor="display-name"
             >
               Display Name
             </label>
@@ -138,6 +168,8 @@ const ProfileSettingsForm = () => {
               name="displayName"
               type="text"
               placeholder=""
+              {...register("displayName")}
+              defaultValue={userinfo ? userinfo["display_name"] : ""}
             />
           </div>
         </div>
@@ -145,7 +177,7 @@ const ProfileSettingsForm = () => {
           <div className="w-full px-3">
             <label
               className="block  tracking-wide text-gray-700 text-s font-bold mb-2"
-              for="email-address"
+              htmlFor="email-address"
             >
               E-mail Address
             </label>
@@ -155,6 +187,8 @@ const ProfileSettingsForm = () => {
               name="emailAddress"
               type="email"
               placeholder=""
+              {...register("emailAddress")}
+              defaultValue={userinfo ? userinfo["email"] : ""}
             />
           </div>
         </div>
@@ -162,7 +196,7 @@ const ProfileSettingsForm = () => {
           <div className="w-full px-3">
             <label
               className="block  tracking-wide text-gray-700 text-s font-bold mb-2"
-              for="cover-photo"
+              htmlFor="cover-photo"
             >
               Cover Photo
             </label>
@@ -173,7 +207,7 @@ const ProfileSettingsForm = () => {
           <div className="w-full px-3">
             <label
               className="block  tracking-wide text-gray-700 text-s font-bold mb-2"
-              for="roll"
+              htmlFor="roll"
             >
               Role
             </label>
@@ -183,13 +217,15 @@ const ProfileSettingsForm = () => {
               name="roll"
               type="text"
               placeholder="Type and press enter"
+              defaultValue={""}
+              {...register("roll")}
               onKeyUp={handleRoleChange}
             />
           </div>
           {roleList &&
             roleList.length > 0 &&
             roleList.map((role, index) => (
-              <div className="px-3 pb-4">
+              <div className="px-3 pb-4" key={`rolw-${index}`}>
                 <div className="h-8 w-auto boarder rounded bg-gray-100">
                   <div className="flex flex-row">
                     <div className="pr-4 pl-2 pt-1">{role}</div>
@@ -209,7 +245,7 @@ const ProfileSettingsForm = () => {
           <div className="w-full md:w-1/2 px-3">
             <label
               className="block  tracking-wide text-gray-700 text-s font-bold mb-2"
-              for="location-country"
+              htmlFor="location-country"
             >
               Location Country
             </label>
@@ -222,7 +258,9 @@ const ProfileSettingsForm = () => {
               >
                 {countryList &&
                   countryList.map((data, index) => (
-                    <option value={data.country}>{data.country}</option>
+                    <option value={data.country} key={`country-${index}`}>
+                      {data.country}
+                    </option>
                   ))}
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"></div>
@@ -231,7 +269,7 @@ const ProfileSettingsForm = () => {
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
             <label
               className="block  tracking-wide text-gray-700 text-s font-bold mb-2"
-              for="location-area"
+              htmlFor="location-area"
             >
               Location Area
             </label>
@@ -242,7 +280,11 @@ const ProfileSettingsForm = () => {
                 name="locationArea"
               >
                 {stateList &&
-                  stateList.map((stat) => <option value={stat}>{stat}</option>)}
+                  stateList.map((stat, index) => (
+                    <option value={stat} key={`area-${index}`}>
+                      {stat}
+                    </option>
+                  ))}
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"></div>
             </div>
@@ -252,13 +294,13 @@ const ProfileSettingsForm = () => {
           <div className="w-full px-3">
             <label
               className="block  tracking-wide text-gray-700 text-s font-bold mb-2"
-              for="comment"
+              htmlFor="comment"
             >
               Comment, Biography
             </label>
             <textarea
               rows="6"
-              class="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white resize-none"
+              className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white resize-none"
             ></textarea>
           </div>
         </div>
@@ -272,7 +314,7 @@ const ProfileSettingsForm = () => {
                 <div className="w-full md:w-3/12 sm:pr-3">
                   <label
                     className="block tracking-wide text-gray-700 text-s font-bold mb-2"
-                    for="snc"
+                    htmlFor="snc"
                   >
                     SNC
                   </label>
@@ -281,10 +323,11 @@ const ProfileSettingsForm = () => {
                       className="block w-full border border-zinc-300 rounded focus:outline-none focus:bg-white"
                       id="snc"
                       name="snc"
+                      {...register("snc")}
                     >
                       <option>Discord</option>
                       <option>Twitter</option>
-                      <option>&#9429;</option>
+                      <option>facebook</option>
                       <option>Instagram</option>
                       <option>Youtube</option>
                       <option>Tumblr</option>
@@ -302,7 +345,7 @@ const ProfileSettingsForm = () => {
                 <div className="w-full md:w-8/12">
                   <label
                     className="block  tracking-wide text-gray-700 text-s font-bold mb-2"
-                    for="snc-url"
+                    htmlFor="snc-url"
                   >
                     &nbsp;
                   </label>
@@ -312,18 +355,20 @@ const ProfileSettingsForm = () => {
                     name="sncUrl"
                     type="text"
                     placeholder="URL"
+                    {...register("sncUrl")}
+                    defaultValue={""}
                   />
                 </div>
                 <div className="w-full md:w-1/12">
                   <label
                     className="hidden sm:block tracking-wide text-gray-700 text-s font-bold mb-2"
-                    for="snc-add"
+                    htmlFor="snc-add"
                   >
                     &nbsp;
                   </label>
                   <div className="text-center justify-center pt-1.5">
                     <i
-                      class="fa fa-plus-circle fa-2x text-gray-300 font-thin"
+                      className="fa fa-plus-circle fa-2x text-gray-300 font-thin"
                       aria-hidden="true"
                     ></i>
                   </div>
@@ -333,14 +378,14 @@ const ProfileSettingsForm = () => {
                 <div>Facebook</div>
                 <div>https://www.123456789.com/</div>
                 <div className="text-gray-500 text-right">
-                  <i class="fa fa-times" aria-hidden="true"></i>
+                  <i className="fa fa-times" aria-hidden="true"></i>
                 </div>
               </div>
               <div className="w-full py-4 grid grid-cols-3">
                 <div>Insta</div>
                 <div>https://www.iwanttoonuts.net/</div>
                 <div className="text-gray-500 text-right">
-                  <i class="fa fa-times" aria-hidden="true"></i>
+                  <i className="fa fa-times" aria-hidden="true"></i>
                 </div>
               </div>
             </div>
@@ -357,7 +402,7 @@ const ProfileSettingsForm = () => {
                 <div className="w-full md:w-3/12 sm:pr-5">
                   <label
                     className="block  tracking-wide text-gray-700 text-s font-bold mb-2"
-                    for="website"
+                    htmlFor="website"
                   >
                     Website
                   </label>
@@ -367,12 +412,14 @@ const ProfileSettingsForm = () => {
                     name="website"
                     type="text"
                     placeholder="Link Title"
+                    {...register("website")}
+                    defaultValue={""}
                   />
                 </div>
                 <div className="w-full md:w-8/12">
                   <label
                     className="block  tracking-wide text-gray-700 text-s font-bold mb-2"
-                    for="website-url"
+                    htmlFor="website-url"
                   >
                     &nbsp;
                   </label>
@@ -382,18 +429,20 @@ const ProfileSettingsForm = () => {
                     name="websiteUrl"
                     type="text"
                     placeholder="URL"
+                    {...register("websiteUrl")}
+                    defaultValue={""}
                   />
                 </div>
                 <div className="w-full md:w-1/12">
                   <label
                     className="hidden sm:block tracking-wide text-gray-700 text-s font-bold mb-2"
-                    for="snc-add"
+                    htmlFor="snc-add"
                   >
                     &nbsp;
                   </label>
                   <div className="text-center justify-center pt-1.5">
                     <i
-                      class="fa fa-plus-circle fa-2x text-gray-300 font-thin"
+                      className="fa fa-plus-circle fa-2x text-gray-300 font-thin"
                       aria-hidden="true"
                     ></i>
                   </div>
@@ -403,21 +452,21 @@ const ProfileSettingsForm = () => {
                 <div>Portfolio</div>
                 <div>https://www.123456789.com/</div>
                 <div className="text-gray-500 text-right">
-                  <i class="fa fa-times" aria-hidden="true"></i>
+                  <i className="fa fa-times" aria-hidden="true"></i>
                 </div>
               </div>
               <div className="w-full py-4 grid grid-cols-3">
                 <div>Website</div>
                 <div>https://www.iwanttoeatdonuts.net/</div>
                 <div className="text-gray-500 text-right">
-                  <i class="fa fa-times" aria-hidden="true"></i>
+                  <i className="fa fa-times" aria-hidden="true"></i>
                 </div>
               </div>
               <div className="w-full py-4 grid grid-cols-3">
                 <div>ONLINE SHOP</div>
                 <div>https://pop.donutspower.jp/</div>
                 <div className="text-gray-500 text-right">
-                  <i class="fa fa-times" aria-hidden="true"></i>
+                  <i className="fa fa-times" aria-hidden="true"></i>
                 </div>
               </div>
             </div>
@@ -427,11 +476,12 @@ const ProfileSettingsForm = () => {
           <div className="w-full px-3 grid grid-cols-3">
             <div></div>
             <div>
-              <input
+              <button
                 type="submit"
                 className="h-12 w-32 sm:w-48  rounded bg-[#0ab4af] text-white pl-0 hover:bg-[#192434] cursor-pointer"
-                value="SAVE"
-              />
+              >
+                SAVE
+              </button>
             </div>
             <div></div>
           </div>
