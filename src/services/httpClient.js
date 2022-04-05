@@ -4,7 +4,7 @@ import jwt from "jwt-decode";
 
 const ROOT_URL = Config.API_ENDPOINT;
 
-export async function client(method, url, body) {
+export async function client(method, url, body, contentType) {
   let token = localStorage.getItem("currentUser");
   const refreshTkn = localStorage.getItem("refresh_token");
 
@@ -13,7 +13,13 @@ export async function client(method, url, body) {
   }
 
   // headers
-  const headers = { "Content-Type": "application/json" };
+  let headers;
+  debugger;
+  if (contentType === "formdata") {
+    headers = { "Content-Type": "multipart/form-data" };
+  } else {
+    headers = { "Content-Type": "application/json" };
+  }
   if (token && token.length > 0) {
     headers["token"] = token;
   }
