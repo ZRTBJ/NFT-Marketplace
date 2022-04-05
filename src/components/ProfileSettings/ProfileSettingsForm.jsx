@@ -18,6 +18,9 @@ const ProfileSettingsForm = () => {
   const [userId, setUserId] = useState(context ? context.user : "");
   const userinfo = useSelector((state) => state.user.userinfo);
   const [isLoading, setIsLoading] = useState(false);
+  const [profileImage, setProfileImage] = useState({ image: null, path: "" });
+  const [websiteList, setWebsiteList] = useState([]);
+  const [sncList, setsncList] = useState([]);
 
   const { register, handleSubmit } = useForm({
     mode: "onBlur",
@@ -35,7 +38,7 @@ const ProfileSettingsForm = () => {
     const response = await getUserInfo(userID);
     let userinfo;
     try {
-      userinfo = response["data"]["user"];
+      userinfo = response["user"];
     } catch {}
     dispatch(setUserInfo(userinfo));
     setIsLoading(false);
@@ -67,18 +70,51 @@ const ProfileSettingsForm = () => {
     }
   };
 
+  function profileImageChnageHandler(event) {
+    const img = event.target.files[0];
+    setProfileImage({ image: img, path: URL.createObjectURL(img) });
+  }
+
+  function addWebsite() {
+    const title = document.getElementById("website");
+    const url = document.getElementById("website-url");
+    if (title.value && url.value) {
+      setWebsiteList([...websiteList, { title: title.value, url: url.value }]);
+      title.value = "";
+      url.value = "";
+    }
+  }
+
+  function addSNC() {
+    const title = document.getElementById("snc");
+    const url = document.getElementById("snc-url");
+    if (title.value && url.value) {
+      setsncList([...sncList, { title: title.value, url: url.value }]);
+      title.value = "Discord";
+      url.value = "";
+    }
+  }
+
+  function showHideSNCPopup() {
+    const userDropDown = document.getElementById("sncdropdown");
+    userDropDown.classList.toggle("hidden");
+  }
+
   const onSubmit = (data) => {
     const request = new FormData();
-    debugger;
     request.append("first_name", data["firstName"]);
     request.append("last_name", data["lastName"]);
     request.append("display_name", data["displayName"]);
+    request.append("email", data["emailAddress"]);
+    request.append("avatar", profileImage.image);
+    setIsLoading(true);
     updateUserInfo(userId, request)
       .then((res) => {
-        const temp = res;
-        debugger;
+        setIsLoading(false);
       })
-      .catch((err) => {});
+      .catch((err) => {
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -101,16 +137,32 @@ const ProfileSettingsForm = () => {
             <div className="flex justify-center">
               <img
                 className="rounded-full border-4 border-gray-300 shadow-sm"
-                src="/static/media/profile.a33a86e1109f4271bbfa9f4bab01ec4b.svg"
+                src={`
+                  ${
+                    userinfo["avatar"]
+                      ? userinfo["avatar"]
+                      : profileImage["path"]
+                      ? profileImage["path"]
+                      : "/static/media/profile.a33a86e1109f4271bbfa9f4bab01ec4b.svg"
+                  }`}
                 alt="user icon"
                 height={140}
                 width={140}
               />
-              <div className="relative z-2 top-24 right-8 w-12 h-12 rounded-full bg-[#0AB4AF] mr-1">
-                <div className="text-center justify-center text-white pt-3">
-                  <i className="fa fa-camera fa-lg" aria-hidden="true"></i>
+              <label htmlFor="file-input" className="cursor-pointer">
+                <div className="relative z-2 top-24 right-8 w-12 h-12 rounded-full bg-[#0AB4AF] mr-1">
+                  <div className="text-center justify-center text-white pt-3">
+                    <i className="fa fa-camera fa-lg" aria-hidden="true"></i>
+                  </div>
                 </div>
-              </div>
+              </label>
+              <input
+                id="file-input"
+                accept="image/png, image/jpeg, image/jpg"
+                type="file"
+                className="hidden"
+                onChange={profileImageChnageHandler}
+              />
             </div>
             <div></div>
           </div>
@@ -307,7 +359,7 @@ const ProfileSettingsForm = () => {
         <div className="flex flex-wrap mb-6">
           <div className="w-full">
             <div
-              id="userDropDown"
+              id="sncMenu"
               className="w-full rounded divide-y divide-zinc-300 float-right px-3"
             >
               <div className="flex flex-wrap w-full pb-2 sm:pb-0">
@@ -318,6 +370,60 @@ const ProfileSettingsForm = () => {
                   >
                     SNC
                   </label>
+                  {/*<div className="static">
+                    <button
+                      id="dropdownDefault"
+                      className="text-black border border-zinc-300 rounded px-4 py-2.5 text-center inline-flex items-center"
+                      type="button"
+                      onClick={showHideSNCPopup}
+                    >
+                      Select SNC
+                      <svg
+                        className="ml-2 w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M19 9l-7 7-7-7"
+                        ></path>
+                      </svg>
+                    </button>
+                    <div
+                      id="sncdropdown"
+                      className="hidden z-10 bg-white rounded divide-y divide-gray-100 shadow"
+                    >
+                      <ul
+                        className="py-1 text-sm text-gray-700 dark:text-gray-200"
+                        aria-labelledby="dropdownDefault"
+                      >
+                        <li className="hover:bg-[#0AB4AF] hover:text-white">
+                          <a href="#" className="block py-2 px-4">
+                            Discord
+                          </a>
+                        </li>
+                        <li className="hover:bg-[#0AB4AF] hover:text-white">
+                          <a href="#" className="block py-2 px-4">
+                            Twitter
+                          </a>
+                        </li>
+                        <li className="hover:bg-[#0AB4AF] hover:text-white">
+                          <a href="#" className="block py-2 px-4">
+                            Facebook
+                          </a>
+                        </li>
+                        <li className="hover:bg-[#0AB4AF] hover:text-white">
+                          <a href="#" className="block py-2 px-4">
+                            Instagram
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>*/}
                   <div className="relative">
                     <select
                       className="block w-full border border-zinc-300 rounded focus:outline-none focus:bg-white"
@@ -368,26 +474,26 @@ const ProfileSettingsForm = () => {
                   </label>
                   <div className="text-center justify-center pt-1.5">
                     <i
-                      className="fa fa-plus-circle fa-2x text-gray-300 font-thin"
+                      onClick={addSNC}
+                      className="fa fa-plus-circle fa-2x text-gray-300 font-thin cursor-pointer"
                       aria-hidden="true"
                     ></i>
                   </div>
                 </div>
               </div>
-              <div className="w-full py-4 grid grid-cols-3">
-                <div>Facebook</div>
-                <div>https://www.123456789.com/</div>
-                <div className="text-gray-500 text-right">
-                  <i className="fa fa-times" aria-hidden="true"></i>
-                </div>
-              </div>
-              <div className="w-full py-4 grid grid-cols-3">
-                <div>Insta</div>
-                <div>https://www.iwanttoonuts.net/</div>
-                <div className="text-gray-500 text-right">
-                  <i className="fa fa-times" aria-hidden="true"></i>
-                </div>
-              </div>
+              {sncList &&
+                sncList.map((snc, index) => (
+                  <div
+                    className="w-full py-4 grid grid-cols-3"
+                    key={`snc-${index}`}
+                  >
+                    <div>{snc.title}</div>
+                    <div>{snc.url}</div>
+                    <div className="text-gray-500 text-right">
+                      <i className="fa fa-times" aria-hidden="true"></i>
+                    </div>
+                  </div>
+                ))}
             </div>
           </div>
         </div>
@@ -395,7 +501,7 @@ const ProfileSettingsForm = () => {
         <div className="flex flex-wrap mb-6">
           <div className="w-full">
             <div
-              id="userDropDown"
+              id="websiteDropDown"
               className="w-full rounded divide-y divide-zinc-300 float-right px-3"
             >
               <div className="flex flex-wrap w-full pb-2 sm:pb-0">
@@ -442,33 +548,26 @@ const ProfileSettingsForm = () => {
                   </label>
                   <div className="text-center justify-center pt-1.5">
                     <i
-                      className="fa fa-plus-circle fa-2x text-gray-300 font-thin"
+                      onClick={addWebsite}
+                      className="fa fa-plus-circle fa-2x text-gray-300 font-thin cursor-pointer"
                       aria-hidden="true"
                     ></i>
                   </div>
                 </div>
               </div>
-              <div className="w-full py-4 grid grid-cols-3">
-                <div>Portfolio</div>
-                <div>https://www.123456789.com/</div>
-                <div className="text-gray-500 text-right">
-                  <i className="fa fa-times" aria-hidden="true"></i>
-                </div>
-              </div>
-              <div className="w-full py-4 grid grid-cols-3">
-                <div>Website</div>
-                <div>https://www.iwanttoeatdonuts.net/</div>
-                <div className="text-gray-500 text-right">
-                  <i className="fa fa-times" aria-hidden="true"></i>
-                </div>
-              </div>
-              <div className="w-full py-4 grid grid-cols-3">
-                <div>ONLINE SHOP</div>
-                <div>https://pop.donutspower.jp/</div>
-                <div className="text-gray-500 text-right">
-                  <i className="fa fa-times" aria-hidden="true"></i>
-                </div>
-              </div>
+              {websiteList &&
+                websiteList.map((website, index) => (
+                  <div
+                    className="w-full py-4 grid grid-cols-3"
+                    key={`website-${index}`}
+                  >
+                    <div>{website.title}</div>
+                    <div>{website.url}</div>
+                    <div className="text-gray-500 text-right">
+                      <i className="fa fa-times" aria-hidden="true"></i>
+                    </div>
+                  </div>
+                ))}
             </div>
           </div>
         </div>
