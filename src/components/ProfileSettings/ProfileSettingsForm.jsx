@@ -24,6 +24,23 @@ const ProfileSettingsForm = () => {
   const [sncList, setsncList] = useState([]);
   const [coverPhotoUrl, setCoverPhotoUrl] = useState("");
   const [coverPhoto, setCoverPhoto] = useState([]);
+  const [selectedSNC, setSelectedSNC] = useState();
+
+  const socialLinks = [
+    { id: 0, title: "discord" },
+    { id: 1, title: "twitter" },
+    { id: 2, title: "facebook" },
+    { id: 3, title: "instagram" },
+    { id: 4, title: "youtube" },
+    { id: 5, title: "tumblr" },
+    { id: 6, title: "weibo" },
+    { id: 7, title: "spotify" },
+    { id: 8, title: "github" },
+    { id: 9, title: "behance" },
+    { id: 10, title: "dribbble" },
+    { id: 11, title: "opensea" },
+    { id: 12, title: "rarible" },
+  ];
 
   const {
     register,
@@ -131,12 +148,12 @@ const ProfileSettingsForm = () => {
   }
 
   function addSNC() {
-    const title = document.getElementById("snc");
+    const title = selectedSNC ? selectedSNC.title : null;
     const url = document.getElementById("snc-url");
-    if (title.value && url.value) {
-      setsncList([...sncList, { title: title.value, url: url.value }]);
-      title.value = "Discord";
+    if (title && url.value) {
+      setsncList([...sncList, { title: title, url: url.value }]);
       url.value = "";
+      setSelectedSNC(undefined);
     }
   }
 
@@ -194,8 +211,12 @@ const ProfileSettingsForm = () => {
       );
     } catch {}
     request.append("biography", data["biography"]);
-    request.append("avatar", profileImage.image);
-    request.append("cover", coverPhoto[0]);
+    if (profileImage.image) {
+      request.append("avatar", profileImage.image);
+    }
+    if (coverPhoto[0]) {
+      request.append("cover", coverPhoto[0]);
+    }
     request.append("web", web);
     request.append("social", social);
     setIsLoading(true);
@@ -501,14 +522,31 @@ const ProfileSettingsForm = () => {
                   >
                     SNC
                   </label>
-                  {/*<div className="static">
+                  <div className="absolute">
                     <button
                       id="dropdownDefault"
                       className="text-black border border-zinc-300 rounded px-4 py-2.5 text-center inline-flex items-center"
                       type="button"
                       onClick={showHideSNCPopup}
                     >
-                      Select SNC
+                      {selectedSNC ? (
+                        <>
+                          <div className="inline-flex">
+                            <img
+                              className="cp"
+                              src={require(`assets/images/profile/social/ico_${selectedSNC.title}.svg`)}
+                              height={24}
+                              width={24}
+                              alt="social logo"
+                            />
+                            <div className="capitalize pl-1.5">
+                              {selectedSNC.title}
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        "Select SNC"
+                      )}
                       <svg
                         className="ml-2 w-4 h-4"
                         fill="none"
@@ -526,57 +564,37 @@ const ProfileSettingsForm = () => {
                     </button>
                     <div
                       id="sncdropdown"
-                      className="hidden z-10 bg-white rounded divide-y divide-gray-100 shadow"
+                      className="hidden z-10 bg-white rounded shadow"
                     >
                       <ul
-                        className="py-1 text-sm text-gray-700 dark:text-gray-200"
+                        className="py-1 text-sm text-gray-700 dark:text-gray-200 divide-y divide-gray-100"
                         aria-labelledby="dropdownDefault"
                       >
-                        <li className="hover:bg-[#0AB4AF] hover:text-white">
-                          <a href="#" className="block py-2 px-4">
-                            Discord
-                          </a>
-                        </li>
-                        <li className="hover:bg-[#0AB4AF] hover:text-white">
-                          <a href="#" className="block py-2 px-4">
-                            Twitter
-                          </a>
-                        </li>
-                        <li className="hover:bg-[#0AB4AF] hover:text-white">
-                          <a href="#" className="block py-2 px-4">
-                            Facebook
-                          </a>
-                        </li>
-                        <li className="hover:bg-[#0AB4AF] hover:text-white">
-                          <a href="#" className="block py-2 px-4">
-                            Instagram
-                          </a>
-                        </li>
+                        {socialLinks.map((link) => (
+                          <li
+                            onClick={() => {
+                              setSelectedSNC(link);
+                              showHideSNCPopup();
+                            }}
+                            className="hover:bg-[#0AB4AF] hover:text-white cursor-pointer"
+                            key={link.id}
+                          >
+                            <div className="inline-flex p-1.5">
+                              <img
+                                className="cp"
+                                src={require(`assets/images/profile/social/ico_${link.title}.svg`)}
+                                height={24}
+                                width={24}
+                                alt="social logo"
+                              />
+                              <div className="capitalize pl-1.5">
+                                {link.title}
+                              </div>
+                            </div>
+                          </li>
+                        ))}
                       </ul>
                     </div>
-                  </div>*/}
-                  <div className="relative">
-                    <select
-                      className="block w-full border border-zinc-300 rounded focus:outline-none"
-                      id="snc"
-                      name="snc"
-                      {...register("snc")}
-                    >
-                      <option>Discord</option>
-                      <option>Twitter</option>
-                      <option>facebook</option>
-                      <option>Instagram</option>
-                      <option>Youtube</option>
-                      <option>Tumblr</option>
-                      <option>Weibo</option>
-                      <option>Spotify</option>
-                      <option>Github</option>
-                      <option>Behance</option>
-                      <option>Dribbble</option>
-                      <option>Opensea</option>
-                      <option>Rarible</option>
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"></div>
                   </div>
                 </div>
                 <div className="w-full md:w-8/12">
@@ -618,9 +636,18 @@ const ProfileSettingsForm = () => {
                     className="w-full py-4 grid grid-cols-3"
                     key={`snc-${index}`}
                   >
-                    <div>{snc.title}</div>
-                    <div>{snc.url}</div>
-                    <div className="text-gray-500 text-right">
+                    <div className="inline-flex p-1.5">
+                      <img
+                        className="cp"
+                        src={require(`assets/images/profile/social/ico_${snc.title}.svg`)}
+                        height={24}
+                        width={24}
+                        alt="social logo"
+                      />
+                      <div className="capitalize pl-1.5">{snc.title}</div>
+                    </div>
+                    <div className="p-1.5">{snc.url}</div>
+                    <div className="p-1.5 text-gray-500 text-right">
                       <i
                         onClick={() => handleRemoveSnc(index)}
                         className="fa fa-times"
