@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import "assets/css/CreateProject/mainView.css";
 import { checkUniqueProjectName } from "services/project/projectService";
 import selectTypeTabData from "Pages/ProjectCreate/projectCreateData";
@@ -25,7 +25,6 @@ export default function CreateProjectLayout() {
   function canVoteProps(params) {
     setCanVote(params);
   }
-
   /**
    * ==============================================
    * Project Type End
@@ -37,23 +36,21 @@ export default function CreateProjectLayout() {
    * Outline Start
    * ==============================================
    */
-  let outlineObject = {
-    projectName: "",
-    coverPhoto: "",
-  };
   const [projectName, setProjectName] = useState("");
   const [coverPhoto, setCoverPhoto] = useState([]);
   const [emptyProjectName, setemptyProjectName] = useState(false);
   const [alreadyTakenProjectName, setAlreadyTakenProjectName] = useState(false);
-  let [outlineKey, setOutlineKey] = useState(0);
+  const [photos, setPshotos] = useState([]);
+  const [projectCategory, setProjectCategory] = useState("");
+  const [emptyProjeCtCategory, setEmptyProjectCategory] = useState(false);
   async function onProjectNameChange(e) {
     let payload = {
       projectName: e,
     };
     await checkUniqueProjectName(payload)
       .then((e) => {
-        if (e.data.code === 0) {
-          setProjectName(e);
+        if (e.code === 0) {
+          setProjectName(payload.projectName);
           setemptyProjectName(false);
           setAlreadyTakenProjectName(false);
         } else {
@@ -65,31 +62,27 @@ export default function CreateProjectLayout() {
       });
   }
   function closeCoverPhotoPreview() {
-    console.log("close");
+    setCoverPhoto([]);
   }
   const onCoverDrop = useCallback((acceptedFiles) => {
-    console.log(acceptedFiles);
     setCoverPhoto(acceptedFiles);
   }, []);
-  // useEffect(() => {
-  //   if (coverPhoto === "") {
-  //     setCoverPhotoPreview(undefined);
-  //     return;
-  //   }
-
-  //   const objectUrl = URL.createObjectURL(coverPhoto[0]);
-  //   setCoverPhotoPreview(objectUrl);
-  //   console.log();
-
-  //   // free memory when ever this component is unmounted
-  //   return () => URL.revokeObjectURL(objectUrl);
-  // }, [coverPhoto]);
+  function closePhotoPreview(fileName) {
+    setPshotos(photos.filter((x) => x.name !== fileName));
+  }
+  const onPhotoDrop = useCallback((acceptedFiles) => {
+    setPshotos(acceptedFiles);
+  }, []);
+  function onProjectCategoryChange(e) {
+    setProjectCategory(e);
+    setEmptyProjectCategory(false);
+  }
   /**
    * ==============================================
    * Outline ENd
    * ==============================================
    */
-  const [currentStep, setcurrentStep] = useState([1]);
+  const [currentStep, setcurrentStep] = useState([1, 2]);
   function handelClickNext() {
     // Select type start
     if (currentStep.length === 1) {
@@ -120,8 +113,11 @@ export default function CreateProjectLayout() {
     if (currentStep.length === 2) {
       if (projectName === "") {
         setemptyProjectName(true);
+      }
+      if (projectCategory === "") {
+        setEmptyProjectCategory(true);
       } else {
-        console.log(projectName, coverPhoto);
+        console.log(projectName, coverPhoto, photos, projectCategory);
       }
       // setcurrentStep([1, 2, 3]);
     }
@@ -157,9 +153,12 @@ export default function CreateProjectLayout() {
               onProjectNameChange={onProjectNameChange}
               emptyProjectName={emptyProjectName}
               alreadyTakenProjectName={alreadyTakenProjectName}
-              closeCoverPhotoReview={() => closeCoverPhotoPreview()}
+              closeCoverPhotoPreview={closeCoverPhotoPreview}
               onCoverDrop={onCoverDrop}
-              key={outlineKey}
+              closePhotoPreview={closePhotoPreview}
+              onPhotoDrop={onPhotoDrop}
+              emptyProjeCtCategory={emptyProjeCtCategory}
+              onProjectCategoryChange={onProjectCategoryChange}
             />
           )}
           {currentStep.length === 3 && <Token />}

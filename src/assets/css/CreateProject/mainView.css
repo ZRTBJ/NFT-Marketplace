@@ -44,10 +44,7 @@
   font-family: "Roboto", sans-serif;
   font-weight: 600;
 }
-.photoPreviewContainer {
-  border: 1px solid black;
-  height: 192px;
-}
+
 .stepTitleName {
   text-align: right;
   color: #e2e2e3;

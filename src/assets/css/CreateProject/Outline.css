@@ -30,3 +30,12 @@
     margin-bottom: 0px;
   }
 }
+.coverPreview {
+  width: 100%;
+  height: 230px;
+  object-fit: contain;
+}
+.outlinePhoto {
+  height: 84px;
+  width: 84px;
+}

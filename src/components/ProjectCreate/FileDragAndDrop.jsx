@@ -2,7 +2,13 @@ import { useMemo } from "react";
 import { useDropzone } from "react-dropzone";
 import dragSvg from "assets/images/projectCreate/dragSvg.svg";
 
-export default function FileDragAndDrop({ height, maxFiles, onDrop }) {
+export default function FileDragAndDrop({
+  height,
+  maxFiles,
+  onDrop,
+  sizePlaceholder,
+  maxSize,
+}) {
   const baseStyle = {
     flex: 1,
     display: "flex",
@@ -38,6 +44,7 @@ export default function FileDragAndDrop({ height, maxFiles, onDrop }) {
       accept: "image/*",
       maxFiles: maxFiles,
       noClick: false,
+      maxSize: maxSize,
     });
   const style = useMemo(
     () => ({
@@ -51,11 +58,12 @@ export default function FileDragAndDrop({ height, maxFiles, onDrop }) {
   );
   return (
     <div>
-      <div className="container">
+      <div className="Filecontainer">
         <div {...getRootProps({ style })}>
           <input {...getInputProps()} />
           <img src={dragSvg} alt="" />
           <p className="dragAndDropLable">Drag and drop here</p>
+          {sizePlaceholder && <div>{sizePlaceholder}</div>}
         </div>
       </div>
     </div>
