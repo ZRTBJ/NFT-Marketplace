@@ -1,0 +1,15 @@
+<svg id="ico_closemodal" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+  <g id="楕円形_238" data-name="楕円形 238" fill="#fff" stroke="#ccc" stroke-width="2">
+    <circle cx="20" cy="20" r="20" stroke="none"/>
+    <circle cx="20" cy="20" r="19" fill="none"/>
+  </g>
+  <g id="グループ_3195" data-name="グループ 3195" transform="translate(-487 -4236)">
+    <g id="ico_cross" transform="translate(492 4241)">
+      <rect id="長方形_616" data-name="長方形 616" width="30" height="30" fill="#ccc" opacity="0"/>
+      <g id="グループ_1469" data-name="グループ 1469" transform="translate(6 6)">
+        <rect id="長方形_425" data-name="長方形 425" width="23.142" height="2.314" transform="translate(0 16.364) rotate(-45)" fill="#ccc"/>
+        <rect id="長方形_425-2" data-name="長方形 425" width="23.142" height="2.314" transform="translate(1.636 0) rotate(45)" fill="#ccc"/>
+      </g>
+    </g>
+  </g>
+</svg>

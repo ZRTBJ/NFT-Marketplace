@@ -6,6 +6,11 @@ import LeftSideBar from "components/ProjectCreate/LeftSideBar";
 import SelectType from "components/ProjectCreate/SelectType";
 import Outline from "components/ProjectCreate/Outline";
 import Token from "components/ProjectCreate/Token";
+import { createProject, updateProject } from "services/project/projectService";
+
+import DraftLogo from "assets/images/projectCreate/draftLogo.svg";
+
+import Modal from "components/Modal";
 
 export default function CreateProjectLayout() {
   /**
@@ -13,7 +18,7 @@ export default function CreateProjectLayout() {
    * Project Type Start
    * ==============================================
    */
-  const [selectedTab, setSelectedTab] = useState(selectTypeTabData[1]);
+  const [selectedTab, setSelectedTab] = useState(selectTypeTabData[0]);
   const [votingPower, setVotingPower] = useState("");
   const [canVote, setCanVote] = useState("");
   function setActiveTab(arg) {
@@ -43,6 +48,14 @@ export default function CreateProjectLayout() {
   const [photos, setPshotos] = useState([]);
   const [projectCategory, setProjectCategory] = useState("");
   const [emptyProjeCtCategory, setEmptyProjectCategory] = useState(false);
+  const [overview, SetOverview] = useState("");
+  const [tagsList, SetTagsList] = useState([]);
+  const [needMember, setNeedMember] = useState(false);
+  const [roleList, setRollList] = useState([]);
+
+  function overviewOnChange(e) {
+    SetOverview(e);
+  }
   async function onProjectNameChange(e) {
     let payload = {
       projectName: e,
@@ -77,12 +90,24 @@ export default function CreateProjectLayout() {
     setProjectCategory(e);
     setEmptyProjectCategory(false);
   }
+  function onChangeTagList(type, list) {
+    if (type === "tag") {
+      SetTagsList(list);
+    } else if (type === "role") {
+      setRollList(list);
+    }
+  }
+  function onNeedMemberChange(e) {
+    setNeedMember(e);
+  }
   /**
    * ==============================================
    * Outline ENd
    * ==============================================
    */
-  const [currentStep, setcurrentStep] = useState([1, 2]);
+  const [currentStep, setcurrentStep] = useState([1]);
+  const [isLoading, setIsloading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   function handelClickNext() {
     // Select type start
     if (currentStep.length === 1) {
@@ -104,6 +129,15 @@ export default function CreateProjectLayout() {
           setcurrentStep([1, 2]);
         }
       } else {
+        let finalSelectedTabs = {
+          id: selectedTab.id,
+          title: selectedTab.title,
+          canVote: selectedTab.canVote,
+          votingPower: selectedTab.votingPower,
+        };
+        setVotingPower(selectedTab.votingPower[0]);
+        setCanVote(selectedTab.canVote[0]);
+        setSelectedTab(finalSelectedTabs);
         setcurrentStep([1, 2]);
       }
     }
@@ -113,13 +147,11 @@ export default function CreateProjectLayout() {
     if (currentStep.length === 2) {
       if (projectName === "") {
         setemptyProjectName(true);
-      }
-      if (projectCategory === "") {
+      } else if (projectCategory === "") {
         setEmptyProjectCategory(true);
       } else {
-        console.log(projectName, coverPhoto, photos, projectCategory);
+        setcurrentStep([1, 2, 3]);
       }
-      // setcurrentStep([1, 2, 3]);
     }
     // Outline end
 
@@ -129,13 +161,75 @@ export default function CreateProjectLayout() {
     }
     // Token end
   }
+  async function saveDraft() {
+    // Outline start
+    if (currentStep.length === 2) {
+      if (projectName === "") {
+        setemptyProjectName(true);
+      } else if (projectCategory === "") {
+        setEmptyProjectCategory(true);
+      } else {
+        // console.log(
+        //   projectName,
+        //   coverPhoto,
+        //   photos,
+        //   projectCategory,
+        //   overview,
+        //   tagsList,
+        //   needMember,
+        //   roleList
+        // );
+        let createPayload = {
+          name: projectName,
+          category_id: projectCategory,
+          voting_power: votingPower.value,
+          voter_mode: canVote.value,
+        };
+        setIsloading(true);
+        await createProject(createPayload)
+          .then((res) => {
+            const r = res.project;
+            let updatePayload = {
+              ...createPayload,
+              id: r.id,
+              cover: coverPhoto[0],
+              photos: photos,
+              overview: overview,
+              tags: tagsList.toString(),
+              need_member: needMember,
+              roles: roleList.toString(),
+            };
+            updateProject("create", updatePayload)
+              .then((res) => {
+                console.log(res);
+                setIsloading(false);
+                setShowModal(true);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+      // setcurrentStep([1, 2, 3]);
+    }
+    // Outline end
+
+    // Token  start
+    // if (currentStep.length === 3) {
+    //   setcurrentStep([1, 2, 3, 4]);
+    // }
+    // Token end
+  }
   function handelClickBack() {
     let currentIndex = currentStep.pop();
     setcurrentStep(currentStep.filter((x) => x !== currentIndex));
   }
   return (
     <div className="flex flex-col md:flex-row ">
-      <div className="hidden md:block md:relative  w-full md:w-64 lg:w-80  content-center">
+      <div className="hidden md:block md:relative bg-[#f6f6f7]  w-full md:w-64 lg:w-80  content-center">
         <LeftSideBar currentStep={currentStep} key={currentStep} />
       </div>
       <div className="flex-1">
@@ -150,6 +244,7 @@ export default function CreateProjectLayout() {
           )}
           {currentStep.length === 2 && (
             <Outline
+              isLoading={isLoading}
               onProjectNameChange={onProjectNameChange}
               emptyProjectName={emptyProjectName}
               alreadyTakenProjectName={alreadyTakenProjectName}
@@ -159,6 +254,9 @@ export default function CreateProjectLayout() {
               onPhotoDrop={onPhotoDrop}
               emptyProjeCtCategory={emptyProjeCtCategory}
               onProjectCategoryChange={onProjectCategoryChange}
+              overviewOnChange={overviewOnChange}
+              onChangeTagList={onChangeTagList}
+              onNeedMemberChange={onNeedMemberChange}
             />
           )}
           {currentStep.length === 3 && <Token />}
@@ -169,7 +267,7 @@ export default function CreateProjectLayout() {
           <div className="buttonContainer">
             <div
               className={
-                +currentStep.length > 1
+                currentStep.length > 1
                   ? "flex justify-between"
                   : "flex justify-end"
               }
@@ -178,20 +276,58 @@ export default function CreateProjectLayout() {
                 <button
                   className="backButton"
                   onClick={() => handelClickBack()}
+                  disabled={isLoading ? true : false}
                 >
                   BACK
                 </button>
               )}
-              <button className="nextButton" onClick={() => handelClickNext()}>
+              <button
+                disabled={isLoading ? true : false}
+                className="nextButton"
+                onClick={() => handelClickNext()}
+              >
                 NEXT
               </button>
             </div>
             {currentStep.length > 1 && (
-              <button className="saveDraft">SAVE DRAFT</button>
+              <button
+                onClick={saveDraft}
+                disabled={isLoading ? true : false}
+                className={`
+                  ${isLoading === true ? "onlySpinner" : ""} saveDraft
+                `}
+              >
+                {isLoading ? "" : "SAVE DRAFT"}
+              </button>
             )}
           </div>
         </div>
       </div>
+      {showModal && (
+        <Modal
+          height={361}
+          width={800}
+          show={showModal}
+          handleClose={() => setShowModal(false)}
+        >
+          <div className="text-center">
+            <img
+              className="w-[151px] h-[133px] block mx-auto mt-[50px]"
+              src={DraftLogo}
+              alt=""
+            />
+            <div className="mb-4 text-[20px] font-bold color-[#192434] draftModalText">
+              Your project saved the draft.
+            </div>
+            <div className="font-roboto mb-6">
+              You can edit information from your project list
+            </div>
+            <button className="w-[200px] h-[54px] bg-[#0AB4AF] rounded text-white">
+              PROJECT LIST
+            </button>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }
