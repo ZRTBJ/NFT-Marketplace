@@ -10,7 +10,7 @@
 
 .loading:before {
   content: "";
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 0;
   right: 0;
@@ -22,7 +22,7 @@
 
 .loading:after {
   content: "";
-  position: absolute;
+  position: fixed;
   height: 10px;
   width: 10px;
   display: block;
