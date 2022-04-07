@@ -12,14 +12,16 @@ const selectTypeTabData = [
         icon: token,
         title: "TOKEN WEIGHTED",
         description: "More tokens more voting power.",
-        active:false
+        active: false,
+        value: "TknW8",
       },
       {
         id: 2,
         icon: vote1Member,
         title: "1 VOTE PER 1 MEMBER",
         description: "Every member gets 1 vote.",
-        active:false
+        active: false,
+        value: "1VPM",
       },
     ],
     canVote: [
@@ -28,14 +30,16 @@ const selectTypeTabData = [
         icon: owner,
         title: "OWNERS",
         description: "The owners who have the governance token.",
-        active:false
+        active: false,
+        value: "Owners",
       },
       {
         id: 2,
         icon: allMember,
         title: "ALL MEMBERS",
         description: "Every member can vote.",
-        active:false
+        active: false,
+        value: "AllMembers",
       },
     ],
   },
@@ -48,7 +52,8 @@ const selectTypeTabData = [
         icon: token,
         title: "TOKEN WEIGHTED",
         description: "More tokens more voting power.",
-        active:true
+        active: true,
+        value: "TknW8",
       },
     ],
     canVote: [
@@ -57,7 +62,8 @@ const selectTypeTabData = [
         icon: owner,
         title: "OWNERS",
         description: "The owners who have the governance token.",
-        active:true
+        active: true,
+        value: "Owners",
       },
     ],
   },
@@ -70,7 +76,8 @@ const selectTypeTabData = [
         icon: vote1Member,
         title: "1 VOTE PER 1 MEMBER",
         description: "Every member gets 1 vote.",
-        active:true
+        active: true,
+        value: "1VPM",
       },
     ],
     canVote: [
@@ -79,7 +86,8 @@ const selectTypeTabData = [
         icon: allMember,
         title: "ALL MEMBERS",
         description: "Every member can vote.",
-        active:true
+        active: true,
+        value: "AllMembers",
       },
     ],
   },
@@ -92,7 +100,8 @@ const selectTypeTabData = [
         icon: token,
         title: "TOKEN WEIGHTED",
         description: "More tokens more voting power.",
-        active:true
+        active: true,
+        value: "TknW8",
       },
     ],
     canVote: [
@@ -101,7 +110,8 @@ const selectTypeTabData = [
         icon: allMember,
         title: "ALL MEMBERS",
         description: "Every member can vote.",
-        active:true
+        active: true,
+        value: "AllMembers",
       },
     ],
   },

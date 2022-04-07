@@ -16,6 +16,9 @@ export default function Outline({
   onPhotoDrop,
   emptyProjeCtCategory,
   onProjectCategoryChange,
+  overviewOnChange,
+  onChangeTagList,
+  onNeedMemberChange,
 }) {
   const [projectName, SetProjectName] = useState("");
   let [coverPhoto, setCoverPhoto] = useState([]);
@@ -23,6 +26,15 @@ export default function Outline({
   const [photosUrl, setPhotosUrl] = useState([]);
   const [projectCategoryList, setProjectCategoryList] = useState([]);
   const [category, setCategory] = useState({});
+  const [overviwe, setOverview] = useState("");
+  const [tagList, setTagList] = useState([]);
+  const [roleList, setRoleList] = useState([]);
+  const [tagsLimit, setTagsLimit] = useState(false);
+  const [lookingForMember, setLookingForMember] = useState(false);
+  function onOverviewChnage(e) {
+    setOverview(e.target.value);
+    overviewOnChange(e.target.value);
+  }
   async function changeProjectName(value) {
     SetProjectName(value);
     onProjectNameChange(value);
@@ -56,7 +68,6 @@ export default function Outline({
       onPhotoDrop(params);
     }
   }
-
   function closeCoverPhoto() {
     setCoverPhoto([]);
     setCoverPhotoUrl("");
@@ -66,13 +77,61 @@ export default function Outline({
     setPhotosUrl(photosUrl.filter((x) => x.name !== i));
     closePhotoPreview(i);
   }
-
+  function handleRoleChange(type, event) {
+    if (type === "tag") {
+      const value = event.target.value;
+      if (event.code === "Enter" && value.length > 0) {
+        if (tagList.length > 4) {
+          setTagsLimit(true);
+        } else {
+          setTagList([...tagList, value]);
+          onChangeTagList("tag", [...tagList, value]);
+          event.target.value = "";
+        }
+      }
+    } else if (type === "role") {
+      const value = event.target.value;
+      if (event.code === "Enter" && value.length > 0) {
+        setRoleList([...roleList, value]);
+        onChangeTagList("role", [...roleList, value]);
+        event.target.value = "";
+      }
+    }
+  }
+  const handleRemoveRole = (type, index) => {
+    if (type === "tag") {
+      if (index >= 0) {
+        const newRoleList = [...tagList];
+        newRoleList.splice(index, 1);
+        setTagList(newRoleList);
+        onChangeTagList("tag", newRoleList);
+        setTagsLimit(false);
+      }
+    } else if (type === "role") {
+      if (index >= 0) {
+        const newRoleList = [...roleList];
+        newRoleList.splice(index, 1);
+        setRoleList(newRoleList);
+        onChangeTagList("role", newRoleList);
+      }
+    }
+  };
+  function needMemberChange(e) {
+    if (e) {
+      setLookingForMember(true);
+      onNeedMemberChange(true);
+    } else {
+      setRoleList([]);
+      onChangeTagList("role", []);
+      setLookingForMember(false);
+      onNeedMemberChange(false);
+    }
+  }
   useEffect(() => {
     getProjectCategory().then((e) => {
       setProjectCategoryList(e.categories);
     });
   }, []);
-
   useEffect(() => {
     let objectUrl = "";
     if (coverPhoto.length === 1) {
@@ -81,7 +140,6 @@ export default function Outline({
     }
     return () => URL.revokeObjectURL(objectUrl);
   }, [coverPhoto]);
-
   return (
     <div className="outlineContainer">
       <div className="OutlineTitle">OUTLINE</div>
@@ -154,7 +212,15 @@ export default function Outline({
       </div>
       <div>
         <div className="lable">Overview</div>
-        <textarea className="mb-6" name="" id="" cols="30" rows="6"></textarea>
+        <textarea
+          value={overviwe}
+          onChange={onOverviewChnage}
+          className="mb-6"
+          name=""
+          id=""
+          cols="30"
+          rows="6"
+        ></textarea>
       </div>
       <div className="mb-6">
         <div className="lable">Category</div>
@@ -172,43 +238,91 @@ export default function Outline({
           <div className="validationTag">Project category is required</div>
         )}
       </div>
-      <div>
-        <div className="lable">Tags</div>
-        <input className="outlineTags" type="text" />
-        <div className="h-8 boarder w-fit rounded bg-gray-100 mb-6">
-          <div className="flex flex-row">
-            <div className="pr-4 pl-2 pt-1">ROLL</div>
-            <div className="border-l border-white px-1">
-              <i className="fa fa-times-thin fa-2x" aria-hidden="true"></i>
-            </div>
-          </div>
+      <div className="flex flex-wrap mb-6">
+        <div className="w-full">
+          <div className="lable">Tags(upto 5)</div>
+          <input
+            className="outlineTags mb-2"
+            type="text"
+            placeholder="Type and press enter"
+            defaultValue={""}
+            onKeyUp={(e) => handleRoleChange("tag", e)}
+          />
+          {tagsLimit && (
+            <div className="validationTag mb-3">Only five tags can save </div>
+          )}
         </div>
+        {tagList &&
+          tagList.length > 0 &&
+          tagList.map((role, index) => (
+            <div className="px-3 pb-4" key={`rolw-${index}`}>
+              <div className="h-8 w-auto boarder rounded bg-gray-100">
+                <div className="flex flex-row">
+                  <div className="pr-4 pl-2 pt-1 break-all">{role}</div>
+                  <div className="border-l border-white px-1">
+                    <i
+                      onClick={() => handleRemoveRole("tag", index)}
+                      className="fa fa-times-thin fa-2x cursor-pointer"
+                      aria-hidden="true"
+                    ></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
       </div>
       <div className="mb-6">
         <div className="lable">Are you looking for members?</div>
         <div className="flex -flex-wrap">
-          <button className="h-10 rounded w-36 border border-[#CCCCCC] cursor-pointer	">
+          <button
+            onClick={() => needMemberChange(true)}
+            className="h-10 rounded w-36 border border-[#CCCCCC] cursor-pointer	"
+          >
             YES
           </button>
-          <button className="h-10 rounded w-36 border border-[#CCCCCC] ml-2 cursor-pointer	">
+          <button
+            onClick={() => needMemberChange(false)}
+            className="h-10 rounded w-36 border border-[#CCCCCC] ml-2 cursor-pointer	"
+          >
             NO
           </button>
         </div>
       </div>
-      <div>
-        <div className="lable">
-          What kind of role do you want people to participate in?
-          <input type="text" name="" id="" className="outlineRollTags" />
-          <div className="h-8 boarder w-fit rounded bg-gray-100 mb-6">
-            <div className="flex flex-row">
-              <div className="pr-4 pl-2 pt-1">ROLL</div>
-              <div className="border-l border-white px-1">
-                <i className="fa fa-times-thin fa-2x" aria-hidden="true"></i>
-              </div>
+
+      {lookingForMember && (
+        <div>
+          <div className="flex flex-wrap mb-6">
+            <div className="w-full">
+              What kind of role do you want people to participate in?
+              <input
+                className="outlineRollTags mb-2"
+                type="text"
+                placeholder="Type and press enter"
+                defaultValue={""}
+                onKeyUp={(e) => handleRoleChange("role", e)}
+              />
             </div>
+            {roleList &&
+              roleList.length > 0 &&
+              roleList.map((role, index) => (
+                <div className="px-3 pb-4" key={`rolw-${index}`}>
+                  <div className="h-8 w-auto boarder rounded bg-gray-100">
+                    <div className="flex flex-row">
+                      <div className="pr-4 pl-2 pt-1 break-all">{role}</div>
+                      <div className="border-l border-white px-1">
+                        <i
+                          onClick={() => handleRemoveRole("role", index)}
+                          className="fa fa-times-thin fa-2x cursor-pointer"
+                          aria-hidden="true"
+                        ></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
