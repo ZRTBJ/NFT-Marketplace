@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import FileDragAndDrop from "../ProjectCreate/FileDragAndDrop";
 import data from "../../data/countries";
@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { setUserInfo } from "../../Slice/userSlice";
 import { useDispatch } from "react-redux";
 import { getUserInfo } from "../../services/User/userService";
+import deleteIcon from "assets/images/projectCreate/ico_delete01.svg";
 
 const ProfileSettingsForm = () => {
   const dispatch = useDispatch();
@@ -21,14 +22,35 @@ const ProfileSettingsForm = () => {
   const [profileImage, setProfileImage] = useState({ image: null, path: "" });
   const [websiteList, setWebsiteList] = useState([]);
   const [sncList, setsncList] = useState([]);
+  const [coverPhotoUrl, setCoverPhotoUrl] = useState("");
+  const [coverPhoto, setCoverPhoto] = useState([]);
+  const [selectedSNC, setSelectedSNC] = useState();
 
-  const { register, handleSubmit } = useForm({
-    mode: "onBlur",
-    reValidateMode: "onChange",
-  });
+  const socialLinks = [
+    { id: 0, title: "discord" },
+    { id: 1, title: "twitter" },
+    { id: 2, title: "facebook" },
+    { id: 3, title: "instagram" },
+    { id: 4, title: "youtube" },
+    { id: 5, title: "tumblr" },
+    { id: 6, title: "weibo" },
+    { id: 7, title: "spotify" },
+    { id: 8, title: "github" },
+    { id: 9, title: "behance" },
+    { id: 10, title: "dribbble" },
+    { id: 11, title: "opensea" },
+    { id: 12, title: "rarible" },
+  ];
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm();
 
   useEffect(() => {
-    if (userId && !userinfo["first_name"]) {
+    if (userId) {
       getUserDetails(userId);
     }
   }, []);
@@ -39,9 +61,57 @@ const ProfileSettingsForm = () => {
     let userinfo;
     try {
       userinfo = response["user"];
+      setValue("firstName", userinfo["first_name"]);
+      setValue("lastName", userinfo["last_name"]);
+      setValue("displayName", userinfo["display_name"]);
+      setValue("emailAddress", userinfo["email"]);
+      setValue("biography", userinfo["biography"]);
+      try {
+        document.getElementById("location-country").value = userinfo["country"];
+        setCountry(userinfo["country"]);
+      } catch {}
+      setValue("locationArea", userinfo["area"]);
+      setCoverPhotoUrl(userinfo["cover"]);
+      if (userinfo["job"]) {
+        setRoleList(userinfo["job"].split(","));
+      }
+      if (userinfo["web"]) {
+        try {
+          const webs = JSON.parse(userinfo["web"]);
+          const weblist = [...webs].map((e) => ({
+            title: Object.keys(e)[0],
+            url: Object.values(e)[0],
+          }));
+          setWebsiteList(weblist);
+        } catch {
+          setWebsiteList([]);
+        }
+      }
+
+      if (userinfo["social"]) {
+        try {
+          const sociallinks = JSON.parse(userinfo["social"]);
+          const sncs = [...sociallinks].map((e) => ({
+            title: Object.keys(e)[0],
+            url: Object.values(e)[0],
+          }));
+          setsncList(sncs);
+        } catch {
+          setsncList([]);
+        }
+      }
     } catch {}
     dispatch(setUserInfo(userinfo));
     setIsLoading(false);
+  }
+
+  function setCountry(selectedCountry) {
+    const country = countryList.find((x) => x.country === selectedCountry);
+    if (country) {
+      setStateList(country.states);
+    } else {
+      setStateList([]);
+    }
   }
 
   function handleCountrySelect(event) {
@@ -59,6 +129,7 @@ const ProfileSettingsForm = () => {
     if (event.code === "Enter" && value.length > 0) {
       setRoleList([...roleList, value]);
       event.target.value = "";
+      event.preventDefault();
     }
   }
 
@@ -67,6 +138,22 @@ const ProfileSettingsForm = () => {
       const newRoleList = [...roleList];
       newRoleList.splice(index, 1);
       setRoleList(newRoleList);
+    }
+  };
+
+  const handleRemoveWebsite = (index) => {
+    if (index >= 0) {
+      const newWebsiteList = [...websiteList];
+      newWebsiteList.splice(index, 1);
+      setWebsiteList(newWebsiteList);
+    }
+  };
+
+  const handleRemoveSnc = (index) => {
+    if (index >= 0) {
+      const newSncList = [...sncList];
+      newSncList.splice(index, 1);
+      setsncList(newSncList);
     }
   };
 
@@ -86,12 +173,12 @@ const ProfileSettingsForm = () => {
   }
 
   function addSNC() {
-    const title = document.getElementById("snc");
+    const title = selectedSNC ? selectedSNC.title : null;
     const url = document.getElementById("snc-url");
-    if (title.value && url.value) {
-      setsncList([...sncList, { title: title.value, url: url.value }]);
-      title.value = "Discord";
+    if (title && url.value) {
+      setsncList([...sncList, { title: title, url: url.value }]);
       url.value = "";
+      setSelectedSNC(undefined);
     }
   }
 
@@ -100,13 +187,63 @@ const ProfileSettingsForm = () => {
     userDropDown.classList.toggle("hidden");
   }
 
+  function closeCoverPhoto() {
+    setCoverPhoto([]);
+    setCoverPhotoUrl("");
+    closeCoverPhotoPreview();
+  }
+
+  async function coverPhotoSelect(params) {
+    if (params.length === 1) {
+      setCoverPhoto(params);
+      onCoverDrop(params);
+    }
+  }
+
+  function closeCoverPhotoPreview() {
+    setCoverPhoto([]);
+  }
+
+  const onCoverDrop = useCallback((acceptedFiles) => {
+    setCoverPhoto(acceptedFiles);
+  }, []);
+
+  useEffect(() => {
+    let objectUrl = "";
+    if (coverPhoto.length === 1) {
+      objectUrl = URL.createObjectURL(coverPhoto[0]);
+      setCoverPhotoUrl(objectUrl);
+    }
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [coverPhoto]);
+
   const onSubmit = (data) => {
+    const job = roleList.toString();
+    const web = [...websiteList].map((e) => ({ [e.title]: e.url }));
+    const social = [...sncList].map((e) => ({ [e.title]: e.url }));
+
     const request = new FormData();
     request.append("first_name", data["firstName"]);
     request.append("last_name", data["lastName"]);
     request.append("display_name", data["displayName"]);
     request.append("email", data["emailAddress"]);
-    request.append("avatar", profileImage.image);
+    request.append("job", job);
+    request.append("area", data["locationArea"]);
+    try {
+      request.append(
+        "country",
+        document.getElementById("location-country")?.value
+      );
+    } catch {}
+    request.append("biography", data["biography"]);
+    if (profileImage.image) {
+      request.append("avatar", profileImage.image);
+    }
+    if (coverPhoto[0]) {
+      request.append("cover", coverPhoto[0]);
+    }
+    request.append("web", JSON.stringify(web));
+    request.append("social", JSON.stringify(social));
     setIsLoading(true);
     updateUserInfo(userId, request)
       .then((res) => {
@@ -119,11 +256,8 @@ const ProfileSettingsForm = () => {
 
   return (
     /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
-    <div
-      className={`grid justify-items-center my-24 ${
-        isLoading ? "loading" : ""
-      }`}
-    >
+    <div className={`grid justify-items-center my-24`}>
+      {isLoading && <div className="loading"></div>}
       <h1 className="text-5xl font-bold mb-16">PROFILE</h1>
       <form
         id="profile-setting"
@@ -176,7 +310,7 @@ const ProfileSettingsForm = () => {
               First Name
             </label>
             <input
-              className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none"
               id="first-name"
               name="firstName"
               type="text"
@@ -196,7 +330,7 @@ const ProfileSettingsForm = () => {
               Last Name
             </label>
             <input
-              className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none"
               id="last-name"
               name="lastName"
               type="text"
@@ -212,17 +346,28 @@ const ProfileSettingsForm = () => {
               className="block tracking-wide text-gray-700 text-s font-bold mb-2"
               htmlFor="display-name"
             >
-              Display Name
+              Display Name (<span className="text-red-500">*</span>)
             </label>
             <input
-              className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className={`block w-full border ${
+                errors.displayName ? "border-red-500" : "border-zinc-300"
+              } rounded py-3 px-4 mb-3 leading-tight ${
+                errors.displayName ? "focus:border focus:border-red-500" : ""
+              }`}
               id="display-name"
               name="displayName"
               type="text"
               placeholder=""
-              {...register("displayName")}
+              {...register("displayName", {
+                required: "Display Name is required.",
+              })}
               defaultValue={userinfo ? userinfo["display_name"] : ""}
             />
+            {errors.displayName && (
+              <p className="text-red-500 text-xs ">
+                {errors.displayName.message}
+              </p>
+            )}
           </div>
         </div>
         <div className="flex flex-wrap mb-6">
@@ -234,14 +379,21 @@ const ProfileSettingsForm = () => {
               E-mail Address
             </label>
             <input
-              className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none"
               id="email-address"
               name="emailAddress"
-              type="email"
+              type="text"
               placeholder=""
-              {...register("emailAddress")}
+              {...register("emailAddress", {
+                pattern: /^\w+([-+.']\w+)*[\-]?@\w+([-.]\w+)*\.\w+([-.]\w+)*$/,
+              })}
               defaultValue={userinfo ? userinfo["email"] : ""}
             />
+            {errors.emailAddress && (
+              <p className="text-red-500 text-xs ">
+                Please enter a valid email address (example: johndoe@domain.com)
+              </p>
+            )}
           </div>
         </div>
         <div className="flex flex-wrap mb-6">
@@ -250,9 +402,31 @@ const ProfileSettingsForm = () => {
               className="block  tracking-wide text-gray-700 text-s font-bold mb-2"
               htmlFor="cover-photo"
             >
-              Cover Photo
+              Cover photo (upto 4MB)
             </label>
-            <FileDragAndDrop height="230px" />
+            {coverPhotoUrl === "" ? (
+              <FileDragAndDrop
+                maxFiles={1}
+                height="230px"
+                onDrop={(e) => coverPhotoSelect(e)}
+                sizePlaceholder="1300X600"
+                maxSize={4000000}
+              />
+            ) : (
+              <div className="relative">
+                <img
+                  className="coverPreview block"
+                  src={coverPhotoUrl}
+                  alt=""
+                />
+                <img
+                  alt=""
+                  src={deleteIcon}
+                  onClick={closeCoverPhoto}
+                  className="absolute top-2 cp right-0"
+                />
+              </div>
+            )}
           </div>
         </div>
         <div className="flex flex-wrap mb-6">
@@ -264,14 +438,13 @@ const ProfileSettingsForm = () => {
               Role
             </label>
             <input
-              className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none"
               id="roll"
-              name="roll"
               type="text"
               placeholder="Type and press enter"
               defaultValue={""}
               {...register("roll")}
-              onKeyUp={handleRoleChange}
+              onKeyPress={handleRoleChange}
             />
           </div>
           {roleList &&
@@ -303,7 +476,7 @@ const ProfileSettingsForm = () => {
             </label>
             <div className="relative">
               <select
-                className="block w-full border border-zinc-300 rounded focus:outline-none focus:bg-white"
+                className="block w-full border border-zinc-300 rounded focus:outline-none"
                 id="location-country"
                 name="locationCountry"
                 onChange={handleCountrySelect}
@@ -327,9 +500,10 @@ const ProfileSettingsForm = () => {
             </label>
             <div className="relative">
               <select
-                className="block w-full border border-zinc-300 rounded focus:outline-none focus:bg-white"
+                className="block w-full border border-zinc-300 rounded focus:outline-none"
                 id="location-area"
                 name="locationArea"
+                {...register("locationArea")}
               >
                 {stateList &&
                   stateList.map((stat, index) => (
@@ -346,13 +520,16 @@ const ProfileSettingsForm = () => {
           <div className="w-full px-3">
             <label
               className="block  tracking-wide text-gray-700 text-s font-bold mb-2"
-              htmlFor="comment"
+              htmlFor="biography"
             >
               Comment, Biography
             </label>
             <textarea
               rows="6"
-              className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white resize-none"
+              id="biography"
+              name="biography"
+              {...register("biography")}
+              className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none resize-none"
             ></textarea>
           </div>
         </div>
@@ -370,14 +547,31 @@ const ProfileSettingsForm = () => {
                   >
                     SNC
                   </label>
-                  {/*<div className="static">
+                  <div className="absolute">
                     <button
                       id="dropdownDefault"
                       className="text-black border border-zinc-300 rounded px-4 py-2.5 text-center inline-flex items-center"
                       type="button"
                       onClick={showHideSNCPopup}
                     >
-                      Select SNC
+                      {selectedSNC ? (
+                        <>
+                          <div className="inline-flex">
+                            <img
+                              className="cp"
+                              src={require(`assets/images/profile/social/ico_${selectedSNC.title}.svg`)}
+                              height={24}
+                              width={24}
+                              alt="social logo"
+                            />
+                            <div className="capitalize pl-1.5">
+                              {selectedSNC.title}
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        "Select SNC"
+                      )}
                       <svg
                         className="ml-2 w-4 h-4"
                         fill="none"
@@ -395,57 +589,37 @@ const ProfileSettingsForm = () => {
                     </button>
                     <div
                       id="sncdropdown"
-                      className="hidden z-10 bg-white rounded divide-y divide-gray-100 shadow"
+                      className="hidden z-10 bg-white rounded shadow"
                     >
                       <ul
-                        className="py-1 text-sm text-gray-700 dark:text-gray-200"
+                        className="py-1 text-sm text-gray-700 dark:text-gray-200 divide-y divide-gray-100"
                         aria-labelledby="dropdownDefault"
                       >
-                        <li className="hover:bg-[#0AB4AF] hover:text-white">
-                          <a href="#" className="block py-2 px-4">
-                            Discord
-                          </a>
-                        </li>
-                        <li className="hover:bg-[#0AB4AF] hover:text-white">
-                          <a href="#" className="block py-2 px-4">
-                            Twitter
-                          </a>
-                        </li>
-                        <li className="hover:bg-[#0AB4AF] hover:text-white">
-                          <a href="#" className="block py-2 px-4">
-                            Facebook
-                          </a>
-                        </li>
-                        <li className="hover:bg-[#0AB4AF] hover:text-white">
-                          <a href="#" className="block py-2 px-4">
-                            Instagram
-                          </a>
-                        </li>
+                        {socialLinks.map((link) => (
+                          <li
+                            onClick={() => {
+                              setSelectedSNC(link);
+                              showHideSNCPopup();
+                            }}
+                            className="hover:bg-[#0AB4AF] hover:text-white cursor-pointer"
+                            key={link.id}
+                          >
+                            <div className="inline-flex p-1.5">
+                              <img
+                                className="cp"
+                                src={require(`assets/images/profile/social/ico_${link.title}.svg`)}
+                                height={24}
+                                width={24}
+                                alt="social logo"
+                              />
+                              <div className="capitalize pl-1.5">
+                                {link.title}
+                              </div>
+                            </div>
+                          </li>
+                        ))}
                       </ul>
                     </div>
-                  </div>*/}
-                  <div className="relative">
-                    <select
-                      className="block w-full border border-zinc-300 rounded focus:outline-none focus:bg-white"
-                      id="snc"
-                      name="snc"
-                      {...register("snc")}
-                    >
-                      <option>Discord</option>
-                      <option>Twitter</option>
-                      <option>facebook</option>
-                      <option>Instagram</option>
-                      <option>Youtube</option>
-                      <option>Tumblr</option>
-                      <option>Weibo</option>
-                      <option>Spotify</option>
-                      <option>Github</option>
-                      <option>Behance</option>
-                      <option>Dribbble</option>
-                      <option>Opensea</option>
-                      <option>Rarible</option>
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"></div>
                   </div>
                 </div>
                 <div className="w-full md:w-8/12">
@@ -456,7 +630,7 @@ const ProfileSettingsForm = () => {
                     &nbsp;
                   </label>
                   <input
-                    className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                    className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none"
                     id="snc-url"
                     name="sncUrl"
                     type="text"
@@ -487,10 +661,23 @@ const ProfileSettingsForm = () => {
                     className="w-full py-4 grid grid-cols-3"
                     key={`snc-${index}`}
                   >
-                    <div>{snc.title}</div>
-                    <div>{snc.url}</div>
-                    <div className="text-gray-500 text-right">
-                      <i className="fa fa-times" aria-hidden="true"></i>
+                    <div className="inline-flex p-1.5">
+                      <img
+                        className="cp"
+                        src={require(`assets/images/profile/social/ico_${snc.title}.svg`)}
+                        height={24}
+                        width={24}
+                        alt="social logo"
+                      />
+                      <div className="capitalize pl-1.5">{snc.title}</div>
+                    </div>
+                    <div className="p-1.5">{snc.url}</div>
+                    <div className="p-1.5 text-gray-500 text-right">
+                      <i
+                        onClick={() => handleRemoveSnc(index)}
+                        className="fa fa-times"
+                        aria-hidden="true"
+                      ></i>
                     </div>
                   </div>
                 ))}
@@ -513,7 +700,7 @@ const ProfileSettingsForm = () => {
                     Website
                   </label>
                   <input
-                    className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                    className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none"
                     id="website"
                     name="website"
                     type="text"
@@ -530,7 +717,7 @@ const ProfileSettingsForm = () => {
                     &nbsp;
                   </label>
                   <input
-                    className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                    className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none"
                     id="website-url"
                     name="websiteUrl"
                     type="text"
@@ -564,7 +751,11 @@ const ProfileSettingsForm = () => {
                     <div>{website.title}</div>
                     <div>{website.url}</div>
                     <div className="text-gray-500 text-right">
-                      <i className="fa fa-times" aria-hidden="true"></i>
+                      <i
+                        onClick={() => handleRemoveWebsite(index)}
+                        className="fa fa-times"
+                        aria-hidden="true"
+                      ></i>
                     </div>
                   </div>
                 ))}
