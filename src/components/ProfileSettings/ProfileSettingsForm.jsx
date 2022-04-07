@@ -75,6 +75,31 @@ const ProfileSettingsForm = () => {
       if (userinfo["job"]) {
         setRoleList(userinfo["job"].split(","));
       }
+      if (userinfo["web"]) {
+        try {
+          const webs = JSON.parse(userinfo["web"]);
+          const weblist = [...webs].map((e) => ({
+            title: Object.keys(e)[0],
+            url: Object.values(e)[0],
+          }));
+          setWebsiteList(weblist);
+        } catch {
+          setWebsiteList([]);
+        }
+      }
+
+      if (userinfo["social"]) {
+        try {
+          const sociallinks = JSON.parse(userinfo["social"]);
+          const sncs = [...sociallinks].map((e) => ({
+            title: Object.keys(e)[0],
+            url: Object.values(e)[0],
+          }));
+          setsncList(sncs);
+        } catch {
+          setsncList([]);
+        }
+      }
     } catch {}
     dispatch(setUserInfo(userinfo));
     setIsLoading(false);
@@ -217,8 +242,8 @@ const ProfileSettingsForm = () => {
     if (coverPhoto[0]) {
       request.append("cover", coverPhoto[0]);
     }
-    request.append("web", web);
-    request.append("social", social);
+    request.append("web", JSON.stringify(web));
+    request.append("social", JSON.stringify(social));
     setIsLoading(true);
     updateUserInfo(userId, request)
       .then((res) => {
