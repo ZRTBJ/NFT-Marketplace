@@ -42,11 +42,18 @@ const Header = () => {
       }
     }
   }, [account]);
+
   useEffect(() => {
     torusInit().then((e) => {
       setTorusAccountInfo(e);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (userId && !userinfo.display_name) {
+      getUserDetails(userId, false);
+    }
   }, []);
 
   useEffect(() => {
@@ -96,14 +103,14 @@ const Header = () => {
       setIsLoading(true);
       let response = await loginUser(authDispatch, request);
       setUserId(response["user_id"]);
-      getUserDetails(response["user_id"]);
+      getUserDetails(response["user_id"], true);
     } catch (error) {
       setIsLoading(false);
       console.log(error);
     }
   }
 
-  async function getUserDetails(userID) {
+  async function getUserDetails(userID, isNavigate) {
     const response = await getUserInfo(userID);
     let userinfo;
     try {
@@ -111,14 +118,16 @@ const Header = () => {
     } catch {}
     dispatch(setUserInfo(userinfo));
     setIsLoading(false);
-    if (
-      userinfo &&
-      userinfo["display_name"] &&
-      userinfo["display_name"].length > 0
-    ) {
-      history.push("/profile");
-    } else {
-      history.push("/profile-settings");
+    if (isNavigate === true) {
+      if (
+        userinfo &&
+        userinfo["display_name"] &&
+        userinfo["display_name"].length > 0
+      ) {
+        history.push("/profile");
+      } else {
+        history.push("/profile-settings");
+      }
     }
     setShowModal(false);
   }
@@ -150,11 +159,9 @@ const Header = () => {
       <Sidebar show={showSideBar} handleClose={() => setShowSideBar(false)} />
       <nav className="bg-white border border-gray-200">
         <div className="flex justify-between items-center">
-          <div
-            onClick={() => setShowSideBar(true)}
-            className="flex flex-wrap cp"
-          >
+          <div className="flex flex-wrap cp">
             <button
+              onClick={() => setShowSideBar(true)}
               type="button"
               className="inline-flex items-center p-2 ml-3 mr-3 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
               aria-controls="side-menu"
@@ -170,7 +177,7 @@ const Header = () => {
                 <path
                   fillRule="evenodd"
                   d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                  clip-rule="evenodd"
+                  clipRule="evenodd"
                 ></path>
               </svg>
               <svg
@@ -182,11 +189,11 @@ const Header = () => {
                 <path
                   fillRule="evenodd"
                   d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                  clip-rule="evenodd"
+                  clipRule="evenodd"
                 ></path>
               </svg>
             </button>
-            <div className="mx-auto">
+            <div className="mx-auto" onClick={() => history.push("/")}>
               <img className="cp" src={logo} height="39" width="165" alt="" />
             </div>
           </div>

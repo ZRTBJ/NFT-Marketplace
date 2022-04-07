@@ -364,7 +364,7 @@ const ProfileSettingsForm = () => {
               defaultValue={userinfo ? userinfo["display_name"] : ""}
             />
             {errors.displayName && (
-              <p className="text-red-500 text-xs ">
+              <p className="text-red-500 text-xs font-medium">
                 {errors.displayName.message}
               </p>
             )}
@@ -379,7 +379,11 @@ const ProfileSettingsForm = () => {
               E-mail Address
             </label>
             <input
-              className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none"
+              className={`block w-full border ${
+                errors.emailAddress ? "border-red-500" : "border-zinc-300"
+              } rounded py-3 px-4 mb-3 leading-tight ${
+                errors.emailAddress ? "focus:border focus:border-red-500" : ""
+              }`}
               id="email-address"
               name="emailAddress"
               type="text"
@@ -390,7 +394,7 @@ const ProfileSettingsForm = () => {
               defaultValue={userinfo ? userinfo["email"] : ""}
             />
             {errors.emailAddress && (
-              <p className="text-red-500 text-xs ">
+              <p className="text-red-500 text-xs font-medium">
                 Please enter a valid email address (example: johndoe@domain.com)
               </p>
             )}
@@ -580,7 +584,7 @@ const ProfileSettingsForm = () => {
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
-                          stroke-linecap="round"
+                          strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth="2"
                           d="M19 9l-7 7-7-7"

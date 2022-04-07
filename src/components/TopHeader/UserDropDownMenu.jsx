@@ -33,7 +33,7 @@ const UserDropDownMenu = () => {
   function handleLogout() {
     logout(dispatch);
     showHideUserPopup();
-    history.push("/login");
+    history.push("/");
     window.location.reload();
   }
 
@@ -101,7 +101,7 @@ const UserDropDownMenu = () => {
                     <div className="text-[20px]">$12.00 USD</div>
                     <div className="mt-1">
                       <span className="inline-flex items-center justify-center px-2.5 py-1.5 text-xs font-bold leading-none text-slate-500 bg-white rounded-full border-x">
-                        <div class="w-2 h-2 rounded-full bg-[#0AB4AF] mr-1"></div>
+                        <div className="w-2 h-2 rounded-full bg-[#0AB4AF] mr-1"></div>
                         ETHRIAM Mainnet
                       </span>
                     </div>
