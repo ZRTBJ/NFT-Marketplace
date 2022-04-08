@@ -675,7 +675,7 @@ const ProfileSettingsForm = () => {
                       />
                       <div className="capitalize pl-1.5">{snc.title}</div>
                     </div>
-                    <div className="p-1.5">{snc.url}</div>
+                    <div className="p-1.5 truncate">{snc.url}</div>
                     <div className="p-1.5 text-gray-500 text-right">
                       <i
                         onClick={() => handleRemoveSnc(index)}
@@ -753,7 +753,7 @@ const ProfileSettingsForm = () => {
                     key={`website-${index}`}
                   >
                     <div>{website.title}</div>
-                    <div>{website.url}</div>
+                    <div className="truncate ">{website.url}</div>
                     <div className="text-gray-500 text-right">
                       <i
                         onClick={() => handleRemoveWebsite(index)}
