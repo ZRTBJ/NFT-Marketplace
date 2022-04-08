@@ -243,7 +243,7 @@ const Header = () => {
                       {/* Dropdown menu */}
                       <div
                         id="userDropDown"
-                        className="hidden z-10 w-72 bg-white text-base rounded divide-y divide-gray-100 shadow-xl dark:bg-gray-700 dark:divide-gray-600 float-right mt-4"
+                        className="hidden relative z-10 w-72 bg-white text-base rounded divide-y divide-gray-100 shadow-xl dark:bg-gray-700 dark:divide-gray-600 float-right mt-4"
                       >
                         <UserDropDownMenu />
                       </div>

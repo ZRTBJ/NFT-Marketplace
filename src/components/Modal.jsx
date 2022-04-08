@@ -1,7 +1,6 @@
 import "../assets/css/Modal.css";
 import ModalCloseLogo from "assets/images/projectCreate/ico_closemodal.svg";
 const Modal = ({ handleClose, show, children, height, width }) => {
-  const showHideClassName = show ? "modal display-block" : "modal display-none";
   let styleObj = {
     height: height ? height + "px" : "",
     maxWidth: width ? width + "px" : "",
@@ -13,7 +12,10 @@ const Modal = ({ handleClose, show, children, height, width }) => {
     // e.stopImmediatePropagation();
   };
   return (
-    <div className={showHideClassName} onClick={handleClose}>
+    <div
+      className={`${show ? "modal display-block" : "modal display-none"} z-10`}
+      onClick={handleClose}
+    >
       <section
         onClick={(e) => modalBodyClicked(e)}
         style={styleObj}
