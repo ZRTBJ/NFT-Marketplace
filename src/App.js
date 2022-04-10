@@ -4,6 +4,7 @@ import routes from "routes/routes.js";
 import { AuthProvider } from "./Context";
 import AppRoute from "components/AppRoute";
 import Header from "components/TopHeader/Header";
+import FooterPage from "./Pages/Footer";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
               />
             ))}
           </Switch>
+          <FooterPage />
         </AuthProvider>
       </Router>
     </div>
