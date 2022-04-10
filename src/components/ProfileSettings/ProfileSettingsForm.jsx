@@ -9,6 +9,8 @@ import { setUserInfo } from "../../Slice/userSlice";
 import { useDispatch } from "react-redux";
 import { getUserInfo } from "../../services/User/userService";
 import deleteIcon from "assets/images/projectCreate/ico_delete01.svg";
+import SuccessModal from "../modalDialog/SuccessModal";
+import ErrorModal from "../modalDialog/ErrorModal";
 
 const ProfileSettingsForm = () => {
   const dispatch = useDispatch();
@@ -25,6 +27,8 @@ const ProfileSettingsForm = () => {
   const [coverPhotoUrl, setCoverPhotoUrl] = useState("");
   const [coverPhoto, setCoverPhoto] = useState([]);
   const [selectedSNC, setSelectedSNC] = useState();
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
   const socialLinks = [
     { id: 0, title: "discord" },
@@ -247,10 +251,18 @@ const ProfileSettingsForm = () => {
     setIsLoading(true);
     updateUserInfo(userId, request)
       .then((res) => {
+        if (res && res.code === 0) {
+          setShowErrorModal(false);
+          setShowSuccessModal(true);
+        } else {
+          setShowErrorModal(true);
+        }
         setIsLoading(false);
       })
       .catch((err) => {
         setIsLoading(false);
+        setShowSuccessModal(false);
+        setShowErrorModal(true);
       });
   };
 
@@ -781,6 +793,15 @@ const ProfileSettingsForm = () => {
           </div>
         </div>
       </form>
+      {showSuccessModal && (
+        <SuccessModal
+          handleClose={setShowSuccessModal}
+          show={showSuccessModal}
+        />
+      )}
+      {showErrorModal && (
+        <ErrorModal handleClose={setShowErrorModal} show={showErrorModal} />
+      )}
     </div>
   );
 };
