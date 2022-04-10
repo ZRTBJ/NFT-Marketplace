@@ -40,7 +40,7 @@ async function refreshToken() {
     const user = jwt(refreshTkn);
     const tknExpDate = new Date(user.exp * 1000);
     const today = new Date();
-    const diff = Math.ceil((tknExpDate - today) / (1000 * 60 * 60 * 24));
+    const diff = (tknExpDate - today) / (1000 * 60 * 60 * 24);
     if (diff <= 1) {
       const headers = {
         "Content-Type": "multipart/form-data",
