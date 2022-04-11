@@ -19,8 +19,11 @@ import { useHistory } from "react-router-dom";
 import { setUserInfo } from "../../Slice/userSlice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
+import config from "config";
 
 const Header = () => {
+  // const ws = new WebSocket(`wss://${config.WEB_SOKET}/ws`);
+
   const history = useHistory();
   const dispatch = useDispatch();
   const { activateBrowserWallet, account, active, activate } = useEthers();
@@ -61,6 +64,30 @@ const Header = () => {
       window.ethereum.on("accountsChanged", handleAccountsChanged);
     }
   }, []);
+  useEffect(() => {
+    if (userId !== null) {
+      const ws = new WebSocket(`ws://${config.WEB_SOKET}/ws`);
+
+      const apiCall = {
+        event: "bts:subscribe",
+        data: { channel: "order_book_btcusd" },
+      };
+
+      ws.onopen = (event) => {
+        ws.send(JSON.stringify({ Token: localStorage.getItem("currentUser") }));
+      };
+
+      ws.onmessage = function (event) {
+        try {
+          console.log(event);
+        } catch (err) {
+          console.log(err);
+        }
+      };
+    } else {
+      console.log("no user");
+    }
+  }, [userId]);
 
   async function handleConnectWallet() {
     const isConnected = await isWalletConnected();
@@ -104,6 +131,10 @@ const Header = () => {
       let response = await loginUser(authDispatch, request);
       setUserId(response["user_id"]);
       getUserDetails(response["user_id"], true);
+      const apiCall = {
+        event: "bts:subscribe",
+        data: { channel: "order_book_btcusd" },
+      };
     } catch (error) {
       setIsLoading(false);
       console.log(error);
@@ -205,7 +236,7 @@ const Header = () => {
             >
               <li className="hidden sm:block">
                 <button
-                  onClick={torusLogout}
+                  onClick={() => history.push("/project-create")}
                   className="cp createProjectButtonConatiner"
                 >
                   CREATE PROJECT

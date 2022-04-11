@@ -29,7 +29,7 @@ const routes = [
   {
     path: "/project-create",
     component: ProjectCreate,
-    isPrivate: false,
+    isPrivate: true,
   },
 
   {
