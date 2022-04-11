@@ -1,8 +1,8 @@
 import React from "react";
-import { ReactComponent as Tokenfunding } from "../../assets/images/home/figure_tokenfunding.svg";
-import { ReactComponent as Collaboration } from "../../assets/images/home/figure_collaboration.svg";
-import { ReactComponent as Shared } from "../../assets/images/home/figure_shared.svg";
-import { ReactComponent as Mint } from "../../assets/images/home/figure_mint.svg";
+import Tokenfunding from "../../assets/images/home/figure_tokenfunding.svg";
+import Collaboration from "../../assets/images/home/figure_collaboration.svg";
+import Shared from "../../assets/images/home/figure_shared.svg";
+import Mint from "../../assets/images/home/figure_mint.svg";
 
 function WhatIsCreabo(props) {
   return (
@@ -15,7 +15,7 @@ function WhatIsCreabo(props) {
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8 lg-12 place-items-center mt-4 sm:mt-12 mx-4 sm:mx-6 xl:mx-40">
         <div className="lg:w-64 text-center max-w-fit">
           <div className="px-2 sm:px-14">
-            <Tokenfunding />
+            <img className="block mx-auto" src={Tokenfunding} alt="" />
           </div>
           <div className="text-lg sm:text-xl font-bold pt-4 pb-2">
             TOKEN FUNDING
@@ -27,7 +27,7 @@ function WhatIsCreabo(props) {
         </div>
         <div className="lg:w-64 text-center max-w-fit">
           <div className="px-2 sm:px-14">
-            <Collaboration />
+            <img className="block mx-auto" src={Collaboration} alt="" />
           </div>
           <div className="text-lg sm:text-xl font-bold pt-4 pb-2">
             COLLABORATION
@@ -39,7 +39,7 @@ function WhatIsCreabo(props) {
         </div>
         <div className="lg:w-64 text-center max-w-fit">
           <div className="px-2 sm:px-14">
-            <Shared />
+            <img className="block mx-auto" src={Shared} alt="" />
           </div>
           <div className="text-lg sm:text-xl font-bold pt-4 pb-2">
             SHARED OWNERSHIP
@@ -51,7 +51,7 @@ function WhatIsCreabo(props) {
         </div>
         <div className="lg:w-64 text-center max-w-fit">
           <div className="px-2 sm:px-14">
-            <Mint />
+            <img className="block mx-auto" src={Mint} alt="" />
           </div>
           <div className="text-lg sm:text-xl font-bold pt-4 pb-2">NFT MINT</div>
           <p className="antialiased text-sm sm:text-base">
