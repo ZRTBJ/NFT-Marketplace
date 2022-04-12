@@ -41,7 +41,7 @@ async function refreshToken() {
     const tknExpDate = new Date(user.exp * 1000);
     const today = new Date();
     const diff = (tknExpDate - today) / (1000 * 60 * 60 * 24);
-    if (diff <= 1) {
+    if (diff <= 6.5) {
       const headers = {
         "Content-Type": "multipart/form-data",
         refresh_token: refreshTkn,
@@ -55,11 +55,11 @@ async function refreshToken() {
         headers: headers,
       });
 
-      localStorage.setItem("currentUser", response.data.token);
-      localStorage.setItem("user_id", response.data.user_id);
-      localStorage.setItem("refresh_token", response.data["refresh_token"]);
+      localStorage.setItem("currentUser", response.token);
+      localStorage.setItem("user_id", response.user_id);
+      localStorage.setItem("refresh_token", response["refresh_token"]);
 
-      token = response.data.token;
+      token = response.token;
     }
   }
   return token;

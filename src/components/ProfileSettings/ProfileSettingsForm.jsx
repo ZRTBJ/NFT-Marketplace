@@ -254,6 +254,7 @@ const ProfileSettingsForm = () => {
         if (res && res.code === 0) {
           setShowErrorModal(false);
           setShowSuccessModal(true);
+          getUserDetails(userId);
         } else {
           setShowErrorModal(true);
         }

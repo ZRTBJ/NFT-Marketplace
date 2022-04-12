@@ -23,7 +23,7 @@ function FooterPage(props) {
               </span>
             </span>
             <div>
-              <ul class="list-none text-gray-100 text-base font-sans">
+              <ul className="list-none text-gray-100 text-base font-sans">
                 <li className="text-lg font-bold m-2.5">Service</li>
                 <li className="text-sm m-2.5">Create Project</li>
                 <li className="text-sm m-2.5">Project List</li>
@@ -33,7 +33,7 @@ function FooterPage(props) {
               </ul>
             </div>
             <div>
-              <ul class="list-none text-gray-100 text-base font-sans">
+              <ul className="list-none text-gray-100 text-base font-sans">
                 <li className="text-lg font-bold m-2.5">Company</li>
                 <li className="text-sm m-2.5">About</li>
                 <li className="text-sm m-2.5">Terms of service</li>
@@ -55,15 +55,15 @@ function FooterPage(props) {
                   <Discord className="fill-white" />
                 </span>
                 <i
-                  class="fa fa-instagram fa-lg m-2 pl-4 cursor-pointer"
+                  className="fa fa-instagram fa-lg m-2 pl-4 cursor-pointer"
                   aria-hidden="true"
                 ></i>
                 <i
-                  class="fa fa-facebook fa-lg m-2 pl-4 cursor-pointer"
+                  className="fa fa-facebook fa-lg m-2 pl-4 cursor-pointer"
                   aria-hidden="true"
                 ></i>
                 <i
-                  class="fa fa-twitter fa-lg m-2 pl-4 cursor-pointer"
+                  className="fa fa-twitter fa-lg m-2 pl-4 cursor-pointer"
                   aria-hidden="true"
                 ></i>
               </div>
