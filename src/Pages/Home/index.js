@@ -37,30 +37,35 @@ function Home(props) {
             <img
               className="h-[720px]"
               src={require(`assets/images/slider/AdobeStock_388577434_Preview.jpg`)}
+              alt="slider 1"
             />
           </div>
           <div>
             <img
               className="h-[720px]"
               src={require(`assets/images/slider/games-battlefield.jpg`)}
+              alt="slider 2"
             />
           </div>
           <div>
             <img
               className="h-[720px]"
               src={require(`assets/images/slider/game.jpg`)}
+              alt="slider 3"
             />
           </div>
           <div>
             <img
               className="h-[720px]"
               src={require(`assets/images/slider/halo.jpg`)}
+              alt="slider 4"
             />
           </div>
           <div>
             <img
               className="h-[720px]"
               src={require(`assets/images/slider/Gaming-Mobile-Wallpaper.jpg`)}
+              alt="slider 5"
             />
           </div>
         </Carousel>
@@ -112,6 +117,7 @@ function Home(props) {
           <div>
             <img
               src={require(`assets/images/slider/AdobeStock_388577434_Preview.jpg`)}
+              alt="slider 1"
               height={1020}
               width={650}
             />
@@ -119,6 +125,7 @@ function Home(props) {
           <div>
             <img
               src={require(`assets/images/slider/games-battlefield.jpg`)}
+              alt="slider 2"
               height={1020}
               width={650}
             />
@@ -126,6 +133,7 @@ function Home(props) {
           <div>
             <img
               src={require(`assets/images/slider/game.jpg`)}
+              alt="slider 3"
               height={1020}
               width={650}
             />
@@ -133,6 +141,7 @@ function Home(props) {
           <div>
             <img
               src={require(`assets/images/slider/halo.jpg`)}
+              alt="slider 4"
               height={1020}
               width={650}
             />
@@ -140,6 +149,7 @@ function Home(props) {
           <div>
             <img
               src={require(`assets/images/slider/Gaming-Mobile-Wallpaper.jpg`)}
+              alt="slider 1"
               height={1020}
               width={650}
             />

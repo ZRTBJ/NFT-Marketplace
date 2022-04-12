@@ -5,6 +5,7 @@ import Profile from "Pages/Profile";
 import ProfileSettings from "Pages/ProfileSettings";
 import ProfileProjectList from "Pages/ProfileProjectList";
 import ProjectCreate from "Pages/ProjectCreate";
+import ProjectPoll from "Pages/ProjectEditPoll";
 
 const routes = [
   {
@@ -37,7 +38,11 @@ const routes = [
     component: ProjectCreate,
     isPrivate: true,
   },
-
+  {
+    path: "/project-edit/:id/poll",
+    component: ProjectPoll,
+    isPrivate: true,
+  },
   {
     path: "/*",
     component: NotFound,
