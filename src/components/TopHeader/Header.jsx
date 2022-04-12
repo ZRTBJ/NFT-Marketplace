@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import Modal from "../Modal";
 import Sidebar from "../Sidebar/Sidebar";
@@ -67,16 +68,9 @@ const Header = () => {
   useEffect(() => {
     if (userId !== null) {
       const ws = new WebSocket(`ws://${config.WEB_SOKET}/ws`);
-
-      const apiCall = {
-        event: "bts:subscribe",
-        data: { channel: "order_book_btcusd" },
-      };
-
       ws.onopen = (event) => {
         ws.send(JSON.stringify({ Token: localStorage.getItem("currentUser") }));
       };
-
       ws.onmessage = function (event) {
         try {
           console.log(event);
