@@ -12,8 +12,7 @@ const ProfileSettings = () => {
   function projectEdit(id) {
     console.log(id);
     history.push({
-      pathname: "/project-edit-outline",
-      search: `id:${id}`,
+      pathname: `/project-edit/${id}/poll`,
     });
   }
   useEffect(() => {
