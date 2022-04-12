@@ -137,7 +137,7 @@ const UserDropDownMenu = () => {
       </div>
       <div className="text-gray-900 hover:bg-[#0AB4AF] hover:text-white">
         <Link
-          to=""
+          to="profile-project-list"
           className="inline-flex user-dropdown-item"
           onClick={showHideUserPopup}
         >
