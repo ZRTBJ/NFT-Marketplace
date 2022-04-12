@@ -44,3 +44,7 @@ export async function updateProject(screen, payload) {
     return await client("PUT", `/project/${payload.id}`, bodyFormData);
   }
 }
+
+export async function getMemberProjectList(payload) {
+  return await client("GET", `/project`);
+}

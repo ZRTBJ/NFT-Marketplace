@@ -7,7 +7,12 @@ import { NavLink } from "react-router-dom";
 const TopNavigationCard = () => {
   const navigationList = [
     { id: 0, title: "PROFILE", to: "/profile-settings", logo: <ProfileLogo /> },
-    { id: 1, title: "PROJECT", to: "/project-settings", logo: <ProjectLogo /> },
+    {
+      id: 1,
+      title: "PROJECT",
+      to: "/profile-project-list",
+      logo: <ProjectLogo />,
+    },
     {
       id: 2,
       title: "BOOKMARK",
@@ -28,7 +33,6 @@ const TopNavigationCard = () => {
         <NavLink
           key={i.id}
           to={i.to}
-          onClick={(e) => e.preventDefault()}
           className="topNavigationCardLinks"
           activeClassName="selectedTopNavigation"
         >

@@ -3,6 +3,7 @@ import Dashboard from "../Pages/Dashboard";
 import NotFound from "../Pages/NotFound";
 import Profile from "Pages/Profile";
 import ProfileSettings from "Pages/ProfileSettings";
+import ProfileProjectList from "Pages/ProfileProjectList";
 import ProjectCreate from "Pages/ProjectCreate";
 
 const routes = [
@@ -25,6 +26,11 @@ const routes = [
     path: "/profile-settings",
     component: ProfileSettings,
     isPrivate: false,
+  },
+  {
+    path: "/profile-project-list",
+    component: ProfileProjectList,
+    isPrivate: true,
   },
   {
     path: "/project-create",
