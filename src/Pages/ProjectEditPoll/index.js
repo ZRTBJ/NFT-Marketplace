@@ -1,8 +1,38 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ProjectEditTopNavigationCard from "components/ProjectEdit/ProjectEditTopNavigationCard";
 import ProjectCover from "components/ProjectEdit/ProjectCover";
+import { getProjectPollList } from "services/project/projectService";
+import Moment from "moment";
 
 function ProjectPoll(props) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [pollList, setPollList] = useState([]);
+  const [total, setTotal] = useState(1);
+
+  const projectId = props.match.params.id;
+  let pageNo = 1;
+  let pageSize = 15;
+
+  useEffect(() => {
+    if (projectId && !isLoading) {
+      getPollList(projectId);
+    }
+  }, []);
+
+  async function getPollList(projectId) {
+    setIsLoading(true);
+    const response = await getProjectPollList(projectId, pageNo, pageSize);
+    setTotal(response.total);
+    const newPollList = pollList.concat(response.polls);
+    setPollList(newPollList);
+    setIsLoading(false);
+  }
+
+  function getMore() {
+    pageNo++;
+    getPollList(projectId);
+  }
+
   return (
     <>
       <div className="sticky z-[1]">
@@ -19,111 +49,66 @@ function ProjectPoll(props) {
               New Post
             </span>
           </div>
-          <div className="pt-5">
-            <div className="flex">
-              <span className="inline-flex items-center justify-center px-3.5 py-1.5 text-sm sm:text-lg leading-none border border-[#0AB4AF] rounded-full">
-                <strong>DUE DATE&nbsp;&nbsp;</strong> 2022/04/13 - 2022/04/30
-              </span>
-              <span className="hidden sm:block ml-4 mt-2">2022/04/30</span>
+          {pollList && pollList.length > 0 ? (
+            <>
+              {pollList.map((poll, index) => (
+                <div className="pt-5" key={`poll-list-${index}`}>
+                  <div className="flex">
+                    <span
+                      className={`inline-flex items-center justify-center px-3.5 py-1.5 text-sm sm:text-s leading-none border ${
+                        poll.status === "success"
+                          ? "border-[#0AB4AF]"
+                          : poll.status === "failed"
+                          ? "border-red-400"
+                          : "border-gray-400"
+                      } rounded-full`}
+                    >
+                      <span className="font-medium">DUE DATE&nbsp;&nbsp;</span>{" "}
+                      {Moment(poll.start_at).format("YYYY/MM/DD")} -
+                      {Moment(poll.expire_at).format("YYYY/MM/DD")}
+                    </span>
+                    <span className="hidden sm:block ml-4 mt-2">
+                      {Moment(poll.updated_at).format("YYYY/MM/DD")}
+                    </span>
+                  </div>
+                  <p className="block sm:hidden mt-1.5">
+                    {Moment(poll.updated_at).format("YYYY/MM/DD")}
+                  </p>
+                  <div className="text-base sm:text-lg font-bold mt-1">
+                    {poll.title}
+                  </div>
+                  <div className="relative bottom-12 text-right text-gray-400">
+                    <i className="fa fa-angle-right fa-lg sm:fa-2x" />
+                  </div>
+                </div>
+              ))}
+            </>
+          ) : (
+            <></>
+          )}
+          {isLoading ? (
+            <div className={`h-12 w-full text-center`}>
+              <i
+                class="fa fa-spinner fa-spin fa-3x text-[#0AB4AF] mt-4 "
+                aria-hidden="true"
+              ></i>
             </div>
-            <p className="block sm:hidden mt-1.5">2022/04/30</p>
-            <div className="text-base sm:text-xl font-bold mt-1">
-              Propose to change the TOKEN CATEGORY ALLOCATION
-            </div>
-            <div className="relative bottom-12 text-right text-gray-400">
-              <i className="fa fa-angle-right fa-lg sm:fa-2x" />
-            </div>
-          </div>
-          <div className="pt-5">
-            <div className="flex">
-              <span className="inline-flex items-center justify-center px-3.5 py-1.5 text-sm sm:text-lg leading-none border border-gray-400 rounded-full">
-                <strong>DUE DATE&nbsp;&nbsp;</strong> 2022/04/13 - 2022/04/30
-              </span>
-              <span className="hidden sm:block ml-4 mt-2">2022/04/30</span>
-            </div>
-            <p className="block sm:hidden mt-1.5">2022/04/30</p>
-            <div className="text-base sm:text-xl font-bold mt-1">
-              Withdraw the project money
-            </div>
-            <div className="relative bottom-12 text-right text-gray-400">
-              <i className="fa fa-angle-right fa-lg sm:fa-2x" />
-            </div>
-          </div>
-          <div className="pt-5">
-            <div className="flex">
-              <span className="inline-flex items-center justify-center px-3.5 py-1.5 text-sm sm:text-lg leading-none border border-gray-400 rounded-full">
-                <strong>DUE DATE&nbsp;&nbsp;</strong> 2022/04/13 - 2022/04/30
-              </span>
-              <span className="hidden sm:block ml-4 mt-2">2022/04/30</span>
-            </div>
-            <p className="block sm:hidden mt-1.5">2022/04/30</p>
-            <div className="text-base sm:text-xl font-bold mt-1">
-              Withdraw the project money
-            </div>
-            <div className="relative bottom-12 text-right text-gray-400">
-              <i className="fa fa-angle-right fa-lg sm:fa-2x" />
-            </div>
-          </div>
-          <div className="pt-5">
-            <div className="flex">
-              <span className="inline-flex items-center justify-center px-3.5 py-1.5 text-sm sm:text-lg leading-none border border-gray-400 rounded-full">
-                <strong>DUE DATE&nbsp;&nbsp;</strong> 2022/04/13 - 2022/04/30
-              </span>
-              <span className="hidden sm:block ml-4 mt-2">2022/04/30</span>
-            </div>
-            <p className="block sm:hidden mt-1.5">2022/04/30</p>
-            <div className="text-base sm:text-xl font-bold mt-1">
-              Withdraw the project money
-            </div>
-            <div className="relative bottom-12 text-right text-gray-400">
-              <i className="fa fa-angle-right fa-lg sm:fa-2x" />
-            </div>
-          </div>
-          <div className="pt-5">
-            <div className="flex">
-              <span className="inline-flex items-center justify-center px-3.5 py-1.5 text-sm sm:text-lg leading-none border border-gray-400 rounded-full">
-                <strong>DUE DATE&nbsp;&nbsp;</strong> 2022/04/13 - 2022/04/30
-              </span>
-              <span className="hidden sm:block ml-4 mt-2">2022/04/30</span>
-            </div>
-            <p className="block sm:hidden mt-1.5">2022/04/30</p>
-            <div className="text-base sm:text-xl font-bold mt-1">
-              Withdraw the project money
-            </div>
-            <div className="relative bottom-12 text-right text-gray-400">
-              <i className="fa fa-angle-right fa-lg sm:fa-2x" />
-            </div>
-          </div>
-          <div className="pt-5">
-            <div className="flex">
-              <span className="inline-flex items-center justify-center px-3.5 py-1.5 text-sm sm:text-lg leading-none border border-gray-400 rounded-full">
-                <strong>DUE DATE&nbsp;&nbsp;</strong> 2022/04/13 - 2022/04/30
-              </span>
-              <span className="hidden sm:block ml-4 mt-2">2022/04/30</span>
-            </div>
-            <p className="block sm:hidden mt-1.5">2022/04/30</p>
-            <div className="text-base sm:text-xl font-bold mt-1">
-              Withdraw the project money
-            </div>
-            <div className="relative bottom-12 text-right text-gray-400">
-              <i className="fa fa-angle-right fa-lg sm:fa-2x" />
-            </div>
-          </div>
-          <div className="pt-5">
-            <div className="flex">
-              <span className="inline-flex items-center justify-center px-3.5 py-1.5 text-sm sm:text-lg leading-none border border-gray-400 rounded-full">
-                <strong>DUE DATE&nbsp;&nbsp;</strong> 2022/04/13 - 2022/04/30
-              </span>
-              <span className="hidden sm:block ml-4 mt-2">2022/04/30</span>
-            </div>
-            <p className="block sm:hidden mt-1.5">2022/04/30</p>
-            <div className="text-base sm:text-xl font-bold mt-1">
-              Withdraw the project money
-            </div>
-            <div className="relative bottom-12 text-right text-gray-400">
-              <i className="fa fa-angle-right fa-lg sm:fa-2x" />
-            </div>
-          </div>
+          ) : (
+            <>
+              {total - pageSize > 0 ? (
+                <div className={`h-12 w-full text-center pt-8`}>
+                  <span
+                    className="text-[#0AB4AF] cursor-pointer font-medium"
+                    onClick={getMore}
+                  >
+                    See more
+                  </span>
+                </div>
+              ) : (
+                <></>
+              )}
+            </>
+          )}
         </div>
       </div>
     </>
