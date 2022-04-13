@@ -71,7 +71,6 @@ export default function Outline({
   function closeCoverPhoto() {
     setCoverPhoto([]);
     setCoverPhotoUrl("");
-    closeCoverPhotoPreview();
   }
   function closePhoto(i) {
     setPhotosUrl(photosUrl.filter((x) => x.name !== i));
@@ -142,7 +141,8 @@ export default function Outline({
   }, [coverPhoto]);
   return (
     <div className="outlineContainer">
-      <div className="OutlineTitle">OUTLINE</div>
+      <div className="OutlineTitle mb-[80px]">OUTLINE</div>
+
       <div className="mb-6">
         <div className="lable">Project Name</div>
         <DebounceInput

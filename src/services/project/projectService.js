@@ -48,3 +48,6 @@ export async function updateProject(screen, payload) {
 export async function getMemberProjectList(payload) {
   return await client("GET", `/project`);
 }
+export async function getProjectDetailsById(payload) {
+  return await client("GET", `/project/${payload.id}`);
+}

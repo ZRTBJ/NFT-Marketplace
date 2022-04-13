@@ -2,8 +2,10 @@ import React from "react";
 
 export default function SelectTypeCard(props) {
   function active(props) {
-    props.info.active = true;
-    props.cardClick(props);
+    if (props.info.selectable) {
+      props.info.active = true;
+      props.cardClick(props);
+    }
   }
   return (
     <div
