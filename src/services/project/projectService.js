@@ -48,3 +48,10 @@ export async function updateProject(screen, payload) {
 export async function getMemberProjectList(payload) {
   return await client("GET", `/project`);
 }
+
+export async function getProjectPollList(projectId, pageNo, pageSize) {
+  return await client(
+    "GET",
+    `/project/${projectId}/poll?page=${pageNo}&limit=${pageSize}`
+  );
+}

@@ -41,7 +41,7 @@ async function refreshToken() {
     const tknExpDate = new Date(user.exp * 1000);
     const today = new Date();
     const diff = (tknExpDate - today) / (1000 * 60 * 60 * 24);
-    if (diff <= 6.5) {
+    if (diff <= 6.96) {
       const headers = {
         "Content-Type": "multipart/form-data",
         refresh_token: refreshTkn,

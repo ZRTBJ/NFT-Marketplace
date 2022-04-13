@@ -53,7 +53,7 @@ const ProjectEditTopNavigationCard = () => {
     },
   ];
   return (
-    <div className="topNavigationCardContainer !w-[320px] sm:!w-[620px] !h-auto bg-white overflow-y-scroll">
+    <div className="topNavigationCardContainer !w-[320px] sm:!w-[620px] !h-auto bg-white">
       {navigationList.map((i) => (
         <NavLink
           key={i.id}
