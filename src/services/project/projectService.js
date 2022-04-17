@@ -51,3 +51,9 @@ export async function getMemberProjectList(payload) {
 export async function getProjectDetailsById(payload) {
   return await client("GET", `/project/${payload.id}`);
 }
+export async function getProjectPollList(projectId, pageNo, pageSize) {
+  return await client(
+    "GET",
+    `/project/${projectId}/poll?page=${pageNo}&limit=${pageSize}`
+  );
+}
