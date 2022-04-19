@@ -7,9 +7,7 @@ import SelectType from "components/ProjectCreate/SelectType";
 import Outline from "components/ProjectCreate/Outline";
 import Token from "components/ProjectCreate/Token";
 import { createProject, updateProject } from "services/project/projectService";
-
 import DraftLogo from "assets/images/projectCreate/draftLogo.svg";
-
 import Modal from "components/Modal";
 
 export default function CreateProjectLayout() {
