@@ -1,7 +1,7 @@
 import "assets/css/profileSettings.css";
 import TopNavigationCard from "components/ProfileSettings/TopNavigationCard";
 import { useState, useEffect } from "react";
-import { getMemberProjectList } from "services/project/projectService";
+import { getUserProjectListById } from "services/project/projectService";
 import ProjectCard from "components/profile/ProjectCard";
 import { useHistory } from "react-router-dom";
 
@@ -12,7 +12,7 @@ const ProfileSettings = () => {
   function projectEdit(id) {
     console.log(id);
     history.push({
-      pathname: `/project-edit/${id}/poll`,
+      pathname: `/project-edit/${id}/outline`,
     });
   }
   useEffect(() => {
@@ -24,7 +24,7 @@ const ProfileSettings = () => {
         perPage: 10,
       };
       let projectListCards = [];
-      await getMemberProjectList(payload).then((e) => {
+      await getUserProjectListById(payload).then((e) => {
         if (e && e.data) {
           e.data.forEach((element) => {
             let assets = element.assets.find(

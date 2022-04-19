@@ -11,17 +11,21 @@ export default function SelectType(props) {
     props.setActiveTab(type);
   }
   function votingPowerCardClick(active, params) {
-    if (active.title === "CUSTOM") {
-      let inactive = active.votingPower.find((x) => x.title !== params.title);
-      inactive.active = false;
-      props.votingPowerProps(params);
+    if (params.selectable) {
+      if (active.title === "CUSTOM") {
+        let inactive = active.votingPower.find((x) => x.title !== params.title);
+        inactive.active = false;
+        props.votingPowerProps(params);
+      }
     }
   }
   function canVoteCardClick(active, params) {
-    if (active.title === "CUSTOM") {
-      let inactive = active.canVote.find((x) => x.title !== params.title);
-      inactive.active = false;
-      props.canVoteProps(params);
+    if (params.selectable) {
+      if (active.title === "CUSTOM") {
+        let inactive = active.canVote.find((x) => x.title !== params.title);
+        inactive.active = false;
+        props.canVoteProps(params);
+      }
     }
   }
 

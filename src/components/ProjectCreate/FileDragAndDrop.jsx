@@ -8,6 +8,7 @@ export default function FileDragAndDrop({
   onDrop,
   sizePlaceholder,
   maxSize,
+  disabled,
 }) {
   const baseStyle = {
     flex: 1,
@@ -45,6 +46,7 @@ export default function FileDragAndDrop({
       maxFiles: maxFiles,
       noClick: false,
       maxSize: maxSize,
+      disabled: disabled ? disabled : false,
     });
   const style = useMemo(
     () => ({
