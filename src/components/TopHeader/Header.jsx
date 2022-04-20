@@ -195,7 +195,7 @@ const Header = () => {
             <button
               onClick={() => setShowSideBar(true)}
               type="button"
-              className="inline-flex items-center p-2 ml-3 mr-3 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+              className="inline-flex items-center p-2 ml-3 mr-3 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
               aria-controls="side-menu"
               aria-expanded="false"
             >
@@ -275,7 +275,7 @@ const Header = () => {
                       {/* Dropdown menu */}
                       <div
                         id="userDropDown"
-                        className="hidden relative z-10 w-72 bg-white text-base rounded divide-y divide-gray-100 shadow-xl dark:bg-gray-700 dark:divide-gray-600 float-right mt-4"
+                        className="hidden relative z-10 w-72 bg-white text-base rounded divide-y divide-gray-100 shadow-xl float-right mt-4"
                       >
                         <UserDropDownMenu />
                       </div>
