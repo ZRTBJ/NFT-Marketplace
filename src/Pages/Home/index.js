@@ -18,7 +18,7 @@ function Home(props) {
             <p>All together</p>
           </span>
         </div>
-        <div className="flex flex-col sm:flex-row absolute top-44 sm:top-80 lg:top-1/2 xl:top-2/3 left-32 sm:left-1/4 xl:left-1/3 z-[2]">
+        <div className="flex flex-col sm:flex-row absolute top-44 sm:top-80 lg:top-1/2 xl:top-3/4 left-32 sm:left-1/4 xl:left-1/3 z-[2]">
           <div
             className="h-8 sm:h-12 w-32 sm:w-48 pt-0.5 sm:pt-2 text-center rounded border-2 border-zinc-300 ml-4 sm:ml-4 lg:ml-10"
             style={{ background: "rgb(0,0,0,0.5)" }}

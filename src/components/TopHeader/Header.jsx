@@ -67,7 +67,14 @@ const Header = () => {
   }, []);
   useEffect(() => {
     if (userId !== null) {
-      const ws = new WebSocket(`ws://${config.WEB_SOKET}/ws`);
+      let host = "ws:";
+      try {
+        const loc = window.location;
+        if (loc.protocol === "https:") {
+          host = "wss:";
+        }
+      } catch {}
+      const ws = new WebSocket(`${host}//${config.WEB_SOKET}/ws`);
       ws.onopen = (event) => {
         ws.send(JSON.stringify({ Token: localStorage.getItem("currentUser") }));
       };
