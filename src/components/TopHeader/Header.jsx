@@ -28,7 +28,6 @@ const Header = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const { activateBrowserWallet, account, active, activate } = useEthers();
-  const etherBalance = useEtherBalance(account);
   const [showModal, setShowModal] = useState(false);
   const [showSideBar, setShowSideBar] = useState(false);
   const [metamaskAccount, setMetamaskAccount] = useState(account);
