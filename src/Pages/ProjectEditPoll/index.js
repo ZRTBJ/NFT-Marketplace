@@ -51,7 +51,7 @@ function ProjectPoll(props) {
         <span className="text-5xl font-bold">POLL</span>
         <div className="mt-8 divide-y divide-gray-300 w-full sm:w-2/3 px-4 sm:mx-0">
           {showNewPost === true ? (
-            <CreatePoll closeNewPost={closeNewPost} />
+            <CreatePoll closeNewPost={closeNewPost} projectId={projectId} />
           ) : (
             <>
               <div className="text-center sm:text-right">

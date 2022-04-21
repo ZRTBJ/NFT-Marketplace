@@ -39,7 +39,7 @@ const UserDropDownMenu = () => {
 
   return (
     <>
-      <div className="py-3 px-4 text-gray-900 dark:text-white">
+      <div className="py-3 px-4 text-gray-900">
         <div className="inline-flex items-center justify-center">
           <img
             className="rounded-full border border-gray-100 shadow-sm"

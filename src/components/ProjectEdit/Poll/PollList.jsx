@@ -44,7 +44,7 @@ const PollListView = (props) => {
       {props.isLoading ? (
         <div className={`h-12 w-full text-center`}>
           <i
-            class="fa fa-spinner fa-spin fa-3x text-[#0AB4AF] mt-4 "
+            className="fa fa-spinner fa-spin fa-3x text-[#0AB4AF] mt-4 "
             aria-hidden="true"
           ></i>
         </div>
@@ -64,7 +64,6 @@ const PollListView = (props) => {
           )}
         </>
       )}
-      ;
     </>
   );
 };
