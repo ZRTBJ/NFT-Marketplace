@@ -7,7 +7,7 @@ import { getProjectDetailsById } from "services/project/projectService";
 import { getProjectCategory } from "services/project/projectService";
 import { DebounceInput } from "react-debounce-input";
 import { checkUniqueProjectName } from "services/project/projectService";
-import FileDragAndDrop from "components/ProjectCreate/FileDragAndDrop";
+import FileDragAndDrop from "components/DraftProjectUpdate/FileDragAndDrop";
 import deleteIcon from "assets/images/projectCreate/ico_delete01.svg";
 import SuccessModal from "components/modalDialog/SuccessModal";
 import ErrorModal from "components/modalDialog/ErrorModal";

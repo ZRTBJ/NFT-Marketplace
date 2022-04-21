@@ -5,6 +5,7 @@ import Profile from "Pages/Profile";
 import ProfileSettings from "Pages/ProfileSettings";
 import ProfileProjectList from "Pages/ProfileProjectList";
 import ProjectCreate from "Pages/ProjectCreate";
+import DraftProjectUpdate from "Pages/DraftProjectUpdate";
 import ProjectPoll from "Pages/ProjectEditPoll";
 import ProjectEditOutline from "Pages/ProjectEditOutline";
 
@@ -35,10 +36,16 @@ const routes = [
     isPrivate: true,
   },
   {
-    path: "/project-create",
+    path: "/project-update/:id",
+    component: DraftProjectUpdate,
+    isPrivate: true,
+  },
+  {
+    path: "/project-create/",
     component: ProjectCreate,
     isPrivate: true,
   },
+
   {
     path: "/project-edit/:id/poll",
     component: ProjectPoll,

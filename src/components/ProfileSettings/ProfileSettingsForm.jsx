@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
-import FileDragAndDrop from "../ProjectCreate/FileDragAndDrop";
+import FileDragAndDrop from "../DraftProjectUpdate/FileDragAndDrop";
 import data from "../../data/countries";
 import { updateUserInfo } from "../../services/User/userService";
 import { useAuthState } from "Context";

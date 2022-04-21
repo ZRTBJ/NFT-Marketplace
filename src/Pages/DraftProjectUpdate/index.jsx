@@ -9,13 +9,8 @@ import Token from "components/DraftProjectUpdate/Token";
 import { createProject, updateProject } from "services/project/projectService";
 import DraftLogo from "assets/images/projectCreate/draftLogo.svg";
 import Modal from "components/Modal";
-import FullScreenModal from "components/FullScreenModal";
-export default function ProjectCreate() {
-  const [showFullScreenModal, setShowFullScreenModal] = useState(true);
-  function selectProjectTypeRadient(i) {
-    setSelectedTab(i);
-    setShowFullScreenModal(false);
-  }
+
+export default function DraftProjectUpdate() {
   /**
    * ==============================================
    * Project Type Start
@@ -231,144 +226,106 @@ export default function ProjectCreate() {
     setcurrentStep(currentStep.filter((x) => x !== currentIndex));
   }
   return (
-    <div>
-      {showFullScreenModal && (
-        <FullScreenModal>
-          <div className="text-center mt-[50px]">
-            <div className="mb-[24px] text-[42px] font-[600] text-[#192434]">
-              Welcome to CREABO
-            </div>
-            <div className="mb-[35px] text-[#192434]">
-              What are the objectives of your project?
-            </div>
-            <div className="md:max-w-[580px] block mx-auto">
-              <div className="flex flex-wrap justify-between">
-                {selectTypeTabData.map((i) => (
-                  <div key={i.id} className="md:max-w-[280px] mb-8">
-                    <div
-                      className="w-[280px] selectProjectTypeCardHeaderRedient h-[125px] pt-[50px] rounded-tl-lg rounded-tr-lg"
-                      style={{ background: i.backgroundColor }}
-                    >
-                      {i.title}
-                    </div>
-                    <div className="selectTypeCardBoxShadow rounded-bl-lg rounded-br-lg">
-                      <div className="p-3">{i.text}</div>
-                      <button
-                        className="h-[40px] m-3 w-[120px] bg-[#0AB4AF] text-[white] rounded"
-                        onClick={() => selectProjectTypeRadient(i)}
-                      >
-                        SELECT
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </FullScreenModal>
-      )}
-      <div className="flex flex-col md:flex-row ">
-        <div className="hidden md:block md:relative bg-[#f6f6f7]  w-full md:w-64 lg:w-80  content-center">
-          <LeftSideBar currentStep={currentStep} key={currentStep} />
-        </div>
-        <div className="flex-1">
-          <div className="stepTitleName">STEP{currentStep.length}</div>
-          <div className="cardContainer px-3 md:px-5">
-            {currentStep.length === 1 && (
-              <SelectType
-                setActiveTab={setActiveTab}
-                votingPowerProps={votingPowerProps}
-                canVoteProps={canVoteProps}
-                selectedTab={selectedTab}
-              />
-            )}
-            {currentStep.length === 2 && (
-              <Outline
-                isLoading={isLoading}
-                onProjectNameChange={onProjectNameChange}
-                emptyProjectName={emptyProjectName}
-                alreadyTakenProjectName={alreadyTakenProjectName}
-                closeCoverPhotoPreview={closeCoverPhotoPreview}
-                onCoverDrop={onCoverDrop}
-                closePhotoPreview={closePhotoPreview}
-                onPhotoDrop={onPhotoDrop}
-                emptyProjeCtCategory={emptyProjeCtCategory}
-                onProjectCategoryChange={onProjectCategoryChange}
-                overviewOnChange={overviewOnChange}
-                onChangeTagList={onChangeTagList}
-                onNeedMemberChange={onNeedMemberChange}
-              />
-            )}
-            {currentStep.length === 3 && <Token />}
-            {/* {currentStep === 1 && <SelectType />}
+    <div className="flex flex-col md:flex-row ">
+      <div className="hidden md:block md:relative bg-[#f6f6f7]  w-full md:w-64 lg:w-80  content-center">
+        <LeftSideBar currentStep={currentStep} key={currentStep} />
+      </div>
+      <div className="flex-1">
+        <div className="stepTitleName">STEP{currentStep.length}</div>
+        <div className="cardContainer px-3 md:px-5">
+          {currentStep.length === 1 && (
+            <SelectType
+              setActiveTab={setActiveTab}
+              votingPowerProps={votingPowerProps}
+              canVoteProps={canVoteProps}
+            />
+          )}
+          {currentStep.length === 2 && (
+            <Outline
+              isLoading={isLoading}
+              onProjectNameChange={onProjectNameChange}
+              emptyProjectName={emptyProjectName}
+              alreadyTakenProjectName={alreadyTakenProjectName}
+              closeCoverPhotoPreview={closeCoverPhotoPreview}
+              onCoverDrop={onCoverDrop}
+              closePhotoPreview={closePhotoPreview}
+              onPhotoDrop={onPhotoDrop}
+              emptyProjeCtCategory={emptyProjeCtCategory}
+              onProjectCategoryChange={onProjectCategoryChange}
+              overviewOnChange={overviewOnChange}
+              onChangeTagList={onChangeTagList}
+              onNeedMemberChange={onNeedMemberChange}
+            />
+          )}
+          {currentStep.length === 3 && <Token />}
+          {/* {currentStep === 1 && <SelectType />}
         {currentStep === 1 && <SelectType />}
         {currentStep === 1 && <SelectType />}
         {currentStep === 1 && <SelectType />} */}
-            <div className="buttonContainer">
-              <div
-                className={
-                  currentStep.length > 1
-                    ? "flex justify-between"
-                    : "flex justify-end"
-                }
-              >
-                {currentStep.length > 1 && (
-                  <button
-                    className="backButton"
-                    onClick={() => handelClickBack()}
-                    disabled={isLoading ? true : false}
-                  >
-                    BACK
-                  </button>
-                )}
-                <button
-                  disabled={isLoading ? true : false}
-                  className="nextButton"
-                  onClick={() => handelClickNext()}
-                >
-                  NEXT
-                </button>
-              </div>
+          <div className="buttonContainer">
+            <div
+              className={
+                currentStep.length > 1
+                  ? "flex justify-between"
+                  : "flex justify-end"
+              }
+            >
               {currentStep.length > 1 && (
                 <button
-                  onClick={saveDraft}
+                  className="backButton"
+                  onClick={() => handelClickBack()}
                   disabled={isLoading ? true : false}
-                  className={`
-                  ${isLoading === true ? "onlySpinner" : ""} saveDraft
-                `}
                 >
-                  {isLoading ? "" : "SAVE DRAFT"}
+                  BACK
                 </button>
               )}
-            </div>
-          </div>
-        </div>
-        {showModal && (
-          <Modal
-            height={361}
-            width={800}
-            show={showModal}
-            handleClose={() => setShowModal(false)}
-          >
-            <div className="text-center">
-              <img
-                className="w-[151px] h-[133px] block mx-auto mt-[50px]"
-                src={DraftLogo}
-                alt=""
-              />
-              <div className="mb-4 text-[20px] font-bold color-[#192434] draftModalText">
-                Your project saved the draft.
-              </div>
-              <div className="font-roboto mb-6">
-                You can edit information from your project list
-              </div>
-              <button className="w-[200px] h-[54px] bg-[#0AB4AF] rounded text-white">
-                PROJECT LIST
+              <button
+                disabled={isLoading ? true : false}
+                className="nextButton"
+                onClick={() => handelClickNext()}
+              >
+                NEXT
               </button>
             </div>
-          </Modal>
-        )}
+            {currentStep.length > 1 && (
+              <button
+                onClick={saveDraft}
+                disabled={isLoading ? true : false}
+                className={`
+                  ${isLoading === true ? "onlySpinner" : ""} saveDraft
+                `}
+              >
+                {isLoading ? "" : "SAVE DRAFT"}
+              </button>
+            )}
+          </div>
+        </div>
       </div>
+      {showModal && (
+        <Modal
+          height={361}
+          width={800}
+          show={showModal}
+          handleClose={() => setShowModal(false)}
+        >
+          <div className="text-center">
+            <img
+              className="w-[151px] h-[133px] block mx-auto mt-[50px]"
+              src={DraftLogo}
+              alt=""
+            />
+            <div className="mb-4 text-[20px] font-bold color-[#192434] draftModalText">
+              Your project saved the draft.
+            </div>
+            <div className="font-roboto mb-6">
+              You can edit information from your project list
+            </div>
+            <button className="w-[200px] h-[54px] bg-[#0AB4AF] rounded text-white">
+              PROJECT LIST
+            </button>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }
