@@ -97,3 +97,12 @@ export async function getProjectPollList(projectId, pageNo, pageSize) {
     `/project/${projectId}/poll?page=${pageNo}&limit=${pageSize}`
   );
 }
+
+export async function createProjectPoll(projectId, payload) {
+  return await client(
+    "POST",
+    `/project/${projectId}/poll`,
+    payload,
+    "formdata"
+  );
+}

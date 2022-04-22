@@ -1,7 +1,25 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useEthers, useEtherBalance } from "@usedapp/core";
+import { createProjectPoll } from "services/project/projectService";
+import SuccessModal from "components/modalDialog/SuccessModal";
+import ErrorModal from "components/modalDialog/ErrorModal";
 
 const CreatePoll = (props) => {
+  const { account } = useEthers();
+  const etherBalance = useEtherBalance(account);
+  const [balance, setBalance] = useState(0);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    if (etherBalance) {
+      setBalance(parseInt(etherBalance.toString(), 16));
+    }
+  });
+
   const {
     register,
     handleSubmit,
@@ -10,7 +28,44 @@ const CreatePoll = (props) => {
   } = useForm();
 
   const onSubmit = (data) => {
-    debugger;
+    const request = new FormData();
+    request.append("title", data["title"]);
+    request.append("comment", data["comment"]);
+    request.append(
+      "expiry_date",
+      data["year"] +
+        "-" +
+        data["month"] +
+        "-" +
+        data["day"] +
+        "T" +
+        data["hour"] +
+        ":" +
+        data["minute"] +
+        ":00+00:00"
+    );
+    request.append("poll_type", "YES/NO");
+    request.append("amount", data["amount"]);
+    request.append("unit", "MATIC");
+    request.append("eoa", data["withdraw"]);
+    request.append("action_type", "transferToWallet");
+
+    createProjectPoll(props.projectId, request)
+      .then((res) => {
+        if (res && res.code === 0) {
+          setShowErrorModal(false);
+          setShowSuccessModal(true);
+        } else {
+          setErrorMessage(res.message);
+          setShowErrorModal(true);
+        }
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        setShowSuccessModal(false);
+        setShowErrorModal(true);
+      });
   };
 
   function generateYearOption() {
@@ -19,7 +74,11 @@ const CreatePoll = (props) => {
     let startYear = new Date().getFullYear();
 
     for (let i = 0; i <= 10; i++) {
-      year.push(<option value={startYear}>{startYear}</option>);
+      year.push(
+        <option key={`year-${i}`} value={startYear}>
+          {startYear}
+        </option>
+      );
       startYear++;
     }
     return year;
@@ -29,7 +88,14 @@ const CreatePoll = (props) => {
     const days = [];
 
     for (let i = 1; i <= 31; i++) {
-      days.push(<option value={i}>{i}</option>);
+      days.push(
+        <option
+          key={`day-${i.toString().padStart(2, "0")}`}
+          value={i.toString().padStart(2, "0")}
+        >
+          {i}
+        </option>
+      );
     }
     return days;
   }
@@ -39,7 +105,7 @@ const CreatePoll = (props) => {
 
     for (let i = 0; i <= 23; i++) {
       hours.push(
-        <option value={i.toString().padStart(2, "0")}>
+        <option key={`hour-${i}`} value={i.toString().padStart(2, "0")}>
           {i.toString().padStart(2, "0")}
         </option>
       );
@@ -52,7 +118,7 @@ const CreatePoll = (props) => {
 
     for (let i = 0; i <= 59; i++) {
       mins.push(
-        <option value={i.toString().padStart(2, "0")}>
+        <option key={`min-${i}`} value={i.toString().padStart(2, "0")}>
           {i.toString().padStart(2, "0")}
         </option>
       );
@@ -61,7 +127,7 @@ const CreatePoll = (props) => {
   }
 
   return (
-    <div className="mt-8 mx-0 xl:mx-24">
+    <div className={`mt-8 mx-0 xl:mx-24 ${isLoading ? "loading" : ""}`}>
       <form
         id="new-post"
         name="newPostForm"
@@ -101,7 +167,7 @@ const CreatePoll = (props) => {
         <div className="flex flex-wrap mb-6">
           <div className="w-full px-3">
             <label className="block  tracking-wide text-gray-700 text-s font-bold mb-2">
-              Due date
+              Due date (<span className="text-red-500">*</span>)
             </label>
             <div className="flex w-full">
               <div className="relative">
@@ -122,18 +188,18 @@ const CreatePoll = (props) => {
                   name="month"
                   {...register("month")}
                 >
-                  <option>January</option>
-                  <option>February</option>
-                  <option>March</option>
-                  <option>April</option>
-                  <option>May</option>
-                  <option>June</option>
-                  <option>July</option>
-                  <option>August</option>
-                  <option>September</option>
-                  <option>October</option>
-                  <option>November</option>
-                  <option>December</option>
+                  <option value={"01"}>January</option>
+                  <option value={"02"}>February</option>
+                  <option value={"03"}>March</option>
+                  <option value={"04"}>April</option>
+                  <option value={"05"}>May</option>
+                  <option value={"06"}>June</option>
+                  <option value={"07"}>July</option>
+                  <option value={"08"}>August</option>
+                  <option value={"09"}>September</option>
+                  <option value={"10"}>October</option>
+                  <option value={"11"}>November</option>
+                  <option value={"12"}>December</option>
                 </select>
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"></div>
               </div>
@@ -214,7 +280,8 @@ const CreatePoll = (props) => {
               className="block  tracking-wide text-gray-700 text-s font-bold mb-2"
               htmlFor="location-country"
             >
-              Amount you want to withdraw?
+              Amount you want to withdraw? (
+              <span className="text-red-500">*</span>)
             </label>
             <input
               className={`block w-full border ${
@@ -244,7 +311,7 @@ const CreatePoll = (props) => {
               <div className="flex bg-gray-200 rounded h-11 pr-2">
                 <div className="px-2 mt-3 text-[#0ab4af]">BALANCE</div>
                 <div className="mt-2">
-                  <span className="text-xl font-medium">0</span>
+                  <span className="text-xl font-medium">{balance}</span>
                   <span className="text-sm font-medium">K</span>
                 </div>
                 <div className="mx-2 mt-4 text-[10px] font-medium">MATIC</div>
@@ -323,6 +390,20 @@ const CreatePoll = (props) => {
           </div>
         </div>
       </form>
+      {showSuccessModal && (
+        <SuccessModal
+          handleClose={setShowSuccessModal}
+          show={showSuccessModal}
+        />
+      )}
+      {showErrorModal && (
+        <ErrorModal
+          handleClose={setShowErrorModal}
+          show={showErrorModal}
+          title={"Error"}
+          message={errorMessage}
+        />
+      )}
     </div>
   );
 };

@@ -80,5 +80,6 @@ axios.interceptors.response.use(
     if (error.response.status === 403) {
       tokenExpired();
     }
+    return error.response.data;
   }
 );
