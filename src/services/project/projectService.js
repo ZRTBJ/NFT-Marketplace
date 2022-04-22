@@ -40,6 +40,7 @@ export async function updateProject(screen, payload) {
     bodyFormData.append("tags", payload.tags);
     bodyFormData.append("need_member", payload.need_member);
     bodyFormData.append("roles", payload.roles);
+    bodyFormData.append("visibility", payload.visibility);
 
     return await client("PUT", `/project/${payload.id}`, bodyFormData);
   } else {

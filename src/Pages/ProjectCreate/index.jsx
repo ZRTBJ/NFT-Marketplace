@@ -2,15 +2,15 @@ import { useState, useCallback } from "react";
 import "assets/css/CreateProject/mainView.css";
 import { checkUniqueProjectName } from "services/project/projectService";
 import selectTypeTabData from "Pages/DraftProjectUpdate/projectCreateData";
-import LeftSideBar from "components/DraftProjectUpdate/LeftSideBar";
 import SelectType from "components/DraftProjectUpdate/SelectType";
 import Outline from "components/DraftProjectUpdate/Outline";
-import Token from "components/DraftProjectUpdate/Token";
 import { createProject, updateProject } from "services/project/projectService";
 import DraftLogo from "assets/images/projectCreate/draftLogo.svg";
 import Modal from "components/Modal";
 import FullScreenModal from "components/FullScreenModal";
+import { useHistory } from "react-router-dom";
 export default function ProjectCreate() {
+  const history = useHistory();
   const [showFullScreenModal, setShowFullScreenModal] = useState(true);
   function selectProjectTypeRadient(i) {
     setSelectedTab(i);
@@ -111,6 +111,66 @@ export default function ProjectCreate() {
   const [currentStep, setcurrentStep] = useState([1]);
   const [isLoading, setIsloading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  async function saveDraft(visibility) {
+    // Outline start
+    if (currentStep.length === 2) {
+      if (projectName === "") {
+        setemptyProjectName(true);
+      } else if (projectCategory === "") {
+        setEmptyProjectCategory(true);
+      } else {
+        // console.log(
+        //   projectName,
+        //   coverPhoto,
+        //   photos,
+        //   projectCategory,
+        //   overview,
+        //   tagsList,
+        //   needMember,
+        //   roleList
+        // );
+        let createPayload = {
+          name: projectName,
+          category_id: projectCategory,
+          voting_power: votingPower.value,
+          voter_mode: canVote.value,
+        };
+        setIsloading(true);
+        await createProject(createPayload)
+          .then((res) => {
+            const r = res.project;
+            let updatePayload = {
+              ...createPayload,
+              id: r.id,
+              cover: coverPhoto[0],
+              photos: photos,
+              overview: overview,
+              tags: tagsList.toString(),
+              need_member: needMember,
+              roles: roleList.toString(),
+              visibility: visibility,
+            };
+            updateProject("create", updatePayload)
+              .then(() => {
+                setIsloading(false);
+                setShowModal(true);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+      // setcurrentStep([1, 2, 3]);
+    }
+    // Outline end
+  }
+  function handelClickBack() {
+    let currentIndex = currentStep.pop();
+    setcurrentStep(currentStep.filter((x) => x !== currentIndex));
+  }
   function handelClickNext() {
     // Select type start
     if (currentStep.length === 1) {
@@ -164,72 +224,6 @@ export default function ProjectCreate() {
     }
     // Token end
   }
-  async function saveDraft() {
-    // Outline start
-    if (currentStep.length === 2) {
-      if (projectName === "") {
-        setemptyProjectName(true);
-      } else if (projectCategory === "") {
-        setEmptyProjectCategory(true);
-      } else {
-        // console.log(
-        //   projectName,
-        //   coverPhoto,
-        //   photos,
-        //   projectCategory,
-        //   overview,
-        //   tagsList,
-        //   needMember,
-        //   roleList
-        // );
-        let createPayload = {
-          name: projectName,
-          category_id: projectCategory,
-          voting_power: votingPower.value,
-          voter_mode: canVote.value,
-        };
-        setIsloading(true);
-        await createProject(createPayload)
-          .then((res) => {
-            const r = res.project;
-            let updatePayload = {
-              ...createPayload,
-              id: r.id,
-              cover: coverPhoto[0],
-              photos: photos,
-              overview: overview,
-              tags: tagsList.toString(),
-              need_member: needMember,
-              roles: roleList.toString(),
-            };
-            updateProject("create", updatePayload)
-              .then((res) => {
-                console.log(res);
-                setIsloading(false);
-                setShowModal(true);
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }
-      // setcurrentStep([1, 2, 3]);
-    }
-    // Outline end
-
-    // Token  start
-    // if (currentStep.length === 3) {
-    //   setcurrentStep([1, 2, 3, 4]);
-    // }
-    // Token end
-  }
-  function handelClickBack() {
-    let currentIndex = currentStep.pop();
-    setcurrentStep(currentStep.filter((x) => x !== currentIndex));
-  }
   return (
     <div>
       {showFullScreenModal && (
@@ -268,11 +262,7 @@ export default function ProjectCreate() {
         </FullScreenModal>
       )}
       <div className="flex flex-col md:flex-row ">
-        <div className="hidden md:block md:relative bg-[#f6f6f7]  w-full md:w-64 lg:w-80  content-center">
-          <LeftSideBar currentStep={currentStep} key={currentStep} />
-        </div>
         <div className="flex-1">
-          <div className="stepTitleName">STEP{currentStep.length}</div>
           <div className="cardContainer px-3 md:px-5">
             {currentStep.length === 1 && (
               <SelectType
@@ -299,11 +289,6 @@ export default function ProjectCreate() {
                 onNeedMemberChange={onNeedMemberChange}
               />
             )}
-            {currentStep.length === 3 && <Token />}
-            {/* {currentStep === 1 && <SelectType />}
-        {currentStep === 1 && <SelectType />}
-        {currentStep === 1 && <SelectType />}
-        {currentStep === 1 && <SelectType />} */}
             <div className="buttonContainer">
               <div
                 className={
@@ -312,7 +297,7 @@ export default function ProjectCreate() {
                     : "flex justify-end"
                 }
               >
-                {currentStep.length > 1 && (
+                {currentStep.length > 1 ? (
                   <button
                     className="backButton"
                     onClick={() => handelClickBack()}
@@ -320,25 +305,41 @@ export default function ProjectCreate() {
                   >
                     BACK
                   </button>
+                ) : (
+                  <button
+                    disabled={isLoading ? true : false}
+                    className="nextButton"
+                    onClick={() => handelClickNext()}
+                  >
+                    NEXT
+                  </button>
                 )}
-                <button
-                  disabled={isLoading ? true : false}
-                  className="nextButton"
-                  onClick={() => handelClickNext()}
-                >
-                  NEXT
-                </button>
               </div>
               {currentStep.length > 1 && (
-                <button
-                  onClick={saveDraft}
-                  disabled={isLoading ? true : false}
-                  className={`
-                  ${isLoading === true ? "onlySpinner" : ""} saveDraft
+                <div className="flex justify-center space-x-6 mt-4">
+                  <button
+                    onClick={() => saveDraft("private")}
+                    disabled={isLoading ? true : false}
+                    className={`
+                  ${
+                    isLoading === true ? "onlySpinner" : ""
+                  } h-[54px] w-[200px] rounded bg-[#B9CCD5] text-[white] hover:bg-[#192434]
                 `}
-                >
-                  {isLoading ? "" : "SAVE DRAFT"}
-                </button>
+                  >
+                    {isLoading ? "" : "PRIVATE"}
+                  </button>
+                  <button
+                    onClick={() => saveDraft("public")}
+                    disabled={isLoading ? true : false}
+                    className={`
+                  ${
+                    isLoading === true ? "onlySpinner" : ""
+                  } h-[54px] w-[200px] rounded bg-[#0AB4AF] text-[white] hover:bg-[#192434]
+                `}
+                  >
+                    {isLoading ? "" : "PUBLIC"}
+                  </button>
+                </div>
               )}
             </div>
           </div>
@@ -362,7 +363,10 @@ export default function ProjectCreate() {
               <div className="font-roboto mb-6">
                 You can edit information from your project list
               </div>
-              <button className="w-[200px] h-[54px] bg-[#0AB4AF] rounded text-white">
+              <button
+                onClick={() => history.push("/profile-project-list")}
+                className="w-[200px] h-[54px] bg-[#0AB4AF] rounded text-white"
+              >
                 PROJECT LIST
               </button>
             </div>

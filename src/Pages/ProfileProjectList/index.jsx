@@ -9,11 +9,16 @@ const ProfileSettings = () => {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(true);
   const [projectList, setProjectList] = useState([]);
-  function projectEdit(id) {
-    console.log(id);
-    history.push({
-      pathname: `/project-edit/${id}/outline`,
-    });
+  function projectEdit(status, id) {
+    if (status === "published") {
+      history.push({
+        pathname: `/project-edit/${id}/outline`,
+      });
+    } else if (status === "draft") {
+      history.push({
+        pathname: `/project-update/${id}`,
+      });
+    }
   }
   useEffect(() => {
     getUserInfo();
@@ -38,6 +43,8 @@ const ProfileSettings = () => {
               bookmark: element.project_mark_count,
               like: element.project_like_count,
               view: element.project_view_count,
+              status: element.project_status,
+              visibility: element.visibility,
             });
           });
         }
@@ -55,7 +62,10 @@ const ProfileSettings = () => {
         <div className="container mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
             {projectList.map((cardlist) => (
-              <div onClick={() => projectEdit(cardlist.id)} key={cardlist.id}>
+              <div
+                onClick={() => projectEdit(cardlist.status, cardlist.id)}
+                key={cardlist.id}
+              >
                 <div className="projectCardLayout">
                   <ProjectCard cardInfo={cardlist} />
                 </div>

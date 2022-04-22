@@ -30,7 +30,9 @@ export default function SelectType(props) {
   }
 
   useEffect(() => {
-    setActive(props.selectedTab);
+    if (props.selectedTab) {
+      setActive(props.selectedTab);
+    }
   }, [props.selectedTab]);
 
   return (
