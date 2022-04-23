@@ -4,8 +4,11 @@ import { useEthers, useEtherBalance } from "@usedapp/core";
 import { createProjectPoll } from "services/project/projectService";
 import SuccessModal from "components/modalDialog/SuccessModal";
 import ErrorModal from "components/modalDialog/ErrorModal";
+import { addPollList } from "../../../Slice/projectSlice";
+import { useDispatch } from "react-redux";
 
 const CreatePoll = (props) => {
+  const dispatch = useDispatch();
   const { account } = useEthers();
   const etherBalance = useEtherBalance(account);
   const [balance, setBalance] = useState(0);
@@ -50,9 +53,11 @@ const CreatePoll = (props) => {
     request.append("eoa", data["withdraw"]);
     request.append("action_type", "transferToWallet");
 
+    setIsLoading(true);
     createProjectPoll(props.projectId, request)
       .then((res) => {
         if (res && res.code === 0) {
+          dispatch(addPollList(res["function_uuid"]));
           setShowErrorModal(false);
           setShowSuccessModal(true);
         } else {
@@ -124,6 +129,11 @@ const CreatePoll = (props) => {
       );
     }
     return mins;
+  }
+
+  function closeSuccesModal() {
+    setShowSuccessModal(false);
+    props.closeNewPost();
   }
 
   return (
@@ -391,10 +401,7 @@ const CreatePoll = (props) => {
         </div>
       </form>
       {showSuccessModal && (
-        <SuccessModal
-          handleClose={setShowSuccessModal}
-          show={showSuccessModal}
-        />
+        <SuccessModal handleClose={closeSuccesModal} show={showSuccessModal} />
       )}
       {showErrorModal && (
         <ErrorModal

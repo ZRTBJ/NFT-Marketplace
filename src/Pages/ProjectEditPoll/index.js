@@ -37,6 +37,7 @@ function ProjectPoll(props) {
 
   function closeNewPost() {
     setShowNewPost(false);
+    getPollList(projectId);
   }
 
   return (
