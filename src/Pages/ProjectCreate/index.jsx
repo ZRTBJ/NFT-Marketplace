@@ -9,6 +9,7 @@ import Token from "components/ProjectCreate/Token";
 import { createProject, updateProject } from "services/project/projectService";
 import DraftLogo from "assets/images/projectCreate/draftLogo.svg";
 import Modal from "components/Modal";
+import Confirmation from "components/ProjectCreate/Confirmation";
 
 export default function CreateProjectLayout() {
   /**
@@ -155,7 +156,7 @@ export default function CreateProjectLayout() {
 
     // Token  start
     if (currentStep.length === 3) {
-      setcurrentStep([1, 2, 3, 4]);
+      setcurrentStep([1, 2, 3, 4, 5, 6, 7]); // to show confirmation temporarily for now
     }
     // Token end
   }
@@ -260,8 +261,8 @@ export default function CreateProjectLayout() {
           {currentStep.length === 3 && <Token />}
           {/* {currentStep === 1 && <SelectType />}
         {currentStep === 1 && <SelectType />}
-        {currentStep === 1 && <SelectType />}
-        {currentStep === 1 && <SelectType />} */}
+        {currentStep === 1 && <SelectType /> }*/}
+          {currentStep.length === 7 && <Confirmation />}
           <div className="buttonContainer">
             <div
               className={
@@ -279,13 +280,15 @@ export default function CreateProjectLayout() {
                   BACK
                 </button>
               )}
-              <button
-                disabled={isLoading ? true : false}
-                className="nextButton"
-                onClick={() => handelClickNext()}
-              >
-                NEXT
-              </button>
+              {currentStep.length < 7 && (
+                <button
+                  disabled={isLoading ? true : false}
+                  className="nextButton"
+                  onClick={() => handelClickNext()}
+                >
+                  NEXT
+                </button>
+              )}
             </div>
             {currentStep.length > 1 && (
               <button

@@ -16,7 +16,7 @@ export default function LeftSideBar(props) {
     { id: 7, title: "CONFIRMATION", active: false },
   ];
   const [currentStep] = useState(props.currentStep);
-  const percentage = 14;
+  const percentage = currentStep.length > 1 ? currentStep.length * 14 : 14;
 
   return (
     <div className="createProjectLeftSideBarContainer">
@@ -36,8 +36,8 @@ export default function LeftSideBar(props) {
               <span className="text-gray-600">%</span>
             </div>
             <div className="pt-2">
-              <span className="text-lg font-medium">{currentStep}</span>
-              <span className="text-gray-400">/6</span>
+              <span className="text-lg font-medium">{currentStep.length}</span>
+              <span className="text-gray-400">/7</span>
             </div>
           </div>
         </CircularProgressbarWithChildren>
