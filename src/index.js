@@ -6,6 +6,7 @@ import "./assets/css/common.css";
 import "font-awesome/css/font-awesome.min.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import "tw-elements";
 import store from "./store/store";
 import { Provider } from "react-redux";
 import { DAppProvider } from "@usedapp/core";
