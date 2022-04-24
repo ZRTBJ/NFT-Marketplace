@@ -44,29 +44,19 @@ export default function ProjectCreate() {
    * Outline Start
    * ==============================================
    */
+
+  // Project Name start
   const [projectName, setProjectName] = useState("");
-  const [coverPhoto, setCoverPhoto] = useState([]);
   const [emptyProjectName, setemptyProjectName] = useState(false);
   const [alreadyTakenProjectName, setAlreadyTakenProjectName] = useState(false);
-  const [photos, setPshotos] = useState([]);
-  const [projectCategory, setProjectCategory] = useState("");
-  const [emptyProjeCtCategory, setEmptyProjectCategory] = useState(false);
-  const [overview, SetOverview] = useState("");
-  const [tagsList, SetTagsList] = useState([]);
-  const [needMember, setNeedMember] = useState(false);
-  const [roleList, setRollList] = useState([]);
-
-  function overviewOnChange(e) {
-    SetOverview(e);
-  }
   async function onProjectNameChange(e) {
     let payload = {
       projectName: e,
     };
+    setProjectName(payload.projectName);
     await checkUniqueProjectName(payload)
       .then((e) => {
         if (e.code === 0) {
-          setProjectName(payload.projectName);
           setemptyProjectName(false);
           setAlreadyTakenProjectName(false);
         } else {
@@ -77,102 +67,213 @@ export default function ProjectCreate() {
         console.log(err);
       });
   }
-  function closeCoverPhotoPreview() {
+  // Project Name End
+
+  // Cover photo start
+  const [coverPhoto, setCoverPhoto] = useState([]);
+  const [coverPhotoUrl, setCoverPhotoUrl] = useState("");
+  const onCoverPhotoSelect = useCallback((acceptedFiles) => {
+    if (acceptedFiles.length === 1) {
+      setCoverPhoto(acceptedFiles);
+      let objectUrl = URL.createObjectURL(acceptedFiles[0]);
+      setCoverPhotoUrl(objectUrl);
+      setoutlineKey(1);
+    }
+  }, []);
+  function onCoverPhotoRemove() {
     setCoverPhoto([]);
+    setCoverPhotoUrl("");
   }
-  const onCoverDrop = useCallback((acceptedFiles) => {
-    setCoverPhoto(acceptedFiles);
+  // Cover photo end
+
+  // photos start
+  const [photos, setPshotos] = useState([]);
+  const [photosUrl, setPhotosUrl] = useState([]);
+  const onPhotosSelect = useCallback((acceptedFiles) => {
+    let totalSize = 0;
+    acceptedFiles.forEach((element) => {
+      totalSize = totalSize + element.size;
+    });
+    if (totalSize > 16000000) {
+      alert("Size Exceed");
+    } else {
+      let objectUrl = [];
+      acceptedFiles.forEach((element) => {
+        objectUrl.push({
+          name: element.name,
+          url: URL.createObjectURL(element),
+        });
+      });
+      setPshotos(acceptedFiles);
+      setPhotosUrl(objectUrl);
+    }
   }, []);
-  function closePhotoPreview(fileName) {
+  function onPhotosRemove(fileName) {
     setPshotos(photos.filter((x) => x.name !== fileName));
+    setPhotosUrl(photosUrl.filter((x) => x.name !== fileName));
   }
-  const onPhotoDrop = useCallback((acceptedFiles) => {
-    setPshotos(acceptedFiles);
-  }, []);
+  // Photos End
+
+  // overview start
+  const [overview, setOverview] = useState("");
+  function onOverviewChange(e) {
+    setOverview(e.target.value);
+  }
+  // overview End
+
+  // category start
+  const [projectCategory, setProjectCategory] = useState("");
+  const [emptyProjeCtCategory, setEmptyProjectCategory] = useState(false);
   function onProjectCategoryChange(e) {
-    setProjectCategory(e);
+    setProjectCategory(e.target.value);
     setEmptyProjectCategory(false);
   }
-  function onChangeTagList(type, list) {
-    if (type === "tag") {
-      SetTagsList(list);
-    } else if (type === "role") {
-      setRollList(list);
+  // category end
+
+  // tags start
+  const [tagList, setTagList] = useState([]);
+  const [tagLimit, setTagLimit] = useState(false);
+  function onTagEnter(event) {
+    const value = event.target.value;
+    if (event.code === "Enter" && value.length > 0) {
+      if (tagList.length > 4) {
+        setTagLimit(true);
+      } else {
+        setTagList([...tagList, value]);
+        event.target.value = "";
+      }
     }
   }
-  function onNeedMemberChange(e) {
-    setNeedMember(e);
+  function onTagRemove(index) {
+    if (index >= 0) {
+      const newRoleList = [...tagList];
+      newRoleList.splice(index, 1);
+      setTagList(newRoleList);
+      setTagLimit(false);
+    }
   }
+  // tag end
+
+  // role start
+  const [roleList, setRoleList] = useState([]);
+  function onRoleEnter(event) {
+    const value = event.target.value;
+    if (event.code === "Enter" && value.length > 0) {
+      setRoleList([...roleList, value]);
+      event.target.value = "";
+    }
+  }
+  function onRoleRemove(index) {
+    if (index >= 0) {
+      const newRoleList = [...roleList];
+      newRoleList.splice(index, 1);
+      setRoleList(newRoleList);
+    }
+  }
+
+  // role end
+
+  // Need mamber start
+  const [needMember, setNeedMember] = useState(false);
+  function onNeedMemberChange(e) {
+    if (e) {
+      setNeedMember(true);
+    } else {
+      setRoleList([]);
+      setNeedMember(false);
+    }
+  }
+  // need member end
+
+  const [outlineKey, setoutlineKey] = useState(0);
+
   /**
    * ==============================================
    * Outline ENd
    * ==============================================
    */
   const [currentStep, setcurrentStep] = useState([1]);
-  const [isLoading, setIsloading] = useState(false);
+  const [isLoadingPublic, setisLoadingPublic] = useState(false);
+  const [isLoadingPrivate, setisLoadingPrivate] = useState(false);
   const [showModal, setShowModal] = useState(false);
   async function saveDraft(visibility) {
-    // Outline start
     if (currentStep.length === 2) {
       if (projectName === "") {
         setemptyProjectName(true);
-      } else if (projectCategory === "") {
+      }
+      if (projectCategory === "") {
         setEmptyProjectCategory(true);
-      } else {
+      }
+      if (
+        projectName !== "" &&
+        projectCategory !== "" &&
+        alreadyTakenProjectName === false
+      ) {
         // console.log(
+        //   selectedTab,
         //   projectName,
         //   coverPhoto,
         //   photos,
         //   projectCategory,
         //   overview,
-        //   tagsList,
+        //   tagList,
         //   needMember,
         //   roleList
         // );
-        let createPayload = {
-          name: projectName,
-          category_id: projectCategory,
-          voting_power: votingPower.value,
-          voter_mode: canVote.value,
-        };
-        setIsloading(true);
-        await createProject(createPayload)
-          .then((res) => {
-            const r = res.project;
-            let updatePayload = {
-              ...createPayload,
-              id: r.id,
-              cover: coverPhoto[0],
-              photos: photos,
-              overview: overview,
-              tags: tagsList.toString(),
-              need_member: needMember,
-              roles: roleList.toString(),
-              visibility: visibility,
-            };
-            updateProject("create", updatePayload)
-              .then(() => {
-                setIsloading(false);
-                setShowModal(true);
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-          })
-          .catch((err) => {
-            console.log(err);
-          });
       }
+
+      let createPayload = {
+        name: projectName,
+        category_id: projectCategory,
+        org_type: selectedTab.title.toLocaleLowerCase(),
+        voting_power: selectedTab.votingPower.find((x) => x.active === true)
+          .value,
+        voter_mode: selectedTab.canVote.find((x) => x.active === true).value,
+      };
+      if (visibility === "private") {
+        setisLoadingPrivate(true);
+      } else if (visibility === "public") {
+        setisLoadingPublic(true);
+      }
+      await createProject(createPayload)
+        .then((res) => {
+          const r = res.project;
+          let updatePayload = {
+            ...createPayload,
+            id: r.id,
+            cover: coverPhoto[0],
+            photos: photos,
+            overview: overview,
+            tags: tagList.toString(),
+            need_member: needMember,
+            roles: roleList.toString(),
+            visibility: visibility,
+          };
+          updateProject("create", updatePayload)
+            .then(() => {
+              if (visibility === "private") {
+                setisLoadingPrivate(false);
+              } else if (visibility === "public") {
+                setisLoadingPublic(false);
+              }
+              setShowModal(true);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
       // setcurrentStep([1, 2, 3]);
     }
-    // Outline end
   }
   function handelClickBack() {
     let currentIndex = currentStep.pop();
     setcurrentStep(currentStep.filter((x) => x !== currentIndex));
   }
   function handelClickNext() {
-    // Select type start
     if (currentStep.length === 1) {
       if (selectedTab.title === "CUSTOM") {
         if (votingPower === "" && canVote === "") {
@@ -182,47 +283,12 @@ export default function ProjectCreate() {
         } else if (canVote === "") {
           alert("Chosse 1 who can vote");
         } else if (votingPower !== "" && canVote !== "") {
-          let finalSelectedTab = {
-            id: 1,
-            title: "CUSTOM",
-            canVote: [canVote],
-            votingPower: [votingPower],
-          };
-          setSelectedTab(finalSelectedTab);
           setcurrentStep([1, 2]);
         }
       } else {
-        let finalSelectedTabs = {
-          id: selectedTab.id,
-          title: selectedTab.title,
-          canVote: selectedTab.canVote,
-          votingPower: selectedTab.votingPower,
-        };
-        setVotingPower(selectedTab.votingPower[0]);
-        setCanVote(selectedTab.canVote[0]);
-        setSelectedTab(finalSelectedTabs);
         setcurrentStep([1, 2]);
       }
     }
-    // Select type end
-
-    // Outline start
-    if (currentStep.length === 2) {
-      if (projectName === "") {
-        setemptyProjectName(true);
-      } else if (projectCategory === "") {
-        setEmptyProjectCategory(true);
-      } else {
-        setcurrentStep([1, 2, 3]);
-      }
-    }
-    // Outline end
-
-    // Token  start
-    if (currentStep.length === 3) {
-      setcurrentStep([1, 2, 3, 4]);
-    }
-    // Token end
   }
   return (
     <div>
@@ -274,19 +340,39 @@ export default function ProjectCreate() {
             )}
             {currentStep.length === 2 && (
               <Outline
-                isLoading={isLoading}
-                onProjectNameChange={onProjectNameChange}
+                key={outlineKey}
+                // name
+                projectName={projectName}
                 emptyProjectName={emptyProjectName}
                 alreadyTakenProjectName={alreadyTakenProjectName}
-                closeCoverPhotoPreview={closeCoverPhotoPreview}
-                onCoverDrop={onCoverDrop}
-                closePhotoPreview={closePhotoPreview}
-                onPhotoDrop={onPhotoDrop}
+                onProjectNameChange={onProjectNameChange}
+                //cover photos
+                coverPhotoUrl={coverPhotoUrl}
+                onCoverPhotoSelect={onCoverPhotoSelect}
+                onCoverPhotoRemove={onCoverPhotoRemove}
+                //photos
+                photosUrl={photosUrl}
+                onPhotosSelect={onPhotosSelect}
+                onPhotosRemove={onPhotosRemove}
+                // overview
+                overview={overview}
+                onOverviewChange={onOverviewChange}
+                // category
+                projectCategory={projectCategory}
                 emptyProjeCtCategory={emptyProjeCtCategory}
                 onProjectCategoryChange={onProjectCategoryChange}
-                overviewOnChange={overviewOnChange}
-                onChangeTagList={onChangeTagList}
+                // tag
+                tagList={tagList}
+                tagLimit={tagLimit}
+                onTagEnter={onTagEnter}
+                onTagRemove={onTagRemove}
+                // need member
+                needMember={needMember}
                 onNeedMemberChange={onNeedMemberChange}
+                // role list
+                roleList={roleList}
+                onRoleEnter={onRoleEnter}
+                onRoleRemove={onRoleRemove}
               />
             )}
             <div className="buttonContainer">
@@ -301,13 +387,14 @@ export default function ProjectCreate() {
                   <button
                     className="backButton"
                     onClick={() => handelClickBack()}
-                    disabled={isLoading ? true : false}
+                    disabled={
+                      isLoadingPrivate ? true : isLoadingPublic ? true : false
+                    }
                   >
                     BACK
                   </button>
                 ) : (
                   <button
-                    disabled={isLoading ? true : false}
                     className="nextButton"
                     onClick={() => handelClickNext()}
                   >
@@ -319,25 +406,25 @@ export default function ProjectCreate() {
                 <div className="flex justify-center space-x-6 mt-4">
                   <button
                     onClick={() => saveDraft("private")}
-                    disabled={isLoading ? true : false}
+                    disabled={isLoadingPrivate ? true : false}
                     className={`
                   ${
-                    isLoading === true ? "onlySpinner" : ""
+                    isLoadingPrivate === true ? "onlySpinner" : ""
                   } h-[54px] w-[200px] rounded bg-[#B9CCD5] text-[white] hover:bg-[#192434]
                 `}
                   >
-                    {isLoading ? "" : "PRIVATE"}
+                    {isLoadingPrivate ? "" : "PRIVATE"}
                   </button>
                   <button
                     onClick={() => saveDraft("public")}
-                    disabled={isLoading ? true : false}
+                    disabled={isLoadingPublic ? true : false}
                     className={`
                   ${
-                    isLoading === true ? "onlySpinner" : ""
+                    isLoadingPublic === true ? "onlySpinner" : ""
                   } h-[54px] w-[200px] rounded bg-[#0AB4AF] text-[white] hover:bg-[#192434]
                 `}
                   >
-                    {isLoading ? "" : "PUBLIC"}
+                    {isLoadingPublic ? "" : "PUBLIC"}
                   </button>
                 </div>
               )}

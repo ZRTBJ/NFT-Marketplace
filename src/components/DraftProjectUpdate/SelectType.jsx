@@ -28,7 +28,6 @@ export default function SelectType(props) {
       }
     }
   }
-
   useEffect(() => {
     if (props.selectedTab) {
       setActive(props.selectedTab);

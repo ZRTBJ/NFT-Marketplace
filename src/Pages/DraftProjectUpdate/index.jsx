@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import "assets/css/CreateProject/mainView.css";
 import { checkUniqueProjectName } from "services/project/projectService";
 import selectTypeTabData from "Pages/DraftProjectUpdate/projectCreateData";
@@ -9,6 +9,8 @@ import Token from "components/DraftProjectUpdate/Token";
 import { createProject, updateProject } from "services/project/projectService";
 import DraftLogo from "assets/images/projectCreate/draftLogo.svg";
 import Modal from "components/Modal";
+import { useParams } from "react-router-dom";
+import { getProjectDetailsById } from "services/project/projectService";
 
 export default function DraftProjectUpdate() {
   /**
@@ -19,6 +21,8 @@ export default function DraftProjectUpdate() {
   const [selectedTab, setSelectedTab] = useState(selectTypeTabData[0]);
   const [votingPower, setVotingPower] = useState("");
   const [canVote, setCanVote] = useState("");
+  const { id } = useParams();
+  const [isDataLoading, setDataIsLoading] = useState(true);
   function setActiveTab(arg) {
     setSelectedTab(arg);
   }
@@ -41,6 +45,7 @@ export default function DraftProjectUpdate() {
    */
   const [projectName, setProjectName] = useState("");
   const [coverPhoto, setCoverPhoto] = useState([]);
+  const [coverPhotoUrl, setCoverPhotoUrl] = useState("");
   const [emptyProjectName, setemptyProjectName] = useState(false);
   const [alreadyTakenProjectName, setAlreadyTakenProjectName] = useState(false);
   const [photos, setPshotos] = useState([]);
@@ -98,6 +103,65 @@ export default function DraftProjectUpdate() {
   function onNeedMemberChange(e) {
     setNeedMember(e);
   }
+  async function projectDetails() {
+    let payload = {
+      id: id,
+    };
+    await getProjectDetailsById(payload).then((e) => {
+      let response = e.project;
+      if (response.org_type !== "") {
+        let org_type = selectTypeTabData.find(
+          (x) => x.title === response.org_type.toUpperCase()
+        );
+        setSelectedTab(org_type);
+      }
+      setProjectName(response.name);
+      let cover = response.assets.find((x) => x.asset_purpose === "cover");
+      setCoverPhotoUrl(cover ? cover.path : "");
+      // let photosInfoData = response.assets.filter(
+      //   (x) => x.asset_purpose === "subphoto"
+      // );
+      // setPhotosLengthFromResponse(photosInfoData.length);
+      // setPhotosInfo(photosInfoData);
+      // let constPhotosName = ["img1", "img2", "img3", "img4"];
+      // let photosname = [];
+      // photosname = photosInfoData.map((e) => {
+      //   return e.name;
+      // });
+      // let remainingPhotosName = constPhotosName.filter(function (v) {
+      //   return !photosname.includes(v);
+      // });
+      // setRemainingPhotosName(remainingPhotosName);
+      // if (photosInfoData.length === 4) {
+      //   setPhotoDisabled(true);
+      // }
+      // setOverview(response.overview);
+      // setCategory(response.category_id);
+      // if (response.tags) {
+      //   if (response.tags.length > 0) {
+      //     let tags = [];
+      //     response.tags.forEach((element) => {
+      //       tags.push(element.name);
+      //     });
+      //     setTagList(tags);
+      //   }
+      // }
+      // setLookingForMember(response.member_needed);
+      // if (response.roles) {
+      //   if (response.roles.length > 0) {
+      //     let roles = [];
+      //     response.roles.forEach((element) => {
+      //       roles.push(element.name);
+      //     });
+      //     setRoleList(roles);
+      //   }
+      // }
+      setDataIsLoading(false);
+    });
+  }
+  useEffect(() => {
+    projectDetails();
+  }, []);
   /**
    * ==============================================
    * Outline ENd
@@ -226,106 +290,112 @@ export default function DraftProjectUpdate() {
     setcurrentStep(currentStep.filter((x) => x !== currentIndex));
   }
   return (
-    <div className="flex flex-col md:flex-row ">
-      <div className="hidden md:block md:relative bg-[#f6f6f7]  w-full md:w-64 lg:w-80  content-center">
-        <LeftSideBar currentStep={currentStep} key={currentStep} />
-      </div>
-      <div className="flex-1">
-        <div className="stepTitleName">STEP{currentStep.length}</div>
-        <div className="cardContainer px-3 md:px-5">
-          {currentStep.length === 1 && (
-            <SelectType
-              setActiveTab={setActiveTab}
-              votingPowerProps={votingPowerProps}
-              canVoteProps={canVoteProps}
-            />
-          )}
-          {currentStep.length === 2 && (
-            <Outline
-              isLoading={isLoading}
-              onProjectNameChange={onProjectNameChange}
-              emptyProjectName={emptyProjectName}
-              alreadyTakenProjectName={alreadyTakenProjectName}
-              closeCoverPhotoPreview={closeCoverPhotoPreview}
-              onCoverDrop={onCoverDrop}
-              closePhotoPreview={closePhotoPreview}
-              onPhotoDrop={onPhotoDrop}
-              emptyProjeCtCategory={emptyProjeCtCategory}
-              onProjectCategoryChange={onProjectCategoryChange}
-              overviewOnChange={overviewOnChange}
-              onChangeTagList={onChangeTagList}
-              onNeedMemberChange={onNeedMemberChange}
-            />
-          )}
-          {currentStep.length === 3 && <Token />}
-          {/* {currentStep === 1 && <SelectType />}
+    <div>
+      {isDataLoading && <div className="loading"></div>}
+      <div className="flex flex-col md:flex-row ">
+        <div className="hidden md:block md:relative bg-[#f6f6f7]  w-full md:w-64 lg:w-80  content-center">
+          <LeftSideBar currentStep={currentStep} key={currentStep} />
+        </div>
+        <div className="flex-1">
+          <div className="stepTitleName">STEP{currentStep.length}</div>
+          <div className="cardContainer px-3 md:px-5">
+            {currentStep.length === 1 && (
+              <SelectType
+                setActiveTab={setActiveTab}
+                votingPowerProps={votingPowerProps}
+                canVoteProps={canVoteProps}
+                selectedTab={selectedTab}
+              />
+            )}
+            {currentStep.length === 2 && (
+              <Outline
+                SelectedprojectName={projectName}
+                SelectedcoverPhotoUrl={coverPhotoUrl}
+                isLoading={isLoading}
+                onProjectNameChange={onProjectNameChange}
+                emptyProjectName={emptyProjectName}
+                alreadyTakenProjectName={alreadyTakenProjectName}
+                closeCoverPhotoPreview={closeCoverPhotoPreview}
+                onCoverDrop={onCoverDrop}
+                closePhotoPreview={closePhotoPreview}
+                onPhotoDrop={onPhotoDrop}
+                emptyProjeCtCategory={emptyProjeCtCategory}
+                onProjectCategoryChange={onProjectCategoryChange}
+                overviewOnChange={overviewOnChange}
+                onChangeTagList={onChangeTagList}
+                onNeedMemberChange={onNeedMemberChange}
+              />
+            )}
+            {currentStep.length === 3 && <Token />}
+            {/* {currentStep === 1 && <SelectType />}
         {currentStep === 1 && <SelectType />}
         {currentStep === 1 && <SelectType />}
         {currentStep === 1 && <SelectType />} */}
-          <div className="buttonContainer">
-            <div
-              className={
-                currentStep.length > 1
-                  ? "flex justify-between"
-                  : "flex justify-end"
-              }
-            >
+            <div className="buttonContainer">
+              <div
+                className={
+                  currentStep.length > 1
+                    ? "flex justify-between"
+                    : "flex justify-end"
+                }
+              >
+                {currentStep.length > 1 && (
+                  <button
+                    className="backButton"
+                    onClick={() => handelClickBack()}
+                    disabled={isLoading ? true : false}
+                  >
+                    BACK
+                  </button>
+                )}
+                <button
+                  disabled={isLoading ? true : false}
+                  className="nextButton"
+                  onClick={() => handelClickNext()}
+                >
+                  NEXT
+                </button>
+              </div>
               {currentStep.length > 1 && (
                 <button
-                  className="backButton"
-                  onClick={() => handelClickBack()}
+                  onClick={saveDraft}
                   disabled={isLoading ? true : false}
-                >
-                  BACK
-                </button>
-              )}
-              <button
-                disabled={isLoading ? true : false}
-                className="nextButton"
-                onClick={() => handelClickNext()}
-              >
-                NEXT
-              </button>
-            </div>
-            {currentStep.length > 1 && (
-              <button
-                onClick={saveDraft}
-                disabled={isLoading ? true : false}
-                className={`
+                  className={`
                   ${isLoading === true ? "onlySpinner" : ""} saveDraft
                 `}
-              >
-                {isLoading ? "" : "SAVE DRAFT"}
-              </button>
-            )}
+                >
+                  {isLoading ? "" : "SAVE DRAFT"}
+                </button>
+              )}
+            </div>
           </div>
         </div>
+        {showModal && (
+          <Modal
+            height={361}
+            width={800}
+            show={showModal}
+            handleClose={() => setShowModal(false)}
+          >
+            <div className="text-center">
+              <img
+                className="w-[151px] h-[133px] block mx-auto mt-[50px]"
+                src={DraftLogo}
+                alt=""
+              />
+              <div className="mb-4 text-[20px] font-bold color-[#192434] draftModalText">
+                Your project saved the draft.
+              </div>
+              <div className="font-roboto mb-6">
+                You can edit information from your project list
+              </div>
+              <button className="w-[200px] h-[54px] bg-[#0AB4AF] rounded text-white">
+                PROJECT LIST
+              </button>
+            </div>
+          </Modal>
+        )}
       </div>
-      {showModal && (
-        <Modal
-          height={361}
-          width={800}
-          show={showModal}
-          handleClose={() => setShowModal(false)}
-        >
-          <div className="text-center">
-            <img
-              className="w-[151px] h-[133px] block mx-auto mt-[50px]"
-              src={DraftLogo}
-              alt=""
-            />
-            <div className="mb-4 text-[20px] font-bold color-[#192434] draftModalText">
-              Your project saved the draft.
-            </div>
-            <div className="font-roboto mb-6">
-              You can edit information from your project list
-            </div>
-            <button className="w-[200px] h-[54px] bg-[#0AB4AF] rounded text-white">
-              PROJECT LIST
-            </button>
-          </div>
-        </Modal>
-      )}
     </div>
   );
 }

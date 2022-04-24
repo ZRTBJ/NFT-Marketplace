@@ -1,4 +1,5 @@
 import "assets/css/profileSettings.css";
+import dummyImage from "assets/images/dummy.png";
 import TopNavigationCard from "components/ProfileSettings/TopNavigationCard";
 import { useState, useEffect } from "react";
 import { getUserProjectListById } from "services/project/projectService";
@@ -37,7 +38,7 @@ const ProfileSettings = () => {
             );
             projectListCards.push({
               id: element.id,
-              img: assets ? assets.path : "",
+              img: assets ? assets.path : dummyImage,
               title: element.name,
               type: element.project_type,
               bookmark: element.project_mark_count,

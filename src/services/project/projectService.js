@@ -20,6 +20,7 @@ export async function getProjectCategory() {
 export async function createProject(payload) {
   const bodyFormData = new FormData();
   bodyFormData.append("name", payload.name);
+  bodyFormData.append("org_type", payload.org_type);
   bodyFormData.append("category_id", payload.category_id);
   bodyFormData.append("voting_power", payload.voting_power);
   bodyFormData.append("voter_mode", payload.voter_mode);
@@ -28,6 +29,7 @@ export async function createProject(payload) {
 export async function updateProject(screen, payload) {
   if (screen === "create") {
     const bodyFormData = new FormData();
+    bodyFormData.append("org_type", payload.org_type);
     bodyFormData.append("voting_power", payload.voting_power);
     bodyFormData.append("voter_mode", payload.voter_mode);
     bodyFormData.append("name", payload.name);
