@@ -11,14 +11,14 @@ export default function Token() {
   const onSubmit = (data) => console.log(data);
 
   return (
-    <div class="grid justify-items-center">
+    <div className="grid justify-items-center">
       <h1 className="text-5xl font-bold mb-16">TOKEN SETTING</h1>
       <form className="w-full max-w-2xl" onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-wrap mb-6">
           <div className="w-full px-3">
             <label
               className="block tracking-wide text-gray-700 text-s font-bold mb-2"
-              for="token-name"
+              htmlFor="token-name"
             >
               Token name
             </label>
@@ -35,7 +35,7 @@ export default function Token() {
           <div className="w-full px-3">
             <label
               className="block tracking-wide text-gray-700 text-s font-bold mb-2"
-              for="token-symbol"
+              htmlFor="token-symbol"
             >
               Token symbol (Up to 5 characters)
             </label>
@@ -52,7 +52,7 @@ export default function Token() {
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
             <label
               className="block tracking-wide text-gray-700 text-s font-bold mb-2"
-              for="number-of-tokens"
+              htmlFor="number-of-tokens"
             >
               Number Of Tokens
             </label>

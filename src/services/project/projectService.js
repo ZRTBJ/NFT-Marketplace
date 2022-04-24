@@ -12,6 +12,11 @@ export async function checkUniqueProjectName(payload) {
   bodyFormData.append("project_name", payload.projectName);
   return await client("POST", `/project/validate`, bodyFormData);
 }
+export async function checkUniqueTokenInfo(payload) {
+  const bodyFormData = new FormData();
+  bodyFormData.append("project_name", payload.projectName);
+  return await client("POST", `/project/validate`, bodyFormData);
+}
 
 export async function getProjectCategory() {
   return await client("GET", `/meta/category`);
@@ -20,6 +25,7 @@ export async function getProjectCategory() {
 export async function createProject(payload) {
   const bodyFormData = new FormData();
   bodyFormData.append("name", payload.name);
+  bodyFormData.append("org_type", payload.org_type);
   bodyFormData.append("category_id", payload.category_id);
   bodyFormData.append("voting_power", payload.voting_power);
   bodyFormData.append("voter_mode", payload.voter_mode);
@@ -28,6 +34,7 @@ export async function createProject(payload) {
 export async function updateProject(screen, payload) {
   if (screen === "create") {
     const bodyFormData = new FormData();
+    bodyFormData.append("org_type", payload.org_type);
     bodyFormData.append("voting_power", payload.voting_power);
     bodyFormData.append("voter_mode", payload.voter_mode);
     bodyFormData.append("name", payload.name);
@@ -40,40 +47,68 @@ export async function updateProject(screen, payload) {
     bodyFormData.append("tags", payload.tags);
     bodyFormData.append("need_member", payload.need_member);
     bodyFormData.append("roles", payload.roles);
+    bodyFormData.append("visibility", payload.visibility);
 
     return await client("PUT", `/project/${payload.id}`, bodyFormData);
   } else {
     const bodyFormData = new FormData();
-    bodyFormData.append("name", payload.name);
-    if (payload.cover !== null) {
-      bodyFormData.append("cover", payload.cover);
+    if (payload.org_type) {
+      bodyFormData.append("org_type", payload.org_type);
     }
-    if (payload.photos !== null) {
-      let photoIndex = payload.photosLengthFromResponse;
-      if (photoIndex === 0) {
-        photoIndex = photoIndex + 1;
-        payload.photos.forEach((element, index) => {
-          bodyFormData.append(`image_${photoIndex}`, element);
+    if (payload.voting_power) {
+      bodyFormData.append("voting_power", payload.voting_power);
+    }
+    if (payload.voter_mode) {
+      bodyFormData.append("voter_mode", payload.voter_mode);
+    }
+    if (payload.name) {
+      bodyFormData.append("name", payload.name);
+    }
+    if (payload.cover) {
+      if (payload.cover !== null) {
+        bodyFormData.append("cover", payload.cover);
+      }
+    }
+    if (payload.photos) {
+      if (payload.photos !== null) {
+        let photoIndex = payload.photosLengthFromResponse;
+        if (photoIndex === 0) {
           photoIndex = photoIndex + 1;
-        });
-      } else {
-        if (payload.photos.length === payload.remainingPhotosName.length) {
-          for (let index = 0; index < payload.photos.length; index++) {
-            const element = payload.photos[index];
-            bodyFormData.append(
-              `image_${payload.remainingPhotosName[index][3]}`,
-              element
-            );
+          payload.photos.forEach((element, index) => {
+            bodyFormData.append(`image_${photoIndex}`, element);
+            photoIndex = photoIndex + 1;
+          });
+        } else {
+          if (payload.photos.length === payload.remainingPhotosName.length) {
+            for (let index = 0; index < payload.photos.length; index++) {
+              const element = payload.photos[index];
+              bodyFormData.append(
+                `image_${payload.remainingPhotosName[index][3]}`,
+                element
+              );
+            }
           }
         }
       }
     }
-
-    bodyFormData.append("overview", payload.overview);
-    bodyFormData.append("category_id", payload.category_id);
-    bodyFormData.append("tags", payload.tags);
-    bodyFormData.append("need_member", payload.need_member);
-    bodyFormData.append("roles", payload.roles);
+    if (payload.overview) {
+      bodyFormData.append("overview", payload.overview);
+    }
+    if (payload.category_id) {
+      bodyFormData.append("category_id", payload.category_id);
+    }
+    if (payload.tags) {
+      bodyFormData.append("tags", payload.tags);
+    }
+    if (payload.need_member !== undefined) {
+      bodyFormData.append("need_member", payload.need_member);
+    }
+    if (payload.roles) {
+      bodyFormData.append("roles", payload.roles);
+    }
+    if (payload.visibility) {
+      bodyFormData.append("visibility", payload.visibility);
+    }
 
     return await client("PUT", `/project/${payload.id}`, bodyFormData);
   }
