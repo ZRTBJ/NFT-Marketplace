@@ -76,7 +76,10 @@ export default function ProjectCreate() {
     if (acceptedFiles.length === 1) {
       setCoverPhoto(acceptedFiles);
       let objectUrl = URL.createObjectURL(acceptedFiles[0]);
-      setCoverPhotoUrl(objectUrl);
+      let coverPhotoInfo = {
+        path: objectUrl,
+      };
+      setCoverPhotoUrl(coverPhotoInfo);
       setoutlineKey(1);
     }
   }, []);
@@ -101,7 +104,7 @@ export default function ProjectCreate() {
       acceptedFiles.forEach((element) => {
         objectUrl.push({
           name: element.name,
-          url: URL.createObjectURL(element),
+          path: URL.createObjectURL(element),
         });
       });
       setPshotos(acceptedFiles);
@@ -109,8 +112,8 @@ export default function ProjectCreate() {
     }
   }, []);
   function onPhotosRemove(fileName) {
-    setPshotos(photos.filter((x) => x.name !== fileName));
-    setPhotosUrl(photosUrl.filter((x) => x.name !== fileName));
+    setPshotos(photos.filter((x) => x.name !== fileName.name));
+    setPhotosUrl(photosUrl.filter((x) => x.name !== fileName.name));
   }
   // Photos End
 
@@ -203,8 +206,7 @@ export default function ProjectCreate() {
       }
       if (projectCategory === "") {
         setEmptyProjectCategory(true);
-      }
-      if (
+      } else if (
         projectName !== "" &&
         projectCategory !== "" &&
         alreadyTakenProjectName === false
@@ -220,51 +222,50 @@ export default function ProjectCreate() {
         //   needMember,
         //   roleList
         // );
+        let createPayload = {
+          name: projectName,
+          category_id: projectCategory,
+          org_type: selectedTab.title.toLocaleLowerCase(),
+          voting_power: selectedTab.votingPower.find((x) => x.active === true)
+            .value,
+          voter_mode: selectedTab.canVote.find((x) => x.active === true).value,
+        };
+        if (visibility === "private") {
+          setisLoadingPrivate(true);
+        } else if (visibility === "public") {
+          setisLoadingPublic(true);
+        }
+        await createProject(createPayload)
+          .then((res) => {
+            const r = res.project;
+            let updatePayload = {
+              ...createPayload,
+              id: r.id,
+              cover: coverPhoto[0],
+              photos: photos,
+              overview: overview,
+              tags: tagList.toString(),
+              need_member: needMember,
+              roles: roleList.toString(),
+              visibility: visibility,
+            };
+            updateProject("create", updatePayload)
+              .then(() => {
+                if (visibility === "private") {
+                  setisLoadingPrivate(false);
+                } else if (visibility === "public") {
+                  setisLoadingPublic(false);
+                }
+                setShowModal(true);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       }
-
-      let createPayload = {
-        name: projectName,
-        category_id: projectCategory,
-        org_type: selectedTab.title.toLocaleLowerCase(),
-        voting_power: selectedTab.votingPower.find((x) => x.active === true)
-          .value,
-        voter_mode: selectedTab.canVote.find((x) => x.active === true).value,
-      };
-      if (visibility === "private") {
-        setisLoadingPrivate(true);
-      } else if (visibility === "public") {
-        setisLoadingPublic(true);
-      }
-      await createProject(createPayload)
-        .then((res) => {
-          const r = res.project;
-          let updatePayload = {
-            ...createPayload,
-            id: r.id,
-            cover: coverPhoto[0],
-            photos: photos,
-            overview: overview,
-            tags: tagList.toString(),
-            need_member: needMember,
-            roles: roleList.toString(),
-            visibility: visibility,
-          };
-          updateProject("create", updatePayload)
-            .then(() => {
-              if (visibility === "private") {
-                setisLoadingPrivate(false);
-              } else if (visibility === "public") {
-                setisLoadingPublic(false);
-              }
-              setShowModal(true);
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
 
       // setcurrentStep([1, 2, 3]);
     }

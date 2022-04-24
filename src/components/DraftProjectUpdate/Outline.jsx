@@ -85,7 +85,11 @@ export default function Outline({
           />
         ) : (
           <div className="relative">
-            <img className="coverPreview block" src={coverPhotoUrl} alt="" />
+            <img
+              className="coverPreview block"
+              src={coverPhotoUrl.path}
+              alt=""
+            />
             <img
               alt=""
               src={deleteIcon}
@@ -102,18 +106,23 @@ export default function Outline({
             <FileDragAndDrop
               maxFiles={4}
               height="192px"
-              onDrop={(e) => onPhotosSelect(e)}
+              onDrop={(e) => onPhotosSelect(e, photosUrl)}
               sizePlaceholder="Total upto 16MB"
+              disabled={photosUrl.length > 3 ? true : false}
             />
           </div>
           <div className="photoPreviewContainer mt-3 md:mt-0 md:w-[209px] md:pl-4 mx-12 md:mx-0 flex md:justify-between flex-wrap">
             {photosUrl.map((i) => (
-              <div key={i.url} className="relative m-2 md:m-0">
-                <img alt="" className="outlinePhoto md:m-1 block" src={i.url} />
+              <div key={i.path} className="relative m-2 md:m-0">
+                <img
+                  alt=""
+                  className="outlinePhoto md:m-1 block"
+                  src={i.path}
+                />
                 <img
                   alt=""
                   src={deleteIcon}
-                  onClick={() => onPhotosRemove(i.name)}
+                  onClick={() => onPhotosRemove(i)}
                   className="absolute top-0 cp right-0"
                 />
               </div>
