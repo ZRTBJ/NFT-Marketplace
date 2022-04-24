@@ -3,6 +3,7 @@ import { getUserProjectListById } from "../services/project/projectService";
 const initialState = {
   status: "idle",
   entities: {},
+  polls: [],
 };
 
 const projectSlice = createSlice({
@@ -16,10 +17,15 @@ const projectSlice = createSlice({
       state.entities = action.payload;
       state.status = "complete";
     },
+    addPollList(state, action) {
+      state.polls.push(action.payload);
+      state.status = "complete";
+    },
   },
 });
 
-export const { projectLoading, getUserProjectList } = projectSlice.actions;
+export const { projectLoading, getUserProjectList, addPollList } =
+  projectSlice.actions;
 
 export default projectSlice.reducer;
 

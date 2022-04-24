@@ -373,32 +373,72 @@ export default function DraftProjectUpdate() {
   async function saveDraft(visibility) {
     // Select type start
     if (currentStep.length === 1) {
-      if (visibility === "private") {
-        setisLoadingPrivate(true);
-      } else if (visibility === "public") {
-        setisLoadingPublic(true);
-      }
-
-      let selectType = {
-        id: id,
-        org_type: selectedTab.title.toLocaleLowerCase(),
-        voting_power: selectedTab.votingPower.find((x) => x.active === true)
-          .value,
-        voter_mode: selectedTab.canVote.find((x) => x.active === true).value,
-        visibility: visibility,
-      };
-      await updateProject("update", selectType)
-        .then(() => {
-          if (visibility === "private") {
-            setisLoadingPrivate(false);
-          } else if (visibility === "public") {
-            setisLoadingPublic(false);
+      if (currentStep.length === 1) {
+        if (selectedTab.title === "CUSTOM") {
+          if (votingPower === "" && canVote === "") {
+            alert("Chosse 1 who have voting power and who can vote");
+          } else if (votingPower === "") {
+            alert("Chosse 1 who have voting power");
+          } else if (canVote === "") {
+            alert("Chosse 1 who can vote");
+          } else if (votingPower !== "" && canVote !== "") {
+            if (visibility === "private") {
+              setisLoadingPrivate(true);
+            } else if (visibility === "public") {
+              setisLoadingPublic(true);
+            }
+            let selectType = {
+              id: id,
+              org_type: selectedTab.title.toLocaleLowerCase(),
+              voting_power: selectedTab.votingPower.find(
+                (x) => x.active === true
+              ).value,
+              voter_mode: selectedTab.canVote.find((x) => x.active === true)
+                .value,
+              visibility: visibility,
+            };
+            await updateProject("update", selectType)
+              .then(() => {
+                if (visibility === "private") {
+                  setisLoadingPrivate(false);
+                } else if (visibility === "public") {
+                  setisLoadingPublic(false);
+                }
+                setShowModal(true);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
           }
-          setShowModal(true);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+        } else {
+          if (visibility === "private") {
+            setisLoadingPrivate(true);
+          } else if (visibility === "public") {
+            setisLoadingPublic(true);
+          }
+          let selectType = {
+            id: id,
+            org_type: selectedTab.title.toLocaleLowerCase(),
+            voting_power: selectedTab.votingPower.find((x) => x.active === true)
+              .value,
+            voter_mode: selectedTab.canVote.find((x) => x.active === true)
+              .value,
+            visibility: visibility,
+          };
+          await updateProject("update", selectType)
+            .then(() => {
+              if (visibility === "private") {
+                setisLoadingPrivate(false);
+              } else if (visibility === "public") {
+                setisLoadingPublic(false);
+              }
+              setShowModal(true);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+      }
     }
     // select type end
 
@@ -525,7 +565,7 @@ export default function DraftProjectUpdate() {
                     : "flex justify-end"
                 }
               >
-                {currentStep.length > 1 ? (
+                {currentStep.length > 1 && (
                   <button
                     className="backButton"
                     onClick={() => handelClickBack()}
@@ -535,7 +575,8 @@ export default function DraftProjectUpdate() {
                   >
                     BACK
                   </button>
-                ) : (
+                )}
+                {currentStep.length < 8 && (
                   <button
                     className="nextButton"
                     onClick={() => handelClickNext()}
