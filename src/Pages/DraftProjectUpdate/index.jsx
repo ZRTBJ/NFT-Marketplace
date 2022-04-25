@@ -16,6 +16,8 @@ import DraftLogo from "assets/images/projectCreate/draftLogo.svg";
 import Modal from "components/Modal";
 import { useParams } from "react-router-dom";
 import { useHistory } from "react-router-dom";
+import Confirmation from "components/DraftProjectUpdate/Confirmation";
+import DeployingProjectModal from "components/modalDialog/DeployingProjectModal";
 
 export default function DraftProjectUpdate() {
   const history = useHistory();
@@ -335,6 +337,7 @@ export default function DraftProjectUpdate() {
   const [isLoadingPublic, setisLoadingPublic] = useState(false);
   const [isLoadingPrivate, setisLoadingPrivate] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showDeployModal, setShowDeployModal] = useState(false);
   async function projectDetails() {
     let payload = {
       id: id,
@@ -446,7 +449,7 @@ export default function DraftProjectUpdate() {
     // Token  start
     if (currentStep.length === 3) {
       if (!alreadyTakenTokenName && !alreadyTakenSymbol) {
-        setcurrentStep([1, 2, 3, 4]);
+        setcurrentStep([1, 2, 3, 4, 5, 6, 7]); // todo for now
       }
     }
     // Token end
@@ -679,8 +682,16 @@ export default function DraftProjectUpdate() {
             )}
             {/* {currentStep === 1 && <SelectType />}
         {currentStep === 1 && <SelectType />}
-        {currentStep === 1 && <SelectType />}
         {currentStep === 1 && <SelectType />} */}
+            {currentStep.length === 7 && (
+              <Confirmation
+                selectedType={selectedTab}
+                votingPower={votingPower}
+                canVote={canVote}
+                projectName={projectName}
+                tokenName={tokenName}
+              />
+            )}
             <div className="buttonContainer">
               <div
                 className={
@@ -700,7 +711,7 @@ export default function DraftProjectUpdate() {
                     BACK
                   </button>
                 )}
-                {currentStep.length < 8 && (
+                {currentStep.length < 7 && (
                   <button
                     className="nextButton"
                     onClick={() => handelClickNext()}
@@ -709,6 +720,31 @@ export default function DraftProjectUpdate() {
                   </button>
                 )}
               </div>
+              {currentStep.length === 7 && (
+                <div className="mt-8">
+                  <div className="text-center font-semibold">
+                    <p>It costs GAS fee to publish the project.</p>
+                    <p>
+                      Also, the information entered here cannot be changed after
+                      PUBLISH.
+                    </p>
+                    <p>(OUTLINE can be changed and members can be added)</p>
+                    <p></p>
+                    <p>
+                      If you don’t want to publish it now, press the
+                      PRIVATE/PUBLIC button to save the project.
+                    </p>
+                  </div>
+                  <div className="flex justify-center space-x-6 my-4">
+                    <button
+                      onClick={() => setShowDeployModal(true)}
+                      className={`h-[54px] w-[200px] rounded bg-[#0AB4AF] text-[white] hover:bg-[#192434]`}
+                    >
+                      PUBLISH
+                    </button>
+                  </div>
+                </div>
+              )}
               <div className="flex justify-center space-x-6 mt-4">
                 <button
                   onClick={() => saveDraft("private")}
@@ -789,6 +825,12 @@ export default function DraftProjectUpdate() {
             </button>
           </div>
         </Modal>
+      )}
+      {showDeployModal && (
+        <DeployingProjectModal
+          show={showDeployModal}
+          handleClose={setShowDeployModal}
+        />
       )}
     </div>
   );
