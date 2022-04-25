@@ -305,7 +305,7 @@ export default function ProjectCreate() {
             <div className="md:max-w-[580px] block mx-auto">
               <div className="flex flex-wrap justify-between">
                 {selectTypeTabData.map((i) => (
-                  <div key={i.id} className="md:max-w-[280px] mb-8">
+                  <div key={i.id} className="md:max-w-[280px] mb-8 bg-[white]">
                     <div
                       className="w-[280px] selectProjectTypeCardHeaderRedient h-[125px] pt-[50px] rounded-tl-lg rounded-tr-lg"
                       style={{ background: i.backgroundColor }}
@@ -315,7 +315,8 @@ export default function ProjectCreate() {
                     <div className="selectTypeCardBoxShadow rounded-bl-lg rounded-br-lg">
                       <div className="p-3">{i.text}</div>
                       <button
-                        className="h-[40px] m-3 w-[120px] bg-[#0AB4AF] text-[white] rounded"
+                        className="h-[40px] m-3 w-[120px] bg-[#0AB4AF] text-[white] rounded font-[500]"
+                        style={{ fontFamily: "Roboto" }}
                         onClick={() => selectProjectTypeRadient(i)}
                       >
                         SELECT

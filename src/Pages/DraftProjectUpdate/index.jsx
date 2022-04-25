@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import "assets/css/CreateProject/mainView.css";
 import {
   checkUniqueProjectName,
+  checkUniqueTokenInfo,
   deleteAssetsOfProject,
   updateProject,
   getProjectDetailsById,
@@ -56,6 +57,7 @@ export default function DraftProjectUpdate() {
   async function onProjectNameChange(e) {
     let payload = {
       projectName: e,
+      project_uuid: id,
     };
     setProjectName(payload.projectName);
     await checkUniqueProjectName(payload)
@@ -207,7 +209,6 @@ export default function DraftProjectUpdate() {
       setRoleList(newRoleList);
     }
   }
-
   // role end
 
   // Need mamber start
@@ -225,12 +226,115 @@ export default function DraftProjectUpdate() {
   const [outlineKey, setoutlineKey] = useState(0);
   const [photosLengthFromResponse, setPhotosLengthFromResponse] = useState(0);
   const [remainingPhotosName, setRemainingPhotosName] = useState([]);
-
+  async function setUpPhotos() {
+    let payload = {
+      id: id,
+    };
+    await getProjectDetailsById(payload).then((e) => {
+      let response = e.project;
+      let photosInfoData = response.assets.filter(
+        (x) => x.asset_purpose === "subphoto"
+      );
+      setPhotosLengthFromResponse(photosInfoData.length);
+      setPhotosUrl(photosInfoData);
+      let constPhotosName = ["img1", "img2", "img3", "img4"];
+      let photosname = [];
+      photosname = photosInfoData.map((e) => {
+        return e.name;
+      });
+      let remainingPhotosName = constPhotosName.filter(function (v) {
+        return !photosname.includes(v);
+      });
+      setRemainingPhotosName(remainingPhotosName);
+    });
+  }
   /**
    * ==============================================
    * Outline ENd
    * ==============================================
    */
+  /**
+   * ==============================================
+   * Token Start
+   * ==============================================
+   */
+
+  // token name start
+  const [tokenName, setTokenName] = useState("");
+  const [alreadyTakenTokenName, setAlreadyTakenTokenName] = useState(false);
+  async function onTokenNameChange(params) {
+    let payload = {
+      data: params,
+      type: "token_name",
+      project_uuid: id,
+    };
+    setTokenName(payload.projectName);
+    await checkUniqueTokenInfo(payload)
+      .then((e) => {
+        if (e.code === 0) {
+          setAlreadyTakenTokenName(false);
+        } else {
+          setAlreadyTakenTokenName(true);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+  // token name end
+
+  // token name start
+  const [tokenSymbol, setTokenSymbol] = useState("");
+  const [alreadyTakenSymbol, setAlreadyTakenSymbol] = useState(false);
+  async function onTokenSymbolChange(params) {
+    let payload = {
+      data: params,
+      type: "token_symbol",
+      project_uuid: id,
+    };
+    setTokenSymbol(payload.projectName);
+    await checkUniqueTokenInfo(payload)
+      .then((e) => {
+        if (e.code === 0) {
+          setAlreadyTakenSymbol(false);
+        } else {
+          setAlreadyTakenSymbol(true);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+  // token name end
+
+  // number of token
+  const [numberOfTokens, setNumberOfTokens] = useState("");
+  function isInDesiredForm(str) {
+    var n = Math.floor(Number(str));
+    return n !== Infinity && String(n) === str && n >= 0;
+  }
+  async function onNumberOfTokenChange(params) {
+    if (params === "") {
+      setNumberOfTokens("");
+    }
+    let token = isInDesiredForm(params);
+    if (token) {
+      setNumberOfTokens(params);
+    }
+  }
+  //  number of token end
+
+  /**
+   * ==============================================
+   * Token End
+   * ==============================================
+   */
+
+  const [currentStep, setcurrentStep] = useState([1]);
+  const [isLoading, setIsloading] = useState(false);
+  const [isLoadingPublic, setisLoadingPublic] = useState(false);
+  const [isLoadingPrivate, setisLoadingPrivate] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   async function projectDetails() {
     let payload = {
       id: id,
@@ -299,40 +403,15 @@ export default function DraftProjectUpdate() {
         }
       }
       // outline end
+
+      // Token start
+      setTokenName(response.token_name);
+      setTokenSymbol(response.token_symbol);
+      setNumberOfTokens(response.token_amount_total);
+      // Token end
       setDataIsLoading(false);
     });
   }
-  useEffect(() => {
-    projectDetails();
-  }, []);
-
-  async function setUpPhotos() {
-    let payload = {
-      id: id,
-    };
-    await getProjectDetailsById(payload).then((e) => {
-      let response = e.project;
-      let photosInfoData = response.assets.filter(
-        (x) => x.asset_purpose === "subphoto"
-      );
-      setPhotosLengthFromResponse(photosInfoData.length);
-      setPhotosUrl(photosInfoData);
-      let constPhotosName = ["img1", "img2", "img3", "img4"];
-      let photosname = [];
-      photosname = photosInfoData.map((e) => {
-        return e.name;
-      });
-      let remainingPhotosName = constPhotosName.filter(function (v) {
-        return !photosname.includes(v);
-      });
-      setRemainingPhotosName(remainingPhotosName);
-    });
-  }
-  const [currentStep, setcurrentStep] = useState([1]);
-  const [isLoading, setIsloading] = useState(false);
-  const [isLoadingPublic, setisLoadingPublic] = useState(false);
-  const [isLoadingPrivate, setisLoadingPrivate] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   function handelClickNext() {
     // Select type start
     if (currentStep.length === 1) {
@@ -356,7 +435,7 @@ export default function DraftProjectUpdate() {
     if (currentStep.length === 2) {
       if (projectName === "") {
         setemptyProjectName(true);
-      } else if (projectCategory === "") {
+      } else if (projectCategory === "default") {
         setEmptyProjectCategory(true);
       } else {
         setcurrentStep([1, 2, 3]);
@@ -366,7 +445,9 @@ export default function DraftProjectUpdate() {
 
     // Token  start
     if (currentStep.length === 3) {
-      setcurrentStep([1, 2, 3, 4]);
+      if (!alreadyTakenTokenName && !alreadyTakenSymbol) {
+        setcurrentStep([1, 2, 3, 4]);
+      }
     }
     // Token end
   }
@@ -461,10 +542,6 @@ export default function DraftProjectUpdate() {
 
         let updatePayload = {
           id: id,
-          org_type: selectedTab.title.toLocaleLowerCase(),
-          voting_power: selectedTab.votingPower.find((x) => x.active === true)
-            .value,
-          voter_mode: selectedTab.canVote.find((x) => x.active === true).value,
           visibility: visibility,
           name: projectName,
           category_id: projectCategory,
@@ -492,11 +569,44 @@ export default function DraftProjectUpdate() {
       }
     }
     // outline end
+
+    // token start
+    if (currentStep.length === 3) {
+      if (!alreadyTakenSymbol && !alreadyTakenTokenName) {
+        if (visibility === "private") {
+          setisLoadingPrivate(true);
+        } else if (visibility === "public") {
+          setisLoadingPublic(true);
+        }
+        let updatePayload = {
+          id: id,
+          token_name: tokenName,
+          token_symbol: tokenSymbol,
+          token_amount_total: numberOfTokens,
+        };
+        updateProject("update", updatePayload)
+          .then((res) => {
+            if (visibility === "private") {
+              setisLoadingPrivate(false);
+            } else if (visibility === "public") {
+              setisLoadingPublic(false);
+            }
+            setShowModal(true);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    }
+    // token end
   }
   function handelClickBack() {
     let currentIndex = currentStep.pop();
     setcurrentStep(currentStep.filter((x) => x !== currentIndex));
   }
+  useEffect(() => {
+    projectDetails();
+  }, []);
   return (
     <div>
       {isDataLoading && <div className="loading"></div>}
@@ -552,7 +662,21 @@ export default function DraftProjectUpdate() {
                 onRoleRemove={onRoleRemove}
               />
             )}
-            {currentStep.length === 3 && <Token />}
+            {currentStep.length === 3 && (
+              <Token
+                // token name
+                tokenName={tokenName}
+                alreadyTakenTokenName={alreadyTakenTokenName}
+                onTokenNameChange={onTokenNameChange}
+                // token symbol
+                tokenSymbol={tokenSymbol}
+                alreadyTakenSymbol={alreadyTakenSymbol}
+                onTokenSymbolChange={onTokenSymbolChange}
+                // number of token
+                numberOfTokens={numberOfTokens}
+                onNumberOfTokenChange={onNumberOfTokenChange}
+              />
+            )}
             {/* {currentStep === 1 && <SelectType />}
         {currentStep === 1 && <SelectType />}
         {currentStep === 1 && <SelectType />}
