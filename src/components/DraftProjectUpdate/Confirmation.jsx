@@ -48,15 +48,20 @@ export default function Confirmation(props) {
               aria-labelledby="headingOne5"
             >
               <div className="accordion-body py-4 px-5">
-                <strong>This is the first item's accordion body.</strong> It is
-                shown by default, until the collapse plugin adds the appropriate
-                classes that we use to style each element. These classes control
-                the overall appearance, as well as the showing and hiding via
-                CSS transitions. You can modify any of this with custom CSS or
-                overriding our default variables. It's also worth noting that
-                just about any HTML can go within the{" "}
-                <code>.accordion-body</code>, though the transition does limit
-                overflow.
+                <div>
+                  <div>Driven by (Who can propose?)</div>
+                  <div className="font-semibold">
+                    {props.selectedType.title}
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <div>Voting Power</div>
+                  <div className="font-semibold">{props.votingPower.title}</div>
+                </div>
+                <div className="mt-4">
+                  <div>Who can vote?</div>
+                  <div className="font-semibold">{props.canVote.title}</div>
+                </div>
               </div>
             </div>
           </div>
@@ -93,7 +98,12 @@ export default function Confirmation(props) {
               className="accordion-collapse collapse"
               aria-labelledby="headingTwo5"
             >
-              <div className="accordion-body py-4 px-5">OUTLINE</div>
+              <div className="accordion-body py-4 px-5">
+                <div>
+                  <div>Project name</div>
+                  <div className="font-semibold">{props.projectName}</div>
+                </div>
+              </div>
             </div>
           </div>
           <div className="accordion-item bg-white border border-gray-200">
@@ -129,7 +139,12 @@ export default function Confirmation(props) {
               className="accordion-collapse collapse"
               aria-labelledby="headingThree5"
             >
-              <div className="accordion-body py-4 px-5">TOKEN SETTING</div>
+              <div className="accordion-body py-4 px-5">
+                <div>
+                  <div>Token name</div>
+                  <div className="font-semibold">{props.tokenName}</div>
+                </div>
+              </div>
             </div>
           </div>
           <div className="accordion-item bg-white border border-gray-200">
