@@ -10,11 +10,13 @@ export async function getUserProjectListById(payload) {
 export async function checkUniqueProjectName(payload) {
   const bodyFormData = new FormData();
   bodyFormData.append("project_name", payload.projectName);
+  bodyFormData.append(`project_uuid`, payload.project_uuid);
   return await client("POST", `/project/validate`, bodyFormData);
 }
 export async function checkUniqueTokenInfo(payload) {
   const bodyFormData = new FormData();
-  bodyFormData.append("project_name", payload.projectName);
+  bodyFormData.append(`${payload.type}`, payload.data);
+  bodyFormData.append(`project_uuid`, payload.project_uuid);
   return await client("POST", `/project/validate`, bodyFormData);
 }
 
@@ -109,7 +111,15 @@ export async function updateProject(screen, payload) {
     if (payload.visibility) {
       bodyFormData.append("visibility", payload.visibility);
     }
-
+    if (payload.token_name) {
+      bodyFormData.append("token_name", payload.token_name);
+    }
+    if (payload.token_symbol) {
+      bodyFormData.append("token_symbol", payload.token_symbol);
+    }
+    if (payload.token_amount_total) {
+      bodyFormData.append("token_amount_total", payload.token_amount_total);
+    }
     return await client("PUT", `/project/${payload.id}`, bodyFormData);
   }
 }
