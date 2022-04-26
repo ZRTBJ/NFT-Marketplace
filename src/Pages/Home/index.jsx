@@ -1,15 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import SwiperCore, { Autoplay, Pagination } from "swiper";
 import WhatIsCreabo from "../../components/Home/WhatIsCreabo";
+import ProjectListCard from "components/Home/ProjectListCard";
 
 function Home(props) {
   SwiperCore.use([Autoplay]);
 
   return (
-    <>
+    <div>
       {/* Top slider */}
       <div className="block">
         <div className="flex absolute top-28 lg:top-32 xl:top-42 left-8 z-[2]">
@@ -92,7 +93,35 @@ function Home(props) {
       <div className="pt-2">
         <WhatIsCreabo />
       </div>
-    </>
+      {/* Project List */}
+      <div className="bg-[#192434] ">
+        <div className="flex items-center pt-[54px] mb-[32px]">
+          <div className=" text-[100px] text-[#0AB4AF] roboto font-[600]">
+            PROJECT
+          </div>
+          <div className="ml-[23px] mt-[50px] w-[100px] h-[26px] bg-[#0AB4AF] text-center rounded-[13px] text-[#FFFFFF]">
+            more
+          </div>
+        </div>
+        <div className="pb-[60px]">
+          <Swiper
+            slidesPerView={4}
+            spaceBetween={30}
+            pagination={{
+              clickable: true,
+            }}
+            modules={[Pagination]}
+          >
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
+              <SwiperSlide>
+                <ProjectListCard />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
+        <hr className="border-[1px] border-[white mb-6" />
+      </div>
+    </div>
   );
 }
 
