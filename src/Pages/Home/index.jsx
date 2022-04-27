@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { getPublicProjectList } from "services/project/projectService";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
@@ -8,6 +9,15 @@ import ProjectListCard from "components/Home/ProjectListCard";
 
 function Home(props) {
   SwiperCore.use([Autoplay]);
+  const [projectList, setProjectList] = useState([]);
+  async function getProjectList() {
+    await getPublicProjectList().then((response) => {
+      setProjectList(response.data);
+    });
+  }
+  useEffect(() => {
+    getProjectList();
+  }, []);
 
   return (
     <div>
@@ -105,16 +115,22 @@ function Home(props) {
         </div>
         <div className="pb-[60px]">
           <Swiper
-            slidesPerView={4}
             spaceBetween={30}
-            pagination={{
-              clickable: true,
+            breakpoints={{
+              640: {
+                slidesPerView: 1,
+              },
+              768: {
+                slidesPerView: 3,
+              },
+              1024: {
+                slidesPerView: 4,
+              },
             }}
-            modules={[Pagination]}
           >
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
-              <SwiperSlide>
-                <ProjectListCard />
+            {projectList.map((i) => (
+              <SwiperSlide key={i.id}>
+                <ProjectListCard key={i.id} project={i} />
               </SwiperSlide>
             ))}
           </Swiper>
