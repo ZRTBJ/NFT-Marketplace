@@ -154,3 +154,20 @@ export async function createProjectPoll(projectId, payload) {
     "formdata"
   );
 }
+
+export async function getPublishCost(projectId) {
+  return await client("GET", `/project/${projectId}/publish/cost`);
+}
+
+export async function publishFundTransfer(projectId, payload) {
+  return await client(
+    "POST",
+    `/project/${projectId}/publish/transfer_fund`,
+    payload,
+    "formdata"
+  );
+}
+
+export async function publishProject(projectId) {
+  return await client("POST", `/project/${projectId}/publish`, "formdata");
+}

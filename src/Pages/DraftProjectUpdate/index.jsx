@@ -6,6 +6,9 @@ import {
   deleteAssetsOfProject,
   updateProject,
   getProjectDetailsById,
+  getPublishCost,
+  publishFundTransfer,
+  publishProject,
 } from "services/project/projectService";
 import selectTypeTabData from "Pages/DraftProjectUpdate/projectCreateData";
 import LeftSideBar from "components/DraftProjectUpdate/LeftSideBar";
@@ -18,6 +21,7 @@ import { useParams } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import Confirmation from "components/DraftProjectUpdate/Confirmation";
 import DeployingProjectModal from "components/modalDialog/DeployingProjectModal";
+import { getTransactionSign } from "util/metaMaskWallet";
 
 export default function DraftProjectUpdate() {
   const history = useHistory();
@@ -607,9 +611,50 @@ export default function DraftProjectUpdate() {
     let currentIndex = currentStep.pop();
     setcurrentStep(currentStep.filter((x) => x !== currentIndex));
   }
+
   useEffect(() => {
     projectDetails();
   }, []);
+
+  function getProjectPublishCost() {
+    setDataIsLoading(true);
+    getPublishCost(id)
+      .then((res) => {
+        getProjectTransactionSign(res.amount);
+      })
+      .catch((err) => {
+        setDataIsLoading(false);
+      });
+  }
+
+  async function getProjectTransactionSign(amount) {
+    const signature = await getTransactionSign(amount);
+    const request = new FormData();
+    request.append("signature", signature);
+    request.append("amount", amount);
+
+    publishFundTransfer(id, request)
+      .then((res) => {
+        setDataIsLoading(false);
+        publishThisProject();
+      })
+      .catch((err) => {
+        setDataIsLoading(false);
+      });
+  }
+
+  function publishThisProject() {
+    setDataIsLoading(true);
+    publishProject(id)
+      .then((res) => {
+        setDataIsLoading(false);
+        setShowDeployModal(true);
+      })
+      .catch((err) => {
+        setDataIsLoading(false);
+      });
+  }
+
   return (
     <div>
       {isDataLoading && <div className="loading"></div>}
@@ -737,7 +782,9 @@ export default function DraftProjectUpdate() {
                   </div>
                   <div className="flex justify-center space-x-6 my-4">
                     <button
-                      onClick={() => setShowDeployModal(true)}
+                      onClick={
+                        () => getProjectPublishCost() // setShowDeployModal(true)
+                      }
                       className={`h-[54px] w-[200px] rounded bg-[#0AB4AF] text-[white] hover:bg-[#192434]`}
                     >
                       PUBLISH
