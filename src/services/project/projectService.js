@@ -6,6 +6,9 @@ export async function getUserProjectListById(payload) {
     `/user/${payload.id}/project?page=${payload.page}&per_page=${payload.perPage}`
   );
 }
+export async function getPublicProjectList() {
+  return await client("GET", `/project`);
+}
 
 export async function checkUniqueProjectName(payload) {
   const bodyFormData = new FormData();
