@@ -19,35 +19,42 @@ const DeployingProjectModal = ({ handleClose, show, buttomText }) => {
               <Stepper
                 activeStep={step}
                 styleConfig={{
+                  connectorStateColors: true,
                   completedBgColor: "#0AB4AF",
                   inactiveBgColor: "#B9CCD5",
                   labelFontSize: "1em",
                   fontWeight: "600",
                 }}
+                connectorStyleConfig={{
+                  activeColor: "#0AB4AF",
+                  completedColor: "#0AB4AF",
+                  size: 2,
+                  stepSize: "1em",
+                }}
               >
                 <Step label="Fund Transfer">
-                  {step === 1 ? (
+                  {step === 0 ? (
                     <i className="fa fa-hourglass" aria-hidden="true"></i>
                   ) : (
                     <i className="fa fa-check" aria-hidden="true"></i>
                   )}
                 </Step>
                 <Step label="Deployment Smartcontract">
-                  {step === 2 ? (
+                  {step === 1 ? (
                     <i className="fa fa-hourglass" aria-hidden="true"></i>
                   ) : (
                     <i className="fa fa-check" aria-hidden="true"></i>
                   )}
                 </Step>
                 <Step label="Set up project data">
-                  {step === 3 ? (
+                  {step === 2 ? (
                     <i className="fa fa-hourglass" aria-hidden="true"></i>
                   ) : (
                     <i className="fa fa-check" aria-hidden="true"></i>
                   )}
                 </Step>
                 <Step label="Completed">
-                  {step === 4 ? (
+                  {step === 3 ? (
                     <i className="fa fa-hourglass" aria-hidden="true"></i>
                   ) : (
                     <i className="fa fa-check" aria-hidden="true"></i>

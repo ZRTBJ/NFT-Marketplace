@@ -1,5 +1,6 @@
 import Config from "../config";
 import MetaMaskOnboarding from "@metamask/onboarding";
+import { ethers } from "ethers";
 
 const currentUrl = new URL(window.location.href);
 const forwarderOrigin =
@@ -121,6 +122,60 @@ export async function getPersonalSign() {
         console.error(error.message);
       }
     }
+    return signedResult;
+  } else {
+    onBoardBrowserPlugin();
+    return;
+  }
+}
+
+export async function getTransactionSign(amount) {
+  // Check if MetaMask is installed
+  // MetaMask injects the global API into window.ethereum
+  if (window.ethereum) {
+    let signedResult = "";
+    // get the count
+    try {
+      signedResult = await window.ethereum.request({
+        method: "eth_getTransactionCount",
+        params: [window.ethereum.selectedAddress, "latest"],
+      });
+    } catch (error) {
+      if (error.code === 4001) {
+        // EIP-1193 userRejectedRequest error
+        window.alert("Please connect to MetaMask.");
+      } else {
+        console.error(error.message);
+      }
+    }
+
+    const txsCount = ethers.BigNumber.from(signedResult);
+    const tx = {
+      to: "0x0174965F7ad2442bd158408749138b037A1B98F9",
+      nonce: txsCount.toNumber(),
+      gasLimit: ethers.BigNumber.from("60000"),
+      gasPrice: ethers.BigNumber.from(amount),
+      value: ethers.BigNumber.from(0),
+      chainId: 1,
+    };
+    const serializedTxHash = ethers.utils.keccak256(
+      ethers.utils.serializeTransaction(tx)
+    );
+    // get the sign
+    try {
+      signedResult = await window.ethereum.request({
+        method: "eth_sign",
+        params: [window.ethereum.selectedAddress, serializedTxHash],
+      });
+    } catch (error) {
+      if (error.code === 4001) {
+        // EIP-1193 userRejectedRequest error
+        window.alert("Please connect to MetaMask.");
+      } else {
+        console.error(error.message);
+      }
+    }
+
     return signedResult;
   } else {
     onBoardBrowserPlugin();
