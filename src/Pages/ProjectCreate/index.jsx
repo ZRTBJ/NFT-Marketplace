@@ -306,11 +306,15 @@ export default function ProjectCreate() {
               <div className="flex flex-wrap justify-between">
                 {selectTypeTabData.map((i) => (
                   <div key={i.id} className="md:max-w-[280px] mb-8 bg-[white]">
-                    <div
-                      className="w-[280px] selectProjectTypeCardHeaderRedient h-[125px] pt-[50px] rounded-tl-lg rounded-tr-lg"
-                      style={{ background: i.backgroundColor }}
-                    >
-                      {i.title}
+                    <div className="relative">
+                      <img
+                        className="w-[280px] block rounded-tr-lg rounded-tl-lg"
+                        src={i.background}
+                        alt=""
+                      />
+                      <div className="absolute top-10 left-0 right-0 selectProjectTypeCardHeaderRedient">
+                        {i.title}
+                      </div>
                     </div>
                     <div className="selectTypeCardBoxShadow rounded-bl-lg rounded-br-lg">
                       <div className="p-3">{i.text}</div>
