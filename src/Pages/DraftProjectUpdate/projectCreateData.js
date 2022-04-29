@@ -2,12 +2,17 @@ import allMember from "assets/images/projectCreate/allMember.svg";
 import owner from "assets/images/projectCreate/owner.svg";
 import vote1Member from "assets/images/projectCreate/vote1Member.svg";
 import token from "assets/images/projectCreate/token.svg";
+import greenRadient from "assets/images/projectCreate/green.jpg";
+import blueRadient from "assets/images/projectCreate/blue.jpg";
+import pinkRadient from "assets/images/projectCreate/pink.jpg";
+import yellowRadient from "assets/images/projectCreate/yellow.jpg";
+
 const selectTypeTabData = [
   {
     id: 1,
     title: "CUSTOM",
     text: "Custom Tab description text",
-    backgroundColor: `transparent radial-gradient(closest-side at 24% 20%, #0ad5cf 0%, #006f6c 100%)`,
+    background: greenRadient,
     votingPower: [
       {
         id: 1,
@@ -53,7 +58,7 @@ const selectTypeTabData = [
     id: 2,
     title: "COMPANY",
     text: "Company Tab description",
-    backgroundColor: `transparent radial-gradient(closest-side at 24% 20%, #0AAED5 0%, #00226F 100%)`,
+    background: blueRadient,
     votingPower: [
       {
         id: 1,
@@ -99,7 +104,7 @@ const selectTypeTabData = [
     id: 3,
     title: "COLLABORATE",
     text: "Collaborate Tab text",
-    backgroundColor: `transparent radial-gradient(closest-side at 24% 20%, #FF2B95 0%, #6F001E 100%)`,
+    background: pinkRadient,
     votingPower: [
       {
         id: 1,
@@ -145,7 +150,7 @@ const selectTypeTabData = [
     id: 4,
     title: "CLUB",
     text: "Club Tab text",
-    backgroundColor: `transparent radial-gradient(closest-side at 24% 20%, #E5E500 0%, #965802 100%)`,
+    background: yellowRadient,
     votingPower: [
       {
         id: 1,

@@ -12,6 +12,19 @@ function Home(props) {
   const [projectList, setProjectList] = useState([]);
   async function getProjectList() {
     await getPublicProjectList().then((response) => {
+      response.data.forEach((element) => {
+        if (element.project_fundraising !== null) {
+          let allocation = "";
+          let user_allocated_percent = "";
+          allocation =
+            (element.token_amount_total / 100) *
+            element.project_fundraising.allocation_percent;
+          user_allocated_percent =
+            (allocation / 100) *
+            element.project_fundraising.user_allocated_percent;
+          element.project_fundraising.total_allocation = user_allocated_percent;
+        }
+      });
       setProjectList(response.data);
     });
   }

@@ -45,12 +45,16 @@ const ProjectListCard = ({ project }) => {
               )}
             </div>
           )}
-          {project.status === "publised" && project.fundraising !== null && (
-            <div
-              style={{ borderRadius: " 4px 4px 0px 0px" }}
-              className="bg-[#FFFFFF] px-4 py-1 text-[10px] ml-5 roboto font-bold text-[#D31B0C]"
-            >
-              TOKEN SALE
+          {project.status === "published" && (
+            <div>
+              {project.project_fundraising !== null && (
+                <div
+                  style={{ borderRadius: " 4px 4px 0px 0px" }}
+                  className="bg-[#FFFFFF] px-4 py-1 text-[10px] ml-5 roboto font-bold text-[#D31B0C]"
+                >
+                  TOKEN SALE
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -58,26 +62,35 @@ const ProjectListCard = ({ project }) => {
           {project.name}
         </div>
         <div className="test-[12px] text-[#192434] mt-[28px] mb-[11px]">
-          {project.overview.substring(0, 120) + " ..."}
+          {project.overview.substring(0, 70) + " ..."}
         </div>
         {project.status === "published" && (
           <div>
-            <div className="flex mt-[11px] justify-between text-[#192434] text-[10px]">
-              <div>0</div>
-              <div>1000 TOKEN NAME</div>
-            </div>
-            <div className="w-full rounded-lg  bg-gray-200 mb-[9px] h-[8px]">
-              <div
-                className="bg-[#0AB4AF] rounded-lg h-[8px]"
-                style={{ width: "45%" }}
-              ></div>
-            </div>
+            {project.project_fundraising !== null && (
+              <div>
+                <div className="flex mt-[11px] justify-between text-[#192434] text-[10px]">
+                  <div>0</div>
+                  <div>
+                    <span>{project.project_fundraising.total_allocation}</span>{" "}
+                    {project.token_name}
+                  </div>
+                </div>
+                <div className="w-full rounded-lg  bg-gray-200 mb-[9px] h-[8px]">
+                  <div
+                    className="bg-[#0AB4AF] rounded-lg h-[8px]"
+                    style={{
+                      width: `${project.project_fundraising.user_allocated_percent}px`,
+                    }}
+                  ></div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
         <div className="flex justify-between pb-[16px]">
           <div className="w-[100px] pt-[2px] h-[20px] text-center rounded-[12px] border-[1px] text-[10px] border-[#B9CCD5] text-[#192434]">
-            {project.cateory_name}
+            {project.category_name}
           </div>
           <div className="flex">
             <div className="flex items-center">
