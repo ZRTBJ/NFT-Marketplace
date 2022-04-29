@@ -22,6 +22,8 @@ import { useHistory } from "react-router-dom";
 import Confirmation from "components/DraftProjectUpdate/Confirmation";
 import DeployingProjectModal from "components/modalDialog/DeployingProjectModal";
 import { getTransactionSign } from "util/metaMaskWallet";
+import SuccessModal from "components/modalDialog/SuccessModal";
+import ErrorModal from "components/modalDialog/ErrorModal";
 
 export default function DraftProjectUpdate() {
   const history = useHistory();
@@ -35,6 +37,10 @@ export default function DraftProjectUpdate() {
   const [canVote, setCanVote] = useState("");
   const { id } = useParams();
   const [isDataLoading, setDataIsLoading] = useState(true);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [gasPrice, setGasPrice] = useState(0);
+
   function setActiveTab(arg) {
     setSelectedTab(arg);
   }
@@ -268,13 +274,14 @@ export default function DraftProjectUpdate() {
   // token name start
   const [tokenName, setTokenName] = useState("");
   const [alreadyTakenTokenName, setAlreadyTakenTokenName] = useState(false);
-  async function onTokenNameChange(params) {
+  async function onTokenNameChange(tokenName) {
     let payload = {
-      data: params,
+      data: tokenName,
       type: "token_name",
       project_uuid: id,
     };
-    setTokenName(payload.projectName);
+
+    setTokenName(tokenName);
     await checkUniqueTokenInfo(payload)
       .then((e) => {
         if (e.code === 0) {
@@ -292,13 +299,13 @@ export default function DraftProjectUpdate() {
   // token name start
   const [tokenSymbol, setTokenSymbol] = useState("");
   const [alreadyTakenSymbol, setAlreadyTakenSymbol] = useState(false);
-  async function onTokenSymbolChange(params) {
+  async function onTokenSymbolChange(tokenSymbol) {
     let payload = {
-      data: params,
+      data: tokenSymbol,
       type: "token_symbol",
       project_uuid: id,
     };
-    setTokenSymbol(payload.projectName);
+    setTokenSymbol(tokenSymbol);
     await checkUniqueTokenInfo(payload)
       .then((e) => {
         if (e.code === 0) {
@@ -591,6 +598,7 @@ export default function DraftProjectUpdate() {
           token_symbol: tokenSymbol,
           token_amount_total: numberOfTokens,
         };
+
         updateProject("update", updatePayload)
           .then((res) => {
             if (visibility === "private") {
@@ -620,7 +628,13 @@ export default function DraftProjectUpdate() {
     setDataIsLoading(true);
     getPublishCost(id)
       .then((res) => {
-        getProjectTransactionSign(res.amount);
+        if (res.code === 0) {
+          setGasPrice(res.amount ? res.amount : 0);
+          getProjectTransactionSign(res.amount);
+        } else {
+          setDataIsLoading(false);
+          setShowErrorModal(true);
+        }
       })
       .catch((err) => {
         setDataIsLoading(false);
@@ -636,7 +650,12 @@ export default function DraftProjectUpdate() {
     publishFundTransfer(id, request)
       .then((res) => {
         setDataIsLoading(false);
-        publishThisProject();
+        if (res.code === 0) {
+          setShowDeployModal(true);
+          publishThisProject(); // to-do: wait for websocket response of success then call this api
+        } else {
+          setShowErrorModal(true);
+        }
       })
       .catch((err) => {
         setDataIsLoading(false);
@@ -648,7 +667,11 @@ export default function DraftProjectUpdate() {
     publishProject(id)
       .then((res) => {
         setDataIsLoading(false);
-        setShowDeployModal(true);
+        if (res.code === 0) {
+          setShowDeployModal(true);
+        } else {
+          setShowErrorModal(true);
+        }
       })
       .catch((err) => {
         setDataIsLoading(false);
@@ -877,7 +900,17 @@ export default function DraftProjectUpdate() {
         <DeployingProjectModal
           show={showDeployModal}
           handleClose={setShowDeployModal}
+          gasPrice={gasPrice}
         />
+      )}
+      {showSuccessModal && (
+        <SuccessModal
+          handleClose={setShowSuccessModal}
+          show={showSuccessModal}
+        />
+      )}
+      {showErrorModal && (
+        <ErrorModal handleClose={setShowErrorModal} show={showErrorModal} />
       )}
     </div>
   );

@@ -3,8 +3,9 @@ import ico_matic from "assets/images/projectEdit/ico_matic.svg";
 import Modal from "../Modal";
 import { Step, Stepper } from "react-form-stepper";
 import { useState } from "react";
+import { produceWithPatches } from "immer";
 
-const DeployingProjectModal = ({ handleClose, show, buttomText }) => {
+const DeployingProjectModal = ({ handleClose, show, buttomText, gasPrice }) => {
   const btnText = buttomText ? buttomText : "VIEW on ETHERSCAN";
   const [step, setStep] = useState(1);
   return (
@@ -72,7 +73,10 @@ const DeployingProjectModal = ({ handleClose, show, buttomText }) => {
                   </div>
                   <div>Complete Deposit</div>
                   <div className="ml-8">
-                    <span className="float-right"> ~ 2.1 MATIC</span>
+                    <span className="float-right">
+                      {" "}
+                      ~ {produceWithPatches.gasPrice} MATIC
+                    </span>
                   </div>
                 </div>
               </div>
