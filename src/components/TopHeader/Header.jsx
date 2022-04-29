@@ -173,7 +173,12 @@ const Header = () => {
       console.log("Please connect to MetaMask.");
     } else if (accounts[0] !== metamaskAccount) {
       const currentAccount = accounts[0];
-      if (currentAccount && currentAccount.length > 5) {
+      if (
+        userId &&
+        userId.length > 0 &&
+        currentAccount &&
+        currentAccount.length > 5
+      ) {
         getPersonalSign()
           .then((signature) => {
             userLogin(currentAccount, signature, "metamask");

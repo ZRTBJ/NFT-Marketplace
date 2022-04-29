@@ -134,11 +134,12 @@ export async function getTransactionSign(amount) {
   // MetaMask injects the global API into window.ethereum
   if (window.ethereum) {
     let signedResult = "";
+    const account = await getWalletAccount();
     // get the count
     try {
       signedResult = await window.ethereum.request({
         method: "eth_getTransactionCount",
-        params: [window.ethereum.selectedAddress, "latest"],
+        params: [account, "latest"],
       });
     } catch (error) {
       if (error.code === 4001) {
@@ -165,7 +166,7 @@ export async function getTransactionSign(amount) {
     try {
       signedResult = await window.ethereum.request({
         method: "eth_sign",
-        params: [window.ethereum.selectedAddress, serializedTxHash],
+        params: [account, serializedTxHash],
       });
     } catch (error) {
       if (error.code === 4001) {

@@ -3,7 +3,7 @@ const FullScreenModal = ({ children }) => {
   return (
     <div
       className={`fixed top-0 left-0 w-[100%] h-[100%]  block z-10`}
-      style={{ background: "rgba(255,255,255,0.9 )" }}
+      style={{ background: "rgba(255,255,255,0.5 )" }}
     >
       <section className={"modal-main"}>{children}</section>
     </div>
