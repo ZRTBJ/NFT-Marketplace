@@ -12,16 +12,19 @@ function App() {
       <Router>
         <AuthProvider>
           <Header />
-          <Switch>
-            {routes.map((route) => (
-              <AppRoute
-                key={route.path}
-                path={route.path}
-                component={route.component}
-                isPrivate={route.isPrivate}
-              />
-            ))}
-          </Switch>
+          {/* Dynamic Body */}
+          <div className="min-h-[50vh]">
+            <Switch>
+              {routes.map((route) => (
+                <AppRoute
+                  key={route.path}
+                  path={route.path}
+                  component={route.component}
+                  isPrivate={route.isPrivate}
+                />
+              ))}
+            </Switch>
+          </div>
           <FooterPage />
         </AuthProvider>
       </Router>
