@@ -6,8 +6,14 @@ export async function getUserProjectListById(payload) {
     `/user/${payload.id}/project?page=${payload.page}&per_page=${payload.perPage}`
   );
 }
-export async function getPublicProjectList() {
-  return await client("GET", `/project`);
+export async function getPublicProjectList(payload) {
+  if (payload) {
+    let limit = `${payload.limit ? `limit=${payload.limit}` : ""}`;
+    let order_by = `${payload.order_by ? `order_by=${payload.order_by}` : ""}`;
+    return await client("GET", `/project?${limit}${order_by}`);
+  } else {
+    return await client("GET", `/project`);
+  }
 }
 
 export async function checkUniqueProjectName(payload) {

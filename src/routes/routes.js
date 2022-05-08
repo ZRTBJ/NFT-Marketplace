@@ -9,6 +9,7 @@ import DraftProjectUpdate from "Pages/DraftProjectUpdate";
 import ProjectPoll from "Pages/ProjectEditPoll";
 import ProjectEditOutline from "Pages/ProjectEditOutline";
 import projectDetails from "Pages/ProjectDetails";
+import AllProject from "Pages/AllProject";
 
 const routes = [
   {
@@ -62,6 +63,12 @@ const routes = [
     component: projectDetails,
     isPrivate: true,
   },
+  {
+    path: "/all-project",
+    component: AllProject,
+    isPrivate: false,
+  },
+
   {
     path: "/*",
     component: NotFound,

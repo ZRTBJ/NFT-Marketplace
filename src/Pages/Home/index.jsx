@@ -6,6 +6,7 @@ import "swiper/css/pagination";
 import SwiperCore, { Autoplay, Pagination } from "swiper";
 import WhatIsCreabo from "../../components/Home/WhatIsCreabo";
 import ProjectListCard from "components/Home/ProjectListCard";
+import { Link } from "react-router-dom";
 
 function Home(props) {
   SwiperCore.use([Autoplay]);
@@ -122,9 +123,12 @@ function Home(props) {
           <div className=" text-[100px] text-[#0AB4AF] roboto font-[600]">
             PROJECT
           </div>
-          <div className="ml-[23px] mt-[50px] w-[100px] h-[26px] bg-[#0AB4AF] text-center rounded-[13px] text-[#FFFFFF]">
+          <Link
+            to="/all-project"
+            className="ml-[23px] mt-[50px] w-[100px] h-[26px] bg-[#0AB4AF] text-center rounded-[13px] text-[#FFFFFF]"
+          >
             more
-          </div>
+          </Link>
         </div>
         <div className="pb-[60px]">
           <Swiper
