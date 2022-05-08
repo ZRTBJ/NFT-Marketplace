@@ -7,14 +7,14 @@ const ProjectListCard = ({ project }) => {
       style={{ boxShadow: " 0px 0px 4px #00000024" }}
     >
       <img
-        style={{ borderRadius: " 8px 8px 0px 0px" }}
+        style={{ borderRadius: "8px 8px 0px 0px" }}
         src={project.assets.find((x) => x.asset_purpose === "cover").path}
         alt=""
         className="h-[280px] w-[280px] object-cover"
       />
       <div
-        style={{ borderRadius: " 0px 0px 8px 8px" }}
-        className="bg-[#FFFFFF] pl-4 pr-4"
+        style={{ borderRadius: "0px 0px 8px 8px" }}
+        className="bg-[#FFFFFF] pl-4 pr-4 "
       >
         <div className="flex mt-[-16px] ">
           {project.status === "draft" && (
