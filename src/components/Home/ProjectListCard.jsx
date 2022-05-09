@@ -61,9 +61,11 @@ const ProjectListCard = ({ project }) => {
         <div className="mt-[14px] mb-[28px] text-[#192434] roboto font-bold">
           {project.name}
         </div>
-        <div className="test-[12px] text-[#192434] mt-[28px] mb-[11px]">
-          {project.overview.substring(0, 70) + " ..."}
-        </div>
+        {project.project_fundraising === null && (
+          <div className="test-[12px] text-[#192434] mt-[28px] mb-[11px]">
+            {project.overview.substring(0, 70) + " ..."}
+          </div>
+        )}
         {project.status === "published" && (
           <div>
             {project.project_fundraising !== null && (
