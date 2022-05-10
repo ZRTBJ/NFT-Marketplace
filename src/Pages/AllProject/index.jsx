@@ -3,23 +3,37 @@ import { DebounceInput } from "react-debounce-input";
 import {
   getPublicProjectList,
   getProjectCategory,
+  getProjectListBySearch,
 } from "services/project/projectService";
 import ProjectListCard from "components/Home/ProjectListCard";
 import InfiniteScroll from "react-infinite-scroll-component";
+import sortIcon from "assets/images/home/ico_filter.svg";
 function AllProject() {
-  const [search, setSearch] = useState("");
   const [projectList, setProjectList] = useState([]);
   const [hasMore, setHasMore] = useState(true);
-  let [limit, setLimit] = useState(4);
-  const [isLoading, setIsloading] = useState(true);
 
-  function onProjectNameChange(value) {
-    if (value === "") {
-      console.log("empty");
-    } else {
-      setSearch(value);
-    }
+  const [isLoading, setIsloading] = useState(true);
+  const [orderBy, setOrderBy] = useState("newer");
+  let [page, setPage] = useState(1);
+  let [limit, setLimit] = useState(10);
+  const [criteria, setCriteria] = useState("name");
+  const [keyword, setKeyword] = useState("");
+
+  async function filterProjectList() {
+    setIsloading(true);
+    const payload = {
+      orderBy: orderBy,
+      page: page,
+      limit: limit,
+      criteria: criteria,
+      keyword: keyword,
+    };
+    await getProjectListBySearch(payload).then((res) => {
+      console.log(res);
+    });
+    setIsloading(false);
   }
+
   async function getProjectList(payload) {
     let categoryList = [];
     setIsloading(true);
@@ -51,70 +65,73 @@ function AllProject() {
     setIsloading(false);
   }
   async function fetchData() {
-    setLimit((limit = limit + 1));
+    setLimit((limit = limit + 10));
+    setPage((page = page + 1));
     let payload = {
       limit: limit,
     };
     await getProjectList(payload);
   }
-  async function typeChange(e) {
-    let payload = {
-      limit: limit,
-      order_by: e,
-    };
-    getProjectList(payload);
+  async function onProjectNameChange(value) {
+    if (value === "") {
+      console.log("empty");
+    } else {
+      setKeyword(value);
+      await filterProjectList();
+    }
   }
-  async function selectSearchType(e) {
-    let payload = {
-      limit: limit,
-      order_by: e,
-    };
-    console.log(payload);
-    // getProjectList(payload);
+  async function onOrderChange(e) {
+    setOrderBy(e);
+    await filterProjectList();
+  }
+  async function onSearchTypeChange(e) {
+    setCriteria(e);
+    await filterProjectList();
   }
   useEffect(() => {
-    let payload = {
-      limit: limit,
-    };
-    getProjectList(payload);
+    filterProjectList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <div className="max-w-[1366px] mx-auto ">
-      <div className="mt-[24px]  md:mb-[40px]">
-        <div className="flex 	w-full align-items flex-wrap  px-[27px]  justify-between">
-          <div className="md:flex flex-1 ">
+      <div className="mt-[15px]">
+        <div className="flex 	w-full   md:px-[27px] px-[14px]">
+          <div className="flex w-full">
             <select
-              name=""
-              id=""
-              onChange={(e) => selectSearchType(e.target.value)}
-              className="md:w-[160px] md:ml-4 mb-4"
+              value={criteria}
+              onChange={(e) => onSearchTypeChange(e.target.value)}
+              className="w-[88px]  h-[34px] md:h-[44px] text-[12px] md:text-[16px] md:w-[160px] md:ml-4 mb-4 "
             >
-              <option selected value="newer">
-                Project Name
-              </option>
-              <option value="old">Role</option>
+              <option value="name">Project Name</option>
+              <option value="job">Role</option>
             </select>
             <DebounceInput
               minLength={1}
-              debounceTimeout={300}
+              debounceTimeout={600}
               onChange={(e) => onProjectNameChange(e.target.value)}
               type="text"
-              className="projectNameInput md:max-w-[464px] mb-4"
+              className="border mr-4 border-[#cccccc]  rounded   md:w-[776px] mb-4 h-[34px] md:h-[44px] "
               name="projectNameLable"
               id="projectNameLable"
               placeholder={"Search"}
-              value={search}
+              value={keyword}
             />
+            <button className="text-center h-[34px] md:h-[44px] w-[34px] border border-[#CCCCCC] md:hidden">
+              <img
+                src={sortIcon}
+                className={"h-[24px] ml-1 w-[24px] block "}
+                alt=""
+              />
+            </button>
+            <select
+              value={orderBy}
+              onChange={(e) => onOrderChange(e.target.value)}
+              className="hidden md:block md:w-[174px] pr-4 ml-auto"
+            >
+              <option defaultValue={"newer"}>Newer</option>
+              <option value="old">OLD</option>
+            </select>
           </div>
-          <select
-            name=""
-            id=""
-            onChange={(e) => typeChange(e.target.value)}
-            className="md:w-[174px] pr-4"
-          >
-            <option value="newer">Newer</option>
-            <option value="old">OLD</option>
-          </select>
         </div>
       </div>
       <InfiniteScroll
@@ -125,13 +142,13 @@ function AllProject() {
 
         // below props only if you need pull down functionality
       >
-        <div className="container mx-auto p-6 grid grid-cols-1  md:grid-cols-3 lg:grid-cols-4  gap-4">
+        <div className="container md:mx-auto md:p-6 grid grid-cols-2  md:grid-cols-3 lg:grid-cols-4  md:gap-4">
           {projectList.map((i) => (
             <div
               key={i.id}
               className="mb-8 col-span-1 flex flex-col bg-white p-4"
             >
-              <ProjectListCard key={i.id} project={i} />
+              <ProjectListCard key={i.id} sm={166} md={280} project={i} />
             </div>
           ))}
         </div>

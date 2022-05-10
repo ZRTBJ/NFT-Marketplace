@@ -95,16 +95,16 @@ const Profile = () => {
         name: "PROJECT",
         cardList: userProjectList,
       },
-      {
-        id: 2,
-        name: "WORK",
-        cardList: [],
-      },
-      {
-        id: 3,
-        name: "COLLECTION",
-        cardList: [],
-      },
+      // {
+      //   id: 2,
+      //   name: "WORK",
+      //   cardList: [],
+      // },
+      // {
+      //   id: 3,
+      //   name: "COLLECTION",
+      //   cardList: [],
+      // },
     ];
     setTab(tabData);
   }, [userProjectList]);
