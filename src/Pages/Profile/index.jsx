@@ -59,7 +59,7 @@ const Profile = () => {
         }
       });
       let payload = {
-        id: localStorage.getItem("user_id"),
+        id: id,
         page: 1,
         perPage: 10,
       };
@@ -114,12 +114,25 @@ const Profile = () => {
       <div className={!isLoading ? "" : "loading"}></div>
       {!isLoading && (
         <div className="profilePageContainer">
-          <div className="banner"></div>
-          <img
-            src={user.avatar}
-            className="userProfilePicture"
-            alt="User profile"
-          />
+          {user.cover === "" ? (
+            <div className="ProfileBannerDefault"></div>
+          ) : (
+            <img src={user.cover} className="Profilebanner" alt="" />
+          )}
+
+          {user.avatar === "" ? (
+            <img
+              src={profile}
+              className="userProfilePicture"
+              alt="User profile"
+            />
+          ) : (
+            <img
+              src={user.avatar}
+              className="userProfilePicture"
+              alt="User profile"
+            />
+          )}
           <div className="userName">
             {user.first_name} {user.last_name}
           </div>
@@ -153,13 +166,8 @@ const Profile = () => {
               <div className="statsTitle">Followers</div>
             </div>
           </div>
-          {isFollowing ? (
-            <button
-              className="followButton"
-              onClick={() => setIsFollowing(false)}
-            >
-              FOLLOWING
-            </button>
+          {localStorage.getItem("user_id") === id ? (
+            <></>
           ) : (
             <button
               className="followButton"
@@ -168,6 +176,7 @@ const Profile = () => {
               FOLLOW
             </button>
           )}
+
           <div className="socialIconsContqainer">
             {sncList &&
               sncList.map((snc, index) => (
@@ -195,8 +204,8 @@ const Profile = () => {
             ))} */}
           </div>
           <div className="portfolioButtonContainer">
-            {websiteList.map((e) => (
-              <button>
+            {websiteList.map((e, index) => (
+              <button key={`web-${index}`}>
                 <a href={e.url}>{e.title}</a>
               </button>
             ))}

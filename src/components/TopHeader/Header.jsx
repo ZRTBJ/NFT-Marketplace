@@ -155,7 +155,7 @@ const Header = () => {
         userinfo["display_name"] &&
         userinfo["display_name"].length > 0
       ) {
-        history.push("/profile");
+        history.push(`/profile/${localStorage.getItem("user_id")}`);
       } else {
         history.push("/profile-settings");
       }

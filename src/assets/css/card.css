@@ -154,6 +154,7 @@
   .userProfilePicture {
     height: 80px;
     width: 80px;
+    margin-top: -44px;
   }
   .userName {
     font-size: 18px;

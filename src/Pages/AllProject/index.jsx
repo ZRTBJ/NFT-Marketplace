@@ -83,6 +83,17 @@ function AllProject() {
       <div className="mt-[24px]  md:mb-[40px]">
         <div className="flex 	w-full align-items flex-wrap  px-[27px]  justify-between">
           <div className="md:flex flex-1 ">
+            <select
+              name=""
+              id=""
+              onChange={(e) => selectSearchType(e.target.value)}
+              className="md:w-[160px] md:ml-4 mb-4"
+            >
+              <option selected value="newer">
+                Project Name
+              </option>
+              <option value="old">Role</option>
+            </select>
             <DebounceInput
               minLength={1}
               debounceTimeout={300}
@@ -94,17 +105,6 @@ function AllProject() {
               placeholder={"Search"}
               value={search}
             />
-            <select
-              name=""
-              id=""
-              onChange={(e) => selectSearchType(e.target.value)}
-              className="md:w-[160px] md:ml-4 mb-4"
-            >
-              <option selected value="newer">
-                Project Name
-              </option>
-              <option value="old">Roll</option>
-            </select>
           </div>
           <select
             name=""
