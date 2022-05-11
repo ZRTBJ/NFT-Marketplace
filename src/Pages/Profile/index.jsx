@@ -25,7 +25,7 @@ import { useParams } from "react-router-dom";
 const Profile = () => {
   const { id } = useParams();
   const [user, setUser] = useState({});
-  let [isFollowing, setIsFollowing] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
   const [userProjectList, setUserProjectList] = useState([]);
   const [tab, setTab] = useState([]);
   const [isLoading, setisLoading] = useState(true);
@@ -204,9 +204,9 @@ const Profile = () => {
             ))} */}
           </div>
           <div className="portfolioButtonContainer">
-            {websiteList.map((e, index) => (
+            {websiteList.map((website, index) => (
               <button key={`web-${index}`}>
-                <a href={e.url}>{e.title}</a>
+                <a href={website.url}>{website.title}</a>
               </button>
             ))}
           </div>
