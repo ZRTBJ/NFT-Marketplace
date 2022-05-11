@@ -177,3 +177,10 @@ export async function publishFundTransfer(projectId, payload) {
 export async function publishProject(projectId) {
   return await client("POST", `/project/${projectId}/publish`, "formdata");
 }
+
+export async function getProjectListBySearch(payload) {
+  return await client(
+    "GET",
+    `/project?order_by=${payload.order_by}&page=${payload.page}&limit=${payload.limit}&criteria=${payload.criteria}&keyword=${payload.keyword}`
+  );
+}

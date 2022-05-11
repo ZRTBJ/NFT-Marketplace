@@ -23,7 +23,7 @@ const routes = [
     isPrivate: true,
   },
   {
-    path: "/profile",
+    path: "/profile/:id",
     component: Profile,
     isPrivate: false,
   },

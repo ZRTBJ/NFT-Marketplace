@@ -12,7 +12,9 @@ const Tab = (props) => {
         <div className="buttonGroup">
           {props.tabs.map((type) => (
             <button
-              className={active.name === type.name ? "activeBUttonTab" : ""}
+              className={`max-w-[418px] ${
+                active.name === type.name ? "activeBUttonTab" : ""
+              }`}
               key={type.id}
               onClick={() => setActive(type)}
             >
@@ -25,39 +27,51 @@ const Tab = (props) => {
       <div className="tabContent">
         {active.name === "PROJECT" && (
           <div className="container mx-auto">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
-              {active.cardList.map((cardlist) => (
-                <div key={cardlist.id}>
-                  <div className="projectCardLayout">
-                    <ProjectCard cardInfo={cardlist} />
+            {active.cardList.length === 0 ? (
+              <div>No Projects yet</div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
+                {active.cardList.map((cardlist) => (
+                  <div key={cardlist.id}>
+                    <div className="projectCardLayout">
+                      <ProjectCard cardInfo={cardlist} />
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
         {active.name === "WORK" && (
           <div className="container mx-auto md:px-4">
-            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 md:gap-4">
-              {active.cardList.map((cardlist) => (
-                <div key={cardlist.id}>
-                  <div className="workCardLayout">
-                    <WorkCard cardInfo={cardlist} />
+            {active.cardList.length === 0 ? (
+              <div>No works yet</div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 md:gap-4">
+                {active.cardList.map((cardlist) => (
+                  <div key={cardlist.id}>
+                    <div className="workCardLayout">
+                      <WorkCard cardInfo={cardlist} />
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
         {active.name === "COLLECTION" && (
           <div className="container mx-auto">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 md:px-5 ">
-              {active.cardList.map((cardlist) => (
-                <div key={cardlist.id} className="collectionCardLayout">
-                  <CollectionCard cardInfo={cardlist} />
-                </div>
-              ))}
-            </div>
+            {active.cardList.length === 0 ? (
+              <div>No collections yet</div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 md:px-5 ">
+                {active.cardList.map((cardlist) => (
+                  <div key={cardlist.id} className="collectionCardLayout">
+                    <CollectionCard cardInfo={cardlist} />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>

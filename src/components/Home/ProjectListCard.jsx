@@ -1,16 +1,16 @@
 import likeIcon from "assets/images/profile/ico_like.svg";
 import viewIcon from "assets/images/profile/ico_view.svg";
-const ProjectListCard = ({ project }) => {
+const ProjectListCard = ({ project, sm, md }) => {
   return (
     <div
-      className="max-w-[280px] roboto"
+      className={`roboto mx-auto md:mx-[0px] max-w-[${sm}px] md:max-w-[${md}px]`}
       style={{ boxShadow: " 0px 0px 4px #00000024" }}
     >
       <img
         style={{ borderRadius: "8px 8px 0px 0px" }}
         src={project.assets.find((x) => x.asset_purpose === "cover").path}
         alt=""
-        className="h-[280px] w-[280px] object-cover"
+        className={` h-[240px] md:h=[280px] w-full object-cover `}
       />
       <div
         style={{ borderRadius: "0px 0px 8px 8px" }}
@@ -61,13 +61,15 @@ const ProjectListCard = ({ project }) => {
         <div className="mt-[14px] mb-[28px] text-[#192434] roboto font-bold">
           {project.name}
         </div>
-        <div className="test-[12px] text-[#192434] mt-[28px] mb-[11px]">
-          {project.overview.substring(0, 70) + " ..."}
-        </div>
+        {project.project_fundraising === null && (
+          <div className="test-[12px] text-[#192434] mt-[28px] mb-[11px] min-h-[48px]">
+            {project.overview.substring(0, 70) + " ..."}
+          </div>
+        )}
         {project.status === "published" && (
           <div>
             {project.project_fundraising !== null && (
-              <div>
+              <div className="min-h-[57px]">
                 <div className="flex mt-[11px] justify-between text-[#192434] text-[10px]">
                   <div>0</div>
                   <div>

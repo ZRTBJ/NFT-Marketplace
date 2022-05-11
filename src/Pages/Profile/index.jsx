@@ -4,39 +4,62 @@ import profile from "assets/images/profile/profile.svg";
 import locationIcon from "assets/images/profile/locationIcon.svg";
 import Tab from "components/profile/Tab";
 import { getUserProjectListById } from "services/project/projectService";
-const initialStats = [
-  { id: 0, title: "Works", amount: "10.5k" },
-  { id: 1, title: "Items", amount: "10.5k" },
-  { id: 2, title: "Views", amount: "10.5k" },
-  { id: 3, title: "Appreciations", amount: "10.5k" },
-  { id: 4, title: "Followers", amount: "10.5k" },
-];
-const socialLinks = [
-  { id: 0, title: "discord", link: "" },
-  { id: 1, title: "twitter", link: "" },
-  { id: 2, title: "facebook", link: "" },
-  { id: 3, title: "instagram", link: "" },
-  { id: 4, title: "youtube", link: "" },
-  { id: 5, title: "tumblr", link: "" },
-  { id: 6, title: "weibo", link: "" },
-  { id: 7, title: "spotify", link: "" },
-  { id: 8, title: "github", link: "" },
-  { id: 9, title: "behance", link: "" },
-  { id: 10, title: "dribbble", link: "" },
-  { id: 11, title: "opensea", link: "" },
-  { id: 12, title: "rarible", link: "" },
-];
+import { getUserInfo } from "services/User/userService";
+import { useParams } from "react-router-dom";
+
+// const socialLinks = [
+//   { id: 0, title: "discord", link: "" },
+//   { id: 1, title: "twitter", link: "" },
+//   { id: 2, title: "facebook", link: "" },
+//   { id: 3, title: "instagram", link: "" },
+//   { id: 4, title: "youtube", link: "" },
+//   { id: 5, title: "tumblr", link: "" },
+//   { id: 6, title: "weibo", link: "" },
+//   { id: 7, title: "spotify", link: "" },
+//   { id: 8, title: "github", link: "" },
+//   { id: 9, title: "behance", link: "" },
+//   { id: 10, title: "dribbble", link: "" },
+//   { id: 11, title: "opensea", link: "" },
+//   { id: 12, title: "rarible", link: "" },
+// ];
 const Profile = () => {
-  let [stats] = useState(initialStats);
-  let [isFollowing, setIsFollowing] = useState(false);
+  const { id } = useParams();
+  const [user, setUser] = useState({});
+  const [isFollowing, setIsFollowing] = useState(false);
   const [userProjectList, setUserProjectList] = useState([]);
   const [tab, setTab] = useState([]);
   const [isLoading, setisLoading] = useState(true);
+  const [websiteList, setWebsiteList] = useState([]);
+  const [sncList, setsncList] = useState([]);
   useEffect(() => {
-    getUserInfo();
-    async function getUserInfo() {
+    async function userInfo() {
+      await getUserInfo(id).then((response) => {
+        setUser(response.user);
+        if (response.user["web"]) {
+          try {
+            const webs = JSON.parse(response.user["web"]);
+            const weblist = [...webs].map((e) => ({
+              title: Object.keys(e)[0],
+              url: Object.values(e)[0],
+            }));
+            setWebsiteList(weblist);
+          } catch {
+            setWebsiteList([]);
+          }
+          try {
+            const sociallinks = JSON.parse(response.user["social"]);
+            const sncs = [...sociallinks].map((e) => ({
+              title: Object.keys(e)[0],
+              url: Object.values(e)[0],
+            }));
+            setsncList(sncs);
+          } catch {
+            setsncList([]);
+          }
+        }
+      });
       let payload = {
-        id: localStorage.getItem("user_id"),
+        id: id,
         page: 1,
         perPage: 10,
       };
@@ -62,6 +85,7 @@ const Profile = () => {
       });
       setisLoading(false);
     }
+    userInfo();
   }, []);
 
   useEffect(() => {
@@ -71,56 +95,79 @@ const Profile = () => {
         name: "PROJECT",
         cardList: userProjectList,
       },
-      {
-        id: 2,
-        name: "WORK",
-        cardList: [],
-      },
-      {
-        id: 3,
-        name: "COLLECTION",
-        cardList: [],
-      },
+      // {
+      //   id: 2,
+      //   name: "WORK",
+      //   cardList: [],
+      // },
+      // {
+      //   id: 3,
+      //   name: "COLLECTION",
+      //   cardList: [],
+      // },
     ];
     setTab(tabData);
   }, [userProjectList]);
 
   return (
-    <div>
+    <div className="container mx-auto">
       <div className={!isLoading ? "" : "loading"}></div>
       {!isLoading && (
         <div className="profilePageContainer">
-          <div className="banner"></div>
-          <img
-            src={profile}
-            className="userProfilePicture"
-            alt="User profile"
-          />
-          <div className="userName">USER NAME</div>
-          <div className="profession">Designer, Web Analytics Consultant</div>
+          {user.cover === "" ? (
+            <div className="ProfileBannerDefault"></div>
+          ) : (
+            <img src={user.cover} className="Profilebanner" alt="" />
+          )}
+
+          {user.avatar === "" ? (
+            <img
+              src={profile}
+              className="userProfilePicture"
+              alt="User profile"
+            />
+          ) : (
+            <img
+              src={user.avatar}
+              className="userProfilePicture"
+              alt="User profile"
+            />
+          )}
+          <div className="userName">
+            {user.first_name} {user.last_name}
+          </div>
+          <div className="profession">{user.job}</div>
           <div className="mt-2 flex justify-center">
             <img className="locationIcon" src={locationIcon} alt="" />
-            <div className="address">Tokyo, Japan</div>
+            <div className="address">
+              {user.area} {user.country}
+            </div>
           </div>
-          <div className="intro">
-            Hello Everyone! Thanks for coming my page. Please offer
-            collaboration your project to me if you favorite my work. Thank you.
-          </div>
+          <div className="intro">{user.biography}</div>
           <div className="statsContainer flex justify-center flex-wrap">
-            {stats.map((i) => (
-              <div key={i.id} className="stat">
-                <div className="amount">{i.amount}</div>
-                <div className="statsTitle">{i.title}</div>
-              </div>
-            ))}
+            <div className="stat">
+              <div className="amount">{user.data.total_work}</div>
+              <div className="statsTitle">Works</div>
+            </div>
+            <div className="stat">
+              <div className="amount">{user.data.total_item}</div>
+              <div className="statsTitle">Items</div>
+            </div>
+            <div className="stat">
+              <div className="amount">{user.data.total_view}</div>
+              <div className="statsTitle">Views</div>
+            </div>
+            <div className="stat">
+              <div className="amount">{user.data.total_review}</div>
+              <div className="statsTitle">Appreciations</div>
+            </div>
+            <div className="stat">
+              <div className="amount">{user.data.total_follow}</div>
+              <div className="statsTitle">Followers</div>
+            </div>
           </div>
-          {isFollowing ? (
-            <button
-              className="followButton"
-              onClick={() => setIsFollowing(false)}
-            >
-              FOLLOWING
-            </button>
+          {localStorage.getItem("user_id") === id ? (
+            <></>
           ) : (
             <button
               className="followButton"
@@ -129,20 +176,39 @@ const Profile = () => {
               FOLLOW
             </button>
           )}
+
           <div className="socialIconsContqainer">
-            {socialLinks.map((i) => (
+            {sncList &&
+              sncList.map((snc, index) => (
+                <div key={`snc-${index}`}>
+                  <div className="inline-flex p-1.5">
+                    <a href={snc.url}>
+                      <img
+                        className="cp"
+                        src={require(`assets/images/profile/social/ico_${snc.title}.svg`)}
+                        height={24}
+                        width={24}
+                        alt="social logo"
+                      />
+                    </a>
+                  </div>
+                </div>
+              ))}
+            {/* {socialLinks.map((i) => (
               <img
                 key={i.id}
                 className="cp"
                 src={require(`assets/images/profile/social/ico_${i.title}.svg`)}
                 alt="social logo"
               />
-            ))}
+            ))} */}
           </div>
           <div className="portfolioButtonContainer">
-            <button>Portfolio</button>
-            <button>Website</button>
-            <button>Online Shop</button>
+            {websiteList.map((website, index) => (
+              <button key={`web-${index}`}>
+                <a href={website.url}>{website.title}</a>
+              </button>
+            ))}
           </div>
           <div className="profileDivider"></div>
           <Tab tabs={tab} />

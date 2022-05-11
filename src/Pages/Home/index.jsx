@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { getPublicProjectList } from "services/project/projectService";
+import {
+  getPublicProjectList,
+  getProjectCategory,
+} from "services/project/projectService";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
@@ -11,9 +14,17 @@ import { Link } from "react-router-dom";
 function Home(props) {
   SwiperCore.use([Autoplay]);
   const [projectList, setProjectList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   async function getProjectList() {
+    let categoryList = [];
+    await getProjectCategory().then((response) => {
+      categoryList = response.categories;
+    });
     await getPublicProjectList().then((response) => {
       response.data.forEach((element) => {
+        element.category_name = categoryList.find(
+          (x) => x.id === element.category_id
+        ).name;
         if (element.project_fundraising !== null) {
           let allocation = "";
           let user_allocated_percent = "";
@@ -27,6 +38,7 @@ function Home(props) {
         }
       });
       setProjectList(response.data);
+      setIsLoading(false);
     });
   }
   useEffect(() => {
@@ -119,37 +131,42 @@ function Home(props) {
       </div>
       {/* Project List */}
       <div className="bg-[#192434] ">
-        <div className="flex items-center pt-[54px] mb-[32px]">
-          <div className=" text-[100px] text-[#0AB4AF] roboto font-[600]">
+        <div className="flex items-center justify-between md:justify-start  pt-[40px] md:pt-[54px] mb-[32px]">
+          <div className="text-[40px] md:text-[100px] text-[#0AB4AF] roboto font-[600]">
             PROJECT
           </div>
           <Link
             to="/all-project"
-            className="ml-[23px] mt-[50px] w-[100px] h-[26px] bg-[#0AB4AF] text-center rounded-[13px] text-[#FFFFFF]"
+            className="ml-[23px] md:mt-[50px] mr-4 md:mr-0  h-[22px] w-[74px] text-[14px] md:text-[16px] md:w-[100px] md:h-[26px] bg-[#0AB4AF] text-center rounded-[13px] text-[#FFFFFF]"
           >
             more
           </Link>
         </div>
         <div className="pb-[60px]">
           <Swiper
-            spaceBetween={30}
+            centeredSlides={false}
             breakpoints={{
               640: {
-                slidesPerView: 1,
+                slidesPerView: 2,
               },
               768: {
                 slidesPerView: 3,
+                spaceBetween: 30,
               },
               1024: {
-                slidesPerView: 4,
+                slidesPerView: 5,
               },
             }}
           >
-            {projectList.map((i) => (
-              <SwiperSlide key={i.id}>
-                <ProjectListCard key={i.id} project={i} />
-              </SwiperSlide>
-            ))}
+            {!isLoading && (
+              <div>
+                {projectList.map((i) => (
+                  <SwiperSlide>
+                    <ProjectListCard key={i.id} project={i} sm={'240'} md={'280'} />
+                  </SwiperSlide>
+                ))}
+              </div>
+            )}
           </Swiper>
         </div>
         <hr className="border-[1px] border-[white mb-6" />

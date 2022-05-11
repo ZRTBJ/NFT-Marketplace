@@ -117,7 +117,7 @@ const UserDropDownMenu = () => {
       </div>
       <div className="text-gray-900 hover:bg-[#0AB4AF] hover:text-white">
         <Link
-          to="/profile"
+          to={`/profile/${localStorage.getItem("user_id")}`}
           className="inline-flex user-dropdown-item"
           onClick={showHideUserPopup}
         >
