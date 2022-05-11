@@ -162,7 +162,7 @@ function Home(props) {
               <div>
                 {projectList.map((i) => (
                   <SwiperSlide>
-                    <ProjectListCard key={i.id} project={i} sm={240} md={280} />
+                    <ProjectListCard key={i.id} project={i} sm={'240'} md={'280'} />
                   </SwiperSlide>
                 ))}
               </div>

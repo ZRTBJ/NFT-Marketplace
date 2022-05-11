@@ -8,69 +8,74 @@ import {
 import ProjectListCard from "components/Home/ProjectListCard";
 import InfiniteScroll from "react-infinite-scroll-component";
 import sortIcon from "assets/images/home/ico_filter.svg";
+
 function AllProject() {
+  const [categoryList, setCategoryList] = useState([]);
   const [projectList, setProjectList] = useState([]);
   const [hasMore, setHasMore] = useState(true);
-
   const [isLoading, setIsloading] = useState(true);
   const [orderBy, setOrderBy] = useState("newer");
-  let [page, setPage] = useState(1);
-  let [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(10);
+  const [limit, setLimit] = useState(1);
   const [criteria, setCriteria] = useState("name");
   const [keyword, setKeyword] = useState("");
+  const [smallSpinnedLoading, setSmallSpinnedLoading] = useState(false);
 
-  async function filterProjectList() {
+  async function categoryListAPIcCall() {
     setIsloading(true);
+    await getProjectCategory().then((response) => {
+      setCategoryList(response.categories);
+      filterProjectList(response.categories);
+    });
+    setIsloading(false);
+  }
+  async function filterProjectList(categories) {
+    setSmallSpinnedLoading(true);
+    setHasMore(false);
     const payload = {
-      orderBy: orderBy,
+      order_by: orderBy,
       page: page,
       limit: limit,
       criteria: criteria,
       keyword: keyword,
     };
-    await getProjectListBySearch(payload).then((res) => {
-      console.log(res);
-    });
-    setIsloading(false);
-  }
-
-  async function getProjectList(payload) {
-    let categoryList = [];
-    setIsloading(true);
-    await getProjectCategory().then((response) => {
-      categoryList = response.categories;
-    });
-    await getPublicProjectList(payload).then((response) => {
-      response.data.forEach((element) => {
-        element.category_name = categoryList.find(
-          (x) => x.id === element.category_id
-        ).name;
-        if (element.project_fundraising !== null) {
-          let allocation = "";
-          let user_allocated_percent = "";
-          allocation =
-            (element.token_amount_total / 100) *
-            element.project_fundraising.allocation_percent;
-          user_allocated_percent =
-            (allocation / 100) *
-            element.project_fundraising.user_allocated_percent;
-          element.project_fundraising.total_allocation = user_allocated_percent;
+    await getProjectListBySearch(payload).then((response) => {
+      if (response.data !== null) {
+        response.data.forEach((element) => {
+          element.category_name = categories.find(
+            (x) => x.id === element.category_id
+          ).name;
+          if (element.project_fundraising !== null) {
+            let allocation = "";
+            let user_allocated_percent = "";
+            allocation =
+              (element.token_amount_total / 100) *
+              element.project_fundraising.allocation_percent;
+            user_allocated_percent =
+              (allocation / 100) *
+              element.project_fundraising.user_allocated_percent;
+            element.project_fundraising.total_allocation =
+              user_allocated_percent;
+          }
+        });
+        let projects = projectList.concat(response.data);
+        setProjectList(projects);
+        if (response.data.length === limit) {
+          let pageSize = page + 1;
+          setPage(pageSize);
+          // let limiteSize = limit + 1;
+          // setLimit(limiteSize);
+          setHasMore(true);
         }
-      });
-      setProjectList(response.data);
-      if (response.pageSize >= response.total) {
-        setHasMore(false);
+        setSmallSpinnedLoading(false);
       }
     });
-    setIsloading(false);
   }
+
   async function fetchData() {
-    setLimit((limit = limit + 10));
-    setPage((page = page + 1));
-    let payload = {
-      limit: limit,
-    };
-    await getProjectList(payload);
+    if (hasMore) {
+      await filterProjectList(categoryList);
+    }
   }
   async function onProjectNameChange(value) {
     if (value === "") {
@@ -89,7 +94,7 @@ function AllProject() {
     await filterProjectList();
   }
   useEffect(() => {
-    filterProjectList();
+    categoryListAPIcCall();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
@@ -134,25 +139,26 @@ function AllProject() {
           </div>
         </div>
       </div>
-      <InfiniteScroll
-        dataLength={projectList.length} //This is important field to render the next data
-        next={fetchData}
-        hasMore={hasMore}
-        loader={isLoading && <div className="loading"></div>}
-
-        // below props only if you need pull down functionality
-      >
-        <div className="container md:mx-auto md:p-6 grid grid-cols-2  md:grid-cols-3 lg:grid-cols-4  md:gap-4">
-          {projectList.map((i) => (
-            <div
-              key={i.id}
-              className="mb-8 col-span-1 flex flex-col bg-white p-4"
-            >
-              <ProjectListCard key={i.id} sm={166} md={280} project={i} />
-            </div>
-          ))}
-        </div>
-      </InfiniteScroll>
+      {isLoading && <div className="loading"></div>}
+      {!isLoading && (
+        <InfiniteScroll
+          dataLength={projectList.length} //This is important field to render the next data
+          next={fetchData}
+          hasMore={hasMore}
+        >
+          <div className="container md:mx-auto md:p-6 grid grid-cols-2  md:grid-cols-3 lg:grid-cols-4  md:gap-4">
+            {projectList.map((i) => (
+              <div
+                key={i.id}
+                className="mb-8 col-span-1 flex flex-col bg-white p-4"
+              >
+                <ProjectListCard key={i.id} sm={166} md={280} project={i} />
+              </div>
+            ))}
+          </div>
+          {hasMore && <div className="onlySpinner"></div>}
+        </InfiniteScroll>
+      )}
     </div>
   );
 }

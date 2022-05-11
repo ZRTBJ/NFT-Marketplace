@@ -10,7 +10,7 @@ const ProjectListCard = ({ project, sm, md }) => {
         style={{ borderRadius: "8px 8px 0px 0px" }}
         src={project.assets.find((x) => x.asset_purpose === "cover").path}
         alt=""
-        className={`w-full object-cover  h-[${sm}px] md:h-[${md}px]`}
+        className={` h-[240px] md:h=[280px] w-full object-cover `}
       />
       <div
         style={{ borderRadius: "0px 0px 8px 8px" }}
