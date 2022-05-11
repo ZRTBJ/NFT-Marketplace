@@ -344,9 +344,6 @@ export default function DraftProjectUpdate() {
    */
 
   const [currentStep, setcurrentStep] = useState([1]);
-  const [isLoading, setIsloading] = useState(false);
-  const [isLoadingPublic, setisLoadingPublic] = useState(false);
-  const [isLoadingPrivate, setisLoadingPrivate] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showDeployModal, setShowDeployModal] = useState(false);
   async function projectDetails() {
@@ -478,9 +475,9 @@ export default function DraftProjectUpdate() {
             alert("Chosse 1 who can vote");
           } else if (votingPower !== "" && canVote !== "") {
             if (visibility === "private") {
-              setisLoadingPrivate(true);
+              setDataIsLoading(true);
             } else if (visibility === "public") {
-              setisLoadingPublic(true);
+              setDataIsLoading(true);
             }
             let selectType = {
               id: id,
@@ -495,9 +492,9 @@ export default function DraftProjectUpdate() {
             await updateProject("update", selectType)
               .then(() => {
                 if (visibility === "private") {
-                  setisLoadingPrivate(false);
+                  setDataIsLoading(false);
                 } else if (visibility === "public") {
-                  setisLoadingPublic(false);
+                  setDataIsLoading(false);
                 }
                 setShowModal(true);
               })
@@ -507,9 +504,9 @@ export default function DraftProjectUpdate() {
           }
         } else {
           if (visibility === "private") {
-            setisLoadingPrivate(true);
+            setDataIsLoading(true);
           } else if (visibility === "public") {
-            setisLoadingPublic(true);
+            setDataIsLoading(true);
           }
           let selectType = {
             id: id,
@@ -523,9 +520,9 @@ export default function DraftProjectUpdate() {
           await updateProject("update", selectType)
             .then(() => {
               if (visibility === "private") {
-                setisLoadingPrivate(false);
+                setDataIsLoading(false);
               } else if (visibility === "public") {
-                setisLoadingPublic(false);
+                setDataIsLoading(false);
               }
               setShowModal(true);
             })
@@ -549,9 +546,9 @@ export default function DraftProjectUpdate() {
         !alreadyTakenProjectName
       ) {
         if (visibility === "private") {
-          setisLoadingPrivate(true);
+          setDataIsLoading(true);
         } else if (visibility === "public") {
-          setisLoadingPublic(true);
+          setDataIsLoading(true);
         }
 
         let updatePayload = {
@@ -571,9 +568,9 @@ export default function DraftProjectUpdate() {
         updateProject("update", updatePayload)
           .then((res) => {
             if (visibility === "private") {
-              setisLoadingPrivate(false);
+              setDataIsLoading(false);
             } else if (visibility === "public") {
-              setisLoadingPublic(false);
+              setDataIsLoading(false);
             }
             setShowModal(true);
           })
@@ -588,9 +585,9 @@ export default function DraftProjectUpdate() {
     if (currentStep.length === 3) {
       if (!alreadyTakenSymbol && !alreadyTakenTokenName) {
         if (visibility === "private") {
-          setisLoadingPrivate(true);
+          setDataIsLoading(true);
         } else if (visibility === "public") {
-          setisLoadingPublic(true);
+          setDataIsLoading(true);
         }
         let updatePayload = {
           id: id,
@@ -602,9 +599,9 @@ export default function DraftProjectUpdate() {
         updateProject("update", updatePayload)
           .then((res) => {
             if (visibility === "private") {
-              setisLoadingPrivate(false);
+              setDataIsLoading(false);
             } else if (visibility === "public") {
-              setisLoadingPublic(false);
+              setDataIsLoading(false);
             }
             setShowModal(true);
           })
@@ -630,8 +627,10 @@ export default function DraftProjectUpdate() {
       .then((res) => {
         if (res.code === 0) {
           setGasPrice(res.amount ? res.amount : 0);
-          getProjectTransactionSign(res.amount);
+          // getProjectTransactionSign(res.amount);
+          publishThisProject();
         } else {
+          publishThisProject(); // to-do
           setDataIsLoading(false);
           setShowErrorModal(true);
         }
@@ -772,9 +771,6 @@ export default function DraftProjectUpdate() {
                   <button
                     className="backButton"
                     onClick={() => handelClickBack()}
-                    disabled={
-                      isLoadingPrivate ? true : isLoadingPublic ? true : false
-                    }
                   >
                     BACK
                   </button>
@@ -818,25 +814,17 @@ export default function DraftProjectUpdate() {
               <div className="flex justify-center space-x-6 mt-4">
                 <button
                   onClick={() => saveDraft("private")}
-                  disabled={isLoadingPrivate ? true : false}
-                  className={`
-                  ${
-                    isLoadingPrivate === true ? "onlySpinner" : ""
-                  } h-[54px] w-[200px] rounded bg-[#B9CCD5] text-[white] hover:bg-[#192434]
-                `}
+                  disabled={isDataLoading ? true : false}
+                  className={`h-[54px] w-[200px] rounded bg-[#B9CCD5] text-[white] hover:bg-[#192434]`}
                 >
-                  {isLoadingPrivate ? "" : "PRIVATE"}
+                  PRIVATE
                 </button>
                 <button
                   onClick={() => saveDraft("public")}
-                  disabled={isLoadingPublic ? true : false}
-                  className={`
-                  ${
-                    isLoadingPublic === true ? "onlySpinner" : ""
-                  } h-[54px] w-[200px] rounded bg-[#B9CCD5] text-[white] hover:bg-[#192434]
-                `}
+                  disabled={isDataLoading ? true : false}
+                  className={`h-[54px] w-[200px] rounded bg-[#B9CCD5] text-[white] hover:bg-[#192434]`}
                 >
-                  {isLoadingPublic ? "" : "PUBLIC"}
+                  PUBLIC
                 </button>
               </div>
             </div>
