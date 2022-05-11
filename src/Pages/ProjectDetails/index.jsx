@@ -177,34 +177,34 @@ export default function ProjectDetails(props) {
               <div>
                 <img
                   className="rounded-lg shadow-sm h-96 w-full"
-                  src={require(`assets/images/dummy.png`)}
+                  src={require(`assets/images/no-image-found-square.png`)}
                   alt="user icon"
                 />
               </div>
               <div className="flex flex-row mt-2">
                 <img
                   className="rounded-lg shadow-sm h-24 w-30 mr-2"
-                  src={require(`assets/images/dummy.png`)}
+                  src={require(`assets/images/no-image-found-square.png`)}
                   alt="user icon"
                 />
                 <img
                   className="rounded-lg shadow-sm h-24 w-30 mr-2"
-                  src={require(`assets/images/dummy.png`)}
+                  src={require(`assets/images/no-image-found-square.png`)}
                   alt="user icon"
                 />
                 <img
                   className="rounded-lg shadow-sm h-24 w-30 mr-2"
-                  src={require(`assets/images/dummy.png`)}
+                  src={require(`assets/images/no-image-found-square.png`)}
                   alt="user icon"
                 />
                 <img
                   className="rounded-lg shadow-sm h-24 w-30 mr-2"
-                  src={require(`assets/images/dummy.png`)}
+                  src={require(`assets/images/no-image-found-square.png`)}
                   alt="user icon"
                 />
                 <img
                   className="rounded-lg shadow-sm h-24 w-30 mr-2"
-                  src={require(`assets/images/dummy.png`)}
+                  src={require(`assets/images/no-image-found-square.png`)}
                   alt="user icon"
                 />
               </div>
