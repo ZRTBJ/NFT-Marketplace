@@ -61,7 +61,7 @@ const Header = () => {
 
   useEffect(() => {
     if (window.ethereum) {
-      window.ethereum.on("accountsChanged", handleAccountsChanged);
+      // window.ethereum.on("accountsChanged", handleAccountsChanged);
     }
   }, []);
   useEffect(() => {
