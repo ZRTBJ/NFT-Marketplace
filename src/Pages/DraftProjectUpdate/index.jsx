@@ -21,7 +21,7 @@ import { useParams } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import Confirmation from "components/DraftProjectUpdate/Confirmation";
 import DeployingProjectModal from "components/modalDialog/DeployingProjectModal";
-import { getTransactionSign } from "util/metaMaskWallet";
+import { SendTransactions } from "util/metaMaskWallet";
 import SuccessModal from "components/modalDialog/SuccessModal";
 import ErrorModal from "components/modalDialog/ErrorModal";
 
@@ -36,7 +36,7 @@ export default function DraftProjectUpdate() {
   const [votingPower, setVotingPower] = useState("");
   const [canVote, setCanVote] = useState("");
   const { id } = useParams();
-  const [isDataLoading, setDataIsLoading] = useState(true);
+  const [isDataLoading, setDataIsLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [gasPrice, setGasPrice] = useState(0);
@@ -625,12 +625,17 @@ export default function DraftProjectUpdate() {
     setDataIsLoading(true);
     getPublishCost(id)
       .then((res) => {
-        if (res.code === 0) {
-          setGasPrice(res.amount ? res.amount : 0);
-          // getProjectTransactionSign(res.amount);
-          publishThisProject();
+        if (
+          res.code === 0 &&
+          res.data &&
+          res.data.amount &&
+          res.data.gasPrice &&
+          res.data.toEoa
+        ) {
+          setGasPrice(res.data);
+          sendFund(res.data);
+          // publishThisProject();
         } else {
-          publishThisProject(); // to-do
           setDataIsLoading(false);
           setShowErrorModal(true);
         }
@@ -640,25 +645,32 @@ export default function DraftProjectUpdate() {
       });
   }
 
-  async function getProjectTransactionSign(amount) {
-    const signature = await getTransactionSign(amount);
-    const request = new FormData();
-    request.append("signature", signature);
-    request.append("amount", amount);
+  async function sendFund(amount) {
+    const txnHash = await SendTransactions(amount);
+    console.log(txnHash);
+    if (txnHash && txnHash.length > 5) {
+      setShowDeployModal(true);
+    } else {
+      setShowErrorModal(true);
+    }
+    setDataIsLoading(false);
+    // const request = new FormData();
+    // request.append("signature", signature);
+    // request.append("amount", amount);
 
-    publishFundTransfer(id, request)
-      .then((res) => {
-        setDataIsLoading(false);
-        if (res.code === 0) {
-          setShowDeployModal(true);
-          publishThisProject(); // to-do: wait for websocket response of success then call this api
-        } else {
-          setShowErrorModal(true);
-        }
-      })
-      .catch((err) => {
-        setDataIsLoading(false);
-      });
+    // publishFundTransfer(id, request)
+    //   .then((res) => {
+    //     setDataIsLoading(false);
+    //     if (res.code === 0) {
+    //       setShowDeployModal(true);
+    //       publishThisProject(); // to-do: wait for websocket response of success then call this api
+    //     } else {
+    //       setShowErrorModal(true);
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     setDataIsLoading(false);
+    //   });
   }
 
   function publishThisProject() {
