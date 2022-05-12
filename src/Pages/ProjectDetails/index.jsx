@@ -31,26 +31,19 @@ export default function ProjectDetails(props) {
 
   return (
     <div className={`my-4 ${isLoading ? "loading" : ""}`}>
-      {!isLoading && project && project.name && (
+      {!isLoading && project && !project.name && (
         <div className="text-center text-red-500">Project not Found</div>
       )}
-      {!isLoading && (
+      {!isLoading && project && project.name && (
         <div>
-          <div className="ml-12 text-2xl font-bold">
-            {project.name + "Project Name 3"}
-          </div>
+          <div className="ml-12 text-2xl font-bold">{project.name}</div>
           <div className="py-4">
-            {/* <img
+            <img
               src={
                 project?.assets[0]?.path
                   ? project.assets[0].path
-                  : require(`assets/images/no-image-icon.png`)
+                  : require(`assets/images/no-image-found.png`)
               }
-              alt="cover"
-              className="w-full h-96"
-            /> */}
-            <img
-              src={require(`assets/images/no-image-found.png`)}
               alt="cover"
               className="w-full h-96"
             />

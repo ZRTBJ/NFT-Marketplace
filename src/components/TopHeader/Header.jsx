@@ -61,7 +61,7 @@ const Header = () => {
 
   useEffect(() => {
     if (window.ethereum) {
-      // window.ethereum.on("accountsChanged", handleAccountsChanged);
+      window.ethereum.on("accountsChanged", handleAccountsChanged);
     }
   }, []);
   useEffect(() => {
@@ -130,7 +130,10 @@ const Header = () => {
       setIsLoading(true);
       let response = await loginUser(authDispatch, request);
       setUserId(response["user_id"]);
-      getUserDetails(response["user_id"], true);
+      getUserDetails(
+        response["user_id"],
+        userinfo["display_name"] ? false : true
+      );
       const apiCall = {
         event: "bts:subscribe",
         data: { channel: "order_book_btcusd" },
