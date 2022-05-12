@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { DebounceInput } from "react-debounce-input";
 import {
-  getPublicProjectList,
   getProjectCategory,
   getProjectListBySearch,
 } from "services/project/projectService";
@@ -15,8 +14,8 @@ function AllProject() {
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsloading] = useState(true);
   const [orderBy, setOrderBy] = useState("newer");
-  const [page, setPage] = useState(10);
-  const [limit, setLimit] = useState(1);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [criteria, setCriteria] = useState("name");
   const [keyword, setKeyword] = useState("");
   const [smallSpinnedLoading, setSmallSpinnedLoading] = useState(false);
@@ -29,15 +28,20 @@ function AllProject() {
     });
     setIsloading(false);
   }
-  async function filterProjectList(categories) {
+  async function filterProjectList(
+    categories,
+    criteria_keyword,
+    searchKeyword,
+    order_By_keyword
+  ) {
     setSmallSpinnedLoading(true);
     setHasMore(false);
     const payload = {
-      order_by: orderBy,
+      order_by: order_By_keyword ? order_By_keyword : orderBy,
       page: page,
       limit: limit,
-      criteria: criteria,
-      keyword: keyword,
+      criteria: criteria_keyword ? criteria_keyword : "",
+      keyword: searchKeyword ? searchKeyword : "",
     };
     await getProjectListBySearch(payload).then((response) => {
       if (response.data !== null) {
@@ -58,8 +62,6 @@ function AllProject() {
               user_allocated_percent;
           }
         });
-        let projects = projectList.concat(response.data);
-        setProjectList(projects);
         if (response.data.length === limit) {
           let pageSize = page + 1;
           setPage(pageSize);
@@ -67,6 +69,10 @@ function AllProject() {
           // setLimit(limiteSize);
           setHasMore(true);
         }
+        setProjectList(response.data);
+        setSmallSpinnedLoading(false);
+      } else {
+        setProjectList([]);
         setSmallSpinnedLoading(false);
       }
     });
@@ -79,19 +85,21 @@ function AllProject() {
   }
   async function onProjectNameChange(value) {
     if (value === "") {
-      console.log("empty");
+      console.log(value);
+      setKeyword("");
+      await filterProjectList(categoryList, "");
     } else {
       setKeyword(value);
-      await filterProjectList();
+      await filterProjectList(categoryList, value);
     }
   }
   async function onOrderChange(e) {
     setOrderBy(e);
     await filterProjectList();
   }
-  async function onSearchTypeChange(e) {
-    setCriteria(e);
-    await filterProjectList();
+  async function onCriteriaChnage(criteria_paramas) {
+    setCriteria(criteria_paramas);
+    await filterProjectList(categoryList, keyword, criteria_paramas);
   }
   useEffect(() => {
     categoryListAPIcCall();
@@ -104,15 +112,15 @@ function AllProject() {
           <div className="flex w-full">
             <select
               value={criteria}
-              onChange={(e) => onSearchTypeChange(e.target.value)}
+              onChange={(e) => onCriteriaChnage(e.target.value)}
               className="w-[88px]  h-[34px] md:h-[44px] text-[12px] md:text-[16px] md:w-[160px] md:ml-4 mb-4 "
             >
               <option value="name">Project Name</option>
               <option value="job">Role</option>
             </select>
             <DebounceInput
-              minLength={1}
-              debounceTimeout={600}
+              minLength={0}
+              debounceTimeout={100}
               onChange={(e) => onProjectNameChange(e.target.value)}
               type="text"
               className="border mr-4 border-[#cccccc]  rounded   md:w-[776px] mb-4 h-[34px] md:h-[44px] "
@@ -147,14 +155,20 @@ function AllProject() {
           hasMore={hasMore}
         >
           <div className="container md:mx-auto md:p-6 grid grid-cols-2  md:grid-cols-3 lg:grid-cols-4  md:gap-4">
-            {projectList.map((i) => (
-              <div
-                key={i.id}
-                className="mb-8 col-span-1 flex flex-col bg-white p-4"
-              >
-                <ProjectListCard key={i.id} sm={166} md={280} project={i} />
-              </div>
-            ))}
+            {projectList.length > 0 ? (
+              <>
+                {projectList.map((i) => (
+                  <div
+                    key={i.id}
+                    className="mb-8 col-span-1 flex flex-col bg-white p-4"
+                  >
+                    <ProjectListCard key={i.id} sm={166} md={280} project={i} />
+                  </div>
+                ))}
+              </>
+            ) : (
+              <div className="text-center">No Match results</div>
+            )}
           </div>
           {hasMore && <div className="onlySpinner"></div>}
         </InfiniteScroll>
