@@ -144,10 +144,12 @@ function Home(props) {
         </div>
         <div className="pb-[60px]">
           <Swiper
+            spaceBetween={30}
             centeredSlides={false}
             breakpoints={{
               640: {
-                slidesPerView: 2,
+                slidesPerView: 3,
+                spaceBetween: 30,
               },
               768: {
                 slidesPerView: 3,
@@ -160,9 +162,14 @@ function Home(props) {
           >
             {!isLoading && (
               <div>
-                {projectList.map((i) => (
-                  <SwiperSlide>
-                    <ProjectListCard key={i.id} project={i} sm={'240'} md={'280'} />
+                {projectList.map((i, index) => (
+                  <SwiperSlide key={index}>
+                    <ProjectListCard
+                      key={index}
+                      project={i}
+                      sm={"240"}
+                      md={"280"}
+                    />
                   </SwiperSlide>
                 ))}
               </div>
