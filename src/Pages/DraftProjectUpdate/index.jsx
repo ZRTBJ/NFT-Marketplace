@@ -39,8 +39,7 @@ export default function DraftProjectUpdate() {
   const [isDataLoading, setDataIsLoading] = useState(true);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
-  const [gasPrice, setGasPrice] = useState(0);
-  const [tnxHashState, setTnxHashState] = useState("");
+  const [tnxData, setTnxData] = useState({});
 
   function setActiveTab(arg) {
     setSelectedTab(arg);
@@ -633,56 +632,11 @@ export default function DraftProjectUpdate() {
           res.data.gasPrice &&
           res.data.toEoa
         ) {
-          setGasPrice(res.data.amount);
-          sendFund(res.data);
-          // publishThisProject();
-        } else {
-          setDataIsLoading(false);
-          setShowErrorModal(true);
-        }
-      })
-      .catch((err) => {
-        setDataIsLoading(false);
-      });
-  }
-
-  async function sendFund(tnxData) {
-    const txnHash = await SendTransactions(tnxData);
-    const jsonTnxData = JSON.stringify(tnxData);
-    if (txnHash && txnHash.length > 5) {
-      setTnxHashState(txnHash);
-      const request = new FormData();
-      request.append("status", "success");
-      request.append("hash", txnHash);
-      request.append("data", jsonTnxData);
-
-      publishFundTransfer(id, request)
-        .then((res) => {
-          setDataIsLoading(false);
-          if (res.code === 0) {
-            setShowDeployModal(true);
-            // publishThisProject(); // to-do: wait for websocket response of success then call this api
-          } else {
-            setShowErrorModal(true);
-          }
-        })
-        .catch((err) => {
-          setDataIsLoading(false);
-        });
-    } else {
-      setDataIsLoading(false);
-      setShowErrorModal(true);
-    }
-  }
-
-  function publishThisProject() {
-    setDataIsLoading(true);
-    publishProject(id)
-      .then((res) => {
-        setDataIsLoading(false);
-        if (res.code === 0) {
+          setTnxData(res.data);
           setShowDeployModal(true);
+          setDataIsLoading(false);
         } else {
+          setDataIsLoading(false);
           setShowErrorModal(true);
         }
       })
@@ -902,8 +856,8 @@ export default function DraftProjectUpdate() {
         <DeployingProjectModal
           show={showDeployModal}
           handleClose={setShowDeployModal}
-          gasPrice={gasPrice}
-          tnxHash={tnxHashState}
+          tnxData={tnxData}
+          projectId={id}
         />
       )}
       {showSuccessModal && (
