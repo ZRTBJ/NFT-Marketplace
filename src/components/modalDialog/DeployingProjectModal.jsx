@@ -5,9 +5,15 @@ import { Step, Stepper } from "react-form-stepper";
 import { useState } from "react";
 import { produceWithPatches } from "immer";
 
-const DeployingProjectModal = ({ handleClose, show, buttomText, gasPrice }) => {
+const DeployingProjectModal = ({
+  handleClose,
+  show,
+  buttomText,
+  gasPrice,
+  tnxHash,
+}) => {
   const btnText = buttomText ? buttomText : "VIEW on ETHERSCAN";
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
   return (
     <Modal width={800} show={show} handleClose={() => handleClose(false)}>
       <div className="text-center my-6">
@@ -75,7 +81,7 @@ const DeployingProjectModal = ({ handleClose, show, buttomText, gasPrice }) => {
                   <div className="ml-8">
                     <span className="float-right">
                       {" "}
-                      ~ {produceWithPatches.gasPrice} MATIC
+                      ~ {gasPrice ? gasPrice : 0} MATIC
                     </span>
                   </div>
                 </div>
@@ -85,10 +91,17 @@ const DeployingProjectModal = ({ handleClose, show, buttomText, gasPrice }) => {
         </div>
 
         <button
-          className="w-44 h-12 bg-[#0AB4AF] rounded text-white"
-          onClick={() => handleClose(false)}
+          type="button"
+          className="h-12 bg-[#0AB4AF] rounded text-white"
+          onClick={() => {
+            window.open(
+              `https://mumbai.polygonscan.com/tx/${tnxHash ? tnxHash : ""}`,
+              "_blank",
+              "noopener,noreferrer"
+            );
+          }}
         >
-          {btnText}
+          <span className="m-2">{btnText}</span>
         </button>
       </div>
     </Modal>
