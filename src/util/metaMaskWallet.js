@@ -1,6 +1,7 @@
 import Config from "../config";
 import MetaMaskOnboarding from "@metamask/onboarding";
 import { ethers } from "ethers";
+import Web3 from "web3";
 
 const currentUrl = new URL(window.location.href);
 const forwarderOrigin =
@@ -188,22 +189,20 @@ export async function SendTransactions(tnxData) {
   // Check if MetaMask is installed
   // MetaMask injects the global API into window.ethereum
   if (window.ethereum) {
-    let signedResult = "";
+    let tnxHash = "";
     const account = await getWalletAccount();
 
     const params = {
-      gasPrice: ethers.BigNumber.from((tnxData.gasPrice * 100000).toString())
-        ._hex, // "0x107f947c30", // customizable by user during MetaMask confirmation.
+      gasPrice: tnxData.gasPrice.toString(), // "0x107f947c30", // customizable by user during MetaMask confirmation.
       to: tnxData.toEoa, // "0xDD09F730D4e17Cb147bb9d19bC9A2e3c6566B48F",
       from: account,
       value: ethers.BigNumber.from(
-        (tnxData.amount * 10000000000000000).toString()
+        Web3.utils.toWei(tnxData.amount.toString(), "ether")
       )._hex, // "0x09184e72a000",
       chainId: Config.CHAIN_ID,
     };
-    debugger;
     try {
-      signedResult = await window.ethereum.request({
+      tnxHash = await window.ethereum.request({
         method: "eth_sendTransaction",
         params: [params],
       });
@@ -216,7 +215,7 @@ export async function SendTransactions(tnxData) {
       }
     }
 
-    return signedResult;
+    return tnxHash;
   } else {
     onBoardBrowserPlugin();
     return;
