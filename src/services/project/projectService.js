@@ -184,3 +184,12 @@ export async function getProjectListBySearch(payload) {
     `/project?order_by=${payload.order_by}&page=${payload.page}&limit=${payload.limit}&criteria=${payload.criteria}&keyword=${payload.keyword}`
   );
 }
+
+export async function projectLike(projectId, payload) {
+  return await client(
+    "POST",
+    `/project/${projectId}/like`,
+    payload,
+    "formdata"
+  );
+}
