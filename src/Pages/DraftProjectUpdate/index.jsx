@@ -36,10 +36,11 @@ export default function DraftProjectUpdate() {
   const [votingPower, setVotingPower] = useState("");
   const [canVote, setCanVote] = useState("");
   const { id } = useParams();
-  const [isDataLoading, setDataIsLoading] = useState(false);
+  const [isDataLoading, setDataIsLoading] = useState(true);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [gasPrice, setGasPrice] = useState(0);
+  const [tnxHashState, setTnxHashState] = useState("");
 
   function setActiveTab(arg) {
     setSelectedTab(arg);
@@ -632,7 +633,7 @@ export default function DraftProjectUpdate() {
           res.data.gasPrice &&
           res.data.toEoa
         ) {
-          setGasPrice(res.data);
+          setGasPrice(res.data.amount);
           sendFund(res.data);
           // publishThisProject();
         } else {
@@ -645,32 +646,33 @@ export default function DraftProjectUpdate() {
       });
   }
 
-  async function sendFund(amount) {
-    const txnHash = await SendTransactions(amount);
-    console.log(txnHash);
+  async function sendFund(tnxData) {
+    const txnHash = await SendTransactions(tnxData);
+    const jsonTnxData = JSON.stringify(tnxData);
     if (txnHash && txnHash.length > 5) {
-      setShowDeployModal(true);
+      setTnxHashState(txnHash);
+      const request = new FormData();
+      request.append("status", "success");
+      request.append("hash", txnHash);
+      request.append("data", jsonTnxData);
+
+      publishFundTransfer(id, request)
+        .then((res) => {
+          setDataIsLoading(false);
+          if (res.code === 0) {
+            setShowDeployModal(true);
+            // publishThisProject(); // to-do: wait for websocket response of success then call this api
+          } else {
+            setShowErrorModal(true);
+          }
+        })
+        .catch((err) => {
+          setDataIsLoading(false);
+        });
     } else {
+      setDataIsLoading(false);
       setShowErrorModal(true);
     }
-    setDataIsLoading(false);
-    // const request = new FormData();
-    // request.append("signature", signature);
-    // request.append("amount", amount);
-
-    // publishFundTransfer(id, request)
-    //   .then((res) => {
-    //     setDataIsLoading(false);
-    //     if (res.code === 0) {
-    //       setShowDeployModal(true);
-    //       publishThisProject(); // to-do: wait for websocket response of success then call this api
-    //     } else {
-    //       setShowErrorModal(true);
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     setDataIsLoading(false);
-    //   });
   }
 
   function publishThisProject() {
@@ -901,6 +903,7 @@ export default function DraftProjectUpdate() {
           show={showDeployModal}
           handleClose={setShowDeployModal}
           gasPrice={gasPrice}
+          tnxHash={tnxHashState}
         />
       )}
       {showSuccessModal && (
