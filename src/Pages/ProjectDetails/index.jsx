@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { getProjectDetailsById } from "services/project/projectService";
+import {
+  getProjectDetailsById,
+  projectLike,
+} from "services/project/projectService";
 import { ReactComponent as LikeIcon } from "assets/images/projectDetails/ico_like.svg";
 import { ReactComponent as ViewIcon } from "assets/images/projectDetails/ico_view.svg";
 import locationIcon from "assets/images/profile/locationIcon.svg";
@@ -29,6 +32,21 @@ export default function ProjectDetails(props) {
       });
   }
 
+  function LikeProject() {
+    setIsLoading(true);
+    const request = new FormData();
+    request.append("status", true);
+    projectLike(projectId, request)
+      .then((res) => {
+        if (res.code === 0) {
+        }
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        setIsLoading(false);
+      });
+  }
+
   return (
     <div className={`my-4 ${isLoading ? "loading" : ""}`}>
       {!isLoading && project && !project.name && (
@@ -49,7 +67,10 @@ export default function ProjectDetails(props) {
             />
           </div>
           <div className="float-right mr-10">
-            <div className="relative bottom-10 left-1 rounded-full h-14 w-14 bg-[#B9CCD5] hover:bg-[#0AB4AF] grid grid-cols-1 content-center cursor-pointer">
+            <div
+              className="relative bottom-10 left-1 rounded-full h-14 w-14 bg-[#B9CCD5] hover:bg-[#0AB4AF] grid grid-cols-1 content-center cursor-pointer"
+              onClick={LikeProject}
+            >
               <LikeIcon className="ml-1.5" />
             </div>
             <div className="relative bottom-10 left-0 text-sm">Appreciate</div>
@@ -60,7 +81,11 @@ export default function ProjectDetails(props) {
                 <div className="h-28 text-center">
                   <div className="m-4">
                     <p className="text-sm font-semibold">TOKEN SALE</p>
-                    <p className="text-black font-semibold my-2">0</p>
+                    <p className="text-black font-semibold my-2">
+                      {project.token_amount_total
+                        ? project.token_amount_total
+                        : 0}
+                    </p>
                     <p className="text-xs">(0000MATIC)</p>
                   </div>
                 </div>
@@ -99,16 +124,20 @@ export default function ProjectDetails(props) {
           <div className="flex flex-row mt-8 mx-8">
             <div className="w-2/4">
               <div class="flex justify-center">
-                <img
-                  src={require(`assets/images/projectDetails/badge/badge_vr_weighted.png`)}
-                  alt="weighted"
-                  className="h-40 w-40"
-                />
-                <img
-                  src={require(`assets/images/projectDetails/badge/badge_accesspass.png`)}
-                  alt="accesspass"
-                  className="h-40 w-40"
-                />
+                {project.voting_power === "TknW8" && (
+                  <img
+                    src={require(`assets/images/projectDetails/badge/badge_vr_weighted.png`)}
+                    alt="weighted"
+                    className="h-40 w-40"
+                  />
+                )}
+                {project.voting_power === "1VPM" && (
+                  <img
+                    src={require(`assets/images/projectDetails/badge/badge_vr_1vote.png`)}
+                    alt="weighted"
+                    className="h-40 w-40"
+                  />
+                )}
               </div>
             </div>
             <div className="w-2/4">
@@ -170,55 +199,37 @@ export default function ProjectDetails(props) {
               <div>
                 <img
                   className="rounded-lg shadow-sm h-96 w-full"
-                  src={require(`assets/images/no-image-found-square.png`)}
+                  src={
+                    project?.assets[1]?.path
+                      ? project.assets[1].path
+                      : require(`assets/images/no-image-found-square.png`)
+                  }
                   alt="user icon"
                 />
               </div>
               <div className="flex flex-row mt-2">
                 <img
                   className="rounded-lg shadow-sm h-24 w-30 mr-2"
-                  src={require(`assets/images/no-image-found-square.png`)}
+                  src={
+                    project?.assets[2]?.path
+                      ? project.assets[2].path
+                      : require(`assets/images/no-image-found-square.png`)
+                  }
                   alt="user icon"
                 />
                 <img
                   className="rounded-lg shadow-sm h-24 w-30 mr-2"
-                  src={require(`assets/images/no-image-found-square.png`)}
-                  alt="user icon"
-                />
-                <img
-                  className="rounded-lg shadow-sm h-24 w-30 mr-2"
-                  src={require(`assets/images/no-image-found-square.png`)}
-                  alt="user icon"
-                />
-                <img
-                  className="rounded-lg shadow-sm h-24 w-30 mr-2"
-                  src={require(`assets/images/no-image-found-square.png`)}
-                  alt="user icon"
-                />
-                <img
-                  className="rounded-lg shadow-sm h-24 w-30 mr-2"
-                  src={require(`assets/images/no-image-found-square.png`)}
+                  src={
+                    project?.assets[3]?.path
+                      ? project.assets[3].path
+                      : require(`assets/images/no-image-found-square.png`)
+                  }
                   alt="user icon"
                 />
               </div>
             </div>
             <div className="w-2/4">
-              <p>
-                Moonrise Kingdom is a 2012 American coming-of-age comedy-drama
-                film directed by Wes Anderson, written by Anderson and Roman
-                Coppola, and starring Bruce Willis, Edward Norton, Bill Murray,
-                Frances McDormand, Tilda Swinton, Jason Schwartzman, Bob
-                Balaban, and introducing Jared Gilman and Kara Hayward. Largely
-                set on the fictional New England island of New Penzance, it
-                tells the story of an orphan boy (Gilman) who escapes from a
-                scouting camp to unite with his pen pal and love interest, a
-                girl with aggressive tendencies (Hayward). Feeling alienated
-                from their guardians and shunned by their peers, the lovers
-                abscond to an isolated beach. Meanwhile, the island’s police
-                captain (Willis) organizes a search party of scouts and family
-                members to locate the runaways.
-              </p>
-              <p className="mt-4">DISCORD URL : COMUNITY</p>
+              <p>{project.overview}</p>
             </div>
           </div>
           <div className="flex justify-center my-8 border-t">
@@ -227,17 +238,19 @@ export default function ProjectDetails(props) {
             </div>
           </div>
           <div className="flex justify-center">
-            <div className="mt-4 justify-center">
-              <div className="rounded-full h-14 w-14 bg-[#B9CCD5] hover:bg-[#0AB4AF] grid grid-cols-1 content-center cursor-pointer">
+            <div className="mt-4 justify-center text-center">
+              <div className="rounded-full h-14 w-14 bg-[#B9CCD5] hover:bg-[#0AB4AF] grid grid-cols-1 content-center cursor-pointer m-4">
                 <LikeIcon className="ml-1.5" />
               </div>
               <div className="text-sm mt-1">Appreciate</div>
             </div>
-            <div className="mt-4 justify-center ml-4">
-              <div className="rounded-full h-14 w-14 bg-[#B9CCD5] hover:bg-[#0AB4AF] grid grid-cols-1 content-center cursor-pointer">
+            <div className="mt-4 justify-center text-center">
+              <div className="rounded-full h-14 w-14 bg-[#B9CCD5] hover:bg-[#0AB4AF] grid grid-cols-1 content-center cursor-pointer m-4">
                 <ViewIcon className="ml-1.5" />
               </div>
-              <div className="text-sm ml-4 mt-1">300</div>
+              <div className="text-sm mt-1">
+                {project?.project_view_count ? project.project_view_count : 0}
+              </div>
             </div>
           </div>
           <div className="flex justify-center">
