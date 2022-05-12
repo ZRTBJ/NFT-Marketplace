@@ -36,7 +36,7 @@ export default function DraftProjectUpdate() {
   const [votingPower, setVotingPower] = useState("");
   const [canVote, setCanVote] = useState("");
   const { id } = useParams();
-  const [isDataLoading, setDataIsLoading] = useState(false);
+  const [isDataLoading, setDataIsLoading] = useState(true);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [gasPrice, setGasPrice] = useState(0);
