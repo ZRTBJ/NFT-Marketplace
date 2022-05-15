@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   getPublicProjectList,
   getProjectCategory,
@@ -164,12 +164,7 @@ function Home(props) {
               <div>
                 {projectList.map((i, index) => (
                   <SwiperSlide key={index}>
-                    <ProjectListCard
-                      key={index}
-                      project={i}
-                      sm={"240"}
-                      md={"280"}
-                    />
+                    <ProjectListCard key={index} project={i} />
                   </SwiperSlide>
                 ))}
               </div>

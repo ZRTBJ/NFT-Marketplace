@@ -3,7 +3,7 @@ import viewIcon from "assets/images/profile/ico_view.svg";
 const ProjectListCard = ({ project }) => {
   return (
     <div
-      className={`roboto mx-auto md:mx-[0px] w-[240px] md:w-[280px]`}
+      className={`roboto mx-auto md:mx-[0px] w-[166px] md:max-w-[280px] md:w-full`}
       style={{ boxShadow: " 0px 0px 4px #00000024" }}
     >
       <img
@@ -13,8 +13,8 @@ const ProjectListCard = ({ project }) => {
             ? project.assets.find((x) => x.asset_purpose === "cover").path
             : ""
         }
-        alt="project cover"
-        className={` h-[240px] md:h-[280px] w-[240px] md:w-[280px] object-cover `}
+        alt="Project Cover"
+        className={` h-[166px] md:h-[280px] w-[166px] md:w-[280px] object-cover `}
       />
       <div
         style={{ borderRadius: "0px 0px 8px 8px" }}
@@ -77,7 +77,7 @@ const ProjectListCard = ({ project }) => {
                 <div className="flex mt-[11px] justify-between text-[#192434] text-[10px]">
                   <div>0</div>
                   <div>
-                    <span>{project.project_fundraising.total_allocation}</span>{" "}
+                    <span>{project.project_fundraising.total_allocation}</span>
                     {project.token_name}
                   </div>
                 </div>

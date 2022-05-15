@@ -4,7 +4,7 @@ import {
   getProjectCategory,
   getProjectListBySearch,
 } from "services/project/projectService";
-import ProjectListCard from "components/Home/ProjectListCard";
+import ProjectListCard from "components/AllProject/ProjectListCard";
 import InfiniteScroll from "react-infinite-scroll-component";
 import sortIcon from "assets/images/home/ico_filter.svg";
 
@@ -13,10 +13,10 @@ function AllProject() {
   const [projectList, setProjectList] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsloading] = useState(true);
-  const [orderBy, setOrderBy] = useState("newer");
+  const [orderBy, setOrderBy] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
-  const [criteria, setCriteria] = useState("name");
+  const [criteria, setCriteria] = useState("");
   const [keyword, setKeyword] = useState("");
   const [smallSpinnedLoading, setSmallSpinnedLoading] = useState(false);
 
@@ -26,22 +26,21 @@ function AllProject() {
       setCategoryList(response.categories);
       filterProjectList(response.categories);
     });
-    setIsloading(false);
   }
   async function filterProjectList(
     categories,
-    criteria_keyword,
     searchKeyword,
-    order_By_keyword
+    pageNumber,
+    pagesize
   ) {
     setSmallSpinnedLoading(true);
     setHasMore(false);
     const payload = {
-      order_by: order_By_keyword ? order_By_keyword : orderBy,
-      page: page,
-      limit: limit,
-      criteria: criteria_keyword ? criteria_keyword : "",
-      keyword: searchKeyword ? searchKeyword : "",
+      order_by: orderBy === "" ? "newer" : orderBy,
+      page: pageNumber ? pageNumber : page,
+      limit: pagesize ? pagesize : limit,
+      criteria: criteria === "" ? "name" : criteria,
+      keyword: searchKeyword ? searchKeyword : keyword,
     };
     await getProjectListBySearch(payload).then((response) => {
       if (response.data !== null) {
@@ -62,49 +61,91 @@ function AllProject() {
               user_allocated_percent;
           }
         });
-        if (response.data.length === limit) {
-          let pageSize = page + 1;
-          setPage(pageSize);
-          // let limiteSize = limit + 1;
-          // setLimit(limiteSize);
-          setHasMore(true);
+
+        if (searchKeyword === undefined && keyword === "") {
+          if (response.data.length === limit) {
+            let pageSize = page + 1;
+            setPage(pageSize);
+            setHasMore(true);
+          }
+
+          let projects = projectList.concat(response.data);
+          var resArr = [];
+          projects.forEach(function (item) {
+            var i = resArr.findIndex((x) => x.id === item.id);
+            if (i <= -1) {
+              resArr.push({ ...item });
+            }
+          });
+
+          setProjectList(resArr);
+        } else {
+          setProjectList(response.data);
         }
-        setProjectList(response.data);
+
         setSmallSpinnedLoading(false);
       } else {
         setProjectList([]);
         setSmallSpinnedLoading(false);
       }
     });
+    setIsloading(false);
   }
 
   async function fetchData() {
     if (hasMore) {
-      await filterProjectList(categoryList);
+      if (keyword === "") {
+        await filterProjectList(categoryList);
+      }
     }
   }
   async function onProjectNameChange(value) {
     if (value === "") {
-      console.log(value);
       setKeyword("");
-      await filterProjectList(categoryList, "");
     } else {
+      setProjectList([]);
+      setIsloading(true);
+      setPage(1);
       setKeyword(value);
-      await filterProjectList(categoryList, value);
+      let pagesize = 100;
+      await filterProjectList(categoryList, value, 1, pagesize);
     }
   }
   async function onOrderChange(e) {
     setOrderBy(e);
-    await filterProjectList();
+    setPage(1);
+    setProjectList([]);
+    setIsloading(true);
   }
   async function onCriteriaChnage(criteria_paramas) {
     setCriteria(criteria_paramas);
-    await filterProjectList(categoryList, keyword, criteria_paramas);
+    setPage(1);
+    setProjectList([]);
+    setIsloading(true);
   }
   useEffect(() => {
     categoryListAPIcCall();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  useEffect(() => {
+    if (criteria !== "") {
+      filterProjectList(categoryList);
+    }
+  }, [criteria]);
+  useEffect(() => {
+    if (orderBy !== "") {
+      filterProjectList(categoryList);
+    }
+  }, [orderBy]);
+
+  useEffect(() => {
+    if (keyword === "") {
+      if (categoryList.length > 0) {
+        filterProjectList(categoryList);
+      }
+    }
+  }, [keyword]);
+
   return (
     <div className="max-w-[1366px] mx-auto ">
       <div className="mt-[15px]">
@@ -119,8 +160,8 @@ function AllProject() {
               <option value="job">Role</option>
             </select>
             <DebounceInput
-              minLength={0}
-              debounceTimeout={100}
+              minLength={2}
+              debounceTimeout={900}
               onChange={(e) => onProjectNameChange(e.target.value)}
               type="text"
               className="border mr-4 border-[#cccccc]  rounded   md:w-[776px] mb-4 h-[34px] md:h-[44px] "
@@ -141,8 +182,8 @@ function AllProject() {
               onChange={(e) => onOrderChange(e.target.value)}
               className="hidden md:block md:w-[174px] pr-4 ml-auto"
             >
-              <option defaultValue={"newer"}>Newer</option>
-              <option value="old">OLD</option>
+              <option value="newer">Newer</option>
+              <option value="older">OLD</option>
             </select>
           </div>
         </div>
@@ -154,23 +195,22 @@ function AllProject() {
           next={fetchData}
           hasMore={hasMore}
         >
-          <div className="container md:mx-auto md:p-6 grid grid-cols-2  md:grid-cols-3 lg:grid-cols-4  md:gap-4">
-            {projectList.length > 0 ? (
-              <>
-                {projectList.map((i) => (
-                  <div
-                    key={i.id}
-                    className="mb-8 col-span-1 flex flex-col bg-white p-4"
-                  >
-                    <ProjectListCard key={i.id} sm={166} md={280} project={i} />
-                  </div>
-                ))}
-              </>
-            ) : (
-              <div className="text-center">No Match results</div>
-            )}
-          </div>
-          {hasMore && <div className="onlySpinner"></div>}
+          {projectList.length > 0 ? (
+            <div className="container md:mx-auto md:p-6 grid grid-cols-2  md:grid-cols-3 lg:grid-cols-4  md:gap-4">
+              {projectList.map((i) => (
+                <div
+                  key={i.id}
+                  className="mb-8 col-span-1 flex flex-col bg-white p-4"
+                >
+                  <ProjectListCard key={i.id} project={i} />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center mx-auto">No Match results</div>
+          )}
+
+          {smallSpinnedLoading && <div className="onlySpinner"></div>}
         </InfiniteScroll>
       )}
     </div>
