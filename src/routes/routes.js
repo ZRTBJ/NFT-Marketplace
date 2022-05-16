@@ -8,6 +8,7 @@ import ProjectCreate from "Pages/ProjectCreate";
 import DraftProjectUpdate from "Pages/DraftProjectUpdate";
 import ProjectPoll from "Pages/ProjectEditPoll";
 import ProjectEditOutline from "Pages/ProjectEditOutline";
+import ProjectEditTop from "Pages/ProjectEditTop";
 import projectDetails from "Pages/ProjectDetails";
 import AllProject from "Pages/AllProject";
 
@@ -56,6 +57,11 @@ const routes = [
   {
     path: "/project-edit/:id/outline",
     component: ProjectEditOutline,
+    isPrivate: true,
+  },
+  {
+    path: "/project-edit/:id/project-top",
+    component: ProjectEditTop,
     isPrivate: true,
   },
   {
