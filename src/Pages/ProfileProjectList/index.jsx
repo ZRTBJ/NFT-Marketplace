@@ -13,7 +13,7 @@ const ProfileSettings = () => {
   function projectEdit(status, id) {
     if (status === "published") {
       history.push({
-        pathname: `/project-edit/${id}/outline`,
+        pathname: `/project-edit/${id}/project-top`,
       });
     } else if (status === "draft") {
       history.push({
