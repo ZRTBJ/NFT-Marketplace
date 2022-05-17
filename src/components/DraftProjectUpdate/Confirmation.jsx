@@ -15,6 +15,7 @@ export default function Confirmation(props) {
       <h1 className="text-5xl font-bold mb-16">CONFIRMATION</h1>
       <div className="mt-4 w-full">
         <div className="accordion" id="accordionExample5">
+          {/* type */}
           <div className="accordion-item bg-white border border-gray-200">
             <div className="accordion-header mb-0" id="headingOne5">
               <button
@@ -49,22 +50,32 @@ export default function Confirmation(props) {
             >
               <div className="accordion-body py-4 px-5">
                 <div>
-                  <div>Driven by (Who can propose?)</div>
-                  <div className="font-semibold">
-                    {props.selectedType.title}
+                  <div className="text-[12px] text-gray-400 mb-[10px]">
+                    Driven by (Who can propose?)
+                  </div>
+                  <div>
+                    <p className="font-semibold"> OWNERS</p>
+                    <p>
+                      The owners who have the governance token can propose only.
+                    </p>
                   </div>
                 </div>
-                <div className="mt-4">
-                  <div>Voting Power</div>
+                <div className="mt-6">
+                  <div className="text-[12px] text-gray-400 mb-[10px]">
+                    Voting Power
+                  </div>
                   <div className="font-semibold">{props.votingPower.title}</div>
                 </div>
-                <div className="mt-4">
-                  <div>Who can vote?</div>
+                <div className="mt-6">
+                  <div className="text-[12px] text-gray-400 mb-[10px]">
+                    Who can vote?
+                  </div>
                   <div className="font-semibold">{props.canVote.title}</div>
                 </div>
               </div>
             </div>
           </div>
+          {/* outline */}
           <div className="accordion-item bg-white border border-gray-200">
             <h2 className="accordion-header mb-0" id="headingTwo5">
               <button
@@ -100,12 +111,40 @@ export default function Confirmation(props) {
             >
               <div className="accordion-body py-4 px-5">
                 <div>
-                  <div>Project name</div>
-                  <div className="font-semibold">{props.projectName}</div>
+                  <div className="text-[12px] text-gray-400 mb-[10px]">
+                    Project name
+                  </div>
+                  <div className="font-semibold mb-6">{props.projectName}</div>
+                  <div className="text-[12px] text-gray-400 mb-[10px]">
+                    Cover photo
+                  </div>
+                  <img
+                    src={props.projectCover.path}
+                    alt="No cover found"
+                    className="h-[162px] w-full max-w-[546px] object-cover mb-6"
+                  />
+                  <div className="text-[12px] text-gray-400 mb-[10px]">
+                    Photos (up to 4)
+                  </div>
+                  <div className="flex flex-wrap">
+                    {props.photosUrl.length > 0 ? (
+                      props.photosUrl.map((i) => (
+                        <img
+                          src={i.path}
+                          key={i.id}
+                          alt=""
+                          className="rounded h-[124px] w-[124px] object-cover mr-4 mb-4"
+                        />
+                      ))
+                    ) : (
+                      <div className="mx-auto">No Photos</div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+          {/* token settings */}
           <div className="accordion-item bg-white border border-gray-200">
             <h2 className="accordion-header mb-0" id="headingThree5">
               <button
@@ -147,7 +186,7 @@ export default function Confirmation(props) {
               </div>
             </div>
           </div>
-          <div className="accordion-item bg-white border border-gray-200">
+          {/* <div className="accordion-item bg-white border border-gray-200">
             <h2 className="accordion-header mb-0" id="headingThree5">
               <button
                 className="
@@ -220,7 +259,7 @@ export default function Confirmation(props) {
             >
               <div className="accordion-body py-4 px-5">ALLOCATION</div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

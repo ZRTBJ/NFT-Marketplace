@@ -343,7 +343,7 @@ export default function DraftProjectUpdate() {
    * ==============================================
    */
 
-  const [currentStep, setcurrentStep] = useState([1]);
+  const [currentStep, setcurrentStep] = useState([1, 2, 3, 4, 5, 6, 7]);
   const [showModal, setShowModal] = useState(false);
   const [showDeployModal, setShowDeployModal] = useState(false);
   async function projectDetails() {
@@ -369,6 +369,15 @@ export default function DraftProjectUpdate() {
           selectTypeTabData[0].canVote[canVoteIndex].active = true;
           setVotingPower(selectTypeTabData[0].votingPower[votingPowerIndex]);
           setCanVote(selectTypeTabData[0].canVote[canVoteIndex]);
+        } else if (response.org_type !== "custom") {
+          const votingPower = org_type.votingPower.find(
+            (x) => x.active === true
+          );
+          console.log(votingPower);
+
+          const canVote = org_type.canVote.find((x) => x.active === true);
+          setVotingPower(votingPower);
+          setCanVote(canVote);
         }
       }
       // project type end
@@ -620,7 +629,6 @@ export default function DraftProjectUpdate() {
   useEffect(() => {
     projectDetails();
   }, []);
-
   function getProjectPublishCost() {
     setDataIsLoading(true);
     getPublishCost(id)
@@ -719,13 +727,19 @@ export default function DraftProjectUpdate() {
         {currentStep === 1 && <SelectType />}
         {currentStep === 1 && <SelectType />} */}
             {currentStep.length === 7 && (
-              <Confirmation
-                selectedType={selectedTab}
-                votingPower={votingPower}
-                canVote={canVote}
-                projectName={projectName}
-                tokenName={tokenName}
-              />
+              <div>
+                {!isDataLoading && (
+                  <Confirmation
+                    selectedType={selectedTab}
+                    votingPower={votingPower}
+                    canVote={canVote}
+                    projectName={projectName}
+                    projectCover={coverPhotoUrl}
+                    photosUrl={photosUrl}
+                    tokenName={tokenName}
+                  />
+                )}
+              </div>
             )}
             <div className="buttonContainer">
               <div
