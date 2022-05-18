@@ -9,6 +9,7 @@ import {
   getPublishCost,
   publishFundTransfer,
   publishProject,
+  getProjectCategory,
 } from "services/project/projectService";
 import selectTypeTabData from "Pages/DraftProjectUpdate/projectCreateData";
 import LeftSideBar from "components/DraftProjectUpdate/LeftSideBar";
@@ -174,6 +175,7 @@ export default function DraftProjectUpdate() {
 
   // category start
   const [projectCategory, setProjectCategory] = useState("");
+  const [projectCategoryName, setProjectCategoryName] = useState("");
   const [emptyProjeCtCategory, setEmptyProjectCategory] = useState(false);
   function onProjectCategoryChange(e) {
     setProjectCategory(e.target.value);
@@ -343,7 +345,14 @@ export default function DraftProjectUpdate() {
    * ==============================================
    */
 
-  const [currentStep, setcurrentStep] = useState([1, 2, 3, 4, 5, 6, 7]);
+  const [ConfirmationKey, setConfirmationKey] = useState(0);
+  /**
+   * ==============================================
+   * Confirmation end
+   * ==============================================
+   */
+
+  const [currentStep, setcurrentStep] = useState([1]);
   const [showModal, setShowModal] = useState(false);
   const [showDeployModal, setShowDeployModal] = useState(false);
   async function projectDetails() {
@@ -428,8 +437,21 @@ export default function DraftProjectUpdate() {
       setTokenName(response.token_name);
       setTokenSymbol(response.token_symbol);
       setNumberOfTokens(response.token_amount_total);
+
+      getProjectCategory().then((e) => {
+        try {
+          let CategoryName = e.categories.find(
+            (x) => x.id === response.category_id
+          );
+          setProjectCategoryName(CategoryName.name);
+        } catch (error) {
+          console.log(error);
+        }
+      });
+
       // Token end
       setDataIsLoading(false);
+      setConfirmationKey((pre) => pre + 1);
     });
   }
   function handelClickNext() {
@@ -730,13 +752,21 @@ export default function DraftProjectUpdate() {
               <div>
                 {!isDataLoading && (
                   <Confirmation
+                    key={ConfirmationKey}
                     selectedType={selectedTab}
                     votingPower={votingPower}
                     canVote={canVote}
                     projectName={projectName}
                     projectCover={coverPhotoUrl}
                     photosUrl={photosUrl}
+                    overview={overview}
+                    category={projectCategoryName}
+                    tagList={tagList}
+                    needMember={needMember}
+                    roleList={roleList}
                     tokenName={tokenName}
+                    tokenSymbol={tokenSymbol}
+                    numberOfTokens={numberOfTokens}
                   />
                 )}
               </div>
