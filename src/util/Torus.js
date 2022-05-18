@@ -1,5 +1,7 @@
+import Config from "../config";
 import Torus from "@toruslabs/torus-embed";
 import Web3 from "web3";
+import { ethers } from "ethers";
 let torusAccount = null;
 const torus = new Torus({});
 
@@ -42,8 +44,9 @@ export async function torusLogout() {
 export async function torusInit() {
   await torus.init({
     enableLogging: false,
-    //   network:'',
-    //   buildEnv:'production',
+    network: {
+      chainId: Config.CHAIN_ID, // default: 1
+    },
     showTorusButton: false,
   });
   const web3 = new Web3(torus.provider);
@@ -54,4 +57,25 @@ export async function torusInit() {
     return (torusAccount = { address, balance, ...userinfo });
   }
 }
+
+export async function sentFund(tnxData) {
+  let txnHash = "";
+  const web3 = new Web3(torus.provider);
+  const address = (await web3.eth.getAccounts())[0];
+  const txnParams = {
+    from: address,
+    to: tnxData.toEoa,
+    value: ethers.BigNumber.from(
+      Web3.utils.toWei(tnxData.amount.toString(), "ether")
+    )._hex,
+    chainId: Config.CHAIN_ID,
+  };
+  const tHash = await torus.ethereum.request({
+    method: "eth_sendTransaction",
+    params: [txnParams],
+  });
+  txnHash = tHash ? tHash : "";
+  return txnHash;
+}
+
 export { torusAccount };

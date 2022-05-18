@@ -9,6 +9,8 @@ import {
   publishFundTransfer,
   publishProject,
 } from "services/project/projectService";
+import { useAuthState } from "Context";
+import { sentFund } from "util/Torus";
 
 const DeployingProjectModal = ({
   handleClose,
@@ -18,13 +20,22 @@ const DeployingProjectModal = ({
   projectId,
 }) => {
   const btnText = buttomText ? buttomText : "VIEW on ETHERSCAN";
-  const [step, setStep] = useState(1);
+  const context = useAuthState();
+  const [selectedWallet, setSelectedWallet] = useState(
+    context ? context.wallet : ""
+  );
+  const [step, setStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [tnxHash, setTnxHash] = useState("");
 
   async function sendFund() {
+    let txnHash = "";
     setIsLoading(true);
-    const txnHash = await SendTransactions(tnxData);
+    if (selectedWallet === "metamask") {
+      txnHash = await SendTransactions(tnxData);
+    } else {
+      txnHash = await sentFund(tnxData);
+    }
     const jsonTnxData = JSON.stringify(tnxData);
     if (txnHash && txnHash.length > 5) {
       setTnxHash(txnHash);
@@ -141,41 +152,41 @@ const DeployingProjectModal = ({
               {step === 1 && (
                 <div className="py-8 mx-64 flex flex-row p-6 w-1/3 ">
                   <div className="text-center my-4">
-                    <ul class="stepper stepper-vertical">
-                      <li class="stepper-step stepper-active">
-                        <div class="stepper-head">
-                          <span class="stepper-head-icon">
+                    <ul className="stepper stepper-vertical">
+                      <li className="stepper-step stepper-active">
+                        <div className="stepper-head">
+                          <span className="stepper-head-icon">
                             {" "}
                             <i
                               className="fa fa-check"
                               aria-hidden="true"
                             ></i>{" "}
                           </span>
-                          <span class="stepper-head-text"> step1 </span>
+                          <span className="stepper-head-text"> step1 </span>
                         </div>
                       </li>
-                      <li class="stepper-step stepper-failed">
-                        <div class="stepper-head">
-                          <span class="stepper-head-icon">
+                      <li className="stepper-step stepper-failed">
+                        <div className="stepper-head">
+                          <span className="stepper-head-icon">
                             {" "}
                             <i
                               className="fa fa-times"
                               aria-hidden="true"
                             ></i>{" "}
                           </span>
-                          <span class="stepper-head-text"> step2 </span>
+                          <span className="stepper-head-text"> step2 </span>
                         </div>
                       </li>
-                      <li class="stepper-step">
-                        <div class="stepper-head">
-                          <span class="stepper-head-icon">
+                      <li className="stepper-step">
+                        <div className="stepper-head">
+                          <span className="stepper-head-icon">
                             {" "}
                             <i
                               className="fa fa-check"
                               aria-hidden="true"
                             ></i>{" "}
                           </span>
-                          <span class="stepper-head-text"> step3 </span>
+                          <span className="stepper-head-text"> step3 </span>
                         </div>
                       </li>
                     </ul>
