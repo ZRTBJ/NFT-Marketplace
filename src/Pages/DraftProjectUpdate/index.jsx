@@ -9,6 +9,7 @@ import {
   getPublishCost,
   publishFundTransfer,
   publishProject,
+  getProjectCategory,
 } from "services/project/projectService";
 import selectTypeTabData from "Pages/DraftProjectUpdate/projectCreateData";
 import LeftSideBar from "components/DraftProjectUpdate/LeftSideBar";
@@ -174,6 +175,7 @@ export default function DraftProjectUpdate() {
 
   // category start
   const [projectCategory, setProjectCategory] = useState("");
+  const [projectCategoryName, setProjectCategoryName] = useState("");
   const [emptyProjeCtCategory, setEmptyProjectCategory] = useState(false);
   function onProjectCategoryChange(e) {
     setProjectCategory(e.target.value);
@@ -343,6 +345,13 @@ export default function DraftProjectUpdate() {
    * ==============================================
    */
 
+  const [ConfirmationKey, setConfirmationKey] = useState(0);
+  /**
+   * ==============================================
+   * Confirmation end
+   * ==============================================
+   */
+
   const [currentStep, setcurrentStep] = useState([1]);
   const [showModal, setShowModal] = useState(false);
   const [showDeployModal, setShowDeployModal] = useState(false);
@@ -369,6 +378,15 @@ export default function DraftProjectUpdate() {
           selectTypeTabData[0].canVote[canVoteIndex].active = true;
           setVotingPower(selectTypeTabData[0].votingPower[votingPowerIndex]);
           setCanVote(selectTypeTabData[0].canVote[canVoteIndex]);
+        } else if (response.org_type !== "custom") {
+          const votingPower = org_type.votingPower.find(
+            (x) => x.active === true
+          );
+          console.log(votingPower);
+
+          const canVote = org_type.canVote.find((x) => x.active === true);
+          setVotingPower(votingPower);
+          setCanVote(canVote);
         }
       }
       // project type end
@@ -419,8 +437,21 @@ export default function DraftProjectUpdate() {
       setTokenName(response.token_name);
       setTokenSymbol(response.token_symbol);
       setNumberOfTokens(response.token_amount_total);
+
+      getProjectCategory().then((e) => {
+        try {
+          let CategoryName = e.categories.find(
+            (x) => x.id === response.category_id
+          );
+          setProjectCategoryName(CategoryName.name);
+        } catch (error) {
+          console.log(error);
+        }
+      });
+
       // Token end
       setDataIsLoading(false);
+      setConfirmationKey((pre) => pre + 1);
     });
   }
   function handelClickNext() {
@@ -620,7 +651,6 @@ export default function DraftProjectUpdate() {
   useEffect(() => {
     projectDetails();
   }, []);
-
   function getProjectPublishCost() {
     setDataIsLoading(true);
     getPublishCost(id)
@@ -719,13 +749,27 @@ export default function DraftProjectUpdate() {
         {currentStep === 1 && <SelectType />}
         {currentStep === 1 && <SelectType />} */}
             {currentStep.length === 7 && (
-              <Confirmation
-                selectedType={selectedTab}
-                votingPower={votingPower}
-                canVote={canVote}
-                projectName={projectName}
-                tokenName={tokenName}
-              />
+              <div>
+                {!isDataLoading && (
+                  <Confirmation
+                    key={ConfirmationKey}
+                    selectedType={selectedTab}
+                    votingPower={votingPower}
+                    canVote={canVote}
+                    projectName={projectName}
+                    projectCover={coverPhotoUrl}
+                    photosUrl={photosUrl}
+                    overview={overview}
+                    category={projectCategoryName}
+                    tagList={tagList}
+                    needMember={needMember}
+                    roleList={roleList}
+                    tokenName={tokenName}
+                    tokenSymbol={tokenSymbol}
+                    numberOfTokens={numberOfTokens}
+                  />
+                )}
+              </div>
             )}
             <div className="buttonContainer">
               <div
