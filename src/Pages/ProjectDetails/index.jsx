@@ -6,11 +6,14 @@ import {
 import { ReactComponent as LikeIcon } from "assets/images/projectDetails/ico_like.svg";
 import { ReactComponent as ViewIcon } from "assets/images/projectDetails/ico_view.svg";
 import locationIcon from "assets/images/profile/locationIcon.svg";
+import { useHistory } from "react-router-dom";
 
 export default function ProjectDetails(props) {
+  const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
   const [project, setProject] = useState({});
   const projectId = props.match.params.id;
+  const [selectedImages, setSelectedImages] = useState({});
 
   useEffect(() => {
     if (projectId && !isLoading) {
@@ -24,6 +27,9 @@ export default function ProjectDetails(props) {
       .then((res) => {
         if (res.code === 0) {
           setProject(res.project);
+          if (res?.project?.assets[1]) {
+            setSelectedImages(res.project.assets[1]);
+          }
         }
         setIsLoading(false);
       })
@@ -45,6 +51,10 @@ export default function ProjectDetails(props) {
       .catch((error) => {
         setIsLoading(false);
       });
+  }
+
+  function changeImagePreview(image) {
+    setSelectedImages(image);
   }
 
   return (
@@ -75,7 +85,8 @@ export default function ProjectDetails(props) {
             </div>
             <div className="relative bottom-10 left-0 text-sm">Appreciate</div>
           </div>
-          <div className="flex flex-row mt-24 mx-8">
+          <div className="h-4"></div>
+          {/* <div className="flex flex-row mt-24 mx-8">
             <div className="w-2/4 border border-gray-300 float-right">
               <div class="grid grid-cols-4 divide-x divide-gray-300 text-gray-400">
                 <div className="h-28 text-center">
@@ -120,8 +131,8 @@ export default function ProjectDetails(props) {
                 FIXED MEMBER
               </div>
             </div>
-          </div>
-          <div className="flex flex-row mt-8 mx-8">
+          </div> */}
+          {/* <div className="flex flex-row mt-8 mx-8">
             <div className="w-2/4">
               <div class="flex justify-center">
                 {project.voting_power === "TknW8" && (
@@ -190,42 +201,48 @@ export default function ProjectDetails(props) {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
           <div className="text-center w-full my-8 border-t">
             <div className="text-2xl font-semibold my-8">About Project</div>
           </div>
           <div className="flex flex-row mt-8 mx-8">
             <div className="w-2/4 pr-8">
-              <div>
+              {!!project?.assets[1] && (
                 <img
                   className="rounded-lg shadow-sm h-96 w-full"
                   src={
-                    project?.assets[1]?.path
-                      ? project.assets[1].path
+                    selectedImages?.path
+                      ? selectedImages.path
                       : require(`assets/images/no-image-found-square.png`)
                   }
                   alt="user icon"
                 />
-              </div>
+              )}
               <div className="flex flex-row mt-2">
-                <img
-                  className="rounded-lg shadow-sm h-24 w-30 mr-2"
-                  src={
-                    project?.assets[2]?.path
-                      ? project.assets[2].path
-                      : require(`assets/images/no-image-found-square.png`)
-                  }
-                  alt="user icon"
-                />
-                <img
-                  className="rounded-lg shadow-sm h-24 w-30 mr-2"
-                  src={
-                    project?.assets[3]?.path
-                      ? project.assets[3].path
-                      : require(`assets/images/no-image-found-square.png`)
-                  }
-                  alt="user icon"
-                />
+                {project &&
+                  project.assets &&
+                  project.assets.length > 0 &&
+                  project.assets.map((image, index) => (
+                    <>
+                      {index > 0 && (
+                        <img
+                          key={`project-image-${index}`}
+                          className={`rounded-lg shadow-sm h-24 w-30 mr-2 ${
+                            image.path === selectedImages?.path
+                              ? "border-4 border-[#0AB4AF]"
+                              : ""
+                          }`}
+                          src={
+                            image.path
+                              ? image.path
+                              : require(`assets/images/no-image-found-square.png`)
+                          }
+                          alt={`project pic-${index}`}
+                          onClick={() => changeImagePreview(image)}
+                        />
+                      )}
+                    </>
+                  ))}
               </div>
             </div>
             <div className="w-2/4">
@@ -253,7 +270,10 @@ export default function ProjectDetails(props) {
               </div>
             </div>
           </div>
-          <div className="flex justify-center">
+          <div
+            className="flex justify-center cursor-pointer"
+            onClick={() => history.push("/all-project")}
+          >
             <div className="border rounded-full text-center text-black h-14 w-1/4 rounded p-4 mr-2 mt-8 hover:border-[#0AB4AF] hover:text-[#0AB4AF]">
               Back to project list
             </div>

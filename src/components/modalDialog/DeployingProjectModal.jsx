@@ -18,7 +18,7 @@ const DeployingProjectModal = ({
   projectId,
 }) => {
   const btnText = buttomText ? buttomText : "VIEW on ETHERSCAN";
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [tnxHash, setTnxHash] = useState("");
 
@@ -141,7 +141,44 @@ const DeployingProjectModal = ({
               {step === 1 && (
                 <div className="py-8 mx-64 flex flex-row p-6 w-1/3 ">
                   <div className="text-center my-4">
-                    <p className="text-xl text-red-400">(Under Construction)</p>
+                    <ul class="stepper stepper-vertical">
+                      <li class="stepper-step stepper-active">
+                        <div class="stepper-head">
+                          <span class="stepper-head-icon">
+                            {" "}
+                            <i
+                              className="fa fa-check"
+                              aria-hidden="true"
+                            ></i>{" "}
+                          </span>
+                          <span class="stepper-head-text"> step1 </span>
+                        </div>
+                      </li>
+                      <li class="stepper-step stepper-failed">
+                        <div class="stepper-head">
+                          <span class="stepper-head-icon">
+                            {" "}
+                            <i
+                              className="fa fa-times"
+                              aria-hidden="true"
+                            ></i>{" "}
+                          </span>
+                          <span class="stepper-head-text"> step2 </span>
+                        </div>
+                      </li>
+                      <li class="stepper-step">
+                        <div class="stepper-head">
+                          <span class="stepper-head-icon">
+                            {" "}
+                            <i
+                              className="fa fa-check"
+                              aria-hidden="true"
+                            ></i>{" "}
+                          </span>
+                          <span class="stepper-head-text"> step3 </span>
+                        </div>
+                      </li>
+                    </ul>
                   </div>
                 </div>
               )}

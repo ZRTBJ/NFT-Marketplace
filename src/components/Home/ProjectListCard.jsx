@@ -1,10 +1,18 @@
 import likeIcon from "assets/images/profile/ico_like.svg";
 import viewIcon from "assets/images/profile/ico_view.svg";
+import { useHistory } from "react-router-dom";
 const ProjectListCard = ({ project }) => {
+  const history = useHistory();
+
+  function projectDetails(projectId) {
+    history.push(`/project-details/${projectId}`);
+  }
+
   return (
     <div
       className={`roboto mx-auto md:mx-[0px] w-[240px] md:w-[280px]`}
       style={{ boxShadow: " 0px 0px 4px #00000024" }}
+      onClick={() => projectDetails(project.id)}
     >
       <img
         style={{ borderRadius: "8px 8px 0px 0px" }}
@@ -14,7 +22,7 @@ const ProjectListCard = ({ project }) => {
             : ""
         }
         alt="project cover"
-        className={` h-[240px] md:h-[280px] w-[240px] md:w-[280px] object-cover `}
+        className={` h-[240px] md:h-[280px] w-[240px] md:w-[280px] object-cover cursor-pointer`}
       />
       <div
         style={{ borderRadius: "0px 0px 8px 8px" }}
