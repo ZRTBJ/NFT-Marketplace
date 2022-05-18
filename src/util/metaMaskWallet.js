@@ -185,7 +185,7 @@ export async function getTransactionSign(amount) {
   }
 }
 
-export async function SendTransactions(tnxData) {
+export async function SendTransactionMetaMask(tnxData) {
   // Check if MetaMask is installed
   // MetaMask injects the global API into window.ethereum
   if (window.ethereum) {

@@ -4,13 +4,14 @@ import Modal from "../Modal";
 import { Step, Stepper } from "react-form-stepper";
 import { useState } from "react";
 import { produceWithPatches } from "immer";
-import { SendTransactions } from "util/metaMaskWallet";
+import { SendTransactionMetaMask } from "util/metaMaskWallet";
 import {
+  contractDeploy,
   publishFundTransfer,
   publishProject,
 } from "services/project/projectService";
 import { useAuthState } from "Context";
-import { sentFund } from "util/Torus";
+import { SendTransactionTorus } from "util/Torus";
 
 const DeployingProjectModal = ({
   handleClose,
@@ -32,9 +33,9 @@ const DeployingProjectModal = ({
     let txnHash = "";
     setIsLoading(true);
     if (selectedWallet === "metamask") {
-      txnHash = await SendTransactions(tnxData);
+      txnHash = await SendTransactionMetaMask(tnxData);
     } else {
-      txnHash = await sentFund(tnxData);
+      txnHash = await SendTransactionTorus(tnxData);
     }
     const jsonTnxData = JSON.stringify(tnxData);
     if (txnHash && txnHash.length > 5) {
@@ -49,7 +50,7 @@ const DeployingProjectModal = ({
           setIsLoading(false);
           if (res.code === 0) {
             setStep(1);
-            // publishThisProject(); // to-do: wait for websocket response of success then call this api
+            projectContractDeploy();
           } else {
           }
         })
@@ -59,6 +60,21 @@ const DeployingProjectModal = ({
     } else {
       setIsLoading(false);
     }
+  }
+
+  function projectContractDeploy() {
+    setIsLoading(true);
+    contractDeploy(projectId)
+      .then((res) => {
+        setIsLoading(false);
+        if (res.code === 0) {
+          console.log(res);
+        } else {
+        }
+      })
+      .catch((err) => {
+        setIsLoading(false);
+      });
   }
 
   function publishThisProject() {
@@ -150,7 +166,7 @@ const DeployingProjectModal = ({
                 </div>
               )}
               {step === 1 && (
-                <div className="py-8 mx-64 flex flex-row p-6 w-1/3 ">
+                <div className="py-8 mx-64 flex flex-row p-6 w-2/3 ">
                   <div className="text-center my-4">
                     <ul className="stepper stepper-vertical">
                       <li className="stepper-step stepper-active">
@@ -162,7 +178,10 @@ const DeployingProjectModal = ({
                               aria-hidden="true"
                             ></i>{" "}
                           </span>
-                          <span className="stepper-head-text"> step1 </span>
+                          <span className="stepper-head-text text-sm">
+                            {" "}
+                            MainContract Deployment{" "}
+                          </span>
                         </div>
                       </li>
                       <li className="stepper-step stepper-failed">
@@ -174,7 +193,10 @@ const DeployingProjectModal = ({
                               aria-hidden="true"
                             ></i>{" "}
                           </span>
-                          <span className="stepper-head-text"> step2 </span>
+                          <span className="stepper-head-text text-sm">
+                            {" "}
+                            Comp Deployment{" "}
+                          </span>
                         </div>
                       </li>
                       <li className="stepper-step">
@@ -186,7 +208,10 @@ const DeployingProjectModal = ({
                               aria-hidden="true"
                             ></i>{" "}
                           </span>
-                          <span className="stepper-head-text"> step3 </span>
+                          <span className="stepper-head-text text-sm">
+                            {" "}
+                            Timelock Deployment{" "}
+                          </span>
                         </div>
                       </li>
                     </ul>
@@ -209,19 +234,27 @@ const DeployingProjectModal = ({
           </button>
         )}
         {step === 1 && (
-          <button
-            type="button"
-            className="h-12 bg-[#0AB4AF] rounded text-white"
-            onClick={() => {
-              window.open(
-                `https://mumbai.polygonscan.com/tx/${tnxHash ? tnxHash : ""}`,
-                "_blank",
-                "noopener,noreferrer"
-              );
-            }}
-          >
-            <span className="m-2">{btnText}</span>
-          </button>
+          <div className="flex justify-center">
+            <button
+              type="button"
+              className="h-12 bg-[#0AB4AF] rounded text-white mr-4"
+              onClick={() => {
+                window.open(
+                  `https://mumbai.polygonscan.com/tx/${tnxHash ? tnxHash : ""}`,
+                  "_blank",
+                  "noopener,noreferrer"
+                );
+              }}
+            >
+              <span className="mx-4 my-2">{btnText}</span>
+            </button>
+            <button
+              type="button"
+              className="h-12 w-24 bg-[#0AB4AF] rounded text-white"
+            >
+              <span className="mx-4 my-2">Retry</span>
+            </button>
+          </div>
         )}
       </div>
     </Modal>
