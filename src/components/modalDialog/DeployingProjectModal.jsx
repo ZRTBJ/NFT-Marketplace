@@ -12,6 +12,7 @@ import {
 } from "services/project/projectService";
 import { useAuthState } from "Context";
 import { SendTransactionTorus } from "util/Torus";
+import { addProjectDeployData } from "util/ApplicationStorage";
 
 const DeployingProjectModal = ({
   handleClose,
@@ -69,6 +70,12 @@ const DeployingProjectModal = ({
         setIsLoading(false);
         if (res.code === 0) {
           console.log(res);
+          const deployData = {
+            projectId: projectId,
+            function_uuid: res.function_uuid,
+            data: "",
+          };
+          addProjectDeployData(deployData);
         } else {
         }
       })
