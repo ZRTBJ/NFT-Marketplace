@@ -21,6 +21,7 @@ import { setUserInfo } from "../../Slice/userSlice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import config from "config";
+import { addProjectDeployData } from "util/ApplicationStorage";
 
 const Header = () => {
   // const ws = new WebSocket(`wss://${config.WEB_SOKET}/ws`);
@@ -80,6 +81,13 @@ const Header = () => {
       ws.onmessage = function (event) {
         try {
           console.log(event);
+          const deployData = {
+            projectId: "projectId",
+            function_uuid: "res.function_uuid",
+            data: "",
+          };
+          debugger;
+          addProjectDeployData(deployData);
         } catch (err) {
           console.log(err);
         }
@@ -95,7 +103,9 @@ const Header = () => {
     if (isConnected && metamaskAccount && metamaskAccount.length > 5) {
       getPersonalSign()
         .then((signature) => {
-          userLogin(metamaskAccount, signature, "metamask");
+          if (userinfo && !userinfo["display_name"]) {
+            userLogin(metamaskAccount, signature, "metamask");
+          }
         })
         .catch((error) => {
           alert(error.message);
