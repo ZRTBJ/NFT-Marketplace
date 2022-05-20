@@ -5,12 +5,17 @@ import { useState, useEffect } from "react";
 import { getUserProjectListById } from "services/project/projectService";
 import ProjectCard from "components/profile/ProjectCard";
 import { useHistory } from "react-router-dom";
+import DeployingProjectModal from "components/modalDialog/DeployingProjectModal";
 
 const ProfileSettings = () => {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(true);
   const [projectList, setProjectList] = useState([]);
+  const [showDeployModal, setShowDeployModal] = useState(false);
+  const [projectId, setProjectId] = useState("");
+
   function projectEdit(status, id) {
+    setProjectId(id);
     if (status === "published") {
       history.push({
         pathname: `/project-edit/${id}/project-top`,
@@ -19,6 +24,8 @@ const ProfileSettings = () => {
       history.push({
         pathname: `/project-update/${id}`,
       });
+    } else if (status === "publishing") {
+      setShowDeployModal(true);
     }
   }
   useEffect(() => {
@@ -75,6 +82,14 @@ const ProfileSettings = () => {
           </div>
         </div>
       </div>
+      {showDeployModal && (
+        <DeployingProjectModal
+          show={showDeployModal}
+          handleClose={setShowDeployModal}
+          projectId={projectId}
+          publishStep={1}
+        />
+      )}
     </div>
   );
 };
