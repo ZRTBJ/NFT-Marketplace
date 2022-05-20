@@ -5,14 +5,18 @@ export function getAllProjectDeployData() {
   return datas ? JSON.parse(datas) : [];
 }
 
-export function addProjectDeployData({ projectId, function_uuid, data }) {
+export function addProjectDeployData({
+  projectId,
+  etherscan,
+  function_uuid,
+  data,
+}) {
   try {
-    const newDeployObject = { projectId, function_uuid, data };
+    const newDeployObject = { projectId, etherscan, function_uuid, data };
     const oldData = getAllProjectDeployData();
-    const deployObject = oldData.find(
-      (x) => x.projectId === projectId && x.function_uuid === function_uuid
-    );
+    const deployObject = oldData.find((x) => x.function_uuid === function_uuid);
     if (deployObject) {
+      deployObject.etherscan = etherscan;
       deployObject.data = data;
     } else {
       oldData.push(newDeployObject);

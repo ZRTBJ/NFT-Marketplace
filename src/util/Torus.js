@@ -65,7 +65,9 @@ export async function SendTransactionTorus(tnxData) {
   const txnParams = {
     from: address,
     to: tnxData.toEoa,
-    value: ethers.BigNumber.from(Web3.utils.toWei("0.0001", "ether"))._hex,
+    value: ethers.BigNumber.from(
+      Web3.utils.toWei(tnxData.amount.toString(), "ether")
+    )._hex,
     chainId: Config.CHAIN_ID,
   };
   const tHash = await torus.ethereum.request({

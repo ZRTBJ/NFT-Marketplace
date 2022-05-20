@@ -2,17 +2,20 @@ import ico_gas from "assets/images/projectEdit/ico_gas.svg";
 import ico_matic from "assets/images/projectEdit/ico_matic.svg";
 import Modal from "../Modal";
 import { Step, Stepper } from "react-form-stepper";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { produceWithPatches } from "immer";
 import { SendTransactionMetaMask } from "util/metaMaskWallet";
 import {
   contractDeploy,
+  getProjectDetailsById,
   publishFundTransfer,
   publishProject,
 } from "services/project/projectService";
 import { useAuthState } from "Context";
 import { SendTransactionTorus } from "util/Torus";
 import { addProjectDeployData } from "util/ApplicationStorage";
+import { useDispatch, useSelector } from "react-redux";
+import { getProjectDeploy } from "Slice/projectSlice";
 
 const DeployingProjectModal = ({
   handleClose,
@@ -20,30 +23,98 @@ const DeployingProjectModal = ({
   buttomText,
   tnxData,
   projectId,
+  publishStep,
 }) => {
+  const dispatch = useDispatch();
   const btnText = buttomText ? buttomText : "VIEW on ETHERSCAN";
   const context = useAuthState();
   const [selectedWallet, setSelectedWallet] = useState(
     context ? context.wallet : ""
   );
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(publishStep ? publishStep : 0);
   const [isLoading, setIsLoading] = useState(false);
   const [tnxHash, setTnxHash] = useState("");
+  const projectDeploy = useSelector((state) =>
+    state?.projects?.projectDeploy ? state?.projects?.projectDeploy : []
+  );
+  const [deployStatus, setDeployStatus] = useState({
+    projectId: "",
+    etherscan: "",
+    function_uuid: "",
+    fn_name: "",
+    fn_status: "",
+    message: "",
+    step: 1,
+  });
 
-  async function sendFund() {
-    let txnHash = "";
+  useEffect(() => {
+    const projectDeployStatus = projectDeploy.find(
+      (x) => x.projectId === projectId
+    );
+    if (
+      projectDeployStatus &&
+      projectDeployStatus.projectId &&
+      projectDeployStatus.data &&
+      projectDeployStatus.data.length > 5
+    ) {
+      const statusData = JSON.parse(projectDeployStatus.data);
+      const status = {
+        projectId: projectDeployStatus.projectId,
+        etherscan: projectDeployStatus.etherscan,
+        function_uuid: projectDeployStatus.function_uuid,
+        fn_name: statusData["fn_name"],
+        fn_status: statusData["fn_status"],
+        message: statusData["fn_response_data"]["message"],
+        step: statusData["fn_response_data"]["step"],
+      };
+      debugger;
+      setTnxHash(projectDeployStatus.etherscan);
+      setDeployStatus(status);
+    } else if (projectDeployStatus && projectDeployStatus.projectId) {
+      const status = {
+        projectId: projectDeployStatus.projectId,
+        etherscan: projectDeployStatus.etherscan,
+        function_uuid: projectDeployStatus.function_uuid,
+        fn_name: "",
+        fn_status: "pending",
+        message: "",
+        step: 1,
+      };
+      setDeployStatus(status);
+    } else {
+      const status = {
+        projectId: "",
+        etherscan: "",
+        function_uuid: "",
+        fn_name: "",
+        fn_status: "pending",
+        message: "",
+        step: 1,
+      };
+      setDeployStatus(status);
+    }
+  }, [projectDeploy]);
+
+  useEffect(() => {
+    if (publishStep >= 1) {
+      projectDetails();
+    }
+  }, []);
+
+  async function transferFund() {
+    let transactionHash = "";
     setIsLoading(true);
     if (selectedWallet === "metamask") {
-      txnHash = await SendTransactionMetaMask(tnxData);
+      transactionHash = await SendTransactionMetaMask(tnxData);
     } else {
-      txnHash = await SendTransactionTorus(tnxData);
+      transactionHash = await SendTransactionTorus(tnxData);
     }
     const jsonTnxData = JSON.stringify(tnxData);
-    if (txnHash && txnHash.length > 5) {
-      setTnxHash(txnHash);
+    if (transactionHash && transactionHash.length > 5) {
+      setTnxHash(transactionHash);
       const request = new FormData();
       request.append("status", "success");
-      request.append("hash", txnHash);
+      request.append("hash", transactionHash);
       request.append("data", jsonTnxData);
 
       publishFundTransfer(projectId, request)
@@ -51,7 +122,7 @@ const DeployingProjectModal = ({
           setIsLoading(false);
           if (res.code === 0) {
             setStep(1);
-            projectContractDeploy();
+            projectContractDeploy(transactionHash);
           } else {
           }
         })
@@ -63,7 +134,7 @@ const DeployingProjectModal = ({
     }
   }
 
-  function projectContractDeploy() {
+  function projectContractDeploy(etherscan) {
     setIsLoading(true);
     contractDeploy(projectId)
       .then((res) => {
@@ -72,10 +143,12 @@ const DeployingProjectModal = ({
           console.log(res);
           const deployData = {
             projectId: projectId,
+            etherscan: etherscan ? etherscan : tnxHash,
             function_uuid: res.function_uuid,
             data: "",
           };
-          addProjectDeployData(deployData);
+          dispatch(getProjectDeploy(deployData));
+          recheckStatus();
         } else {
         }
       })
@@ -94,6 +167,50 @@ const DeployingProjectModal = ({
         }
       })
       .catch((err) => {
+        setIsLoading(false);
+      });
+  }
+
+  function recheckStatus() {
+    setTimeout(() => {
+      if (deployStatus && deployStatus.step === 1) {
+        projectDetails();
+      }
+    }, 3000);
+  }
+
+  function projectDetails() {
+    setIsLoading(true);
+    getProjectDetailsById({ id: projectId })
+      .then((res) => {
+        if (res.code === 0) {
+          const project = res.project;
+          if (project && project.deploys && project.deploys.length > 0) {
+            try {
+              for (let deploy of project.deploys) {
+                if (deploy.type === "fund_transfer") {
+                  if (deploy.hash && deploy.hash.length > 2) {
+                    setTnxHash(deploy.hash);
+                  }
+                } else if (deploy.type === "deploy_contract") {
+                  const status = {
+                    projectId: project.id,
+                    etherscan: tnxHash,
+                    function_uuid: deploy.fn_uuid,
+                    fn_name: deploy.type,
+                    fn_status: deploy.status,
+                    message: deploy.message,
+                    step: deploy.step,
+                  };
+                  setDeployStatus(status);
+                }
+              }
+            } catch {}
+          }
+        }
+        setIsLoading(false);
+      })
+      .catch((error) => {
         setIsLoading(false);
       });
   }
@@ -176,12 +293,28 @@ const DeployingProjectModal = ({
                 <div className="py-8 mx-64 flex flex-row p-6 w-2/3 ">
                   <div className="text-center my-4">
                     <ul className="stepper stepper-vertical">
-                      <li className="stepper-step stepper-active">
+                      <li
+                        className={`stepper-step ${
+                          deployStatus.step >= 0
+                            ? deployStatus.step === 1 &&
+                              deployStatus.fn_status === "failed"
+                              ? "stepper-failed"
+                              : "stepper-active"
+                            : ""
+                        }`}
+                      >
                         <div className="stepper-head">
                           <span className="stepper-head-icon">
                             {" "}
                             <i
-                              className="fa fa-check"
+                              className={`fa ${
+                                deployStatus.step === 1 &&
+                                deployStatus.fn_status === "failed"
+                                  ? "fa-times"
+                                  : deployStatus.step === 1
+                                  ? "fa-hourglass"
+                                  : "fa-check"
+                              }`}
                               aria-hidden="true"
                             ></i>{" "}
                           </span>
@@ -191,12 +324,28 @@ const DeployingProjectModal = ({
                           </span>
                         </div>
                       </li>
-                      <li className="stepper-step stepper-failed">
+                      <li
+                        className={`stepper-step ${
+                          deployStatus.step >= 2
+                            ? deployStatus.step === 2 &&
+                              deployStatus.fn_status === "failed"
+                              ? "stepper-failed"
+                              : "stepper-active"
+                            : ""
+                        }`}
+                      >
                         <div className="stepper-head">
                           <span className="stepper-head-icon">
                             {" "}
                             <i
-                              className="fa fa-times"
+                              className={`fa ${
+                                deployStatus.step === 2 &&
+                                deployStatus.fn_status === "failed"
+                                  ? "fa-times"
+                                  : deployStatus.step === 2
+                                  ? "fa-hourglass"
+                                  : "fa-check"
+                              }`}
                               aria-hidden="true"
                             ></i>{" "}
                           </span>
@@ -206,18 +355,65 @@ const DeployingProjectModal = ({
                           </span>
                         </div>
                       </li>
-                      <li className="stepper-step">
+                      <li
+                        className={`stepper-step ${
+                          deployStatus.step >= 3
+                            ? deployStatus.step === 3 &&
+                              deployStatus.fn_status === "failed"
+                              ? "stepper-failed"
+                              : "stepper-active"
+                            : ""
+                        }`}
+                      >
                         <div className="stepper-head">
                           <span className="stepper-head-icon">
                             {" "}
                             <i
-                              className="fa fa-check"
+                              className={`fa ${
+                                deployStatus.step === 3 &&
+                                deployStatus.fn_status === "failed"
+                                  ? "fa-times"
+                                  : deployStatus.step === 3
+                                  ? "fa-hourglass"
+                                  : "fa-check"
+                              }`}
                               aria-hidden="true"
                             ></i>{" "}
                           </span>
                           <span className="stepper-head-text text-sm">
                             {" "}
                             Timelock Deployment{" "}
+                          </span>
+                        </div>
+                      </li>
+                      <li
+                        className={`stepper-step ${
+                          deployStatus.step === 4
+                            ? deployStatus.step === 4 &&
+                              deployStatus.fn_status === "failed"
+                              ? "stepper-failed"
+                              : "stepper-active"
+                            : ""
+                        }`}
+                      >
+                        <div className="stepper-head">
+                          <span className="stepper-head-icon">
+                            {" "}
+                            <i
+                              className={`fa ${
+                                deployStatus.step === 4 &&
+                                deployStatus.fn_status === "failed"
+                                  ? "fa-times"
+                                  : deployStatus.step === 4
+                                  ? "fa-hourglass"
+                                  : "fa-check"
+                              }`}
+                              aria-hidden="true"
+                            ></i>{" "}
+                          </span>
+                          <span className="stepper-head-text text-sm">
+                            {" "}
+                            GovernorAlpha Deployment{" "}
                           </span>
                         </div>
                       </li>
@@ -234,7 +430,7 @@ const DeployingProjectModal = ({
             className="h-12 bg-[#0AB4AF] rounded text-white"
             disabled={isLoading}
             onClick={() => {
-              sendFund();
+              transferFund();
             }}
           >
             <span className="m-2 px-8">Transfer</span>
@@ -244,7 +440,7 @@ const DeployingProjectModal = ({
           <div className="flex justify-center">
             <button
               type="button"
-              className="h-12 bg-[#0AB4AF] rounded text-white mr-4"
+              className="h-12 bg-[#0AB4AF] rounded text-white mr-4 cursor-pointer disabled:opacity-50 disabled:bg-gray-500"
               onClick={() => {
                 window.open(
                   `https://mumbai.polygonscan.com/tx/${tnxHash ? tnxHash : ""}`,
@@ -252,12 +448,21 @@ const DeployingProjectModal = ({
                   "noopener,noreferrer"
                 );
               }}
+              disabled={tnxHash && tnxHash.length > 1 ? false : true}
             >
               <span className="mx-4 my-2">{btnText}</span>
             </button>
             <button
               type="button"
-              className="h-12 w-24 bg-[#0AB4AF] rounded text-white"
+              className="h-12 w-24 bg-[#0AB4AF] rounded text-white cursor-pointer disabled:opacity-50 disabled:bg-gray-500"
+              disabled={
+                deployStatus && deployStatus.fn_status === "failed"
+                  ? false
+                  : true
+              }
+              onClick={() => {
+                projectContractDeploy(tnxHash);
+              }}
             >
               <span className="mx-4 my-2">Retry</span>
             </button>

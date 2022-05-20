@@ -22,6 +22,7 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import config from "config";
 import { addProjectDeployData } from "util/ApplicationStorage";
+import { getProjectDeploy } from "Slice/projectSlice";
 
 const Header = () => {
   // const ws = new WebSocket(`wss://${config.WEB_SOKET}/ws`);
@@ -81,13 +82,17 @@ const Header = () => {
       ws.onmessage = function (event) {
         try {
           console.log(event);
-          const deployData = {
-            projectId: "projectId",
-            function_uuid: "res.function_uuid",
-            data: "",
-          };
           debugger;
-          addProjectDeployData(deployData);
+          if (event.data) {
+            const data = JSON.parse(event.data);
+            if (data.type === "functionNotification") {
+              const deployData = {
+                function_uuid: data.fn_uuid,
+                data: event.data,
+              };
+              dispatch(getProjectDeploy(deployData));
+            }
+          }
         } catch (err) {
           console.log(err);
         }
@@ -189,8 +194,9 @@ const Header = () => {
       if (
         userId &&
         userId.length > 0 &&
-        currentAccount &&
-        currentAccount.length > 5
+        userinfo &&
+        userinfo["display_name"] &&
+        userinfo["display_name"].length > 0
       ) {
         getPersonalSign()
           .then((signature) => {

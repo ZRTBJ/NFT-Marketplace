@@ -41,6 +41,8 @@ export default function DraftProjectUpdate() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [tnxData, setTnxData] = useState({});
+  const [projectStatus, setProjectStatus] = useState("");
+  const [publishStep, setPublishStep] = useState(0);
 
   function setActiveTab(arg) {
     setSelectedTab(arg);
@@ -452,6 +454,11 @@ export default function DraftProjectUpdate() {
       // Token end
       setDataIsLoading(false);
       setConfirmationKey((pre) => pre + 1);
+      setProjectStatus(response.project_status);
+      if (response.project_status === "publishing") {
+        setcurrentStep([1, 2, 3, 4, 5, 6, 7]);
+        setPublishStep(1);
+      }
     });
   }
   function handelClickNext() {
@@ -652,27 +659,32 @@ export default function DraftProjectUpdate() {
     projectDetails();
   }, []);
   function getProjectPublishCost() {
-    setDataIsLoading(true);
-    getPublishCost(id)
-      .then((res) => {
-        if (
-          res.code === 0 &&
-          res.data &&
-          res.data.amount &&
-          res.data.gasPrice &&
-          res.data.toEoa
-        ) {
-          setTnxData(res.data);
-          setShowDeployModal(true);
+    if (projectStatus === "publishing") {
+      setPublishStep(1);
+      setShowDeployModal(true);
+    } else {
+      setDataIsLoading(true);
+      getPublishCost(id)
+        .then((res) => {
+          if (
+            res.code === 0 &&
+            res.data &&
+            res.data.amount &&
+            res.data.gasPrice &&
+            res.data.toEoa
+          ) {
+            setTnxData(res.data);
+            setShowDeployModal(true);
+            setDataIsLoading(false);
+          } else {
+            setDataIsLoading(false);
+            setShowErrorModal(true);
+          }
+        })
+        .catch((err) => {
           setDataIsLoading(false);
-        } else {
-          setDataIsLoading(false);
-          setShowErrorModal(true);
-        }
-      })
-      .catch((err) => {
-        setDataIsLoading(false);
-      });
+        });
+    }
   }
 
   return (
@@ -772,30 +784,32 @@ export default function DraftProjectUpdate() {
               </div>
             )}
             <div className="buttonContainer">
-              <div
-                className={
-                  currentStep.length > 1
-                    ? "flex justify-between"
-                    : "flex justify-end"
-                }
-              >
-                {currentStep.length > 1 && (
-                  <button
-                    className="backButton"
-                    onClick={() => handelClickBack()}
-                  >
-                    BACK
-                  </button>
-                )}
-                {currentStep.length < 7 && (
-                  <button
-                    className="nextButton"
-                    onClick={() => handelClickNext()}
-                  >
-                    NEXT
-                  </button>
-                )}
-              </div>
+              {projectStatus && projectStatus !== "publishing" && (
+                <div
+                  className={
+                    currentStep.length > 1
+                      ? "flex justify-between"
+                      : "flex justify-end"
+                  }
+                >
+                  {currentStep.length > 1 && (
+                    <button
+                      className="backButton"
+                      onClick={() => handelClickBack()}
+                    >
+                      BACK
+                    </button>
+                  )}
+                  {currentStep.length < 7 && (
+                    <button
+                      className="nextButton"
+                      onClick={() => handelClickNext()}
+                    >
+                      NEXT
+                    </button>
+                  )}
+                </div>
+              )}
               {currentStep.length === 7 && (
                 <div className="mt-8">
                   <div className="text-center font-semibold">
@@ -823,22 +837,24 @@ export default function DraftProjectUpdate() {
                   </div>
                 </div>
               )}
-              <div className="flex justify-center space-x-6 mt-4">
-                <button
-                  onClick={() => saveDraft("private")}
-                  disabled={isDataLoading ? true : false}
-                  className={`h-[54px] w-[200px] rounded bg-[#B9CCD5] text-[white] hover:bg-[#192434]`}
-                >
-                  PRIVATE
-                </button>
-                <button
-                  onClick={() => saveDraft("public")}
-                  disabled={isDataLoading ? true : false}
-                  className={`h-[54px] w-[200px] rounded bg-[#B9CCD5] text-[white] hover:bg-[#192434]`}
-                >
-                  PUBLIC
-                </button>
-              </div>
+              {projectStatus && projectStatus !== "publishing" && (
+                <div className="flex justify-center space-x-6 mt-4">
+                  <button
+                    onClick={() => saveDraft("private")}
+                    disabled={isDataLoading ? true : false}
+                    className={`h-[54px] w-[200px] rounded bg-[#B9CCD5] text-[white] hover:bg-[#192434]`}
+                  >
+                    PRIVATE
+                  </button>
+                  <button
+                    onClick={() => saveDraft("public")}
+                    disabled={isDataLoading ? true : false}
+                    className={`h-[54px] w-[200px] rounded bg-[#B9CCD5] text-[white] hover:bg-[#192434]`}
+                  >
+                    PUBLIC
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -899,9 +915,13 @@ export default function DraftProjectUpdate() {
       {showDeployModal && (
         <DeployingProjectModal
           show={showDeployModal}
-          handleClose={setShowDeployModal}
+          handleClose={(status) => {
+            setShowDeployModal(status);
+            projectDetails();
+          }}
           tnxData={tnxData}
           projectId={id}
+          publishStep={publishStep}
         />
       )}
       {showSuccessModal && (
