@@ -82,7 +82,6 @@ const Header = () => {
       ws.onmessage = function (event) {
         try {
           console.log(event);
-          debugger;
           if (event.data) {
             const data = JSON.parse(event.data);
             if (data.type === "functionNotification") {
@@ -145,10 +144,7 @@ const Header = () => {
       setIsLoading(true);
       let response = await loginUser(authDispatch, request);
       setUserId(response["user_id"]);
-      getUserDetails(
-        response["user_id"],
-        userinfo["display_name"] ? false : true
-      );
+      getUserDetails(response["user_id"], true);
       const apiCall = {
         event: "bts:subscribe",
         data: { channel: "order_book_btcusd" },
@@ -191,13 +187,7 @@ const Header = () => {
       console.log("Please connect to MetaMask.");
     } else if (accounts[0] !== metamaskAccount) {
       const currentAccount = accounts[0];
-      if (
-        userId &&
-        userId.length > 0 &&
-        userinfo &&
-        userinfo["display_name"] &&
-        userinfo["display_name"].length > 0
-      ) {
+      if (!userId || userId.length < 1) {
         getPersonalSign()
           .then((signature) => {
             userLogin(currentAccount, signature, "metamask");

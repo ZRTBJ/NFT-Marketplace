@@ -60,14 +60,21 @@ export async function torusInit() {
 
 export async function SendTransactionTorus(tnxData) {
   let txnHash = "";
+  await torus.init({
+    enableLogging: false,
+    network: {
+      chainId: Config.CHAIN_ID, // default: 1
+    },
+    showTorusButton: false,
+  });
+  await torus.login();
   const web3 = new Web3(torus.provider);
   const address = (await web3.eth.getAccounts())[0];
   const txnParams = {
+    gasPrice: tnxData.gasPrice.toString(),
     from: address,
     to: tnxData.toEoa,
-    value: ethers.BigNumber.from(
-      Web3.utils.toWei(tnxData.amount.toString(), "ether")
-    )._hex,
+    value: ethers.BigNumber.from(Web3.utils.toWei("0.0001", "ether"))._hex,
     chainId: Config.CHAIN_ID,
   };
   const tHash = await torus.ethereum.request({

@@ -44,7 +44,7 @@ const DeployingProjectModal = ({
     fn_name: "",
     fn_status: "",
     message: "",
-    step: 1,
+    step: 0,
   });
 
   useEffect(() => {
@@ -78,7 +78,7 @@ const DeployingProjectModal = ({
         fn_name: "",
         fn_status: "pending",
         message: "",
-        step: 1,
+        step: 0,
       };
       setDeployStatus(status);
     } else {
@@ -89,7 +89,7 @@ const DeployingProjectModal = ({
         fn_name: "",
         fn_status: "pending",
         message: "",
-        step: 1,
+        step: 0,
       };
       setDeployStatus(status);
     }
@@ -106,8 +106,10 @@ const DeployingProjectModal = ({
     setIsLoading(true);
     if (selectedWallet === "metamask") {
       transactionHash = await SendTransactionMetaMask(tnxData);
-    } else {
+    } else if (selectedWallet === "torus") {
       transactionHash = await SendTransactionTorus(tnxData);
+    } else {
+      alert("Something went wrong. Please logout and login again...");
     }
     const jsonTnxData = JSON.stringify(tnxData);
     if (transactionHash && transactionHash.length > 5) {
@@ -173,7 +175,7 @@ const DeployingProjectModal = ({
 
   function recheckStatus() {
     setTimeout(() => {
-      if (deployStatus && deployStatus.step === 1) {
+      if (deployStatus && deployStatus.step === 0) {
         projectDetails();
       }
     }, 3000);
@@ -311,7 +313,7 @@ const DeployingProjectModal = ({
                                 deployStatus.step === 1 &&
                                 deployStatus.fn_status === "failed"
                                   ? "fa-times"
-                                  : deployStatus.step === 1
+                                  : deployStatus.step === 0
                                   ? "fa-hourglass"
                                   : "fa-check"
                               }`}
@@ -342,7 +344,7 @@ const DeployingProjectModal = ({
                                 deployStatus.step === 2 &&
                                 deployStatus.fn_status === "failed"
                                   ? "fa-times"
-                                  : deployStatus.step === 2
+                                  : deployStatus.step === 1
                                   ? "fa-hourglass"
                                   : "fa-check"
                               }`}
@@ -373,7 +375,7 @@ const DeployingProjectModal = ({
                                 deployStatus.step === 3 &&
                                 deployStatus.fn_status === "failed"
                                   ? "fa-times"
-                                  : deployStatus.step === 3
+                                  : deployStatus.step === 2
                                   ? "fa-hourglass"
                                   : "fa-check"
                               }`}
@@ -388,8 +390,8 @@ const DeployingProjectModal = ({
                       </li>
                       <li
                         className={`stepper-step ${
-                          deployStatus.step === 4
-                            ? deployStatus.step === 4 &&
+                          deployStatus.step >= 3
+                            ? deployStatus.step >= 3 &&
                               deployStatus.fn_status === "failed"
                               ? "stepper-failed"
                               : "stepper-active"
@@ -401,10 +403,10 @@ const DeployingProjectModal = ({
                             {" "}
                             <i
                               className={`fa ${
-                                deployStatus.step === 4 &&
+                                deployStatus.step >= 3 &&
                                 deployStatus.fn_status === "failed"
                                   ? "fa-times"
-                                  : deployStatus.step === 4
+                                  : deployStatus.step >= 3
                                   ? "fa-hourglass"
                                   : "fa-check"
                               }`}

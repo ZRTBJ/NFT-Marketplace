@@ -7,7 +7,7 @@ export const initialState = {
   token: "" || token,
   loading: false,
   errorMessage: null,
-  wallet: "" || wallet,
+  wallet: wallet ? wallet : "",
 };
 
 export const AuthReducer = (initialState, action) => {
