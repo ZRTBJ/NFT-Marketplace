@@ -43,6 +43,8 @@ export default function DraftProjectUpdate() {
   const [tnxData, setTnxData] = useState({});
   const [projectStatus, setProjectStatus] = useState("");
   const [publishStep, setPublishStep] = useState(0);
+  const [projectInfo, setProjectInfo] = useState({});
+  const [tokenNameError, setTokenNameError] = useState(false);
 
   function setActiveTab(arg) {
     setSelectedTab(arg);
@@ -363,6 +365,7 @@ export default function DraftProjectUpdate() {
     };
     await getProjectDetailsById(payload).then((e) => {
       let response = e.project;
+      setProjectInfo(e.project);
       // project type start
       if (response.org_type !== "") {
         let org_type = selectTypeTabData.find(
@@ -494,13 +497,16 @@ export default function DraftProjectUpdate() {
 
     // Token  start
     if (currentStep.length === 3) {
-      if (!alreadyTakenTokenName && !alreadyTakenSymbol) {
+      if (!projectInfo.token_name || projectInfo.token_name.length < 1) {
+        setTokenNameError(true);
+      } else if (!alreadyTakenTokenName && !alreadyTakenSymbol) {
         setcurrentStep([1, 2, 3, 4, 5, 6, 7]); // todo for now
       }
     }
     // Token end
   }
   async function saveDraft(visibility) {
+    setTokenNameError(false);
     // Select type start
     if (currentStep.length === 1) {
       if (currentStep.length === 1) {
@@ -512,11 +518,7 @@ export default function DraftProjectUpdate() {
           } else if (canVote === "") {
             alert("Chosse 1 who can vote");
           } else if (votingPower !== "" && canVote !== "") {
-            if (visibility === "private") {
-              setDataIsLoading(true);
-            } else if (visibility === "public") {
-              setDataIsLoading(true);
-            }
+            setDataIsLoading(true);
             let selectType = {
               id: id,
               org_type: selectedTab.title.toLocaleLowerCase(),
@@ -529,23 +531,17 @@ export default function DraftProjectUpdate() {
             };
             await updateProject("update", selectType)
               .then(() => {
-                if (visibility === "private") {
-                  setDataIsLoading(false);
-                } else if (visibility === "public") {
-                  setDataIsLoading(false);
-                }
+                debugger;
+                setDataIsLoading(false);
                 setShowModal(true);
+                projectDetails();
               })
               .catch((err) => {
                 console.log(err);
               });
           }
         } else {
-          if (visibility === "private") {
-            setDataIsLoading(true);
-          } else if (visibility === "public") {
-            setDataIsLoading(true);
-          }
+          setDataIsLoading(true);
           let selectType = {
             id: id,
             org_type: selectedTab.title.toLocaleLowerCase(),
@@ -557,12 +553,10 @@ export default function DraftProjectUpdate() {
           };
           await updateProject("update", selectType)
             .then(() => {
-              if (visibility === "private") {
-                setDataIsLoading(false);
-              } else if (visibility === "public") {
-                setDataIsLoading(false);
-              }
+              debugger;
+              setDataIsLoading(false);
               setShowModal(true);
+              projectDetails();
             })
             .catch((err) => {
               console.log(err);
@@ -583,11 +577,7 @@ export default function DraftProjectUpdate() {
         projectCategory !== "" &&
         !alreadyTakenProjectName
       ) {
-        if (visibility === "private") {
-          setDataIsLoading(true);
-        } else if (visibility === "public") {
-          setDataIsLoading(true);
-        }
+        setDataIsLoading(true);
 
         let updatePayload = {
           id: id,
@@ -605,12 +595,9 @@ export default function DraftProjectUpdate() {
         };
         updateProject("update", updatePayload)
           .then((res) => {
-            if (visibility === "private") {
-              setDataIsLoading(false);
-            } else if (visibility === "public") {
-              setDataIsLoading(false);
-            }
+            setDataIsLoading(false);
             setShowModal(true);
+            projectDetails();
           })
           .catch((err) => {
             console.log(err);
@@ -622,11 +609,8 @@ export default function DraftProjectUpdate() {
     // token start
     if (currentStep.length === 3) {
       if (!alreadyTakenSymbol && !alreadyTakenTokenName) {
-        if (visibility === "private") {
-          setDataIsLoading(true);
-        } else if (visibility === "public") {
-          setDataIsLoading(true);
-        }
+        setDataIsLoading(true);
+
         let updatePayload = {
           id: id,
           token_name: tokenName,
@@ -636,12 +620,9 @@ export default function DraftProjectUpdate() {
 
         updateProject("update", updatePayload)
           .then((res) => {
-            if (visibility === "private") {
-              setDataIsLoading(false);
-            } else if (visibility === "public") {
-              setDataIsLoading(false);
-            }
+            setDataIsLoading(false);
             setShowModal(true);
+            projectDetails();
           })
           .catch((err) => {
             console.log(err);
@@ -743,19 +724,26 @@ export default function DraftProjectUpdate() {
               />
             )}
             {currentStep.length === 3 && (
-              <Token
-                // token name
-                tokenName={tokenName}
-                alreadyTakenTokenName={alreadyTakenTokenName}
-                onTokenNameChange={onTokenNameChange}
-                // token symbol
-                tokenSymbol={tokenSymbol}
-                alreadyTakenSymbol={alreadyTakenSymbol}
-                onTokenSymbolChange={onTokenSymbolChange}
-                // number of token
-                numberOfTokens={numberOfTokens}
-                onNumberOfTokenChange={onNumberOfTokenChange}
-              />
+              <>
+                <Token
+                  // token name
+                  tokenName={tokenName}
+                  alreadyTakenTokenName={alreadyTakenTokenName}
+                  onTokenNameChange={onTokenNameChange}
+                  // token symbol
+                  tokenSymbol={tokenSymbol}
+                  alreadyTakenSymbol={alreadyTakenSymbol}
+                  onTokenSymbolChange={onTokenSymbolChange}
+                  // number of token
+                  numberOfTokens={numberOfTokens}
+                  onNumberOfTokenChange={onNumberOfTokenChange}
+                />
+                {tokenNameError && (
+                  <div className="text-sm text-red-400 text-center">
+                    You must save Token Name (Public/Private).
+                  </div>
+                )}
+              </>
             )}
             {/* {currentStep === 1 && <SelectType />}
         {currentStep === 1 && <SelectType />}
