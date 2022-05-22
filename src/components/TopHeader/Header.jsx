@@ -15,6 +15,7 @@ import {
 } from "../../util/metaMaskWallet";
 import { torusInit, torusWalletLogin, torusLogout } from "../../util/Torus";
 import UserDropDownMenu from "./UserDropDownMenu";
+import NotificationMenu from "./NotificationMenu";
 import { getUserInfo } from "../../services/User/userService";
 import { useHistory } from "react-router-dom";
 import { setUserInfo } from "../../Slice/userSlice";
@@ -39,6 +40,7 @@ const Header = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState(context ? context.user : "");
   const userinfo = useSelector((state) => state.user.userinfo);
+  const [showNotificationList, setShowNotificationList] = useState(false);
 
   useEffect(() => {
     if (active) {
@@ -182,6 +184,10 @@ const Header = () => {
     userDropDown.classList.toggle("hidden");
   }
 
+  function toogleNotificationList() {
+    setShowNotificationList((pre) => !pre);
+  }
+
   function handleAccountsChanged(accounts) {
     if (accounts.length === 0) {
       console.log("Please connect to MetaMask.");
@@ -266,11 +272,28 @@ const Header = () => {
                           width={24}
                           height={24}
                           alt="Notification icon"
+                          onClick={toogleNotificationList}
                         />
                       </span>
-                      <span className="absolute top-2 left-[-10px] inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full z-2">
+                      <span
+                        onClick={toogleNotificationList}
+                        className="absolute top-2 cursor-pointer left-[-10px] inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full z-2"
+                      >
                         999
                       </span>
+
+                      {/* Notification menu */}
+                      <div
+                        id="notificationDropdown"
+                        className=" relative z-10 w-72 bg-white text-base rounded divide-y divide-gray-100 shadow-xl float-right mt-[25px]"
+                      >
+                        <NotificationMenu
+                          showNotificationList={showNotificationList}
+                          showHideNotificationpopUp={(value) =>
+                            setShowNotificationList(value)
+                          }
+                        />
+                      </div>
                     </div>
                     <div className="relative w-16 h-16 pt-2 cursor-pointer">
                       <img
