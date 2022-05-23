@@ -11,9 +11,8 @@ import {
   publishFundTransfer,
   publishProject,
 } from "services/project/projectService";
-import { useAuthState } from "Context";
 import { SendTransactionTorus } from "util/Torus";
-import { addProjectDeployData } from "util/ApplicationStorage";
+import { getWalletType } from "util/ApplicationStorage";
 import { useDispatch, useSelector } from "react-redux";
 import { getProjectDeploy } from "Slice/projectSlice";
 
@@ -27,10 +26,7 @@ const DeployingProjectModal = ({
 }) => {
   const dispatch = useDispatch();
   const btnText = buttomText ? buttomText : "VIEW on ETHERSCAN";
-  const context = useAuthState();
-  const [selectedWallet, setSelectedWallet] = useState(
-    context ? context.wallet : ""
-  );
+  const selectedWallet = getWalletType();
   const [step, setStep] = useState(publishStep ? publishStep : 0);
   const [isLoading, setIsLoading] = useState(false);
   const [tnxHash, setTnxHash] = useState("");

@@ -1,7 +1,8 @@
-const DEPLOYED_PROJECT_LIST = "DEPLOYED_PROJECT_LIST";
+const KEY_DEPLOYED_PROJECT_LIST = "DEPLOYED_PROJECT_LIST";
+const KEY_WALLET_TYPE = "wallet";
 
 export function getAllProjectDeployData() {
-  const datas = localStorage.getItem(DEPLOYED_PROJECT_LIST);
+  const datas = localStorage.getItem(KEY_DEPLOYED_PROJECT_LIST);
   return datas ? JSON.parse(datas) : [];
 }
 
@@ -21,8 +22,12 @@ export function addProjectDeployData({
     } else {
       oldData.push(newDeployObject);
     }
-    localStorage.setItem(DEPLOYED_PROJECT_LIST, JSON.stringify(oldData));
+    localStorage.setItem(KEY_DEPLOYED_PROJECT_LIST, JSON.stringify(oldData));
   } catch {
     console.log("Failed to store");
   }
+}
+
+export function getWalletType() {
+  return localStorage.getItem(KEY_WALLET_TYPE);
 }
