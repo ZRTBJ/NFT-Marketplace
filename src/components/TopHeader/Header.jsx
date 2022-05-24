@@ -9,9 +9,9 @@ import notificationIcon from "assets/images/header/ico_notification@2x.png";
 import { useEthers, useEtherBalance } from "@usedapp/core";
 import { loginUser, useAuthState, useAuthDispatch, logout } from "Context";
 import {
-  connectWallet,
   getPersonalSign,
   isWalletConnected,
+  getWalletAccount,
 } from "../../util/metaMaskWallet";
 import { torusInit, torusWalletLogin, torusLogout } from "../../util/Torus";
 import UserDropDownMenu from "./UserDropDownMenu";
@@ -22,7 +22,6 @@ import { setUserInfo } from "../../Slice/userSlice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import config from "config";
-import { addProjectDeployData } from "util/ApplicationStorage";
 import { getProjectDeploy } from "Slice/projectSlice";
 
 const Header = () => {
@@ -30,25 +29,16 @@ const Header = () => {
 
   const history = useHistory();
   const dispatch = useDispatch();
-  const { activateBrowserWallet, account, active, activate } = useEthers();
   const [showModal, setShowModal] = useState(false);
   const [showSideBar, setShowSideBar] = useState(false);
-  const [metamaskAccount, setMetamaskAccount] = useState(account);
+  const [metamaskAccount, setMetamaskAccount] = useState("");
   const [torusAccountInfo, setTorusAccountInfo] = useState(null);
   const authDispatch = useAuthDispatch();
   const context = useAuthState();
   const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState(context ? context.user : "");
   const userinfo = useSelector((state) => state.user.userinfo);
-  const [showNotificationList, setShowNotificationList] = useState(false);
-
-  useEffect(() => {
-    if (active) {
-      if (account && account.length > 5) {
-        setMetamaskAccount(account);
-      }
-    }
-  }, [account]);
+  const [metamaskConnectAttempt, setMetamaskConnectAttempt] = useState(0);
 
   useEffect(() => {
     torusInit().then((e) => {
@@ -104,27 +94,29 @@ const Header = () => {
   }, [userId]);
 
   async function handleConnectWallet() {
+    setMetamaskConnectAttempt(metamaskConnectAttempt + 1);
+    setTimeout(() => {
+      if (metamaskConnectAttempt > 0) {
+        window.location.reload();
+      }
+    }, 1000);
     const isConnected = await isWalletConnected();
-
-    if (isConnected && metamaskAccount && metamaskAccount.length > 5) {
+    const account = await getWalletAccount();
+    if (isConnected && account && account.length > 5) {
+      setMetamaskConnectAttempt(0);
+      setMetamaskAccount(account);
       getPersonalSign()
         .then((signature) => {
           if (userinfo && !userinfo["display_name"]) {
-            userLogin(metamaskAccount, signature, "metamask");
+            userLogin(account, signature, "metamask");
           }
         })
         .catch((error) => {
           alert(error.message);
         });
     } else {
-      try {
-        await activate();
-        activateBrowserWallet();
-        await connectWallet();
-      } catch (error) {
-        if (!isConnected && !metamaskAccount) {
-          window.location.reload();
-        }
+      if (!isConnected && !account) {
+        window.location.reload();
       }
     }
   }
@@ -159,17 +151,17 @@ const Header = () => {
 
   async function getUserDetails(userID, isNavigate) {
     const response = await getUserInfo(userID);
-    let userinfo;
+    let userinfoResponse;
     try {
-      userinfo = response["user"];
+      userinfoResponse = response["user"];
     } catch {}
-    dispatch(setUserInfo(userinfo));
+    dispatch(setUserInfo(userinfoResponse));
     setIsLoading(false);
     if (isNavigate === true) {
       if (
-        userinfo &&
-        userinfo["display_name"] &&
-        userinfo["display_name"].length > 0
+        userinfoResponse &&
+        userinfoResponse["display_name"] &&
+        userinfoResponse["display_name"].length > 0
       ) {
         history.push(`/profile/${localStorage.getItem("user_id")}`);
       } else {
@@ -184,14 +176,18 @@ const Header = () => {
     userDropDown.classList.toggle("hidden");
   }
 
-  function toogleNotificationList() {
-    setShowNotificationList((pre) => !pre);
-  }
+  // function toogleNotificationList() {
+  //   setShowNotificationList((pre) => !pre);
+  // }
 
   function handleAccountsChanged(accounts) {
     if (accounts.length === 0) {
       console.log("Please connect to MetaMask.");
-    } else if (accounts[0] !== metamaskAccount) {
+    } else if (
+      metamaskAccount &&
+      metamaskAccount.length > 1 &&
+      metamaskAccount !== accounts[0]
+    ) {
       const currentAccount = accounts[0];
       if (!userId || userId.length < 1) {
         getPersonalSign()
@@ -265,7 +261,7 @@ const Header = () => {
               <li className="md:!ml-2.5">
                 {userId ? (
                   <div className="flex space-x-2">
-                    <div className="relative w-10 h-16 pt-4">
+                    {/* <div className="relative w-10 h-16 pt-4">
                       <span className="cursor-pointer">
                         <img
                           src={notificationIcon}
@@ -281,8 +277,6 @@ const Header = () => {
                       >
                         999
                       </span>
-
-                      {/* Notification menu */}
                       <div
                         id="notificationDropdown"
                         className=" relative z-10 w-72 bg-white text-base rounded divide-y divide-gray-100 shadow-xl float-right mt-[25px]"
@@ -295,6 +289,7 @@ const Header = () => {
                         />
                       </div>
                     </div>
+                     */}
                     <div className="relative w-16 h-16 pt-2 cursor-pointer">
                       <img
                         className="rounded-full border border-gray-100 shadow-sm"

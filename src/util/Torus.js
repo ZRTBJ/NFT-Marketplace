@@ -60,15 +60,16 @@ export async function torusInit() {
 
 export async function SendTransactionTorus(tnxData) {
   let txnHash = "";
-  await torus.init({
+  const torusWallet = new Torus({});
+  await torusWallet.init({
     enableLogging: false,
     network: {
       chainId: Config.CHAIN_ID, // default: 1
     },
     showTorusButton: false,
   });
-  await torus.login();
-  const web3 = new Web3(torus.provider);
+  await torusWallet.login();
+  const web3 = new Web3(torusWallet.provider);
   const address = (await web3.eth.getAccounts())[0];
   const txnParams = {
     gasPrice: tnxData.gasPrice.toString(),
@@ -77,7 +78,7 @@ export async function SendTransactionTorus(tnxData) {
     value: ethers.BigNumber.from(Web3.utils.toWei("0.0001", "ether"))._hex,
     chainId: Config.CHAIN_ID,
   };
-  const tHash = await torus.ethereum.request({
+  const tHash = await torusWallet.ethereum.request({
     method: "eth_sendTransaction",
     params: [txnParams],
   });
