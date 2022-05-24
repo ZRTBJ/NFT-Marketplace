@@ -6,6 +6,7 @@ import { getUserProjectListById } from "services/project/projectService";
 import ProjectCard from "components/profile/ProjectCard";
 import { useHistory } from "react-router-dom";
 import DeployingProjectModal from "components/modalDialog/DeployingProjectModal";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const ProfileSettings = () => {
   const history = useHistory();
@@ -13,6 +14,19 @@ const ProfileSettings = () => {
   const [projectList, setProjectList] = useState([]);
   const [showDeployModal, setShowDeployModal] = useState(false);
   const [projectId, setProjectId] = useState("");
+  const [hasMore, setHasMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [smallSpinnedLoading, setSmallSpinnedLoading] = useState(false);
+
+  async function fetchData() {
+    if (hasMore) {
+      setHasMore(false);
+      setSmallSpinnedLoading(true);
+      await getUserInfo();
+      setSmallSpinnedLoading(false);
+    }
+  }
 
   function projectEdit(status, id) {
     setProjectId(id);
@@ -28,38 +42,41 @@ const ProfileSettings = () => {
       setShowDeployModal(true);
     }
   }
+  async function getUserInfo() {
+    let payload = {
+      id: localStorage.getItem("user_id"),
+      page: page,
+      perPage: limit,
+    };
+    let projectListCards = [];
+    await getUserProjectListById(payload).then((e) => {
+      if (e && e.data) {
+        e.data.forEach((element) => {
+          let assets = element.assets.find((x) => x.asset_purpose === "cover");
+          projectListCards.push({
+            id: element.id,
+            img: assets ? assets.path : dummyImage,
+            title: element.name,
+            type: element.project_type,
+            bookmark: element.project_mark_count,
+            like: element.project_like_count,
+            view: element.project_view_count,
+            status: element.project_status,
+            visibility: element.visibility,
+          });
+        });
+        if (e.data.length === limit) {
+          let pageSize = page + 1;
+          setPage(pageSize);
+          setHasMore(true);
+        }
+      }
+      setProjectList(projectListCards);
+      setIsLoading(false);
+    });
+  }
   useEffect(() => {
     getUserInfo();
-    async function getUserInfo() {
-      let payload = {
-        id: localStorage.getItem("user_id"),
-        page: 1,
-        perPage: 10,
-      };
-      let projectListCards = [];
-      await getUserProjectListById(payload).then((e) => {
-        if (e && e.data) {
-          e.data.forEach((element) => {
-            let assets = element.assets.find(
-              (x) => x.asset_purpose === "cover"
-            );
-            projectListCards.push({
-              id: element.id,
-              img: assets ? assets.path : dummyImage,
-              title: element.name,
-              type: element.project_type,
-              bookmark: element.project_mark_count,
-              like: element.project_like_count,
-              view: element.project_view_count,
-              status: element.project_status,
-              visibility: element.visibility,
-            });
-          });
-        }
-        setProjectList(projectListCards);
-      });
-      setIsLoading(false);
-    }
   }, []);
   return (
     <div>
@@ -68,17 +85,35 @@ const ProfileSettings = () => {
         {isLoading && <div className="loading"></div>}
         <h1 className="text-5xl font-bold mb-16">MY PROJECT</h1>
         <div className="container mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
-            {projectList.map((cardlist) => (
-              <div
-                onClick={() => projectEdit(cardlist.status, cardlist.id)}
-                key={cardlist.id}
+          <div>
+            {!isLoading && (
+              <InfiniteScroll
+                dataLength={projectList.length} //This is important field to render the next data
+                next={fetchData}
+                hasMore={hasMore}
               >
-                <div className="projectCardLayout">
-                  <ProjectCard cardInfo={cardlist} />
-                </div>
-              </div>
-            ))}
+                {projectList.length > 0 ? (
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
+                    {projectList.map((cardlist) => (
+                      <div
+                        onClick={() =>
+                          projectEdit(cardlist.status, cardlist.id)
+                        }
+                        key={cardlist.id}
+                      >
+                        <div className="projectCardLayout">
+                          <ProjectCard cardInfo={cardlist} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center mx-auto">No Match results</div>
+                )}
+
+                {smallSpinnedLoading && <div className="onlySpinner"></div>}
+              </InfiniteScroll>
+            )}
           </div>
         </div>
       </div>

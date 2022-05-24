@@ -182,7 +182,7 @@ const Profile = () => {
               sncList.map((snc, index) => (
                 <div key={`snc-${index}`}>
                   <div className="inline-flex p-1.5">
-                    <a href={snc.url}>
+                    <a href={snc.url} target="_blank" rel="noreferrer">
                       <img
                         className="cp"
                         src={require(`assets/images/profile/social/ico_${snc.title}.svg`)}
@@ -206,7 +206,9 @@ const Profile = () => {
           <div className="portfolioButtonContainer">
             {websiteList.map((website, index) => (
               <button key={`web-${index}`}>
-                <a href={website.url}>{website.title}</a>
+                <a href={website.url} target="_blank" rel="noreferrer">
+                  {website.title}
+                </a>
               </button>
             ))}
           </div>

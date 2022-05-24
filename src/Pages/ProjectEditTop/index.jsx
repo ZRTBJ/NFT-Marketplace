@@ -95,7 +95,7 @@ function ProjectEditOutline(props) {
                 <div className="text-[12px] text-gray-400 mb-[10px]">
                   Number of tokens
                 </div>
-                {projectInfo.token_amount_total} {projectInfo.token_symbol}
+                {projectInfo.token_total_amount} {projectInfo.token_symbol}
                 <span className="text-gray-400">(0000MATIC)</span>
               </div>
             </div>
