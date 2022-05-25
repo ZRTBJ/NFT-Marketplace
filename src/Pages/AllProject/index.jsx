@@ -52,7 +52,7 @@ function AllProject() {
             let allocation = "";
             let user_allocated_percent = "";
             allocation =
-              (element.token_amount_total / 100) *
+              (element.token_total_amount / 100) *
               element.project_fundraising.allocation_percent;
             user_allocated_percent =
               (allocation / 100) *
