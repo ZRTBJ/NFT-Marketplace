@@ -17,14 +17,14 @@ const ProfileSettings = () => {
   const [hasMore, setHasMore] = useState(false);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
-  const [smallSpinnedLoading, setSmallSpinnedLoading] = useState(false);
+  const [smallSpinnerLoading, setSmallSpinnerLoading] = useState(false);
 
   async function fetchData() {
     if (hasMore) {
       setHasMore(false);
-      setSmallSpinnedLoading(true);
+      setSmallSpinnerLoading(true);
       await getUserInfo();
-      setSmallSpinnedLoading(false);
+      setSmallSpinnerLoading(false);
     }
   }
 
@@ -48,9 +48,10 @@ const ProfileSettings = () => {
       page: page,
       perPage: limit,
     };
-    let projectListCards = [];
+
     await getUserProjectListById(payload).then((e) => {
       if (e && e.data) {
+        let projectListCards = [];
         e.data.forEach((element) => {
           let assets = element.assets.find((x) => x.asset_purpose === "cover");
           projectListCards.push({
@@ -70,9 +71,10 @@ const ProfileSettings = () => {
           setPage(pageSize);
           setHasMore(true);
         }
+        const project = projectList.concat(projectListCards);
+        setProjectList(project);
+        setIsLoading(false);
       }
-      setProjectList(projectListCards);
-      setIsLoading(false);
     });
   }
   useEffect(() => {
@@ -111,7 +113,7 @@ const ProfileSettings = () => {
                   <div className="text-center mx-auto">No Match results</div>
                 )}
 
-                {smallSpinnedLoading && <div className="onlySpinner"></div>}
+                {smallSpinnerLoading && <div className="onlySpinner"></div>}
               </InfiniteScroll>
             )}
           </div>
