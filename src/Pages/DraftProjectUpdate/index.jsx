@@ -10,6 +10,7 @@ import {
   publishFundTransfer,
   publishProject,
   getProjectCategory,
+  tokenBreakdown,
 } from "services/project/projectService";
 import selectTypeTabData from "Pages/DraftProjectUpdate/projectCreateData";
 import LeftSideBar from "components/DraftProjectUpdate/LeftSideBar";
@@ -25,6 +26,7 @@ import DeployingProjectModal from "components/modalDialog/DeployingProjectModal"
 import { SendTransactions } from "util/metaMaskWallet";
 import SuccessModal from "components/modalDialog/SuccessModal";
 import ErrorModal from "components/modalDialog/ErrorModal";
+import { useAuthState } from "Context";
 
 export default function DraftProjectUpdate() {
   const history = useHistory();
@@ -45,6 +47,8 @@ export default function DraftProjectUpdate() {
   const [publishStep, setPublishStep] = useState(0);
   const [projectInfo, setProjectInfo] = useState({});
   const [tokenNameError, setTokenNameError] = useState(false);
+  const context = useAuthState();
+  const [userId, setUserId] = useState(context ? context.user : "");
 
   function setActiveTab(arg) {
     setSelectedTab(arg);
@@ -441,7 +445,7 @@ export default function DraftProjectUpdate() {
       // Token start
       setTokenName(response.token_name);
       setTokenSymbol(response.token_symbol);
-      setNumberOfTokens(response.token_amount_total);
+      setNumberOfTokens(response.token_total_amount);
 
       getProjectCategory().then((e) => {
         try {
@@ -639,23 +643,30 @@ export default function DraftProjectUpdate() {
   useEffect(() => {
     projectDetails();
   }, []);
-  function getProjectPublishCost() {
+
+  function projectTokenBreakdown() {
     if (projectStatus === "publishing") {
       setPublishStep(1);
       setShowDeployModal(true);
     } else {
+      let data = {
+        user_id: userId,
+        token_category_id:
+          projectInfo &&
+          projectInfo.token_category &&
+          projectInfo.token_category[0] &&
+          projectInfo.token_category[0].id
+            ? projectInfo.token_category[0].id
+            : 1,
+        token_amount: numberOfTokens,
+      };
+      const request = new FormData();
+      request.append("allocation", JSON.stringify(data));
       setDataIsLoading(true);
-      getPublishCost(id)
+      tokenBreakdown(id, request)
         .then((res) => {
-          if (
-            res.code === 0 &&
-            res.data &&
-            res.data.amount &&
-            res.data.gasPrice &&
-            res.data.toEoa
-          ) {
-            setTnxData(res.data);
-            setShowDeployModal(true);
+          if (res.code === 0) {
+            getProjectPublishCost();
             setDataIsLoading(false);
           } else {
             setDataIsLoading(false);
@@ -666,6 +677,30 @@ export default function DraftProjectUpdate() {
           setDataIsLoading(false);
         });
     }
+  }
+
+  function getProjectPublishCost() {
+    setDataIsLoading(true);
+    getPublishCost(id)
+      .then((res) => {
+        if (
+          res.code === 0 &&
+          res.data &&
+          res.data.amount &&
+          res.data.gasPrice &&
+          res.data.toEoa
+        ) {
+          setTnxData(res.data);
+          setShowDeployModal(true);
+          setDataIsLoading(false);
+        } else {
+          setDataIsLoading(false);
+          setShowErrorModal(true);
+        }
+      })
+      .catch((err) => {
+        setDataIsLoading(false);
+      });
   }
 
   return (
@@ -816,7 +851,7 @@ export default function DraftProjectUpdate() {
                   <div className="flex justify-center space-x-6 my-4">
                     <button
                       onClick={
-                        () => getProjectPublishCost() // setShowDeployModal(true)
+                        () => projectTokenBreakdown() // setShowDeployModal(true)
                       }
                       className={`h-[54px] w-[200px] rounded bg-[#0AB4AF] text-[white] hover:bg-[#192434]`}
                     >
