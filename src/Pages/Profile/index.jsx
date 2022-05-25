@@ -6,109 +6,110 @@ import Tab from "components/profile/Tab";
 import { getUserProjectListById } from "services/project/projectService";
 import { getUserInfo } from "services/User/userService";
 import { useParams } from "react-router-dom";
-
-// const socialLinks = [
-//   { id: 0, title: "discord", link: "" },
-//   { id: 1, title: "twitter", link: "" },
-//   { id: 2, title: "facebook", link: "" },
-//   { id: 3, title: "instagram", link: "" },
-//   { id: 4, title: "youtube", link: "" },
-//   { id: 5, title: "tumblr", link: "" },
-//   { id: 6, title: "weibo", link: "" },
-//   { id: 7, title: "spotify", link: "" },
-//   { id: 8, title: "github", link: "" },
-//   { id: 9, title: "behance", link: "" },
-//   { id: 10, title: "dribbble", link: "" },
-//   { id: 11, title: "opensea", link: "" },
-//   { id: 12, title: "rarible", link: "" },
-// ];
+import InfiniteScroll from "react-infinite-scroll-component";
 const Profile = () => {
   const { id } = useParams();
   const [user, setUser] = useState({});
   const [isFollowing, setIsFollowing] = useState(false);
   const [userProjectList, setUserProjectList] = useState([]);
   const [tab, setTab] = useState([]);
-  const [isLoading, setisLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [websiteList, setWebsiteList] = useState([]);
   const [sncList, setsncList] = useState([]);
-  useEffect(() => {
-    async function userInfo() {
-      await getUserInfo(id).then((response) => {
-        setUser(response.user);
-        if (response.user["web"]) {
-          try {
-            const webs = JSON.parse(response.user["web"]);
-            const weblist = [...webs].map((e) => ({
-              title: Object.keys(e)[0],
-              url: Object.values(e)[0],
-            }));
-            setWebsiteList(weblist);
-          } catch {
-            setWebsiteList([]);
-          }
-          try {
-            const sociallinks = JSON.parse(response.user["social"]);
-            const sncs = [...sociallinks].map((e) => ({
-              title: Object.keys(e)[0],
-              url: Object.values(e)[0],
-            }));
-            setsncList(sncs);
-          } catch {
-            setsncList([]);
-          }
-        }
-      });
-      let payload = {
-        id: id,
-        page: 1,
-        perPage: 10,
-      };
-      let projectListCards = [];
-      await getUserProjectListById(payload).then((e) => {
-        if (e && e.data) {
-          e.data.forEach((element) => {
-            let assets = element.assets.find(
-              (x) => x.asset_purpose === "cover"
-            );
-            projectListCards.push({
-              id: element.id,
-              img: assets ? assets.path : "",
-              title: element.name,
-              type: element.project_type,
-              bookmark: element.project_mark_count,
-              like: element.project_like_count,
-              view: element.project_view_count,
-            });
-          });
-        }
-        setUserProjectList(projectListCards);
-      });
-      setisLoading(false);
+  const [hasMore, setHasMore] = useState(false);
+  const [tabKey, setTabKey] = useState(0);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [smallSpinnerLoading, setSmallSpinnerLoading] = useState(false);
+  async function fetchData() {
+    if (hasMore) {
+      setHasMore(false);
+      setSmallSpinnerLoading(true);
+      await userInfo();
+      setSmallSpinnerLoading(false);
     }
+  }
+
+  async function userInfo() {
+    await getUserInfo(id).then((response) => {
+      setUser(response.user);
+      if (response.user["web"]) {
+        try {
+          const webs = JSON.parse(response.user["web"]);
+          const weblist = [...webs].map((e) => ({
+            title: Object.keys(e)[0],
+            url: Object.values(e)[0],
+          }));
+          setWebsiteList(weblist);
+        } catch {
+          setWebsiteList([]);
+        }
+        try {
+          const sociallinks = JSON.parse(response.user["social"]);
+          const sncs = [...sociallinks].map((e) => ({
+            title: Object.keys(e)[0],
+            url: Object.values(e)[0],
+          }));
+          setsncList(sncs);
+        } catch {
+          setsncList([]);
+        }
+      }
+    });
+    let payload = {
+      id: id,
+      page: page,
+      perPage: limit,
+    };
+
+    await getUserProjectListById(payload).then((e) => {
+      if (e && e.data) {
+        let projectListCards = [];
+        e.data.forEach((element) => {
+          let assets = element.assets.find((x) => x.asset_purpose === "cover");
+          projectListCards.push({
+            id: element.id,
+            img: assets ? assets.path : "",
+            title: element.name,
+            type: element.project_type,
+            bookmark: element.project_mark_count,
+            like: element.project_like_count,
+            view: element.project_view_count,
+          });
+        });
+        if (e.data.length === limit) {
+          let pageSize = page + 1;
+          setPage(pageSize);
+          setHasMore(true);
+        }
+        const projects = userProjectList.concat(projectListCards);
+        setUserProjectList(projects);
+        const tabData = [
+          {
+            id: 1,
+            name: "PROJECT",
+            cardList: projects,
+          },
+          // {
+          //   id: 2,
+          //   name: "WORK",
+          //   cardList: [],
+          // },
+          // {
+          //   id: 3,
+          //   name: "COLLECTION",
+          //   cardList: [],
+          // },
+        ];
+        setTab(tabData);
+        setTabKey((pre) => pre + 1);
+      }
+    });
+    setIsLoading(false);
+  }
+  useEffect(() => {
     userInfo();
   }, []);
-
-  useEffect(() => {
-    let tabData = [
-      {
-        id: 1,
-        name: "PROJECT",
-        cardList: userProjectList,
-      },
-      // {
-      //   id: 2,
-      //   name: "WORK",
-      //   cardList: [],
-      // },
-      // {
-      //   id: 3,
-      //   name: "COLLECTION",
-      //   cardList: [],
-      // },
-    ];
-    setTab(tabData);
-  }, [userProjectList]);
-
   return (
     <div className="container mx-auto">
       <div className={!isLoading ? "" : "loading"}></div>
@@ -213,7 +214,18 @@ const Profile = () => {
             ))}
           </div>
           <div className="profileDivider"></div>
-          <Tab tabs={tab} />
+          <div>
+            {!isLoading && (
+              <InfiniteScroll
+                dataLength={userProjectList.length} //This is important field to render the next data
+                next={fetchData}
+                hasMore={hasMore}
+              >
+                <Tab tabs={tab} key={tabKey} />
+                {smallSpinnerLoading && <div className="onlySpinner"></div>}
+              </InfiniteScroll>
+            )}
+          </div>
         </div>
       )}
     </div>
