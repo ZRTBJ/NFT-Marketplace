@@ -197,3 +197,7 @@ export async function projectLike(projectId, payload) {
 export async function contractDeploy(projectId) {
   return await client("POST", `/project/${projectId}/contract_deploy`);
 }
+
+export async function tokenBreakdown(projectId, payload) {
+  return await client("PUT", `/project/${projectId}/token_breakdown`, payload);
+}

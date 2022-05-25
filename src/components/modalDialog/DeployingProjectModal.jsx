@@ -120,7 +120,7 @@ const DeployingProjectModal = ({
           setIsLoading(false);
           if (res.code === 0) {
             setStep(1);
-            projectContractDeploy(transactionHash);
+            publishThisProject(transactionHash);
           } else {
           }
         })
@@ -155,12 +155,21 @@ const DeployingProjectModal = ({
       });
   }
 
-  function publishThisProject() {
+  function publishThisProject(etherscan) {
     setIsLoading(true);
     publishProject(projectId)
       .then((res) => {
         setIsLoading(false);
         if (res.code === 0) {
+          console.log(res);
+          const deployData = {
+            projectId: projectId,
+            etherscan: etherscan ? etherscan : tnxHash,
+            function_uuid: res.function_uuid,
+            data: "",
+          };
+          dispatch(getProjectDeploy(deployData));
+          recheckStatus();
         } else {
         }
       })
@@ -245,22 +254,15 @@ const DeployingProjectModal = ({
                     <i className="fa fa-check" aria-hidden="true"></i>
                   )}
                 </Step>
-                <Step label="Deployment Smartcontract">
+                <Step label="Set up project data">
                   {step === 1 ? (
                     <i className="fa fa-hourglass" aria-hidden="true"></i>
                   ) : (
                     <i className="fa fa-check" aria-hidden="true"></i>
                   )}
                 </Step>
-                <Step label="Set up project data">
-                  {step === 2 ? (
-                    <i className="fa fa-hourglass" aria-hidden="true"></i>
-                  ) : (
-                    <i className="fa fa-check" aria-hidden="true"></i>
-                  )}
-                </Step>
                 <Step label="Completed">
-                  {step === 3 ? (
+                  {step === 2 ? (
                     <i className="fa fa-hourglass" aria-hidden="true"></i>
                   ) : (
                     <i className="fa fa-check" aria-hidden="true"></i>
@@ -318,7 +320,7 @@ const DeployingProjectModal = ({
                           </span>
                           <span className="stepper-head-text text-sm">
                             {" "}
-                            MainContract Deployment{" "}
+                            Erc20 Deployment{" "}
                           </span>
                         </div>
                       </li>
@@ -349,69 +351,7 @@ const DeployingProjectModal = ({
                           </span>
                           <span className="stepper-head-text text-sm">
                             {" "}
-                            Comp Deployment{" "}
-                          </span>
-                        </div>
-                      </li>
-                      <li
-                        className={`stepper-step ${
-                          deployStatus.step >= 3
-                            ? deployStatus.step === 3 &&
-                              deployStatus.fn_status === "failed"
-                              ? "stepper-failed"
-                              : "stepper-active"
-                            : ""
-                        }`}
-                      >
-                        <div className="stepper-head">
-                          <span className="stepper-head-icon">
-                            {" "}
-                            <i
-                              className={`fa ${
-                                deployStatus.step === 3 &&
-                                deployStatus.fn_status === "failed"
-                                  ? "fa-times"
-                                  : deployStatus.step === 2
-                                  ? "fa-hourglass"
-                                  : "fa-check"
-                              }`}
-                              aria-hidden="true"
-                            ></i>{" "}
-                          </span>
-                          <span className="stepper-head-text text-sm">
-                            {" "}
-                            Timelock Deployment{" "}
-                          </span>
-                        </div>
-                      </li>
-                      <li
-                        className={`stepper-step ${
-                          deployStatus.step >= 3
-                            ? deployStatus.step >= 3 &&
-                              deployStatus.fn_status === "failed"
-                              ? "stepper-failed"
-                              : "stepper-active"
-                            : ""
-                        }`}
-                      >
-                        <div className="stepper-head">
-                          <span className="stepper-head-icon">
-                            {" "}
-                            <i
-                              className={`fa ${
-                                deployStatus.step >= 3 &&
-                                deployStatus.fn_status === "failed"
-                                  ? "fa-times"
-                                  : deployStatus.step >= 3
-                                  ? "fa-hourglass"
-                                  : "fa-check"
-                              }`}
-                              aria-hidden="true"
-                            ></i>{" "}
-                          </span>
-                          <span className="stepper-head-text text-sm">
-                            {" "}
-                            GovernorAlpha Deployment{" "}
+                            ProjectToken Deployment{" "}
                           </span>
                         </div>
                       </li>
@@ -459,7 +399,7 @@ const DeployingProjectModal = ({
                   : true
               }
               onClick={() => {
-                projectContractDeploy(tnxHash);
+                publishThisProject(tnxHash);
               }}
             >
               <span className="mx-4 my-2">Retry</span>
