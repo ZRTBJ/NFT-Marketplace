@@ -535,7 +535,6 @@ export default function DraftProjectUpdate() {
             };
             await updateProject("update", selectType)
               .then(() => {
-                debugger;
                 setDataIsLoading(false);
                 setShowModal(true);
                 projectDetails();
@@ -557,7 +556,6 @@ export default function DraftProjectUpdate() {
           };
           await updateProject("update", selectType)
             .then(() => {
-              debugger;
               setDataIsLoading(false);
               setShowModal(true);
               projectDetails();
@@ -882,59 +880,9 @@ export default function DraftProjectUpdate() {
           </div>
         </div>
         {showModal && (
-          <Modal
-            height={361}
-            width={800}
-            show={showModal}
-            handleClose={() => setShowModal(false)}
-          >
-            <div className="text-center">
-              <img
-                className="w-[151px] h-[133px] block mx-auto mt-[50px]"
-                src={DraftLogo}
-                alt=""
-              />
-              <div className="mb-4 text-[20px] font-bold color-[#192434] draftModalText">
-                Your project saved the draft.
-              </div>
-              <div className="font-roboto mb-6">
-                You can edit information from your project list
-              </div>
-              <button className="w-[200px] h-[54px] bg-[#0AB4AF] rounded text-white">
-                PROJECT LIST
-              </button>
-            </div>
-          </Modal>
+          <SuccessModal handleClose={setShowModal} show={showModal} />
         )}
       </div>
-      {showModal && (
-        <Modal
-          height={361}
-          width={800}
-          show={showModal}
-          handleClose={() => setShowModal(false)}
-        >
-          <div className="text-center">
-            <img
-              className="w-[151px] h-[133px] block mx-auto mt-[50px]"
-              src={DraftLogo}
-              alt=""
-            />
-            <div className="mb-4 text-[20px] font-bold color-[#192434] draftModalText">
-              Your project saved the draft.
-            </div>
-            <div className="font-roboto mb-6">
-              You can edit information from your project list
-            </div>
-            <button
-              onClick={() => history.push("/profile-project-list")}
-              className="w-[200px] h-[54px] bg-[#0AB4AF] rounded text-white"
-            >
-              PROJECT LIST
-            </button>
-          </div>
-        </Modal>
-      )}
       {showDeployModal && (
         <DeployingProjectModal
           show={showDeployModal}

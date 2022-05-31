@@ -1,5 +1,7 @@
 import ico_gas from "assets/images/projectEdit/ico_gas.svg";
 import ico_matic from "assets/images/projectEdit/ico_matic.svg";
+import IconCongratulationText from "assets/images/modal/success/icon_congratulation_text.svg";
+import IconSuccess from "assets/images/modal/success/icon_success.svg";
 import Modal from "../Modal";
 import { Step, Stepper } from "react-form-stepper";
 import { useEffect, useState } from "react";
@@ -15,6 +17,7 @@ import { SendTransactionTorus } from "util/Torus";
 import { getWalletType } from "util/ApplicationStorage";
 import { useDispatch, useSelector } from "react-redux";
 import { getProjectDeploy } from "Slice/projectSlice";
+import { useHistory } from "react-router-dom";
 
 const DeployingProjectModal = ({
   handleClose,
@@ -25,6 +28,7 @@ const DeployingProjectModal = ({
   publishStep,
 }) => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const btnText = buttomText ? buttomText : "VIEW on ETHERSCAN";
   const selectedWallet = getWalletType();
   const [step, setStep] = useState(publishStep ? publishStep : 0);
@@ -63,9 +67,11 @@ const DeployingProjectModal = ({
         message: statusData["fn_response_data"]["message"],
         step: statusData["fn_response_data"]["step"],
       };
-      debugger;
-      setTnxHash(projectDeployStatus.etherscan);
+
       setDeployStatus(status);
+      if (statusData["fn_status"] === "success") {
+        setStep(2);
+      }
     } else if (projectDeployStatus && projectDeployStatus.projectId) {
       const status = {
         projectId: projectDeployStatus.projectId,
@@ -183,7 +189,7 @@ const DeployingProjectModal = ({
       if (deployStatus && deployStatus.step === 0) {
         projectDetails();
       }
-    }, 3000);
+    }, 20000);
   }
 
   function projectDetails() {
@@ -194,13 +200,22 @@ const DeployingProjectModal = ({
           const project = res.project;
           if (project && project.deploys && project.deploys.length > 0) {
             try {
+              let status = {
+                projectId: "",
+                etherscan: "",
+                function_uuid: "",
+                fn_name: "",
+                fn_status: "",
+                message: "",
+                step: 0,
+              };
               for (let deploy of project.deploys) {
                 if (deploy.type === "fund_transfer") {
                   if (deploy.hash && deploy.hash.length > 2) {
                     setTnxHash(deploy.hash);
                   }
-                } else if (deploy.type === "deploy_contract") {
-                  const status = {
+                } else if (deploy.type === "publish") {
+                  status = {
                     projectId: project.id,
                     etherscan: tnxHash,
                     function_uuid: deploy.fn_uuid,
@@ -209,10 +224,12 @@ const DeployingProjectModal = ({
                     message: deploy.message,
                     step: deploy.step,
                   };
-                  setDeployStatus(status);
                 }
               }
-            } catch {}
+              setDeployStatus(status);
+            } catch (ex) {
+              debugger;
+            }
           }
         }
         setIsLoading(false);
@@ -290,7 +307,7 @@ const DeployingProjectModal = ({
                 </div>
               )}
               {step === 1 && (
-                <div className="py-8 mx-64 flex flex-row p-6 w-2/3 ">
+                <div className="py-8 flex flex justify-center">
                   <div className="text-center my-4">
                     <ul className="stepper stepper-vertical">
                       <li
@@ -359,6 +376,22 @@ const DeployingProjectModal = ({
                   </div>
                 </div>
               )}
+              {step === 2 && (
+                <div className="py-8 flex flex justify-center">
+                  <div className="text-center mt-12">
+                    <img
+                      className="block mx-auto"
+                      src={IconCongratulationText}
+                      alt=""
+                    />
+                    <img className="block mx-auto" src={IconSuccess} alt="" />
+                    <div className="my-4 text-xl font-bold  draftModalText">
+                      Your project already Establish!!
+                    </div>
+                    <p>Let’s look your project page.</p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -374,7 +407,7 @@ const DeployingProjectModal = ({
             <span className="m-2 px-8">Transfer</span>
           </button>
         )}
-        {step === 1 && (
+        {step >= 1 && (
           <div className="flex justify-center">
             <button
               type="button"
@@ -390,20 +423,37 @@ const DeployingProjectModal = ({
             >
               <span className="mx-4 my-2">{btnText}</span>
             </button>
-            <button
-              type="button"
-              className="h-12 w-24 bg-[#0AB4AF] rounded text-white cursor-pointer disabled:opacity-50 disabled:bg-gray-500"
-              disabled={
-                deployStatus && deployStatus.fn_status === "failed"
-                  ? false
-                  : true
-              }
-              onClick={() => {
-                publishThisProject(tnxHash);
-              }}
-            >
-              <span className="mx-4 my-2">Retry</span>
-            </button>
+            {step === 1 && (
+              <button
+                type="button"
+                className="h-12 w-24 bg-[#0AB4AF] rounded text-white cursor-pointer disabled:opacity-50 disabled:bg-gray-500"
+                disabled={
+                  deployStatus && deployStatus.fn_status === "failed"
+                    ? false
+                    : true
+                }
+                onClick={() => {
+                  publishThisProject(tnxHash);
+                }}
+              >
+                <span className="mx-4 my-2">Retry</span>
+              </button>
+            )}
+            {step === 2 && (
+              <button
+                type="button"
+                className="h-12 bg-[#0AB4AF] rounded text-white cursor-pointer disabled:opacity-50 disabled:bg-gray-500"
+                onClick={() =>
+                  history.push(
+                    `/project-edit/${
+                      deployStatus.projectId ? deployStatus.projectId : "0"
+                    }/project-top`
+                  )
+                }
+              >
+                <span className="mx-4 my-2">PROJECT</span>
+              </button>
+            )}
           </div>
         )}
       </div>

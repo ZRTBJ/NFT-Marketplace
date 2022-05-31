@@ -13,8 +13,10 @@ const Modal = ({ handleClose, show, children, height, width }) => {
   };
   return (
     <div
+      data-toggle="modal"
+      data-backdrop="static"
+      data-keyboard="false"
       className={`${show ? "modal display-block" : "modal display-none"} z-10`}
-      onClick={handleClose}
     >
       <section
         onClick={(e) => modalBodyClicked(e)}
