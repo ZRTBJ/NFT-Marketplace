@@ -67,10 +67,23 @@ const Header = () => {
           host = "wss:";
         }
       } catch {}
-      const ws = new WebSocket(`${host}//${config.WEB_SOKET}/ws`);
+      let ws = new WebSocket(`${host}//${config.WEB_SOKET}/ws`);
       ws.onopen = (event) => {
         ws.send(JSON.stringify({ Token: localStorage.getItem("currentUser") }));
       };
+
+      ws.onclose = function (event) {
+        console.log("disconnected");
+        console.log("Reconnecting...");
+        ws = new WebSocket(`${host}//${config.WEB_SOKET}/ws`);
+        console.log("Reconnected");
+        ws.onopen = (event) => {
+          ws.send(
+            JSON.stringify({ Token: localStorage.getItem("currentUser") })
+          );
+        };
+      };
+
       ws.onmessage = function (event) {
         try {
           console.log(event);

@@ -189,7 +189,7 @@ const DeployingProjectModal = ({
       if (deployStatus && deployStatus.step === 0) {
         projectDetails();
       }
-    }, 20000);
+    }, 30000);
   }
 
   function projectDetails() {
@@ -200,7 +200,7 @@ const DeployingProjectModal = ({
           const project = res.project;
           if (project && project.deploys && project.deploys.length > 0) {
             try {
-              let status = {
+              let projectDstatus = {
                 projectId: "",
                 etherscan: "",
                 function_uuid: "",
@@ -215,7 +215,7 @@ const DeployingProjectModal = ({
                     setTnxHash(deploy.hash);
                   }
                 } else if (deploy.type === "publish") {
-                  status = {
+                  projectDstatus = {
                     projectId: project.id,
                     etherscan: tnxHash,
                     function_uuid: deploy.fn_uuid,
@@ -224,12 +224,28 @@ const DeployingProjectModal = ({
                     message: deploy.message,
                     step: deploy.step,
                   };
+                  if (deploy.step === 2) {
+                    if (deploy.status === "success") {
+                      setStep(2);
+                    }
+                    break;
+                  }
                 }
               }
-              setDeployStatus(status);
+
+              setDeployStatus({
+                ...deployStatus,
+                projectId: projectDstatus.projectId,
+                fn_name: projectDstatus.fn_name,
+                fn_status: projectDstatus.fn_status,
+                step: projectDstatus.step,
+              });
             } catch (ex) {
-              debugger;
+              // debugger;
             }
+          }
+          if (project && project["project_status"] === "publishing") {
+            recheckStatus();
           }
         }
         setIsLoading(false);
@@ -280,7 +296,7 @@ const DeployingProjectModal = ({
                 </Step>
                 <Step label="Completed">
                   {step === 2 ? (
-                    <i className="fa fa-hourglass" aria-hidden="true"></i>
+                    <i className="fa fa-check" aria-hidden="true"></i>
                   ) : (
                     <i className="fa fa-check" aria-hidden="true"></i>
                   )}
@@ -343,7 +359,7 @@ const DeployingProjectModal = ({
                       </li>
                       <li
                         className={`stepper-step ${
-                          deployStatus.step >= 2
+                          deployStatus.step >= 1
                             ? deployStatus.step === 2 &&
                               deployStatus.fn_status === "failed"
                               ? "stepper-failed"
@@ -445,9 +461,7 @@ const DeployingProjectModal = ({
                 className="h-12 bg-[#0AB4AF] rounded text-white cursor-pointer disabled:opacity-50 disabled:bg-gray-500"
                 onClick={() =>
                   history.push(
-                    `/project-edit/${
-                      deployStatus.projectId ? deployStatus.projectId : "0"
-                    }/project-top`
+                    `/project-edit/${projectId ? projectId : "0"}/project-top`
                   )
                 }
               >
