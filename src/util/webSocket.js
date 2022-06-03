@@ -1,20 +1,32 @@
-export function socketOnOpen(socket, payload) {
-  console.log("onopen");
+import useWebSocket from "react-use-websocket";
+import config from "config";
 
-  socket.onopen = () => {
-    socket.send(JSON.stringify(payload));
-  };
-}
-export function socketOnMessage(socket) {
-  console.log("payload");
-  socket.onmessage = function (event) {
-    const json = JSON.parse(event.data);
-    try {
-      if ((json.event = "data")) {
-        console.log(json.data.bids.slice(0, 5));
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-}
+// In functional React component
+
+// This can also be an async getter function. See notes below on Async Urls.
+let host = "ws:";
+try {
+  const loc = window.location;
+  if (loc.protocol === "https:") {
+    host = "wss:";
+  }
+} catch {}
+const socketUrl = `${host}//${config.WEB_SOKET}/ws`;
+
+const {
+  sendMessage,
+  sendJsonMessage,
+  lastMessage,
+  lastJsonMessage,
+  readyState,
+  getWebSocket,
+} = useWebSocket(socketUrl, {
+  onOpen: () => {
+    console.log("opened");
+    JSON.stringify({ Token: localStorage.getItem("currentUser") });
+  },
+  //Will attempt to reconnect on all close events, such as server shutting down
+  shouldReconnect: (closeEvent) => true,
+});
+
+export { sendMessage, lastMessage, readyState, getWebSocket };
