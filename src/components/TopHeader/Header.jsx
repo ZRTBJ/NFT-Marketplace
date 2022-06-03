@@ -23,6 +23,7 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import config from "config";
 import { getProjectDeploy } from "Slice/projectSlice";
+import useWebSocket from "react-use-websocket";
 
 const Header = () => {
   // const ws = new WebSocket(`wss://${config.WEB_SOKET}/ws`);
@@ -39,6 +40,70 @@ const Header = () => {
   const [userId, setUserId] = useState(context ? context.user : "");
   const userinfo = useSelector((state) => state.user.userinfo);
   const [metamaskConnectAttempt, setMetamaskConnectAttempt] = useState(0);
+  const [messageHistory, setMessageHistory] = useState([]);
+
+  // web socket implementation
+  let host = "ws:";
+  try {
+    const loc = window.location;
+    if (loc.protocol === "https:") {
+      host = "wss:";
+    }
+  } catch {}
+  const socketUrl = `${host}//${config.WEB_SOKET}/ws`;
+
+  const {
+    sendMessage,
+    sendJsonMessage,
+    lastMessage,
+    lastJsonMessage,
+    readyState,
+    getWebSocket,
+  } = useWebSocket(socketUrl, {
+    onOpen: () => {
+      console.log("opened");
+      const cUser = localStorage.getItem("currentUser");
+      if (cUser) {
+        sendMessage(JSON.stringify({ Token: cUser }));
+      }
+    },
+    //Will attempt to reconnect on all close events, such as server shutting down
+    shouldReconnect: (closeEvent) => true,
+  });
+
+  useEffect(() => {
+    if (lastMessage !== null) {
+      try {
+        console.log(lastMessage);
+        if (lastMessage.data) {
+          const data = JSON.parse(lastMessage.data);
+          if (data.type === "functionNotification") {
+            const deployData = {
+              function_uuid: data.fn_uuid,
+              data: lastMessage.data,
+            };
+            dispatch(getProjectDeploy(deployData));
+          }
+        }
+      } catch (err) {
+        console.log(err);
+      }
+      setMessageHistory((prev) => prev.concat(lastMessage));
+    }
+  }, [lastMessage, setMessageHistory]);
+
+  useEffect(() => {
+    if (userId !== null) {
+      const cUser = localStorage.getItem("currentUser");
+      if (cUser) {
+        sendMessage(JSON.stringify({ Token: cUser }));
+      }
+    } else {
+      console.log("no user");
+    }
+  }, [userId]);
+
+  // End web socket Implementation
 
   useEffect(() => {
     torusInit().then((e) => {
@@ -58,53 +123,6 @@ const Header = () => {
       window.ethereum.on("accountsChanged", handleAccountsChanged);
     }
   }, []);
-  useEffect(() => {
-    if (userId !== null) {
-      let host = "ws:";
-      try {
-        const loc = window.location;
-        if (loc.protocol === "https:") {
-          host = "wss:";
-        }
-      } catch {}
-      let ws = new WebSocket(`${host}//${config.WEB_SOKET}/ws`);
-      ws.onopen = (event) => {
-        ws.send(JSON.stringify({ Token: localStorage.getItem("currentUser") }));
-      };
-
-      ws.onclose = function (event) {
-        console.log("disconnected");
-        console.log("Reconnecting...");
-        ws = new WebSocket(`${host}//${config.WEB_SOKET}/ws`);
-        console.log("Reconnected");
-        ws.onopen = (event) => {
-          ws.send(
-            JSON.stringify({ Token: localStorage.getItem("currentUser") })
-          );
-        };
-      };
-
-      ws.onmessage = function (event) {
-        try {
-          console.log(event);
-          if (event.data) {
-            const data = JSON.parse(event.data);
-            if (data.type === "functionNotification") {
-              const deployData = {
-                function_uuid: data.fn_uuid,
-                data: event.data,
-              };
-              dispatch(getProjectDeploy(deployData));
-            }
-          }
-        } catch (err) {
-          console.log(err);
-        }
-      };
-    } else {
-      console.log("no user");
-    }
-  }, [userId]);
 
   async function handleConnectWallet() {
     setMetamaskConnectAttempt(metamaskConnectAttempt + 1);
