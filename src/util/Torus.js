@@ -6,6 +6,13 @@ let torusAccount = null;
 const torus = new Torus({});
 
 export async function torusWalletLogin() {
+  await torus.init({
+    enableLogging: false,
+    network: {
+      chainId: Config.CHAIN_ID, // default: 1
+    },
+    showTorusButton: false,
+  });
   await torus.login();
   const web3 = new Web3(torus.provider);
   const address = (await web3.eth.getAccounts())[0];
@@ -37,6 +44,13 @@ export async function torusWalletLogin() {
   });
 }
 export async function torusLogout() {
+  await torus.init({
+    enableLogging: false,
+    network: {
+      chainId: Config.CHAIN_ID, // default: 1
+    },
+    showTorusButton: false,
+  });
   await torus.logout();
   torusAccount = null;
 }

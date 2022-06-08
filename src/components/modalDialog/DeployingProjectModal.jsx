@@ -189,7 +189,7 @@ const DeployingProjectModal = ({
       if (deployStatus && deployStatus.step === 0) {
         projectDetails();
       }
-    }, 60000);
+    }, 45000);
   }
 
   function projectDetails() {
