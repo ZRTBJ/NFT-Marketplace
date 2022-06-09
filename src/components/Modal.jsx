@@ -16,12 +16,12 @@ const Modal = ({ handleClose, show, children, height, width }) => {
       data-toggle="modal"
       data-backdrop="static"
       data-keyboard="false"
-      className={`${show ? "modal display-block" : "modal display-none"} z-10`}
+      className={`${show ? "modal display-block" : "modal display-none"} z-10 `}
     >
       <section
         onClick={(e) => modalBodyClicked(e)}
         style={styleObj}
-        className={" modal-main"}
+        className={" modal-main "}
       >
         <img
           alt=""
@@ -29,7 +29,7 @@ const Modal = ({ handleClose, show, children, height, width }) => {
           onClick={handleClose}
           className="absolute right-[-16px]  cursor-pointer ml-auto h-[35px] w-[35px] mt-[-15px]"
         />
-        {children}
+        <div className="">{children}</div>
       </section>
     </div>
   );

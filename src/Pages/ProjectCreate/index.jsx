@@ -199,6 +199,8 @@ export default function ProjectCreate() {
   const [isLoadingPublic, setisLoadingPublic] = useState(false);
   const [isLoadingPrivate, setisLoadingPrivate] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [projectCreated, setProjectCreated] = useState(false);
+  const [projectId, setProjectId] = useState("");
   async function saveDraft(visibility) {
     if (currentStep.length === 2) {
       if (projectName === "") {
@@ -211,60 +213,40 @@ export default function ProjectCreate() {
         projectCategory !== "" &&
         alreadyTakenProjectName === false
       ) {
-        // console.log(
-        //   selectedTab,
-        //   projectName,
-        //   coverPhoto,
-        //   photos,
-        //   projectCategory,
-        //   overview,
-        //   tagList,
-        //   needMember,
-        //   roleList
-        // );
-        let createPayload = {
-          name: projectName,
-          category_id: projectCategory,
-          org_type: selectedTab.title.toLocaleLowerCase(),
-          voting_power: selectedTab.votingPower.find((x) => x.active === true)
-            .value,
-          voter_mode: selectedTab.canVote.find((x) => x.active === true).value,
-        };
-        if (visibility === "private") {
-          setisLoadingPrivate(true);
-        } else if (visibility === "public") {
-          setisLoadingPublic(true);
+        if (!projectCreated) {
+          if (visibility === "private") {
+            setisLoadingPrivate(true);
+          }
+          if (visibility === "public") {
+            setisLoadingPublic(true);
+          }
+          const id = await newProjectCreate();
+          setProjectId(id);
+          await updateExistingProject(id, visibility);
+          setProjectCreated(true);
+          if (visibility === "private") {
+            setisLoadingPrivate(false);
+          }
+          if (visibility === "public") {
+            setisLoadingPublic(false);
+          }
+          setShowModal(true);
+        } else {
+          if (visibility === "private") {
+            setisLoadingPrivate(true);
+          }
+          if (visibility === "public") {
+            setisLoadingPublic(true);
+          }
+          await updateExistingProject(projectId, visibility);
+          if (visibility === "private") {
+            setisLoadingPrivate(false);
+          }
+          if (visibility === "public") {
+            setisLoadingPublic(false);
+          }
+          setShowModal(true);
         }
-        await createProject(createPayload)
-          .then((res) => {
-            const r = res.project;
-            let updatePayload = {
-              ...createPayload,
-              id: r.id,
-              cover: coverPhoto[0],
-              photos: photos,
-              overview: overview,
-              tags: tagList.toString(),
-              need_member: needMember,
-              roles: roleList.toString(),
-              visibility: visibility,
-            };
-            updateProject("create", updatePayload)
-              .then(() => {
-                if (visibility === "private") {
-                  setisLoadingPrivate(false);
-                } else if (visibility === "public") {
-                  setisLoadingPublic(false);
-                }
-                setShowModal(true);
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-          })
-          .catch((err) => {
-            console.log(err);
-          });
       }
 
       // setcurrentStep([1, 2, 3]);
@@ -290,6 +272,42 @@ export default function ProjectCreate() {
         setcurrentStep([1, 2]);
       }
     }
+  }
+  async function newProjectCreate() {
+    let createPayload = {
+      name: projectName,
+      category_id: projectCategory,
+      org_type: selectedTab.title.toLocaleLowerCase(),
+      voting_power: selectedTab.votingPower.find((x) => x.active === true)
+        .value,
+      voter_mode: selectedTab.canVote.find((x) => x.active === true).value,
+    };
+    let projectId = "";
+    await createProject(createPayload)
+      .then((res) => {
+        projectId = res.project.id;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    return projectId;
+  }
+  async function updateExistingProject(id, visibility) {
+    let updatePayload = {
+      name: projectName,
+      category_id: projectCategory,
+      id: id,
+      cover: coverPhoto[0],
+      photos: photos,
+      overview: overview,
+      tags: tagList.toString(),
+      need_member: needMember,
+      roles: roleList.toString(),
+      visibility: visibility,
+    };
+    updateProject("create", updatePayload).catch((err) => {
+      console.log(err);
+    });
   }
   return (
     <div>

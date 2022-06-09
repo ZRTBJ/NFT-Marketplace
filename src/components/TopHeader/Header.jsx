@@ -168,8 +168,10 @@ const Header = () => {
     try {
       setIsLoading(true);
       let response = await loginUser(authDispatch, request);
+      localStorage.setItem("walletAddress", address);
       setUserId(response["user_id"]);
       getUserDetails(response["user_id"], true);
+
       const apiCall = {
         event: "bts:subscribe",
         data: { channel: "order_book_btcusd" },
