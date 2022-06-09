@@ -26,8 +26,6 @@ import { getProjectDeploy } from "Slice/projectSlice";
 import useWebSocket from "react-use-websocket";
 
 const Header = () => {
-  // const ws = new WebSocket(`wss://${config.WEB_SOKET}/ws`);
-
   const history = useHistory();
   const dispatch = useDispatch();
   const [showModal, setShowModal] = useState(false);
@@ -61,7 +59,7 @@ const Header = () => {
     getWebSocket,
   } = useWebSocket(socketUrl, {
     onOpen: () => {
-      console.log("opened");
+      console.log("webSocket connected");
       const cUser = localStorage.getItem("currentUser");
       if (cUser) {
         sendMessage(JSON.stringify({ Token: cUser }));
@@ -93,7 +91,7 @@ const Header = () => {
   }, [lastMessage, setMessageHistory]);
 
   useEffect(() => {
-    if (userId !== null) {
+    if (userId && userId.length > 0) {
       const cUser = localStorage.getItem("currentUser");
       if (cUser) {
         sendMessage(JSON.stringify({ Token: cUser }));
@@ -104,13 +102,6 @@ const Header = () => {
   }, [userId]);
 
   // End web socket Implementation
-
-  useEffect(() => {
-    torusInit().then((e) => {
-      setTorusAccountInfo(e);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     if (userId && !userinfo.display_name) {
@@ -388,16 +379,14 @@ const Header = () => {
                 )}
               </div>
             </div>
-            <div className="torusButtonContainer cp my-4">
+            <div className="torusButtonContainer cp my-4" onClick={loginTorus}>
               <img
                 className="torusIcon"
                 src={torusIcon}
                 alt="Touras wallet login button"
               />
               {torusAccountInfo == null ? (
-                <div className="torusButtonLabel" onClick={loginTorus}>
-                  Torus
-                </div>
+                <div className="torusButtonLabel">Torus</div>
               ) : (
                 <div className="torusButtonLabel">
                   Acccount : {torusAccountInfo.address.substring(0, 8)}

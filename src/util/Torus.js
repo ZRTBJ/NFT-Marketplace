@@ -6,6 +6,13 @@ let torusAccount = null;
 const torus = new Torus({});
 
 export async function torusWalletLogin() {
+  await torus.init({
+    enableLogging: false,
+    network: {
+      chainId: Config.CHAIN_ID, // default: 1
+    },
+    showTorusButton: false,
+  });
   await torus.login();
   const web3 = new Web3(torus.provider);
   const address = (await web3.eth.getAccounts())[0];
@@ -37,6 +44,13 @@ export async function torusWalletLogin() {
   });
 }
 export async function torusLogout() {
+  await torus.init({
+    enableLogging: false,
+    network: {
+      chainId: Config.CHAIN_ID, // default: 1
+    },
+    showTorusButton: false,
+  });
   await torus.logout();
   torusAccount = null;
 }
@@ -68,9 +82,15 @@ export async function SendTransactionTorus(tnxData) {
     },
     showTorusButton: false,
   });
-  await torusWallet.login();
-  const web3 = new Web3(torusWallet.provider);
-  const address = (await web3.eth.getAccounts())[0];
+
+  let web3 = new Web3(torusWallet.provider);
+  let address = (await web3.eth.getAccounts())[0];
+
+  if (!address) {
+    await torusWallet.login();
+    address = (await web3.eth.getAccounts())[0];
+  }
+
   const txnParams = {
     gasPrice: tnxData.gasPrice.toString(),
     from: address,
@@ -78,10 +98,15 @@ export async function SendTransactionTorus(tnxData) {
     value: ethers.BigNumber.from(Web3.utils.toWei("0.0001", "ether"))._hex,
     chainId: Config.CHAIN_ID,
   };
-  const tHash = await torusWallet.ethereum.request({
-    method: "eth_sendTransaction",
-    params: [txnParams],
-  });
+  let tHash;
+  try {
+    tHash = await torusWallet.ethereum.request({
+      method: "eth_sendTransaction",
+      params: [txnParams],
+    });
+  } catch (error) {
+    alert("Cancelled by user");
+  }
   txnHash = tHash ? tHash : "";
   return txnHash;
 }
