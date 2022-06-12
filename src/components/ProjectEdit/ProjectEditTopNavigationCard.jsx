@@ -48,7 +48,7 @@ const ProjectEditTopNavigationCard = () => {
     {
       id: 7,
       title: "WORK MINT",
-      to: "work-mint",
+      to: "mint-nft",
       logo: <WorkmintLogo />,
     },
   ];
