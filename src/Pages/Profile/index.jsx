@@ -3,10 +3,14 @@ import "assets/css/profile.css";
 import profile from "assets/images/profile/profile.svg";
 import locationIcon from "assets/images/profile/locationIcon.svg";
 import Tab from "components/profile/Tab";
-import { getUserProjectListById } from "services/project/projectService";
+import {
+  getUserProjectListById,
+  getExternalNftList,
+} from "services/project/projectService";
 import { getUserInfo } from "services/User/userService";
 import { useParams } from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroll-component";
+
 const Profile = () => {
   const { id } = useParams();
   const [user, setUser] = useState({});
@@ -21,6 +25,8 @@ const Profile = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [smallSpinnerLoading, setSmallSpinnerLoading] = useState(false);
+  const [walletAddress, setWalletAddress] = useState(null);
+
   async function fetchData() {
     if (hasMore) {
       setHasMore(false);
@@ -61,11 +67,15 @@ const Profile = () => {
       page: page,
       perPage: limit,
     };
-
+    let projectListCards = [];
+    let nftList = [];
     await getUserProjectListById(payload).then((e) => {
       if (e && e.data) {
-        let projectListCards = [];
-        e.data.forEach((element) => {
+        const key = "id";
+        const uniqueProjectList = [
+          ...new Map(e.data.map((item) => [item[key], item])).values(),
+        ];
+        uniqueProjectList.forEach((element) => {
           let assets = element.assets.find((x) => x.asset_purpose === "cover");
           projectListCards.push({
             id: element.id,
@@ -82,29 +92,62 @@ const Profile = () => {
           setPage(pageSize);
           setHasMore(true);
         }
-        const projects = userProjectList.concat(projectListCards);
-        setUserProjectList(projects);
-        const tabData = [
-          {
-            id: 1,
-            name: "PROJECT",
-            cardList: projects,
-          },
-          // {
-          //   id: 2,
-          //   name: "WORK",
-          //   cardList: [],
-          // },
-          // {
-          //   id: 3,
-          //   name: "COLLECTION",
-          //   cardList: [],
-          // },
-        ];
-        setTab(tabData);
         setTabKey((pre) => pre + 1);
       }
     });
+    let address = localStorage.getItem("walletAddress");
+    setWalletAddress(address);
+    let type = "";
+    if (window.ethereum.networkVersion === "80001") {
+      type = "eth";
+    }
+    if (address !== null) {
+      getExternalNftList(address, type).then((res) => {
+        const key = "id.tokenId";
+        const uniqueNftList = [
+          ...new Map(
+            res.external_nft.ownedNfts.map((item) => [
+              item["id"]["tokenId"],
+              item,
+            ])
+          ).values(),
+        ];
+        if (uniqueNftList.length > 0) {
+          uniqueNftList.forEach((element) => {
+            nftList.push({
+              id: element.id.tokenId,
+              img: element.metadata.image,
+              title: element.title,
+              type: "",
+              bookmark: "",
+              like: "",
+              view: "",
+              details: element,
+            });
+          });
+        }
+      });
+    }
+    const projects = userProjectList.concat(projectListCards);
+    setUserProjectList(projects);
+    const tabData = [
+      {
+        id: 1,
+        name: "PROJECT",
+        cardList: projects,
+      },
+      {
+        id: 2,
+        name: "WORK",
+        cardList: nftList,
+      },
+      // {
+      //   id: 3,
+      //   name: "COLLECTION",
+      //   cardList: [],
+      // },
+    ];
+    setTab(tabData);
     setIsLoading(false);
   }
   useEffect(() => {
