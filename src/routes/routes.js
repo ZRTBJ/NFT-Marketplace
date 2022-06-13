@@ -66,11 +66,6 @@ const routes = [
     isPrivate: true,
   },
   {
-    path: "/project-edit/:id/mint-nft",
-    component: MintNFT,
-    isPrivate: true,
-  },
-  {
     path: "/project-details/:id",
     component: projectDetails,
     isPrivate: true,
@@ -79,6 +74,11 @@ const routes = [
     path: "/all-project",
     component: AllProject,
     isPrivate: false,
+  },
+  {
+    path: "/mint-nft",
+    component: MintNFT,
+    isPrivate: true,
   },
   {
     path: "/*",
