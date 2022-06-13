@@ -199,11 +199,11 @@ export async function contractDeploy(projectId) {
 }
 
 export async function getExternalNftList(address, type) {
-  // return await client("GET", `/nft/external?eoa=${address}&&type=${type}`);
-  return await client(
-    "GET",
-    `/nft/external?eoa=0x4265de963cdd60629d03FEE2cd3285e6d5ff6015`
-  );
+  return await client("GET", `/nft/external?eoa=${address}&&type=${type}`);
+  // return await client(
+  //   "GET",
+  //   `/nft/external?eoa=0x4265de963cdd60629d03FEE2cd3285e6d5ff6015`
+  // );
 }
 
 export async function tokenBreakdown(projectId, payload) {
