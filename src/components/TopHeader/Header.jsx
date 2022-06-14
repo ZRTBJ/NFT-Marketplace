@@ -28,7 +28,7 @@ import useWebSocket from "react-use-websocket";
 const Header = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(true);
   const [showSideBar, setShowSideBar] = useState(false);
   const [metamaskAccount, setMetamaskAccount] = useState("");
   const [torusAccountInfo, setTorusAccountInfo] = useState(null);
@@ -39,7 +39,9 @@ const Header = () => {
   const userinfo = useSelector((state) => state.user.userinfo);
   const [metamaskConnectAttempt, setMetamaskConnectAttempt] = useState(0);
   const [messageHistory, setMessageHistory] = useState([]);
-
+  const [isTermsAndConditionsChecked, setIsTermsAndConditionsChecked] =
+    useState(false);
+  const [modalKey, setModalKey] = useState(1);
   // web socket implementation
   let host = "ws:";
   try {
@@ -116,38 +118,41 @@ const Header = () => {
   }, []);
 
   async function handleConnectWallet() {
-    setMetamaskConnectAttempt(metamaskConnectAttempt + 1);
-    setTimeout(() => {
-      if (metamaskConnectAttempt > 0) {
-        window.location.reload();
-      }
-    }, 1000);
-    const isConnected = await isWalletConnected();
-    const account = await getWalletAccount();
-    if (isConnected && account && account.length > 5) {
-      setMetamaskConnectAttempt(0);
-      setMetamaskAccount(account);
-      getPersonalSign()
-        .then((signature) => {
-          if (userinfo && !userinfo["display_name"]) {
-            userLogin(account, signature, "metamask");
-          }
-        })
-        .catch((error) => {
-          alert(error.message);
-        });
-    } else {
-      if (!isConnected && !account) {
-        window.location.reload();
+    if (isTermsAndConditionsChecked) {
+      setMetamaskConnectAttempt(metamaskConnectAttempt + 1);
+      setTimeout(() => {
+        if (metamaskConnectAttempt > 0) {
+          window.location.reload();
+        }
+      }, 1000);
+      const isConnected = await isWalletConnected();
+      const account = await getWalletAccount();
+      if (isConnected && account && account.length > 5) {
+        setMetamaskConnectAttempt(0);
+        setMetamaskAccount(account);
+        getPersonalSign()
+          .then((signature) => {
+            if (userinfo && !userinfo["display_name"]) {
+              userLogin(account, signature, "metamask");
+            }
+          })
+          .catch((error) => {
+            alert(error.message);
+          });
+      } else {
+        if (!isConnected && !account) {
+          window.location.reload();
+        }
       }
     }
   }
   async function loginTorus() {
-    await torusWalletLogin().then((e) => {
-      console.log("got response", e);
-      setTorusAccountInfo(e);
-      userLogin(e.address, e.signature, "torus");
-    });
+    if (isTermsAndConditionsChecked) {
+      await torusWalletLogin().then((e) => {
+        setTorusAccountInfo(e);
+        userLogin(e.address, e.signature, "torus");
+      });
+    }
   }
 
   async function userLogin(address, signature, wallet) {
@@ -223,6 +228,11 @@ const Header = () => {
           });
       }
     }
+  }
+
+  function handelTermsChecked(value) {
+    setIsTermsAndConditionsChecked(value);
+    setModalKey((pre) => pre + 1);
   }
 
   return (
@@ -349,49 +359,92 @@ const Header = () => {
           </div>
         </div>
       </nav>
-      <Modal show={showModal} handleClose={() => setShowModal(false)}>
-        <div className={`walletContainer ${isLoading ? "loading" : ""}`}>
-          <div className="walletTitle">WALLET</div>
-          <div className="walletDescription">
+      <Modal
+        key={modalKey}
+        height={437}
+        width={705}
+        show={showModal}
+        handleClose={() => setShowModal(false)}
+      >
+        <div
+          className={`text-center px-[11px] md:px-[0px] text-[#FFFFFF] ${
+            isLoading ? "loading" : ""
+          }`}
+        >
+          <div className="mt-[10px] font-black text-[28px] ">
+            Connect wallet
+          </div>
+          <div className="mt-[12px] text-[#9499AE] font-bold">
             Connect with one of our available wallet providers or create a new
             one.
           </div>
-          <div className="flex-row sm:flex justify-center w-100 mt-4 px-4 walletLoginButtonModalContainer">
+          <div className="mt-[26px]">
             <div
-              className="metamaskButtonContainer cp my-4"
+              className="w-full max-w-[355px] cursor-pointer h-[52px] bg-[#31224E] rounded-lg block mx-auto px-[14px]"
               onClick={handleConnectWallet}
             >
-              <img
-                className="metamaskIcon"
-                src={metamaskIcon}
-                alt="metamask wallet login button"
-              />
-              <div className="metamaskButtonLabel">
-                {metamaskAccount ? (
-                  <span>
-                    <p>
-                      Login with Address: {metamaskAccount.substring(0, 5)}
-                      ...{" "}
-                    </p>
-                  </span>
-                ) : (
-                  <span>Connect MetaMask</span>
-                )}
+              <div className="flex items-center  pt-[10px]">
+                <div className="flex items-center">
+                  <img
+                    className="h-[32px] w-[32px] "
+                    src={metamaskIcon}
+                    alt="metamask wallet login button"
+                  />
+                  <div className="ml-[11px]">
+                    {metamaskAccount ? (
+                      <span>
+                        <p>
+                          Login with Address: {metamaskAccount.substring(0, 5)}
+                          ...{" "}
+                        </p>
+                      </span>
+                    ) : (
+                      <span>MetaMask</span>
+                    )}
+                  </div>
+                </div>
+                <div className="ml-auto bg-[#9A5AFF] px-2 py-1 text-[10px] rounded font-black text-[#000000]">
+                  Popular
+                </div>
               </div>
             </div>
-            <div className="torusButtonContainer cp my-4" onClick={loginTorus}>
-              <img
-                className="torusIcon"
-                src={torusIcon}
-                alt="Touras wallet login button"
-              />
-              {torusAccountInfo == null ? (
-                <div className="torusButtonLabel">Torus</div>
-              ) : (
-                <div className="torusButtonLabel">
-                  Acccount : {torusAccountInfo.address.substring(0, 8)}
+            <div
+              className="w-full max-w-[355px] h-[52px] bg-[#31224E] rounded-lg mt-[12px] block mx-auto px-[14px]"
+              onClick={loginTorus}
+            >
+              <div className="flex items-center pt-[10px] cursor-pointer">
+                <img
+                  className="h-[28px] w-[28px]"
+                  src={torusIcon}
+                  alt="Touras wallet login button"
+                />
+                <div className="ml-[11px]">
+                  {torusAccountInfo == null ? (
+                    <div className="torusButtonLabel">Torus</div>
+                  ) : (
+                    <div className="torusButtonLabel">
+                      Account : {torusAccountInfo.address.substring(0, 8)}
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
+            </div>
+          </div>
+          <div className="mt-[26px] w-full max-w-[355px]  block mx-auto ">
+            <div className="flex items-baseline">
+              <input
+                type="checkbox"
+                id="termsAndCondition"
+                name="termsAndCondition"
+                checked={isTermsAndConditionsChecked}
+                onChange={(e) => handelTermsChecked(e.target.checked)}
+              />
+              <div className="text-left ml-[8px] font-bold text-[14px]">
+                I read and accept{" "}
+                <span className="text-[#5C008D]">Terms Of services</span> and{" "}
+                <br />
+                <span className="text-[#5C008D]"> Privacy Policy</span>
+              </div>
             </div>
           </div>
         </div>
