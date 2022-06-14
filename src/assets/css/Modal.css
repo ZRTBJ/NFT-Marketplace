@@ -9,13 +9,13 @@
 
 .modal-main {
   position: fixed;
-  background: white;
+  /* background: white; */
   width: 70.6%;
   /* height: auto; */
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  box-shadow: 0px 0px 6px #ffffff;
+  /* box-shadow: 0px 0px 6px #ffffff; */
   border-radius: 8px;
 }
 
@@ -26,24 +26,6 @@
 .display-none {
   display: none;
 }
-.walletContainer {
-  text-align: center;
-}
-
-.walletTitle {
-  color: #222222;
-  font-family: "Roboto", sans-serif;
-  font-weight: 700;
-  font-size: 20px;
-  margin-top: 60px;
-}
-.walletDescription {
-  margin-top: 20px;
-  font-size: 16px;
-  color: #222222;
-  font-family: "Roboto", sans-serif;
-  font-weight: 500;
-}
 .torusIcon {
   height: 24px;
   width: 28px;
@@ -51,49 +33,4 @@
 .metamaskIcon {
   height: 24px;
   width: 26px;
-}
-.metamaskButtonContainer {
-  width: 268px;
-  height: 58px;
-  box-shadow: 0px 0px 4px #00000029;
-  border: 2px solid #ffffff;
-  border-radius: 6px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 30px;
-}
-.torusButtonContainer {
-  width: 268px;
-  height: 58px;
-  box-shadow: 0px 0px 4px #00000029;
-  border: 2px solid #ffffff;
-  border-radius: 6px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.torusButtonLabel {
-  margin-left: 5px;
-  font-family: "Roboto", sans-serif;
-  color: #222222;
-  font-weight: 700;
-}
-.metamaskButtonLabel {
-  margin-left: 5px;
-  font-family: "Roboto", sans-serif;
-  color: #222222;
-  font-weight: 700;
-}
-.walletLoginButtonModalContainer {
-  margin-bottom: 82px;
-}
-
-.metamaskButtonContainer:hover {
-  border: 2px solid #07d5ce;
-  transition: ease-out 0.3s;
-}
-.torusButtonContainer:hover {
-  border: 2px solid #07d5ce;
-  transition: ease-out 0.3s;
 }

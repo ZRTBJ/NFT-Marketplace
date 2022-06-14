@@ -1,5 +1,5 @@
 import "../assets/css/Modal.css";
-import ModalCloseLogo from "assets/images/projectCreate/ico_closemodal.svg";
+import ModalCloseLogo from "assets/images/modal/ico_closemodal.png";
 const Modal = ({ handleClose, show, children, height, width }) => {
   let styleObj = {
     height: height ? height + "px" : "",
@@ -21,13 +21,13 @@ const Modal = ({ handleClose, show, children, height, width }) => {
       <section
         onClick={(e) => modalBodyClicked(e)}
         style={styleObj}
-        className={" modal-main "}
+        className={" modal-main bg-[#161423] rounded-3xl"}
       >
         <img
           alt=""
           src={ModalCloseLogo}
           onClick={handleClose}
-          className="absolute right-[-16px]  cursor-pointer ml-auto h-[35px] w-[35px] mt-[-15px]"
+          className="cursor-pointer ml-auto mt-[26px] mr-[26px] h-[20px] w-[20px]"
         />
         <div className="">{children}</div>
       </section>
