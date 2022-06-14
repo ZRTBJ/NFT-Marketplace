@@ -238,20 +238,20 @@ const Header = () => {
   return (
     <div>
       <Sidebar show={showSideBar} handleClose={() => setShowSideBar(false)} />
-      <nav className="bg-white border border-gray-200">
+      <nav className="border border-black">
         <div className="flex justify-between items-center">
           <div className="flex flex-wrap cp">
             <button
               onClick={() => setShowSideBar(true)}
               type="button"
-              className="inline-flex items-center p-2 ml-3 mr-3 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
+              className="inline-flex items-center p-2 ml-3 mr-3 text-sm text-gray-800 rounded-lg hover:bg-primary-color focus:outline-none focus:ring-2 focus:ring-gray-200"
               aria-controls="side-menu"
               aria-expanded="false"
             >
               <span className="sr-only">Open main menu</span>
               <svg
                 className="w-6 h-6"
-                fill="currentColor"
+                fill="#fff"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
               >
@@ -263,7 +263,7 @@ const Header = () => {
               </svg>
               <svg
                 className="hidden w-6 h-6"
-                fill="currentColor"
+                fill="#fff"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
               >
@@ -275,7 +275,9 @@ const Header = () => {
               </svg>
             </button>
             <div className="mx-auto" onClick={() => history.push("/")}>
-              <img className="cp" src={logo} height="39" width="165" alt="" />
+              <div className="text-left text-white font-semibold text-2xl mt-1">
+                CREABO
+              </div>
             </div>
           </div>
           <div className="w-auto mr-0 sm:mr-4" id="mobile-menu">
@@ -284,13 +286,8 @@ const Header = () => {
                 userId ? "" : "sm:py-2"
               }`}
             >
-              <li className="hidden sm:block">
-                <button
-                  onClick={() => history.push("/project-create")}
-                  className="cp createProjectButtonConatiner"
-                >
-                  CREATE PROJECT
-                </button>
+              <li className="text-center text-white font-semibold text-lg">
+                What’s Creabo
               </li>
               <li className="md:!ml-2.5">
                 {userId ? (
@@ -340,7 +337,7 @@ const Header = () => {
                       {/* Dropdown menu */}
                       <div
                         id="userDropDown"
-                        className="hidden relative z-10 w-72 bg-white text-base rounded divide-y divide-gray-100 shadow-xl float-right mt-4"
+                        className="hidden relative z-10 w-72 bg-dark-background text-base rounded  border border-primary-color divide-y divide-primary-color shadow-xl float-right mt-4"
                       >
                         <UserDropDownMenu />
                       </div>
@@ -349,9 +346,9 @@ const Header = () => {
                 ) : (
                   <button
                     onClick={() => setShowModal(true)}
-                    className="cp walletLoginButtonConatiner"
+                    className="btn-primary w-36"
                   >
-                    WALLET LOGIN
+                    Connect Wallet
                   </button>
                 )}
               </li>
