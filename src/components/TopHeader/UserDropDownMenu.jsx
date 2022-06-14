@@ -39,7 +39,7 @@ const UserDropDownMenu = () => {
 
   return (
     <>
-      <div className="py-3 px-4 text-gray-900">
+      <div className="py-3 px-4 text-white">
         <div className="inline-flex items-center justify-center">
           <img
             className="rounded-full border border-gray-100 shadow-sm"
@@ -59,7 +59,7 @@ const UserDropDownMenu = () => {
           </div>
         </div>
       </div>
-      <div className="py-3 px-4 text-gray-900">
+      <div className="py-3 px-4 text-white">
         <div>
           <div onClick={showHideWallet}>
             WALLET{" "}
@@ -75,7 +75,7 @@ const UserDropDownMenu = () => {
           </div>
           {showWallet && (
             <>
-              <div className="bg-[#F4F4F4]">
+              <div className="bg-dark-background">
                 <div className="inline-flex p-4">
                   <div className="pt-4">
                     {selectedWallet === "metamask" ? (
@@ -95,27 +95,27 @@ const UserDropDownMenu = () => {
                     )}
                   </div>
                   <div className="pl-2">
-                    <small className="text-[#192434] opacity-70 font-['Montserrat']">
+                    <small className="text-white opacity-70 font-['Montserrat']">
                       Total balance
                     </small>
                     <div className="text-[20px]">$12.00 USD</div>
                     <div className="mt-1">
-                      <span className="inline-flex items-center justify-center px-2.5 py-1.5 text-xs font-bold leading-none text-slate-500 bg-white rounded-full border-x">
-                        <div className="w-2 h-2 rounded-full bg-[#0AB4AF] mr-1"></div>
+                      <span className="inline-flex items-center justify-center px-2.5 py-1.5 text-xs font-bold leading-none text-slate-500  rounded-full border-x">
+                        <div className="w-2 h-2 rounded-full bg-primary-color mr-1"></div>
                         ETHRIAM Mainnet
                       </span>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="w-full h-10 text-center text-white bg-[#192434]">
+              <div className="w-full h-10 text-center text-white bg-primary-color">
                 <div className="py-2">Add Funds</div>
               </div>
             </>
           )}
         </div>
       </div>
-      <div className="text-gray-900 hover:bg-[#0AB4AF] hover:text-white">
+      <div className="text-white hover:bg-primary-color">
         <Link
           to={`/profile/${localStorage.getItem("user_id")}`}
           className="inline-flex user-dropdown-item"
@@ -125,7 +125,7 @@ const UserDropDownMenu = () => {
           <div className="ml-2"> PROFILE</div>
         </Link>
       </div>
-      <div className="text-gray-900 hover:bg-[#0AB4AF] hover:text-white">
+      <div className="text-white hover:bg-primary-color ">
         <Link
           to="/profile-settings"
           className="inline-flex user-dropdown-item"
@@ -135,7 +135,7 @@ const UserDropDownMenu = () => {
           <div className="ml-2">SETTING</div>
         </Link>
       </div>
-      <div className="text-gray-900 hover:bg-[#0AB4AF] hover:text-white">
+      <div className="hover:bg-primary-color text-white">
         <Link
           to="/profile-project-list"
           className="inline-flex user-dropdown-item"
@@ -145,10 +145,7 @@ const UserDropDownMenu = () => {
           <div className="ml-2">PROJECT</div>
         </Link>
       </div>
-      <div
-        className="text-gray-900 hover:bg-[#0AB4AF] hover:text-white"
-        onClick={handleLogout}
-      >
+      <div className="hover:bg-primary-color text-white" onClick={handleLogout}>
         <Link
           to=""
           className="inline-flex user-dropdown-item"

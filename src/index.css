@@ -7,6 +7,17 @@ body {
   padding: 0;
 }
 
+.btn-primary {
+  background: linear-gradient(128.96deg, #df9b5d 17.26%, #9a5aff 93.04%);
+  color: #ffffff;
+  border-radius: 8px;
+  min-height: 40px;
+  min-width: 100px;
+  padding: 0 10px;
+  font-size: medium;
+  font-weight: 500;
+}
+
 .cp {
   cursor: pointer;
   transition: 0.3s;
