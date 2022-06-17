@@ -49,7 +49,7 @@ const Header = () => {
     if (loc.protocol === "https:") {
       host = "wss:";
     }
-  } catch {}
+  } catch { }
   const socketUrl = `${host}//${config.WEB_SOKET}/ws`;
 
   const {
@@ -183,7 +183,7 @@ const Header = () => {
     let userinfoResponse;
     try {
       userinfoResponse = response["user"];
-    } catch {}
+    } catch { }
     dispatch(setUserInfo(userinfoResponse));
     setIsLoading(false);
     if (isNavigate === true) {
@@ -240,11 +240,11 @@ const Header = () => {
       <Sidebar show={showSideBar} handleClose={() => setShowSideBar(false)} />
       <nav className="border border-black">
         <div className="flex justify-between items-center">
-          <div className="flex flex-wrap cp">
+          <div className="flex flex-wrap items-center">
             <button
               onClick={() => setShowSideBar(true)}
               type="button"
-              className="inline-flex items-center p-2 ml-3 mr-3 text-sm text-gray-800 rounded-lg hover:bg-primary-color focus:outline-none focus:ring-2 focus:ring-gray-200"
+              className="inline-flex items-center p-2 ml-3 mr-3 cp text-sm text-gray-800 rounded-lg hover:bg-primary-color focus:outline-none focus:ring-2 focus:ring-gray-200"
               aria-controls="side-menu"
               aria-expanded="false"
             >
@@ -274,20 +274,32 @@ const Header = () => {
                 ></path>
               </svg>
             </button>
-            <div className="mx-auto" onClick={() => history.push("/")}>
-              <div className="text-left text-white font-semibold text-2xl mt-1">
+            <div className="mx-auto cp" onClick={() => history.push("/")}>
+              <div className="text-left text-white font-semibold text-2xl mt-1 logo">
                 CREABO
               </div>
             </div>
+
+            <form className="search lg:ml-20 ml-5">
+              <label for="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300">Search</label>
+              <div className="relative">
+                <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+                  <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+                <input type="search" id="default-search" class="search-fld" placeholder="Search your project by name" required />
+              </div>
+            </form>
+
           </div>
+
           <div className="w-auto mr-0 sm:mr-4" id="mobile-menu">
             <ul
-              className={`flex items-center justify-center md:flex-row md:space-x-8 md:text-sm md:font-medium ${
-                userId ? "" : "sm:py-2"
-              }`}
+              className={`flex items-center justify-center md:flex-row md:space-x-8 md:text-sm md:font-medium ${userId ? "" : "sm:py-2"
+                }`}
             >
               <li className="text-center text-white font-semibold text-lg">
                 What’s Creabo
+                link
               </li>
               <li className="md:!ml-2.5">
                 {userId ? (
@@ -364,9 +376,8 @@ const Header = () => {
         handleClose={() => setShowModal(false)}
       >
         <div
-          className={`text-center px-[11px] md:px-[0px] text-[#FFFFFF] ${
-            isLoading ? "loading" : ""
-          }`}
+          className={`text-center px-[11px] md:px-[0px] text-[#FFFFFF] ${isLoading ? "loading" : ""
+            }`}
         >
           <div className="mt-[10px] font-black text-[28px] ">
             Connect wallet

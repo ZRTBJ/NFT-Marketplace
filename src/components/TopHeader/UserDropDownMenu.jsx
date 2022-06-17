@@ -66,9 +66,8 @@ const UserDropDownMenu = () => {
             <span className="pl-1 text-lg">
               <strong>
                 <i
-                  className={`fa fa-angle-right fa-md ${
-                    showWallet ? "fa-rotate-90" : ""
-                  }`}
+                  className={`fa fa-angle-right fa-md ${showWallet ? "fa-rotate-90" : ""
+                    }`}
                 ></i>
               </strong>
             </span>
@@ -96,7 +95,7 @@ const UserDropDownMenu = () => {
                   </div>
                   <div className="pl-2">
                     <small className="text-white opacity-70 font-['Montserrat']">
-                      Total balance
+                      Total balance dsaffdad
                     </small>
                     <div className="text-[20px]">$12.00 USD</div>
                     <div className="mt-1">
