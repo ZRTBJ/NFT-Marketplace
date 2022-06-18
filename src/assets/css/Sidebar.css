@@ -96,55 +96,5 @@
 
 /* sidebarLinksContainer */
 .sidebarLinksContainer {
-  display: flex;
-  flex-direction: column;
   height: calc(100% - 60px);
-}
-
-.sidebarLinksContainer .profile-opton {
-  padding: 50px 0;
-}
-
-.sidebarLinksContainer .profile-opton img {
-  width: 57px;
-  height: 57px;
-  border-radius: 50%;
-  background: #D9D9D9;
-  margin-bottom: 10px;
-}
-
-.sidebarLinksContainer .profile-opton h4 {
-  font-family: 'Satoshi-Bold';
-  font-weight: 900;
-  font-size: 16px;
-  line-height: 22px;
-  color: #fff;
-}
-
-.sidebarLinksContainer .sidebar-link {
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  font-weight: 700;
-  font-size: 1rem;
-  line-height: 22px;
-  color: #653EA7;
-  font-family: 'Satoshi-Bold';
-  padding: 15px 28px;
-  transition: 0.3s ease-in-out all;
-}
-
-.sidebarLinksContainer .sidebar-link:hover {
-  color: #fff;
-}
-
-.sidebarLinksContainer .sidebar-link.active {
-  color: #fff;
-  border-radius: 6px;
-  background-color: #653EA7 !important;
-
-}
-
-.sidebarLinksContainer .sidebar-link:last-child {
-  margin-top: auto;
 }

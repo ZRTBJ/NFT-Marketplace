@@ -80,7 +80,6 @@
   }
 }
 
-
 /* logo */
 .logo {
   padding-right: 75px;
@@ -119,4 +118,77 @@
 
 .search-fld::placeholder {
   color: #D0D0D0;
+}
+
+/* wallet dropdown */
+.walletbox {
+  width: 212px;
+  background: #161423;
+  border-radius: 0px 0px 12px 12px;
+  position: absolute;
+  top: 40px;
+  right: 0;
+  padding: 20px;
+}
+
+.walletbox h3 {
+  font-family: 'Poppins';
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 24px;
+  color: #FFFFFF;
+  margin-bottom: 15px;
+}
+
+.walletbox h4 {
+  font-family: 'Poppins';
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 24px;
+  letter-spacing: 0.2px;
+  color: #FFFFFF;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.walletbox h5 {
+  font-family: 'Poppins';
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  color: #FFFFFF;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+
+.walletbox a.btn-gradient-outline {
+  width: 145px;
+  height: 32px;
+  font-family: 'Poppins';
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.2px;
+  color: #FFFFFF;
+  background: linear-gradient(128.96deg, #DF9B5D 17.26%, #9A5AFF 93.04%);
+  border-radius: 8px;
+  margin: 20px auto;
+}
+
+.walletbox .link-logout {
+  font-family: 'Mulish';
+  font-weight: 800;
+  font-size: 14px;
+  line-height: 18px;
+  color: #FFFFFF;
+  display: block;
+  padding: 20px 0;
+  display: flex;
+  align-items: center;
 }
