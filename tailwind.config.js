@@ -9,8 +9,14 @@ module.exports = {
         "dark-background": "#161423",
         "light-background": "#FFFFFF",
         "primary-color": "#8D2CCB",
+<<<<<<< HEAD
         "primary-color-5": "#653EA7",
         "grey": "#232032"
+=======
+        "color-grey": "#C8C8C8",
+        "color-brown": "#6B4D00",
+        "color-gold": "#D69C07"
+>>>>>>> 49255b1fdea18953b418d74f3c78e1034c4ce44b
       },
       fontFamily: {
         roboto: ["Roboto", "sans-serif"],

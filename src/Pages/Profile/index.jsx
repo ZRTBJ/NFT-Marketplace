@@ -11,6 +11,9 @@ import { getUserInfo } from "services/User/userService";
 import { useParams } from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroll-component";
 
+import Card from "components/profile/Card";
+
+
 const Profile = () => {
   const { id } = useParams();
   const [user, setUser] = useState({});
@@ -154,7 +157,20 @@ const Profile = () => {
     userInfo();
   }, []);
   return (
+
+
+
     <div className="container mx-auto">
+
+      <div className="py-3 grid gap-4 grid-cols-1 sm:grid-cols-6 md:grid-cols-3 lg:grid-cols-4 ">
+
+        <Card />
+
+      </div>
+
+
+
+
       <div className={!isLoading ? "" : "loading"}></div>
       {!isLoading && (
         <div className="profilePageContainer">
