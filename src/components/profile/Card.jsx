@@ -2,17 +2,17 @@ import thumbIcon from "assets/images/profile/card.svg";
 const Card = ({ cardInfo }) => {
   return (
     <>
-      <div className=" rounded-lg border border-primary-color shadow-primary-color shadow-xs p-6">
+      <div className="rounded-lg border border-primary-color shadow-primary-color shadow-xs p-6">
         <a href="#">
           <img className="rounded-lg" src={thumbIcon} alt="card image" />
         </a>
         <div className="p-5">
 
           <a href="#">
-            <h5 class="mb-2 text-lg mt-4 font-black tracking-tight text-color-grey">Project by mustrad face colony Track</h5>
+            <h3 class="mb-2 tracking-tight text-color-grey">Project by mustrad face colony Track</h3>
           </a>
 
-          <p className="mt-4 text-base text-color-grey">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
+          {/* <p className="mt-4 text-color-grey">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p> */}
 
           <div class="mt-4">
             <a href="#" className="inline-flex items-center mr-1 py-2 px-3 text-xs font-bold text-center text-color-gold bg-color-brown rounded-full hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">

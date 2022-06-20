@@ -1,3 +1,5 @@
+const defaultTheme = require('tailwindcss/defaultTheme');
+
 module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
@@ -79,10 +81,9 @@ module.exports = {
 
       },
       fontFamily: {
+        'sans': ['Satoshi-Regular', ...defaultTheme.fontFamily.sans],
         roboto: ["Roboto", "sans-serif"],
         "satoshi-bold": ['Satoshi-Bold', "sans-serif"],
-        "satoshi-regular": ['Satoshi-Regular', "sans-serif"],
-        'mulish': 'Mulish, sans-serif',
         'poppins': 'Poppins, sans-serif'
       },
       height: {
