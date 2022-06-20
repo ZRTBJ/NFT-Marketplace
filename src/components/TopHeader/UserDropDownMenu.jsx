@@ -65,7 +65,7 @@ const UserDropDownMenu = () => {
 
       <div className="w-52  bg-dark-background  rounded-b-xl absolute top-10 right-0">
 
-        <div className="pl-10 pr-3 py-3 border-b border-grey">
+        <div className="pl-10 pr-3 py-3 border-b border-black-shade-800">
           <h3 className="text-white text-sm font-bold mb-6 font-poppins">Wallet</h3>
           <p className="font-poppins text-white flex content-center mb-2">
             <img src={metamaskIcon} alt="mask" width={21} height={21} className="mr-2" />
