@@ -14,7 +14,6 @@ import InfiniteScroll from "react-infinite-scroll-component";
 
 import Card from "components/profile/Card";
 
-
 const Profile = () => {
   const { id } = useParams();
   const [user, setUser] = useState({});
@@ -158,134 +157,170 @@ const Profile = () => {
     userInfo();
   }, []);
   return (
-
-
-
     <div className="container mx-auto">
-
-
-
       <section className="mb-4">
-        <img src={profileDummy} className="rounded-3xl object-cover h-[212px] w-full" alt="Profile Cover image" />
+        <img
+          src={profileDummy}
+          className="rounded-3xl object-cover h-[212px] w-full"
+          alt="Profile Cover image"
+        />
 
         {/* 
          for no image 
         <div className="rounded-3xl h-[212px] w-full bg-white-shade-800"></div> */}
-
       </section>
 
-
-
-
       <section className="flex py-4">
-
         <div className="w-2/3 flex text-white">
-
-          <img className="rounded-lg self-start" src={profile} width={98} height={98} alt="Muhammad Rifat Abubakar" />
+          <img
+            className="rounded-lg self-start"
+            src={profile}
+            width={98}
+            height={98}
+            alt="Muhammad Rifat Abubakar"
+          />
           <div className="flex-1 px-4">
             <h1 className="-mt-1 mb-2 flex">
               Muhammad Rifat Abubakar
-              <svg className="mt-2 ml-2" width="26" height="25" viewBox="0 0 26 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M22.8274 2.89191L14.0084 0.19268C13.3503 -0.0643894 12.5606 -0.0643894 11.7708 0.19268L3.08343 2.89191C1.24066 3.40605 0.187642 5.077 0.582523 6.87649L2.03042 14.5886C2.68855 18.1875 4.53132 21.0153 7.29548 22.6863C9.79639 24.2287 11.6392 24.9999 13.0871 24.9999C14.535 24.9999 16.3777 24.2287 18.8786 22.6863C21.6428 21.0153 23.4856 18.1875 24.1437 14.5886L25.46 6.87649C25.7232 5.077 24.6702 3.40605 22.8274 2.89191ZM17.5624 10.4755L12.2973 15.6168C12.034 15.7454 11.9024 15.8739 11.6392 15.8739C11.3759 15.8739 11.1127 15.7454 10.981 15.6168L8.3485 13.0462C7.95362 12.6605 7.95362 12.0179 8.3485 11.6323C8.74338 11.2467 9.40151 11.2467 9.79639 11.6323L11.7708 13.5603L16.3777 9.06157C16.7726 8.67597 17.4307 8.67597 17.8256 9.06157C17.9572 9.57571 17.9572 10.0899 17.5624 10.4755Z" fill="#4A59E1" />
+              <svg
+                className="mt-2 ml-2"
+                width="26"
+                height="25"
+                viewBox="0 0 26 25"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M22.8274 2.89191L14.0084 0.19268C13.3503 -0.0643894 12.5606 -0.0643894 11.7708 0.19268L3.08343 2.89191C1.24066 3.40605 0.187642 5.077 0.582523 6.87649L2.03042 14.5886C2.68855 18.1875 4.53132 21.0153 7.29548 22.6863C9.79639 24.2287 11.6392 24.9999 13.0871 24.9999C14.535 24.9999 16.3777 24.2287 18.8786 22.6863C21.6428 21.0153 23.4856 18.1875 24.1437 14.5886L25.46 6.87649C25.7232 5.077 24.6702 3.40605 22.8274 2.89191ZM17.5624 10.4755L12.2973 15.6168C12.034 15.7454 11.9024 15.8739 11.6392 15.8739C11.3759 15.8739 11.1127 15.7454 10.981 15.6168L8.3485 13.0462C7.95362 12.6605 7.95362 12.0179 8.3485 11.6323C8.74338 11.2467 9.40151 11.2467 9.79639 11.6323L11.7708 13.5603L16.3777 9.06157C16.7726 8.67597 17.4307 8.67597 17.8256 9.06157C17.9572 9.57571 17.9572 10.0899 17.5624 10.4755Z"
+                  fill="#4A59E1"
+                />
               </svg>
-
             </h1>
             <p className="flex">
-              <svg className="mt-1 mr-1" width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12.2556 2.76562C10.9417 1.35937 9.00948 0.5 7 0.5C4.99052 0.5 3.05833 1.28125 1.74444 2.76562C0.662416 4.01562 0.121403 5.57812 0.275979 7.14062C0.275979 7.45312 0.353266 7.76562 0.430554 8C1.12614 11.2812 4.68137 14.1719 6.22712 15.2656C6.45899 15.4219 6.69085 15.5 7 15.5C7.30915 15.5 7.54101 15.4219 7.77288 15.2656C9.24134 14.1719 12.8739 11.2812 13.5694 8C13.6467 7.76562 13.6467 7.45312 13.724 7.14062C13.8786 5.57812 13.3376 4.01562 12.2556 2.76562ZM7 9.48438C5.84069 9.48438 4.83595 8.54687 4.83595 7.29687C4.83595 6.04687 5.7634 5.10937 7 5.10937C8.2366 5.10937 9.16405 6.04687 9.16405 7.29687C9.16405 8.54687 8.15931 9.48438 7 9.48438Z" fill="#D35252" />
+              <svg
+                className="mt-1 mr-1"
+                width="14"
+                height="16"
+                viewBox="0 0 14 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12.2556 2.76562C10.9417 1.35937 9.00948 0.5 7 0.5C4.99052 0.5 3.05833 1.28125 1.74444 2.76562C0.662416 4.01562 0.121403 5.57812 0.275979 7.14062C0.275979 7.45312 0.353266 7.76562 0.430554 8C1.12614 11.2812 4.68137 14.1719 6.22712 15.2656C6.45899 15.4219 6.69085 15.5 7 15.5C7.30915 15.5 7.54101 15.4219 7.77288 15.2656C9.24134 14.1719 12.8739 11.2812 13.5694 8C13.6467 7.76562 13.6467 7.45312 13.724 7.14062C13.8786 5.57812 13.3376 4.01562 12.2556 2.76562ZM7 9.48438C5.84069 9.48438 4.83595 8.54687 4.83595 7.29687C4.83595 6.04687 5.7634 5.10937 7 5.10937C8.2366 5.10937 9.16405 6.04687 9.16405 7.29687C9.16405 8.54687 8.15931 9.48438 7 9.48438Z"
+                  fill="#D35252"
+                />
               </svg>
-
               Jakarta Indonesia
             </p>
             <p className="flex">
-              <svg className="mt-1 mr-1" width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12.2556 2.76562C10.9417 1.35937 9.00948 0.5 7 0.5C4.99052 0.5 3.05833 1.28125 1.74444 2.76562C0.662416 4.01562 0.121403 5.57812 0.275979 7.14062C0.275979 7.45312 0.353266 7.76562 0.430554 8C1.12614 11.2812 4.68137 14.1719 6.22712 15.2656C6.45899 15.4219 6.69085 15.5 7 15.5C7.30915 15.5 7.54101 15.4219 7.77288 15.2656C9.24134 14.1719 12.8739 11.2812 13.5694 8C13.6467 7.76562 13.6467 7.45312 13.724 7.14062C13.8786 5.57812 13.3376 4.01562 12.2556 2.76562ZM7 9.48438C5.84069 9.48438 4.83595 8.54687 4.83595 7.29687C4.83595 6.04687 5.7634 5.10937 7 5.10937C8.2366 5.10937 9.16405 6.04687 9.16405 7.29687C9.16405 8.54687 8.15931 9.48438 7 9.48438Z" fill="#D35252" />
+              <svg
+                className="mt-1 mr-1"
+                width="14"
+                height="16"
+                viewBox="0 0 14 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12.2556 2.76562C10.9417 1.35937 9.00948 0.5 7 0.5C4.99052 0.5 3.05833 1.28125 1.74444 2.76562C0.662416 4.01562 0.121403 5.57812 0.275979 7.14062C0.275979 7.45312 0.353266 7.76562 0.430554 8C1.12614 11.2812 4.68137 14.1719 6.22712 15.2656C6.45899 15.4219 6.69085 15.5 7 15.5C7.30915 15.5 7.54101 15.4219 7.77288 15.2656C9.24134 14.1719 12.8739 11.2812 13.5694 8C13.6467 7.76562 13.6467 7.45312 13.724 7.14062C13.8786 5.57812 13.3376 4.01562 12.2556 2.76562ZM7 9.48438C5.84069 9.48438 4.83595 8.54687 4.83595 7.29687C4.83595 6.04687 5.7634 5.10937 7 5.10937C8.2366 5.10937 9.16405 6.04687 9.16405 7.29687C9.16405 8.54687 8.15931 9.48438 7 9.48438Z"
+                  fill="#D35252"
+                />
               </svg>
               UI/UX Designer
             </p>
-            <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45.</p>
+            <p>
+              Contrary to popular belief, Lorem Ipsum is not simply random text.
+              It has roots in a piece of classical Latin literature from 45.
+            </p>
           </div>
         </div>
 
         <div className="flex justify-end w-1/3 " role="group">
-
           <div className="cursor-pointer w-12 h-12 bg-primary-50 flex justify-center items-center rounded-md ml-2 ease-in-out duration-300 hover:bg-primary-400">
-            <svg className=" w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path></svg>
+            <svg
+              className=" w-7 h-7 text-white"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
+                clip-rule="evenodd"
+              ></path>
+            </svg>
           </div>
 
           <div className="cursor-pointer w-12 h-12 bg-primary-50 flex justify-center items-center rounded-md ml-2 duration-300 hover:bg-primary-400">
-            <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path></svg>
+            <svg
+              className="w-7 h-7 text-white"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
+                clip-rule="evenodd"
+              ></path>
+            </svg>
           </div>
           <div className="cursor-pointer w-12 h-12 bg-primary-50 flex justify-center items-center rounded-md ml-2 duration-300 hover:bg-primary-400">
-            <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path></svg>
+            <svg
+              className="w-7 h-7 text-white"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
+                clip-rule="evenodd"
+              ></path>
+            </svg>
           </div>
         </div>
-
       </section>
-
-
 
       <section className="flex justify-center">
-
-
         <div className="inline-flex py-4 text-white text-center">
-
           <div className="border-r border-color-ass px-5 last:border-0">
             <strong className="display-block font-bold text-[22px]">0</strong>
-            <span >Views</span>
+            <span>Views</span>
           </div>
 
           <div className="border-r border-color-ass px-5 last:border-0">
             <strong class="display-block font-bold text-[22px]">0</strong>
-            <span >Followers</span>
+            <span>Followers</span>
           </div>
 
           <div className="border-r border-color-ass px-5 last:border-0">
             <strong class="display-block font-bold text-[22px]">0</strong>
-            <span >Works</span>
+            <span>Works</span>
           </div>
-
-
-
         </div>
-
-
-
       </section>
-
-
-
 
       <section className="flex justify-between">
+        <button type="button" class="btn-primary sm">
+          Create New <i class="fa-thin fa-square-plus ml-1"></i>
+        </button>
 
-        <button type="button" class="btn-primary sm">Create New <i class="fa-thin fa-square-plus ml-1"></i></button>
-
-        <button type="button" class="btn-outline-primary sm">Sort By <i class="fa-thin fa-arrow-down-short-wide ml-1"></i></button>
+        <button type="button" class="btn-outline-primary sm">
+          Sort By <i class="fa-thin fa-arrow-down-short-wide ml-1"></i>
+        </button>
       </section>
 
-
-
-
-
-
-
-
       <div className="py-3 grid gap-4 grid-cols-1 sm:grid-cols-6 md:grid-cols-3 lg:grid-cols-4 ">
+        {/* <Card />
+
 
         <Card />
 
-
-        <Card />
-
         <Card />
         <Card />
-        <Card />
-
-
+        <Card /> */}
       </div>
-
-
-
 
       <div className={!isLoading ? "" : "loading"}></div>
       {!isLoading && (

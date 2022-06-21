@@ -18,7 +18,8 @@ import { useHistory } from "react-router-dom";
 import { getUserInfo } from "../../services/User/userService";
 import { useDispatch } from "react-redux";
 import { setUserInfo } from "../../Slice/userSlice";
-const WalletConnectModal = ({ showModal, closeModal }) => {
+import { navigate } from "@storybook/addon-links";
+const WalletConnectModal = ({ showModal, closeModal, navigateToPage }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const context = useAuthState();
@@ -85,7 +86,11 @@ const WalletConnectModal = ({ showModal, closeModal }) => {
         userinfoResponse["display_name"] &&
         userinfoResponse["display_name"].length > 0
       ) {
-        history.push(`/profile/${localStorage.getItem("user_id")}`);
+        if (navigateToPage) {
+          history.push(`/${navigateToPage}`);
+        } else {
+          history.push(`/profile/${localStorage.getItem("user_id")}`);
+        }
       } else {
         history.push("/profile-settings");
       }
@@ -226,6 +231,7 @@ const WalletConnectModal = ({ showModal, closeModal }) => {
             isLoading ? "loading" : ""
           }`}
         >
+          {navigateToPage}
           <div className="mt-[10px] font-black text-[28px] ">
             Connect wallet
           </div>
