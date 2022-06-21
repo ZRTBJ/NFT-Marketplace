@@ -16,6 +16,7 @@ const Header = () => {
   const [showModal, setShowModal] = useState(false);
   const [showSideBar, setShowSideBar] = useState(false);
   const userinfo = useSelector((state) => state.user.userinfo);
+  const loggedIn = useSelector((state) => state.user.loggedIn);
   function showHideUserPopup() {
     const userDropDown = document.getElementById("userDropDown");
     userDropDown.classList.toggle("hidden");
@@ -81,7 +82,7 @@ const Header = () => {
                 What’s Creabo
               </li>
               <li className="md:!ml-2.5">
-                {userId ? (
+                {loggedIn ? (
                   <div className="flex space-x-2">
                     {/* <div className="relative w-10 h-16 pt-4">
                       <span className="cursor-pointer">
