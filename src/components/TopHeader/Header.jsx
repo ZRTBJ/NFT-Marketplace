@@ -8,6 +8,7 @@ import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useAuthState } from "Context";
 import WalletConnectModal from "components/modalDialog/WalletConnectModal";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const history = useHistory();
@@ -139,7 +140,7 @@ const Header = () => {
                   </li>
 
                   <li>
-                    <a href="#">
+                    <Link to="/profile-settings">
                       <svg
                         width="20"
                         height="21"
@@ -152,7 +153,7 @@ const Header = () => {
                           fill="white"
                         />
                       </svg>
-                    </a>
+                    </Link>
                   </li>
 
                   <li className="relative">
