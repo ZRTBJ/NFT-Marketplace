@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import "assets/css/profile.css";
 import profile from "assets/images/profile/profile.svg";
+import profileDummy from "assets/images/profile/profile-dummy.svg";
 import locationIcon from "assets/images/profile/locationIcon.svg";
 import Tab from "components/profile/Tab";
 import {
@@ -163,11 +164,25 @@ const Profile = () => {
     <div className="container mx-auto">
 
 
+
+      <section className="mb-4">
+        <img src={profileDummy} className="rounded-3xl object-cover h-[212px] w-full" alt="Profile Cover image" />
+
+        {/* 
+         for no image 
+        <div className="rounded-3xl h-[212px] w-full bg-white-shade-800"></div> */}
+
+      </section>
+
+
+
+
       <section className="flex py-4">
 
         <div className="w-2/3 flex text-white">
-          <img className="rounded-lg" src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg" width={98} height={98} alt="Muhammad Rifat Abubakar" />
-          <div className="px-4">
+
+          <img className="rounded-lg self-start" src={profile} width={98} height={98} alt="Muhammad Rifat Abubakar" />
+          <div className="flex-1 px-4">
             <h1 className="-mt-1 mb-2 flex">
               Muhammad Rifat Abubakar
               <svg className="mt-2 ml-2" width="26" height="25" viewBox="0 0 26 25" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -192,19 +207,63 @@ const Profile = () => {
           </div>
         </div>
 
-        <div class="flex justify-end w-1/3" role="group">
-          <div className="cursor-pointer w-7 h-7 bg-primary-50 flex justify-center items-center rounded-md ml-1">
-            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path></svg>
+        <div className="flex justify-end w-1/3 " role="group">
+
+          <div className="cursor-pointer w-12 h-12 bg-primary-50 flex justify-center items-center rounded-md ml-2 ease-in-out duration-300 hover:bg-primary-400">
+            <svg className=" w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path></svg>
           </div>
-          <div className="cursor-pointer w-7 h-7 bg-primary-50 flex justify-center items-center rounded-md ml-1">
-            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path></svg>
+
+          <div className="cursor-pointer w-12 h-12 bg-primary-50 flex justify-center items-center rounded-md ml-2 duration-300 hover:bg-primary-400">
+            <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path></svg>
           </div>
-          <div className="cursor-pointer w-7 h-7 bg-primary-50 flex justify-center items-center rounded-md ml-1">
-            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path></svg>
+          <div className="cursor-pointer w-12 h-12 bg-primary-50 flex justify-center items-center rounded-md ml-2 duration-300 hover:bg-primary-400">
+            <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path></svg>
           </div>
         </div>
 
       </section>
+
+
+
+      <section className="flex justify-center">
+
+
+        <div className="inline-flex py-4 text-white text-center">
+
+          <div className="border-r border-color-ass px-5 last:border-0">
+            <strong className="display-block font-bold text-[22px]">0</strong>
+            <span >Views</span>
+          </div>
+
+          <div className="border-r border-color-ass px-5 last:border-0">
+            <strong class="display-block font-bold text-[22px]">0</strong>
+            <span >Followers</span>
+          </div>
+
+          <div className="border-r border-color-ass px-5 last:border-0">
+            <strong class="display-block font-bold text-[22px]">0</strong>
+            <span >Works</span>
+          </div>
+
+
+
+        </div>
+
+
+
+      </section>
+
+
+
+
+      <section className="flex justify-between">
+
+        <button type="button" class="btn-primary sm">Create New <i class="fa-thin fa-square-plus ml-1"></i></button>
+
+        <button type="button" class="btn-outline-primary sm">Sort By <i class="fa-thin fa-arrow-down-short-wide ml-1"></i></button>
+      </section>
+
+
 
 
 
@@ -216,7 +275,11 @@ const Profile = () => {
         <Card />
 
 
+        <Card />
 
+        <Card />
+        <Card />
+        <Card />
 
 
       </div>

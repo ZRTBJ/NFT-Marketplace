@@ -1,5 +1,4 @@
 import { useState } from "react";
-import "assets/css/tab.css";
 import ProjectCard from "./ProjectCard";
 import WorkCard from "./WorkCard";
 import CollectionCard from "./CollectionCard";
@@ -17,21 +16,21 @@ const Tab = (props) => {
   return (
     <div>
       <div className="container px-4 mx-auto">
-        <div className="buttonGroup">
+        <div className="flex flex-wrap justify-center">
           {props.tabs.map((type) => (
             <button
-              className={`max-w-[418px] ${
-                active.name === type.name ? "activeBUttonTab" : ""
-              }`}
+              className={`text-white-shade-600 p-3 hover:text-primary-900 active:text-primary-900 ${active.name === type.name ? "text-primary-900" : ""
+                }`}
               key={type.id}
               onClick={() => setActive(type)}
             >
               {type.name}
+              <span className="bg-primary-50 text-color-ass-1 p-1 ml-1 rounded-sm text-sm">23</span>
             </button>
           ))}
         </div>
       </div>
-      <div className="tabDivider"></div>
+
       <div className="tabContent">
         {active.name === "PROJECT" && (
           <div className="container mx-auto">

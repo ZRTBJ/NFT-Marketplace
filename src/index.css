@@ -1,9 +1,10 @@
 @import url('assets/fonts/WEB/css/satoshi.css');
 
-/* @tailwind base; */
-@tailwind components;
+/* @tailwind base;
+@tailwind components; */
 @tailwind utilities;
 @import "./assets/css/layer-base/typography.css";
+@import "./assets/css/layer-components/component.css";
 
 
 
@@ -12,7 +13,7 @@ body {
   padding: 0;
 }
 
-.btn-primary {
+/* .btn-primary {
   background: linear-gradient(128.96deg, #df9b5d 17.26%, #9a5aff 93.04%);
   color: #ffffff;
   border-radius: 8px;
@@ -21,7 +22,7 @@ body {
   padding: 0 10px;
   font-size: medium;
   font-weight: 500;
-}
+} */
 
 .cp {
   cursor: pointer;
