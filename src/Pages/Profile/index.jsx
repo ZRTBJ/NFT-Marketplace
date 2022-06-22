@@ -3,6 +3,8 @@ import "assets/css/profile.css";
 import profile from "assets/images/profile/profile.svg";
 import profileDummy from "assets/images/profile/profile-dummy.svg";
 import locationIcon from "assets/images/profile/locationIcon.svg";
+import noProject from "assets/images/profile/no-project.svg";
+import emptyProject from "assets/images/profile/empty-project.svg";
 import Tab from "components/profile/Tab";
 import {
   getUserProjectListById,
@@ -258,9 +260,9 @@ const Profile = () => {
 
       <section className="flex justify-between">
 
-        <button type="button" class="btn-primary sm">Create New <i class="fa-thin fa-square-plus ml-1"></i></button>
+        <button type="button" class="btn btn-primary btn-sm">Create New <i class="fa-thin fa-square-plus ml-1"></i></button>
 
-        <button type="button" class="btn-outline-primary sm">Sort By <i class="fa-thin fa-arrow-down-short-wide ml-1"></i></button>
+        <button type="button" class="btn btn-outline-primary btn-sm">Sort By <i class="fa-thin fa-arrow-down-short-wide ml-1"></i></button>
       </section>
 
 
@@ -285,6 +287,18 @@ const Profile = () => {
       </div>
 
 
+      {/* no project */}
+      <section className="text-center my-7 lg:my-40">
+        <img className="inline-block mb-7" src={noProject} alt="This user haven’t create any Project." />
+        <div className="text-color-ass-2 font-bold text-[26px]">This user haven’t create any Project.</div>
+      </section>
+
+
+      <section className="text-center my-7 lg:my-40">
+        <img className="inline-block mb-7" src={emptyProject} alt="This user haven’t create any Project." />
+        <div className="text-color-ass-2 font-bold text-[26px]">You Doesnt have any Project.<br /> let’s go create new project!</div>
+        <button type="button" class="btn-outline-primary-gradient btn-sm mt-5"><span>Create New <i class="fa-thin fa-square-plus ml-2"></i></span></button>
+      </section>
 
 
       <div className={!isLoading ? "" : "loading"}></div>
