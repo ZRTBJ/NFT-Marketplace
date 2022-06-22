@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   status: "idle",
   userinfo: {},
+  loggedIn: false,
 };
 
 const userSlice = createSlice({
@@ -13,6 +14,7 @@ const userSlice = createSlice({
     },
     setUserDetails(state, action) {
       state.userinfo = action.payload;
+      state.loggedIn = true;
       state.status = "idle";
     },
   },

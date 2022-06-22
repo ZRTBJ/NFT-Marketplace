@@ -9,8 +9,9 @@ export async function getUserProjectListById(payload) {
 export async function getPublicProjectList(payload) {
   if (payload) {
     let limit = `${payload.limit ? `limit=${payload.limit}` : ""}`;
-    let order_by = `${payload.order_by ? `order_by=${payload.order_by}` : ""}`;
-    return await client("GET", `/project?${limit}${order_by}`);
+    let page = `${payload.page ? `page=${payload.page}&` : ""}`;
+    let order_by = `${payload.order_by ? `order_by=${payload.order_by}&` : ""}`;
+    return await client("GET", `/project?${order_by}${page}${limit}`);
   } else {
     return await client("GET", `/project`);
   }

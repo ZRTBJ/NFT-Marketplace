@@ -33,15 +33,13 @@ const UserDropDownMenu = () => {
 
   function handleLogout() {
     logout(dispatch);
-    showHideUserPopup();
+    // showHideUserPopup();
     history.push("/");
     window.location.reload();
   }
 
   return (
     <>
-
-
       {/* <div className="wallet">
         <h3> WALLET</h3>
         <h5>
@@ -60,53 +58,50 @@ const UserDropDownMenu = () => {
         </a>
       </div> */}
 
-
-
-
       <div className="w-52  bg-dark-background  rounded-b-xl absolute top-10 right-0">
-
         <div className="pl-10 pr-3 py-3 border-b border-black-shade-800">
           <h3 className="text-white text-sm  mb-6 ">Wallet</h3>
           <p className="text-white flex content-center mb-2">
-            <img src={metamaskIcon} alt="mask" width={21} height={21} className="mr-2" />
+            <img
+              src={metamaskIcon}
+              alt="mask"
+              width={21}
+              height={21}
+              className="mr-2"
+            />
             <span>Total Balance </span>
           </p>
-          <h4 className="text-white text-xl  mb-6 tracking-wide">180.00 USDT</h4>
+          <h4 className="text-white text-xl  mb-6 tracking-wide">
+            180.00 USDT
+          </h4>
           <a className="btn-fund" href="#">
             <span>Add Funds</span>
           </a>
         </div>
 
         <div className="pl-10 pr-3 py-3">
-          <a href="#" className="text-white flex content-center font-extrabold text-sm ">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+          <div
+            onClick={handleLogout}
+            className="text-white flex content-center font-extrabold text-sm cursor-pointer"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+              />
             </svg>
             <span className="ml-2">Log Out</span>
-          </a>
+          </div>
         </div>
-
       </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
       {/* <div className="py-3 px-4 text-white">
         <div className="inline-flex items-center justify-center">

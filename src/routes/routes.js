@@ -68,7 +68,7 @@ const routes = [
   {
     path: "/project-details/:id",
     component: projectDetails,
-    isPrivate: true,
+    isPrivate: false,
   },
   {
     path: "/all-project",

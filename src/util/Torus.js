@@ -6,6 +6,7 @@ let torusAccount = null;
 const torus = new Torus({});
 
 export async function torusWalletLogin() {
+  const torus = new Torus({});
   await torus.init({
     enableLogging: false,
     network: {
