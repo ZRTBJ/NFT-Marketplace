@@ -7,6 +7,7 @@ import { ReactComponent as LikeIcon } from "assets/images/projectDetails/ico_lik
 import { ReactComponent as ViewIcon } from "assets/images/projectDetails/ico_view.svg";
 import locationIcon from "assets/images/profile/locationIcon.svg";
 import { useHistory } from "react-router-dom";
+import Slider from "components/slider/slider";
 
 export default function ProjectDetails(props) {
   const history = useHistory();
@@ -58,35 +59,54 @@ export default function ProjectDetails(props) {
   }
 
   return (
-    <div className={`my-4 ${isLoading ? "loading" : ""}`}>
-      {!isLoading && project && !project.name && (
-        <div className="text-center text-red-500">Project not Found</div>
-      )}
-      {!isLoading && project && project.name && (
-        <div>
-          <div className="ml-12 text-2xl font-bold">{project.name}</div>
-          <div className="py-4">
-            <img
-              src={
-                project?.assets[0]?.path
-                  ? project.assets[0].path
-                  : require(`assets/images/no-image-found.png`)
-              }
-              alt="cover"
-              className="w-full h-96"
-            />
-          </div>
-          <div className="float-right mr-10">
-            <div
-              className="relative bottom-10 left-1 rounded-full h-14 w-14 bg-[#B9CCD5] hover:bg-[#0AB4AF] grid grid-cols-1 content-center cursor-pointer"
-              onClick={LikeProject}
-            >
-              <LikeIcon className="ml-1.5" />
+    <>
+
+      <section className="flex content-center">
+
+        <div className="">
+
+        </div>
+
+        <div className=" max-w-full w-[553px] lg:h-[690px]">
+          <Slider />
+        </div>
+
+      </section>
+
+
+
+
+
+
+      <div className={`my-4 ${isLoading ? "loading" : ""}`}>
+        {!isLoading && project && !project.name && (
+          <div className="text-center text-red-500">Project not Found</div>
+        )}
+        {!isLoading && project && project.name && (
+          <div>
+            <div className="ml-12 text-2xl font-bold">{project.name}</div>
+            <div className="py-4">
+              <img
+                src={
+                  project?.assets[0]?.path
+                    ? project.assets[0].path
+                    : require(`assets/images/no-image-found.png`)
+                }
+                alt="cover"
+                className="w-full h-96"
+              />
             </div>
-            <div className="relative bottom-10 left-0 text-sm">Appreciate</div>
-          </div>
-          <div className="h-4"></div>
-          {/* <div className="flex flex-row mt-24 mx-8">
+            <div className="float-right mr-10">
+              <div
+                className="relative bottom-10 left-1 rounded-full h-14 w-14 bg-[#B9CCD5] hover:bg-[#0AB4AF] grid grid-cols-1 content-center cursor-pointer"
+                onClick={LikeProject}
+              >
+                <LikeIcon className="ml-1.5" />
+              </div>
+              <div className="relative bottom-10 left-0 text-sm">Appreciate</div>
+            </div>
+            <div className="h-4"></div>
+            {/* <div className="flex flex-row mt-24 mx-8">
             <div className="w-2/4 border border-gray-300 float-right">
               <div class="grid grid-cols-4 divide-x divide-gray-300 text-gray-400">
                 <div className="h-28 text-center">
@@ -132,7 +152,7 @@ export default function ProjectDetails(props) {
               </div>
             </div>
           </div> */}
-          {/* <div className="flex flex-row mt-8 mx-8">
+            {/* <div className="flex flex-row mt-8 mx-8">
             <div className="w-2/4">
               <div class="flex justify-center">
                 {project.voting_power === "TknW8" && (
@@ -202,84 +222,86 @@ export default function ProjectDetails(props) {
               </div>
             </div>
           </div> */}
-          <div className="text-center w-full my-8 border-t">
-            <div className="text-2xl font-semibold my-8">About Project</div>
-          </div>
-          <div className="flex flex-row mt-8 mx-8">
-            <div className="w-2/4 pr-8">
-              {!!project?.assets[1] && (
-                <img
-                  className="rounded-lg shadow-sm h-96 w-full"
-                  src={
-                    selectedImages?.path
-                      ? selectedImages.path
-                      : require(`assets/images/no-image-found-square.png`)
-                  }
-                  alt="user icon"
-                />
-              )}
-              <div className="flex flex-row mt-2">
-                {project &&
-                  project.assets &&
-                  project.assets.length > 0 &&
-                  project.assets.map((image, index) => (
-                    <>
-                      {index > 0 && (
-                        <img
-                          key={`project-image-${index}`}
-                          className={`rounded-lg shadow-sm h-24 w-30 mr-2 ${
-                            image.path === selectedImages?.path
+
+            <div className="text-center w-full my-8 border-t">
+              <div className="text-2xl font-semibold my-8">About Project</div>
+            </div>
+            <div className="flex flex-row mt-8 mx-8">
+              <div className="w-2/4 pr-8">
+                {!!project?.assets[1] && (
+                  <img
+                    className="rounded-lg shadow-sm h-96 w-full"
+                    src={
+                      selectedImages?.path
+                        ? selectedImages.path
+                        : require(`assets/images/no-image-found-square.png`)
+                    }
+                    alt="user icon"
+                  />
+                )}
+                <div className="flex flex-row mt-2">
+                  {project &&
+                    project.assets &&
+                    project.assets.length > 0 &&
+                    project.assets.map((image, index) => (
+                      <>
+                        {index > 0 && (
+                          <img
+                            key={`project-image-${index}`}
+                            className={`rounded-lg shadow-sm h-24 w-30 mr-2 ${image.path === selectedImages?.path
                               ? "border-4 border-[#0AB4AF]"
                               : ""
-                          }`}
-                          src={
-                            image.path
-                              ? image.path
-                              : require(`assets/images/no-image-found-square.png`)
-                          }
-                          alt={`project pic-${index}`}
-                          onClick={() => changeImagePreview(image)}
-                        />
-                      )}
-                    </>
-                  ))}
+                              }`}
+                            src={
+                              image.path
+                                ? image.path
+                                : require(`assets/images/no-image-found-square.png`)
+                            }
+                            alt={`project pic-${index}`}
+                            onClick={() => changeImagePreview(image)}
+                          />
+                        )}
+                      </>
+                    ))}
+                </div>
+              </div>
+              <div className="w-2/4">
+                <p>{project.overview}</p>
               </div>
             </div>
-            <div className="w-2/4">
-              <p>{project.overview}</p>
-            </div>
-          </div>
-          <div className="flex justify-center my-8 border-t">
-            <div className="bg-gray-200 text-center text-white h-14 w-1/4 rounded p-4 mr-2 mt-8">
-              TOKEN NOT SALE
-            </div>
-          </div>
-          <div className="flex justify-center">
-            <div className="mt-4 justify-center text-center">
-              <div className="rounded-full h-14 w-14 bg-[#B9CCD5] hover:bg-[#0AB4AF] grid grid-cols-1 content-center cursor-pointer m-4">
-                <LikeIcon className="ml-1.5" />
-              </div>
-              <div className="text-sm mt-1">Appreciate</div>
-            </div>
-            <div className="mt-4 justify-center text-center">
-              <div className="rounded-full h-14 w-14 bg-[#B9CCD5] hover:bg-[#0AB4AF] grid grid-cols-1 content-center cursor-pointer m-4">
-                <ViewIcon className="ml-1.5" />
-              </div>
-              <div className="text-sm mt-1">
-                {project?.project_view_count ? project.project_view_count : 0}
+            <div className="flex justify-center my-8 border-t">
+              <div className="bg-gray-200 text-center text-white h-14 w-1/4 rounded p-4 mr-2 mt-8">
+                TOKEN NOT SALE
               </div>
             </div>
-          </div>
-          <div
-            className="flex justify-center cursor-pointer"
-            onClick={() => history.push("/all-project")}
-          >
-            <div className="border rounded-full text-center text-black h-14 w-1/4 rounded p-4 mr-2 mt-8 hover:border-[#0AB4AF] hover:text-[#0AB4AF]">
-              Back to project list
+            <div className="flex justify-center">
+              <div className="mt-4 justify-center text-center">
+                <div className="rounded-full h-14 w-14 bg-[#B9CCD5] hover:bg-[#0AB4AF] grid grid-cols-1 content-center cursor-pointer m-4">
+                  <LikeIcon className="ml-1.5" />
+                </div>
+                <div className="text-sm mt-1">Appreciate</div>
+              </div>
+              <div className="mt-4 justify-center text-center">
+                <div className="rounded-full h-14 w-14 bg-[#B9CCD5] hover:bg-[#0AB4AF] grid grid-cols-1 content-center cursor-pointer m-4">
+                  <ViewIcon className="ml-1.5" />
+                </div>
+                <div className="text-sm mt-1">
+                  {project?.project_view_count ? project.project_view_count : 0}
+                </div>
+              </div>
+            </div>
+            <div
+              className="flex justify-center cursor-pointer"
+              onClick={() => history.push("/all-project")}
+            >
+              <div className="border rounded-full text-center text-black h-14 w-1/4 rounded p-4 mr-2 mt-8 hover:border-[#0AB4AF] hover:text-[#0AB4AF]">
+                Back to project list
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+
+    </>
   );
 }
