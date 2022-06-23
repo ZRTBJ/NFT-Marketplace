@@ -147,19 +147,38 @@
  * Input
  * ==============================================
  */
+input[type="number"],
+.debounceInput {
+  padding-left: 15px;
+  border: none;
+  background-color: #232032;
+  color: #9499ae;
+  font-size: 13px;
+  /* width: 100%; */
+  border-radius: 6px;
+  height: 42px;
+  width: 100%;
+}
 input,
 textarea {
   padding-left: 15px;
+  border: none;
+  background-color: #232032;
+  color: #9499ae;
+  font-size: 13px;
+  /* width: 100%; */
+  border-radius: 6px;
 }
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  border: 1px solid #0ab4af;
-  outline: #0ab4af;
+  border: 1px solid #232032;
+  outline: #232032;
+  background-color: #232032;
   padding-left: 15px;
 }
 textarea {
-  border: 1px solid #cccccc;
+  /* border: 1px solid #cccccc; */
   border-radius: 4px;
   width: 100%;
   padding-top: 15px;
@@ -167,11 +186,12 @@ textarea {
 }
 select {
   width: 100%;
-  height: 44px;
-  border: 1px solid #cccccc;
-  border-radius: 4px;
+  height: 42px;
+  border-radius: 6px;
   padding-left: 15px;
-  background-color: white;
+  background-color: #232032;
+  color: #9499ae;
+  font-size: 13px;
 }
 
 /**
@@ -184,8 +204,8 @@ select {
   content: "\00d7";
 }
 .validationTag {
-  font-family: "Roboto", sans-serif;
-  color: red;
+  /* font-family: "Roboto", sans-serif; */
+  color: #c82727;
 }
 .roboto {
   font-family: "Roboto", sans-serif;
