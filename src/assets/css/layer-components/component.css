@@ -73,4 +73,8 @@
         leading-7
         hover:bg-transparent;
     }
+
+    .btn-outline-primary-gradient.btn-md { 
+        height: 44px;
+     }
 }

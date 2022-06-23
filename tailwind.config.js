@@ -17,6 +17,7 @@ module.exports = {
         "color-ass": "#585858",
         "color-ass-1": "#787C8C",
         "color-ass-2": "#868686",
+        "color-asss-3": "#9F9F9F",
 
         primary: {
           50: '#231B39',

@@ -5,9 +5,12 @@ import {
 } from "services/project/projectService";
 import { ReactComponent as LikeIcon } from "assets/images/projectDetails/ico_like.svg";
 import { ReactComponent as ViewIcon } from "assets/images/projectDetails/ico_view.svg";
+import coverImg from "assets/images/projectDetails/cover.svg";
 import locationIcon from "assets/images/profile/locationIcon.svg";
 import { useHistory } from "react-router-dom";
 import Slider from "components/slider/slider";
+
+import Card from "components/profile/Card";
 
 export default function ProjectDetails(props) {
   const history = useHistory();
@@ -61,21 +64,85 @@ export default function ProjectDetails(props) {
   return (
     <>
 
-      <section className="flex content-center">
+      <main className="container mx-auto">
 
-        <div className="">
 
+        <section className="flex  justify-end py-7">
+          <button type="button" class="btn btn-outline-primary-gradient btn-md"><span>Edit Project</span> </button>
+        </section>
+
+
+
+        <section>
+          <img className="rounded-3xl w-full object-cover" src={coverImg} />
+        </section>
+
+
+
+
+        <section className="flex flex-col lg:flex-row py-5">
+
+          <div className="flex-1 flex items-center py-5">
+            <div className="pr-28">
+              <h1 className="text-white mb-6">Bored Ape Yatch Club</h1>
+
+              <div className="flex flex-wrap mb-6">
+                <a className="flex space-x-2 items-center text-white mr-4">
+                  <i className="fa-thin fa-eye"></i>
+
+                  <span className=" ml-1">120</span>
+                </a>
+
+                <a className="flex space-x-2 items-center text-white mr-4">
+                  <i class="fa-thin fa-heart"></i>
+
+                  <span className=" ml-1">120</span>
+                </a>
+
+                <a className="flex space-x-2 items-center text-white mr-4">
+                  <i class="fa-thin fa-bookmark"></i>
+
+                  <span className=" ml-1">120</span>
+                </a>
+              </div>
+              <p className="text-color-asss-3 text-sm font-satoshi-bold font-black mb-3">
+                It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal.It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal.
+              </p>
+              <p className="text-color-asss-3 text-sm font-satoshi-bold font-black mb-3">
+                It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal.
+              </p>
+            </div>
+          </div>
+
+          <div className="max-w-full w-[553px] lg:h-[690px] mx-auto">
+            <Slider />
+          </div>
+
+        </section>
+
+
+
+        <section className="flex justify-between p">
+
+          <button type="button" class="btn btn-primary btn-sm">MINT NFT <i class="fa-thin fa-square-plus ml-1"></i></button>
+
+          <button type="button" class="btn btn-outline-primary btn-sm">Sort By <i class="fa-thin fa-arrow-down-short-wide ml-1"></i></button>
+
+        </section>
+
+        <div className="py-3 grid gap-4 grid-cols-1 sm:grid-cols-6 md:grid-cols-3 lg:grid-cols-4 ">
+          <Card />
+
+
+          <Card />
+
+          <Card />
+          <Card />
+          <Card />
         </div>
 
-        <div className=" max-w-full w-[553px] lg:h-[690px]">
-          <Slider />
-        </div>
 
-      </section>
-
-
-
-
+      </main>
 
 
       <div className={`my-4 ${isLoading ? "loading" : ""}`}>

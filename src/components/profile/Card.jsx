@@ -7,15 +7,15 @@ const Card = ({ cardInfo }) => {
           <img className="rounded-lg" src={thumbIcon} alt="card image" />
         </a>
         <div className="p-5">
-          <a href="#">
+          {/* <a href="#">
             <h3 class="mb-2 tracking-tight text-color-grey">
               Project by mustrad face colony Track
             </h3>
-          </a>
+          </a> */}
 
-          {/* <p className="mt-4 text-color-grey">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p> */}
+          <p className="mt-4 text-color-grey text-white">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
 
-          <div class="mt-4">
+          {/* <div class="mt-4">
             <a
               href="#"
               className="inline-flex items-center mr-1 py-2 px-3 text-xs font-bold text-center text-color-gold bg-color-brown rounded-full ease-in-out duration-300 hover:text-color-brown hover:bg-color-gold focus:ring-4 focus:outline-none focus:ring-primary-300 "
@@ -29,9 +29,9 @@ const Card = ({ cardInfo }) => {
             >
               Member
             </a>
-          </div>
+          </div> */}
 
-          <div className="flex flex-wrap mt-4">
+          {/* <div className="flex flex-wrap mt-4">
             <a className="flex space-x-2 items-center text-white mr-4">
               <i className="fa-thin fa-eye"></i>
 
@@ -49,7 +49,7 @@ const Card = ({ cardInfo }) => {
 
               <span className=" ml-1">120</span>
             </a>
-          </div>
+          </div> */}
         </div>
       </div>
     </>
