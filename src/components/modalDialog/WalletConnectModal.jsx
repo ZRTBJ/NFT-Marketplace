@@ -18,7 +18,6 @@ import { useHistory } from "react-router-dom";
 import { getUserInfo } from "../../services/User/userService";
 import { useDispatch } from "react-redux";
 import { setUserInfo } from "../../Slice/userSlice";
-import { navigate } from "@storybook/addon-links";
 const WalletConnectModal = ({ showModal, closeModal, navigateToPage }) => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -77,7 +76,7 @@ const WalletConnectModal = ({ showModal, closeModal, navigateToPage }) => {
     let userinfoResponse;
     try {
       userinfoResponse = response["user"];
-    } catch {}
+    } catch { }
     dispatch(setUserInfo(userinfoResponse));
     setIsLoading(false);
     if (isNavigate === true) {
@@ -166,7 +165,7 @@ const WalletConnectModal = ({ showModal, closeModal, navigateToPage }) => {
     if (loc.protocol === "https:") {
       host = "wss:";
     }
-  } catch {}
+  } catch { }
   const socketUrl = `${host}//${config.WEB_SOKET}/ws`;
 
   const {
@@ -227,9 +226,8 @@ const WalletConnectModal = ({ showModal, closeModal, navigateToPage }) => {
         handleClose={() => closeModal()}
       >
         <div
-          className={`text-center px-[11px] md:px-[0px] text-[#FFFFFF] ${
-            isLoading ? "loading" : ""
-          }`}
+          className={`text-center px-[11px] md:px-[0px] text-[#FFFFFF] ${isLoading ? "loading" : ""
+            }`}
         >
           {navigateToPage}
           <div className="mt-[10px] font-black text-[28px] ">
