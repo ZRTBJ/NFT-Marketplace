@@ -65,7 +65,7 @@ export default function ProjectDetails(props) {
   return (
     <>
 
-      <main className="container mx-auto">
+      <main className="container mx-auto px-4">
 
 
         <section className="flex  justify-end py-7">
@@ -84,7 +84,7 @@ export default function ProjectDetails(props) {
         <section className="flex flex-col lg:flex-row py-5">
 
           <div className="flex-1 flex items-center py-5">
-            <div className="pr-28">
+            <div className="pr-4 lg:pr-28">
               <h1 className="text-white mb-6">Bored Ape Yatch Club</h1>
 
               <div className="flex flex-wrap mb-6">
@@ -163,33 +163,33 @@ export default function ProjectDetails(props) {
 
             <div className="bg-color-dark-1 rounded-3xl p-5 ">
               <h1 className="text-white  pb-4">Properties</h1>
-              <div className="flex justify-between">
-                <div className="rounded-3xl w-36 h-28  mr-4 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
-                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-4">
+              <div className="flex  flex-wrap">
+                <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
+                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
                     <p className="text-white-shade-600 text-sm">Background</p>
                     <h5 className="text-white">Green</h5>
                     <p className="text-white-shade-600 text-sm">Add 5% this trait</p>
                   </div>
                 </div>
 
-                <div className="rounded-3xl w-36 h-28  mr-4 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
-                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-4">
+                <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
+                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
                     <p className="text-white-shade-600 text-sm">Background</p>
                     <h5 className="text-white">Green</h5>
                     <p className="text-white-shade-600 text-sm">Add 5% this trait</p>
                   </div>
                 </div>
 
-                <div className="rounded-3xl w-36 h-28  mr-4 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
-                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-4">
+                <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
+                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
                     <p className="text-white-shade-600 text-sm">Background</p>
                     <h5 className="text-white">Green</h5>
                     <p className="text-white-shade-600 text-sm">Add 5% this trait</p>
                   </div>
                 </div>
 
-                <div className="rounded-3xl w-36 h-28  mr-4 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
-                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-4">
+                <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
+                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
                     <p className="text-white-shade-600 text-sm">Background</p>
                     <h5 className="text-white">Green</h5>
                     <p className="text-white-shade-600 text-sm">Add 5% this trait</p>
@@ -246,33 +246,33 @@ export default function ProjectDetails(props) {
 
             <div className="bg-color-dark-1 rounded-3xl p-5 ">
               <h1 className="text-white  pb-4">Properties</h1>
-              <div className="flex justify-between">
-                <div className="rounded-3xl w-36 h-28  mr-4 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
-                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-4">
+              <div className="flex  flex-wrap">
+                <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
+                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
                     <p className="text-white-shade-600 text-sm">Background</p>
                     <h5 className="text-white">Green</h5>
                     <p className="text-white-shade-600 text-sm">Add 5% this trait</p>
                   </div>
                 </div>
 
-                <div className="rounded-3xl w-36 h-28  mr-4 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
-                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-4">
+                <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
+                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
                     <p className="text-white-shade-600 text-sm">Background</p>
                     <h5 className="text-white">Green</h5>
                     <p className="text-white-shade-600 text-sm">Add 5% this trait</p>
                   </div>
                 </div>
 
-                <div className="rounded-3xl w-36 h-28  mr-4 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
-                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-4">
+                <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
+                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
                     <p className="text-white-shade-600 text-sm">Background</p>
                     <h5 className="text-white">Green</h5>
                     <p className="text-white-shade-600 text-sm">Add 5% this trait</p>
                   </div>
                 </div>
 
-                <div className="rounded-3xl w-36 h-28  mr-4 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
-                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-4">
+                <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
+                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
                     <p className="text-white-shade-600 text-sm">Background</p>
                     <h5 className="text-white">Green</h5>
                     <p className="text-white-shade-600 text-sm">Add 5% this trait</p>
