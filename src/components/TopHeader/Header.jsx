@@ -38,7 +38,7 @@ const Header = () => {
     <div>
       <Sidebar show={showSideBar} handleClose={() => setShowSideBar(false)} />
       <nav className="border border-black">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center  min-h-[70px]">
           <div className="flex flex-wrap items-center">
             <button
               onClick={() => setShowSideBar(true)}
@@ -116,7 +116,7 @@ const Header = () => {
 
           <div className="w-auto mr-0 sm:mr-4" id="mobile-menu">
             <ul
-              className={`flex items-center justify-center md:flex-row md:space-x-8 md:text-sm md:font-medium ${userId ? "" : "sm:py-2"
+              className={`flex items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${userId ? "" : "sm:py-2"
                 }`}
             >
               {userinfo.id && (

@@ -131,7 +131,7 @@ export default function ProjectDetails(props) {
 
         </section>
 
-        <div className="py-3 grid gap-4 grid-cols-1 sm:grid-cols-6 md:grid-cols-3 lg:grid-cols-4 ">
+        <div className="py-3 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
           <Card />
 
 
