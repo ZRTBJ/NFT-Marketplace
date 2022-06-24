@@ -6,6 +6,7 @@ import {
 import { ReactComponent as LikeIcon } from "assets/images/projectDetails/ico_like.svg";
 import { ReactComponent as ViewIcon } from "assets/images/projectDetails/ico_view.svg";
 import coverImg from "assets/images/projectDetails/cover.svg";
+import manImg from "assets/images/projectDetails/man-img.svg";
 import locationIcon from "assets/images/profile/locationIcon.svg";
 import { useHistory } from "react-router-dom";
 import Slider from "components/slider/slider";
@@ -140,6 +141,150 @@ export default function ProjectDetails(props) {
           <Card />
           <Card />
         </div>
+
+
+        <section className="flex flex-col lg:flex-row py-5">
+
+          <div className="flex-1 pr-4">
+            <img src={manImg} className="rounded-3xl" alt="image" />
+          </div>
+
+          <div className="flex-1 flex flex-col justify-between">
+            <div className="bg-color-dark-1 rounded-3xl p-5 mb-2">
+              <h1 className="text-white  pb-4">Bored Ape #8295</h1>
+              <p className="text-white text-sm pb-4">Find it On</p>
+              <p className="text-white-shade-600 text-sm">Your NFT is not listed on any marketplace</p>
+            </div>
+
+            <div className="bg-color-dark-1 rounded-3xl p-5 mb-2">
+              <h1 className="text-white  pb-4">Description</h1>
+              <p className="text-white-shade-600 text-sm pb-4">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. It is a long established fact that a reader will be distracted by</p>
+            </div>
+
+            <div className="bg-color-dark-1 rounded-3xl p-5 ">
+              <h1 className="text-white  pb-4">Properties</h1>
+              <div className="flex justify-between">
+                <div className="rounded-3xl w-36 h-28  mr-4 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
+                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-4">
+                    <p className="text-white-shade-600 text-sm">Background</p>
+                    <h5 className="text-white">Green</h5>
+                    <p className="text-white-shade-600 text-sm">Add 5% this trait</p>
+                  </div>
+                </div>
+
+                <div className="rounded-3xl w-36 h-28  mr-4 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
+                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-4">
+                    <p className="text-white-shade-600 text-sm">Background</p>
+                    <h5 className="text-white">Green</h5>
+                    <p className="text-white-shade-600 text-sm">Add 5% this trait</p>
+                  </div>
+                </div>
+
+                <div className="rounded-3xl w-36 h-28  mr-4 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
+                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-4">
+                    <p className="text-white-shade-600 text-sm">Background</p>
+                    <h5 className="text-white">Green</h5>
+                    <p className="text-white-shade-600 text-sm">Add 5% this trait</p>
+                  </div>
+                </div>
+
+                <div className="rounded-3xl w-36 h-28  mr-4 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
+                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-4">
+                    <p className="text-white-shade-600 text-sm">Background</p>
+                    <h5 className="text-white">Green</h5>
+                    <p className="text-white-shade-600 text-sm">Add 5% this trait</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+
+        </section>
+
+        <section>
+          <div className="bg-color-dark-1 rounded-3xl p-5 mb-4 lg:w-2/5">
+            <div className="flex text-white mb-3">
+              <div className="font-bold w-1/3 flex justify-between mr-1"><span>Smart Contract </span><span>:</span></div>
+              <div className="text-ellipsis overflow-hidden flex-1 pr-4 relative">
+                Xysd29479q3hfu39238yXysd29479q3hfu39238yXysd29479q3hfu39238yXysd29479q3hfu39238y
+                <i class="fa-thin fa-copy cursor-pointer absolute top-1 right-0"></i>
+              </div>
+            </div>
+            <div className="flex text-white">
+              <div className="font-bold w-1/3 flex justify-between mr-1"><span>Token ID </span><span>:</span></div>
+              <div className="text-ellipsis overflow-hidden">12342</div>
+            </div>
+
+          </div>
+        </section>
+
+
+        <section className="flex flex-col lg:flex-row py-5">
+
+          <div className="flex-1 pr-4">
+            <img src={manImg} className="rounded-3xl" alt="image" />
+          </div>
+
+          <div className="flex-1 flex flex-col justify-between">
+            <div className="bg-color-dark-1 rounded-3xl p-5 mb-2">
+              <h1 className="text-white  pb-4">Bored Ape #8295</h1>
+              <p className="text-white text-sm pb-4">Find it On</p>
+
+              <div className="flex">
+                <button className="border border-color-blue rounded-xl p-5 text-color-blue font-semibold mr-4 hover:text-white hover:bg-color-blue"><i class="fa-regular fa-aperture mr-1"></i> Opensea</button>
+                <button className="border border-color-yellow rounded-xl p-5 text-color-yellow font-semibold hover:text-white hover:bg-color-yellow"><i class="fa-regular fa-square-r mr-1"></i> Rarible</button>
+              </div>
+
+            </div>
+
+            <div className="bg-color-dark-1 rounded-3xl p-5 mb-2">
+              <h1 className="text-white  pb-4">Description</h1>
+              <p className="text-white-shade-600 text-sm pb-4">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. It is a long established fact that a reader will be distracted by</p>
+            </div>
+
+            <div className="bg-color-dark-1 rounded-3xl p-5 ">
+              <h1 className="text-white  pb-4">Properties</h1>
+              <div className="flex justify-between">
+                <div className="rounded-3xl w-36 h-28  mr-4 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
+                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-4">
+                    <p className="text-white-shade-600 text-sm">Background</p>
+                    <h5 className="text-white">Green</h5>
+                    <p className="text-white-shade-600 text-sm">Add 5% this trait</p>
+                  </div>
+                </div>
+
+                <div className="rounded-3xl w-36 h-28  mr-4 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
+                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-4">
+                    <p className="text-white-shade-600 text-sm">Background</p>
+                    <h5 className="text-white">Green</h5>
+                    <p className="text-white-shade-600 text-sm">Add 5% this trait</p>
+                  </div>
+                </div>
+
+                <div className="rounded-3xl w-36 h-28  mr-4 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
+                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-4">
+                    <p className="text-white-shade-600 text-sm">Background</p>
+                    <h5 className="text-white">Green</h5>
+                    <p className="text-white-shade-600 text-sm">Add 5% this trait</p>
+                  </div>
+                </div>
+
+                <div className="rounded-3xl w-36 h-28  mr-4 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
+                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-4">
+                    <p className="text-white-shade-600 text-sm">Background</p>
+                    <h5 className="text-white">Green</h5>
+                    <p className="text-white-shade-600 text-sm">Add 5% this trait</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+
+        </section>
 
 
       </main>

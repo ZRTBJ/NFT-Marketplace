@@ -18,6 +18,9 @@ module.exports = {
         "color-ass-1": "#787C8C",
         "color-ass-2": "#868686",
         "color-asss-3": "#9F9F9F",
+        "color-dark-1": "#211E38",
+        "color-blue": "#2081E2",
+        "color-yellow": "#FEDA03",
 
         primary: {
           50: '#231B39',

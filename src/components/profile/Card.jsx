@@ -13,7 +13,7 @@ const Card = ({ cardInfo }) => {
             </h3>
           </a> */}
 
-          <p className="mt-4 text-color-grey text-white">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
+          <p className="mt-4 text-white  font-bold">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
 
           {/* <div class="mt-4">
             <a
