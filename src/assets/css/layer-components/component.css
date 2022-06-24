@@ -77,4 +77,43 @@
     .btn-outline-primary-gradient.btn-md { 
         height: 44px;
      }
+
+
+     /* form field */
+
+     .input-fld {
+        @apply py-1
+        px-3
+        w-[512px]
+        max-w-full
+        h-[42px]
+        rounded-md
+        bg-black-shade-800
+        text-white
+        mb-4;
+        font-size: 13px;
+        line-height: 24px;
+        letter-spacing: 0.03em;
+     }
+     .textarea-fld {
+        @apply  py-3
+        px-3
+        w-[512px]
+        max-w-full
+        h-[128px]
+        rounded-md
+        bg-black-shade-800
+        text-white
+        mb-4;
+        font-size: 13px;
+        line-height: 24px;
+        letter-spacing: 0.03em;
+     }
+
+     select.input-fld { 
+         appearance: none;
+         border-color: transparent;
+     }
+
+
 }

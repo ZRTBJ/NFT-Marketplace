@@ -1,17 +1,3 @@
-.swiper-slide {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-size: cover;
-  background-position: center;
-}
-
-.swiper {
-  width: 100%;
-  height: 553px;
-  margin-left: auto;
-  margin-right: auto;
-} 
 
 .big-img{
   height: 80%;
@@ -38,8 +24,8 @@
 .thumb-img .swiper-slide-thumb-active {
   opacity: 1;
 }
-
-.swiper-slide img {
+.big-img .swiper-slide img ,
+.thumb-img .swiper-slide img {
   display: block;
   width: 100%;
   height: 100%;
