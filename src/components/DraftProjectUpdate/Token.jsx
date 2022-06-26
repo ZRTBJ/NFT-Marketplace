@@ -11,6 +11,7 @@ export default function Token({
   alreadyTakenSymbol,
   onTokenSymbolChange,
   numberOfTokens,
+  emptyNumberOfToken,
   onNumberOfTokenChange,
 }) {
   return (
@@ -52,31 +53,35 @@ export default function Token({
           <div className="validationTag">Token symbol has already taken</div>
         )}
       </div>
-      <div className="md:flex flex-wrap items-center mb-6">
-        <div className="md:w-[65%] md:mr-4">
-          <div className="label">Number Of Tokens</div>
-          <input
-            className=""
-            id="number-of-tokens"
-            name="numberOfTokens"
-            value={numberOfTokens}
-            onChange={(event) => onNumberOfTokenChange(event.target.value)}
-            placeholder=""
-            type="number"
-            min="0"
-          />
-        </div>
-        <div className="md:mt-8">
-          <input
-            className=""
-            id="number-of-tokens"
-            name="numberOfTokens"
-            value={numberOfTokens}
-            onChange={(event) => onNumberOfTokenChange(event.target.value)}
-            placeholder="-"
-            type="number"
-            min="0"
-          />
+      <div className="mb-6">
+        <div className="label">Number Of Tokens</div>
+        <div className="label-grey">set your token supply</div>
+        <div className="md:flex ">
+          <div className="md:w-[65%] md:mr-4">
+            <input
+              className=""
+              id="number-of-tokens"
+              name="numberOfTokens"
+              value={numberOfTokens}
+              onChange={(event) => onNumberOfTokenChange(event.target.value)}
+              placeholder=""
+              type="number"
+              min="0"
+            />
+            {emptyNumberOfToken && (
+              <div className="validationTag">Number of tokens are required</div>
+            )}
+          </div>
+          <div className="mt-4">
+            <input
+              className=""
+              id="number-of-tokens"
+              name="numberOfTokens"
+              placeholder="-"
+              type="number"
+              min="0"
+            />
+          </div>
         </div>
       </div>
     </div>

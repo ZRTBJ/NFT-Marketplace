@@ -61,10 +61,7 @@ export default function Outline({
           minLength={1}
           debounceTimeout={300}
           onChange={(e) => onProjectNameChange(e.target.value)}
-          type="text"
-          className="projectNameInput"
-          name="projectNameLable"
-          id="projectNameLable"
+          className="debounceInput"
           value={projectName}
         />
         {emptyProjectName && (
@@ -82,28 +79,31 @@ export default function Outline({
           Add image up to 4 to showcase your project
         </div>
         <div className="md:flex flex-wrap mb-6">
-          <div className="md:w-[343px]">
+          <div className="w-full md:max-w-[186px]">
             <FileDragAndDrop
               maxFiles={4}
-              height="192px"
+              height="158px"
               onDrop={(e) => onPhotosSelect(e, photosUrl)}
               sizePlaceholder="Total upto 16MB"
               disabled={photosUrl.length > 3 ? true : false}
             />
           </div>
-          <div className="photoPreviewContainer mt-3 md:mt-0 md:w-[209px] md:pl-4 mx-12 md:mx-0 flex md:justify-between flex-wrap">
+          <div className="photoPreviewContainer mt-3 md:mt-0  md:max-w-[372px] md:pl-4 mx-12 md:mx-0 md:flex md:justify-between flex-wrap">
             {photosUrl.map((i) => (
-              <div key={i.path} className="relative m-2 md:m-0">
+              <div
+                key={i.path}
+                className="relative max-w-[158px] md:max-w-full m-2 md:m-0"
+              >
                 <img
                   alt=""
-                  className="outlinePhoto md:m-1 block"
+                  className="outlinePhoto md:m-1 block object-cover"
                   src={i.path}
                 />
                 <img
                   alt=""
                   src={deleteIcon}
                   onClick={() => onPhotosRemove(i)}
-                  className="absolute top-0 cp right-0"
+                  className="absolute top-0 cursor-pointer right-0"
                 />
               </div>
             ))}

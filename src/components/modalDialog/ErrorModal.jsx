@@ -8,7 +8,7 @@ const ErrorModal = ({ handleClose, show, title, message, buttomText }) => {
   const bodyMsg = message ? message : "Please try again.";
   return (
     <Modal
-      height={400}
+      height={450}
       width={800}
       show={show}
       handleClose={() => handleClose(false)}
@@ -19,7 +19,7 @@ const ErrorModal = ({ handleClose, show, title, message, buttomText }) => {
         <div className="my-8 text-xl font-bold  draftModalText">{titleMsg}</div>
         <div className="my-8 font-bold  draftModalText">{bodyMsg}</div>
         <button
-          className="w-44 h-12 bg-[#0AB4AF] rounded text-white"
+          className="btn-outline-primary h-[35px] px-4"
           onClick={() => handleClose(false)}
         >
           {btnText}
