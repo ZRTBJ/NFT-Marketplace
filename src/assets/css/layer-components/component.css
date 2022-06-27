@@ -1,24 +1,26 @@
 @import "tailwindcss/components";
-@layer components { 
-    .btn {
-        @apply
-        rounded-lg
+@layer components {
+  .btn {
+    @apply rounded-lg
         mb-2
         font-black 
         ease-in-out
         duration-300;
-    }
-    .btn-primary {
-        @apply text-white 
+  }
+  .btn-primary {
+    @apply text-white 
         text-lg
         focus:ring-4 
         focus:outline-none 
         focus:ring-blue-300 
         dark:focus:ring-blue-800;
-        background: linear-gradient(128.96deg, #df9b5d 17.26%, #9a5aff 93.04%);
+    background: linear-gradient(128.96deg, #df9b5d 17.26%, #9a5aff 93.04%);
   }
   .btn-primary:hover {
     background: linear-gradient(128.96deg, #9a5aff 17.26%, #df9b5d 93.04%);
+  }
+  .btn-primary:focus {
+    @apply ring-0;
   }
 
   .btn-outline-primary {
@@ -32,20 +34,20 @@
         hover:bg-primary-900;
   }
 
-    .btn-lg {
-        @apply px-8 
-        py-4 ;
-    }
+  .btn-lg {
+    @apply px-8 
+        py-4;
+  }
 
-    .btn-sm {
-         @apply px-4 
+  .btn-sm {
+    @apply px-4 
         py-2;
-    }
+  }
 
-    /* btn-outline-primary-gradient */
+  /* btn-outline-primary-gradient */
 
-    .btn-outline-primary-gradient {
-        @apply rounded-md
+  .btn-outline-primary-gradient {
+    @apply rounded-md
         relative
         z-10
         font-semibold
@@ -55,13 +57,16 @@
         min-h-[28px]
         min-w-[120px]
         hover:text-white;
-        padding: 1px;
-        background-image: linear-gradient(128.96deg, #DF9B5D 17.26%, #9A5AFF 93.04%);
-    }
+    padding: 1px;
+    background-image: linear-gradient(
+      128.96deg,
+      #df9b5d 17.26%,
+      #9a5aff 93.04%
+    );
+  }
 
-
-    .btn-outline-primary-gradient  span {
-        @apply items-center
+  .btn-outline-primary-gradient span {
+    @apply items-center
         bg-dark-background
         rounded-md
         flex
