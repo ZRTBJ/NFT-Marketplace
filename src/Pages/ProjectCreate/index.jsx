@@ -10,6 +10,7 @@ import {
   getPublishCost,
   getProjectDetailsById,
   tokenBreakdown,
+  deleteAssetsOfProject,
 } from "services/project/projectService";
 import { useHistory } from "react-router-dom";
 import LeftSideBar from "components/DraftProjectUpdate/LeftSideBar";
@@ -69,36 +70,85 @@ export default function ProjectCreate() {
     }
   }, []);
   function onCoverPhotoRemove() {
-    setCoverPhoto([]);
-    setCoverPhotoUrl("");
+    if (coverPhotoUrl.id) {
+      let payload = {
+        projectId: projectInfo.id,
+        assetsId: coverPhotoUrl.id,
+      };
+      deleteAssetsOfProject(payload).then((e) => {
+        setCoverPhoto([]);
+        setCoverPhotoUrl("");
+      });
+    } else {
+      setCoverPhoto([]);
+      setCoverPhotoUrl("");
+    }
   }
   // Cover photo end
 
   // photos start
-  const [photos, setPshotos] = useState([]);
+  const [photosLengthFromResponse, setPhotosLengthFromResponse] = useState(0);
+  const [remainingPhotosName, setRemainingPhotosName] = useState([]);
+  const [photos, setPhotos] = useState([]);
   const [photosUrl, setPhotosUrl] = useState([]);
-  const onPhotosSelect = useCallback((acceptedFiles) => {
-    let totalSize = 0;
-    acceptedFiles.forEach((element) => {
-      totalSize = totalSize + element.size;
-    });
-    if (totalSize > 16000000) {
-      alert("Size Exceed");
+  const onPhotosSelect = useCallback((params, photos) => {
+    if (photosLengthFromResponse + params.length > 4) {
+      alert("Maxmimum 4 photos");
     } else {
-      let objectUrl = [];
-      acceptedFiles.forEach((element) => {
-        objectUrl.push({
-          name: element.name,
-          path: URL.createObjectURL(element),
-        });
+      let totalSize = 0;
+      params.forEach((element) => {
+        totalSize = totalSize + element.size;
       });
-      setPshotos(acceptedFiles);
-      setPhotosUrl(objectUrl);
+      if (totalSize > 16000000) {
+        alert("Size Exceed");
+      } else {
+        let objectUrl = [];
+        params.forEach((element) => {
+          objectUrl.push({
+            name: element.name,
+            path: URL.createObjectURL(element),
+          });
+        });
+        let megred = [...photos, ...objectUrl];
+        setPhotosUrl(megred);
+        setPhotos(params);
+      }
     }
   }, []);
-  function onPhotosRemove(fileName) {
-    setPshotos(photos.filter((x) => x.name !== fileName.name));
-    setPhotosUrl(photosUrl.filter((x) => x.name !== fileName.name));
+  async function onPhotosRemove(i) {
+    if (i.id) {
+      let payload = {
+        projectId: projectInfo.id,
+        assetsId: i.id,
+      };
+      await deleteAssetsOfProject(payload).then((e) => {
+        setUpPhotos();
+      });
+    } else {
+      setPhotosUrl(photosUrl.filter((x) => x.name !== i.name));
+    }
+  }
+  async function setUpPhotos() {
+    let payload = {
+      id: projectInfo.id,
+    };
+    await getProjectDetailsById(payload).then((e) => {
+      let response = e.project;
+      let photosInfoData = response.assets.filter(
+        (x) => x.asset_purpose === "subphoto"
+      );
+      setPhotosLengthFromResponse(photosInfoData.length);
+      setPhotosUrl(photosInfoData);
+      let constPhotosName = ["img1", "img2", "img3", "img4"];
+      let photosname = [];
+      photosname = photosInfoData.map((e) => {
+        return e.name;
+      });
+      let remainingPhotosName = constPhotosName.filter(function (v) {
+        return !photosname.includes(v);
+      });
+      setRemainingPhotosName(remainingPhotosName);
+    });
   }
   // Photos End
 
@@ -500,18 +550,19 @@ export default function ProjectCreate() {
       name: projectName,
       category_id: projectCategory,
       id: id ? id : projectId,
-      cover: coverPhoto[0],
-      photos: photos,
+      cover: coverPhoto.length > 0 ? coverPhoto[0] : null,
+      photos: photos.length > 0 ? photos : null,
+      photosLengthFromResponse: photosLengthFromResponse,
+      remainingPhotosName: remainingPhotosName,
       overview: overview,
       tags: tagList.toString(),
-      need_member: needMember,
       roles: roleList.toString(),
       visibility: visibility,
       token_name: tokenName,
       token_symbol: tokenSymbol,
       token_amount_total: numberOfTokens,
     };
-    await updateProject("create", updatePayload);
+    await updateProject(updatePayload);
   }
   async function projectDetails(id) {
     let payload = {
@@ -525,6 +576,22 @@ export default function ProjectCreate() {
         setcurrentStep([1, 2, 3]);
         setPublishStep(1);
       }
+      let cover = response.assets.find((x) => x.asset_purpose === "cover");
+      setCoverPhotoUrl(cover ? cover : "");
+      let photosInfoData = response.assets.filter(
+        (x) => x.asset_purpose === "subphoto"
+      );
+      setPhotosLengthFromResponse(photosInfoData.length);
+      setPhotosUrl(photosInfoData);
+      let constPhotosName = ["img1", "img2", "img3", "img4"];
+      let photosname = [];
+      photosname = photosInfoData.map((e) => {
+        return e.name;
+      });
+      let remainingPhotosName = constPhotosName.filter(function (v) {
+        return !photosname.includes(v);
+      });
+      setRemainingPhotosName(remainingPhotosName);
     });
   }
   useEffect(() => {
