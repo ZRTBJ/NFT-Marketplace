@@ -14,12 +14,17 @@ const SuccessModal = ({ handleClose, show, message, buttomText }) => {
       <div className="text-center mt-2">
         <img className="block mx-auto" src={IconSuccess} alt="" />
         <div className="my-4 text-xl font-bold  text-white">{bodyMsg}</div>
-        <button
-          className="btn-outline-primary h-[35px] px-4"
-          onClick={() => handleClose(false)}
-        >
-          {btnText}
-        </button>
+        <div className="flex justify-center">
+          <a
+            className="btn-primary-outline-gradient w-[120px] h-[38px] rounded-lg mr-4 ml-5 cursor-pointer"
+            onClick={(e) => {
+              e.preventDefault();
+              handleClose(false);
+            }}
+          >
+            <span> {btnText}</span>
+          </a>
+        </div>
       </div>
     </Modal>
   );

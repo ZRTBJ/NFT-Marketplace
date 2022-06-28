@@ -102,7 +102,6 @@ const ProfileSettingsForm = () => {
   function addMoreWebLink() {
     const count = moreWebLink.length;
     setMoreWebLink([...moreWebLink, { title: `moreWebLink${count}` }]);
-    debugger;
   }
 
   function removeCoverPhoto() {
@@ -156,8 +155,8 @@ const ProfileSettingsForm = () => {
     updateUserInfo(userId, request)
       .then((res) => {
         if (res && res.code === 0) {
-          setShowErrorModal(true);
-          // setShowSuccessModal(true);
+          setShowErrorModal(false);
+          setShowSuccessModal(true);
           getUserDetails(userId);
         } else {
           setShowErrorModal(true);
@@ -430,13 +429,15 @@ const ProfileSettingsForm = () => {
         <div className="flex flex-wrap mb-6">
           <div className="w-full px-3 grid grid-cols-3">
             <div>
-              <button
-                type="button"
-                className="btn-outline-primary w-[120px] h-[38px] rounded-lg mr-4 ml-5"
-                onClick={addMoreWebLink}
+              <a
+                className="btn-primary-outline-gradient w-[120px] h-[38px] rounded-lg mr-4 ml-5 cursor-pointer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  addMoreWebLink();
+                }}
               >
-                Show More
-              </button>
+                <span>Show More</span>
+              </a>
             </div>
             <div className="text-right"></div>
             <div className="text-right">
