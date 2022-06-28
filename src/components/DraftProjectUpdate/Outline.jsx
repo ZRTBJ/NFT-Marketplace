@@ -88,7 +88,7 @@ export default function Outline({
               disabled={photosUrl.length > 3 ? true : false}
             />
           </div>
-          <div className="photoPreviewContainer mt-3 md:mt-0  md:max-w-[372px] md:pl-4 mx-12 md:mx-0 md:flex md:justify-between flex-wrap">
+          <div className="photoPreviewContainer mt-3 md:mt-0  md:max-w-[372px] md:pl-4  md:mx-0 flex md:justify-between flex-wrap">
             {photosUrl.map((i) => (
               <div
                 key={i.path}
@@ -96,14 +96,14 @@ export default function Outline({
               >
                 <img
                   alt=""
-                  className="outlinePhoto md:m-1 block object-cover"
+                  className="outlinePhoto md:m-1 block object-cover rounded rounded-[12px]"
                   src={i.path}
                 />
                 <img
                   alt=""
                   src={deleteIcon}
                   onClick={() => onPhotosRemove(i)}
-                  className="absolute top-0 cursor-pointer right-0"
+                  className="absolute top-0 cursor-pointer  right-0"
                 />
               </div>
             ))}
