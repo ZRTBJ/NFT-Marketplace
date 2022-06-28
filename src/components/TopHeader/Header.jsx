@@ -38,7 +38,7 @@ const Header = () => {
     <>
       <Sidebar show={showSideBar} handleClose={() => setShowSideBar(false)} />
       <nav className=" pl-10 pr-12">
-        <div className="flex justify-between items-center  min-h-[71px] bg-fuchsia-700">
+        <div className="flex justify-between items-center  min-h-[71px]">
           <div className="flex flex-wrap items-center flex-1">
             <button
               onClick={() => setShowSideBar(true)}
