@@ -38,7 +38,7 @@ const Header = () => {
     <>
       <Sidebar show={showSideBar} handleClose={() => setShowSideBar(false)} />
       <nav className="pl-5 pr-7 lg:pl-10 lg:pr-12">
-        <div className="flex justify-between items-center  min-h-[71px]">
+        <div className="flex justify-between items-center min-h-[71px]">
           <div className="flex flex-wrap items-center flex-1">
             <button
               onClick={() => setShowSideBar(true)}
@@ -79,7 +79,7 @@ const Header = () => {
               </div>
             </div>
 
-            <form className="mr-5 flex-1 hidden md:block">
+            <form className="mr-6 flex-1 hidden md:block">
               <label
                 for="default-search"
                 className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300"
@@ -242,6 +242,36 @@ const Header = () => {
             </ul>
           </div>
         </div>
+
+
+        <div className="md:hidden">
+
+          <form>
+            <label
+              for="default-search"
+              className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300"
+            >
+              Search
+            </label>
+            <div className="relative">
+              <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+                <i class="fa-regular fa-magnifying-glass text-white-shade-600"></i>
+              </div>
+              <input
+                type="search"
+                id="default-search"
+                className=" bg-color-ass-5 text-lg w-full w-100 text-white rounded-xl pl-10 h-10 placeholder-color-ass-4  focus:pl-10"
+                placeholder="Search your project by name"
+                required
+              />
+            </div>
+          </form>
+
+        </div>
+
+
+
+
       </nav>
       <WalletConnectModal showModal={showModal} closeModal={hideModal} />
     </>
