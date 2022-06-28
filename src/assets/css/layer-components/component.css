@@ -78,4 +78,41 @@
         leading-7
         hover:bg-transparent;
   }
+
+  .btn-primary-outline-gradient {
+    width: 114px;
+    height: 30px;
+    background-image: linear-gradient(
+      128.96deg,
+      #df9b5d 17.26%,
+      #9a5aff 93.04%
+    );
+    border-radius: 8px;
+    padding: 1px;
+    position: relative;
+    z-index: 0;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #df9b5d;
+  }
+
+  .btn-primary-outline-gradient:hover {
+    color: #fff;
+  }
+
+  .btn-primary-outline-gradient span {
+    align-items: center;
+    background: #161423;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    transition: background 0.5s ease;
+    width: 100%;
+  }
+
+  .btn-primary-outline-gradient:hover span {
+    background: transparent;
+  }
 }
