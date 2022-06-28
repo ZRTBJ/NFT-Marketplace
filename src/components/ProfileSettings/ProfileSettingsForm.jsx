@@ -11,40 +11,19 @@ import { getUserInfo } from "../../services/User/userService";
 import deleteIcon from "assets/images/projectCreate/ico_delete01.svg";
 import SuccessModal from "../modalDialog/SuccessModal";
 import ErrorModal from "../modalDialog/ErrorModal";
+import { func } from "prop-types";
 
 const ProfileSettingsForm = () => {
   const dispatch = useDispatch();
   const context = useAuthState();
-  const countryList = data ? JSON.parse(JSON.stringify(data.countries)) : [];
-  const [stateList, setStateList] = useState(countryList[0].states);
-  const [roleList, setRoleList] = useState([]);
   const [userId, setUserId] = useState(context ? context.user : "");
   const userinfo = useSelector((state) => state.user.userinfo);
   const [isLoading, setIsLoading] = useState(false);
   const [profileImage, setProfileImage] = useState({ image: null, path: "" });
-  const [websiteList, setWebsiteList] = useState([]);
-  const [sncList, setsncList] = useState([]);
-  const [coverPhotoUrl, setCoverPhotoUrl] = useState("");
-  const [coverPhoto, setCoverPhoto] = useState([]);
-  const [selectedSNC, setSelectedSNC] = useState();
+  const [coverPhoto, setCoverPhoto] = useState({ image: null, path: "" });
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
-
-  const socialLinks = [
-    { id: 0, title: "discord" },
-    { id: 1, title: "twitter" },
-    { id: 2, title: "facebook" },
-    { id: 3, title: "instagram" },
-    { id: 4, title: "youtube" },
-    { id: 5, title: "tumblr" },
-    { id: 6, title: "weibo" },
-    { id: 7, title: "spotify" },
-    { id: 8, title: "github" },
-    { id: 9, title: "behance" },
-    { id: 10, title: "dribbble" },
-    { id: 11, title: "opensea" },
-    { id: 12, title: "rarible" },
-  ];
+  const [moreWebLink, setMoreWebLink] = useState([]);
 
   const {
     register,
@@ -70,38 +49,39 @@ const ProfileSettingsForm = () => {
       setValue("displayName", userinfo["display_name"]);
       setValue("emailAddress", userinfo["email"]);
       setValue("biography", userinfo["biography"]);
-      try {
-        document.getElementById("location-country").value = userinfo["country"];
-        setCountry(userinfo["country"]);
-      } catch {}
+      setValue("jobDescription", userinfo["job"]);
       setValue("locationArea", userinfo["area"]);
-      setCoverPhotoUrl(userinfo["cover"]);
-      if (userinfo["job"]) {
-        setRoleList(userinfo["job"].split(","));
+      if (userinfo["avatar"] && userinfo["avatar"].length > 0) {
+        setProfileImage({ image: null, path: userinfo["avatar"] });
       }
+      if (userinfo["cover"] && userinfo["cover"].length > 0) {
+        setCoverPhoto({ image: null, path: userinfo["cover"] });
+      }
+
       if (userinfo["web"]) {
         try {
           const webs = JSON.parse(userinfo["web"]);
-          const weblist = [...webs].map((e) => ({
-            title: Object.keys(e)[0],
-            url: Object.values(e)[0],
-          }));
-          setWebsiteList(weblist);
-        } catch {
-          setWebsiteList([]);
+          for (let link of webs) {
+            setMoreWebLink([...moreWebLink, { title: Object.keys(link)[0] }]);
+          }
+          setTimeout(() => {
+            for (let link of webs) {
+              setValue(Object.keys(link)[0], Object.values(link)[0]);
+            }
+          }, 500);
+        } catch (ex) {
+          console.log(ex);
         }
       }
 
       if (userinfo["social"]) {
         try {
           const sociallinks = JSON.parse(userinfo["social"]);
-          const sncs = [...sociallinks].map((e) => ({
-            title: Object.keys(e)[0],
-            url: Object.values(e)[0],
-          }));
-          setsncList(sncs);
-        } catch {
-          setsncList([]);
+          for (let link of sociallinks) {
+            setValue(Object.keys(link)[0], Object.values(link)[0]);
+          }
+        } catch (ex) {
+          console.log(ex);
         }
       }
     } catch {}
@@ -109,81 +89,9 @@ const ProfileSettingsForm = () => {
     setIsLoading(false);
   }
 
-  function setCountry(selectedCountry) {
-    const country = countryList.find((x) => x.country === selectedCountry);
-    if (country) {
-      setStateList(country.states);
-    } else {
-      setStateList([]);
-    }
-  }
-
-  function handleCountrySelect(event) {
-    const selectedCountry = event.target.value;
-    const country = countryList.find((x) => x.country === selectedCountry);
-    if (country) {
-      setStateList(country.states);
-    } else {
-      setStateList([]);
-    }
-  }
-
-  function handleRoleChange(event) {
-    const value = event.target.value;
-    if (event.code === "Enter" && value.length > 0) {
-      setRoleList([...roleList, value]);
-      event.target.value = "";
-      event.preventDefault();
-    }
-  }
-
-  const handleRemoveRole = (index) => {
-    if (index >= 0) {
-      const newRoleList = [...roleList];
-      newRoleList.splice(index, 1);
-      setRoleList(newRoleList);
-    }
-  };
-
-  const handleRemoveWebsite = (index) => {
-    if (index >= 0) {
-      const newWebsiteList = [...websiteList];
-      newWebsiteList.splice(index, 1);
-      setWebsiteList(newWebsiteList);
-    }
-  };
-
-  const handleRemoveSnc = (index) => {
-    if (index >= 0) {
-      const newSncList = [...sncList];
-      newSncList.splice(index, 1);
-      setsncList(newSncList);
-    }
-  };
-
-  function profileImageChnageHandler(event) {
-    const img = event.target.files[0];
+  function profileImageChnageHandler(images) {
+    const img = images[0];
     setProfileImage({ image: img, path: URL.createObjectURL(img) });
-  }
-
-  function addWebsite() {
-    const title = document.getElementById("website");
-    const url = document.getElementById("website-url");
-    if (title.value && url.value) {
-      setWebsiteList([...websiteList, { title: title.value, url: url.value }]);
-      title.value = "";
-      url.value = "";
-    }
-  }
-
-  function addSNC() {
-    const title = selectedSNC ? selectedSNC.title : null;
-    const url = document.getElementById("snc-url");
-    if (title && url.value) {
-      setsncList([...sncList, { title: title, url: url.value }]);
-      url.value = "";
-      setSelectedSNC(undefined);
-    }
   }
 
   function showHideSNCPopup() {
@@ -191,47 +99,43 @@ const ProfileSettingsForm = () => {
     userDropDown.classList.toggle("hidden");
   }
 
-  function closeCoverPhoto() {
-    setCoverPhoto([]);
-    setCoverPhotoUrl("");
-    closeCoverPhotoPreview();
+  function addMoreWebLink() {
+    const count = moreWebLink.length;
+    setMoreWebLink([...moreWebLink, { title: `moreWebLink${count}` }]);
+    debugger;
+  }
+
+  function removeCoverPhoto() {
+    setCoverPhoto({ image: null, path: "" });
   }
 
   async function coverPhotoSelect(params) {
-    if (params.length === 1) {
-      setCoverPhoto(params);
-      onCoverDrop(params);
+    if (params.length > 0) {
+      setCoverPhoto({ image: params[0], path: URL.createObjectURL(params[0]) });
     }
   }
-
-  function closeCoverPhotoPreview() {
-    setCoverPhoto([]);
-  }
-
-  const onCoverDrop = useCallback((acceptedFiles) => {
-    setCoverPhoto(acceptedFiles);
-  }, []);
-
-  useEffect(() => {
-    let objectUrl = "";
-    if (coverPhoto.length === 1) {
-      objectUrl = URL.createObjectURL(coverPhoto[0]);
-      setCoverPhotoUrl(objectUrl);
-    }
-    return () => URL.revokeObjectURL(objectUrl);
-  }, [coverPhoto]);
 
   const onSubmit = (data) => {
-    const job = roleList.toString();
-    const web = [...websiteList].map((e) => ({ [e.title]: e.url }));
-    const social = [...sncList].map((e) => ({ [e.title]: e.url }));
+    const social = [];
+    social.push({ linkInsta: data["linkInsta"] });
+    social.push({ linkReddit: data["linkReddit"] });
+    social.push({ linkTwitter: data["linkTwitter"] });
+    social.push({ linkFacebook: data["linkFacebook"] });
+
+    const web = [];
+    web.push({ webLink1: data["webLink1"] });
+    for (let link of moreWebLink) {
+      if (data[link.title] && data[link.title].length > 0) {
+        web.push({ [link.title]: data[link.title] });
+      }
+    }
 
     const request = new FormData();
     request.append("first_name", data["firstName"]);
     request.append("last_name", data["lastName"]);
     request.append("display_name", data["displayName"]);
     request.append("email", data["emailAddress"]);
-    request.append("job", job);
+    request.append("job", data["jobDescription"]);
     request.append("area", data["locationArea"]);
     try {
       request.append(
@@ -243,8 +147,8 @@ const ProfileSettingsForm = () => {
     if (profileImage.image) {
       request.append("avatar", profileImage.image);
     }
-    if (coverPhoto[0]) {
-      request.append("cover", coverPhoto[0]);
+    if (coverPhoto) {
+      request.append("cover", coverPhoto.image);
     }
     request.append("web", JSON.stringify(web));
     request.append("social", JSON.stringify(social));
@@ -271,14 +175,284 @@ const ProfileSettingsForm = () => {
     /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
     <div className={`grid justify-items-center my-24`}>
       {isLoading && <div className="loading"></div>}
-      <h1 className="text-5xl font-bold mb-16">PROFILE</h1>
       <form
         id="profile-setting"
         name="profileSettingForm"
         className="w-full max-w-2xl"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <div className="flex flex-wrap mb-12">
+        <div className="text-[white]">
+          {/* name */}
+
+          {/* photo */}
+          <div>
+            <div className="text-xl font-semibold mb-4">
+              Set your profile Picture
+            </div>
+            <div className="label">Profile Picture</div>
+            <div className="label-grey">
+              Add your profile picture, yoiu can image you want like NFT or real
+              picture. and let user identify yourself
+            </div>
+            <div className="md:flex flex-wrap mb-6">
+              {profileImage && profileImage.path.length < 1 && (
+                <div className="w-full md:max-w-[186px]">
+                  <FileDragAndDrop
+                    maxFiles={4}
+                    height="158px"
+                    onDrop={(e) => profileImageChnageHandler(e)}
+                    sizePlaceholder="Total upto 16MB"
+                  />
+                </div>
+              )}
+              {profileImage && profileImage.path.length > 0 && (
+                <div className="relative max-w-[158px] md:max-w-full m-2 md:m-0">
+                  <img
+                    alt=""
+                    className="outlinePhoto md:m-1 block object-cover rounded-xl"
+                    src={profileImage.path}
+                  />
+                  <img
+                    alt=""
+                    src={deleteIcon}
+                    className="absolute top-0 cursor-pointer right-0"
+                    onClick={removeCoverPhoto}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* cover */}
+          <div className="mb-6">
+            <div className="label">Cover Photo</div>
+            <div className="label-grey">Add your Cover for project profile</div>
+            {coverPhoto && coverPhoto.path.length < 1 ? (
+              <FileDragAndDrop
+                maxFiles={1}
+                height="230px"
+                onDrop={(e) => coverPhotoSelect(e)}
+                sizePlaceholder="1300X600"
+                maxSize={4000000}
+              />
+            ) : (
+              <div className="relative">
+                <img
+                  className="coverPreview block rounded-xl"
+                  src={coverPhoto.path}
+                  alt=""
+                />
+                <img
+                  alt=""
+                  src={deleteIcon}
+                  className="absolute top-2 cp right-0"
+                  onClick={removeCoverPhoto}
+                />
+              </div>
+            )}
+          </div>
+          <div className="mb-4">
+            <div className="label">Username</div>
+            <div className="label-grey">
+              you can use your name or your nickname.
+            </div>
+            <input
+              className={`block w-full border ${
+                errors.displayName ? "border-red-500" : "border-dark-300"
+              } rounded py-3 px-4 mb-3 leading-tight ${
+                errors.displayName ? "focus:border focus:border-red-500" : ""
+              }`}
+              id="display-name"
+              name="displayName"
+              type="text"
+              placeholder="Username"
+              {...register("displayName", {
+                required: "Username is required.",
+              })}
+              defaultValue={userinfo ? userinfo["display_name"] : ""}
+            />
+            {errors.displayName && (
+              <p className="text-red-500 text-xs font-medium">
+                {errors.displayName.message}
+              </p>
+            )}
+          </div>
+          <div className="mb-4">
+            <div className="label">Location</div>
+            <div className="label-grey">add your location.</div>
+            <input
+              className={`block w-full border border-dark-300 rounded py-3 px-4 mb-3 leading-tight`}
+              id="location-area"
+              name="locationArea"
+              {...register("locationArea")}
+              type="text"
+              placeholder="Add location"
+              defaultValue={userinfo ? userinfo["area"] : ""}
+            />
+          </div>
+          <div className="mb-4">
+            <div className="label">Bio</div>
+            <div className="label-grey">
+              Tell your audience who you are, so they can easily knowing you.
+            </div>
+            <textarea
+              rows="6"
+              id="biography"
+              name="biography"
+              placeholder="Add your bio"
+              {...register("biography")}
+              className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none resize-none"
+              defaultValue={userinfo ? userinfo["biography"] : ""}
+            ></textarea>
+          </div>
+          <div className="mb-4">
+            <div className="label">Job Description</div>
+            <div className="label-grey">Add your description below.</div>
+            <input
+              className={`block w-full border border-dark-300 rounded py-3 px-4 mb-3 leading-tight`}
+              id="job"
+              name="jobDescription"
+              {...register("jobDescription")}
+              type="text"
+              placeholder="Add job description"
+              defaultValue={userinfo ? userinfo["job"] : ""}
+            />
+          </div>
+          <div className="mb-4">
+            <div className="label">Add Social Link</div>
+            <div className="label-grey">
+              Add your social media or link below.
+            </div>
+            <div className="inline-flex items-center w-full">
+              <img
+                className="cp mr-2 mb-3"
+                src={require(`assets/images/profile/social/insta-icon.png`)}
+                height={24}
+                width={24}
+                alt="social logo"
+              />
+              <input
+                className={`block w-full border border-dark-300 rounded py-3 px-4 mb-3 leading-tight`}
+                id="link-insta"
+                name="linkInsta"
+                {...register("linkInsta")}
+                type="text"
+                placeholder="https://"
+              />
+            </div>
+            <div className="inline-flex items-center w-full">
+              <img
+                className="cp mr-2 mb-3"
+                src={require(`assets/images/profile/social/reddit-icon.png`)}
+                height={24}
+                width={24}
+                alt="social logo"
+              />
+              <input
+                className={`block w-full border border-dark-300 rounded py-3 px-4 mb-3 leading-tight`}
+                id="link-reddit"
+                name="linkReddit"
+                {...register("linkReddit")}
+                type="text"
+                placeholder="https://"
+                defaultValue={""}
+              />
+            </div>
+            <div className="inline-flex items-center w-full">
+              <img
+                className="cp mr-2 mb-3"
+                src={require(`assets/images/profile/social/twitter-icon.png`)}
+                height={24}
+                width={24}
+                alt="social logo"
+              />
+              <input
+                className={`block w-full border border-dark-300 rounded py-3 px-4 mb-3 leading-tight`}
+                id="link-twitter"
+                name="linkTwitter"
+                {...register("linkTwitter")}
+                type="text"
+                placeholder="https://"
+                defaultValue={""}
+              />
+            </div>
+            <div className="inline-flex items-center w-full">
+              <img
+                className="cp mr-2 mb-3"
+                src={require(`assets/images/profile/social/facebook-icon.png`)}
+                height={24}
+                width={24}
+                alt="social logo"
+              />
+              <input
+                className={`block w-full border border-dark-300 rounded py-3 px-4 mb-3 leading-tight`}
+                id="link-facebook"
+                name="linkFacebook"
+                {...register("linkFacebook")}
+                type="text"
+                placeholder="https://"
+                defaultValue={""}
+              />
+            </div>
+            <div className="inline-flex items-center w-full">
+              <i class="fa fa-link mr-3 mb-3" aria-hidden="true"></i>
+              <input
+                className={`block w-full border border-dark-300 rounded py-3 px-4 mb-3 leading-tight`}
+                id="link-web"
+                name="webLink1"
+                {...register("webLink1")}
+                type="text"
+                placeholder="https://"
+                defaultValue={""}
+              />
+            </div>
+            {moreWebLink &&
+              moreWebLink.length > 0 &&
+              moreWebLink.map((link, index) => (
+                <div className="inline-flex items-center w-full">
+                  <i class="fa fa-link mr-3 mb-3" aria-hidden="true"></i>
+                  <input
+                    className={`block w-full border border-dark-300 rounded py-3 px-4 mb-3 leading-tight`}
+                    id={`more-link-web-${index}`}
+                    name={`moreWebLink${index}`}
+                    {...register(`moreWebLink${index}`)}
+                    type="text"
+                    placeholder="https://"
+                    defaultValue={""}
+                  />
+                </div>
+              ))}
+          </div>
+        </div>
+        <div className="flex flex-wrap mb-6">
+          <div className="w-full px-3 grid grid-cols-3">
+            <div>
+              <button
+                type="button"
+                className="btn-outline-primary w-[120px] h-[38px] rounded-lg mr-4 ml-5"
+                onClick={addMoreWebLink}
+              >
+                Show More
+              </button>
+            </div>
+            <div className="text-right"></div>
+            <div className="text-right">
+              <button
+                type="button"
+                className="btn-primary w-[80px] h-[38px] rounded-lg mr-4"
+              >
+                Skip
+              </button>
+              <button
+                type="submit"
+                className="btn-primary w-[100px] h-[38px] rounded-lg"
+              >
+                NEXT <i class="fa fa-angle-right" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        {/* <div className="flex flex-wrap mb-12">
           <div className="w-full grid grid-cols-3">
             <div></div>
             <div className="flex justify-center">
@@ -792,7 +966,7 @@ const ProfileSettingsForm = () => {
             </div>
             <div></div>
           </div>
-        </div>
+        </div> */}
       </form>
       {showSuccessModal && (
         <SuccessModal
