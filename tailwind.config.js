@@ -18,6 +18,8 @@ module.exports = {
         "color-ass-1": "#787C8C",
         "color-ass-2": "#868686",
         "color-asss-3": "#9F9F9F",
+        "color-ass-4": "#D0D0D0",
+        "color-ass-5": "#353535",
         "color-dark-1": "#211E38",
         "color-blue": "#2081E2",
         "color-yellow": "#FEDA03",
