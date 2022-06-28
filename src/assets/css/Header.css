@@ -93,6 +93,15 @@
   border: 5px solid currentColor;
 }
 
+@media only screen and (max-width: 1024px) {
+  .logo::after {
+    width: 48px;
+   right: 0px;
+   top:5px;
+  }
+}
+
+
 /* btn-fund */
 
 .btn-fund {

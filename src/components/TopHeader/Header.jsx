@@ -37,13 +37,13 @@ const Header = () => {
   return (
     <>
       <Sidebar show={showSideBar} handleClose={() => setShowSideBar(false)} />
-      <nav className=" pl-10 pr-12">
+      <nav className="pl-5 pr-7 lg:pl-10 lg:pr-12">
         <div className="flex justify-between items-center  min-h-[71px]">
           <div className="flex flex-wrap items-center flex-1">
             <button
               onClick={() => setShowSideBar(true)}
               type="button"
-              className="inline-flex items-center p-2  mr-12 cp rounded-lg hover:bg-primary-color focus:outline-none focus:ring-2 focus:ring-gray-200"
+              className="inline-flex items-center p-2 mr-5 lg:mr-12 cp rounded-lg hover:bg-primary-color focus:outline-none focus:ring-2 focus:ring-gray-200"
               aria-controls="side-menu"
               aria-expanded="false"
             >
@@ -73,9 +73,9 @@ const Header = () => {
                 ></path>
               </svg>
             </button>
-            <div className="cp mr-14" onClick={() => history.push("/")}>
-              <div className="text-white font-satoshi-bold font-black text-3xl relative pr-20 logo">
-                CREABO
+            <div className="cp mr-5 lg:mr-14" onClick={() => history.push("/")}>
+              <div className="text-white font-satoshi-bold font-black text-2xl lg:text-3xl relative pr-14 lg:pr-20 logo">
+                CREAB
               </div>
             </div>
 
@@ -104,11 +104,11 @@ const Header = () => {
           <div className="flex items-center" id="mobile-menu">
 
             {!userinfo.id && (
-              <h5 className="text-white">What’s Creabo</h5>
+              <h5 className="text-white mr-2 hidden md:block">What’s Creabo</h5>
             )}
 
             <ul
-              className={`hidden flex items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${userId ? "" : "sm:py-2"
+              className={`flex items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${userId ? "" : "sm:py-2"
                 }`}
             >
               {userinfo.id && (
