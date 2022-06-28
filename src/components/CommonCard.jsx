@@ -16,7 +16,7 @@ const CommonCard = ({ project }) => {
         <img
           className="rounded-lg w-full max-w-[301px] h-[301px] object-cover"
           src={
-            project.assets.length > 0
+            project && project.assets && project.assets.length > 0
               ? project.assets.find((x) => x.asset_purpose === "cover").path
               : thumbIcon
           }
