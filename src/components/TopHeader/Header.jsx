@@ -38,7 +38,7 @@ const Header = () => {
     <div>
       <Sidebar show={showSideBar} handleClose={() => setShowSideBar(false)} />
       <nav className="border border-black">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center py-3">
           <div className="flex flex-wrap items-center">
             <button
               onClick={() => setShowSideBar(true)}
