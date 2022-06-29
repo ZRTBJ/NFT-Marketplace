@@ -4,6 +4,7 @@
     @apply rounded-lg
         font-black 
         ease-in-out
+        font-satoshi-bold
         duration-300;
   }
   .btn-primary {
@@ -27,7 +28,6 @@
         border border-primary-900
         shadow
         shadow-primary-600   
-        font-black 
         text-base
         hover:text-white
         hover:bg-primary-900;
@@ -51,6 +51,7 @@
         z-10
         font-black
         text-lg
+        font-satoshi-bold
         tracking-tighter
         text-secondary-900
         min-h-[28px]
