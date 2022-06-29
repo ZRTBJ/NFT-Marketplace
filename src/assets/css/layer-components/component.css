@@ -49,8 +49,8 @@
     @apply rounded-md
         relative
         z-10
-        font-semibold
-        text-sm
+        font-black
+        text-lg
         tracking-tighter
         text-secondary-900
         min-h-[28px]

@@ -67,10 +67,11 @@ function Home() {
   }, []);
 
   return (
-    <div className="text-white">
-      <div className="text-center mt-[46px]">
+    <main className="container mx-auto px-4 text-white">
+      <section className="text-center  my-11">
         <HomeNavigateCard />
-      </div>
+      </section>
+
       <div className="mt-[26px] ml-4">
         <h2 className="mb-[36px]">Newest Project</h2>
         <Swiper
@@ -129,7 +130,7 @@ function Home() {
           )}
         </Swiper>
       </div>
-    </div>
+    </main>
   );
 }
 

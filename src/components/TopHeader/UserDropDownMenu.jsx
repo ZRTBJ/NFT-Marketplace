@@ -58,7 +58,7 @@ const UserDropDownMenu = () => {
         </a>
       </div> */}
 
-      <div className="w-screen md:w-52 h-screen md:h-auto  bg-dark-background md:shadow-lg rounded-b-xl absolute top-10 right-[-44px] md:right-0 z-20">
+      <div className="w-screen md:w-52 h-screen md:h-auto  bg-dark-background md:shadow-lg rounded-b-xl absolute top-8 right-[-44px] md:right-0 z-20">
         <div className="pl-10 pr-3 py-3 border-b border-black-shade-800">
           <h3 className="text-white text-sm  mb-6 ">Wallet</h3>
           <p className="text-white flex content-center mb-2">

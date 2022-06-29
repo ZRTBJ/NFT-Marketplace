@@ -39,7 +39,7 @@ const Header = () => {
       <Sidebar show={showSideBar} handleClose={() => setShowSideBar(false)} />
       <nav className="pl-5 pr-7 lg:pl-10 lg:pr-12">
         <div className="flex justify-between items-center min-h-[71px]">
-          <div className="flex flex-wrap items-center flex-1">
+          <div className="flex items-center flex-1">
             <button
               onClick={() => setShowSideBar(true)}
               type="button"
@@ -108,7 +108,7 @@ const Header = () => {
             )}
 
             <ul
-              className={`flex items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${userId ? "" : "sm:py-2"
+              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${userId ? "" : "sm:py-2"
                 }`}
             >
               {userinfo.id && (
@@ -129,6 +129,7 @@ const Header = () => {
                       </svg>
                     </a>
                   </li>
+
 
                   <li>
                     <Link to="/profile-settings">
