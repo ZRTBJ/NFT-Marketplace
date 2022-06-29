@@ -78,12 +78,12 @@ const Sidebar = ({ show, handleClose }) => {
 
 
           <a href="#" className="flex items-center font-satoshi-bold mb-2 px-7 py-4 font-bold text-primary-500 ease-in-out duration-300 hover:text-white rounded  active:bg-primary-500 active:text-white last:mt-auto">
-            <i class="fa-regular fa-file-plus"></i>
+            <i class="fa-regular fa-circle-plus"></i>
             <span class="ml-2"> Create Project</span>
           </a>
 
           <a href="#" className="flex items-center font-satoshi-bold mb-2 px-7 py-4 font-bold text-primary-500 ease-in-out duration-300 hover:text-white rounded  active:bg-primary-500 active:text-white last:mt-auto">
-            <i class="fa-regular fa-file-plus"></i>
+            <i class="fa-regular fa-cubes-stacked"></i>
             <span class="ml-2"> Ecosystem</span>
           </a>
 
