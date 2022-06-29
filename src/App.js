@@ -25,7 +25,7 @@ function App() {
               ))}
             </Switch>
           </div>
-          <FooterPage />
+          {/* <FooterPage /> */}
         </AuthProvider>
       </Router>
     </div>

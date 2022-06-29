@@ -72,12 +72,16 @@ function Home() {
         <HomeNavigateCard />
       </section>
 
-      <div className="mt-[26px] ml-4">
-        <h2 className="mb-[36px]">Newest Project</h2>
+      <section className="">
+        <h2 className="mb-5">Newest Project</h2>
         <Swiper
           breakpoints={{
+            320: {
+              slidesPerView: 2,
+              spaceBetween: 15,
+            },
             640: {
-              slidesPerView: 3,
+              slidesPerView: 2,
               spaceBetween: 30,
             },
             768: {
@@ -86,6 +90,10 @@ function Home() {
             },
             1024: {
               slidesPerView: 4,
+              spaceBetween: 30,
+            },
+            1536: {
+              slidesPerView: 5,
               spaceBetween: 30,
             },
           }}
@@ -100,13 +108,18 @@ function Home() {
             </div>
           )}
         </Swiper>
-      </div>
+      </section>
+
       <div className="mt-[26px] ml-4">
         <h2 className="mb-[36px]">Popular Project</h2>
         <Swiper
           breakpoints={{
+            320: {
+              slidesPerView: 2,
+              spaceBetween: 15,
+            },
             640: {
-              slidesPerView: 3,
+              slidesPerView: 2,
               spaceBetween: 30,
             },
             768: {
@@ -115,7 +128,11 @@ function Home() {
             },
             1024: {
               slidesPerView: 4,
-              spaceBetween: 10,
+              spaceBetween: 30,
+            },
+            1536: {
+              slidesPerView: 5,
+              spaceBetween: 30,
             },
           }}
         >
