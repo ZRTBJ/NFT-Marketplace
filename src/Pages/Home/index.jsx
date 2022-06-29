@@ -72,7 +72,7 @@ function Home() {
         <HomeNavigateCard />
       </section>
 
-      <section className="">
+      <section>
         <h2 className="mb-5">Newest Project</h2>
         <Swiper
           breakpoints={{
@@ -110,8 +110,8 @@ function Home() {
         </Swiper>
       </section>
 
-      <div className="mt-[26px] ml-4">
-        <h2 className="mb-[36px]">Popular Project</h2>
+      <section>
+        <h2 className="mb-5">Popular Project</h2>
         <Swiper
           breakpoints={{
             320: {
@@ -146,7 +146,7 @@ function Home() {
             </div>
           )}
         </Swiper>
-      </div>
+      </section>
     </main>
   );
 }
