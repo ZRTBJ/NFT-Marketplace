@@ -14,7 +14,7 @@ const CommonCard = ({ project }) => {
     >
       <div>
         <img
-          className="rounded-lg w-full max-w-[301px] h-[301px] object-cover"
+          className="rounded-lg w-full max-w-[301px] h-[137px] lg:h-[301px] object-cover"
           src={
             project && project.assets && project.assets.length > 0
               ? project.assets.find((x) => x.asset_purpose === "cover").path

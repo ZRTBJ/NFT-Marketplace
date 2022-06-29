@@ -35,15 +35,15 @@ const Header = () => {
     setShowModal(false);
   }
   return (
-    <div>
+    <>
       <Sidebar show={showSideBar} handleClose={() => setShowSideBar(false)} />
-      <nav className="border border-black">
-        <div className="flex justify-between items-center py-3">
-          <div className="flex flex-wrap items-center">
+      <nav className="pl-5 pr-7 lg:pl-10 lg:pr-12">
+        <div className="flex justify-between items-center min-h-[71px]">
+          <div className="flex items-center flex-1">
             <button
               onClick={() => setShowSideBar(true)}
               type="button"
-              className="inline-flex items-center p-2 ml-3 mr-3 cp text-sm text-gray-800 rounded-lg hover:bg-primary-color focus:outline-none focus:ring-2 focus:ring-gray-200"
+              className="inline-flex items-center p-2 mr-5 lg:mr-12 cp rounded-lg hover:bg-primary-color focus:outline-none focus:ring-2 focus:ring-gray-200"
               aria-controls="side-menu"
               aria-expanded="false"
             >
@@ -73,13 +73,13 @@ const Header = () => {
                 ></path>
               </svg>
             </button>
-            <div className="mx-auto cp" onClick={() => history.push("/")}>
-              <div className="text-left text-white font-semibold text-2xl mt-1 logo">
-                CREABO
+            <div className="cp mr-5 lg:mr-14" onClick={() => history.push("/")}>
+              <div className="text-white font-satoshi-bold font-black text-2xl lg:text-3xl relative pr-14 lg:pr-20 logo">
+                CREAB
               </div>
             </div>
 
-            <form className="search lg:ml-20 ml-5">
+            <form className="mr-6 flex-1 hidden md:block">
               <label
                 for="default-search"
                 className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300"
@@ -88,25 +88,12 @@ const Header = () => {
               </label>
               <div className="relative">
                 <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
-                  <svg
-                    className="w-5 h-5 text-gray-500 dark:text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    ></path>
-                  </svg>
+                  <i class="fa-regular fa-magnifying-glass text-white-shade-600"></i>
                 </div>
                 <input
                   type="search"
                   id="default-search"
-                  className="search-fld text-lg max-w-full text-white rounded-xl pl-10 h-10"
+                  className=" bg-color-ass-5 text-lg w-full max-w-[556px] text-white rounded-xl pl-10 h-10 placeholder-color-ass-4  focus:pl-10"
                   placeholder="Search your project by name"
                   required
                 />
@@ -114,11 +101,15 @@ const Header = () => {
             </form>
           </div>
 
-          <div className="w-auto mr-0 sm:mr-4" id="mobile-menu">
+          <div className="flex items-center" id="mobile-menu">
+
+            {!userinfo.id && (
+              <h5 className="text-white mr-2 hidden md:block">What’s Creabo</h5>
+            )}
+
             <ul
-              className={`flex items-center justify-center md:flex-row md:space-x-8 md:text-sm md:font-medium ${
-                userId ? "" : "sm:py-2"
-              }`}
+              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${userId ? "" : "sm:py-2"
+                }`}
             >
               {userinfo.id && (
                 <>
@@ -139,6 +130,7 @@ const Header = () => {
                     </a>
                   </li>
 
+
                   <li>
                     <Link to="/profile-settings">
                       <svg
@@ -157,7 +149,7 @@ const Header = () => {
                   </li>
 
                   <li className="relative">
-                    <div onClick={() => showHideUserPopupWallet()}>
+                    <div className="cp" onClick={() => showHideUserPopupWallet()}>
                       <svg
                         width="20"
                         height="19"
@@ -181,6 +173,7 @@ const Header = () => {
                   </li>
                 </>
               )}
+
               <li className="md:ml-2.5">
                 {!userinfo.id && (
                   // ? (
@@ -241,7 +234,7 @@ const Header = () => {
                   // ) :
                   <button
                     onClick={() => setShowModal(true)}
-                    className="btn-primary w-36"
+                    className="btn btn-primary btn-sm text-sm"
                   >
                     Connect Wallet
                   </button>
@@ -250,9 +243,39 @@ const Header = () => {
             </ul>
           </div>
         </div>
+
+
+        <div className="md:hidden">
+
+          <form>
+            <label
+              for="default-search"
+              className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300"
+            >
+              Search
+            </label>
+            <div className="relative">
+              <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+                <i class="fa-regular fa-magnifying-glass text-white-shade-600"></i>
+              </div>
+              <input
+                type="search"
+                id="default-search"
+                className=" bg-color-ass-5 text-lg w-full w-100 text-white rounded-xl pl-10 h-10 placeholder-color-ass-4  focus:pl-10"
+                placeholder="Search your project by name"
+                required
+              />
+            </div>
+          </form>
+
+        </div>
+
+
+
+
       </nav>
       <WalletConnectModal showModal={showModal} closeModal={hideModal} />
-    </div>
+    </>
   );
 };
 export default Header;

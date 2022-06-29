@@ -67,16 +67,21 @@ function Home() {
   }, []);
 
   return (
-    <div className="text-white">
-      <div className="text-center mt-[46px]">
+    <main className="container mx-auto px-4 text-white">
+      <section className="text-center  my-11">
         <HomeNavigateCard />
-      </div>
-      <div className="mt-[26px] ml-4">
-        <h2 className="mb-[36px]">Newest Project</h2>
+      </section>
+
+      <section>
+        <h2 className="mb-5">Newest Project</h2>
         <Swiper
           breakpoints={{
+            320: {
+              slidesPerView: 2,
+              spaceBetween: 15,
+            },
             640: {
-              slidesPerView: 3,
+              slidesPerView: 2,
               spaceBetween: 30,
             },
             768: {
@@ -85,6 +90,10 @@ function Home() {
             },
             1024: {
               slidesPerView: 4,
+              spaceBetween: 30,
+            },
+            1536: {
+              slidesPerView: 5,
               spaceBetween: 30,
             },
           }}
@@ -99,13 +108,18 @@ function Home() {
             </div>
           )}
         </Swiper>
-      </div>
-      <div className="mt-[26px] ml-4">
-        <h2 className="mb-[36px]">Popular Project</h2>
+      </section>
+
+      <section>
+        <h2 className="mb-5">Popular Project</h2>
         <Swiper
           breakpoints={{
+            320: {
+              slidesPerView: 2,
+              spaceBetween: 15,
+            },
             640: {
-              slidesPerView: 3,
+              slidesPerView: 2,
               spaceBetween: 30,
             },
             768: {
@@ -114,7 +128,11 @@ function Home() {
             },
             1024: {
               slidesPerView: 4,
-              spaceBetween: 10,
+              spaceBetween: 30,
+            },
+            1536: {
+              slidesPerView: 5,
+              spaceBetween: 30,
             },
           }}
         >
@@ -128,8 +146,8 @@ function Home() {
             </div>
           )}
         </Swiper>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }
 

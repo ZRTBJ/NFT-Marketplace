@@ -24,38 +24,36 @@ const HomeNavigateCard = () => {
     }; // cleanup toggles value, if unmounted
   }, []);
   return (
-    <div>
-      <div className="max-w-[533px] w-full mx-auto px-5 ">
-        <h1 className="leading-[40px]">
-          Lorem Ipsum is simply dolor amet text
-        </h1>
-      </div>
-      <div className="max-w-[505px] w-full mx-auto mt-[17px] px-5">
-        <p className="leading-[24px] text-[16px] ">
+    <>
+      <article className="max-w-lg mx-auto">
+        <h1>Simply finf the project and start contributing</h1>
+        <p className="text-sm mt-4">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua.
         </p>
-      </div>
-      <div className="mt-[17px] md:flex justify-center">
-        <button
-          className="btn-primary px-4 w-[199px] mb-4 mr-4 h-[38px]"
-          onClick={() => navigate("project-create")}
-        >
-          Create New Project
-        </button>
-        <button
-          className="btn-outline-primary px-4 h-[38px] w-[120px]"
-          onClick={() => navigate("mint")}
-        >
-          Mint NFT
-        </button>
-      </div>
+        <div className="flex justify-center mt-5">
+          <button
+            className="btn btn-primary btn-sm mr-5"
+            onClick={() => navigate("project-create")}
+          >
+            Create <span className="hidden md:inline">New</span> Project
+          </button>
+          <button
+            className="btn-outline-primary-gradient btn-sm"
+            onClick={() => navigate("mint")}
+          >
+            <span>
+              Mint NFT
+            </span>
+          </button>
+        </div>
+      </article>
       <WalletConnectModal
         showModal={showModal}
         closeModal={hideModal}
         navigateToPage={navigateToPage}
       />
-    </div>
+    </>
   );
 };
 

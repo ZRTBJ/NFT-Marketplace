@@ -81,16 +81,11 @@
 }
 
 /* logo */
-.logo {
-  padding-right: 75px;
-  position: relative;
-}
-
 .logo::after {
   height: 24px;
   width: 68px;
-  right: 0;
-  top: 4px;
+  right: 5px;
+  top: 6px;
   content: '';
   border-radius: 20px;
   position: absolute;
@@ -98,20 +93,14 @@
   border: 5px solid currentColor;
 }
 
-/* search */
-.search-fld {
-  width: 556px;
-  background: #353535;
-  border: 1px solid #353535;
+@media only screen and (max-width: 1024px) {
+  .logo::after {
+    width: 48px;
+   right: 0px;
+   top:5px;
+  }
 }
 
-.search-fld:focus-visible {
-  padding-left: 40px;
-}
-
-.search-fld::placeholder {
-  color: #D0D0D0;
-}
 
 /* btn-fund */
 
