@@ -56,8 +56,8 @@ export default function Token({
       <div className="mb-6">
         <div className="label">Number Of Tokens</div>
         <div className="label-grey">set your token supply</div>
-        <div className="md:flex ">
-          <div className="md:w-[65%] md:mr-4">
+        <div className="md:flex items-start">
+          <div className="md:w-[65%] mb-4 md:mr-4">
             <input
               className=""
               id="number-of-tokens"
@@ -72,7 +72,7 @@ export default function Token({
               <div className="validationTag">Number of tokens are required</div>
             )}
           </div>
-          <div className="mt-4">
+          <div className="">
             <input
               className=""
               id="number-of-tokens"

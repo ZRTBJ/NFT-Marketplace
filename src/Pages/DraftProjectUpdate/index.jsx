@@ -111,7 +111,6 @@ export default function DraftProjectUpdate() {
     }
   }, []);
   function onCoverPhotoRemove() {
-    console.log(coverPhotoUrl);
     if (coverPhotoUrl.id) {
       let payload = {
         projectId: id,
@@ -403,8 +402,8 @@ export default function DraftProjectUpdate() {
       // outline start
       setProjectName(response.name);
       let cover = response.assets.find((x) => x.asset_purpose === "cover");
-
       setCoverPhotoUrl(cover ? cover : "");
+
       let photosInfoData = response.assets.filter(
         (x) => x.asset_purpose === "subphoto"
       );
@@ -511,65 +510,8 @@ export default function DraftProjectUpdate() {
   }
   async function saveDraft(visibility) {
     setTokenNameError(false);
-    // Select type start
-    if (currentStep.length === 1) {
-      if (currentStep.length === 1) {
-        if (selectedTab.title === "CUSTOM") {
-          if (votingPower === "" && canVote === "") {
-            alert("Chosse 1 who have voting power and who can vote");
-          } else if (votingPower === "") {
-            alert("Chosse 1 who have voting power");
-          } else if (canVote === "") {
-            alert("Chosse 1 who can vote");
-          } else if (votingPower !== "" && canVote !== "") {
-            setDataIsLoading(true);
-            let selectType = {
-              id: id,
-              org_type: selectedTab.title.toLocaleLowerCase(),
-              voting_power: selectedTab.votingPower.find(
-                (x) => x.active === true
-              ).value,
-              voter_mode: selectedTab.canVote.find((x) => x.active === true)
-                .value,
-              visibility: visibility,
-            };
-            await updateProject("update", selectType)
-              .then(() => {
-                setDataIsLoading(false);
-                setShowModal(true);
-                projectDetails();
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-          }
-        } else {
-          setDataIsLoading(true);
-          let selectType = {
-            id: id,
-            org_type: selectedTab.title.toLocaleLowerCase(),
-            voting_power: selectedTab.votingPower.find((x) => x.active === true)
-              .value,
-            voter_mode: selectedTab.canVote.find((x) => x.active === true)
-              .value,
-            visibility: visibility,
-          };
-          await updateProject("update", selectType)
-            .then(() => {
-              setDataIsLoading(false);
-              setShowModal(true);
-              projectDetails();
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        }
-      }
-    }
-    // select type end
-
     // outline start
-    if (currentStep.length === 2) {
+    if (currentStep.length === 1) {
       if (projectName === "") {
         setemptyProjectName(true);
       } else if (projectCategory === "") {
@@ -595,7 +537,7 @@ export default function DraftProjectUpdate() {
           photosLengthFromResponse: photosLengthFromResponse,
           remainingPhotosName: remainingPhotosName,
         };
-        updateProject("update", updatePayload)
+        updateProject(updatePayload)
           .then((res) => {
             setDataIsLoading(false);
             setShowModal(true);
@@ -609,7 +551,7 @@ export default function DraftProjectUpdate() {
     // outline end
 
     // token start
-    if (currentStep.length === 3) {
+    if (currentStep.length === 2) {
       if (!alreadyTakenSymbol && !alreadyTakenTokenName) {
         setDataIsLoading(true);
 
@@ -620,7 +562,7 @@ export default function DraftProjectUpdate() {
           token_amount_total: numberOfTokens,
         };
 
-        updateProject("update", updatePayload)
+        updateProject(updatePayload)
           .then((res) => {
             setDataIsLoading(false);
             setShowModal(true);

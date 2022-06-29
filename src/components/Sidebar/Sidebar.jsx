@@ -1,5 +1,10 @@
 import "assets/css/Sidebar.css";
+import { useAuthState } from "Context";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { getUserInfo } from "services/User/userService";
+import { setUserInfo } from "Slice/userSlice";
 import SidebarNavigationCard from "./SideBarNavigationCard";
 const openStyle = { width: "300px" };
 const closeStyle = { width: "0px" };
@@ -8,6 +13,26 @@ const linksList = [
   { id: 1, title: "Contact", to: "/" },
 ];
 const Sidebar = ({ show, handleClose }) => {
+  const dispatch = useDispatch();
+  const context = useAuthState();
+  const [userId, setUserId] = useState(context ? context.user : "");
+  const userinfo = useSelector((state) => state.user.userinfo);
+
+  useEffect(() => {
+    if (userId && !userinfo.display_name) {
+      getUserDetails(userId);
+    }
+  }, []);
+
+  async function getUserDetails(userID) {
+    const response = await getUserInfo(userID);
+    let userinfoResponse;
+    try {
+      userinfoResponse = response["user"];
+    } catch { }
+    dispatch(setUserInfo(userinfoResponse));
+  }
+
   return (
     <div>
       <div
@@ -21,15 +46,23 @@ const Sidebar = ({ show, handleClose }) => {
         {/* <SidebarNavigationCard /> */}
         {/* <div className="sidebarDevider"></div> */}
 
-
         <div className="sidebarLinksContainer flex flex-col">
-
-
-          <div className="py-10 px-7">
-            <img className="w-14 h-14 rounded-full mb-3 bg-gray-400" src="/static/media/profile.a33a86e1109f4271bbfa9f4bab01ec4b.svg" alt="profile-name" />
-            <h4 className="font-satoshi-bold font-black text-white text-base">Muhammad Rifat</h4>
+          <div className="py-10 px-10">
+            <img
+              className="rounded-full border border-gray-100 shadow-sm mb-3"
+              src={
+                userinfo["avatar"]
+                  ? userinfo["avatar"]
+                  : "/static/media/profile.a33a86e1109f4271bbfa9f4bab01ec4b.svg"
+              }
+              height={64}
+              width={64}
+              alt="user icon"
+            />
+            <h4 className="font-satoshi-bold font-black text-white text-base">
+              {userinfo["display_name"]}
+            </h4>
           </div>
-
 
           {/* {linksList.map((i) => (
             <Link key={i.id} to={i.to} className="cp">
@@ -58,8 +91,6 @@ const Sidebar = ({ show, handleClose }) => {
             <i class="fa-regular fa-arrow-right-from-bracket"></i>
             <span class="ml-2">Log Out</span>
           </a>
-
-
         </div>
       </div>
     </div>
