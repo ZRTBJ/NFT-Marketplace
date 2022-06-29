@@ -172,7 +172,7 @@ const ProfileSettingsForm = () => {
 
   return (
     /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
-    <div className={`grid justify-items-center my-24`}>
+    <div className={`grid justify-items-center mt-24`}>
       {isLoading && <div className="loading"></div>}
       <form
         id="profile-setting"
@@ -429,7 +429,7 @@ const ProfileSettingsForm = () => {
         <div className="flex flex-wrap mb-6">
           <div className="w-full px-3 grid grid-cols-3">
             <div>
-              <a
+              {/* <a
                 className="btn-primary-outline-gradient w-[120px] h-[38px] rounded-lg mr-4 ml-5 cursor-pointer"
                 onClick={(e) => {
                   e.preventDefault();
@@ -437,7 +437,16 @@ const ProfileSettingsForm = () => {
                 }}
               >
                 <span>Show More</span>
-              </a>
+              </a> */}
+              <button
+                type="button"
+                class="btn-outline-primary-gradient w-[100px] h-[38px]"
+                onClick={(e) => {
+                  addMoreWebLink();
+                }}
+              >
+                <span>Show More</span>
+              </button>
             </div>
             <div className="text-right"></div>
             <div className="text-right">
