@@ -72,81 +72,86 @@ function Home() {
         <HomeNavigateCard />
       </section>
 
-      <section>
-        <h2 className="mb-5">Newest Project</h2>
-        <Swiper
-          breakpoints={{
-            320: {
-              slidesPerView: 2,
-              spaceBetween: 15,
-            },
-            640: {
-              slidesPerView: 2,
-              spaceBetween: 30,
-            },
-            768: {
-              slidesPerView: 3,
-              spaceBetween: 30,
-            },
-            1024: {
-              slidesPerView: 4,
-              spaceBetween: 30,
-            },
-            1536: {
-              slidesPerView: 5,
-              spaceBetween: 30,
-            },
-          }}
-        >
-          {!isLoading && (
-            <div>
-              {projectList.map((i, index) => (
-                <SwiperSlide key={index}>
-                  <CommonCard key={index} project={i} />
-                </SwiperSlide>
-              ))}
-            </div>
-          )}
-        </Swiper>
-      </section>
+      {isLoading && <div className="loading"></div>}
 
-      <section>
-        <h2 className="mb-5">Popular Project</h2>
-        <Swiper
-          breakpoints={{
-            320: {
-              slidesPerView: 2,
-              spaceBetween: 15,
-            },
-            640: {
-              slidesPerView: 2,
-              spaceBetween: 30,
-            },
-            768: {
-              slidesPerView: 3,
-              spaceBetween: 30,
-            },
-            1024: {
-              slidesPerView: 4,
-              spaceBetween: 30,
-            },
-            1536: {
-              slidesPerView: 5,
-              spaceBetween: 30,
-            },
-          }}
-        >
-          {!isLoading && (
-            <div>
-              {popularProjectList.map((i, index) => (
-                <SwiperSlide key={index}>
-                  <CommonCard key={index} project={i} />
-                </SwiperSlide>
-              ))}
-            </div>
-          )}
-        </Swiper>
-      </section>
+      {!isLoading && (
+        <div>
+          <section>
+            <h2 className="mb-5">Newest Project</h2>
+            <Swiper
+              breakpoints={{
+                320: {
+                  slidesPerView: 2,
+                  spaceBetween: 15,
+                },
+                640: {
+                  slidesPerView: 2,
+                  spaceBetween: 30,
+                },
+                768: {
+                  slidesPerView: 3,
+                  spaceBetween: 30,
+                },
+                1024: {
+                  slidesPerView: 4,
+                  spaceBetween: 30,
+                },
+                1536: {
+                  slidesPerView: 5,
+                  spaceBetween: 30,
+                },
+              }}
+            >
+              {!isLoading && (
+                <div>
+                  {projectList.map((i, index) => (
+                    <SwiperSlide key={index}>
+                      <CommonCard key={index} project={i} />
+                    </SwiperSlide>
+                  ))}
+                </div>
+              )}
+            </Swiper>
+          </section>
+          <section>
+            <h2 className="mb-5">Popular Project</h2>
+            <Swiper
+              breakpoints={{
+                320: {
+                  slidesPerView: 2,
+                  spaceBetween: 15,
+                },
+                640: {
+                  slidesPerView: 2,
+                  spaceBetween: 30,
+                },
+                768: {
+                  slidesPerView: 3,
+                  spaceBetween: 30,
+                },
+                1024: {
+                  slidesPerView: 4,
+                  spaceBetween: 30,
+                },
+                1536: {
+                  slidesPerView: 5,
+                  spaceBetween: 30,
+                },
+              }}
+            >
+              {!isLoading && (
+                <div>
+                  {popularProjectList.map((i, index) => (
+                    <SwiperSlide key={index}>
+                      <CommonCard key={index} project={i} />
+                    </SwiperSlide>
+                  ))}
+                </div>
+              )}
+            </Swiper>
+          </section>
+        </div>
+      )}
     </main>
   );
 }

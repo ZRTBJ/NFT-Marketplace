@@ -27,6 +27,7 @@ const WalletConnectModal = ({ showModal, closeModal, navigateToPage }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isTermsAndConditionsChecked, setIsTermsAndConditionsChecked] =
     useState(false);
+  const [showMessage, setshowMessage] = useState(false);
   const [metamaskConnectAttempt, setMetamaskConnectAttempt] = useState(0);
   const [metamaskAccount, setMetamaskAccount] = useState("");
   const [torusAccountInfo, setTorusAccountInfo] = useState(null);
@@ -61,6 +62,8 @@ const WalletConnectModal = ({ showModal, closeModal, navigateToPage }) => {
           window.location.reload();
         }
       }
+    } else {
+      setshowMessage(true);
     }
   }
   async function loginTorus() {
@@ -69,6 +72,8 @@ const WalletConnectModal = ({ showModal, closeModal, navigateToPage }) => {
         setTorusAccountInfo(e);
         userLogin(e.address, e.signature, "torus");
       });
+    } else {
+      setshowMessage(true);
     }
   }
   async function getUserDetails(userID, isNavigate) {
@@ -122,6 +127,7 @@ const WalletConnectModal = ({ showModal, closeModal, navigateToPage }) => {
   function handelTermsChecked(value) {
     setIsTermsAndConditionsChecked(value);
     setModalKey((pre) => pre + 1);
+    setshowMessage(false);
   }
   useEffect(() => {
     if (window.ethereum) {
@@ -298,11 +304,18 @@ const WalletConnectModal = ({ showModal, closeModal, navigateToPage }) => {
                 checked={isTermsAndConditionsChecked}
                 onChange={(e) => handelTermsChecked(e.target.checked)}
               />
-              <div className="text-left ml-[8px] font-bold text-[14px]">
-                I read and accept{" "}
-                <span className="text-[#5C008D]">Terms Of services</span> and{" "}
-                <br />
-                <span className="text-[#5C008D]"> Privacy Policy</span>
+              <div>
+                <div className="text-left ml-[8px] font-bold text-[14px]">
+                  I read and accept{" "}
+                  <span className="text-[#5C008D]">Terms Of services</span> and{" "}
+                  <br />
+                  <span className="text-[#5C008D]"> Privacy Policy</span>
+                </div>
+                {showMessage && (
+                  <div className="validationTag">
+                    please accept terms and conditions
+                  </div>
+                )}
               </div>
             </div>
           </div>
