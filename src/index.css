@@ -1,12 +1,10 @@
-@import url('assets/fonts/WEB/css/satoshi.css');
+@import url("assets/fonts/WEB/css/satoshi.css");
 
 /* @tailwind base;
 @tailwind components; */
 @tailwind utilities;
 @import "./assets/css/layer-base/typography.css";
 @import "./assets/css/layer-components/component.css";
-
-
 
 body {
   margin: 0 !important;
@@ -51,7 +49,7 @@ body {
 }
 
 .stepper-active .stepper-head-icon {
-  background-color: #0ab4af;
+  background-color: #7d33a4;
 }
 
 .stepper-failed .stepper-head-icon {
@@ -66,6 +64,17 @@ body {
   background-color: #b9ccd5;
   border-radius: 100%;
   font-size: 0.875rem;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.7rem;
+  height: 1.7rem;
+}
+
+.stepper-vertical .stepper-step:not(:last-child):after {
+  position: absolute;
+  left: 2.25rem;
+  height: calc(100% - 2.45rem);
+  top: 3rem;
+  width: 1px;
+  margin-top: 0.5rem;
+  content: "";
+  background-color: white;
 }

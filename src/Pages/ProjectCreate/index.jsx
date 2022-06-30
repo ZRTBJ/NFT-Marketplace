@@ -324,7 +324,7 @@ export default function ProjectCreate() {
   const [projectId, setProjectId] = useState("");
   const [projectStatus, setProjectStatus] = useState("");
   const [publishStep, setPublishStep] = useState(0);
-  const [showDeployModal, setShowDeployModal] = useState(false);
+  const [showDeployModal, setShowDeployModal] = useState(true);
   const [tnxData, setTnxData] = useState({});
   const [isDataLoading, setDataIsLoading] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -708,7 +708,10 @@ export default function ProjectCreate() {
               )}
               {currentStep.length === 3 && (
                 <button
-                  onClick={() => setShowPublishModal(true)}
+                  onClick={
+                    () => setShowDeployModal(true)
+                    // setShowPublishModal(true)
+                  }
                   className="btn-primary w-[100px] h-[38px] ml-auto"
                 >
                   PUBLISH
