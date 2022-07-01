@@ -67,18 +67,22 @@ export default function ProjectDetails(props) {
 
       <main className="container mx-auto px-4">
 
-
         <section className="flex  justify-end py-7">
           <button type="button" class="btn btn-outline-primary-gradient btn-md"><span>Edit Project</span> </button>
         </section>
 
+        {/* Cover image section */}
+        <section className="mt-5 rounded-3xl">
+          <img
+            src={coverImg}
+            className="rounded-3xl object-cover md:h-[217px] w-full"
+            alt="Profile Cover image"
+          />
 
-
-        <section>
-          <img className="rounded-3xl w-full object-cover" src={coverImg} />
+          {/* 
+          If need, use it for if no cover image, other wise need to delte it
+          <div className="rounded-3xl h-[212px] w-full bg-white-shade-800"></div> */}
         </section>
-
-
 
 
         <section className="flex flex-col lg:flex-row py-5">
@@ -122,7 +126,6 @@ export default function ProjectDetails(props) {
         </section>
 
 
-
         <section className="flex justify-between p">
 
           <button type="button" class="btn btn-primary btn-sm">MINT NFT <i class="fa-thin fa-square-plus ml-1"></i></button>
@@ -131,21 +134,32 @@ export default function ProjectDetails(props) {
 
         </section>
 
-        <div className="py-3 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
+        <div className="py-3 grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
           <Card />
-
-
           <Card />
-
           <Card />
           <Card />
           <Card />
         </div>
 
 
+
+
+
+
+
+        {/* ========== nft deatils page murkup */}
+        <br /><br /><br /><br /><br /><br /><br />
+
+
+
+
+
+
+
         <section className="flex flex-col lg:flex-row py-5">
 
-          <div className="flex-1 pr-4">
+          <div className="flex-1 pr-4 mb-5 md:mb-0">
             <img src={manImg} className="rounded-3xl" alt="image" />
           </div>
 
@@ -221,9 +235,19 @@ export default function ProjectDetails(props) {
         </section>
 
 
+
+
+
+
+        {/* ========== nft deatils page murkup */}
+        <br /><br /><br /><br /><br /><br /><br />
+
+
+
+
         <section className="flex flex-col lg:flex-row py-5">
 
-          <div className="flex-1 pr-4">
+          <div className="flex-1 pr-4 mb-5 md:mb-0">
             <img src={manImg} className="rounded-3xl" alt="image" />
           </div>
 
@@ -287,10 +311,22 @@ export default function ProjectDetails(props) {
         </section>
 
 
+
+
+
+
+
       </main>
 
 
-      <div className={`my-4 ${isLoading ? "loading" : ""}`}>
+
+
+
+      {/* old code */}
+
+
+
+      {/* <div className={`my-4 ${isLoading ? "loading" : ""}`}>
         {!isLoading && project && !project.name && (
           <div className="text-center text-red-500">Project not Found</div>
         )}
@@ -317,8 +353,11 @@ export default function ProjectDetails(props) {
               </div>
               <div className="relative bottom-10 left-0 text-sm">Appreciate</div>
             </div>
-            <div className="h-4"></div>
-            {/* <div className="flex flex-row mt-24 mx-8">
+            <div className="h-4"></div> */}
+
+
+
+      {/* <div className="flex flex-row mt-24 mx-8">
             <div className="w-2/4 border border-gray-300 float-right">
               <div class="grid grid-cols-4 divide-x divide-gray-300 text-gray-400">
                 <div className="h-28 text-center">
@@ -364,7 +403,7 @@ export default function ProjectDetails(props) {
               </div>
             </div>
           </div> */}
-            {/* <div className="flex flex-row mt-8 mx-8">
+      {/* <div className="flex flex-row mt-8 mx-8">
             <div className="w-2/4">
               <div class="flex justify-center">
                 {project.voting_power === "TknW8" && (
@@ -435,7 +474,7 @@ export default function ProjectDetails(props) {
             </div>
           </div> */}
 
-            <div className="text-center w-full my-8 border-t">
+      {/* <div className="text-center w-full my-8 border-t">
               <div className="text-2xl font-semibold my-8">About Project</div>
             </div>
             <div className="flex flex-row mt-8 mx-8">
@@ -512,7 +551,19 @@ export default function ProjectDetails(props) {
             </div>
           </div>
         )}
-      </div>
+      </div> */}
+
+
+
+
+
+
+
+
+
+
+
+
 
     </>
   );
