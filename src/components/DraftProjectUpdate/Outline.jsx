@@ -12,6 +12,7 @@ export default function Outline({
   emptyProjectName,
   alreadyTakenProjectName,
   onProjectNameChange,
+  projectNameDisabled,
 
   // cover photo
   coverPhotoUrl,
@@ -63,6 +64,7 @@ export default function Outline({
           onChange={(e) => onProjectNameChange(e.target.value)}
           className="debounceInput"
           value={projectName}
+          disabled={projectNameDisabled}
         />
         {emptyProjectName && (
           <div className="validationTag">Unique project name is required</div>

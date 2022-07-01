@@ -48,7 +48,6 @@
   .btn-outline-primary-gradient {
     @apply rounded-md
         relative
-        z-10
         font-black
         text-lg
         font-satoshi-bold
@@ -95,10 +94,10 @@
         min-height: 42px;
      }
 
-     /* form field */
+  /* form field */
 
-     .input-fld {
-        @apply py-1
+  .input-fld {
+    @apply py-1
         px-3
         w-[512px]
         max-w-full
@@ -107,12 +106,12 @@
         bg-black-shade-800
         text-white
         mb-4;
-        font-size: 13px;
-        line-height: 24px;
-        letter-spacing: 0.03em;
-     }
-     .textarea-fld {
-        @apply  py-3
+    font-size: 13px;
+    line-height: 24px;
+    letter-spacing: 0.03em;
+  }
+  .textarea-fld {
+    @apply py-3
         px-3
         w-[512px]
         max-w-full
@@ -121,15 +120,13 @@
         bg-black-shade-800
         text-white
         mb-4;
-        font-size: 13px;
-        line-height: 24px;
-        letter-spacing: 0.03em;
-     }
+    font-size: 13px;
+    line-height: 24px;
+    letter-spacing: 0.03em;
+  }
 
-     select.input-fld { 
-         appearance: none;
-         border-color: transparent;
-     }
-
-
+  select.input-fld {
+    appearance: none;
+    border-color: transparent;
+  }
 }

@@ -15,15 +15,15 @@ const SuccessModal = ({ handleClose, show, message, buttomText }) => {
         <img className="block mx-auto" src={IconSuccess} alt="" />
         <div className="my-4 text-xl font-bold  text-white">{bodyMsg}</div>
         <div className="flex justify-center">
-          <a
-            className="btn-primary-outline-gradient w-[120px] h-[38px] rounded-lg mr-4 ml-5 cursor-pointer"
+          <button
+            type="button"
+            class="btn-outline-primary-gradient w-[100px] h-[38px]"
             onClick={(e) => {
-              e.preventDefault();
               handleClose(false);
             }}
           >
-            <span> {btnText}</span>
-          </a>
+            <span>{btnText}</span>
+          </button>
         </div>
       </div>
     </Modal>

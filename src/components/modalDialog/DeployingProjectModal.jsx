@@ -1,7 +1,6 @@
 import ico_gas from "assets/images/projectEdit/ico_gas.svg";
 import ico_matic from "assets/images/projectEdit/ico_matic.svg";
-import IconCongratulationText from "assets/images/modal/success/icon_congratulation_text.svg";
-import IconSuccess from "assets/images/modal/success/icon_success.svg";
+import IconSuccess from "assets/images/modal/success/success_modal_img.svg";
 import Modal from "../Modal";
 import { Step, Stepper } from "react-form-stepper";
 import { useEffect, useState } from "react";
@@ -29,9 +28,9 @@ const DeployingProjectModal = ({
 }) => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const btnText = buttomText ? buttomText : "VIEW on ETHERSCAN";
+  const btnText = buttomText ? buttomText : "View on EtherScan";
   const selectedWallet = getWalletType();
-  const [step, setStep] = useState(publishStep ? publishStep : 0);
+  const [step, setStep] = useState(publishStep ? publishStep : 2);
   const [isLoading, setIsLoading] = useState(false);
   const [tnxHash, setTnxHash] = useState("");
   const projectDeploy = useSelector((state) =>
@@ -258,65 +257,50 @@ const DeployingProjectModal = ({
   return (
     <Modal width={800} show={show} handleClose={() => handleClose(false)}>
       <div className={`text-center my-6 ${isLoading ? "loading" : ""}`}>
-        <div className="mx-4 divide-y divide-solid divide-gray-400">
-          <div className="text-center font-semibold my-4">
-            Deploying Project
-          </div>
+        <div className="mx-4">
           <div>
+            <div className="flex justify-center">
+              <div>
+                <i className="fa fa-check-square fa-xl" aria-hidden="true"></i>
+                <p className="mt-4 text-xs">Deploying Project</p>
+              </div>
+              <div className="h-4 w-36 bg-[#232032]  mt-1"></div>
+              <div>
+                <i
+                  className={`fa fa-check-square fa-xl ${
+                    step >= 1 ? "text-white" : "text-gray-700"
+                  }`}
+                  aria-hidden="true"
+                ></i>
+                <p className="mt-4 text-xs">Deploying Smartcontrat</p>
+              </div>
+
+              <div className="h-4 w-36 bg-[#232032] mt-1"></div>
+              <div>
+                <i
+                  className={`fa fa-check-square fa-xl ${
+                    step >= 2 ? "text-white" : "text-gray-700"
+                  }`}
+                  aria-hidden="true"
+                ></i>
+                <p className="mt-4 text-xs">Completed</p>
+              </div>
+            </div>
             <div>
-              <Stepper
-                activeStep={step}
-                styleConfig={{
-                  connectorStateColors: true,
-                  completedBgColor: "#0AB4AF",
-                  inactiveBgColor: "#B9CCD5",
-                  labelFontSize: "1em",
-                  fontWeight: "600",
-                }}
-                connectorStyleConfig={{
-                  activeColor: "#0AB4AF",
-                  completedColor: "#0AB4AF",
-                  size: 2,
-                  stepSize: "1em",
-                }}
-              >
-                <Step label="Fund Transfer">
-                  {step === 0 ? (
-                    <i className="fa fa-hourglass" aria-hidden="true"></i>
-                  ) : (
-                    <i className="fa fa-check" aria-hidden="true"></i>
-                  )}
-                </Step>
-                <Step label="Set up project data">
-                  {step === 1 ? (
-                    <i className="fa fa-hourglass" aria-hidden="true"></i>
-                  ) : (
-                    <i className="fa fa-check" aria-hidden="true"></i>
-                  )}
-                </Step>
-                <Step label="Completed">
-                  {step === 2 ? (
-                    <i className="fa fa-check" aria-hidden="true"></i>
-                  ) : (
-                    <i className="fa fa-check" aria-hidden="true"></i>
-                  )}
-                </Step>
-              </Stepper>
               {step === 0 && (
                 <div className="py-8">
                   <img className="block mx-auto" src={ico_gas} alt="" />
                   <div className="text-center my-4">
                     Estimation of total gas required for these transactions.
                   </div>
-                  <div className="my-4 bg-gray-100 mx-48 flex flex-row p-6">
+                  <div className="my-4 bg-[#232032] mx-48 flex flex-row p-6">
                     <div className="mx-2">
                       <img className="block mx-auto" src={ico_matic} alt="" />
                     </div>
                     <div>Complete Deposit</div>
                     <div className="ml-8">
                       <span className="float-right">
-                        {" "}
-                        ~ {tnxData.amount ? tnxData.amount : 0} MATIC
+                        {tnxData.amount ? tnxData.amount : 0} MATIC
                       </span>
                     </div>
                   </div>
@@ -395,16 +379,10 @@ const DeployingProjectModal = ({
               {step === 2 && (
                 <div className="py-8 flex flex justify-center">
                   <div className="text-center mt-12">
-                    <img
-                      className="block mx-auto"
-                      src={IconCongratulationText}
-                      alt=""
-                    />
                     <img className="block mx-auto" src={IconSuccess} alt="" />
                     <div className="my-4 text-xl font-bold  draftModalText">
-                      Your project already Establish!!
+                      Congratulation! you success creating project!
                     </div>
-                    <p>Let’s look your project page.</p>
                   </div>
                 </div>
               )}
@@ -414,20 +392,20 @@ const DeployingProjectModal = ({
         {step === 0 && (
           <button
             type="button"
-            className="h-12 bg-[#0AB4AF] rounded text-white"
+            className="btn-outline-primary-gradient w-[100px] h-[38px]"
             disabled={isLoading}
             onClick={() => {
               transferFund();
             }}
           >
-            <span className="m-2 px-8">Transfer</span>
+            <span>Transfer</span>
           </button>
         )}
         {step >= 1 && (
           <div className="flex justify-center">
             <button
               type="button"
-              className="h-12 bg-[#0AB4AF] rounded text-white mr-4 cursor-pointer disabled:opacity-50 disabled:bg-gray-500"
+              className="btn-outline-primary-gradient h-[38px] cursor-pointer disabled:opacity-50 disabled:bg-gray-500 mr-4"
               onClick={() => {
                 window.open(
                   `https://mumbai.polygonscan.com/tx/${tnxHash ? tnxHash : ""}`,
@@ -437,12 +415,12 @@ const DeployingProjectModal = ({
               }}
               disabled={tnxHash && tnxHash.length > 1 ? false : true}
             >
-              <span className="mx-4 my-2">{btnText}</span>
+              <span className="text-base">&nbsp;{btnText}&nbsp;&nbsp;</span>
             </button>
             {step === 1 && (
               <button
                 type="button"
-                className="h-12 w-24 bg-[#0AB4AF] rounded text-white cursor-pointer disabled:opacity-50 disabled:bg-gray-500"
+                className="btn-outline-primary-gradient h-[38px] cursor-pointer disabled:opacity-50 disabled:bg-gray-500"
                 disabled={
                   deployStatus && deployStatus.fn_status === "failed"
                     ? false
@@ -452,20 +430,20 @@ const DeployingProjectModal = ({
                   publishThisProject(tnxHash);
                 }}
               >
-                <span className="mx-4 my-2">Retry</span>
+                <span>Retry</span>
               </button>
             )}
             {step === 2 && (
               <button
                 type="button"
-                className="h-12 bg-[#0AB4AF] rounded text-white cursor-pointer disabled:opacity-50 disabled:bg-gray-500"
+                className="btn-outline-primary-gradient h-[38px] cursor-pointer disabled:opacity-50 disabled:bg-gray-500"
                 onClick={() =>
                   history.push(
                     `/project-edit/${projectId ? projectId : "0"}/project-top`
                   )
                 }
               >
-                <span className="mx-4 my-2">PROJECT</span>
+                <span>PROJECT</span>
               </button>
             )}
           </div>
