@@ -94,6 +94,10 @@
         min-height: 42px;
      }
 
+     .box-shadow {
+       box-shadow: 0 0 5px rgba(0,0,0,0.5)
+     }
+
   /* form field */
 
   .input-fld {
