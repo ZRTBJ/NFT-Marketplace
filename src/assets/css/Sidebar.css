@@ -17,7 +17,6 @@
   margin-top: 10px;
 }
 
-
 .sidenav .closebtn {
   font-size: 36px;
   margin-left: 29px;
@@ -25,7 +24,7 @@
 }
 
 .closebtn:hover {
-  color: #07d5ce;
+  color: #7d33a4;
 }
 
 .sidebarCardContainer {
@@ -76,8 +75,7 @@
 }
 
 .sidebarCardContainer:hover {
-  background-color: #0AB4AF;
-
+  background-color: #0ab4af;
 }
 
 .sidebarCardContainer:hover .sidebarCardTitle {
@@ -86,7 +84,7 @@
 
 .sidebarDevider {
   height: 1px;
-  background-color: #E2E2E3;
+  background-color: #e2e2e3;
   margin: 30px 0px;
 }
 

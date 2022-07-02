@@ -14,30 +14,33 @@ const Tab = (props) => {
     setShowModal(true);
   }
   return (
-    <div>
-      <div className="container px-4 mx-auto">
-        <div className="flex flex-wrap justify-center">
-          {props.tabs.map((type) => (
-            <button
-              className={`text-white-shade-600 p-3 hover:text-primary-900 active:text-primary-900 ${active.name === type.name ? "text-primary-900" : ""
-                }`}
-              key={type.id}
-              onClick={() => setActive(type)}
-            >
-              {type.name}
-              <span className="bg-primary-50 text-color-ass-1 p-1 ml-1 rounded-sm text-sm">23</span>
-            </button>
-          ))}
-        </div>
+    <>
+
+      <div className="flex-wrap justify-center hidden md:flex">
+        {props.tabs.map((type) => (
+          <button
+            className={`text-white-shade-600 p-3 hover:text-primary-900 active:text-primary-900 ${active.name === type.name ? "text-primary-900" : ""
+              }`}
+            key={type.id}
+            onClick={() => setActive(type)}
+          >
+            {type.name}
+            <span className="bg-primary-50 text-color-ass-1 p-1 ml-1 rounded-sm text-sm">23</span>
+          </button>
+        ))}
       </div>
 
       <div className="tabContent">
         {active.name === "PROJECT" && (
-          <div className="container mx-auto">
+          <div>
+            {/* <h1 className="text-white md:hidden"><span className="pr-3">Projects</span> <i class="fa-solid fa-circle-caret-down"></i></h1>
+            <h1 className="text-white md:hidden"><span className="pr-3">Projects</span> <i class="fa-solid fa-circle-caret-right"></i></h1> 
+            <div className=" h-0 ease-in-out duration-300">No Projects yet</div>*/}
+
             {active.cardList.length === 0 ? (
               <div>No Projects yet</div>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 {active.cardList.map((cardlist) => (
                   <div key={cardlist.id}>
                     <div className="projectCardLayout">
@@ -51,8 +54,9 @@ const Tab = (props) => {
         )}
         {active.name === "WORK" && (
           <div className="container mx-auto md:px-4">
+            <h1 className="text-white md:hidden"><span className="pr-3">Work</span> <i class="fa-solid fa-circle-caret-down"></i></h1>
             {active.cardList.length === 0 ? (
-              <div>No works yet</div>
+              <div className="text-white">No works yet</div>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 md:gap-4">
                 {active.cardList.map((cardlist) => (
@@ -71,7 +75,7 @@ const Tab = (props) => {
           </div>
         )}
         {active.name === "COLLECTION" && (
-          <div className="container mx-auto">
+          <div>
             {active.cardList.length === 0 ? (
               <div>No collections yet</div>
             ) : (
@@ -137,7 +141,7 @@ const Tab = (props) => {
           </div>
         </Modal>
       )}
-    </div>
+    </>
   );
 };
 
