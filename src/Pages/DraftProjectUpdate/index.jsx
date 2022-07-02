@@ -24,6 +24,7 @@ import SuccessModal from "components/modalDialog/SuccessModal";
 import ErrorModal from "components/modalDialog/ErrorModal";
 import { useAuthState } from "Context";
 import PublishModal from "components/modalDialog/PublishModal";
+import LeftSideBar from "components/DraftProjectUpdate/LeftSideBar";
 
 export default function DraftProjectUpdate() {
   const history = useHistory();
@@ -610,7 +611,7 @@ export default function DraftProjectUpdate() {
       <div className="cardContainer px-3 md:px-5">
         {currentStep.length === 1 && (
           <div>
-            {/* <LeftSideBar currentStep={currentStep} key={currentStep.length} /> */}
+            <LeftSideBar currentStep={currentStep} key={currentStep.length} />
             <Outline
               key={outlineKey}
               // name
@@ -650,7 +651,7 @@ export default function DraftProjectUpdate() {
         )}
         {currentStep.length === 2 && (
           <div>
-            {/* <LeftSideBar currentStep={currentStep} key={currentStep.length} /> */}
+            <LeftSideBar currentStep={currentStep} key={currentStep.length} />
             <Token
               // token name
               tokenName={tokenName}
