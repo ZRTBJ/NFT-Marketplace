@@ -5,7 +5,11 @@ import { useHistory } from "react-router-dom";
 const CommonCard = ({ project }) => {
   const history = useHistory();
   function projectDetails(projectId) {
-    history.push(`/project-details/${projectId}`);
+    if (project.project_status === "draft" || project.status === "draft") {
+      history.push(`/project-update/${projectId}`);
+    } else {
+      history.push(`/project-details/${projectId}`);
+    }
   }
 
   return (
@@ -13,17 +17,33 @@ const CommonCard = ({ project }) => {
       onClick={() => projectDetails(project.id)}
       className="rounded-lg border rounded rounded-[24px] border-primary-50 cursor-pointer relative p-2"
     >
-      <div className="absolute left-0 z-10 right-0 flex  items-center justify-center mx-auto w-[169px] font-bold top-[50%] h-[35px]  text-color-gold bg-color-brown rounded-lg">
-        <img src={edit_icon} className="mr-2" alt="" />
-        <span>Continue Editing</span>
+      <div>
+        {project.project_status === "draft" || project.status === "draft" ? (
+          <div className="absolute left-0 z-10 right-0 flex  items-center justify-center mx-auto w-[169px] font-bold top-[50%] h-[35px]  text-color-gold bg-color-brown rounded-lg">
+            <img src={edit_icon} className="mr-2" alt="edit" />
+            <span>Continue Editing</span>
+          </div>
+        ) : (
+          <></>
+        )}
       </div>
-      <div className="bg-[#9499AE] opacity-[0.5]  rounded rounded-[24px]">
+
+      <div
+        className={`  rounded rounded-[24px] ${
+          project.project_status === "draft" || project.status === "draft"
+            ? "bg-[#9499AE] opacity-[0.5]"
+            : ""
+        }`}
+      >
         <div>
           <img
             className="rounded-lg w-full h-[137px] lg:h-[301px] object-cover"
             src={
               project && project.assets && project.assets.length > 0
-                ? project.assets.find((x) => x.asset_purpose === "cover").path
+                ? project.assets.find((x) => x.asset_purpose === "cover")?.path
+                  ? project.assets.find((x) => x.asset_purpose === "cover")
+                      ?.path
+                  : thumbIcon
                 : thumbIcon
             }
             alt="card"
@@ -34,10 +54,7 @@ const CommonCard = ({ project }) => {
             <h3 class="mb-2 tracking-tight text-color-grey">{project.name}</h3>
           </div>
           {project.showOverview && (
-            <div className="mt-4 text-white  font-bold">
-              {" "}
-              {project.overview}{" "}
-            </div>
+            <div className="mt-4 text-white  font-bold">{project.overview}</div>
           )}
           <div class="mt-4">
             <div className="inline-flex items-center mr-1 py-2 px-3 text-xs font-bold text-center text-color-gold bg-color-brown rounded-full ease-in-out duration-300 hover:text-color-brown hover:bg-color-gold focus:ring-4 focus:outline-none focus:ring-primary-300 ">

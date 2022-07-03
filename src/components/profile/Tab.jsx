@@ -3,93 +3,101 @@ import CommonCard from "components/CommonCard";
 import WorkCard from "./WorkCard";
 import CollectionCard from "./CollectionCard";
 import Modal from "components/Modal";
+import { useSelector } from "react-redux";
+import { Link, useParams } from "react-router-dom";
+import EmptyCaseCard from "components/profile/EmptyCaseCard";
 
 const Tab = (props) => {
+  const { id } = useParams();
   const [active, setActive] = useState(props.tabs[0]);
   const [modalInfo, setModalInfo] = useState({});
   const [showModal, setShowModal] = useState(false);
+  const userData = useSelector((state) => state.user.userinfo);
   function openModal(card) {
-    console.log(card);
     setModalInfo(card);
     setShowModal(true);
+  }
+  function OnSetActive(type, index) {
+    setActive(type);
+    props.OnSetActive(index);
   }
   return (
     <>
       <div className="flex-wrap justify-center hidden md:flex">
-        {props.tabs.map((type) => (
+        {props.tabs.map((type, index) => (
           <button
             className={`text-white-shade-600 p-3 hover:text-primary-900 active:text-primary-900 ${
               active.name === type.name ? "text-primary-900" : ""
             }`}
             key={type.id}
-            onClick={() => setActive(type)}
+            onClick={() => OnSetActive(type, index)}
           >
             {type.name}
             <span className="bg-primary-50 text-color-ass-1 p-1 ml-1 rounded-sm text-sm">
-              {active.cardList.length}
+              {active.list.length}
             </span>
           </button>
         ))}
       </div>
+      <section className="flex mt-7">
+        {userData.id && userData.id === id ? (
+          <>
+            <button type="button" class="btn btn-primary btn-sm">
+              <Link to="/project-create">
+                Create New <i class="fa-thin fa-square-plus ml-1"></i>
+              </Link>
+            </button>
+          </>
+        ) : (
+          <></>
+        )}
+
+        <button type="button" class="ml-auto btn btn-outline-primary btn-sm">
+          Sort By <i class="fa-thin fa-arrow-down-short-wide ml-1"></i>
+        </button>
+      </section>
 
       <div className="tabContent">
-        {active.id === 1 && (
-          <div>
-            {/* <h1 className="text-white md:hidden"><span className="pr-3">Projects</span> <i class="fa-solid fa-circle-caret-down"></i></h1>
-            <h1 className="text-white md:hidden"><span className="pr-3">Projects</span> <i class="fa-solid fa-circle-caret-right"></i></h1> 
-            <div className=" h-0 ease-in-out duration-300">No Projects yet</div>*/}
-
-            {active.cardList.length === 0 ? (
-              <div>No Projects yet</div>
+        {active.name === "Dao Project List" && (
+          <div className="py-5 grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
+            {active.list.length === 0 ? (
+              <EmptyCaseCard type={"Project"}></EmptyCaseCard>
             ) : (
-              <div className="py-5 grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
-                {active.cardList.map((cardlist) => (
+              <>
+                {active.list.map((list) => (
                   <div>
-                    <CommonCard key={cardlist.id} project={cardlist} />
+                    <CommonCard key={list.id} project={list} />
                   </div>
                 ))}
-              </div>
+              </>
             )}
           </div>
         )}
-        {active.name === "WORK" && (
-          <div className="container mx-auto md:px-4">
-            <h1 className="text-white md:hidden">
-              <span className="pr-3">Work</span>{" "}
-              <i class="fa-solid fa-circle-caret-down"></i>
-            </h1>
-            {active.cardList.length === 0 ? (
-              <div className="text-white">No works yet</div>
-            ) : (
-              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 md:gap-4">
-                {active.cardList.map((cardlist) => (
-                  <div key={cardlist.id}>
-                    <div
-                      className="workCardLayout"
-                      onClick={() => openModal(cardlist)}
-                      key={cardlist.id}
-                    >
-                      <WorkCard key={cardlist.id} cardInfo={cardlist} />
-                    </div>
-                  </div>
-                ))}
+        {active.name === "Works" && (
+          <div className="py-5 grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
+            {active.list.map((list) => (
+              <div onClick={() => openModal(list)}>
+                <CommonCard key={list.id} project={list} />
               </div>
-            )}
+            ))}
           </div>
         )}
-        {active.name === "COLLECTION" && (
-          <div>
-            {active.cardList.length === 0 ? (
-              <div>No collections yet</div>
-            ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 md:px-5 ">
-                {active.cardList.map((cardlist) => (
-                  <div key={cardlist.id} className="collectionCardLayout">
-                    <CollectionCard cardInfo={cardlist} />
-                  </div>
-                ))}
+        {active.name === "NFTs" && (
+          <div className="py-5 grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
+            {active.list.map((list) => (
+              <div>
+                <CommonCard key={list.id} project={list} />
               </div>
-            )}
+            ))}
+          </div>
+        )}
+        {active.name === "Bookmark" && (
+          <div className="py-5 grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
+            {active.list.map((list) => (
+              <div>
+                <CommonCard key={list.id} project={list} />
+              </div>
+            ))}
           </div>
         )}
       </div>

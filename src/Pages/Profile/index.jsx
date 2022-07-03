@@ -2,9 +2,7 @@ import { useState, useEffect } from "react";
 import "assets/css/profile.css";
 import profile from "assets/images/profile/profile.svg";
 import profileDummy from "assets/images/profile/profile-dummy.svg";
-import locationIcon from "assets/images/profile/locationIcon.svg";
-import noProject from "assets/images/profile/no-project.svg";
-import emptyProject from "assets/images/profile/empty-project.svg";
+
 import Tab from "components/profile/Tab";
 import {
   getUserProjectListById,
@@ -12,163 +10,198 @@ import {
   getProjectCategory,
 } from "services/project/projectService";
 import { getUserInfo } from "services/User/userService";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroll-component";
 
-import Card from "components/profile/Card";
-
 const Profile = () => {
+  // User general data start
   const { id } = useParams();
   const [user, setUser] = useState({});
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [userProjectList, setUserProjectList] = useState([]);
-  const [tab, setTab] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [websiteList, setWebsiteList] = useState([]);
   const [sncList, setsncList] = useState([]);
+
+  async function userInfo() {
+    await getUserInfo(id)
+      .then((response) => {
+        setUser(response.user);
+        if (response.user["web"]) {
+          try {
+            const webs = JSON.parse(response.user["web"]);
+            const weblist = [...webs].map((e) => ({
+              title: Object.keys(e)[0],
+              url: Object.values(e)[0],
+            }));
+            setWebsiteList(weblist);
+          } catch {
+            setWebsiteList([]);
+          }
+          try {
+            const sociallinks = JSON.parse(response.user["social"]);
+            const sncs = [...sociallinks].map((e) => ({
+              title: Object.keys(e)[0],
+              url: Object.values(e)[0],
+            }));
+            setsncList(sncs);
+          } catch {
+            setsncList([]);
+          }
+        }
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
+  }
+  // user General data end
+
+  // project category List start
+  const [projectCategoryList, setProjectCategoryList] = useState([]);
+  async function projectCategory() {
+    await getProjectCategory()
+      .then((response) => {
+        setProjectCategoryList(response.categories);
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
+  }
+  // project category List end
+
+  // 4 Tab Data
+
+  // project List start
+  const [projectList, setProjectList] = useState([]);
+  const [projectListPageNumber, setProjectListPageNumber] = useState(1);
+  const [projectListLimit, setProjectListLimit] = useState(10);
+  const [hasMoreProjectListData, setMoreProjectListData] = useState(false);
+
+  // project List End
+
+  const [isLoading, setIsLoading] = useState(true);
   const [hasMore, setHasMore] = useState(false);
   const [tabKey, setTabKey] = useState(0);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
-  const [smallSpinnerLoading, setSmallSpinnerLoading] = useState(false);
   const [walletAddress, setWalletAddress] = useState(null);
 
-  async function fetchData() {
+  // project list
+
+  const [workList, setWorkList] = useState([]);
+  const [nftList, setNftList] = useState([]);
+  const [bookmarkList, setBookmarkList] = useState([]);
+
+  let initialTabData = [
+    { id: 1, name: "Dao Project List", list: projectList },
+    { id: 2, name: "Works", list: workList },
+    { id: 3, name: "NFTs", list: nftList },
+    { id: 4, name: "Bookmark", list: bookmarkList },
+  ];
+  const [activeTab, setActiveTab] = useState(initialTabData[0]);
+  const [tabData, setTabData] = useState(initialTabData);
+  function OnSetActive(index) {
+    setActiveTab(initialTabData[index]);
+  }
+
+  async function onScrollLoadMoreData() {
     if (hasMore) {
       setHasMore(false);
-      setSmallSpinnerLoading(true);
       await userInfo();
-      setSmallSpinnerLoading(false);
     }
   }
 
-  async function userInfo() {
-    await getUserInfo(id).then((response) => {
-      setUser(response.user);
-      if (response.user["web"]) {
-        try {
-          const webs = JSON.parse(response.user["web"]);
-          const weblist = [...webs].map((e) => ({
-            title: Object.keys(e)[0],
-            url: Object.values(e)[0],
-          }));
-          setWebsiteList(weblist);
-        } catch {
-          setWebsiteList([]);
-        }
-        try {
-          const sociallinks = JSON.parse(response.user["social"]);
-          const sncs = [...sociallinks].map((e) => ({
-            title: Object.keys(e)[0],
-            url: Object.values(e)[0],
-          }));
-          setsncList(sncs);
-        } catch {
-          setsncList([]);
-        }
-      }
-    });
+  async function getProjectList() {
     let payload = {
       id: id,
-      page: page,
-      perPage: limit,
+      page: projectListPageNumber,
+      perPage: projectListLimit,
     };
-    let projectListCards = [];
-    let nftList = [];
-    let categoryList = [];
-    await getProjectCategory().then((response) => {
-      categoryList = response.categories;
-    });
+
     await getUserProjectListById(payload).then((e) => {
-      if (e && e.data) {
-        const key = "id";
-        const uniqueProjectList = [
-          ...new Map(e.data.map((item) => [item[key], item])).values(),
-        ];
-        uniqueProjectList.forEach((element) => {
-          element.category_name = categoryList.find(
-            (x) => x.id === element.category_id
-          ).name;
-          element.showOverview = true;
-        });
-        projectListCards = uniqueProjectList;
-        if (e.data.length === limit) {
-          let pageSize = page + 1;
-          setPage(pageSize);
-          setHasMore(true);
-        }
-        setTabKey((pre) => pre + 1);
-      }
-    });
-    let address = localStorage.getItem("walletAddress");
-    setWalletAddress(address);
-    let type = "";
-    if (window.ethereum.networkVersion === "80001") {
-      type = "eth";
-    }
-    if (address !== null) {
-      getExternalNftList(address, type).then((res) => {
-        const key = "id.tokenId";
-        const uniqueNftList = [
-          ...new Map(
-            res.external_nft.ownedNfts.map((item) => [
-              item["id"]["tokenId"],
-              item,
-            ])
-          ).values(),
-        ];
-        if (uniqueNftList.length > 0) {
-          uniqueNftList.forEach((element) => {
-            nftList.push({
-              id: element.id.tokenId,
-              img: element.metadata.image,
-              title: element.title,
-              type: "",
-              bookmark: "",
-              like: "",
-              view: "",
-              details: element,
-            });
-          });
-        }
+      let projectListCards = [];
+      const key = "id";
+      const uniqueProjectList = [
+        ...new Map(e.data.map((item) => [item[key], item])).values(),
+      ];
+      uniqueProjectList.forEach((element) => {
+        // element.category_name = projectCategoryList.find(
+        //   (x) => x.id === element.category_id
+        // ).name;
+        // element.showOverview = true;
       });
-    }
-    const projects = userProjectList.concat(projectListCards);
-    console.log(projects);
-    setUserProjectList(projects);
-    const tabData = [
-      {
-        id: 1,
-        name: `DAO Project List`,
-        cardList: projects,
-      },
-      {
-        id: 2,
-        name: `Works`,
-        cardList: nftList,
-      },
-      {
-        id: 3,
-        name: `NFTs`,
-        cardList: nftList,
-      },
-      {
-        id: 4,
-        name: `Bookmark`,
-        cardList: nftList,
-      },
-      // {
-      //   id: 3,
-      //   name: "COLLECTION",
-      //   cardList: [],
-      // },
-    ];
-    setTab(tabData);
-    setIsLoading(false);
+      projectListCards = uniqueProjectList;
+      setTabKey((pre) => pre + 1);
+      const projects = projectList.concat(projectListCards);
+      setProjectList(projects);
+      if (e.data.length === limit) {
+        const pageSize = page + 1;
+        setProjectListPageNumber(pageSize);
+        setMoreProjectListData(true);
+      }
+      setIsLoading(false);
+    });
+
+    // let address = localStorage.getItem("walletAddress");
+    // setWalletAddress(address);
+    // let type = "";
+    // if (window.ethereum.networkVersion === "80001") {
+    //   type = "eth";
+    // }
+    // if (address !== null) {
+    //   getExternalNftList(address, type).then((res) => {
+    //     const key = "id.tokenId";
+    //     const uniqueNftList = [
+    //       ...new Map(
+    //         res.external_nft.ownedNfts.map((item) => [
+    //           item["id"]["tokenId"],
+    //           item,
+    //         ])
+    //       ).values(),
+    //     ];
+    //     if (uniqueNftList.length > 0) {
+    //       uniqueNftList.forEach((element) => {
+    //         nftList.push({
+    //           id: element.id.tokenId,
+    //           img: element.metadata.image,
+    //           title: element.title,
+    //           type: "",
+    //           bookmark: "",
+    //           like: "",
+    //           view: "",
+    //           details: element,
+    //         });
+    //       });
+    //     }
+    //   });
+    // }
   }
+  async function getWorksList() {}
+  async function getNftList() {}
+  async function getBookmarks() {}
+
+  useEffect(() => {
+    projectCategory();
+  }, []);
+  useEffect(() => {
+    setProjectCategoryList(projectCategoryList);
+  }, [projectCategoryList]);
+
   useEffect(() => {
     userInfo();
   }, []);
+
+  useEffect(() => {
+    setUser(user);
+  }, [user]);
+
+  useEffect(() => {
+    getProjectList();
+  }, []);
+  useEffect(() => {
+    setProjectList(projectList);
+    let oldTabData = [...tabData];
+    oldTabData[0].list = projectList;
+    setTabData(oldTabData);
+  }, [projectList]);
+
   return (
     <>
       {isLoading && <div className="loading"></div>}
@@ -298,9 +331,9 @@ const Profile = () => {
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    fill-rule="evenodd"
+                    fillRule="evenodd"
                     d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
-                    clip-rule="evenodd"
+                    clipRule="evenodd"
                   ></path>
                 </svg>
               </div>
@@ -343,88 +376,55 @@ const Profile = () => {
             <div className="inline-flex py-4 text-white text-center">
               <div className="border-r border-color-ass px-5 last:border-0">
                 <strong className="display-block font-black font-satoshi-bold text-[22px]">
-                  {user.data.total_view}
+                  {user?.data?.total_view}
                 </strong>
                 <span>Views</span>
               </div>
 
               <div className="border-r border-color-ass px-5 last:border-0">
                 <strong class="display-block font-black font-satoshi-bold text-[22px]">
-                  {user.data.total_follow}
+                  {user?.data?.total_follow}
                 </strong>
                 <span>Followers</span>
               </div>
 
               <div className="border-r border-color-ass px-5 last:border-0">
                 <strong class="display-block font-black font-satoshi-bold text-[22px]">
-                  {user.data.total_work}
+                  {user?.data?.total_work}
                 </strong>
                 <span>Works</span>
               </div>
             </div>
           </section>
 
-          <section className="flex justify-between mt-7">
-            <button type="button" class="btn btn-primary btn-sm">
-              Create New <i class="fa-thin fa-square-plus ml-1"></i>
-            </button>
-
-            <button type="button" class="btn btn-outline-primary btn-sm">
-              Sort By <i class="fa-thin fa-arrow-down-short-wide ml-1"></i>
-            </button>
-          </section>
           <div>
             {!isLoading && (
               <InfiniteScroll
-                dataLength={userProjectList.length} //This is important field to render the next data
-                next={fetchData}
-                hasMore={hasMore}
+                dataLength={projectList.length} //This is important field to render the next data
+                next={onScrollLoadMoreData}
+                hasMore={hasMoreProjectListData}
               >
-                <Tab tabs={tab} key={tabKey} />
-                {smallSpinnerLoading && <div className="onlySpinner"></div>}
+                <Tab tabs={tabData} key={tabKey} OnSetActive={OnSetActive} />
               </InfiniteScroll>
             )}
           </div>
 
-          {/* <div className="py-5 grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-          </div> */}
-
-          {/* no project */}
-          <section className="text-center py-6">
-            <img
-              className="inline-block mb-4 md:mb-7"
-              src={noProject}
-              alt="This user haven’t create any Project."
-            />
-            <div className="text-color-ass-2 font-bold text-lg md:text-[26px]">
-              This user haven’t create any Project.
-            </div>
-          </section>
-
-          <section className="text-center py-6">
-            <img
-              className="inline-block mb-4 md:mb-7"
-              src={emptyProject}
-              alt="This user haven’t create any Project."
-            />
-            <div className="text-color-ass-2 font-bold text-lg md:text-[26px]">
-              You Doesnt have any Project.
-              <br /> let’s go create new project!
-            </div>
-            <button
-              type="button"
-              class="btn-outline-primary-gradient btn-md mt-5"
-            >
-              <span>
-                Create New <i class="fa-thin fa-square-plus ml-2"></i>
-              </span>
-            </button>
-          </section>
+          {/* {activeTab.name === "Dao Project List" && (
+            <>
+              {projectList.length === 0 && (
+                <EmptyCaseCard type={"Project"}></EmptyCaseCard>
+              )}
+            </>
+          )}
+          {activeTab.name === "Works" && (
+            <EmptyCaseCard type={"Work"}></EmptyCaseCard>
+          )}
+          {activeTab.name === "NFTs" && (
+            <EmptyCaseCard type={"NFT"}></EmptyCaseCard>
+          )}
+          {activeTab.name === "Bookmark" && (
+            <EmptyCaseCard type={"Bookmark"}></EmptyCaseCard>
+          )} */}
         </main>
       )}
 
@@ -536,11 +536,11 @@ const Profile = () => {
             ))}
           </div>
           <div className="profileDivider"></div>
-          <div>
+          <div>tabData
             {!isLoading && (
               <InfiniteScroll
                 dataLength={userProjectList.length} //This is important field to render the next data
-                next={fetchData}
+                next={onScrollLoadMoreData}
                 hasMore={hasMore}
               >
                 <Tab tabs={tab} key={tabKey} />
