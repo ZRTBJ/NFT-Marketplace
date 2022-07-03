@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ProjectCard from "./ProjectCard";
+import CommonCard from "components/CommonCard";
 import WorkCard from "./WorkCard";
 import CollectionCard from "./CollectionCard";
 import Modal from "components/Modal";
@@ -15,23 +15,25 @@ const Tab = (props) => {
   }
   return (
     <>
-
       <div className="flex-wrap justify-center hidden md:flex">
         {props.tabs.map((type) => (
           <button
-            className={`text-white-shade-600 p-3 hover:text-primary-900 active:text-primary-900 ${active.name === type.name ? "text-primary-900" : ""
-              }`}
+            className={`text-white-shade-600 p-3 hover:text-primary-900 active:text-primary-900 ${
+              active.name === type.name ? "text-primary-900" : ""
+            }`}
             key={type.id}
             onClick={() => setActive(type)}
           >
             {type.name}
-            <span className="bg-primary-50 text-color-ass-1 p-1 ml-1 rounded-sm text-sm">23</span>
+            <span className="bg-primary-50 text-color-ass-1 p-1 ml-1 rounded-sm text-sm">
+              {active.cardList.length}
+            </span>
           </button>
         ))}
       </div>
 
       <div className="tabContent">
-        {active.name === "PROJECT" && (
+        {active.id === 1 && (
           <div>
             {/* <h1 className="text-white md:hidden"><span className="pr-3">Projects</span> <i class="fa-solid fa-circle-caret-down"></i></h1>
             <h1 className="text-white md:hidden"><span className="pr-3">Projects</span> <i class="fa-solid fa-circle-caret-right"></i></h1> 
@@ -40,12 +42,10 @@ const Tab = (props) => {
             {active.cardList.length === 0 ? (
               <div>No Projects yet</div>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+              <div className="py-5 grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
                 {active.cardList.map((cardlist) => (
-                  <div key={cardlist.id}>
-                    <div className="projectCardLayout">
-                      <ProjectCard cardInfo={cardlist} />
-                    </div>
+                  <div>
+                    <CommonCard key={cardlist.id} project={cardlist} />
                   </div>
                 ))}
               </div>
@@ -54,7 +54,10 @@ const Tab = (props) => {
         )}
         {active.name === "WORK" && (
           <div className="container mx-auto md:px-4">
-            <h1 className="text-white md:hidden"><span className="pr-3">Work</span> <i class="fa-solid fa-circle-caret-down"></i></h1>
+            <h1 className="text-white md:hidden">
+              <span className="pr-3">Work</span>{" "}
+              <i class="fa-solid fa-circle-caret-down"></i>
+            </h1>
             {active.cardList.length === 0 ? (
               <div className="text-white">No works yet</div>
             ) : (
