@@ -3,8 +3,9 @@ import {
   getProjectDetailsById,
   projectLike,
 } from "services/project/projectService";
-import { ReactComponent as LikeIcon } from "assets/images/projectDetails/ico_like.svg";
-import { ReactComponent as ViewIcon } from "assets/images/projectDetails/ico_view.svg";
+
+import heartIcon from "assets/images/projectDetails/heartIcon.png";
+import bookmarkIcon from "assets/images/projectDetails/bookmarkIcon.png";
 import coverImg from "assets/images/projectDetails/cover.svg";
 import manImg from "assets/images/projectDetails/man-img.svg";
 import locationIcon from "assets/images/profile/locationIcon.svg";
@@ -21,6 +22,7 @@ export default function ProjectDetails(props) {
   const projectId = props.match.params.id;
   const [selectedImages, setSelectedImages] = useState({});
   const userInfo = useSelector((state) => state.user.userinfo);
+  // nft list
 
   useEffect(() => {
     if (projectId && !isLoading) {
@@ -72,7 +74,7 @@ export default function ProjectDetails(props) {
           <main className="container mx-auto px-4">
             {userInfo.id && (
               <>
-                {project.your_token_category && (
+                {project.your_token_category ? (
                   <>
                     <section className="flex  justify-end py-7">
                       <button
@@ -85,6 +87,21 @@ export default function ProjectDetails(props) {
                       </button>
                     </section>
                   </>
+                ) : (
+                  <div className="flex justify-end">
+                    <img
+                      className="h-[56px] w-[56px] mr-3 cursor-pointer"
+                      src={heartIcon}
+                      alt=""
+                      onClick={LikeProject}
+                    />
+                    <img
+                      cursor-pointer
+                      className="h-[56px] w-[56px]  cursor-pointer"
+                      src={bookmarkIcon}
+                      alt=""
+                    />
+                  </div>
                 )}
               </>
             )}
@@ -165,14 +182,14 @@ export default function ProjectDetails(props) {
             </div>
 
             {/* ========== nft deatils page murkup */}
+            {/* <br />
             <br />
             <br />
             <br />
             <br />
             <br />
-            <br />
-            <br />
-
+            <br /> */}
+            {/* 
             <section className="flex flex-col lg:flex-row py-5">
               <div className="flex-1 pr-4 mb-5 md:mb-0">
                 <img src={manImg} className="rounded-3xl" alt="image" />
@@ -274,18 +291,18 @@ export default function ProjectDetails(props) {
                   <div className="text-ellipsis overflow-hidden">12342</div>
                 </div>
               </div>
-            </section>
+            </section> */}
 
             {/* ========== nft deatils page murkup */}
+            {/* <br />
             <br />
             <br />
             <br />
             <br />
             <br />
-            <br />
-            <br />
+            <br /> */}
 
-            <section className="flex flex-col lg:flex-row py-5">
+            {/* <section className="flex flex-col lg:flex-row py-5">
               <div className="flex-1 pr-4 mb-5 md:mb-0">
                 <img src={manImg} className="rounded-3xl" alt="image" />
               </div>
@@ -370,7 +387,7 @@ export default function ProjectDetails(props) {
                   </div>
                 </div>
               </div>
-            </section>
+            </section> */}
           </main>
         </>
       )}
