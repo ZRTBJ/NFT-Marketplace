@@ -17,6 +17,7 @@ import { getWalletType } from "util/ApplicationStorage";
 import { useDispatch, useSelector } from "react-redux";
 import { getProjectDeploy } from "Slice/projectSlice";
 import { useHistory } from "react-router-dom";
+import { useAuthState } from "Context";
 
 const DeployingProjectModal = ({
   handleClose,
@@ -30,9 +31,11 @@ const DeployingProjectModal = ({
   const history = useHistory();
   const btnText = buttomText ? buttomText : "View on EtherScan";
   const selectedWallet = getWalletType();
-  const [step, setStep] = useState(publishStep ? publishStep : 2);
+  const [step, setStep] = useState(publishStep ? publishStep : 0);
   const [isLoading, setIsLoading] = useState(false);
   const [tnxHash, setTnxHash] = useState("");
+  const context = useAuthState();
+  const [userId, setUserId] = useState(context ? context.user : "");
   const projectDeploy = useSelector((state) =>
     state?.projects?.projectDeploy ? state?.projects?.projectDeploy : []
   );
@@ -320,7 +323,7 @@ const DeployingProjectModal = ({
                             : ""
                         }`}
                       >
-                        <div className="stepper-head">
+                        <div className="stepper-head hover:!bg-transparent">
                           <span className="stepper-head-icon">
                             {" "}
                             <i
@@ -351,7 +354,7 @@ const DeployingProjectModal = ({
                             : ""
                         }`}
                       >
-                        <div className="stepper-head">
+                        <div className="stepper-head hover:!bg-transparent">
                           <span className="stepper-head-icon">
                             {" "}
                             <i
@@ -430,20 +433,16 @@ const DeployingProjectModal = ({
                   publishThisProject(tnxHash);
                 }}
               >
-                <span>Retry</span>
+                <span>&nbsp;&nbsp;Retry&nbsp;&nbsp;</span>
               </button>
             )}
             {step === 2 && (
               <button
                 type="button"
                 className="btn-outline-primary-gradient h-[38px] cursor-pointer disabled:opacity-50 disabled:bg-gray-500"
-                onClick={() =>
-                  history.push(
-                    `/project-edit/${projectId ? projectId : "0"}/project-top`
-                  )
-                }
+                onClick={() => history.push(`/profile/${userId ? userId : ""}`)}
               >
-                <span>PROJECT</span>
+                <span>&nbsp;&nbsp;Back to Profile&nbsp;&nbsp;</span>
               </button>
             )}
           </div>
