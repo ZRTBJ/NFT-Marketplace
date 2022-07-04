@@ -323,7 +323,7 @@ const DeployingProjectModal = ({
                             : ""
                         }`}
                       >
-                        <div className="stepper-head">
+                        <div className="stepper-head hover:!bg-transparent">
                           <span className="stepper-head-icon">
                             {" "}
                             <i
