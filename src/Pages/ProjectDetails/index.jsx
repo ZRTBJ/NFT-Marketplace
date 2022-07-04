@@ -8,10 +8,11 @@ import { ReactComponent as ViewIcon } from "assets/images/projectDetails/ico_vie
 import coverImg from "assets/images/projectDetails/cover.svg";
 import manImg from "assets/images/projectDetails/man-img.svg";
 import locationIcon from "assets/images/profile/locationIcon.svg";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import Slider from "components/slider/slider";
-
 import Card from "components/profile/Card";
+
+import { useSelector } from "react-redux";
 
 export default function ProjectDetails(props) {
   const history = useHistory();
@@ -19,6 +20,7 @@ export default function ProjectDetails(props) {
   const [project, setProject] = useState({});
   const projectId = props.match.params.id;
   const [selectedImages, setSelectedImages] = useState({});
+  const userInfo = useSelector((state) => state.user.userinfo);
 
   useEffect(() => {
     if (projectId && !isLoading) {
@@ -64,267 +66,316 @@ export default function ProjectDetails(props) {
 
   return (
     <>
+      {isLoading && <div className="loading"></div>}
+      {!isLoading && (
+        <>
+          <main className="container mx-auto px-4">
+            {userInfo.id && (
+              <>
+                {project.your_token_category && (
+                  <>
+                    <section className="flex  justify-end py-7">
+                      <button
+                        type="button"
+                        class="btn btn-outline-primary-gradient btn-md"
+                      >
+                        <Link to={`/project-edit/${project.id}/outline`}>
+                          <span>Edit Project</span>
+                        </Link>
+                      </button>
+                    </section>
+                  </>
+                )}
+              </>
+            )}
 
-      <main className="container mx-auto px-4">
+            {/* Cover image section */}
+            <section className="mt-5 rounded-3xl">
+              <img
+                src={
+                  project && project.assets && project.assets.length > 0
+                    ? project.assets.find((x) => x.asset_purpose === "cover")
+                        ?.path
+                      ? project.assets.find((x) => x.asset_purpose === "cover")
+                          ?.path
+                      : require(`assets/images/no-image-found.png`)
+                    : require(`assets/images/no-image-found.png`)
+                }
+                className="rounded-3xl object-cover md:h-[217px] w-full"
+                alt="Project Cover"
+              />
+            </section>
 
-        <section className="flex  justify-end py-7">
-          <button type="button" class="btn btn-outline-primary-gradient btn-md"><span>Edit Project</span> </button>
-        </section>
+            <section className="flex flex-col lg:flex-row py-5">
+              <div className="flex-1 flex items-center py-5">
+                <div className="pr-4 lg:pr-28">
+                  <h1 className="text-white mb-6">{project.name}</h1>
 
-        {/* Cover image section */}
-        <section className="mt-5 rounded-3xl">
-          <img
-            src={coverImg}
-            className="rounded-3xl object-cover md:h-[217px] w-full"
-            alt="Profile Cover image"
-          />
+                  <div className="flex flex-wrap mb-6">
+                    <div className="flex space-x-2 items-center text-white mr-4 cursor-pointer">
+                      <i className="fa-thin fa-eye"></i>
+                      <span className=" ml-1">
+                        {project.project_view_count}
+                      </span>
+                    </div>
 
-          {/* 
-          If need, use it for if no cover image, other wise need to delte it
-          <div className="rounded-3xl h-[212px] w-full bg-white-shade-800"></div> */}
-        </section>
+                    <div className="flex space-x-2 items-center text-white mr-4 cursor-pointer">
+                      <i class="fa-thin fa-heart"></i>
 
+                      <span className=" ml-1">
+                        {project.project_like_count}
+                      </span>
+                    </div>
 
-        <section className="flex flex-col lg:flex-row py-5">
+                    <div className="flex space-x-2 items-center text-white mr-4 cursor-pointer">
+                      <i class="fa-thin fa-bookmark"></i>
 
-          <div className="flex-1 flex items-center py-5">
-            <div className="pr-4 lg:pr-28">
-              <h1 className="text-white mb-6">Bored Ape Yatch Club</h1>
-
-              <div className="flex flex-wrap mb-6">
-                <a className="flex space-x-2 items-center text-white mr-4">
-                  <i className="fa-thin fa-eye"></i>
-
-                  <span className=" ml-1">120</span>
-                </a>
-
-                <a className="flex space-x-2 items-center text-white mr-4">
-                  <i class="fa-thin fa-heart"></i>
-
-                  <span className=" ml-1">120</span>
-                </a>
-
-                <a className="flex space-x-2 items-center text-white mr-4">
-                  <i class="fa-thin fa-bookmark"></i>
-
-                  <span className=" ml-1">120</span>
-                </a>
-              </div>
-              <p className="text-color-asss-3 text-sm font-satoshi-bold font-black mb-3">
-                It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal.It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal.
-              </p>
-              <p className="text-color-asss-3 text-sm font-satoshi-bold font-black mb-3">
-                It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal.
-              </p>
-            </div>
-          </div>
-
-          <div className="max-w-full w-[553px] lg:h-[690px] mx-auto">
-            <Slider />
-          </div>
-
-        </section>
-
-
-        <section className="flex justify-between p">
-
-          <button type="button" class="btn btn-primary btn-sm">MINT NFT <i class="fa-thin fa-square-plus ml-1"></i></button>
-
-          <button type="button" class="btn btn-outline-primary btn-sm">Sort By <i class="fa-thin fa-arrow-down-short-wide ml-1"></i></button>
-
-        </section>
-
-        <div className="py-3 grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-        </div>
-
-
-
-
-
-
-
-        {/* ========== nft deatils page murkup */}
-        <br /><br /><br /><br /><br /><br /><br />
-
-
-
-
-
-
-
-        <section className="flex flex-col lg:flex-row py-5">
-
-          <div className="flex-1 pr-4 mb-5 md:mb-0">
-            <img src={manImg} className="rounded-3xl" alt="image" />
-          </div>
-
-          <div className="flex-1 flex flex-col justify-between">
-            <div className="bg-color-dark-1 rounded-3xl p-5 mb-2">
-              <h1 className="text-white  pb-4">Bored Ape #8295</h1>
-              <p className="text-white text-sm pb-4">Find it On</p>
-              <p className="text-white-shade-600 text-sm">Your NFT is not listed on any marketplace</p>
-            </div>
-
-            <div className="bg-color-dark-1 rounded-3xl p-5 mb-2">
-              <h1 className="text-white  pb-4">Description</h1>
-              <p className="text-white-shade-600 text-sm pb-4">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. It is a long established fact that a reader will be distracted by</p>
-            </div>
-
-            <div className="bg-color-dark-1 rounded-3xl p-5 ">
-              <h1 className="text-white  pb-4">Properties</h1>
-              <div className="flex  flex-wrap">
-                <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
-                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
-                    <p className="text-white-shade-600 text-sm">Background</p>
-                    <h5 className="text-white">Green</h5>
-                    <p className="text-white-shade-600 text-sm">Add 5% this trait</p>
+                      <span className=" ml-1">
+                        {project.project_mark_count}
+                      </span>
+                    </div>
                   </div>
-                </div>
-
-                <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
-                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
-                    <p className="text-white-shade-600 text-sm">Background</p>
-                    <h5 className="text-white">Green</h5>
-                    <p className="text-white-shade-600 text-sm">Add 5% this trait</p>
-                  </div>
-                </div>
-
-                <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
-                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
-                    <p className="text-white-shade-600 text-sm">Background</p>
-                    <h5 className="text-white">Green</h5>
-                    <p className="text-white-shade-600 text-sm">Add 5% this trait</p>
-                  </div>
-                </div>
-
-                <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
-                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
-                    <p className="text-white-shade-600 text-sm">Background</p>
-                    <h5 className="text-white">Green</h5>
-                    <p className="text-white-shade-600 text-sm">Add 5% this trait</p>
-                  </div>
+                  <p className="text-color-asss-3 text-sm font-satoshi-bold font-black mb-3">
+                    {project.overview}
+                  </p>
                 </div>
               </div>
-            </div>
 
-
-          </div>
-
-        </section>
-
-        <section>
-          <div className="bg-color-dark-1 rounded-3xl p-5 mb-4 lg:w-2/5">
-            <div className="flex text-white mb-3">
-              <div className="font-bold w-1/3 flex justify-between mr-1"><span>Smart Contract </span><span>:</span></div>
-              <div className="text-ellipsis overflow-hidden flex-1 pr-4 relative">
-                Xysd29479q3hfu39238yXysd29479q3hfu39238yXysd29479q3hfu39238yXysd29479q3hfu39238y
-                <i class="fa-thin fa-copy cursor-pointer absolute top-1 right-0"></i>
+              <div className="max-w-full w-[553px] lg:h-[690px] mx-auto">
+                <Slider imagesUrl={project.assets} />
               </div>
+            </section>
+
+            <section className="flex justify-between p">
+              <button type="button" class="btn btn-primary btn-sm">
+                MINT NFT <i class="fa-thin fa-square-plus ml-1"></i>
+              </button>
+
+              <button type="button" class="btn btn-outline-primary btn-sm">
+                Sort By <i class="fa-thin fa-arrow-down-short-wide ml-1"></i>
+              </button>
+            </section>
+
+            <div className="py-3 grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
+              <Card />
+              <Card />
+              <Card />
+              <Card />
+              <Card />
             </div>
-            <div className="flex text-white">
-              <div className="font-bold w-1/3 flex justify-between mr-1"><span>Token ID </span><span>:</span></div>
-              <div className="text-ellipsis overflow-hidden">12342</div>
-            </div>
 
-          </div>
-        </section>
+            {/* ========== nft deatils page murkup */}
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
 
-
-
-
-
-
-        {/* ========== nft deatils page murkup */}
-        <br /><br /><br /><br /><br /><br /><br />
-
-
-
-
-        <section className="flex flex-col lg:flex-row py-5">
-
-          <div className="flex-1 pr-4 mb-5 md:mb-0">
-            <img src={manImg} className="rounded-3xl" alt="image" />
-          </div>
-
-          <div className="flex-1 flex flex-col justify-between">
-            <div className="bg-color-dark-1 rounded-3xl p-5 mb-2">
-              <h1 className="text-white  pb-4">Bored Ape #8295</h1>
-              <p className="text-white text-sm pb-4">Find it On</p>
-
-              <div className="flex">
-                <button className="border border-color-blue rounded-xl p-5 text-color-blue font-semibold mr-4 hover:text-white hover:bg-color-blue"><i class="fa-regular fa-aperture mr-1"></i> Opensea</button>
-                <button className="border border-color-yellow rounded-xl p-5 text-color-yellow font-semibold hover:text-white hover:bg-color-yellow"><i class="fa-regular fa-square-r mr-1"></i> Rarible</button>
+            <section className="flex flex-col lg:flex-row py-5">
+              <div className="flex-1 pr-4 mb-5 md:mb-0">
+                <img src={manImg} className="rounded-3xl" alt="image" />
               </div>
 
-            </div>
-
-            <div className="bg-color-dark-1 rounded-3xl p-5 mb-2">
-              <h1 className="text-white  pb-4">Description</h1>
-              <p className="text-white-shade-600 text-sm pb-4">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. It is a long established fact that a reader will be distracted by</p>
-            </div>
-
-            <div className="bg-color-dark-1 rounded-3xl p-5 ">
-              <h1 className="text-white  pb-4">Properties</h1>
-              <div className="flex  flex-wrap">
-                <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
-                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
-                    <p className="text-white-shade-600 text-sm">Background</p>
-                    <h5 className="text-white">Green</h5>
-                    <p className="text-white-shade-600 text-sm">Add 5% this trait</p>
-                  </div>
+              <div className="flex-1 flex flex-col justify-between">
+                <div className="bg-color-dark-1 rounded-3xl p-5 mb-2">
+                  <h1 className="text-white  pb-4">Bored Ape #8295</h1>
+                  <p className="text-white text-sm pb-4">Find it On</p>
+                  <p className="text-white-shade-600 text-sm">
+                    Your NFT is not listed on any marketplace
+                  </p>
                 </div>
 
-                <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
-                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
-                    <p className="text-white-shade-600 text-sm">Background</p>
-                    <h5 className="text-white">Green</h5>
-                    <p className="text-white-shade-600 text-sm">Add 5% this trait</p>
-                  </div>
+                <div className="bg-color-dark-1 rounded-3xl p-5 mb-2">
+                  <h1 className="text-white  pb-4">Description</h1>
+                  <p className="text-white-shade-600 text-sm pb-4">
+                    It is a long established fact that a reader will be
+                    distracted by the readable content of a page when looking at
+                    its layout. It is a long established fact that a reader will
+                    be distracted by the readable content of a page when looking
+                    at its layout. It is a long established fact that a reader
+                    will be distracted by
+                  </p>
                 </div>
 
-                <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
-                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
-                    <p className="text-white-shade-600 text-sm">Background</p>
-                    <h5 className="text-white">Green</h5>
-                    <p className="text-white-shade-600 text-sm">Add 5% this trait</p>
-                  </div>
-                </div>
+                <div className="bg-color-dark-1 rounded-3xl p-5 ">
+                  <h1 className="text-white  pb-4">Properties</h1>
+                  <div className="flex  flex-wrap">
+                    <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
+                      <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
+                        <p className="text-white-shade-600 text-sm">
+                          Background
+                        </p>
+                        <h5 className="text-white">Green</h5>
+                        <p className="text-white-shade-600 text-sm">
+                          Add 5% this trait
+                        </p>
+                      </div>
+                    </div>
 
-                <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
-                  <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
-                    <p className="text-white-shade-600 text-sm">Background</p>
-                    <h5 className="text-white">Green</h5>
-                    <p className="text-white-shade-600 text-sm">Add 5% this trait</p>
+                    <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
+                      <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
+                        <p className="text-white-shade-600 text-sm">
+                          Background
+                        </p>
+                        <h5 className="text-white">Green</h5>
+                        <p className="text-white-shade-600 text-sm">
+                          Add 5% this trait
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
+                      <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
+                        <p className="text-white-shade-600 text-sm">
+                          Background
+                        </p>
+                        <h5 className="text-white">Green</h5>
+                        <p className="text-white-shade-600 text-sm">
+                          Add 5% this trait
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
+                      <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
+                        <p className="text-white-shade-600 text-sm">
+                          Background
+                        </p>
+                        <h5 className="text-white">Green</h5>
+                        <p className="text-white-shade-600 text-sm">
+                          Add 5% this trait
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </section>
 
+            <section>
+              <div className="bg-color-dark-1 rounded-3xl p-5 mb-4 lg:w-2/5">
+                <div className="flex text-white mb-3">
+                  <div className="font-bold w-1/3 flex justify-between mr-1">
+                    <span>Smart Contract </span>
+                    <span>:</span>
+                  </div>
+                  <div className="text-ellipsis overflow-hidden flex-1 pr-4 relative">
+                    Xysd29479q3hfu39238yXysd29479q3hfu39238yXysd29479q3hfu39238yXysd29479q3hfu39238y
+                    <i class="fa-thin fa-copy cursor-pointer absolute top-1 right-0"></i>
+                  </div>
+                </div>
+                <div className="flex text-white">
+                  <div className="font-bold w-1/3 flex justify-between mr-1">
+                    <span>Token ID </span>
+                    <span>:</span>
+                  </div>
+                  <div className="text-ellipsis overflow-hidden">12342</div>
+                </div>
+              </div>
+            </section>
 
-          </div>
+            {/* ========== nft deatils page murkup */}
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
 
-        </section>
+            <section className="flex flex-col lg:flex-row py-5">
+              <div className="flex-1 pr-4 mb-5 md:mb-0">
+                <img src={manImg} className="rounded-3xl" alt="image" />
+              </div>
 
+              <div className="flex-1 flex flex-col justify-between">
+                <div className="bg-color-dark-1 rounded-3xl p-5 mb-2">
+                  <h1 className="text-white  pb-4">Bored Ape #8295</h1>
+                  <p className="text-white text-sm pb-4">Find it On</p>
 
+                  <div className="flex">
+                    <button className="border border-color-blue rounded-xl p-5 text-color-blue font-semibold mr-4 hover:text-white hover:bg-color-blue">
+                      <i class="fa-regular fa-aperture mr-1"></i> Opensea
+                    </button>
+                    <button className="border border-color-yellow rounded-xl p-5 text-color-yellow font-semibold hover:text-white hover:bg-color-yellow">
+                      <i class="fa-regular fa-square-r mr-1"></i> Rarible
+                    </button>
+                  </div>
+                </div>
 
+                <div className="bg-color-dark-1 rounded-3xl p-5 mb-2">
+                  <h1 className="text-white  pb-4">Description</h1>
+                  <p className="text-white-shade-600 text-sm pb-4">
+                    It is a long established fact that a reader will be
+                    distracted by the readable content of a page when looking at
+                    its layout. It is a long established fact that a reader will
+                    be distracted by the readable content of a page when looking
+                    at its layout. It is a long established fact that a reader
+                    will be distracted by
+                  </p>
+                </div>
 
+                <div className="bg-color-dark-1 rounded-3xl p-5 ">
+                  <h1 className="text-white  pb-4">Properties</h1>
+                  <div className="flex  flex-wrap">
+                    <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
+                      <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
+                        <p className="text-white-shade-600 text-sm">
+                          Background
+                        </p>
+                        <h5 className="text-white">Green</h5>
+                        <p className="text-white-shade-600 text-sm">
+                          Add 5% this trait
+                        </p>
+                      </div>
+                    </div>
 
+                    <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
+                      <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
+                        <p className="text-white-shade-600 text-sm">
+                          Background
+                        </p>
+                        <h5 className="text-white">Green</h5>
+                        <p className="text-white-shade-600 text-sm">
+                          Add 5% this trait
+                        </p>
+                      </div>
+                    </div>
 
+                    <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
+                      <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
+                        <p className="text-white-shade-600 text-sm">
+                          Background
+                        </p>
+                        <h5 className="text-white">Green</h5>
+                        <p className="text-white-shade-600 text-sm">
+                          Add 5% this trait
+                        </p>
+                      </div>
+                    </div>
 
-      </main>
-
-
-
-
+                    <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
+                      <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
+                        <p className="text-white-shade-600 text-sm">
+                          Background
+                        </p>
+                        <h5 className="text-white">Green</h5>
+                        <p className="text-white-shade-600 text-sm">
+                          Add 5% this trait
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </main>
+        </>
+      )}
 
       {/* old code */}
-
-
 
       {/* <div className={`my-4 ${isLoading ? "loading" : ""}`}>
         {!isLoading && project && !project.name && (
@@ -354,8 +405,6 @@ export default function ProjectDetails(props) {
               <div className="relative bottom-10 left-0 text-sm">Appreciate</div>
             </div>
             <div className="h-4"></div> */}
-
-
 
       {/* <div className="flex flex-row mt-24 mx-8">
             <div className="w-2/4 border border-gray-300 float-right">
@@ -552,19 +601,6 @@ export default function ProjectDetails(props) {
           </div>
         )}
       </div> */}
-
-
-
-
-
-
-
-
-
-
-
-
-
     </>
   );
 }

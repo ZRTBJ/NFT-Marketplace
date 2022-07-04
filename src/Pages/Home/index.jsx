@@ -31,33 +31,37 @@ function Home() {
     await getProjectCategory().then((response) => {
       categoryList = response.categories;
     });
-    await getPublicProjectList(payload).then((response) => {
-      let data = [];
-      data = response.data;
-      data.forEach((element) => {
-        element.category_name = categoryList.find(
-          (x) => x.id === element.category_id
-        ).name;
-        // if (element.project_fundraising !== null) {
-        //   let allocation = "";
-        //   let user_allocated_percent = "";
-        //   allocation =
-        //     (element.token_total_amount / 100) *
-        //     element.project_fundraising.allocation_percent;
-        //   user_allocated_percent =
-        //     (allocation / 100) *
-        //     element.project_fundraising.user_allocated_percent;
-        //   element.project_fundraising.total_allocation = user_allocated_percent;
-        // }
-      });
-      if (type === "new") {
-        setProjectList(data);
-      } else if (type === "popular") {
-        setPopularProjectList(data);
-      }
+    await getPublicProjectList(payload)
+      .then((response) => {
+        let data = [];
+        data = response.data;
+        data.forEach((element) => {
+          element.category_name = categoryList.find(
+            (x) => x.id === element.category_id
+          ).name;
+          // if (element.project_fundraising !== null) {
+          //   let allocation = "";
+          //   let user_allocated_percent = "";
+          //   allocation =
+          //     (element.token_total_amount / 100) *
+          //     element.project_fundraising.allocation_percent;
+          //   user_allocated_percent =
+          //     (allocation / 100) *
+          //     element.project_fundraising.user_allocated_percent;
+          //   element.project_fundraising.total_allocation = user_allocated_percent;
+          // }
+        });
+        if (type === "new") {
+          setProjectList(data);
+        } else if (type === "popular") {
+          setPopularProjectList(data);
+        }
 
-      setIsLoading(false);
-    });
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
   }
   useEffect(() => {
     getProjectList(payload, "new");
@@ -71,13 +75,11 @@ function Home() {
       <section className="text-center  my-11">
         <HomeNavigateCard />
       </section>
-
-      {isLoading && <div className="loading"></div>}
-
-      {!isLoading && (
-        <div>
-          <section>
-            <h2 className="mb-5">Newest Project</h2>
+      <div>
+        <section>
+          <h2 className="mb-5">Newest Project</h2>
+          {isLoading && <div className="onlySpinner mt-[150px]"></div>}
+          {!isLoading && (
             <Swiper
               breakpoints={{
                 320: {
@@ -102,18 +104,18 @@ function Home() {
                 },
               }}
             >
-              {!isLoading && (
-                <div>
-                  {projectList.map((i, index) => (
-                    <SwiperSlide key={index}>
-                      <CommonCard key={index} project={i} />
-                    </SwiperSlide>
-                  ))}
-                </div>
-              )}
+              <div>
+                {projectList.map((i, index) => (
+                  <SwiperSlide key={index}>
+                    <CommonCard key={index} project={i} />
+                  </SwiperSlide>
+                ))}
+              </div>
             </Swiper>
-          </section>
-          <section>
+          )}
+        </section>
+        {!isLoading && (
+          <section className="mt-16 pb-16">
             <h2 className="mb-5">Popular Project</h2>
             <Swiper
               breakpoints={{
@@ -139,19 +141,17 @@ function Home() {
                 },
               }}
             >
-              {!isLoading && (
-                <div>
-                  {popularProjectList.map((i, index) => (
-                    <SwiperSlide key={index}>
-                      <CommonCard key={index} project={i} />
-                    </SwiperSlide>
-                  ))}
-                </div>
-              )}
+              <div>
+                {popularProjectList.map((i, index) => (
+                  <SwiperSlide key={index}>
+                    <CommonCard key={index} project={i} />
+                  </SwiperSlide>
+                ))}
+              </div>
             </Swiper>
           </section>
-        </div>
-      )}
+        )}
+      </div>
     </main>
   );
 }

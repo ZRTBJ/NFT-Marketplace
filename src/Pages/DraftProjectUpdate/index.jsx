@@ -24,6 +24,7 @@ import SuccessModal from "components/modalDialog/SuccessModal";
 import ErrorModal from "components/modalDialog/ErrorModal";
 import { useAuthState } from "Context";
 import PublishModal from "components/modalDialog/PublishModal";
+import LeftSideBar from "components/DraftProjectUpdate/LeftSideBar";
 
 export default function DraftProjectUpdate() {
   const history = useHistory();
@@ -347,6 +348,10 @@ export default function DraftProjectUpdate() {
     };
     await getProjectDetailsById(payload).then((e) => {
       let response = e.project;
+      if (!response.your_token_category) {
+        history.push("/");
+      }
+
       setProjectInfo(e.project);
       // outline start
       setProjectName(response.name);
@@ -391,9 +396,11 @@ export default function DraftProjectUpdate() {
       // outline end
 
       // Token start
-      setTokenName(response.token_name);
-      setTokenSymbol(response.token_symbol);
-      setNumberOfTokens(response.token_total_amount);
+      setTokenName(response.token_name ? response.token_name : "");
+      setTokenSymbol(response.token_symbol ? response.token_symbol : "");
+      setNumberOfTokens(
+        response.token_total_amount ? response.token_total_amount : ""
+      );
 
       getProjectCategory().then((e) => {
         try {
@@ -421,6 +428,7 @@ export default function DraftProjectUpdate() {
     if (currentStep.length === 1) {
       if (projectName === "") {
         setemptyProjectName(true);
+        window.scrollTo({ top: 0, behavior: "smooth" });
       } else if (projectCategory === "default") {
         setEmptyProjectCategory(true);
       } else {
@@ -445,6 +453,7 @@ export default function DraftProjectUpdate() {
         numberOfTokens !== ""
       ) {
         if (!alreadyTakenTokenName && !alreadyTakenSymbol) {
+          console.log(tokenName);
           setcurrentStep([1, 2, 3]);
         }
       }
@@ -462,6 +471,7 @@ export default function DraftProjectUpdate() {
     if (currentStep.length === 1) {
       if (projectName === "") {
         setemptyProjectName(true);
+        window.scrollTo({ top: 0, behavior: "smooth" });
       } else if (projectCategory === "") {
         setEmptyProjectCategory(true);
       } else if (
@@ -610,7 +620,11 @@ export default function DraftProjectUpdate() {
       <div className="cardContainer px-3 md:px-5">
         {currentStep.length === 1 && (
           <div>
-            {/* <LeftSideBar currentStep={currentStep} key={currentStep.length} /> */}
+            <LeftSideBar
+              currentStep={currentStep}
+              update={true}
+              key={currentStep.length}
+            />
             <Outline
               key={outlineKey}
               // name
@@ -650,7 +664,11 @@ export default function DraftProjectUpdate() {
         )}
         {currentStep.length === 2 && (
           <div>
-            {/* <LeftSideBar currentStep={currentStep} key={currentStep.length} /> */}
+            <LeftSideBar
+              currentStep={currentStep}
+              update={true}
+              key={currentStep.length}
+            />
             <Token
               // token name
               tokenName={tokenName}

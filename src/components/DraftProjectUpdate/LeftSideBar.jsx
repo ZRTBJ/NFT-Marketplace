@@ -31,7 +31,9 @@ export default function LeftSideBar(props) {
         </CircularProgressbarWithChildren>
       </div>
       <div className="">
-        <div className="font-bold text-[22px]">Create Project</div>
+        <div className="font-bold text-[22px]">
+          {props.update ? "Update Project" : "Create Project"}
+        </div>
         <div className="text-[12px] text-[#9499AE]">
           Make sure you have fill the form with right data.
         </div>

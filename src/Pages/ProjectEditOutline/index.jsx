@@ -16,6 +16,7 @@ import ErrorModal from "components/modalDialog/ErrorModal";
 
 export default function ProjectEditOutline() {
   const { id } = useParams();
+  const history = useHistory();
   const [isDataLoading, setDataIsLoading] = useState(true);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -239,6 +240,9 @@ export default function ProjectEditOutline() {
     };
     await getProjectDetailsById(payload).then((e) => {
       let response = e.project;
+      if (!response.your_token_category) {
+        history.push("/");
+      }
       // outline start
       setProjectName(response.name);
       let cover = response.assets.find((x) => x.asset_purpose === "cover");
@@ -381,13 +385,13 @@ export default function ProjectEditOutline() {
         )}
         <div className="buttonContainer">
           {projectStatus !== "publishing" && (
-            <div className="flex justify-center">
+            <div className="flex justify-start">
               {currentStep.length === 1 && (
                 <button
                   onClick={() => saveDraft("publish")}
                   className="btn-primary w-[100px] h-[38px] "
                 >
-                  PUBLISH
+                  Save
                 </button>
               )}
             </div>
