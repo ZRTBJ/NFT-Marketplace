@@ -5,6 +5,8 @@ import { useHistory } from "react-router-dom";
 const CommonCard = ({ project }) => {
   const history = useHistory();
   function projectDetails(projectId) {
+    if (project.your_token_category) {
+    }
     if (project.project_status === "draft" || project.status === "draft") {
       history.push(`/project-update/${projectId}`);
     } else {

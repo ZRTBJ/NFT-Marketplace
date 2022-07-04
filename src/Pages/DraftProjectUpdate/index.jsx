@@ -348,6 +348,10 @@ export default function DraftProjectUpdate() {
     };
     await getProjectDetailsById(payload).then((e) => {
       let response = e.project;
+      if (!response.your_token_category) {
+        history.push("/");
+      }
+
       setProjectInfo(e.project);
       // outline start
       setProjectName(response.name);
