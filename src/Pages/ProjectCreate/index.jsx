@@ -324,7 +324,7 @@ export default function ProjectCreate() {
   const [projectId, setProjectId] = useState("");
   const [projectStatus, setProjectStatus] = useState("");
   const [publishStep, setPublishStep] = useState(0);
-  const [showDeployModal, setShowDeployModal] = useState(true);
+  const [showDeployModal, setShowDeployModal] = useState(false);
   const [tnxData, setTnxData] = useState({});
   const [isDataLoading, setDataIsLoading] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -389,33 +389,62 @@ export default function ProjectCreate() {
       setPublishStep(1);
       setShowDeployModal(true);
     } else {
-      let id = "";
-      if (!projectCreated) {
-        id = await createNewProject();
-        await updateExistingProject(id, "public");
-        await projectDetails(id);
-      } else if (projectCreated && projectId !== "") {
-        await updateExistingProject(id, "public");
-        await projectDetails(id);
+      try {
+        let id = projectInfo && projectInfo.id ? projectInfo.id : "";
+        setDataIsLoading(true);
+        if (!projectCreated) {
+          id = await createNewProject();
+          await updateExistingProject(id, "public");
+          await projectDetails(id);
+        } else if (projectCreated && id !== "") {
+          await updateExistingProject(id, "public");
+          await projectDetails(id);
+        }
+        await delay(1000);
+        let data = {
+          user_id: userId,
+          token_category_id:
+            projectInfo &&
+            projectInfo.token_category &&
+            projectInfo.token_category[0] &&
+            projectInfo.token_category[0].id
+              ? projectInfo.token_category[0].id
+              : 26,
+          token_amount: parseInt(numberOfTokens),
+        };
+        const request = new FormData();
+        request.append("allocation", JSON.stringify(data));
+        await tokenBreakdown(id, request)
+          .then((res) => {
+            if (res.code === 0) {
+              getProjectPublishCost(id);
+              setDataIsLoading(false);
+            } else {
+              setDataIsLoading(false);
+              setShowErrorModal(true);
+            }
+          })
+          .catch((err) => {
+            setDataIsLoading(false);
+          });
+      } catch {
+        setDataIsLoading(false);
       }
-      let data = {
-        user_id: userId,
-        token_category_id:
-          projectInfo &&
-          projectInfo.token_category &&
-          projectInfo.token_category[0] &&
-          projectInfo.token_category[0].id
-            ? projectInfo.token_category[0].id
-            : 1,
-        token_amount: parseInt(numberOfTokens),
-      };
-      const request = new FormData();
-      request.append("allocation", JSON.stringify(data));
-      setDataIsLoading(true);
-      await tokenBreakdown(id, request)
+    }
+  }
+  async function getProjectPublishCost(id) {
+    if (id || (projectInfo && projectInfo.id)) {
+      await getPublishCost(id ? id : projectInfo.id)
         .then((res) => {
-          if (res.code === 0) {
-            getProjectPublishCost();
+          if (
+            res.code === 0 &&
+            res.data &&
+            res.data.amount &&
+            res.data.gasPrice &&
+            res.data.toEoa
+          ) {
+            setTnxData(res.data);
+            setShowDeployModal(true);
             setDataIsLoading(false);
           } else {
             setDataIsLoading(false);
@@ -426,28 +455,6 @@ export default function ProjectCreate() {
           setDataIsLoading(false);
         });
     }
-  }
-  async function getProjectPublishCost() {
-    await getPublishCost(projectId)
-      .then((res) => {
-        if (
-          res.code === 0 &&
-          res.data &&
-          res.data.amount &&
-          res.data.gasPrice &&
-          res.data.toEoa
-        ) {
-          setTnxData(res.data);
-          setShowDeployModal(true);
-          setDataIsLoading(false);
-        } else {
-          setDataIsLoading(false);
-          setShowErrorModal(true);
-        }
-      })
-      .catch((err) => {
-        setDataIsLoading(false);
-      });
   }
   async function createBlock(id, visibility) {
     setDataIsLoading(true);
@@ -599,6 +606,11 @@ export default function ProjectCreate() {
       setProjectCategoryList(e.categories);
     });
   }, []);
+
+  function delay(time) {
+    return new Promise((resolve) => setTimeout(resolve, time));
+  }
+
   return (
     <div className="text-[white]">
       {isDataLoading && <div className="loading"></div>}
@@ -708,10 +720,7 @@ export default function ProjectCreate() {
               )}
               {currentStep.length === 3 && (
                 <button
-                  onClick={
-                    () => setShowDeployModal(true)
-                    // setShowPublishModal(true)
-                  }
+                  onClick={() => setShowPublishModal(true)}
                   className="btn-primary w-[100px] h-[38px] ml-auto"
                 >
                   PUBLISH
