@@ -53,8 +53,6 @@
         font-satoshi-bold
         tracking-tighter
         text-secondary-900
-        min-h-[28px]
-        min-w-[120px]
         hover:text-white;
     padding: 1px;
     background-image: linear-gradient(
@@ -63,6 +61,8 @@
       #9a5aff 93.04%
     );
   }
+
+
 
   .btn-outline-primary-gradient span {
     @apply items-center
@@ -76,11 +76,27 @@
         duration-300 
         leading-7
         hover:bg-transparent;
-  }
+    }
 
-  .btn-outline-primary-gradient.btn-md {
-    height: 44px;
-  }
+      .btn-outline-primary-gradient.btn-sm {
+        min-width: 120px;
+        min-height: 28px;
+      }
+      .btn-outline-primary-gradient.btn-sm span{ 
+        min-height: 26px;
+     }
+
+    .btn-outline-primary-gradient.btn-md { 
+        min-width: 160px;
+        min-height: 44px;
+     }
+      .btn-outline-primary-gradient.btn-md span{ 
+        min-height: 42px;
+     }
+
+     .box-shadow {
+       box-shadow: 0 0 5px rgba(0,0,0,0.5)
+     }
 
   /* form field */
 
