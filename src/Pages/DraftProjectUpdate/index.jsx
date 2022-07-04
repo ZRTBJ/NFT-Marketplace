@@ -746,7 +746,7 @@ export default function DraftProjectUpdate() {
           show={showDeployModal}
           handleClose={(status) => {
             setShowDeployModal(status);
-            projectDetails(id);
+            history.push(`/profile/${userId ? userId : ""}`);
           }}
           tnxData={tnxData}
           projectId={id}
