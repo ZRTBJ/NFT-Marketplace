@@ -383,7 +383,8 @@ export default function ProjectCreate() {
       // }
     }
   }
-  async function projectTokenBreakdown() {
+
+  async function intiProjectPublish() {
     setShowPublishModal(false);
     if (projectStatus === "publishing") {
       setPublishStep(1);
@@ -395,43 +396,71 @@ export default function ProjectCreate() {
         if (!projectCreated) {
           id = await createNewProject();
           await updateExistingProject(id, "public");
-          await projectDetails(id);
+          getProjectStatus(id);
         } else if (projectCreated && id !== "") {
           await updateExistingProject(id, "public");
-          await projectDetails(id);
+          getProjectStatus(id);
         }
         await delay(1000);
-        let data = {
-          user_id: userId,
-          token_category_id:
-            projectInfo &&
-            projectInfo.token_category &&
-            projectInfo.token_category[0] &&
-            projectInfo.token_category[0].id
-              ? projectInfo.token_category[0].id
-              : 26,
-          token_amount: parseInt(numberOfTokens),
-        };
-        const request = new FormData();
-        request.append("allocation", JSON.stringify(data));
-        await tokenBreakdown(id, request)
-          .then((res) => {
-            if (res.code === 0) {
-              getProjectPublishCost(id);
-              setDataIsLoading(false);
-            } else {
-              setDataIsLoading(false);
-              setShowErrorModal(true);
-            }
-          })
-          .catch((err) => {
-            setDataIsLoading(false);
-          });
       } catch {
         setDataIsLoading(false);
       }
     }
+
+    function getProjectStatus(id) {
+      let payload = {
+        id: id ? id : projectId,
+      };
+      getProjectDetailsById(payload)
+        .then((e) => {
+          let proj = e.project;
+          id = proj.id;
+          debugger;
+          if (
+            proj &&
+            proj.token_category &&
+            proj.token_category[0] &&
+            proj.token_category[0].id
+          ) {
+            projectTokenBreakdown(id, proj.token_category[0].id);
+          }
+        })
+        .catch((ex) => {
+          setDataIsLoading(false);
+        });
+    }
+
+    async function projectTokenBreakdown(projectId, token_category_id) {
+      let data = {
+        user_id: userId,
+        token_category_id: token_category_id
+          ? token_category_id
+          : projectInfo &&
+            projectInfo.token_category &&
+            projectInfo.token_category[0] &&
+            projectInfo.token_category[0].id
+          ? projectInfo.token_category[0].id
+          : 1,
+        token_amount: parseInt(numberOfTokens),
+      };
+      const request = new FormData();
+      request.append("allocation", JSON.stringify(data));
+      await tokenBreakdown(projectId, request)
+        .then((res) => {
+          if (res.code === 0) {
+            getProjectPublishCost(projectId);
+            setDataIsLoading(false);
+          } else {
+            setDataIsLoading(false);
+            setShowErrorModal(true);
+          }
+        })
+        .catch((err) => {
+          setDataIsLoading(false);
+        });
+    }
   }
+
   async function getProjectPublishCost(id) {
     if (id || (projectInfo && projectInfo.id)) {
       await getPublishCost(id ? id : projectInfo.id)
@@ -757,7 +786,7 @@ export default function ProjectCreate() {
       {showPublishModal && (
         <PublishModal
           handleClose={() => setShowPublishModal(false)}
-          publishProject={projectTokenBreakdown}
+          publishProject={intiProjectPublish}
           show={showPublishModal}
         />
       )}
