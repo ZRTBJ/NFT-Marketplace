@@ -22,6 +22,23 @@
   .btn-primary:focus {
     @apply ring-0;
   }
+ 
+ .btn-secondary {
+     @apply text-white 
+        text-lg
+        bg-white-shade-600
+        focus:ring-4 
+        focus:outline-none 
+        focus:ring-blue-300;
+ }
+.btn-text-gradient {
+  background: linear-gradient(128.96deg, #df9b5d 17.26%, #9a5aff 93.04%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+
+}
+
 
   .btn-outline-primary {
     @apply text-primary-900
@@ -133,4 +150,24 @@
     appearance: none;
     border-color: transparent;
   }
+
+  .icon-blockchain {
+   position: relative;
+}
+ .icon-blockchain input{
+   padding-left : 30px;
+}
+
+
+  .icon-blockchain::after {
+    content: '';
+    width: 14px;
+    height: 14px;
+    position: absolute;
+    left: 10px;
+    top: 14px;
+    background: #ffffff url("../../images/polygon.svg") no-repeat;
+  }
+
+
 }
