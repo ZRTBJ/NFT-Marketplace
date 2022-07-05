@@ -415,7 +415,6 @@ export default function ProjectCreate() {
         .then((e) => {
           let proj = e.project;
           id = proj.id;
-          debugger;
           if (
             proj &&
             proj.token_category &&

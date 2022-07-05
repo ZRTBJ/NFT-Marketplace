@@ -161,13 +161,14 @@ input[type="number"],
 }
 input,
 textarea {
-  padding-left: 15px;
+  padding:10px 15px;
   border: none;
   background-color: #232032;
   color: #9499ae;
   font-size: 13px;
-  /* width: 100%; */
+  width: 100%; 
   border-radius: 6px;
+  border:  1px solid #232032;
 }
 input:focus-visible,
 textarea:focus-visible,
