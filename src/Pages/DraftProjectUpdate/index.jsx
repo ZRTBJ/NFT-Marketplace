@@ -569,7 +569,7 @@ export default function DraftProjectUpdate() {
           projectInfo.token_category[0].id
             ? projectInfo.token_category[0].id
             : 1,
-        token_amount: numberOfTokens,
+        token_amount: parseInt(numberOfTokens),
       };
       const request = new FormData();
       request.append("allocation", JSON.stringify(data));
