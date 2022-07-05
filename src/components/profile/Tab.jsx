@@ -5,7 +5,7 @@ import CollectionCard from "./CollectionCard";
 import Modal from "components/Modal";
 import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
-import EmptyCaseCard from "components/profile/EmptyCaseCard";
+import ProfileEmptyCaseCard from "components/EmptyCaseCard/ProfileEmptyCaseCard";
 
 const Tab = (props) => {
   const { id } = useParams();
@@ -61,7 +61,7 @@ const Tab = (props) => {
         {active.name === "Dao Project List" && (
           <div className="py-5 grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
             {active.list.length === 0 ? (
-              <EmptyCaseCard type={"Project"}></EmptyCaseCard>
+              <ProfileEmptyCaseCard type={"Project"}></ProfileEmptyCaseCard>
             ) : (
               <>
                 {active.list.map((list) => (
