@@ -31,14 +31,11 @@
         focus:outline-none 
         focus:ring-blue-300;
  }
-.btn-text-gradient {
-  background: linear-gradient(128.96deg, #df9b5d 17.26%, #9a5aff 93.04%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-
-
-}
-
+  .btn-text-gradient {
+    background: linear-gradient(128.96deg, #df9b5d 17.26%, #9a5aff 93.04%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 
   .btn-outline-primary {
     @apply text-primary-900
