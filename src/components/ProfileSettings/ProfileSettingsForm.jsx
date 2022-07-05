@@ -12,10 +12,12 @@ import deleteIcon from "assets/images/projectCreate/ico_delete01.svg";
 import SuccessModal from "../modalDialog/SuccessModal";
 import ErrorModal from "../modalDialog/ErrorModal";
 import { func } from "prop-types";
+import { useHistory } from "react-router-dom";
 
 const ProfileSettingsForm = () => {
   const dispatch = useDispatch();
   const context = useAuthState();
+  const history = useHistory();
   const [userId, setUserId] = useState(context ? context.user : "");
   const userinfo = useSelector((state) => state.user.userinfo);
   const [isLoading, setIsLoading] = useState(false);
@@ -444,6 +446,7 @@ const ProfileSettingsForm = () => {
               <button
                 type="button"
                 className="btn-primary w-[80px] h-[38px] rounded-lg mr-4"
+                onClick={() => history.push(`/profile/${userId ? userId : ""}`)}
               >
                 Skip
               </button>
