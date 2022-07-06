@@ -2,9 +2,9 @@ import thumbIcon from "assets/images/profile/card.svg";
 const Card = ({ cardInfo }) => {
   return (
     <>
-      <div className="rounded-lg border border-primary-50  p-6">
+      <div className="rounded-3xl border border-primary-50  p-6">
         <a href="#">
-          <img className="rounded-lg" src={thumbIcon} alt="card image" />
+          <img className="rounded-3xl" src={thumbIcon} alt="card image" />
         </a>
         <div className="p-5">
           {/* <a href="#">

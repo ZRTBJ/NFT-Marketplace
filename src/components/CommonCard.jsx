@@ -1,6 +1,5 @@
 import thumbIcon from "assets/images/profile/card.svg";
 import edit_icon from "assets/images/profile/edit_icon.png";
-import ProjectCreate from "Pages/ProjectCreate";
 import { useHistory } from "react-router-dom";
 
 const CommonCard = ({ project }) => {
@@ -20,7 +19,7 @@ const CommonCard = ({ project }) => {
   return (
     <div
       onClick={() => gotToDetailPage(project.id)}
-      className="rounded-lg border rounded rounded-[24px] border-primary-50 cursor-pointer relative p-3"
+      className="border rounded-3xl border-primary-50 cursor-pointer relative p-3"
     >
       <div>
         {(!project.isNft && project.project_status === "draft") ||
@@ -35,7 +34,7 @@ const CommonCard = ({ project }) => {
       </div>
 
       <div
-        className={`  rounded rounded-[24px] ${
+        className={`rounded-3xl ${
           (!project.isNft && project.project_status === "draft") ||
           project.status === "draft"
             ? "bg-[#9499AE] opacity-[0.5] p-2"
@@ -45,7 +44,7 @@ const CommonCard = ({ project }) => {
         <div>
           {!project.isNft ? (
             <img
-              className="rounded-lg w-full h-[137px] lg:h-[301px] object-cover"
+              className="rounded-3xl w-full h-[137px] lg:h-72 2xl:h-[301px] object-cover"
               src={
                 project && project.assets && project.assets.length > 0
                   ? project.assets.find((x) => x.asset_purpose === "cover")
