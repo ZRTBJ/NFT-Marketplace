@@ -30,7 +30,7 @@ export default function Slider(props) {
         className="big-img"
       >
         {props?.imagesUrl?.map((i) => (
-          <SwiperSlide>
+          <SwiperSlide key={i.id}>
             <img src={i.path} alt="cover" />
           </SwiperSlide>
         ))}
@@ -47,7 +47,7 @@ export default function Slider(props) {
         className="mySwiper thumb-img"
       >
         {props?.imagesUrl?.map((i) => (
-          <SwiperSlide>
+          <SwiperSlide key={i.id}>
             <img src={i.path} alt="cover" />
           </SwiperSlide>
         ))}

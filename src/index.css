@@ -78,3 +78,7 @@ body {
   content: "";
   background-color: white;
 }
+
+.infinity-scroll {
+  overflow: hidden !important;
+}
