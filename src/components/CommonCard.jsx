@@ -17,40 +17,37 @@ const CommonCard = ({ project }) => {
   return (
     <div
       onClick={() => projectDetails(project.id)}
-      className="rounded-lg border rounded rounded-[24px] border-primary-50 cursor-pointer relative p-2"
+      className="border rounded-3xl border-primary-50 cursor-pointer relative p-2"
     >
-      <div>
-        {project.project_status === "draft" || project.status === "draft" ? (
-          <div className="absolute left-0 z-10 right-0 flex  items-center justify-center mx-auto w-[169px] font-bold top-[50%] h-[35px]  text-color-gold bg-color-brown rounded-lg">
-            <img src={edit_icon} className="mr-2" alt="edit" />
-            <span>Continue Editing</span>
-          </div>
-        ) : (
-          <></>
-        )}
-      </div>
+
+      {project.project_status === "draft" || project.status === "draft" ? (
+        <div className="absolute left-0 z-10 right-0 flex  items-center justify-center mx-auto w-[169px] font-bold top-[50%] h-[35px]  text-color-gold bg-color-brown rounded-lg">
+          <img src={edit_icon} className="mr-2" alt="edit" />
+          <span>Continue Editing</span>
+        </div>
+      ) : (
+        <></>
+      )}
+
 
       <div
-        className={`  rounded rounded-[24px] ${
-          project.project_status === "draft" || project.status === "draft"
-            ? "bg-[#9499AE] opacity-[0.5]"
-            : ""
-        }`}
+        className={`rounded-3xl ${project.project_status === "draft" || project.status === "draft"
+          ? "bg-[#9499AE] opacity-[0.5]"
+          : ""
+          }`}
       >
-        <div>
-          <img
-            className="rounded-lg w-full h-[137px] lg:h-[301px] object-cover"
-            src={
-              project && project.assets && project.assets.length > 0
-                ? project.assets.find((x) => x.asset_purpose === "cover")?.path
-                  ? project.assets.find((x) => x.asset_purpose === "cover")
-                      ?.path
-                  : thumbIcon
+        <img
+          className="rounded-3xl w-full h-[137px] lg:h-72 2xl:h-[301px] object-cover"
+          src={
+            project && project.assets && project.assets.length > 0
+              ? project.assets.find((x) => x.asset_purpose === "cover")?.path
+                ? project.assets.find((x) => x.asset_purpose === "cover")
+                  ?.path
                 : thumbIcon
-            }
-            alt="card"
-          />
-        </div>
+              : thumbIcon
+          }
+          alt="card"
+        />
         <div className="p-5">
           <div>
             <h3 class="mb-2 tracking-tight text-color-grey">{project.name}</h3>
