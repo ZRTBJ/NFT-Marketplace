@@ -22,7 +22,7 @@ const CommonCard = ({ project }) => {
   return (
     <div
       onClick={() => gotToDetailPage(project.id)}
-      className="rounded-lg border rounded rounded-[24px] border-primary-50 cursor-pointer relative p-2"
+      className="border rounded-3xl border-primary-50 cursor-pointer relative p-2"
     >
       <div>
         {(!project.isNft && project.project_status === "draft") ||
@@ -37,7 +37,7 @@ const CommonCard = ({ project }) => {
       </div>
 
       <div
-        className={`  rounded rounded-[24px] ${
+        className={`rounded-3xl ${
           (!project.isNft && project.project_status === "draft") ||
           project.status === "draft"
             ? "bg-[#9499AE] opacity-[0.5]"
@@ -47,7 +47,7 @@ const CommonCard = ({ project }) => {
         <div>
           {!project.isNft ? (
             <img
-              className="rounded-lg w-full h-[137px] lg:h-[301px] object-cover"
+              className="rounded-3xl w-full h-[137px] lg:h-72 2xl:h-[301px] object-cover"
               src={
                 project && project.assets && project.assets.length > 0
                   ? project.assets.find((x) => x.asset_purpose === "cover")
@@ -76,10 +76,10 @@ const CommonCard = ({ project }) => {
           )}
           {!project.isNft && (
             <div class="mt-4">
-              <div className="inline-flex items-center mr-1 py-2 px-3 text-xs font-bold text-center text-color-gold bg-color-brown rounded-full ease-in-out duration-300 hover:text-color-brown hover:bg-color-gold focus:ring-4 focus:outline-none focus:ring-primary-300 ">
+              <div className="inline-flex items-center mr-1 py-2 px-3 text-xs font-bold justify-center  text-color-gold bg-color-brown rounded-full ease-in-out duration-300 w-20 mb-2 md:mb-0 hover:text-color-brown hover:bg-color-gold focus:ring-4 focus:outline-none focus:ring-primary-300">
                 Member
               </div>
-              <div className="inline-flex items-center mr-1 py-2 px-3 text-xs font-bold text-center text-primary-50 bg-primary-900 rounded-full ease-in-out duration-300 hover:text-primary-900 hover:bg-primary-200 focus:ring-4 focus:outline-none focus:ring-primary-300 ">
+              <div className="inline-flex items-center mr-1 py-2 px-3 text-xs font-bold justify-center text-primary-50 bg-primary-900 rounded-full ease-in-out duration-300 w-20 hover:text-primary-900 hover:bg-primary-200 focus:ring-4 focus:outline-none focus:ring-primary-300">
                 Owner
               </div>
             </div>
