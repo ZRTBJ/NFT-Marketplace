@@ -56,10 +56,10 @@ const CommonCard = ({ project }) => {
             <div className="mt-4 text-white  font-bold">{project.overview}</div>
           )}
           <div class="mt-4">
-            <div className="inline-flex items-center mr-1 py-2 px-3 text-xs font-bold text-center text-color-gold bg-color-brown rounded-full ease-in-out duration-300 hover:text-color-brown hover:bg-color-gold focus:ring-4 focus:outline-none focus:ring-primary-300 ">
+            <div className="inline-flex items-center mr-1 py-2 px-3 text-xs font-bold justify-center  text-color-gold bg-color-brown rounded-full ease-in-out duration-300 w-20 mb-2 md:mb-0 hover:text-color-brown hover:bg-color-gold focus:ring-4 focus:outline-none focus:ring-primary-300 ">
               Member
             </div>
-            <div className="inline-flex items-center mr-1 py-2 px-3 text-xs font-bold text-center text-primary-50 bg-primary-900 rounded-full ease-in-out duration-300 hover:text-primary-900 hover:bg-primary-200 focus:ring-4 focus:outline-none focus:ring-primary-300 ">
+            <div className="inline-flex items-center mr-1 py-2 px-3 text-xs font-bold justify-center text-primary-50 bg-primary-900 rounded-full ease-in-out duration-300 w-20 hover:text-primary-900 hover:bg-primary-200 focus:ring-4 focus:outline-none focus:ring-primary-300 ">
               Owner
             </div>
           </div>
