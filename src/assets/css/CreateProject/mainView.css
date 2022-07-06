@@ -30,7 +30,8 @@
 }
 .buttonContainer {
   margin-top: 42px;
-  margin-bottom: 80px;
+  margin-bottom: 0px;
+  padding-bottom: 30px;
 }
 .cardContainer {
   max-width: 600px;

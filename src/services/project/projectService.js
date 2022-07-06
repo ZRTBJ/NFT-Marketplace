@@ -162,6 +162,14 @@ export async function projectLike(projectId, payload) {
     "formdata"
   );
 }
+export async function projectBookmark(projectId, payload) {
+  return await client(
+    "POST",
+    `/project/${projectId}/bookmark`,
+    payload,
+    "formdata"
+  );
+}
 
 export async function contractDeploy(projectId) {
   return await client("POST", `/project/${projectId}/contract_deploy`);
