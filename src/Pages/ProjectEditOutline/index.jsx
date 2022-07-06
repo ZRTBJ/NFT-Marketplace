@@ -240,7 +240,7 @@ export default function ProjectEditOutline() {
     };
     await getProjectDetailsById(payload).then((e) => {
       let response = e.project;
-      if (!response.your_token_category) {
+      if (!response.is_owner) {
         history.push("/");
       }
       // outline start

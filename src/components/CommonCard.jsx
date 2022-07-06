@@ -9,8 +9,6 @@ const CommonCard = ({ project }) => {
     if (project.isNft) {
       console.log("nft");
     } else {
-      if (project.your_token_category) {
-      }
       if (project.project_status === "draft" || project.status === "draft") {
         history.push(`/project-update/${projectId}`);
       } else {

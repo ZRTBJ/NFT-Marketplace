@@ -348,7 +348,7 @@ export default function DraftProjectUpdate() {
     };
     await getProjectDetailsById(payload).then((e) => {
       let response = e.project;
-      if (!response.your_token_category) {
+      if (!response.is_owner) {
         history.push("/");
       }
 
