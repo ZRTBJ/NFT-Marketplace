@@ -5,19 +5,22 @@ import notificationIcon from "assets/images/header/ico_notification@2x.png";
 import UserDropDownMenu from "./UserDropDownMenu";
 import NotificationMenu from "./NotificationMenu";
 import { useHistory } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setSideBar } from "Slice/userSlice";
 import { useAuthState } from "Context";
 import WalletConnectModal from "components/modalDialog/WalletConnectModal";
 import { Link } from "react-router-dom";
 
 const Header = () => {
   const history = useHistory();
+  const dispatch = useDispatch();
   const context = useAuthState();
+
   const [userId, setUserId] = useState(context ? context.user : "");
   const [showModal, setShowModal] = useState(false);
-  const [showSideBar, setShowSideBar] = useState(false);
   const userinfo = useSelector((state) => state.user.userinfo);
-  const loggedIn = useSelector((state) => state.user.loggedIn);
+  const showSidebar = useSelector((state) => state.user.showSidebar);
+  const [showSidebarKey, setSideBarKey] = useState(0);
   function showHideUserPopup() {
     const userDropDown = document.getElementById("userDropDown");
     userDropDown.classList.toggle("hidden");
@@ -26,6 +29,21 @@ const Header = () => {
   function showHideUserPopupWallet() {
     const userDropDown = document.getElementById("userDropDownWallet");
     userDropDown.classList.toggle("hidden");
+  }
+  console.log(showSidebar);
+
+  function handelSidebar(e) {
+    e.preventDefault();
+    if (showSidebar) {
+      dispatch(setSideBar(false));
+    } else {
+      dispatch(setSideBar(true));
+    }
+  }
+  function closeSidebar() {
+    console.log("clicked");
+    dispatch(setSideBar(false));
+    setSideBarKey((pr) => pr + 1);
   }
 
   // function toogleNotificationList() {
@@ -36,12 +54,14 @@ const Header = () => {
   }
   return (
     <>
-      <Sidebar show={showSideBar} handleClose={() => setShowSideBar(false)} />
+      {showSidebar && (
+        <Sidebar key={showSidebarKey} handleClose={closeSidebar} />
+      )}
       <nav className="pl-5 pr-7 lg:pl-10 lg:pr-12">
         <div className="flex justify-between items-center min-h-[71px]">
           <div className="flex items-center flex-1">
             <button
-              onClick={() => setShowSideBar(true)}
+              onClick={(e) => handelSidebar(e)}
               type="button"
               className="inline-flex items-center p-2 mr-5 lg:mr-12 cp rounded-lg hover:bg-primary-color focus:outline-none focus:ring-2 focus:ring-gray-200"
               aria-controls="side-menu"
@@ -102,14 +122,14 @@ const Header = () => {
           </div>
 
           <div className="flex items-center" id="mobile-menu">
-
             {!userinfo.id && (
               <h5 className="text-white mr-2 hidden md:block">What’s Creabo</h5>
             )}
 
             <ul
-              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${userId ? "" : "sm:py-2"
-                }`}
+              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${
+                userId ? "" : "sm:py-2"
+              }`}
             >
               {userinfo.id && (
                 <>
@@ -130,7 +150,6 @@ const Header = () => {
                     </a>
                   </li>
 
-
                   <li>
                     <Link to="/profile-settings">
                       <svg
@@ -149,7 +168,10 @@ const Header = () => {
                   </li>
 
                   <li className="relative">
-                    <div className="cp" onClick={() => showHideUserPopupWallet()}>
+                    <div
+                      className="cp"
+                      onClick={() => showHideUserPopupWallet()}
+                    >
                       <svg
                         width="20"
                         height="19"
@@ -244,9 +266,7 @@ const Header = () => {
           </div>
         </div>
 
-
         <div className="md:hidden">
-
           <form>
             <label
               for="default-search"
@@ -267,13 +287,9 @@ const Header = () => {
               />
             </div>
           </form>
-
         </div>
-
-
-
-
       </nav>
+
       <WalletConnectModal showModal={showModal} closeModal={hideModal} />
     </>
   );

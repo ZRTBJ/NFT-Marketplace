@@ -9,6 +9,7 @@ const Modal = ({ handleClose, show, children, height, width }) => {
   const modalBodyClicked = (e) => {
     e.preventDefault();
     e.stopPropagation();
+
     // e.stopImmediatePropagation();
   };
   return (
@@ -21,7 +22,9 @@ const Modal = ({ handleClose, show, children, height, width }) => {
       <section
         onClick={(e) => modalBodyClicked(e)}
         style={styleObj}
-        className={" modal-main bg-dark-background rounded-3xl relative text-white p-11"}
+        className={
+          " modal-main bg-dark-background rounded-3xl relative text-white p-11"
+        }
       >
         {/* <img
           alt=""
@@ -29,7 +32,10 @@ const Modal = ({ handleClose, show, children, height, width }) => {
           onClick={handleClose}
           className="cursor-pointer ml-auto mt-[26px] mr-[26px] h-[20px] w-[20px]"
         /> */}
-        <i class="fa-light fa-square-xmark cursor-pointer text-2xl absolute top-12 right-8" onClick={handleClose}></i>
+        <i
+          class="fa-light fa-square-xmark cursor-pointer text-2xl absolute top-12 right-8"
+          onClick={handleClose}
+        ></i>
         <div className="">{children}</div>
       </section>
     </div>

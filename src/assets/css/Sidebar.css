@@ -7,7 +7,6 @@
   left: 0;
   background-color: #111;
   overflow-x: hidden;
-  transition: 0.5s;
   box-shadow: 3px 0px 6px #00000024;
   background: #161423 0% 0% no-repeat padding-box;
 }

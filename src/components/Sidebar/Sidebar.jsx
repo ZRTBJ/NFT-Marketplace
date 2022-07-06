@@ -4,8 +4,11 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { getUserInfo } from "services/User/userService";
-import { setUserInfo } from "Slice/userSlice";
+import { setUserInfo, setSideBar } from "Slice/userSlice";
 import SidebarNavigationCard from "./SideBarNavigationCard";
+import { useDetectClickOutside } from "react-detect-click-outside";
+import WalletConnectModal from "components/modalDialog/WalletConnectModal";
+import { useHistory } from "react-router-dom";
 const openStyle = { width: "271px" };
 const closeStyle = { width: "0px" };
 const linksList = [
@@ -14,6 +17,8 @@ const linksList = [
 ];
 const Sidebar = ({ show, handleClose }) => {
   const dispatch = useDispatch();
+  const ref = useDetectClickOutside({ onTriggered: handleClose });
+
   const context = useAuthState();
   const [userId, setUserId] = useState(context ? context.user : "");
   const userinfo = useSelector((state) => state.user.userinfo);
@@ -32,74 +37,88 @@ const Sidebar = ({ show, handleClose }) => {
     } catch {}
     dispatch(setUserInfo(userinfoResponse));
   }
+  const history = useHistory();
+  const [showModal, setShowModal] = useState(false);
+  const [navigateToPage, setNavigateToPage] = useState("");
+  async function navigate(type) {
+    setNavigateToPage(type);
+    console.log(userinfo.id);
+    if (!userinfo.id) {
+      setShowModal(true);
+    } else {
+      history.push(`/${type}`);
+    }
+  }
+  function hideModal() {
+    dispatch(setSideBar(false));
+  }
+
+  function navigateTo(type) {
+    navigate(type);
+    // handleClose();
+  }
 
   return (
-    <>
-      <div id="" style={show ? openStyle : closeStyle} className="sidenav">
-        <div className="closebtn cp" onClick={handleClose}>
-          &times;
-        </div>
-        {/* <SidebarNavigationCard /> */}
-        {/* <div className="sidebarDevider"></div> */}
-
-        <div className="sidebarLinksContainer flex flex-col">
-          <div className="pt-10 pr-10 pb-5 pl-[52px]">
+    <div style={openStyle} className="sidenav" ref={ref}>
+      <div className="closebtn cp" onClick={handleClose}>
+        &times;
+      </div>
+      <div className="sidebarLinksContainer flex flex-col">
+        <div className="pt-10 mx-auto pb-5">
+          {userinfo["avatar"] ? (
             <img
               className="rounded-full border border-gray-100 shadow-sm mb-3 h-16 object-cover"
-              src={
-                userinfo["avatar"]
-                  ? userinfo["avatar"]
-                  : "/static/media/profile.a33a86e1109f4271bbfa9f4bab01ec4b.svg"
-              }
+              src={userinfo["avatar"]}
               width={64}
               alt={userinfo["display_name"]}
             />
-            <h4 className="font-satoshi-bold font-black text-white text-base">
-              {userinfo["display_name"]}
-            </h4>
-          </div>
+          ) : (
+            <div className="rounded-full  h-[100px] w-[100px] bg-[grey] shadow-sm mb-3 "></div>
+          )}
 
-          {/* {linksList.map((i) => (
+          <h4 className="font-satoshi-bold font-black text-white text-base">
+            {userinfo["display_name"]}
+          </h4>
+        </div>
+
+        {/* {linksList.map((i) => (
             <Link key={i.id} to={i.to} className="cp">
               {i.title}
             </Link>
 
           ))} */}
-          <div className="pl-6 pr-10 flex-1 flex flex-col">
-            <div className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-white rounded  active:bg-primary-500 active:text-white last:mt-auto  bg-primary-500 text-white cursor-pointer">
-              <Link to={`/profile/${userinfo.id}`}>
-                <i class="fa-regular fa-user"></i>
-                <span class="ml-2"> PROFILE</span>
-              </Link>
-            </div>
-
-            <a
-              href="#"
-              className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-primary-500 ease-in-out duration-300 hover:text-white rounded  active:bg-primary-500 active:text-white last:mt-auto"
-            >
-              <i class="fa-regular fa-circle-plus"></i>
-              <span class="ml-2"> Create Project</span>
-            </a>
-
-            <a
-              href="#"
-              className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-primary-500 ease-in-out duration-300 hover:text-white rounded  active:bg-primary-500 active:text-white last:mt-auto"
-            >
-              <i class="fa-regular fa-cubes-stacked"></i>
-              <span class="ml-2"> Ecosystem</span>
-            </a>
-
-            <a
-              href="#"
-              className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-primary-500 ease-in-out duration-300 hover:text-white rounded  active:bg-primary-500 active:text-white last:mt-auto"
-            >
-              <i class="fa-regular fa-arrow-right-from-bracket"></i>
-              <span class="ml-2">Log Out</span>
-            </a>
+        <div
+          onClick={() => navigateTo()}
+          className="pl-6 pr-10 flex-0 flex flex-col"
+        >
+          <div className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-white rounded  active:bg-primary-500 active:text-white last:mt-auto  bg-primary-500 text-white cursor-pointer">
+            <i class="fa-regular fa-user"></i>
+            <span class="ml-2"> PROFILE</span>
           </div>
+
+          <div
+            onClick={() => navigateTo("project-create")}
+            className="flex cursor-pointer items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-primary-500 ease-in-out duration-300 hover:text-white rounded  active:bg-primary-500 active:text-white last:mt-auto"
+          >
+            <i class="fa-regular fa-circle-plus"></i>
+            <span class="ml-2"> Create Project</span>
+          </div>
+
+          <a
+            href="#"
+            className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-primary-500 ease-in-out duration-300 hover:text-white rounded  active:bg-primary-500 active:text-white last:mt-auto"
+          >
+            <i class="fa-regular fa-cubes-stacked"></i>
+            <span class="ml-2"> Ecosystem</span>
+          </a>
         </div>
       </div>
-    </>
+      <WalletConnectModal
+        showModal={showModal}
+        closeModal={hideModal}
+        navigateToPage={navigateToPage}
+      />
+    </div>
   );
 };
 export default Sidebar;
