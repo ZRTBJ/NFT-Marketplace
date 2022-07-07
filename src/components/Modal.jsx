@@ -1,9 +1,10 @@
 import "../assets/css/Modal.css";
 import ModalCloseLogo from "assets/images/modal/ico_closemodal.png";
-const Modal = ({ handleClose, show, children, height, width }) => {
+const Modal = ({ handleClose, show, children, height, width, overflow }) => {
   let styleObj = {
     height: height ? height + "px" : "",
-    maxWidth: width ? width + "px" : "",
+    width: width ? width + "px" : "",
+    overflow: overflow ? overflow : "hidden",
   };
 
   const modalBodyClicked = (e) => {
