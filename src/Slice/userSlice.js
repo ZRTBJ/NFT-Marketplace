@@ -19,7 +19,7 @@ const userSlice = createSlice({
       state.status = "idle";
     },
     setShowSideBar(state, action) {
-      state.showSidebar = action;
+      state.showSidebar = action.payload;
     },
   },
 });

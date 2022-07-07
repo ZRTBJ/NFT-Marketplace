@@ -104,13 +104,10 @@ const Sidebar = ({ show, handleClose }) => {
             <span class="ml-2"> Create Project</span>
           </div>
 
-          <a
-            href="#"
-            className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-primary-500 ease-in-out duration-300 hover:text-white rounded  active:bg-primary-500 active:text-white last:mt-auto"
-          >
+          <div className="flex items-center  cursor-pointer font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-primary-500 ease-in-out duration-300 hover:text-white rounded  active:bg-primary-500 active:text-white last:mt-auto">
             <i class="fa-regular fa-cubes-stacked"></i>
             <span class="ml-2"> Ecosystem</span>
-          </a>
+          </div>
         </div>
       </div>
       <WalletConnectModal
