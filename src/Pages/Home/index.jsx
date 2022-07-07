@@ -103,6 +103,7 @@ function Home() {
                   spaceBetween: 15,
                 },
               }}
+              className="swipe-card"
             >
               <div>
                 {projectList.map((i, index) => (
@@ -140,6 +141,7 @@ function Home() {
                   spaceBetween: 15,
                 },
               }}
+              className="swipe-card"
             >
               <div>
                 {popularProjectList.map((i, index) => (
