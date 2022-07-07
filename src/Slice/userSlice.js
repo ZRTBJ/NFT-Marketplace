@@ -2,6 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   status: "idle",
   userinfo: {},
+  loggedIn: false,
+  showSidebar: false,
 };
 
 const userSlice = createSlice({
@@ -13,16 +15,24 @@ const userSlice = createSlice({
     },
     setUserDetails(state, action) {
       state.userinfo = action.payload;
+      state.loggedIn = true;
       state.status = "idle";
+    },
+    setShowSideBar(state, action) {
+      state.showSidebar = action.payload;
     },
   },
 });
 
-export const { userLoading, setUserDetails } = userSlice.actions;
+export const { userLoading, setUserDetails, setShowSideBar } =
+  userSlice.actions;
 
 export default userSlice.reducer;
 
 // Thunk function
 export const setUserInfo = (user) => (dispatch) => {
   dispatch(setUserDetails(user));
+};
+export const setSideBar = (value) => (dispatch) => {
+  dispatch(setShowSideBar(value));
 };

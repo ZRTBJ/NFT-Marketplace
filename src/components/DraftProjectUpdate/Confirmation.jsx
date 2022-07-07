@@ -11,312 +11,101 @@ export default function Confirmation(props) {
   const onSubmit = (data) => console.log(data);
 
   return (
-    <div className="grid justify-items-center">
-      <h1 className="text-5xl font-bold mb-16">CONFIRMATION</h1>
-      <div className="mt-4 w-full">
-        <div className="accordion" id="accordionExample5">
-          {/* type */}
-          <div className="accordion-item bg-white border border-gray-200">
-            <div className="accordion-header mb-0" id="headingOne5">
-              <button
-                className="
-        accordion-button
-        relative
-        flex
-        items-center
-        w-full
-        py-4
-        px-5
-        text-base text-gray-800 text-left
-        bg-[#f6f6f7]
-        border-0
-        rounded-none
-        transition
-        focus:outline-none
-      "
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseOne5"
-                aria-expanded="true"
-                aria-controls="collapseOne5"
-              >
-                SELECT TYPE
-              </button>
-            </div>
-            <div
-              id="collapseOne5"
-              className="accordion-collapse collapse show"
-              aria-labelledby="headingOne5"
-            >
-              <div className="accordion-body py-4 px-5">
-                <div>
-                  <div className="text-[12px] text-gray-400 mb-[10px]">
-                    Driven by (Who can propose?)
-                  </div>
-                  <div>
-                    <p className="font-semibold"> OWNERS</p>
-                    <p>
-                      The owners who have the governance token can propose only.
-                    </p>
-                  </div>
-                </div>
-                <div className="mt-6">
-                  <div className="text-[12px] text-gray-400 mb-[10px]">
-                    Voting Power
-                  </div>
-                  <div className="font-semibold">{props.votingPower.title}</div>
-                </div>
-                <div className="mt-6">
-                  <div className="text-[12px] text-gray-400 mb-[10px]">
-                    Who can vote?
-                  </div>
-                  <div className="font-semibold">{props.canVote.title}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* outline */}
-          <div className="accordion-item bg-white border border-gray-200">
-            <h2 className="accordion-header mb-0" id="headingTwo5">
-              <button
-                className="
-        accordion-button
-        collapsed
-        relative
-        flex
-        items-center
-        w-full
-        py-4
-        px-5
-        text-base text-gray-800 text-left
-        bg-[#f6f6f7]
-        border-0
-        rounded-none
-        transition
-        focus:outline-none
-      "
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseTwo5"
-                aria-expanded="false"
-                aria-controls="collapseTwo5"
-              >
-                OUTLINE
-              </button>
-            </h2>
-            <div
-              id="collapseTwo5"
-              className="accordion-collapse collapse"
-              aria-labelledby="headingTwo5"
-            >
-              <div className="accordion-body py-4 px-5">
-                <div>
-                  <div className="text-[12px] text-gray-400 mb-[10px]">
-                    Project name
-                  </div>
-                  <div className="font-semibold mb-6">{props.projectName}</div>
-                  <div className="text-[12px] text-gray-400 mb-[10px]">
-                    Cover photo
-                  </div>
-                  <img
-                    src={props.projectCover.path}
-                    alt="No cover found"
-                    className="h-[162px] w-full max-w-[546px] object-cover mb-6"
-                  />
-                  <div className="text-[12px] text-gray-400 mb-[10px]">
-                    Photos (up to 4)
-                  </div>
-                  <div className="flex flex-wrap mb-6">
-                    {props.photosUrl.length > 0 ? (
-                      props.photosUrl.map((i) => (
-                        <img
-                          src={i.path}
-                          key={i.id}
-                          alt=""
-                          className="rounded h-[124px] w-[124px] object-cover mr-4 mb-4"
-                        />
-                      ))
-                    ) : (
-                      <div className="mx-auto">No Photos</div>
-                    )}
-                  </div>
-                  <div className="text-[12px] text-gray-400 mb-[10px]">
-                    Overview
-                  </div>
-                  <div className="mb-6">{props.overview}</div>
-                  <div className="text-[12px] text-gray-400 mb-[10px]">
-                    Category
-                  </div>
-                  <div className="mb-6">{props.category}</div>
-                  <div className="text-[12px] text-gray-400 mb-[10px]">
-                    Tags (up to 5)
-                  </div>
-                  <div className="mb-6">
-                    {props.tagList.length < 0 ? (
-                      <div>No Tags found</div>
-                    ) : (
-                      <div className="flex flex-wrap">
-                        {props.tagList.map((tag) => (
-                          <div className="bg-[#F4F4F4] text-[#707070] pr-3 pl-2 mr-2 pt-1 pb-1 mb-3">
-                            {tag}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <div className="text-[12px] text-gray-400 mb-[10px]">
-                    Are you looking for members?
-                  </div>
-                  <div className="mb-6">{props.needMember ? "Yes" : "No"}</div>
-                  <div className="text-[12px] text-gray-400 mb-[10px]">
-                    What kind of role do you want people to participate in?
-                  </div>
-                  <div className="mb-6">
-                    {props.roleList.length < 0 ? (
-                      <div>No roles found</div>
-                    ) : (
-                      <div className="flex flex-wrap">
-                        {props.roleList.map((role) => (
-                          <div className="bg-[#F4F4F4] text-[#707070] pr-3 pl-2 mr-2 pt-1 pb-1 mb-3">
-                            {role}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* token settings */}
-          <div className="accordion-item bg-white border border-gray-200">
-            <h2 className="accordion-header mb-0" id="headingThree5">
-              <button
-                className="
-        accordion-button
-        collapsed
-        relative
-        flex
-        items-center
-        w-full
-        py-4
-        px-5
-        text-base text-gray-800 text-left
-        bg-[#f6f6f7]
-        border-0
-        rounded-none
-        transition
-        focus:outline-none
-      "
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseThree5"
-                aria-expanded="false"
-                aria-controls="collapseThree5"
-              >
-                TOKEN SETTING
-              </button>
-            </h2>
-            <div
-              id="collapseThree5"
-              className="accordion-collapse collapse"
-              aria-labelledby="headingThree5"
-            >
-              <div className="accordion-body py-4 px-5">
-                <div>
-                  <div className="text-[12px] text-gray-400 mb-[10px]">
-                    Token name
-                  </div>
-                  <div className="font-semibold mb-6">{props.tokenName}</div>
-                  <div className="text-[12px] text-gray-400 mb-[10px]">
-                    Token symbol (Up to 5 characters)
-                  </div>
-                  <div className="font-semibold mb-6">{props.tokenSymbol}</div>
-                  <div className="text-[12px] text-gray-400 mb-[10px]">
-                    Number of tokens
-                  </div>
-                  <div className="font-semibold mb-6">
-                    {props.numberOfTokens} KAT
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* <div className="accordion-item bg-white border border-gray-200">
-            <h2 className="accordion-header mb-0" id="headingThree5">
-              <button
-                className="
-        accordion-button
-        collapsed
-        relative
-        flex
-        items-center
-        w-full
-        py-4
-        px-5
-        text-base text-gray-800 text-left
-        bg-[#f6f6f7]
-        border-0
-        rounded-none
-        transition
-        focus:outline-none
-      "
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseFour5"
-                aria-expanded="false"
-                aria-controls="collapseFour5"
-              >
-                TOKEN CATEGORY ALLOCATION
-              </button>
-            </h2>
-            <div
-              id="collapseFour5"
-              className="accordion-collapse collapse"
-              aria-labelledby="headingThree5"
-            >
-              <div className="accordion-body py-4 px-5">
-                TOKEN CATEGORY ALLOCATION
-              </div>
-            </div>
-          </div>
-          <div className="accordion-item bg-white border border-gray-200">
-            <h2 className="accordion-header mb-0" id="headingThree5">
-              <button
-                className="
-        accordion-button
-        collapsed
-        relative
-        flex
-        items-center
-        w-full
-        py-4
-        px-5
-        text-base text-gray-800 text-left
-        bg-[#f6f6f7]
-        border-0
-        rounded-none
-        transition
-        focus:outline-none
-      "
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseFive5"
-                aria-expanded="false"
-                aria-controls="collapseFive5"
-              >
-                ALLOCATION
-              </button>
-            </h2>
-            <div
-              id="collapseFive5"
-              className="accordion-collapse collapse"
-              aria-labelledby="headingThree5"
-            >
-              <div className="accordion-body py-4 px-5">ALLOCATION</div>
-            </div>
-          </div> */}
+    <div>
+      <div>
+        <div className="font-bold text-[22px] mb-[6px]">Review</div>
+        <div className="text-[#9499AE] text-[12px] mb-[24px]">
+          Make sure you have fill the form with right data.
         </div>
+        <div className="font-bold mb-[6px]">Project name</div>
+        <div className="text-[#9499AE] mb-[12px] text-[12px]">
+          Your Project name
+        </div>
+        <div className="font-black mb-6">{props.projectName}</div>
+
+        <div className=" font-bold mb-[6px]">Photos</div>
+        <div className="text-[#9499AE] mb-[12px] text-[12px]">
+          Add image up to 4 to showcase your project
+        </div>
+        <div className="flex flex-wrap mb-6">
+          {props.photosUrl.length > 0 ? (
+            props.photosUrl.map((i) => (
+              <img
+                src={i.path}
+                key={i.id}
+                alt=""
+                className="rounded h-[124px] w-[124px] object-cover mr-4 mb-4"
+              />
+            ))
+          ) : (
+            <div className="mx-auto">No Photos</div>
+          )}
+        </div>
+
+        <div className="font-bold mb-[6px]">Cover photo</div>
+        <div className="text-[#9499AE] mb-[12px] text-[12px]">
+          Add your Cover for project profile
+        </div>
+        <img
+          src={props.projectCover.path}
+          alt="No cover found"
+          className="h-[162px] w-full max-w-[546px] rounded rounded-[12px] object-cover mb-6"
+        />
+
+        <div className="font-bold mb-[6px]">Description</div>
+        <div className="text-[#9499AE] mb-[12px] text-[12px]">
+          Tell your audience what’s your project about, so they can easily
+          understand the project.
+        </div>
+        <div className="mb-6">{props.overview}</div>
+
+        <div className="font-bold mb-[6px]">Category</div>
+        <div className="text-[#9499AE] mb-[12px] text-[12px]">
+          What kind of project are you working?
+        </div>
+        <div className="mb-6 font-black">{props.category}</div>
+
+        <div className="font-bold mb-[6px]">Tags (up to 5)</div>
+        <div className="text-[#9499AE] mb-[12px] text-[12px]">
+          Your project tags
+        </div>
+        <div className="mb-6">
+          {props.tagList.length < 0 ? (
+            <div>No Tags found</div>
+          ) : (
+            <div className="flex flex-wrap">
+              {props.tagList.map((tag) => (
+                <div className="bg-[#232032] text-[#9499AE] pr-3 pl-2 mr-2 pt-1 pb-1 mb-3">
+                  {tag}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+      <div>
+        <div className="font-bold text-[22px] mb-[6px]">Token Issue</div>
+        <div className="text-[#9499AE] text-[12px] mb-[24px]">
+          Your Token Information
+        </div>
+        <div className="font-bold mb-[6px]">Token name</div>
+        <div className="text-[#9499AE] mb-[12px] text-[12px]">
+          Your Token name
+        </div>
+        <div className="font-black  mb-6">{props.tokenName}</div>
+
+        <div className="font-bold mb-[6px]">
+          Token symbol (Up to 5 characters)
+        </div>
+        <div className="text-[#9499AE] mb-[12px] text-[12px]">
+          Your token symbol eg: ETH,BTC.CAR,SOL
+        </div>
+        <div className="font-black mb-6">{props.tokenSymbol}</div>
+        <div className="font-bold mb-[6px]">Number of tokens</div>
+        <div className="text-[#9499AE] mb-[12px] text-[12px]">
+          set your token supply
+        </div>
+        <div className="font-black mb-6">{props.numberOfTokens}</div>
       </div>
     </div>
   );

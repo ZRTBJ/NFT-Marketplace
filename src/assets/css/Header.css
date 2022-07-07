@@ -58,6 +58,7 @@
   padding-right: 1rem;
   width: 100%;
 }
+
 .user-dropdown-item:hover {
   background-color: #8d2ccb;
   fill: white;
@@ -77,4 +78,65 @@
     font-family: "Montserrat", sans-serif;
     margin-right: 20px;
   }
+}
+
+/* logo */
+.logo::after {
+  height: 24px;
+  width: 68px;
+  right: 5px;
+  top: 6px;
+  content: '';
+  border-radius: 20px;
+  position: absolute;
+  border-color: #ffffff;
+  border: 5px solid currentColor;
+}
+
+@media only screen and (max-width: 1024px) {
+  .logo::after {
+    width: 48px;
+   right: 0px;
+   top:5px;
+  }
+}
+
+
+/* btn-fund */
+
+.btn-fund {
+  width: 114px;
+  height: 30px;
+  background-image: linear-gradient(128.96deg, #DF9B5D 17.26%, #9A5AFF 93.04%);
+  border-radius: 5px;
+  padding: 1px;
+  position: relative;
+  z-index: 2;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #DF9B5D;
+  letter-spacing: 0.2px;
+}
+
+.btn-fund:hover {
+  color: #fff;
+}
+
+.btn-fund span {
+  align-items: center;
+  background: #161423;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  transition: background .5s ease;
+  width: 100%;
+}
+
+.btn-fund:hover span {
+  background: transparent;
 }

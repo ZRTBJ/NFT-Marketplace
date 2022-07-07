@@ -13,7 +13,7 @@ function App() {
         <AuthProvider>
           <Header />
           {/* Dynamic Body */}
-          <div className="min-h-[50vh">
+          <div className="min-h-[100vh]">
             <Switch>
               {routes.map((route) => (
                 <AppRoute
@@ -25,7 +25,7 @@ function App() {
               ))}
             </Switch>
           </div>
-          <FooterPage />
+          {/* <FooterPage /> */}
         </AuthProvider>
       </Router>
     </div>

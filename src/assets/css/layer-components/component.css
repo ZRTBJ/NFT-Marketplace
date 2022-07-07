@@ -1,0 +1,166 @@
+@import "tailwindcss/components";
+@layer components {
+  .btn {
+    @apply rounded-lg
+        font-black 
+        ease-in-out
+        font-satoshi-bold
+        duration-300;
+  }
+  .btn-primary {
+    @apply text-white 
+        text-lg
+        focus:ring-4 
+        focus:outline-none 
+        focus:ring-blue-300 
+        dark:focus:ring-blue-800;
+    background: linear-gradient(128.96deg, #df9b5d 17.26%, #9a5aff 93.04%);
+  }
+  .btn-primary:hover {
+    background: linear-gradient(128.96deg, #9a5aff 17.26%, #df9b5d 93.04%);
+  }
+  .btn-primary:focus {
+    @apply ring-0;
+  }
+ 
+ .btn-secondary {
+     @apply text-white 
+        text-lg
+        bg-white-shade-600
+        focus:ring-4 
+        focus:outline-none 
+        focus:ring-blue-300;
+ }
+  .btn-text-gradient {
+    background: linear-gradient(128.96deg, #df9b5d 17.26%, #9a5aff 93.04%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .btn-outline-primary {
+    @apply text-primary-900
+        border border-primary-900
+        shadow
+        shadow-primary-600   
+        text-base
+        hover:text-white
+        hover:bg-primary-900;
+  }
+
+  .btn-lg {
+    @apply px-8 
+        py-4;
+  }
+
+  .btn-sm {
+    @apply px-4 
+        py-2;
+  }
+
+  /* btn-outline-primary-gradient */
+
+  .btn-outline-primary-gradient {
+    @apply rounded-md
+        relative
+        font-black
+        text-lg
+        font-satoshi-bold
+        tracking-tighter
+        text-secondary-900
+        hover:text-white;
+    padding: 1px;
+    background-image: linear-gradient(
+      128.96deg,
+      #df9b5d 17.26%,
+      #9a5aff 93.04%
+    );
+  }
+
+
+
+  .btn-outline-primary-gradient span {
+    @apply items-center
+        bg-dark-background
+        rounded-md
+        flex
+        justify-center
+        w-full
+        h-full
+        transition
+        duration-300 
+        leading-7
+        hover:bg-transparent;
+    }
+
+      .btn-outline-primary-gradient.btn-sm {
+        min-width: 120px;
+        min-height: 28px;
+      }
+      .btn-outline-primary-gradient.btn-sm span{ 
+        min-height: 26px;
+     }
+
+    .btn-outline-primary-gradient.btn-md { 
+        min-width: 160px;
+        min-height: 44px;
+     }
+      .btn-outline-primary-gradient.btn-md span{ 
+        min-height: 42px;
+     }
+
+  /* form field */
+
+  .input-fld {
+    @apply py-1
+        px-3
+        w-[512px]
+        max-w-full
+        h-[42px]
+        rounded-md
+        bg-black-shade-800
+        text-white
+        mb-4;
+    font-size: 13px;
+    line-height: 24px;
+    letter-spacing: 0.03em;
+  }
+  .textarea-fld {
+    @apply py-3
+        px-3
+        w-[512px]
+        max-w-full
+        h-[128px]
+        rounded-md
+        bg-black-shade-800
+        text-white
+        mb-4;
+    font-size: 13px;
+    line-height: 24px;
+    letter-spacing: 0.03em;
+  }
+
+  select.input-fld {
+    appearance: none;
+    border-color: transparent;
+  }
+
+  .icon-blockchain {
+   position: relative;
+}
+ .icon-blockchain input{
+   padding-left : 30px;
+}
+
+
+  .icon-blockchain::after {
+    content: '';
+    width: 14px;
+    height: 14px;
+    position: absolute;
+    left: 10px;
+    top: 14px;
+    background: #ffffff url("../../images/polygon.svg") no-repeat;
+  }
+
+
+}

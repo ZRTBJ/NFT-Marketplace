@@ -12,13 +12,9 @@ import {
   getProjectCategory,
   tokenBreakdown,
 } from "services/project/projectService";
-import selectTypeTabData from "Pages/DraftProjectUpdate/projectCreateData";
-import LeftSideBar from "components/DraftProjectUpdate/LeftSideBar";
-import SelectType from "components/DraftProjectUpdate/SelectType";
+
 import Outline from "components/DraftProjectUpdate/Outline";
 import Token from "components/DraftProjectUpdate/Token";
-import DraftLogo from "assets/images/projectCreate/draftLogo.svg";
-import Modal from "components/Modal";
 import { useParams } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import Confirmation from "components/DraftProjectUpdate/Confirmation";
@@ -27,17 +23,11 @@ import { SendTransactions } from "util/metaMaskWallet";
 import SuccessModal from "components/modalDialog/SuccessModal";
 import ErrorModal from "components/modalDialog/ErrorModal";
 import { useAuthState } from "Context";
+import PublishModal from "components/modalDialog/PublishModal";
+import LeftSideBar from "components/DraftProjectUpdate/LeftSideBar";
 
 export default function DraftProjectUpdate() {
   const history = useHistory();
-  /**
-   * ==============================================
-   * Project Type Start
-   * ==============================================
-   */
-  const [selectedTab, setSelectedTab] = useState(selectTypeTabData[0]);
-  const [votingPower, setVotingPower] = useState("");
-  const [canVote, setCanVote] = useState("");
   const { id } = useParams();
   const [isDataLoading, setDataIsLoading] = useState(true);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -48,23 +38,8 @@ export default function DraftProjectUpdate() {
   const [projectInfo, setProjectInfo] = useState({});
   const [tokenNameError, setTokenNameError] = useState(false);
   const context = useAuthState();
+  const [showPublishModal, setShowPublishModal] = useState(false);
   const [userId, setUserId] = useState(context ? context.user : "");
-
-  function setActiveTab(arg) {
-    setSelectedTab(arg);
-  }
-  function votingPowerProps(params) {
-    setVotingPower(params);
-  }
-  function canVoteProps(params) {
-    setCanVote(params);
-  }
-  /**
-   * ==============================================
-   * Project Type End
-   * ==============================================
-   */
-
   /**
    * ==============================================
    * Outline Start
@@ -111,7 +86,6 @@ export default function DraftProjectUpdate() {
     }
   }, []);
   function onCoverPhotoRemove() {
-    console.log(coverPhotoUrl);
     if (coverPhotoUrl.id) {
       let payload = {
         projectId: id,
@@ -284,6 +258,7 @@ export default function DraftProjectUpdate() {
   // token name start
   const [tokenName, setTokenName] = useState("");
   const [alreadyTakenTokenName, setAlreadyTakenTokenName] = useState(false);
+  const [emptyToken, setEmptyToken] = useState(false);
   async function onTokenNameChange(tokenName) {
     let payload = {
       data: tokenName,
@@ -292,6 +267,7 @@ export default function DraftProjectUpdate() {
     };
 
     setTokenName(tokenName);
+    setEmptyToken(false);
     await checkUniqueTokenInfo(payload)
       .then((e) => {
         if (e.code === 0) {
@@ -309,6 +285,7 @@ export default function DraftProjectUpdate() {
   // token name start
   const [tokenSymbol, setTokenSymbol] = useState("");
   const [alreadyTakenSymbol, setAlreadyTakenSymbol] = useState(false);
+  const [emptySymbol, setEmptySymbol] = useState(false);
   async function onTokenSymbolChange(tokenSymbol) {
     let payload = {
       data: tokenSymbol,
@@ -316,6 +293,7 @@ export default function DraftProjectUpdate() {
       project_uuid: id,
     };
     setTokenSymbol(tokenSymbol);
+    setEmptySymbol(false);
     await checkUniqueTokenInfo(payload)
       .then((e) => {
         if (e.code === 0) {
@@ -332,6 +310,7 @@ export default function DraftProjectUpdate() {
 
   // number of token
   const [numberOfTokens, setNumberOfTokens] = useState("");
+  const [emptyNumberOfToken, setEmptyNumberOfToken] = useState(false);
   function isInDesiredForm(str) {
     var n = Math.floor(Number(str));
     return n !== Infinity && String(n) === str && n >= 0;
@@ -361,7 +340,7 @@ export default function DraftProjectUpdate() {
    */
 
   const [currentStep, setcurrentStep] = useState([1]);
-  const [showModal, setShowModal] = useState(false);
+
   const [showDeployModal, setShowDeployModal] = useState(false);
   async function projectDetails() {
     let payload = {
@@ -369,42 +348,16 @@ export default function DraftProjectUpdate() {
     };
     await getProjectDetailsById(payload).then((e) => {
       let response = e.project;
-      setProjectInfo(e.project);
-      // project type start
-      if (response.org_type !== "") {
-        let org_type = selectTypeTabData.find(
-          (x) => x.title === response.org_type.toUpperCase()
-        );
-        setSelectedTab(org_type);
-        if (response.org_type === "custom") {
-          let votingPowerIndex = selectTypeTabData[0].votingPower.findIndex(
-            (x) => x.value === response.voting_power
-          );
-          let canVoteIndex = selectTypeTabData[0].canVote.findIndex(
-            (x) => x.value === response.voter_mode
-          );
-          selectTypeTabData[0].votingPower[votingPowerIndex].active = true;
-          selectTypeTabData[0].canVote[canVoteIndex].active = true;
-          setVotingPower(selectTypeTabData[0].votingPower[votingPowerIndex]);
-          setCanVote(selectTypeTabData[0].canVote[canVoteIndex]);
-        } else if (response.org_type !== "custom") {
-          const votingPower = org_type.votingPower.find(
-            (x) => x.active === true
-          );
-          console.log(votingPower);
-
-          const canVote = org_type.canVote.find((x) => x.active === true);
-          setVotingPower(votingPower);
-          setCanVote(canVote);
-        }
+      if (!response.is_owner) {
+        history.push("/");
       }
-      // project type end
 
+      setProjectInfo(e.project);
       // outline start
       setProjectName(response.name);
       let cover = response.assets.find((x) => x.asset_purpose === "cover");
-
       setCoverPhotoUrl(cover ? cover : "");
+
       let photosInfoData = response.assets.filter(
         (x) => x.asset_purpose === "subphoto"
       );
@@ -443,9 +396,11 @@ export default function DraftProjectUpdate() {
       // outline end
 
       // Token start
-      setTokenName(response.token_name);
-      setTokenSymbol(response.token_symbol);
-      setNumberOfTokens(response.token_total_amount);
+      setTokenName(response.token_name ? response.token_name : "");
+      setTokenSymbol(response.token_symbol ? response.token_symbol : "");
+      setNumberOfTokens(
+        response.token_total_amount ? response.token_total_amount : ""
+      );
 
       getProjectCategory().then((e) => {
         try {
@@ -469,109 +424,54 @@ export default function DraftProjectUpdate() {
     });
   }
   function handelClickNext() {
-    // Select type start
-    if (currentStep.length === 1) {
-      if (selectedTab.title === "CUSTOM") {
-        if (votingPower === "" && canVote === "") {
-          alert("Chosse 1 who have voting power and who can vote");
-        } else if (votingPower === "") {
-          alert("Chosse 1 who have voting power");
-        } else if (canVote === "") {
-          alert("Chosse 1 who can vote");
-        } else if (votingPower !== "" && canVote !== "") {
-          setcurrentStep([1, 2]);
-        }
-      } else {
-        setcurrentStep([1, 2]);
-      }
-    }
-    // Select type end
-
     // Outline start
-    if (currentStep.length === 2) {
+    if (currentStep.length === 1) {
       if (projectName === "") {
         setemptyProjectName(true);
+        window.scrollTo({ top: 0, behavior: "smooth" });
       } else if (projectCategory === "default") {
         setEmptyProjectCategory(true);
       } else {
-        setcurrentStep([1, 2, 3]);
+        setcurrentStep([1, 2]);
       }
     }
     // Outline end
 
     // Token  start
-    if (currentStep.length === 3) {
-      if (!projectInfo.token_name || projectInfo.token_name.length < 1) {
-        setTokenNameError(true);
-      } else if (!alreadyTakenTokenName && !alreadyTakenSymbol) {
-        setcurrentStep([1, 2, 3, 4, 5, 6, 7]); // todo for now
+    if (currentStep.length === 2) {
+      if (tokenName === "") {
+        setEmptyToken(true);
       }
+      if (tokenSymbol === "") {
+        setEmptySymbol(true);
+      }
+      if (numberOfTokens === "") {
+        setEmptyNumberOfToken(true);
+      } else if (
+        tokenName !== "" &&
+        tokenSymbol !== "" &&
+        numberOfTokens !== ""
+      ) {
+        if (!alreadyTakenTokenName && !alreadyTakenSymbol) {
+          console.log(tokenName);
+          setcurrentStep([1, 2, 3]);
+        }
+      }
+      // if (!projectInfo.token_name || projectInfo.token_name.length < 1) {
+      //   setTokenNameError(true);
+      // } else if (!alreadyTakenTokenName && !alreadyTakenSymbol) {
+      //   setcurrentStep([1, 2, 3, 4, 5, 6, 7]); // todo for now
+      // }
     }
     // Token end
   }
   async function saveDraft(visibility) {
     setTokenNameError(false);
-    // Select type start
-    if (currentStep.length === 1) {
-      if (currentStep.length === 1) {
-        if (selectedTab.title === "CUSTOM") {
-          if (votingPower === "" && canVote === "") {
-            alert("Chosse 1 who have voting power and who can vote");
-          } else if (votingPower === "") {
-            alert("Chosse 1 who have voting power");
-          } else if (canVote === "") {
-            alert("Chosse 1 who can vote");
-          } else if (votingPower !== "" && canVote !== "") {
-            setDataIsLoading(true);
-            let selectType = {
-              id: id,
-              org_type: selectedTab.title.toLocaleLowerCase(),
-              voting_power: selectedTab.votingPower.find(
-                (x) => x.active === true
-              ).value,
-              voter_mode: selectedTab.canVote.find((x) => x.active === true)
-                .value,
-              visibility: visibility,
-            };
-            await updateProject("update", selectType)
-              .then(() => {
-                setDataIsLoading(false);
-                setShowModal(true);
-                projectDetails();
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-          }
-        } else {
-          setDataIsLoading(true);
-          let selectType = {
-            id: id,
-            org_type: selectedTab.title.toLocaleLowerCase(),
-            voting_power: selectedTab.votingPower.find((x) => x.active === true)
-              .value,
-            voter_mode: selectedTab.canVote.find((x) => x.active === true)
-              .value,
-            visibility: visibility,
-          };
-          await updateProject("update", selectType)
-            .then(() => {
-              setDataIsLoading(false);
-              setShowModal(true);
-              projectDetails();
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        }
-      }
-    }
-    // select type end
-
     // outline start
-    if (currentStep.length === 2) {
+    if (currentStep.length === 1) {
       if (projectName === "") {
         setemptyProjectName(true);
+        window.scrollTo({ top: 0, behavior: "smooth" });
       } else if (projectCategory === "") {
         setEmptyProjectCategory(true);
       } else if (
@@ -588,17 +488,15 @@ export default function DraftProjectUpdate() {
           category_id: projectCategory,
           overview: overview,
           tags: tagList.toString(),
-          need_member: needMember,
-          roles: roleList.toString(),
           cover: coverPhoto.length > 0 ? coverPhoto[0] : null,
           photos: photos.length > 0 ? photos : null,
           photosLengthFromResponse: photosLengthFromResponse,
           remainingPhotosName: remainingPhotosName,
         };
-        updateProject("update", updatePayload)
+        updateProject(updatePayload)
           .then((res) => {
             setDataIsLoading(false);
-            setShowModal(true);
+            setShowSuccessModal(true);
             projectDetails();
           })
           .catch((err) => {
@@ -609,26 +507,40 @@ export default function DraftProjectUpdate() {
     // outline end
 
     // token start
-    if (currentStep.length === 3) {
-      if (!alreadyTakenSymbol && !alreadyTakenTokenName) {
-        setDataIsLoading(true);
+    if (currentStep.length === 2) {
+      if (tokenName === "") {
+        setEmptyToken(true);
+      }
+      if (tokenSymbol === "") {
+        setEmptySymbol(true);
+      }
+      if (numberOfTokens === "") {
+        setEmptyNumberOfToken(true);
+      } else if (
+        tokenName !== "" &&
+        tokenSymbol !== "" &&
+        numberOfTokens !== ""
+      ) {
+        if (!alreadyTakenSymbol && !alreadyTakenTokenName) {
+          setDataIsLoading(true);
 
-        let updatePayload = {
-          id: id,
-          token_name: tokenName,
-          token_symbol: tokenSymbol,
-          token_amount_total: numberOfTokens,
-        };
+          let updatePayload = {
+            id: id,
+            token_name: tokenName,
+            token_symbol: tokenSymbol,
+            token_amount_total: numberOfTokens,
+          };
 
-        updateProject("update", updatePayload)
-          .then((res) => {
-            setDataIsLoading(false);
-            setShowModal(true);
-            projectDetails();
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+          updateProject(updatePayload)
+            .then((res) => {
+              setDataIsLoading(false);
+              setShowSuccessModal(true);
+              projectDetails();
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
       }
     }
     // token end
@@ -643,6 +555,7 @@ export default function DraftProjectUpdate() {
   }, []);
 
   function projectTokenBreakdown() {
+    setShowPublishModal(false);
     if (projectStatus === "publishing") {
       setPublishStep(1);
       setShowDeployModal(true);
@@ -656,7 +569,7 @@ export default function DraftProjectUpdate() {
           projectInfo.token_category[0].id
             ? projectInfo.token_category[0].id
             : 1,
-        token_amount: numberOfTokens,
+        token_amount: parseInt(numberOfTokens),
       };
       const request = new FormData();
       request.append("allocation", JSON.stringify(data));
@@ -702,193 +615,138 @@ export default function DraftProjectUpdate() {
   }
 
   return (
-    <div>
+    <div className="text-[white]">
       {isDataLoading && <div className="loading"></div>}
-      <div className="flex flex-col md:flex-row ">
-        <div className="hidden md:block md:relative bg-[#f6f6f7]  w-full md:w-64 lg:w-80  content-center">
-          <LeftSideBar currentStep={currentStep} key={currentStep} />
-        </div>
-        <div className="flex-1">
-          <div className="stepTitleName">STEP{currentStep.length}</div>
-          <div className="cardContainer px-3 md:px-5">
-            {currentStep.length === 1 && (
-              <SelectType
-                setActiveTab={setActiveTab}
-                votingPowerProps={votingPowerProps}
-                canVoteProps={canVoteProps}
-                selectedTab={selectedTab}
-              />
-            )}
-            {currentStep.length === 2 && (
-              <Outline
-                key={outlineKey}
-                // name
-                projectName={projectName}
-                emptyProjectName={emptyProjectName}
-                alreadyTakenProjectName={alreadyTakenProjectName}
-                onProjectNameChange={onProjectNameChange}
-                //cover photos
-                coverPhotoUrl={coverPhotoUrl}
-                onCoverPhotoSelect={onCoverPhotoSelect}
-                onCoverPhotoRemove={onCoverPhotoRemove}
-                //photos
-                photosUrl={photosUrl}
-                onPhotosSelect={onPhotosSelect}
-                onPhotosRemove={onPhotosRemove}
-                // overview
-                overview={overview}
-                onOverviewChange={onOverviewChange}
-                // category
-                projectCategory={projectCategory}
-                emptyProjeCtCategory={emptyProjeCtCategory}
-                onProjectCategoryChange={onProjectCategoryChange}
-                // tag
-                tagList={tagList}
-                tagLimit={tagLimit}
-                onTagEnter={onTagEnter}
-                onTagRemove={onTagRemove}
-                // need member
-                needMember={needMember}
-                onNeedMemberChange={onNeedMemberChange}
-                // role list
-                roleList={roleList}
-                onRoleEnter={onRoleEnter}
-                onRoleRemove={onRoleRemove}
-              />
-            )}
-            {currentStep.length === 3 && (
-              <>
-                <Token
-                  // token name
-                  tokenName={tokenName}
-                  alreadyTakenTokenName={alreadyTakenTokenName}
-                  onTokenNameChange={onTokenNameChange}
-                  // token symbol
-                  tokenSymbol={tokenSymbol}
-                  alreadyTakenSymbol={alreadyTakenSymbol}
-                  onTokenSymbolChange={onTokenSymbolChange}
-                  // number of token
-                  numberOfTokens={numberOfTokens}
-                  onNumberOfTokenChange={onNumberOfTokenChange}
-                />
-                {tokenNameError && (
-                  <div className="text-sm text-red-400 text-center">
-                    You must save Token Name (Public/Private).
-                  </div>
-                )}
-              </>
-            )}
-            {/* {currentStep === 1 && <SelectType />}
-        {currentStep === 1 && <SelectType />}
-        {currentStep === 1 && <SelectType />} */}
-            {currentStep.length === 7 && (
-              <div>
-                {!isDataLoading && (
-                  <Confirmation
-                    key={ConfirmationKey}
-                    selectedType={selectedTab}
-                    votingPower={votingPower}
-                    canVote={canVote}
-                    projectName={projectName}
-                    projectCover={coverPhotoUrl}
-                    photosUrl={photosUrl}
-                    overview={overview}
-                    category={projectCategoryName}
-                    tagList={tagList}
-                    needMember={needMember}
-                    roleList={roleList}
-                    tokenName={tokenName}
-                    tokenSymbol={tokenSymbol}
-                    numberOfTokens={numberOfTokens}
-                  />
-                )}
-              </div>
-            )}
-            <div className="buttonContainer">
-              {projectStatus && projectStatus !== "publishing" && (
-                <div
-                  className={
-                    currentStep.length > 1
-                      ? "flex justify-between"
-                      : "flex justify-end"
-                  }
+      <div className="cardContainer px-3 md:px-5">
+        {currentStep.length === 1 && (
+          <div>
+            <LeftSideBar
+              currentStep={currentStep}
+              update={true}
+              key={currentStep.length}
+            />
+            <Outline
+              key={outlineKey}
+              // name
+              projectName={projectName}
+              emptyProjectName={emptyProjectName}
+              alreadyTakenProjectName={alreadyTakenProjectName}
+              onProjectNameChange={onProjectNameChange}
+              //cover photos
+              coverPhotoUrl={coverPhotoUrl}
+              onCoverPhotoSelect={onCoverPhotoSelect}
+              onCoverPhotoRemove={onCoverPhotoRemove}
+              //photos
+              photosUrl={photosUrl}
+              onPhotosSelect={onPhotosSelect}
+              onPhotosRemove={onPhotosRemove}
+              // overview
+              overview={overview}
+              onOverviewChange={onOverviewChange}
+              // category
+              projectCategory={projectCategory}
+              emptyProjeCtCategory={emptyProjeCtCategory}
+              onProjectCategoryChange={onProjectCategoryChange}
+              // tag
+              tagList={tagList}
+              tagLimit={tagLimit}
+              onTagEnter={onTagEnter}
+              onTagRemove={onTagRemove}
+              // need member
+              needMember={needMember}
+              onNeedMemberChange={onNeedMemberChange}
+              // role list
+              roleList={roleList}
+              onRoleEnter={onRoleEnter}
+              onRoleRemove={onRoleRemove}
+            />
+          </div>
+        )}
+        {currentStep.length === 2 && (
+          <div>
+            <LeftSideBar
+              currentStep={currentStep}
+              update={true}
+              key={currentStep.length}
+            />
+            <Token
+              // token name
+              tokenName={tokenName}
+              emptyToken={emptyToken}
+              alreadyTakenTokenName={alreadyTakenTokenName}
+              onTokenNameChange={onTokenNameChange}
+              // token symbol
+              tokenSymbol={tokenSymbol}
+              emptySymbol={emptySymbol}
+              alreadyTakenSymbol={alreadyTakenSymbol}
+              onTokenSymbolChange={onTokenSymbolChange}
+              // number of token
+              numberOfTokens={numberOfTokens}
+              emptyNumberOfToken={emptyNumberOfToken}
+              onNumberOfTokenChange={onNumberOfTokenChange}
+            />
+          </div>
+        )}
+        {currentStep.length === 3 && (
+          <Confirmation
+            projectName={projectName}
+            projectCover={coverPhotoUrl}
+            photosUrl={photosUrl}
+            overview={overview}
+            category={projectCategoryName}
+            tagList={tagList}
+            needMember={needMember}
+            roleList={roleList}
+            tokenName={tokenName}
+            tokenSymbol={tokenSymbol}
+            numberOfTokens={numberOfTokens}
+          />
+        )}
+        <div className="buttonContainer">
+          {projectStatus !== "publishing" && (
+            <div className="flex">
+              {currentStep.length > 1 && (
+                <button
+                  className="btn-outline-primary mr-4 w-[100px] h-[38px]"
+                  onClick={() => handelClickBack()}
                 >
-                  {currentStep.length > 1 && (
-                    <button
-                      className="backButton"
-                      onClick={() => handelClickBack()}
-                    >
-                      BACK
-                    </button>
-                  )}
-                  {currentStep.length < 7 && (
-                    <button
-                      className="nextButton"
-                      onClick={() => handelClickNext()}
-                    >
-                      NEXT
-                    </button>
-                  )}
-                </div>
+                  BACK
+                </button>
               )}
-              {currentStep.length === 7 && (
-                <div className="mt-8">
-                  <div className="text-center font-semibold">
-                    <p>It costs GAS fee to publish the project.</p>
-                    <p>
-                      Also, the information entered here cannot be changed after
-                      PUBLISH.
-                    </p>
-                    <p>(OUTLINE can be changed and members can be added)</p>
-                    <p></p>
-                    <p>
-                      If you don’t want to publish it now, press the
-                      PRIVATE/PUBLIC button to save the project.
-                    </p>
-                  </div>
-                  <div className="flex justify-center space-x-6 my-4">
-                    <button
-                      onClick={
-                        () => projectTokenBreakdown() // setShowDeployModal(true)
-                      }
-                      className={`h-[54px] w-[200px] rounded bg-[#0AB4AF] text-[white] hover:bg-[#192434]`}
-                    >
-                      PUBLISH
-                    </button>
-                  </div>
-                </div>
+              {currentStep.length < 3 && (
+                <button
+                  className="btn-primary w-[100px] h-[38px]"
+                  onClick={() => handelClickNext()}
+                >
+                  NEXT
+                </button>
               )}
-              {projectStatus && projectStatus !== "publishing" && (
-                <div className="flex justify-center space-x-6 mt-4">
-                  <button
-                    onClick={() => saveDraft("private")}
-                    disabled={isDataLoading ? true : false}
-                    className={`h-[54px] w-[200px] rounded bg-[#B9CCD5] text-[white] hover:bg-[#192434]`}
-                  >
-                    PRIVATE
-                  </button>
-                  <button
-                    onClick={() => saveDraft("public")}
-                    disabled={isDataLoading ? true : false}
-                    className={`h-[54px] w-[200px] rounded bg-[#B9CCD5] text-[white] hover:bg-[#192434]`}
-                  >
-                    PUBLIC
-                  </button>
-                </div>
+              {currentStep.length < 3 && (
+                <button
+                  onClick={() => saveDraft("public")}
+                  className={`btn-outline-primary w-[140px] h-[38px] ml-auto`}
+                >
+                  Save to Draft
+                </button>
+              )}
+              {currentStep.length === 3 && (
+                <button
+                  onClick={() => setShowPublishModal(true)}
+                  className="btn-primary w-[100px] h-[38px] ml-auto"
+                >
+                  PUBLISH
+                </button>
               )}
             </div>
-          </div>
+          )}
         </div>
-        {showModal && (
-          <SuccessModal handleClose={setShowModal} show={showModal} />
-        )}
       </div>
       {showDeployModal && (
         <DeployingProjectModal
           show={showDeployModal}
           handleClose={(status) => {
             setShowDeployModal(status);
-            projectDetails();
+            history.push(`/profile/${userId ? userId : ""}`);
           }}
           tnxData={tnxData}
           projectId={id}
@@ -897,12 +755,22 @@ export default function DraftProjectUpdate() {
       )}
       {showSuccessModal && (
         <SuccessModal
-          handleClose={setShowSuccessModal}
+          handleClose={() => setShowSuccessModal(false)}
           show={showSuccessModal}
         />
       )}
       {showErrorModal && (
-        <ErrorModal handleClose={setShowErrorModal} show={showErrorModal} />
+        <ErrorModal
+          handleClose={() => setShowErrorModal(false)}
+          show={showErrorModal}
+        />
+      )}
+      {showPublishModal && (
+        <PublishModal
+          handleClose={() => setShowPublishModal(false)}
+          publishProject={projectTokenBreakdown}
+          show={showPublishModal}
+        />
       )}
     </div>
   );

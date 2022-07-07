@@ -1,0 +1,28 @@
+
+@import "tailwindcss/base";
+@layer base {
+    h1 {
+        @apply font-satoshi-bold text-lg md:text-3xl font-black;
+    }
+
+    h2 {
+        @apply font-satoshi-bold text-[26px] font-bold;
+    }
+
+    h3 {
+        @apply font-satoshi-bold text-lg font-black;
+    }
+
+
+    h4 {
+        @apply font-satoshi-bold text-base font-black;
+    }
+
+    h5 {
+        @apply font-satoshi-bold text-sm font-black;
+    }
+
+    p {
+        @apply text-base;
+    }
+}

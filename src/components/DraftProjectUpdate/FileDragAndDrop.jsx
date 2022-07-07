@@ -17,10 +17,10 @@ export default function FileDragAndDrop({
     alignItems: "center",
     height: height,
     borderWidth: 1,
-    borderRadius: 4,
-    borderColor: "#CCCCCC",
+    borderRadius: 12,
+    borderColor: "#232032",
     borderStyle: "solid",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#232032",
     color: "#bdbdbd",
     outline: "none",
     transition: "border .24s ease-in-out",
@@ -64,8 +64,11 @@ export default function FileDragAndDrop({
         <div {...getRootProps({ style })}>
           <input {...getInputProps()} />
           <img src={dragSvg} alt="" />
-          <p className="dragAndDropLable">Drag and drop here</p>
-          {sizePlaceholder && <div>{sizePlaceholder}</div>}
+          <p className="text-[#646A80] text-[13px] font-bold ">
+            Add Image/Drag from
+          </p>
+          <div className="text-[#7D33A4] text-[13px] font-bold">Computer</div>
+          {/* {sizePlaceholder && <div>{sizePlaceholder}</div>} */}
         </div>
       </div>
     </div>

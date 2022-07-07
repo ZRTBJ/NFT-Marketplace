@@ -1,13 +1,17 @@
-@tailwind base;
-@tailwind components;
+@import url("assets/fonts/WEB/css/satoshi.css");
+
+/* @tailwind base;
+@tailwind components; */
 @tailwind utilities;
+@import "./assets/css/layer-base/typography.css";
+@import "./assets/css/layer-components/component.css";
 
 body {
   margin: 0 !important;
   padding: 0;
 }
 
-.btn-primary {
+/* .btn-primary {
   background: linear-gradient(128.96deg, #df9b5d 17.26%, #9a5aff 93.04%);
   color: #ffffff;
   border-radius: 8px;
@@ -16,7 +20,7 @@ body {
   padding: 0 10px;
   font-size: medium;
   font-weight: 500;
-}
+} */
 
 .cp {
   cursor: pointer;
@@ -45,7 +49,7 @@ body {
 }
 
 .stepper-active .stepper-head-icon {
-  background-color: #0ab4af;
+  background-color: #7d33a4;
 }
 
 .stepper-failed .stepper-head-icon {
@@ -57,9 +61,24 @@ body {
   justify-content: center;
   align-items: center;
   color: white;
-  background-color: #b9ccd5;
+  background-color: #9499ae;
   border-radius: 100%;
   font-size: 0.875rem;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.7rem;
+  height: 1.7rem;
+}
+
+.stepper-vertical .stepper-step:not(:last-child):after {
+  position: absolute;
+  left: 2.25rem;
+  height: calc(100% - 2.45rem);
+  top: 3rem;
+  width: 1px;
+  margin-top: 0.5rem;
+  content: "";
+  background-color: white;
+}
+
+.infinity-scroll {
+  overflow: hidden !important;
 }

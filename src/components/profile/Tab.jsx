@@ -1,89 +1,103 @@
 import { useState } from "react";
-import "assets/css/tab.css";
-import ProjectCard from "./ProjectCard";
+import CommonCard from "components/CommonCard";
 import WorkCard from "./WorkCard";
 import CollectionCard from "./CollectionCard";
 import Modal from "components/Modal";
+import { useSelector } from "react-redux";
+import { Link, useParams } from "react-router-dom";
+import ProfileEmptyCaseCard from "components/EmptyCaseCard/ProfileEmptyCaseCard";
 
 const Tab = (props) => {
+  const { id } = useParams();
   const [active, setActive] = useState(props.tabs[0]);
   const [modalInfo, setModalInfo] = useState({});
   const [showModal, setShowModal] = useState(false);
+  const userData = useSelector((state) => state.user.userinfo);
   function openModal(card) {
-    console.log(card);
     setModalInfo(card);
     setShowModal(true);
   }
+  function OnSetActive(type, index) {
+    setActive(type);
+    props.OnSetActive(index);
+  }
   return (
-    <div>
-      <div className="container px-4 mx-auto">
-        <div className="buttonGroup">
-          {props.tabs.map((type) => (
-            <button
-              className={`max-w-[418px] ${
-                active.name === type.name ? "activeBUttonTab" : ""
-              }`}
-              key={type.id}
-              onClick={() => setActive(type)}
-            >
-              {type.name}
-            </button>
-          ))}
-        </div>
+    <>
+      <div className="flex-wrap justify-center hidden md:flex">
+        {props.tabs.map((type, index) => (
+          <button
+            className={`text-white-shade-600 p-3 hover:text-primary-900 active:text-primary-900 ${
+              active.name === type.name ? "text-primary-900" : ""
+            }`}
+            key={type.id}
+            onClick={() => OnSetActive(type, index)}
+          >
+            {type.name}
+            <span className="bg-primary-50 text-color-ass-1 p-1 ml-1 rounded-sm text-sm">
+              {active.list.length}
+            </span>
+          </button>
+        ))}
       </div>
-      <div className="tabDivider"></div>
+      <section className="flex mt-7">
+        {userData.id && userData.id === id ? (
+          <>
+            <button type="button" class="btn btn-primary btn-sm">
+              <Link to="/project-create">
+                Create New <i class="fa-thin fa-square-plus ml-1"></i>
+              </Link>
+            </button>
+          </>
+        ) : (
+          <></>
+        )}
+
+        <button type="button" class="ml-auto btn btn-outline-primary btn-sm">
+          Sort By <i class="fa-thin fa-arrow-down-short-wide ml-1"></i>
+        </button>
+      </section>
+
       <div className="tabContent">
-        {active.name === "PROJECT" && (
-          <div className="container mx-auto">
-            {active.cardList.length === 0 ? (
-              <div>No Projects yet</div>
+        {active.name === "Dao Project List" && (
+          <div className="py-5 grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
+            {active.list.length === 0 ? (
+              <ProfileEmptyCaseCard type={"Project"}></ProfileEmptyCaseCard>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
-                {active.cardList.map((cardlist) => (
-                  <div key={cardlist.id}>
-                    <div className="projectCardLayout">
-                      <ProjectCard cardInfo={cardlist} />
-                    </div>
+              <>
+                {active.list.map((list) => (
+                  <div>
+                    <CommonCard key={list.id} project={list} />
                   </div>
                 ))}
-              </div>
+              </>
             )}
           </div>
         )}
-        {active.name === "WORK" && (
-          <div className="container mx-auto md:px-4">
-            {active.cardList.length === 0 ? (
-              <div>No works yet</div>
-            ) : (
-              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 md:gap-4">
-                {active.cardList.map((cardlist) => (
-                  <div key={cardlist.id}>
-                    <div
-                      className="workCardLayout"
-                      onClick={() => openModal(cardlist)}
-                      key={cardlist.id}
-                    >
-                      <WorkCard key={cardlist.id} cardInfo={cardlist} />
-                    </div>
-                  </div>
-                ))}
+        {active.name === "Works" && (
+          <div className="py-5 grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
+            {active.list.map((list) => (
+              <div onClick={() => openModal(list)}>
+                <CommonCard key={list.id} project={list} />
               </div>
-            )}
+            ))}
           </div>
         )}
-        {active.name === "COLLECTION" && (
-          <div className="container mx-auto">
-            {active.cardList.length === 0 ? (
-              <div>No collections yet</div>
-            ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 md:px-5 ">
-                {active.cardList.map((cardlist) => (
-                  <div key={cardlist.id} className="collectionCardLayout">
-                    <CollectionCard cardInfo={cardlist} />
-                  </div>
-                ))}
+        {active.name === "NFTs" && (
+          <div className="py-5 grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
+            {active.list.map((list) => (
+              <div>
+                <CommonCard key={list.id} project={list} />
               </div>
-            )}
+            ))}
+          </div>
+        )}
+        {active.name === "Bookmark" && (
+          <div className="py-5 grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
+            {active.list.map((list) => (
+              <div>
+                <CommonCard key={list.id} project={list} />
+              </div>
+            ))}
           </div>
         )}
       </div>
@@ -138,7 +152,7 @@ const Tab = (props) => {
           </div>
         </Modal>
       )}
-    </div>
+    </>
   );
 };
 

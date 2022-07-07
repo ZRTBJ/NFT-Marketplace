@@ -12,6 +12,7 @@ export default function Outline({
   emptyProjectName,
   alreadyTakenProjectName,
   onProjectNameChange,
+  projectNameDisabled,
 
   // cover photo
   coverPhotoUrl,
@@ -52,19 +53,18 @@ export default function Outline({
     });
   }, []);
   return (
-    <div className="outlineContainer">
-      <div className="OutlineTitle mb-[80px]">OUTLINE</div>
+    <div className="text-[white]">
+      {/* name */}
       <div className="mb-6">
-        <div className="lable">Project Name</div>
+        <div className="label">Project Name</div>
+        <div className="label-grey">Your Project name</div>
         <DebounceInput
           minLength={1}
           debounceTimeout={300}
           onChange={(e) => onProjectNameChange(e.target.value)}
-          type="text"
-          className="projectNameInput"
-          name="projectNameLable"
-          id="projectNameLable"
+          className="debounceInput"
           value={projectName}
+          disabled={projectNameDisabled}
         />
         {emptyProjectName && (
           <div className="validationTag">Unique project name is required</div>
@@ -73,8 +73,50 @@ export default function Outline({
           <div className="validationTag">Project name has already taken</div>
         )}
       </div>
+
+      {/* photo */}
+      <div>
+        <div className="label">Picture</div>
+        <div className="label-grey">
+          Add image up to 4 to showcase your project
+        </div>
+        <div className="md:flex flex-wrap mb-6">
+          <div className="w-full md:max-w-[186px]">
+            <FileDragAndDrop
+              maxFiles={4}
+              height="158px"
+              onDrop={(e) => onPhotosSelect(e, photosUrl)}
+              sizePlaceholder="Total upto 16MB"
+              disabled={photosUrl.length > 3 ? true : false}
+            />
+          </div>
+          <div className="photoPreviewContainer mt-3 md:mt-0  md:max-w-[372px] md:pl-4  md:mx-0 flex md:justify-between flex-wrap">
+            {photosUrl.map((i) => (
+              <div
+                key={i.path}
+                className="relative max-w-[158px] md:max-w-full m-2 md:m-0"
+              >
+                <img
+                  alt=""
+                  className="outlinePhoto md:m-1 block object-cover rounded rounded-[12px]"
+                  src={i.path}
+                />
+                <img
+                  alt=""
+                  src={deleteIcon}
+                  onClick={() => onPhotosRemove(i)}
+                  className="absolute top-0 cursor-pointer  right-0"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* cover */}
       <div className="mb-6">
-        <div className="lable">Cover photo (upto 4MB)</div>
+        <div className="label">Cover Photo</div>
+        <div className="label-grey">Add your Cover for project profile</div>
         {coverPhotoUrl === "" ? (
           <FileDragAndDrop
             maxFiles={1}
@@ -99,39 +141,14 @@ export default function Outline({
           </div>
         )}
       </div>
+
+      {/* overview */}
       <div>
-        <div className="lable">photos (upto 4)</div>
-        <div className="md:flex flex-wrap mb-6">
-          <div className="md:w-[343px]">
-            <FileDragAndDrop
-              maxFiles={4}
-              height="192px"
-              onDrop={(e) => onPhotosSelect(e, photosUrl)}
-              sizePlaceholder="Total upto 16MB"
-              disabled={photosUrl.length > 3 ? true : false}
-            />
-          </div>
-          <div className="photoPreviewContainer mt-3 md:mt-0 md:w-[209px] md:pl-4 mx-12 md:mx-0 flex md:justify-between flex-wrap">
-            {photosUrl.map((i) => (
-              <div key={i.path} className="relative m-2 md:m-0">
-                <img
-                  alt=""
-                  className="outlinePhoto md:m-1 block"
-                  src={i.path}
-                />
-                <img
-                  alt=""
-                  src={deleteIcon}
-                  onClick={() => onPhotosRemove(i)}
-                  className="absolute top-0 cp right-0"
-                />
-              </div>
-            ))}
-          </div>
+        <div className="label">Description</div>
+        <div className="label-grey">
+          Tell your audience what’s your project about, so they can easily
+          understand the project.
         </div>
-      </div>
-      <div>
-        <div className="lable">Overview</div>
         <textarea
           value={overview}
           onChange={onOverviewChange}
@@ -140,10 +157,13 @@ export default function Outline({
           id=""
           cols="30"
           rows="6"
+          placeholder="Add description"
         ></textarea>
       </div>
+
+      {/* category */}
       <div className="mb-6">
-        <div className="lable">Category</div>
+        <div className="label">Category</div>
         <select value={projectCategory} onChange={onProjectCategoryChange}>
           <option value={"default"} defaultValue>
             Choose an option
@@ -158,9 +178,12 @@ export default function Outline({
           <div className="validationTag">Project category is required</div>
         )}
       </div>
+
+      {/* tags */}
       <div className="flex flex-wrap mb-6">
         <div className="w-full">
-          <div className="lable">Tags(upto 5)</div>
+          <div className="label">Tags</div>
+          <div className="label-grey">Add tags on your project</div>
           <input
             className="outlineTags mb-2"
             type="text"
@@ -175,14 +198,16 @@ export default function Outline({
         {tagList &&
           tagList.length > 0 &&
           tagList.map((role, index) => (
-            <div className="px-3 pb-4" key={`rolw-${index}`}>
-              <div className="h-8 w-auto boarder rounded bg-gray-100">
-                <div className="flex flex-row">
-                  <div className="pr-4 pl-2 pt-1 break-all">{role}</div>
-                  <div className="border-l border-white px-1">
+            <div className="px-3 pb-4 " key={`rolw-${index}`}>
+              <div className="h-8 w-auto border border-[#232032] rounded bg-[#232032] ">
+                <div className="flex flex-row items-center">
+                  <div className="pr-1 pl-2 pt-1 label-grey  break-all">
+                    {role}
+                  </div>
+                  <div className="px-2 pt-0">
                     <i
                       onClick={() => onTagRemove(index)}
-                      className="fa fa-times-thin fa-2x cursor-pointer"
+                      className="fa fa-times-thin  cursor-pointer"
                       aria-hidden="true"
                     ></i>
                   </div>
@@ -191,57 +216,6 @@ export default function Outline({
             </div>
           ))}
       </div>
-      <div className="mb-6">
-        <div className="lable">Are you looking for members?</div>
-        <div className="flex -flex-wrap">
-          <button
-            onClick={() => onNeedMemberChange(true)}
-            className="h-10 rounded w-36 border border-[#CCCCCC] cursor-pointer	"
-          >
-            YES
-          </button>
-          <button
-            onClick={() => onNeedMemberChange(false)}
-            className="h-10 rounded w-36 border border-[#CCCCCC] ml-2 cursor-pointer	"
-          >
-            NO
-          </button>
-        </div>
-      </div>
-      {needMember && (
-        <div>
-          <div className="flex flex-wrap mb-6">
-            <div className="w-full">
-              What kind of role do you want people to participate in?
-              <input
-                className="outlineRollTags mb-2"
-                type="text"
-                placeholder="Type and press enter"
-                defaultValue={""}
-                onKeyUp={(e) => onRoleEnter(e)}
-              />
-            </div>
-            {roleList &&
-              roleList.length > 0 &&
-              roleList.map((role, index) => (
-                <div className="px-3 pb-4" key={`rolw-${index}`}>
-                  <div className="h-8 w-auto boarder rounded bg-gray-100">
-                    <div className="flex flex-row">
-                      <div className="pr-4 pl-2 pt-1 break-all">{role}</div>
-                      <div className="border-l border-white px-1">
-                        <i
-                          onClick={() => onRoleRemove(index)}
-                          className="fa fa-times-thin fa-2x cursor-pointer"
-                          aria-hidden="true"
-                        ></i>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
