@@ -159,7 +159,8 @@ input[type="number"],
   height: 42px;
   width: 100%;
 }
-input,
+input[type="text"],
+input[type="email"],
 textarea {
   padding:10px 15px;
   border: none;
