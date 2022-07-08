@@ -173,9 +173,9 @@ const Profile = () => {
     //   });
     // }
   }
-  async function getWorksList() {}
-  async function getNftList() {}
-  async function getBookmarks() {}
+  async function getWorksList() { }
+  async function getNftList() { }
+  async function getBookmarks() { }
 
   useEffect(() => {
     projectCategory();
@@ -291,7 +291,7 @@ const Profile = () => {
               className="flex flex-wrap mt-3 md:justify-end md:w-1/3  md:mt-0"
               role="group"
             >
-              <div className="cursor-pointer w-12 h-12 bg-primary-50 flex justify-center items-center rounded-md ease-in-out duration-300 mr-4 last:mr-0hover:bg-primary-400">
+              <div className="cursor-pointer w-12 h-12 bg-primary-50 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-primary-400">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -323,7 +323,7 @@ const Profile = () => {
                 </svg>
               </div>
 
-              <div className="cursor-pointer w-12 h-12 bg-primary-50 flex justify-center items-center rounded-md duration-300 mr-4 last:mr-0hover:bg-primary-400">
+              <div className="cursor-pointer w-12 h-12 bg-primary-50 flex justify-center items-center rounded-md duration-300 ml-4 hover:bg-primary-400">
                 <svg
                   className="w-7 h-7 text-white"
                   fill="currentColor"
@@ -337,7 +337,7 @@ const Profile = () => {
                   ></path>
                 </svg>
               </div>
-              <div className="cursor-pointer w-12 h-12 bg-primary-50 flex justify-center items-center rounded-md duration-300 mr-4 last:mr-0 hover:bg-primary-400">
+              <div className="cursor-pointer w-12 h-12 bg-primary-50 flex justify-center items-center rounded-md duration-300 ml-4 hover:bg-primary-400">
                 <svg
                   width="18"
                   height="19"

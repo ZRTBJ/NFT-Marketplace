@@ -78,7 +78,7 @@ const Tab = (props) => {
 
             */}
 
-            <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300">
+            <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300 py-5">
               {active.list.length === 0 ? (
                 <ProfileEmptyCaseCard type={"Project"}></ProfileEmptyCaseCard>
               ) : (
@@ -94,7 +94,7 @@ const Tab = (props) => {
           </>
         )}
         {active.name === "Works" && (
-          <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300">
+          <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300 py-5">
             {active.list.map((list) => (
               <div onClick={() => openModal(list)}>
                 <CommonCard key={list.id} project={list} />
@@ -103,7 +103,7 @@ const Tab = (props) => {
           </div>
         )}
         {active.name === "NFTs" && (
-          <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300">
+          <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300 py-5">
             {active.list.map((list) => (
               <div>
                 <CommonCard key={list.id} project={list} />
@@ -112,7 +112,7 @@ const Tab = (props) => {
           </div>
         )}
         {active.name === "Bookmark" && (
-          <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300">
+          <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300 py-5">
             {active.list.map((list) => (
               <div>
                 <CommonCard key={list.id} project={list} />

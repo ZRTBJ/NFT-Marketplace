@@ -23,7 +23,7 @@ const CommonCard = ({ project }) => {
   return (
     <div
       onClick={() => gotToDetailPage(project.id)}
-      className="border rounded-3xl border-primary-50 cursor-pointer relative p-2"
+      className="border rounded-3xl border-primary-50 cursor-pointer relative"
     >
 
       {(!project.isNft && project.project_status === "draft") ||
@@ -38,7 +38,7 @@ const CommonCard = ({ project }) => {
 
 
       <div
-        className={`rounded-3xl ${(!project.isNft && project.project_status === "draft") ||
+        className={`rounded-3xl p-2 ${(!project.isNft && project.project_status === "draft") ||
           project.status === "draft"
           ? "bg-[#9499AE] opacity-[0.5]"
           : ""
@@ -83,7 +83,7 @@ const CommonCard = ({ project }) => {
         )}
 
         {!project.isNft && (
-          <div className="flex mt-4">
+          <div className="flex mt-4 mb-1">
             <div className="flex space-x-2 items-center text-white mr-4">
               <i className="fa-thin fa-eye"></i>
               <span className=" ml-1">{project.project_view_count}</span>

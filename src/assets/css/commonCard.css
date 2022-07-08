@@ -8,7 +8,7 @@
     }
 }
 
-@media (max-width: 768px) { 
+@media (max-width: 767px) { 
     .swipe-card .swiper-slide{
       width: 153px !important;
     }
@@ -17,5 +17,4 @@
       width: 137px;
       height: 137px;
     }
-
 }

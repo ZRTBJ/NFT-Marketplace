@@ -92,21 +92,21 @@
         hover:bg-transparent;
     }
 
-      .btn-outline-primary-gradient.btn-sm {
-        min-width: 120px;
-        min-height: 28px;
-      }
-      .btn-outline-primary-gradient.btn-sm span{ 
-        min-height: 26px;
-     }
+    .btn-outline-primary-gradient.btn-sm {
+      min-width: 120px;
+      min-height: 28px;
+    }
+    .btn-outline-primary-gradient.btn-sm span{ 
+      min-height: 26px;
+    }
 
     .btn-outline-primary-gradient.btn-md { 
         min-width: 160px;
         min-height: 44px;
      }
-      .btn-outline-primary-gradient.btn-md span{ 
-        min-height: 42px;
-     }
+    .btn-outline-primary-gradient.btn-md span{ 
+      min-height: 42px;
+    }
 
   /* form field */
 
@@ -120,9 +120,9 @@
         bg-black-shade-800
         text-white
         mb-4;
-    font-size: 13px;
-    line-height: 24px;
-    letter-spacing: 0.03em;
+      font-size: 13px;
+      line-height: 24px;
+      letter-spacing: 0.03em;
   }
   .textarea-fld {
     @apply py-3
@@ -134,9 +134,9 @@
         bg-black-shade-800
         text-white
         mb-4;
-    font-size: 13px;
-    line-height: 24px;
-    letter-spacing: 0.03em;
+      font-size: 13px;
+      line-height: 24px;
+      letter-spacing: 0.03em;
   }
 
   select.input-fld {
@@ -146,13 +146,12 @@
 
   .icon-blockchain {
    position: relative;
-}
- .icon-blockchain input{
+  }
+ .icon-blockchain input[type="text"]{
    padding-left : 30px;
-}
+ }
 
-
-  .icon-blockchain::after {
+ .icon-blockchain::after {
     content: '';
     width: 14px;
     height: 14px;

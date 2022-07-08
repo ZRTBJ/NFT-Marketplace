@@ -5,8 +5,6 @@ import {
   projectBookmark,
 } from "services/project/projectService";
 import { getNftListByProjectId } from "services/nft/nftService";
-import heartIcon from "assets/images/projectDetails/heartIcon.png";
-import bookmarkIcon from "assets/images/projectDetails/bookmarkIcon.png";
 import coverImg from "assets/images/projectDetails/cover.svg";
 import manImg from "assets/images/projectDetails/man-img.svg";
 import locationIcon from "assets/images/profile/locationIcon.svg";
@@ -149,44 +147,38 @@ export default function ProjectDetails(props) {
                   </section>
                 </>
               ) : (
-                <div className="flex justify-end">
-                  <img
-                    className="h-[56px] w-[56px] mr-3 cursor-pointer"
-                    src={heartIcon}
-                    alt=""
-                    onClick={LikeProject}
-                  />
-                  <img
-                    className="h-[56px] w-[56px]  cursor-pointer"
-                    src={bookmarkIcon}
-                    alt=""
-                    onClick={BookmarkProject}
-                  />
-                </div>
+                <section className="flex justify-end pt-12 pb-4">
+                  <div onClick={LikeProject} className="cursor-pointer text-primary-900 w-14 h-14 bg-primary-50 flex justify-center items-center rounded-md duration-300 mr-4 hover:bg-primary-400">
+                    <i class="fa-regular fa-heart text-xl"></i>
+                  </div>
+                  <div onClick={BookmarkProject} className="cursor-pointer text-primary-900 w-14 h-14 bg-primary-50 flex justify-center items-center rounded-md duration-300 mr-4 hover:bg-primary-400">
+                    <i class="fa-regular fa-bookmark text-xl"></i>
+                  </div>
+                </section>
               )}
             </>
           )}
 
           {/* Cover image section */}
-          <section className="mt-5 rounded-3xl">
+          <section className="pt-5 rounded-3xl">
             {!isLoading && (
               <img
                 src={
                   project && project.assets && project.assets.length > 0
                     ? project.assets.find((x) => x.asset_purpose === "cover")
-                        ?.path
+                      ?.path
                       ? project.assets.find((x) => x.asset_purpose === "cover")
-                          ?.path
+                        ?.path
                       : require(`assets/images/no-image-found.png`)
                     : require(`assets/images/no-image-found.png`)
                 }
-                className="rounded-3xl object-cover md:h-[217px] w-full"
+                className="rounded-3xl object-cover md:h-[310px] w-full"
                 alt="Project Cover"
               />
             )}
           </section>
 
-          <section className="flex flex-col lg:flex-row py-5">
+          <section className="flex flex-col lg:flex-row py-9">
             <div className="flex-1 flex items-center py-5">
               <div className="pr-4 lg:pr-28">
                 <h1 className="text-white mb-6">{project.name}</h1>
@@ -215,7 +207,7 @@ export default function ProjectDetails(props) {
               </div>
             </div>
 
-            <div className="max-w-full w-[553px] lg:h-[690px] mx-auto">
+            <div className="max-w-full lg:w-[553px] lg:h-[690px] mx-auto">
               <Slider imagesUrl={project.assets} />
             </div>
           </section>
