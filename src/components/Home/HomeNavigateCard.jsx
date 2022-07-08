@@ -40,11 +40,9 @@ const HomeNavigateCard = () => {
           </button>
           <button
             className="btn-outline-primary-gradient btn-sm"
-            onClick={() => navigate("mint")}
+            onClick={() => navigate("")}
           >
-            <span>
-              Mint NFT
-            </span>
+            <span>Mint NFT</span>
           </button>
         </div>
       </article>
