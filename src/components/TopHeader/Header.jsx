@@ -5,12 +5,16 @@ import notificationIcon from "assets/images/header/ico_notification@2x.png";
 import UserDropDownMenu from "./UserDropDownMenu";
 import NotificationMenu from "./NotificationMenu";
 import { useHistory } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useAuthState } from "Context";
 import WalletConnectModal from "components/modalDialog/WalletConnectModal";
 import { Link } from "react-router-dom";
+import useWebSocket from "react-use-websocket";
+import config from "config";
+import { getProjectDeploy } from "Slice/projectSlice";
 
 const Header = () => {
+  const dispatch = useDispatch();
   const history = useHistory();
   const context = useAuthState();
   const [userId, setUserId] = useState(context ? context.user : "");
@@ -18,6 +22,19 @@ const Header = () => {
   const [showSideBar, setShowSideBar] = useState(false);
   const userinfo = useSelector((state) => state.user.userinfo);
   const loggedIn = useSelector((state) => state.user.loggedIn);
+  const [messageHistory, setMessageHistory] = useState([]);
+
+  useEffect(() => {
+    if (userId && userId.length > 0) {
+      const cUser = localStorage.getItem("currentUser");
+      if (cUser) {
+        sendMessage(JSON.stringify({ Token: cUser }));
+      }
+    } else {
+      console.log("no user");
+    }
+  }, [userId]);
+
   function showHideUserPopup() {
     const userDropDown = document.getElementById("userDropDown");
     userDropDown.classList.toggle("hidden");
@@ -34,6 +51,65 @@ const Header = () => {
   function hideModal() {
     setShowModal(false);
   }
+
+  // web socket implementation
+  let host = "ws:";
+  try {
+    const loc = window.location;
+    if (loc.protocol === "https:") {
+      host = "wss:";
+    }
+  } catch {}
+  const socketUrl = `${host}//${config.WEB_SOKET}/ws`;
+
+  const {
+    sendMessage,
+    sendJsonMessage,
+    lastMessage,
+    lastJsonMessage,
+    readyState,
+    getWebSocket,
+  } = useWebSocket(socketUrl, {
+    onOpen: () => {
+      console.log("webSocket connected");
+      const cUser = localStorage.getItem("currentUser");
+      if (cUser) {
+        sendMessage(JSON.stringify({ Token: cUser }));
+      }
+    },
+    //Will attempt to reconnect on all close events, such as server shutting down
+    shouldReconnect: (closeEvent) => true,
+  });
+
+  useEffect(() => {
+    if (lastMessage !== null) {
+      try {
+        console.log(lastMessage);
+        if (lastMessage.data) {
+          const data = JSON.parse(lastMessage.data);
+          if (data.type === "functionNotification") {
+            const deployData = {
+              function_uuid: data.fn_uuid,
+              data: lastMessage.data,
+            };
+            dispatch(getProjectDeploy(deployData));
+          } else if (data.type === "fileUploadNotification") {
+            const deployData = {
+              function_uuid: data.Data.job_id,
+              data: lastMessage.data,
+            };
+            dispatch(getProjectDeploy(deployData));
+          }
+        }
+      } catch (err) {
+        console.log(err);
+      }
+      setMessageHistory((prev) => prev.concat(lastMessage));
+    }
+  }, [lastMessage, setMessageHistory]);
+
+  // End web socket Implementation
+
   return (
     <>
       <Sidebar show={showSideBar} handleClose={() => setShowSideBar(false)} />
@@ -102,14 +178,14 @@ const Header = () => {
           </div>
 
           <div className="flex items-center" id="mobile-menu">
-
             {!userinfo.id && (
               <h5 className="text-white mr-2 hidden md:block">What’s Creabo</h5>
             )}
 
             <ul
-              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${userId ? "" : "sm:py-2"
-                }`}
+              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${
+                userId ? "" : "sm:py-2"
+              }`}
             >
               {userinfo.id && (
                 <>
@@ -130,7 +206,6 @@ const Header = () => {
                     </a>
                   </li>
 
-
                   <li>
                     <Link to="/profile-settings">
                       <svg
@@ -149,7 +224,10 @@ const Header = () => {
                   </li>
 
                   <li className="relative">
-                    <div className="cp" onClick={() => showHideUserPopupWallet()}>
+                    <div
+                      className="cp"
+                      onClick={() => showHideUserPopupWallet()}
+                    >
                       <svg
                         width="20"
                         height="19"
@@ -244,9 +322,7 @@ const Header = () => {
           </div>
         </div>
 
-
         <div className="md:hidden">
-
           <form>
             <label
               for="default-search"
@@ -267,12 +343,7 @@ const Header = () => {
               />
             </div>
           </form>
-
         </div>
-
-
-
-
       </nav>
       <WalletConnectModal showModal={showModal} closeModal={hideModal} />
     </>

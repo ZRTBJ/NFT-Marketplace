@@ -221,11 +221,18 @@ export default function ProjectDetails(props) {
           </section>
 
           <section className="flex  my-4">
-            {project.your_token_category && (
-              <button type="button" class="btn btn-primary btn-sm">
-                MINT NFT <i class="fa-thin fa-square-plus ml-1"></i>
-              </button>
-            )}
+            {project.your_token_category &&
+              project.project_status === "published" && (
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm"
+                  onClick={() =>
+                    history.push(`/${project.id ? project.id : ""}/mint-nft`)
+                  }
+                >
+                  MINT NFT <i class="fa-thin fa-square-plus ml-1"></i>
+                </button>
+              )}
 
             {nftList.length !== 0 && (
               <button

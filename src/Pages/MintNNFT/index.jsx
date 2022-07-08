@@ -2,66 +2,87 @@ import Modal from "components/Modal";
 import ErrorModal from "components/modalDialog/ErrorModal";
 import SuccessModal from "components/modalDialog/SuccessModal";
 import ProjectEditTopNavigationCard from "components/ProjectEdit/ProjectEditTopNavigationCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import dummyImg from "assets/images/dummy-img.svg";
-import { saveNFT } from "services/nft/nftService";
+import { generateUploadkey, saveNFT } from "services/nft/nftService";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { getProjectDeploy } from "Slice/projectSlice";
 
-const MintNFT = () => {
+export default function MintNFT(props) {
+  const dispatch = useDispatch();
+  const projectDeploy = useSelector((state) =>
+    state?.projects?.projectDeploy ? state?.projects?.projectDeploy : []
+  );
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showAddPropertyModal, setShowAddPropertyModal] = useState(false);
   const [propertyList, setpropertyList] = useState([{ type: "", name: "" }]);
   const [nftImage, setnftImage] = useState({ image: null, path: "" });
+  const projectId = props.match.params.id;
+
+  const [jobId, setJobId] = useState("");
+  let savingNFT = false;
 
   const {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm();
 
-  function nftImageChnageHandler(event) {
+  useEffect(() => {
+    const projectDeployStatus = projectDeploy.find(
+      (x) => x.function_uuid === jobId
+    );
+    if (projectDeployStatus && projectDeployStatus.data) {
+      const data = JSON.parse(projectDeployStatus.data);
+      if (
+        data.Data["assetId"] &&
+        data.Data["assetId"].length > 0 &&
+        data.Data["path"] &&
+        data.Data["path"].length > 0
+      ) {
+        if (!savingNFT) {
+          savingNFT = true;
+          saveNFTDetails(data.Data["assetId"], data.Data["path"]);
+        }
+      } else {
+        savingNFT = false;
+      }
+    }
+  }, [projectDeploy]);
+
+  function nftImageChangeHandler(event) {
     const img = event.currentTarget.files[0];
     setnftImage({ image: img, path: URL.createObjectURL(img) });
   }
 
-  const onSubmit = (data) => {
-    // const request = new FormData();
-    // request.append("project_uuid", "9f3da222-ff7b-485d-bce5-dc33385fadb0");
-    // request.append("name", "lastName");
-    // request.append("display_name", "My onchain NFT");
-    // request.append("description", "This is NFT description");
-    // request.append("asset_uid", "b148fbe0-e6be-4b3c-99b9-97705efee46c");
-    // request.append("external_url", "");
+  function genUploadKey() {
+    const request = new FormData();
+    request.append("project_uid", projectId);
+    generateUploadkey(request)
+      .then((res) => {
+        console.log(res);
+        if (res.key) {
+          uploadAFile(res.key);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
-    // const attributes = [
-    //   {
-    //     key: "Name",
-    //     value: "Long2",
-    //     value_type: "string",
-    //     display_type: "properties",
-    //   },
-    // ];
-
-    // request.append("attributes", JSON.stringify(attributes));
-
-    // saveNFT(request)
-    //   .then((res) => {
-    //     console.log(res);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
-
+  function uploadAFile(uploadKey) {
     let headers;
 
     headers = {
       "Content-Type": "multipart/form-data",
       "Access-Control-Allow-Origin": "*",
-      key: "lbBU5DHA0WNYrJ22PjoM4vJHQVEB4KYV2d65Q83yxgH3Sa3PZTqwFzd_p9YwS-NhG_rc7stCnyfpzOUfldbgzCiOkjYoUy7gvvFWiOglcy8dF6_ergn233IBj-JMZDcCXvOe_4VO0YVQsnH0OKtrlesAYgS14Cn4_MW_Dtkb0Udk5TCcGcXEZYHEGsfSyLf3i1mvsQbTjFa92YFyCR8Deww0FphosFjy",
+      key: uploadKey,
     };
 
     let formdata = new FormData();
@@ -76,26 +97,53 @@ const MintNFT = () => {
     })
       .then((response) => {
         console.log(response);
+        setJobId(response["job_id"]);
+        const deployData = {
+          projectId: projectId,
+          etherscan: "",
+          function_uuid: response["job_id"],
+          data: "",
+        };
+        dispatch(getProjectDeploy(deployData));
+        // setIsLoading(false);
       })
       .catch((err) => {
         console.log(err);
+        setIsLoading(false);
       });
+  }
 
-    // fetch("http://34.102.235.130/upload", {
-    //   method: "post",
-    //   headers: {
-    //     "Content-Type": "multipart/form-data",
-    //     "Access-Control-Allow-Origin": "*",
-    //     key: "lbBU5DHA0WNYrJ22PjoM4vJHQVEB4KYV2d65Q83yxgH3Sa3PZTqwFzd_p9YwS-NhG_rc7stCnyfpzOUfldbgzCiOkjYoUy7gvvFWiOglcy8dF6_ergn233IBj-JMZDcCXvOe_4VO0YVQsnH0OKtrlesAYgS14Cn4_MW_Dtkb0Udk5TCcGcXEZYHEGsfSyLf3i1mvsQbTjFa92YFyCR8Deww0FphosFjy",
-    //   },
-    //   body: formdata,
-    // })
-    //   .then((response) => {
-    //     console.log(response);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+  function saveNFTDetails(assetId, path) {
+    setIsLoading(true);
+    const request = new FormData();
+    request.append("project_uuid", projectId);
+    request.append("name", watch("name"));
+    request.append("description", watch("description"));
+    request.append("asset_uid", assetId);
+    request.append("external_url", path);
+    const attributes = [
+      {
+        key: "Name",
+        value: "Long2",
+        value_type: "string",
+        display_type: "properties",
+      },
+    ];
+    request.append("attributes", JSON.stringify(attributes));
+    saveNFT(request)
+      .then((res) => {
+        console.log(res);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }
+
+  const onSubmit = (data) => {
+    setIsLoading(true);
+    genUploadKey();
   };
 
   function addProperty() {
@@ -124,7 +172,7 @@ const MintNFT = () => {
 
   return (
     <>
-      <main className="container mx-auto px-4">
+      <main className={`container mx-auto px-4 ${isLoading ? "loading" : ""}`}>
         <section className="flex my-9 flex-col md:flex-row text-white">
           <div className="flex-1">
             <h3 className="mb-8">Start build your NFT</h3>
@@ -148,7 +196,7 @@ const MintNFT = () => {
                   {...register("name", {
                     required: "Name is required.",
                   })}
-                  defaultValue={"Look So Clean #21124"}
+                  defaultValue={""}
                 />
                 {errors.name && (
                   <p className="text-red-500 text-xs font-medium">
@@ -172,7 +220,7 @@ const MintNFT = () => {
                   className="block h-32  mb-3"
                   id="description"
                   name="description"
-                  placeholder="It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here"
+                  placeholder="description"
                   {...register("description", {
                     required: "Name is required.",
                   })}
@@ -237,12 +285,12 @@ const MintNFT = () => {
                 Jpeg/Mp4/GIF/PNG/Mp3.
               </small>
 
-              <div class="flex justify-center items-center max-w-full w-40 h-40">
+              <div className="flex justify-center items-center max-w-full w-40 h-40">
                 <label
                   htmlFor="dropzone-file"
-                  class="flex flex-col justify-center items-center w-full h-40 bg-black-shade-800 rounded-xl  cursor-pointer"
+                  className="flex flex-col justify-center items-center w-full h-40 bg-black-shade-800 rounded-xl  cursor-pointer"
                 >
-                  <div class="flex flex-col justify-center items-center pt-5 pb-6">
+                  <div className="flex flex-col justify-center items-center pt-5 pb-6">
                     {nftImage.image ? (
                       <img
                         src={nftImage.path}
@@ -270,15 +318,17 @@ const MintNFT = () => {
                       </svg>
                     )}
 
-                    <p class="text-xs mt-2 text-color-ass-8">Add Assets from</p>
-                    <p class="text-xs text-primary-color-1">Computer</p>
+                    <p className="text-xs mt-2 text-color-ass-8">
+                      Add Assets from
+                    </p>
+                    <p className="text-xs text-primary-color-1">Computer</p>
                   </div>
 
                   <input
                     id="dropzone-file"
                     type="file"
-                    class="hidden"
-                    onChange={(e) => nftImageChnageHandler(e)}
+                    className="hidden"
+                    onChange={(e) => nftImageChangeHandler(e)}
                   />
                 </label>
               </div>
@@ -300,19 +350,19 @@ const MintNFT = () => {
                   </small>
                 </div>
                 <i
-                  class="fa-regular fa-square-plus text-2xl cursor-pointer"
+                  className="fa-regular fa-square-plus text-2xl cursor-pointer"
                   onClick={() => setShowAddPropertyModal(true)}
                 ></i>
               </div>
 
               <div className="flex py-3 border-b border-b-black-shade-800">
-                <i class="fa-regular fa-grip-lines"></i>
+                <i className="fa-regular fa-grip-lines"></i>
                 <div className="flex-1 px-3">
                   <p className="-mt-1">Properties</p>
                   <small className="text-color-ass-7">Add NFT properties</small>
                 </div>
                 <i
-                  class="fa-regular fa-square-plus text-2xl cursor-pointer"
+                  className="fa-regular fa-square-plus text-2xl cursor-pointer"
                   onClick={() => setShowAddPropertyModal(true)}
                 ></i>
               </div>
@@ -446,23 +496,23 @@ const MintNFT = () => {
                   <div className="flex items-center mt-3">
                     <input name="ss" type="text" className="w-32" />
                     <input name="ss" type="text" className="w-32 ml-3" />
-                    <i class="fa-solid fa-trash cursor-pointer ml-3"></i>
+                    <i className="fa-solid fa-trash cursor-pointer ml-3"></i>
                   </div>
                 </div>
                 <i
-                  class="fa-regular fa-square-plus text-2xl cursor-pointer"
+                  className="fa-regular fa-square-plus text-2xl cursor-pointer"
                   onClick={() => setShowAddPropertyModal(true)}
                 ></i>
               </div>
 
               <div className="flex py-3 border-b border-b-black-shade-800">
-                <i class="fa-regular fa-grip-lines"></i>
+                <i className="fa-regular fa-grip-lines"></i>
                 <div className="flex-1 px-3">
                   <p className="-mt-1">Properties</p>
                   <small className="text-color-ass-7">Add NFT properties</small>
                 </div>
                 <i
-                  class="fa-regular fa-square-plus text-2xl cursor-pointer"
+                  className="fa-regular fa-square-plus text-2xl cursor-pointer"
                   onClick={() => setShowAddPropertyModal(true)}
                 ></i>
               </div>
@@ -504,7 +554,7 @@ const MintNFT = () => {
                       onChange={(e) => handleOnChangeName(e, index)}
                     />
                     <i
-                      class="fa-solid fa-trash cursor-pointer ml-3"
+                      className="fa-solid fa-trash cursor-pointer ml-3"
                       onClick={() => removeProperty(index)}
                     ></i>
                   </div>
@@ -514,7 +564,7 @@ const MintNFT = () => {
             <div className="mt-5">
               <button
                 type="button"
-                class="btn btn-text-gradient"
+                className="btn btn-text-gradient"
                 onClick={() => addProperty()}
               >
                 Add more +
@@ -535,5 +585,4 @@ const MintNFT = () => {
       </main>
     </>
   );
-};
-export default MintNFT;
+}
