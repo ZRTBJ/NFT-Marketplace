@@ -5,7 +5,7 @@ import CollectionCard from "./CollectionCard";
 import Modal from "components/Modal";
 import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
-import EmptyCaseCard from "components/profile/EmptyCaseCard";
+import ProfileEmptyCaseCard from "components/EmptyCaseCard/ProfileEmptyCaseCard";
 
 const Tab = (props) => {
   const { id } = useParams();
@@ -26,9 +26,8 @@ const Tab = (props) => {
       <div className="flex-wrap justify-center hidden md:flex">
         {props.tabs.map((type, index) => (
           <button
-            className={`text-white-shade-600 p-3 hover:text-primary-900 active:text-primary-900 ${
-              active.name === type.name ? "text-primary-900" : ""
-            }`}
+            className={`text-white-shade-600 p-3 hover:text-primary-900 active:text-primary-900 ${active.name === type.name ? "text-primary-900" : ""
+              }`}
             key={type.id}
             onClick={() => OnSetActive(type, index)}
           >
@@ -59,22 +58,43 @@ const Tab = (props) => {
 
       <div className="tabContent">
         {active.name === "Dao Project List" && (
-          <div className="py-5 grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
-            {active.list.length === 0 ? (
-              <EmptyCaseCard type={"Project"}></EmptyCaseCard>
-            ) : (
-              <>
-                {active.list.map((list) => (
-                  <div>
-                    <CommonCard key={list.id} project={list} />
-                  </div>
-                ))}
-              </>
-            )}
-          </div>
+          <>
+
+
+            {/* 
+            
+                //Open Ttitle
+                <h1 className="text-white mt-4 md:hidden"><span className="pr-3">Projects</span> <i class="fa-solid fa-circle-caret-down"></i></h1>
+
+                <div className="py-5"> open content</div>
+
+                // Close Title  inside h1 tag icon class name will be changed
+                <h1 className="text-white md:hidden"><span className="pr-3">Projects</span> <i class="fa-solid fa-circle-caret-right"></i></h1> 
+
+                //Close Content py- class will be removed h-0 class will be added
+                
+                <div className="h-0"> Close content</div>
+            
+
+            */}
+
+            <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300">
+              {active.list.length === 0 ? (
+                <ProfileEmptyCaseCard type={"Project"}></ProfileEmptyCaseCard>
+              ) : (
+                <>
+                  {active.list.map((list) => (
+                    <div>
+                      <CommonCard key={list.id} project={list} />
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
+          </>
         )}
         {active.name === "Works" && (
-          <div className="py-5 grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
+          <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300">
             {active.list.map((list) => (
               <div onClick={() => openModal(list)}>
                 <CommonCard key={list.id} project={list} />
@@ -83,7 +103,7 @@ const Tab = (props) => {
           </div>
         )}
         {active.name === "NFTs" && (
-          <div className="py-5 grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
+          <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300">
             {active.list.map((list) => (
               <div>
                 <CommonCard key={list.id} project={list} />
@@ -92,7 +112,7 @@ const Tab = (props) => {
           </div>
         )}
         {active.name === "Bookmark" && (
-          <div className="py-5 grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
+          <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300">
             {active.list.map((list) => (
               <div>
                 <CommonCard key={list.id} project={list} />

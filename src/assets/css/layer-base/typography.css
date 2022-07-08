@@ -6,14 +6,13 @@
     }
 
     h2 {
-        @apply font-satoshi-bold text-[26px] font-bold;
+        @apply font-satoshi-bold text-base md:text-[26px] font-bold;
     }
 
     h3 {
-        @apply font-satoshi-bold text-lg font-black;
+        @apply font-satoshi-bold text-sm md:text-lg font-black;
     }
-
-
+    
     h4 {
         @apply font-satoshi-bold text-base font-black;
     }
