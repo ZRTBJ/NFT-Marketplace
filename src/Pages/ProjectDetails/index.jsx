@@ -146,7 +146,7 @@ export default function ProjectDetails(props) {
                   <section className="flex  justify-end py-7">
                     <button
                       type="button"
-                      class="btn btn-outline-primary-gradient btn-md"
+                      className="btn btn-outline-primary-gradient btn-md"
                     >
                       <Link to={`/project-edit/${project.id}/outline`}>
                         <span>Edit Project</span>
@@ -236,13 +236,13 @@ export default function ProjectDetails(props) {
                   </div>
 
                   <div className="flex space-x-2 items-center text-white mr-4 cursor-pointer">
-                    <i class="fa-thin fa-heart"></i>
+                    <i className="fa-thin fa-heart"></i>
 
                     <span className=" ml-1">{project.project_like_count}</span>
                   </div>
 
                   <div className="flex space-x-2 items-center text-white mr-4 cursor-pointer">
-                    <i class="fa-thin fa-bookmark"></i>
+                    <i className="fa-thin fa-bookmark"></i>
 
                     <span className=" ml-1">{project.project_mark_count}</span>
                   </div>
@@ -264,21 +264,22 @@ export default function ProjectDetails(props) {
               project.project_status === "published" && (
                 <button
                   type="button"
-                  class="btn btn-primary btn-sm"
+                  className="btn btn-primary btn-sm"
                   onClick={() =>
                     history.push(`/${project.id ? project.id : ""}/mint-nft`)
                   }
                 >
-                  MINT NFT <i class="fa-thin fa-square-plus ml-1"></i>
+                  MINT NFT <i className="fa-thin fa-square-plus ml-1"></i>
                 </button>
               )}
 
             {nftList.length !== 0 && (
               <button
                 type="button"
-                class="ml-auto btn btn-outline-primary btn-sm"
+                className="ml-auto btn btn-outline-primary btn-sm"
               >
-                Sort By <i class="fa-thin fa-arrow-down-short-wide ml-1"></i>
+                Sort By{" "}
+                <i className="fa-thin fa-arrow-down-short-wide ml-1"></i>
               </button>
             )}
           </section>
@@ -421,7 +422,7 @@ export default function ProjectDetails(props) {
                   </div>
                   <div className="text-ellipsis overflow-hidden flex-1 pr-4 relative">
                     Xysd29479q3hfu39238yXysd29479q3hfu39238yXysd29479q3hfu39238yXysd29479q3hfu39238y
-                    <i class="fa-thin fa-copy cursor-pointer absolute top-1 right-0"></i>
+                    <i className="fa-thin fa-copy cursor-pointer absolute top-1 right-0"></i>
                   </div>
                 </div>
                 <div className="flex text-white">
@@ -455,10 +456,10 @@ export default function ProjectDetails(props) {
 
                   <div className="flex">
                     <button className="border border-color-blue rounded-xl p-5 text-color-blue font-semibold mr-4 hover:text-white hover:bg-color-blue">
-                      <i class="fa-regular fa-aperture mr-1"></i> Opensea
+                      <i className="fa-regular fa-aperture mr-1"></i> Opensea
                     </button>
                     <button className="border border-color-yellow rounded-xl p-5 text-color-yellow font-semibold hover:text-white hover:bg-color-yellow">
-                      <i class="fa-regular fa-square-r mr-1"></i> Rarible
+                      <i className="fa-regular fa-square-r mr-1"></i> Rarible
                     </button>
                   </div>
                 </div>
@@ -565,7 +566,7 @@ export default function ProjectDetails(props) {
 
       {/* <div className="flex flex-row mt-24 mx-8">
             <div className="w-2/4 border border-gray-300 float-right">
-              <div class="grid grid-cols-4 divide-x divide-gray-300 text-gray-400">
+              <div className="grid grid-cols-4 divide-x divide-gray-300 text-gray-400">
                 <div className="h-28 text-center">
                   <div className="m-4">
                     <p className="text-sm font-semibold">TOKEN SALE</p>
@@ -611,7 +612,7 @@ export default function ProjectDetails(props) {
           </div> */}
       {/* <div className="flex flex-row mt-8 mx-8">
             <div className="w-2/4">
-              <div class="flex justify-center">
+              <div className="flex justify-center">
                 {project.voting_power === "TknW8" && (
                   <img
                     src={require(`assets/images/projectDetails/badge/badge_vr_weighted.png`)}
@@ -629,7 +630,7 @@ export default function ProjectDetails(props) {
               </div>
             </div>
             <div className="w-2/4">
-              <div class="flex ml-12">
+              <div className="flex ml-12">
                 <div className="w-1/2">
                   <p>
                     <strong>INVESTER</strong> <span>0 people</span>

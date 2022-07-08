@@ -174,9 +174,9 @@ const Profile = () => {
     //   });
     // }
   }
-  async function getWorksList() { }
-  async function getNftList() { }
-  async function getBookmarks() { }
+  async function getWorksList() {}
+  async function getNftList() {}
+  async function getBookmarks() {}
 
   useEffect(() => {
     projectCategory();
@@ -383,14 +383,14 @@ const Profile = () => {
               </div>
 
               <div className="border-r border-color-ass px-5 last:border-0">
-                <strong class="display-block font-black font-satoshi-bold text-[22px]">
+                <strong className="display-block font-black font-satoshi-bold text-[22px]">
                   {user?.data?.total_follow}
                 </strong>
                 <span>Followers</span>
               </div>
 
               <div className="border-r border-color-ass px-5 last:border-0">
-                <strong class="display-block font-black font-satoshi-bold text-[22px]">
+                <strong className="display-block font-black font-satoshi-bold text-[22px]">
                   {user?.data?.total_work}
                 </strong>
                 <span>Works</span>

@@ -63,7 +63,7 @@ const CommonCard = ({ project }) => {
           )}
         </div>
         <div>
-          <h3 class="mb-[13px] mt-[12px] tracking-tight text-color-grey">
+          <h3 className="mb-[13px] mt-[12px] tracking-tight text-color-grey">
             {project.name}
           </h3>
           {!project.isNft && project.showOverview && (
@@ -100,11 +100,11 @@ const CommonCard = ({ project }) => {
                   <span className=" ml-1">{project.project_view_count}</span>
                 </div>
                 <div className="flex  mr-[35px] items-center text-white ">
-                  <i class="fa-thin fa-heart mr-2"></i>
+                  <i className="fa-thin fa-heart mr-2"></i>
                   <span className=" ml-1"> {project.project_like_count}</span>
                 </div>
                 <div className="flex  mr-[35px] items-center text-white ">
-                  <i class="fa-thin fa-bookmark mr-2"></i>
+                  <i className="fa-thin fa-bookmark mr-2"></i>
                   <span className=" ml-1">{project.project_mark_count}</span>
                 </div>
               </div>
@@ -120,11 +120,11 @@ const CommonCard = ({ project }) => {
                 <span className=" ml-1">{project.project_view_count}</span>
               </div>
               <div className="flex space-x-2 items-center text-white mr-4">
-                <i class="fa-thin fa-heart"></i>
+                <i className="fa-thin fa-heart"></i>
                 <span className=" ml-1"> {project.project_like_count}</span>
               </div>
               <div className="flex space-x-2 items-center text-white mr-4">
-                <i class="fa-thin fa-bookmark"></i>
+                <i className="fa-thin fa-bookmark"></i>
                 <span className=" ml-1">{project.project_mark_count}</span>
               </div>
             </div>

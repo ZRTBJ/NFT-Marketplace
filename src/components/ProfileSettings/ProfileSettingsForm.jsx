@@ -174,7 +174,9 @@ const ProfileSettingsForm = () => {
 
   return (
     /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
-    <div className={`grid justify-items-center mt-24`}>
+    <div
+      className={`grid justify-items-center mt-24 ml-4 mr-4 sm:ml-0 sm:mr-0`}
+    >
       {isLoading && <div className="loading"></div>}
       <form
         id="profile-setting"
@@ -396,7 +398,7 @@ const ProfileSettingsForm = () => {
               />
             </div>
             <div className="inline-flex items-center w-full">
-              <i class="fa fa-link mr-3 mb-3" aria-hidden="true"></i>
+              <i className="fa fa-link mr-3 mb-3" aria-hidden="true"></i>
               <input
                 className={`block w-full border border-dark-300 rounded py-3 px-4 mb-3 leading-tight`}
                 id="link-web"
@@ -414,7 +416,7 @@ const ProfileSettingsForm = () => {
                   key={`more-link-${index}`}
                   className="inline-flex items-center w-full"
                 >
-                  <i class="fa fa-link mr-3 mb-3" aria-hidden="true"></i>
+                  <i className="fa fa-link mr-3 mb-3" aria-hidden="true"></i>
                   <input
                     className={`block w-full border border-dark-300 rounded py-3 px-4 mb-3 leading-tight`}
                     id={`more-link-web-${index}`}
@@ -433,7 +435,7 @@ const ProfileSettingsForm = () => {
             <div>
               <button
                 type="button"
-                class="btn-outline-primary-gradient w-[100px] h-[38px]"
+                className="btn-outline-primary-gradient w-[100px] h-[38px]"
                 onClick={(e) => {
                   addMoreWebLink();
                 }}
@@ -441,11 +443,19 @@ const ProfileSettingsForm = () => {
                 <span>Show More</span>
               </button>
             </div>
-            <div className="text-right"></div>
             <div className="text-right">
               <button
                 type="button"
-                className="btn-primary w-[80px] h-[38px] rounded-lg mr-4"
+                className="inline-block sm:hidden btn-primary w-[80px] h-[38px] rounded-lg mr-4"
+                onClick={() => history.push(`/profile/${userId ? userId : ""}`)}
+              >
+                Skip
+              </button>
+            </div>
+            <div className="text-right">
+              <button
+                type="button"
+                className="hidden sm:inline-block btn-primary w-[80px] h-[38px] rounded-lg mr-4"
                 onClick={() => history.push(`/profile/${userId ? userId : ""}`)}
               >
                 Skip
@@ -454,7 +464,7 @@ const ProfileSettingsForm = () => {
                 type="submit"
                 className="btn-primary w-[100px] h-[38px] rounded-lg"
               >
-                NEXT <i class="fa fa-angle-right" aria-hidden="true"></i>
+                NEXT <i className="fa fa-angle-right" aria-hidden="true"></i>
               </button>
             </div>
           </div>
