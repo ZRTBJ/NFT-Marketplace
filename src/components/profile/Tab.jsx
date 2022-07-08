@@ -26,8 +26,9 @@ const Tab = (props) => {
       <div className="flex-wrap justify-center hidden md:flex">
         {props.tabs.map((type, index) => (
           <button
-            className={`text-white-shade-600 p-3 hover:text-primary-900 active:text-primary-900 ${active.name === type.name ? "text-primary-900" : ""
-              }`}
+            className={`text-white-shade-600 p-3 hover:text-primary-900 active:text-primary-900 ${
+              active.name === type.name ? "text-primary-900" : ""
+            }`}
             key={type.id}
             onClick={() => OnSetActive(type, index)}
           >
@@ -41,9 +42,9 @@ const Tab = (props) => {
       <section className="flex mt-7">
         {userData.id && userData.id === id ? (
           <>
-            <button type="button" class="btn btn-primary btn-sm">
+            <button type="button" className="btn btn-primary btn-sm">
               <Link to="/project-create">
-                Create New <i class="fa-thin fa-square-plus ml-1"></i>
+                Create New <i className="fa-thin fa-square-plus ml-1"></i>
               </Link>
             </button>
           </>
@@ -51,25 +52,26 @@ const Tab = (props) => {
           <></>
         )}
 
-        <button type="button" class="ml-auto btn btn-outline-primary btn-sm">
-          Sort By <i class="fa-thin fa-arrow-down-short-wide ml-1"></i>
+        <button
+          type="button"
+          className="ml-auto btn btn-outline-primary btn-sm"
+        >
+          Sort By <i className="fa-thin fa-arrow-down-short-wide ml-1"></i>
         </button>
       </section>
 
       <div className="tabContent">
         {active.name === "Dao Project List" && (
           <>
-
-
             {/* 
             
                 //Open Ttitle
-                <h1 className="text-white mt-4 md:hidden"><span className="pr-3">Projects</span> <i class="fa-solid fa-circle-caret-down"></i></h1>
+                <h1 className="text-white mt-4 md:hidden"><span className="pr-3">Projects</span> <i className="fa-solid fa-circle-caret-down"></i></h1>
 
                 <div className="py-5"> open content</div>
 
                 // Close Title  inside h1 tag icon class name will be changed
-                <h1 className="text-white md:hidden"><span className="pr-3">Projects</span> <i class="fa-solid fa-circle-caret-right"></i></h1> 
+                <h1 className="text-white md:hidden"><span className="pr-3">Projects</span> <i className="fa-solid fa-circle-caret-right"></i></h1> 
 
                 //Close Content py- class will be removed h-0 class will be added
                 

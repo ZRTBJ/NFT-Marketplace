@@ -27,7 +27,10 @@ const Modal = ({ handleClose, show, children, height, width, overflow }) => {
           " modal-main bg-dark-background rounded-3xl relative text-white p-11"
         }
       >
-        <i class="fa-light fa-square-xmark cursor-pointer text-2xl absolute top-12 right-8" onClick={handleClose}></i>
+        <i
+          className="fa-light fa-square-xmark cursor-pointer text-2xl absolute top-12 right-8"
+          onClick={handleClose}
+        ></i>
         <div className="">{children}</div>
       </section>
     </div>

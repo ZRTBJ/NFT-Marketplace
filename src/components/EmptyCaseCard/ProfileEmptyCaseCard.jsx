@@ -22,10 +22,10 @@ const EmptyCaseCard = (props) => {
             </div>
             <button
               type="button"
-              class="btn-outline-primary-gradient btn-md mt-5"
+              className="btn-outline-primary-gradient btn-md mt-5"
             >
               <span>
-                Create New <i class="fa-thin fa-square-plus ml-2"></i>
+                Create New <i className="fa-thin fa-square-plus ml-2"></i>
               </span>
             </button>
           </section>

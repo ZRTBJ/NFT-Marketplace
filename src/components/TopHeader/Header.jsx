@@ -184,7 +184,7 @@ const Header = () => {
               </label>
               <div className="relative">
                 <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
-                  <i class="fa-regular fa-magnifying-glass text-white-shade-600"></i>
+                  <i className="fa-regular fa-magnifying-glass text-white-shade-600"></i>
                 </div>
                 <input
                   type="search"
@@ -352,7 +352,7 @@ const Header = () => {
             </label>
             <div className="relative">
               <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
-                <i class="fa-regular fa-magnifying-glass text-white-shade-600"></i>
+                <i className="fa-regular fa-magnifying-glass text-white-shade-600"></i>
               </div>
               <input
                 type="search"

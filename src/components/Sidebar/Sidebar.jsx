@@ -92,21 +92,21 @@ const Sidebar = ({ show, handleClose }) => {
           className="pl-6 pr-10 flex-0 flex flex-col"
         >
           <div className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-white rounded  active:bg-primary-500 active:text-white last:mt-auto  bg-primary-500 text-white cursor-pointer">
-            <i class="fa-regular fa-user"></i>
-            <span class="ml-2"> PROFILE</span>
+            <i className="fa-regular fa-user"></i>
+            <span className="ml-2"> PROFILE</span>
           </div>
 
           <div
             onClick={() => navigateTo("project-create")}
             className="flex cursor-pointer items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-primary-500 ease-in-out duration-300 hover:text-white rounded  active:bg-primary-500 active:text-white last:mt-auto"
           >
-            <i class="fa-regular fa-circle-plus"></i>
-            <span class="ml-2"> Create Project</span>
+            <i className="fa-regular fa-circle-plus"></i>
+            <span className="ml-2"> Create Project</span>
           </div>
 
           <div className="flex items-center  cursor-pointer font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-primary-500 ease-in-out duration-300 hover:text-white rounded  active:bg-primary-500 active:text-white last:mt-auto">
-            <i class="fa-regular fa-cubes-stacked"></i>
-            <span class="ml-2"> Ecosystem</span>
+            <i className="fa-regular fa-cubes-stacked"></i>
+            <span className="ml-2"> Ecosystem</span>
           </div>
         </div>
       </div>
