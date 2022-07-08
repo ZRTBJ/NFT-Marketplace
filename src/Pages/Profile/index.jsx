@@ -126,6 +126,7 @@ const Profile = () => {
         //   (x) => x.id === element.category_id
         // ).name;
         // element.showOverview = true;
+        element.showMembersTag = true;
       });
       projectListCards = uniqueProjectList;
       setTabKey((pre) => pre + 1);

@@ -5,6 +5,10 @@ import {
   projectBookmark,
 } from "services/project/projectService";
 import { getNftListByProjectId } from "services/nft/nftService";
+import { ReactComponent as HeartIcon } from "assets/images/projectDetails/heartIcon.svg";
+import { ReactComponent as BookmarkIcon } from "assets/images/projectDetails/bookmarkIcon.svg";
+import { ReactComponent as HeartIconFilled } from "assets/images/projectDetails/HeartIconFilled.svg";
+import { ReactComponent as BookmarkIconFilled } from "assets/images/projectDetails/BookmarkIconFilled.svg";
 import coverImg from "assets/images/projectDetails/cover.svg";
 import manImg from "assets/images/projectDetails/man-img.svg";
 import locationIcon from "assets/images/profile/locationIcon.svg";
@@ -64,30 +68,34 @@ export default function ProjectDetails(props) {
       });
   }
 
-  function LikeProject() {
+  function LikeProject(value) {
     setIsLoading(true);
     const request = new FormData();
-    request.append("like", true);
+    request.append("like", value);
     projectLike(projectId, request)
       .then((res) => {
         if (res.code === 0) {
         }
         setIsLoading(false);
+        projectDetails(projectId);
+        fetchNftList();
       })
       .catch((error) => {
         setIsLoading(false);
       });
   }
 
-  function BookmarkProject() {
+  function BookmarkProject(value) {
     setIsLoading(true);
     const request = new FormData();
-    request.append("bookmark", true);
+    request.append("bookmark", value);
     projectBookmark(projectId, request)
       .then((res) => {
         if (res.code === 0) {
         }
         setIsLoading(false);
+        projectDetails(projectId);
+        fetchNftList();
       })
       .catch((error) => {
         setIsLoading(false);
@@ -133,7 +141,7 @@ export default function ProjectDetails(props) {
         <main className="container mx-auto px-4">
           {userInfo.id && (
             <>
-              {project.your_token_category ? (
+              {project.is_owner ? (
                 <>
                   <section className="flex  justify-end py-7">
                     <button
@@ -147,14 +155,52 @@ export default function ProjectDetails(props) {
                   </section>
                 </>
               ) : (
-                <section className="flex justify-end pt-12 pb-4">
-                  <div onClick={LikeProject} className="cursor-pointer text-primary-900 w-14 h-14 bg-primary-50 flex justify-center items-center rounded-md duration-300 mr-4 hover:bg-primary-400">
-                    <i class="fa-regular fa-heart text-xl"></i>
-                  </div>
-                  <div onClick={BookmarkProject} className="cursor-pointer text-primary-900 w-14 h-14 bg-primary-50 flex justify-center items-center rounded-md duration-300 mr-4 hover:bg-primary-400">
-                    <i class="fa-regular fa-bookmark text-xl"></i>
-                  </div>
-                </section>
+                <div className="flex justify-end gap-3">
+                  {project.liked ? (
+                    <div className="h-[56px] w-[56px] bg-[#231B39] rounded rounded-[12px] text-center flex justify-center items-center">
+                      <HeartIconFilled
+                        className="h-[24px] w-[24px] cursor-pointer"
+                        onClick={() => LikeProject(false)}
+                      />
+                    </div>
+                  ) : (
+                    <div className="h-[56px] w-[56px] bg-[#231B39] rounded rounded-[12px] text-center flex justify-center items-center">
+                      <HeartIcon
+                        className="h-[24px] w-[24px] cursor-pointer"
+                        onClick={() => LikeProject(true)}
+                      />
+                    </div>
+                  )}
+
+                  {project.bookmarked ? (
+                    <div className="h-[56px] w-[56px] bg-[#231B39] rounded rounded-[12px] text-center flex justify-center items-center">
+                      <BookmarkIconFilled
+                        className="h-[24px] w-[24px] cursor-pointer"
+                        onClick={() => BookmarkProject(false)}
+                      />
+                    </div>
+                  ) : (
+                    <div className="h-[56px] w-[56px] bg-[#231B39] rounded rounded-[12px] text-center flex justify-center items-center">
+                      <BookmarkIcon
+                        className=" h-[24px] w-[24px] cursor-pointer"
+                        onClick={() => BookmarkProject(true)}
+                      />
+                    </div>
+                  )}
+
+                  {/* <img
+                    className="h-[56px] w-[56px] mr-3 cursor-pointer"
+                    src={heartIcon}
+                    alt=""
+                    onClick={LikeProject}
+                  />
+                  <img
+                    className="h-[56px] w-[56px]  cursor-pointer"
+                    src={bookmarkIcon}
+                    alt=""
+                    onClick={BookmarkProject}
+                  /> */}
+                </div>
               )}
             </>
           )}
@@ -166,9 +212,9 @@ export default function ProjectDetails(props) {
                 src={
                   project && project.assets && project.assets.length > 0
                     ? project.assets.find((x) => x.asset_purpose === "cover")
-                      ?.path
-                      ? project.assets.find((x) => x.asset_purpose === "cover")
                         ?.path
+                      ? project.assets.find((x) => x.asset_purpose === "cover")
+                          ?.path
                       : require(`assets/images/no-image-found.png`)
                     : require(`assets/images/no-image-found.png`)
                 }
@@ -213,7 +259,8 @@ export default function ProjectDetails(props) {
           </section>
 
           <section className="flex  my-4">
-            {project.your_token_category &&
+            {project.is_owner &&
+              project.your_token_category &&
               project.project_status === "published" && (
                 <button
                   type="button"
@@ -238,7 +285,7 @@ export default function ProjectDetails(props) {
 
           {nftList.length === 0 ? (
             <>
-              {project.your_token_category ? (
+              {project.is_owner ? (
                 <ProjectDetailsEmptyCaseCard userType="self"></ProjectDetailsEmptyCaseCard>
               ) : (
                 <ProjectDetailsEmptyCaseCard userType="visitor"></ProjectDetailsEmptyCaseCard>

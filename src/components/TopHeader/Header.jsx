@@ -6,6 +6,7 @@ import UserDropDownMenu from "./UserDropDownMenu";
 import NotificationMenu from "./NotificationMenu";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { setSideBar } from "Slice/userSlice";
 import { useAuthState } from "Context";
 import WalletConnectModal from "components/modalDialog/WalletConnectModal";
 import { Link } from "react-router-dom";
@@ -14,13 +15,15 @@ import config from "config";
 import { getProjectDeploy } from "Slice/projectSlice";
 
 const Header = () => {
-  const dispatch = useDispatch();
   const history = useHistory();
+  const dispatch = useDispatch();
   const context = useAuthState();
+
   const [userId, setUserId] = useState(context ? context.user : "");
   const [showModal, setShowModal] = useState(false);
-  const [showSideBar, setShowSideBar] = useState(false);
   const userinfo = useSelector((state) => state.user.userinfo);
+  const showSidebar = useSelector((state) => state.user.showSidebar);
+  const [showSidebarKey, setSideBarKey] = useState(0);
   const loggedIn = useSelector((state) => state.user.loggedIn);
   const [messageHistory, setMessageHistory] = useState([]);
 
@@ -43,6 +46,21 @@ const Header = () => {
   function showHideUserPopupWallet() {
     const userDropDown = document.getElementById("userDropDownWallet");
     userDropDown.classList.toggle("hidden");
+  }
+  console.log(showSidebar);
+
+  function handelSidebar(e) {
+    e.preventDefault();
+    if (showSidebar) {
+      dispatch(setSideBar(false));
+    } else {
+      dispatch(setSideBar(true));
+    }
+  }
+  function closeSidebar() {
+    console.log("clicked");
+    dispatch(setSideBar(false));
+    setSideBarKey((pr) => pr + 1);
   }
 
   // function toogleNotificationList() {
@@ -112,12 +130,14 @@ const Header = () => {
 
   return (
     <>
-      <Sidebar show={showSideBar} handleClose={() => setShowSideBar(false)} />
+      {showSidebar && (
+        <Sidebar key={showSidebarKey} handleClose={closeSidebar} />
+      )}
       <nav className="pl-5 pr-7 lg:pl-10 lg:pr-12">
         <div className="flex justify-between items-center min-h-[71px]">
           <div className="flex items-center flex-1">
             <button
-              onClick={() => setShowSideBar(true)}
+              onClick={(e) => handelSidebar(e)}
               type="button"
               className="inline-flex items-center p-2 mr-5 lg:mr-12 cp rounded-lg hover:bg-primary-color focus:outline-none focus:ring-2 focus:ring-gray-200"
               aria-controls="side-menu"
@@ -345,6 +365,7 @@ const Header = () => {
           </form>
         </div>
       </nav>
+
       <WalletConnectModal showModal={showModal} closeModal={hideModal} />
     </>
   );

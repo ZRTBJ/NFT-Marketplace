@@ -8,8 +8,10 @@ import HomeNavigateCard from "components/Home/HomeNavigateCard";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
+import "swiper/css/navigation";
 import SwiperCore, { Autoplay } from "swiper";
 import CommonCard from "components/CommonCard";
+import { Navigation } from "swiper";
 
 function Home() {
   SwiperCore.use([Autoplay]);

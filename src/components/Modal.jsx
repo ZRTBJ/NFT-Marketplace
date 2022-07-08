@@ -10,6 +10,7 @@ const Modal = ({ handleClose, show, children, height, width, overflow }) => {
   const modalBodyClicked = (e) => {
     e.preventDefault();
     e.stopPropagation();
+
     // e.stopImmediatePropagation();
   };
   return (
