@@ -147,7 +147,7 @@
   .icon-blockchain {
    position: relative;
 }
- .icon-blockchain input{
+ .icon-blockchain input[type="text"]{
    padding-left : 30px;
 }
 
