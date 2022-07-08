@@ -10,11 +10,13 @@
   box-sizing: border-box;
   padding-top: 11px;
 }
-
+/* thumb image*/
 .thumb-img .swiper-slide {
-  width: 24%;
+  //width: 24%;
   height: 100%;
   opacity: 0.6;
+  width: 127px;
+  height: 127px;
 }
 .thumb-img img {
   border-radius: 12px;
@@ -62,4 +64,14 @@
 .swiper-button-next {
   position: absolute !important;
   right: 10px !important;
+}
+
+@media (max-width: 767px) {
+  .big-img .swiper-slide {
+    height: calc(100vw - 32px);
+  }
+  .thumb-img .swiper-slide {
+    width: 77px !important;
+    height: 77px;
+  }
 }

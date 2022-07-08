@@ -1,6 +1,7 @@
 import thumbIcon from "assets/images/profile/card.svg";
 import edit_icon from "assets/images/profile/edit_icon.png";
 import { useHistory } from "react-router-dom";
+import "../assets/css/commonCard.css";
 
 const CommonCard = ({ project }) => {
   const history = useHistory();
@@ -21,20 +22,17 @@ const CommonCard = ({ project }) => {
       onClick={() => gotToDetailPage(project.id)}
       className="border rounded-3xl border-primary-50 cursor-pointer relative p-3"
     >
-      <div>
-        {(!project.isNft && project.project_status === "draft") ||
-        project.status === "draft" ? (
-          <div className="absolute left-0 z-10 right-0 flex p-3  items-center justify-center mx-auto w-[169px] font-bold top-[50%] h-[35px]  text-color-gold bg-color-brown rounded-lg">
-            <img src={edit_icon} className="mr-2" alt="edit" />
-            <span>Continue Editing</span>
-          </div>
-        ) : (
-          <></>
-        )}
-      </div>
-
+      {(!project.isNft && project.project_status === "draft") ||
+      project.status === "draft" ? (
+        <div className="absolute left-0 z-10 right-0 flex p-3  items-center justify-center mx-auto w-[169px] font-bold top-[50%] h-[35px]  text-color-gold bg-color-brown rounded-lg">
+          <img src={edit_icon} className="mr-2" alt="edit" />
+          <span>Continue Editing</span>
+        </div>
+      ) : (
+        <></>
+      )}
       <div
-        className={`rounded-3xl ${
+        className={`rounded-3xl p-2 ${
           (!project.isNft && project.project_status === "draft") ||
           project.status === "draft"
             ? "bg-[#9499AE] opacity-[0.5] p-2"
@@ -95,17 +93,38 @@ const CommonCard = ({ project }) => {
           )}
 
           {!project.isNft && (
-            <div className="flex flex-wrap">
-              <div className="flex  items-center text-white mr-[35px]">
-                <i className="fa-thin fa-eye mr-2"></i>
+            <>
+              <div className="flex flex-wrap">
+                <div className="flex  items-center text-white mr-[35px]">
+                  <i className="fa-thin fa-eye mr-2"></i>
+                  <span className=" ml-1">{project.project_view_count}</span>
+                </div>
+                <div className="flex  mr-[35px] items-center text-white ">
+                  <i class="fa-thin fa-heart mr-2"></i>
+                  <span className=" ml-1"> {project.project_like_count}</span>
+                </div>
+                <div className="flex  mr-[35px] items-center text-white ">
+                  <i class="fa-thin fa-bookmark mr-2"></i>
+                  <span className=" ml-1">{project.project_mark_count}</span>
+                </div>
+              </div>
+              <div className="inline-flex items-center mr-1 py-2 px-3 text-xs font-bold justify-center text-primary-50 bg-primary-900 rounded-full ease-in-out duration-300 w-20 hover:text-primary-900 hover:bg-primary-200 focus:ring-4 focus:outline-none focus:ring-primary-300">
+                Owner
+              </div>
+            </>
+          )}
+          {!project.isNft && (
+            <div className="flex mt-4 mb-1">
+              <div className="flex space-x-2 items-center text-white mr-4">
+                <i className="fa-thin fa-eye"></i>
                 <span className=" ml-1">{project.project_view_count}</span>
               </div>
-              <div className="flex  mr-[35px] items-center text-white ">
-                <i class="fa-thin fa-heart mr-2"></i>
+              <div className="flex space-x-2 items-center text-white mr-4">
+                <i class="fa-thin fa-heart"></i>
                 <span className=" ml-1"> {project.project_like_count}</span>
               </div>
-              <div className="flex  mr-[35px] items-center text-white ">
-                <i class="fa-thin fa-bookmark mr-2"></i>
+              <div className="flex space-x-2 items-center text-white mr-4">
+                <i class="fa-thin fa-bookmark"></i>
                 <span className=" ml-1">{project.project_mark_count}</span>
               </div>
             </div>

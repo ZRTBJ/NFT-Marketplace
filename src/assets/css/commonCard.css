@@ -1,0 +1,20 @@
+@media (min-width: 768px) { 
+    .swipe-card .swiper-slide{
+        width: 317px !important;
+    }
+    .swipe-card .swiper-slide img{
+        width: 301px;
+        height: 301px;
+    }
+}
+
+@media (max-width: 767px) { 
+    .swipe-card .swiper-slide{
+      width: 153px !important;
+    }
+
+    .swipe-card .swiper-slide img{
+      width: 137px;
+      height: 137px;
+    }
+}

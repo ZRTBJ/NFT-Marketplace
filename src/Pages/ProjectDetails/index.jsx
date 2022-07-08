@@ -206,7 +206,7 @@ export default function ProjectDetails(props) {
           )}
 
           {/* Cover image section */}
-          <section className="mt-5 rounded-3xl">
+          <section className="pt-5 rounded-3xl">
             {!isLoading && (
               <img
                 src={
@@ -218,13 +218,13 @@ export default function ProjectDetails(props) {
                       : require(`assets/images/no-image-found.png`)
                     : require(`assets/images/no-image-found.png`)
                 }
-                className="rounded-3xl object-cover md:h-[217px] w-full"
+                className="rounded-3xl object-cover md:h-[310px] w-full"
                 alt="Project Cover"
               />
             )}
           </section>
 
-          <section className="flex flex-col lg:flex-row py-5">
+          <section className="flex flex-col lg:flex-row py-9">
             <div className="flex-1 flex items-center py-5">
               <div className="pr-4 lg:pr-28">
                 <h1 className="text-white mb-6">{project.name}</h1>
@@ -253,17 +253,25 @@ export default function ProjectDetails(props) {
               </div>
             </div>
 
-            <div className="max-w-full w-[553px] lg:h-[690px] mx-auto">
+            <div className="max-w-full lg:w-[553px] lg:h-[690px] mx-auto">
               <Slider imagesUrl={project.assets} />
             </div>
           </section>
 
           <section className="flex  my-4">
-            {project.is_owner && (
-              <button type="button" class="btn btn-primary btn-sm">
-                MINT NFT <i class="fa-thin fa-square-plus ml-1"></i>
-              </button>
-            )}
+            {project.is_owner &&
+              project.your_token_category &&
+              project.project_status === "published" && (
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm"
+                  onClick={() =>
+                    history.push(`/${project.id ? project.id : ""}/mint-nft`)
+                  }
+                >
+                  MINT NFT <i class="fa-thin fa-square-plus ml-1"></i>
+                </button>
+              )}
 
             {nftList.length !== 0 && (
               <button

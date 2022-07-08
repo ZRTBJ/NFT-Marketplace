@@ -79,89 +79,80 @@ function Home() {
       </section>
       <div>
         <section>
-          <div className="relative">
-            <h2 className="mb-5">Newest Project</h2>
-
-            {isLoading && <div className="onlySpinner mt-[150px]"></div>}
-            {!isLoading && (
-              <div className="">
-                <Swiper
-                  breakpoints={{
-                    320: {
-                      slidesPerView: 2,
-                      spaceBetween: 15,
-                    },
-                    640: {
-                      slidesPerView: 2,
-                      spaceBetween: 30,
-                    },
-                    768: {
-                      slidesPerView: 3,
-                      spaceBetween: 30,
-                    },
-                    1024: {
-                      slidesPerView: 4,
-                      spaceBetween: 30,
-                    },
-                    1536: {
-                      slidesPerView: 5,
-                      spaceBetween: 30,
-                    },
-                  }}
-                  navigation={true}
-                  modules={[Navigation]}
-                >
-                  <div>
-                    {projectList.map((i, index) => (
-                      <SwiperSlide key={index}>
-                        <CommonCard key={index} project={i} />
-                      </SwiperSlide>
-                    ))}
-                  </div>
-                </Swiper>
+          <h2 className="mb-5">Newest Project</h2>
+          {isLoading && <div className="onlySpinner mt-[150px]"></div>}
+          {!isLoading && (
+            <Swiper
+              breakpoints={{
+                320: {
+                  slidesPerView: 2,
+                  spaceBetween: 15,
+                },
+                640: {
+                  slidesPerView: 2,
+                  spaceBetween: 15,
+                },
+                768: {
+                  slidesPerView: 3,
+                  spaceBetween: 15,
+                },
+                1024: {
+                  slidesPerView: 4,
+                  spaceBetween: 15,
+                },
+                1536: {
+                  slidesPerView: 5,
+                  spaceBetween: 15,
+                },
+              }}
+              className="swipe-card"
+            >
+              <div>
+                {projectList.map((i, index) => (
+                  <SwiperSlide key={index}>
+                    <CommonCard key={index} project={i} />
+                  </SwiperSlide>
+                ))}
               </div>
-            )}
-          </div>
+            </Swiper>
+          )}
         </section>
         {!isLoading && (
           <section className="mt-16 pb-16">
-            <div className="relative">
-              <h2 className="mb-5">Popular Project</h2>
-              <Swiper
-                breakpoints={{
-                  320: {
-                    slidesPerView: 2,
-                    spaceBetween: 15,
-                  },
-                  640: {
-                    slidesPerView: 2,
-                    spaceBetween: 30,
-                  },
-                  768: {
-                    slidesPerView: 3,
-                    spaceBetween: 30,
-                  },
-                  1024: {
-                    slidesPerView: 4,
-                    spaceBetween: 30,
-                  },
-                  1536: {
-                    slidesPerView: 5,
-                    spaceBetween: 30,
-                  },
-                }}
-                navigation={true}
-                modules={[Navigation]}
-              >
-                <div>
-                  {popularProjectList.map((i, index) => (
-                    <SwiperSlide key={index}>
-                      <CommonCard key={index} project={i} />
-                    </SwiperSlide>
-                  ))}
-                </div>
-              </Swiper>
-            </div>
+            <h2 className="mb-5">Popular Project</h2>
+            <Swiper
+              breakpoints={{
+                320: {
+                  slidesPerView: 2,
+                  spaceBetween: 15,
+                },
+                640: {
+                  slidesPerView: 2,
+                  spaceBetween: 15,
+                },
+                768: {
+                  slidesPerView: 3,
+                  spaceBetween: 15,
+                },
+                1024: {
+                  slidesPerView: 4,
+                  spaceBetween: 15,
+                },
+                1536: {
+                  slidesPerView: 5,
+                  spaceBetween: 15,
+                },
+              }}
+              className="swipe-card"
+            >
+              <div>
+                {popularProjectList.map((i, index) => (
+                  <SwiperSlide key={index}>
+                    <CommonCard key={index} project={i} />
+                  </SwiperSlide>
+                ))}
+              </div>
+            </Swiper>
           </section>
         )}
       </div>

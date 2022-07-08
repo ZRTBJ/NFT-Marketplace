@@ -10,6 +10,9 @@ import { setSideBar } from "Slice/userSlice";
 import { useAuthState } from "Context";
 import WalletConnectModal from "components/modalDialog/WalletConnectModal";
 import { Link } from "react-router-dom";
+import useWebSocket from "react-use-websocket";
+import config from "config";
+import { getProjectDeploy } from "Slice/projectSlice";
 
 const Header = () => {
   const history = useHistory();
@@ -21,6 +24,20 @@ const Header = () => {
   const userinfo = useSelector((state) => state.user.userinfo);
   const showSidebar = useSelector((state) => state.user.showSidebar);
   const [showSidebarKey, setSideBarKey] = useState(0);
+  const loggedIn = useSelector((state) => state.user.loggedIn);
+  const [messageHistory, setMessageHistory] = useState([]);
+
+  useEffect(() => {
+    if (userId && userId.length > 0) {
+      const cUser = localStorage.getItem("currentUser");
+      if (cUser) {
+        sendMessage(JSON.stringify({ Token: cUser }));
+      }
+    } else {
+      console.log("no user");
+    }
+  }, [userId]);
+
   function showHideUserPopup() {
     const userDropDown = document.getElementById("userDropDown");
     userDropDown.classList.toggle("hidden");
@@ -52,6 +69,65 @@ const Header = () => {
   function hideModal() {
     setShowModal(false);
   }
+
+  // web socket implementation
+  let host = "ws:";
+  try {
+    const loc = window.location;
+    if (loc.protocol === "https:") {
+      host = "wss:";
+    }
+  } catch {}
+  const socketUrl = `${host}//${config.WEB_SOKET}/ws`;
+
+  const {
+    sendMessage,
+    sendJsonMessage,
+    lastMessage,
+    lastJsonMessage,
+    readyState,
+    getWebSocket,
+  } = useWebSocket(socketUrl, {
+    onOpen: () => {
+      console.log("webSocket connected");
+      const cUser = localStorage.getItem("currentUser");
+      if (cUser) {
+        sendMessage(JSON.stringify({ Token: cUser }));
+      }
+    },
+    //Will attempt to reconnect on all close events, such as server shutting down
+    shouldReconnect: (closeEvent) => true,
+  });
+
+  useEffect(() => {
+    if (lastMessage !== null) {
+      try {
+        console.log(lastMessage);
+        if (lastMessage.data) {
+          const data = JSON.parse(lastMessage.data);
+          if (data.type === "functionNotification") {
+            const deployData = {
+              function_uuid: data.fn_uuid,
+              data: lastMessage.data,
+            };
+            dispatch(getProjectDeploy(deployData));
+          } else if (data.type === "fileUploadNotification") {
+            const deployData = {
+              function_uuid: data.Data.job_id,
+              data: lastMessage.data,
+            };
+            dispatch(getProjectDeploy(deployData));
+          }
+        }
+      } catch (err) {
+        console.log(err);
+      }
+      setMessageHistory((prev) => prev.concat(lastMessage));
+    }
+  }, [lastMessage, setMessageHistory]);
+
+  // End web socket Implementation
+
   return (
     <>
       {showSidebar && (

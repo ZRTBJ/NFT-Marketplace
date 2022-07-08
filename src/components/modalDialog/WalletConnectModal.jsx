@@ -6,14 +6,11 @@ import {
 } from "util/metaMaskWallet";
 import { useEthers, useEtherBalance } from "@usedapp/core";
 import { useSelector } from "react-redux";
-import useWebSocket from "react-use-websocket";
 import Modal from "components/Modal";
 import torusIcon from "assets/images/modal/torus.png";
 import metamaskIcon from "assets/images/modal/metamask.png";
 import { torusWalletLogin } from "util/Torus";
 import { loginUser, useAuthState, useAuthDispatch, logout } from "Context";
-import config from "config";
-import { getProjectDeploy } from "Slice/projectSlice";
 import { useHistory } from "react-router-dom";
 import { getUserInfo } from "../../services/User/userService";
 import { useDispatch } from "react-redux";
@@ -34,7 +31,6 @@ const WalletConnectModal = ({ showModal, closeModal, navigateToPage }) => {
   const authDispatch = useAuthDispatch();
 
   const [userId, setUserId] = useState(context ? context.user : "");
-  const [messageHistory, setMessageHistory] = useState([]);
   async function handleConnectWallet() {
     if (isTermsAndConditionsChecked) {
       setMetamaskConnectAttempt(metamaskConnectAttempt + 1);
@@ -154,67 +150,6 @@ const WalletConnectModal = ({ showModal, closeModal, navigateToPage }) => {
       }
     }
   }
-  useEffect(() => {
-    if (userId && userId.length > 0) {
-      const cUser = localStorage.getItem("currentUser");
-      if (cUser) {
-        sendMessage(JSON.stringify({ Token: cUser }));
-      }
-    } else {
-      console.log("no user");
-    }
-  }, [userId]);
-  // web socket implementation
-  let host = "ws:";
-  try {
-    const loc = window.location;
-    if (loc.protocol === "https:") {
-      host = "wss:";
-    }
-  } catch {}
-  const socketUrl = `${host}//${config.WEB_SOKET}/ws`;
-
-  const {
-    sendMessage,
-    sendJsonMessage,
-    lastMessage,
-    lastJsonMessage,
-    readyState,
-    getWebSocket,
-  } = useWebSocket(socketUrl, {
-    onOpen: () => {
-      console.log("webSocket connected");
-      const cUser = localStorage.getItem("currentUser");
-      if (cUser) {
-        sendMessage(JSON.stringify({ Token: cUser }));
-      }
-    },
-    //Will attempt to reconnect on all close events, such as server shutting down
-    shouldReconnect: (closeEvent) => true,
-  });
-
-  useEffect(() => {
-    if (lastMessage !== null) {
-      try {
-        console.log(lastMessage);
-        if (lastMessage.data) {
-          const data = JSON.parse(lastMessage.data);
-          if (data.type === "functionNotification") {
-            const deployData = {
-              function_uuid: data.fn_uuid,
-              data: lastMessage.data,
-            };
-            dispatch(getProjectDeploy(deployData));
-          }
-        }
-      } catch (err) {
-        console.log(err);
-      }
-      setMessageHistory((prev) => prev.concat(lastMessage));
-    }
-  }, [lastMessage, setMessageHistory]);
-
-  // End web socket Implementation
 
   useEffect(() => {
     if (userId && !userinfo.display_name) {
