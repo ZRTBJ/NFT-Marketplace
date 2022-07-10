@@ -91,11 +91,17 @@ const Sidebar = ({ show, handleClose }) => {
           onClick={() => navigateTo()}
           className="pl-6 pr-10 flex-0 flex flex-col"
         >
-          <div className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-white rounded  active:bg-primary-500 active:text-white last:mt-auto  bg-primary-500 text-white cursor-pointer">
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              navigateTo(`profile/${userId}`);
+            }}
+            className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-white rounded  active:bg-primary-500 active:text-white last:mt-auto  bg-primary-500 text-white cursor-pointer"
+          >
             <i className="fa-regular fa-user"></i>
             <span className="ml-2"> PROFILE</span>
           </div>
-
           <div
             onClick={() => navigateTo("project-create")}
             className="flex cursor-pointer items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-primary-500 ease-in-out duration-300 hover:text-white rounded  active:bg-primary-500 active:text-white last:mt-auto"
@@ -103,7 +109,6 @@ const Sidebar = ({ show, handleClose }) => {
             <i className="fa-regular fa-circle-plus"></i>
             <span className="ml-2"> Create Project</span>
           </div>
-
           <div className="flex items-center  cursor-pointer font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-primary-500 ease-in-out duration-300 hover:text-white rounded  active:bg-primary-500 active:text-white last:mt-auto">
             <i className="fa-regular fa-cubes-stacked"></i>
             <span className="ml-2"> Ecosystem</span>

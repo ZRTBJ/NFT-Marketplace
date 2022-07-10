@@ -1,29 +1,36 @@
 import Modal from "components/Modal";
 import ErrorModal from "components/modalDialog/ErrorModal";
 import SuccessModal from "components/modalDialog/SuccessModal";
-import ProjectEditTopNavigationCard from "components/ProjectEdit/ProjectEditTopNavigationCard";
+import publishModalSvg from "assets/images/modal/publishModalSvg.png";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import dummyImg from "assets/images/dummy-img.svg";
 import { generateUploadkey, saveNFT } from "services/nft/nftService";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { getProjectDeploy } from "Slice/projectSlice";
+import { getProjectDetailsById } from "services/project/projectService";
+import { useHistory } from "react-router-dom";
 
 export default function MintNFT(props) {
   const dispatch = useDispatch();
+  const history = useHistory();
   const projectDeploy = useSelector((state) =>
     state?.projects?.projectDeploy ? state?.projects?.projectDeploy : []
   );
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [showAddPropertyModal, setShowAddPropertyModal] = useState(false);
-  const [propertyList, setpropertyList] = useState([{ type: "", name: "" }]);
+  const [showDefinedPropertyModal, setShowDefinedPropertyModal] =
+    useState(false);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [propertyList, setPropertyList] = useState([]);
+  const [definedPropertyList, setDefinedPropertyList] = useState([]);
   const [nftImage, setnftImage] = useState({ image: null, path: "" });
   const projectId = props.match.params.id;
-
+  const [isFileError, setFileError] = useState(false);
   const [jobId, setJobId] = useState("");
+  const [project, setProject] = useState({});
+
   let savingNFT = false;
 
   const {
@@ -56,9 +63,34 @@ export default function MintNFT(props) {
     }
   }, [projectDeploy]);
 
+  useEffect(() => {
+    if (projectId && !isLoading) {
+      projectDetails(projectId);
+    }
+  }, []);
+
+  function projectDetails(pid) {
+    setIsLoading(true);
+    getProjectDetailsById({ id: pid })
+      .then((res) => {
+        if (res.code === 0) {
+          setProject(res.project);
+        }
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        setIsLoading(false);
+      });
+  }
+
   function nftImageChangeHandler(event) {
-    const img = event.currentTarget.files[0];
-    setnftImage({ image: img, path: URL.createObjectURL(img) });
+    try {
+      const img = event.currentTarget.files[0];
+      setnftImage({ image: img, path: URL.createObjectURL(img) });
+      setFileError(false);
+    } catch {
+      setFileError(true);
+    }
   }
 
   function genUploadKey() {
@@ -121,52 +153,104 @@ export default function MintNFT(props) {
     request.append("description", watch("description"));
     request.append("asset_uid", assetId);
     request.append("external_url", path);
-    const attributes = [
-      {
-        key: "Name",
-        value: "Long2",
+    const attributes = [];
+    // defined properties
+    for (let dprop of definedPropertyList) {
+      const prop = {
+        key: dprop.key,
+        value: dprop.value,
         value_type: "string",
         display_type: "properties",
-      },
-    ];
-    request.append("attributes", JSON.stringify(attributes));
+      };
+      attributes.push(prop);
+    }
+    // properties
+    for (let aprop of propertyList) {
+      const prop = {
+        key: aprop.key,
+        value: aprop.value,
+        value_type: "string",
+        display_type: "properties",
+      };
+      attributes.push(prop);
+    }
+    if (attributes && attributes.length > 0) {
+      request.append("attributes", JSON.stringify(attributes));
+    }
     saveNFT(request)
       .then((res) => {
         console.log(res);
         setIsLoading(false);
+        setShowConfirmationModal(false);
+        setShowSuccessModal(true);
       })
       .catch((err) => {
         console.log(err);
         setIsLoading(false);
+        setShowConfirmationModal(false);
+        setShowErrorModal(true);
       });
   }
 
   const onSubmit = (data) => {
+    if (nftImage && nftImage.image) {
+      setFileError(false);
+      setShowConfirmationModal(true);
+    } else {
+      setFileError(true);
+    }
+  };
+
+  function uploadAndSaveNFT() {
     setIsLoading(true);
     genUploadKey();
-  };
+  }
 
   function addProperty() {
     const tempProperty = [...propertyList];
-    tempProperty.push({ type: "", name: "" });
-    setpropertyList(tempProperty);
+    tempProperty.push({ key: "", name: "" });
+    setPropertyList(tempProperty);
   }
 
   function removeProperty(index) {
     const tempProperty = [...propertyList];
     tempProperty.splice(index - 1, 1);
-    setpropertyList(tempProperty);
+    setPropertyList(tempProperty);
   }
 
-  function handleOnChangeType(event, index) {
-    const value = event.target.value;
-    const property = propertyList[index];
-    property.type = value;
+  function addDefinedProperty() {
+    const tempProperty = [...definedPropertyList];
+    tempProperty.push({ key: "", name: "" });
+    setDefinedPropertyList(tempProperty);
   }
 
-  function handleOnChangeName(event, index) {
+  function removeDefinedProperty(index) {
+    const tempProperty = [...definedPropertyList];
+    tempProperty.splice(index - 1, 1);
+    setDefinedPropertyList(tempProperty);
+  }
+
+  function handleOnChangePropertyType(event, index) {
     const value = event.target.value;
     const property = propertyList[index];
+    property.key = value;
+  }
+
+  function handleOnChangePropertyName(event, index) {
+    const value = event.target.value;
+    const property = propertyList[index];
+    property.name = value;
+  }
+
+  function handleOnChangeDefinedPropertyType(event, index) {
+    const value = event.target.value;
+    const property = definedPropertyList[index];
+    property.key = value;
+  }
+
+  function handleOnChangeDefinedPropertyName(event, index) {
+    const value = event.target.value;
+    const property = definedPropertyList[index];
     property.name = value;
   }
 
@@ -222,7 +306,7 @@ export default function MintNFT(props) {
                   name="description"
                   placeholder="description"
                   {...register("description", {
-                    required: "Name is required.",
+                    required: "Description is required.",
                   })}
                   defaultValue={""}
                 ></textarea>
@@ -281,7 +365,7 @@ export default function MintNFT(props) {
                 Upload Assets
               </label>
               <small className="block text-xs text-color-ass-7 mb-3">
-                You can add your assets up to ??GB, you can user format
+                You can add your assets up to 1GB, you can user format
                 Jpeg/Mp4/GIF/PNG/Mp3.
               </small>
 
@@ -328,10 +412,16 @@ export default function MintNFT(props) {
                     id="dropzone-file"
                     type="file"
                     className="hidden"
+                    accept="audio/mpeg3, image/*"
                     onChange={(e) => nftImageChangeHandler(e)}
                   />
                 </label>
               </div>
+              {isFileError && (
+                <p className="text-red-500 text-xs font-medium mt-2">
+                  Please select a vaild file.
+                </p>
+              )}
             </div>
             <div className="mb-6">
               <div className="text-sm font-bold font-satoshi-bold">
@@ -346,12 +436,14 @@ export default function MintNFT(props) {
                 <div className="flex-1 px-3">
                   <p className="-mt-1">Define Properties</p>
                   <small className="text-color-ass-7">
-                    Add the properties on your NFT.
+                    {definedPropertyList && definedPropertyList.length > 0
+                      ? `${definedPropertyList.length}+ Defined Attributes`
+                      : "Add the properties on your NFT."}
                   </small>
                 </div>
                 <i
                   className="fa-regular fa-square-plus text-2xl cursor-pointer"
-                  onClick={() => setShowAddPropertyModal(true)}
+                  onClick={() => setShowDefinedPropertyModal(true)}
                 ></i>
               </div>
 
@@ -363,9 +455,35 @@ export default function MintNFT(props) {
                 </div>
                 <i
                   className="fa-regular fa-square-plus text-2xl cursor-pointer"
-                  onClick={() => setShowAddPropertyModal(true)}
+                  onClick={() => addProperty()}
                 ></i>
               </div>
+              {propertyList &&
+                propertyList.map((property, index) => (
+                  <div key={`properties-${index}`}>
+                    <div className="flex items-center mt-3">
+                      <input
+                        name={`type-${index}`}
+                        type={"text"}
+                        className="w-32"
+                        defaultValue={property.type}
+                        onChange={(e) => handleOnChangePropertyType(e, index)}
+                      />
+
+                      <input
+                        name={`name-${index}`}
+                        type={"text"}
+                        className="ml-3 w-32"
+                        defaultValue={property.name}
+                        onChange={(e) => handleOnChangePropertyName(e, index)}
+                      />
+                      <i
+                        className="fa-solid fa-trash cursor-pointer ml-3"
+                        onClick={() => removeProperty(index)}
+                      ></i>
+                    </div>
+                  </div>
+                ))}
             </div>
           </div>
         </section>
@@ -376,153 +494,9 @@ export default function MintNFT(props) {
         <br />
         <br />
 
-        {/* <section className="flex my-9 flex-col md:flex-row text-white">
-          <div className="flex-1">
-            <h3 className="mb-8">Start build your NFT</h3>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="mb-6">
-                <label
-                  className="block text-sm font-bold font-satoshi-bold"
-                  htmlFor="name"
-                >
-                  Name
-                </label>
-                <small className="block text-xs text-color-ass-7 mb-2">
-                  Fill the name for your NFT
-                </small>
-                <input
-                  className="block mb-3"
-                  id="name"
-                  name="name"
-                  type="text"
-                  placeholder="Name"
-                  {...register("name", {
-                    required: "Name is required.",
-                  })}
-                  defaultValue={"Look So Clean #21124"}
-                />
-                {errors.name && (
-                  <p className="text-red-500 text-xs font-medium">
-                    {errors.name.message}
-                  </p>
-                )}
-              </div>
-              <div className="mb-6">
-                <label
-                  className="block text-sm font-bold font-satoshi-bold"
-                  htmlFor="description"
-                >
-                  Description
-                </label>
-                <small className="block text-xs text-color-ass-7 mb-2">
-                  What this NFT about or story behind this NFT
-                </small>
-
-                <textarea
-                  className="block h-32  mb-3"
-                  id="description"
-                  name="description"
-                  placeholder="It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here"
-                  {...register("description", {
-                    required: "Name is required.",
-                  })}
-                  defaultValue={""}
-                ></textarea>
-                {errors.name && (
-                  <p className="text-red-500 text-xs font-medium">
-                    {errors.description.message}
-                  </p>
-                )}
-              </div>
-              <div className="mb-6">
-                <label
-                  className="block text-sm font-bold font-satoshi-bold"
-                  htmlFor="blockchain"
-                >
-                  Blockchain
-                </label>
-                <small className="block text-xs text-color-ass-7 mb-2">
-                  Choose the blockchain you want to use for this NFT
-                </small>
-                <div className="icon-blockchain">
-                  <input
-                    className="block mb-3"
-                    id="blockchain"
-                    name="blockchain"
-                    type="text"
-                    placeholder="Polygon"
-                    {...register("blockchain")}
-                    defaultValue={"Polygon"}
-                    disabled={true}
-                  />
-                  {errors.blockchain && (
-                    <p className="text-red-500 text-xs font-medium">
-                      {errors.blockchain.message}
-                    </p>
-                  )}
-                </div>
-              </div>
-              <div className="mb-6">
-                <button type="submit" className="btn btn-primary btn-sm">
-                  CREATE
-                </button>
-              </div>
-            </form>
-          </div>
-          <div className="w-[1px] bg-black-shade-800  mx-11 hidden md:block"></div>
-          <div className="flex-1">
-            <div className="mb-6">
-              <img
-                src={dummyImg}
-                className="rounded-xl  max-w-full w-40 h-40 object-cover"
-              />
-            </div>
-            <div className="mb-6">
-              <div className="text-sm font-bold font-satoshi-bold">
-                Properties
-              </div>
-              <small className="block text-xs text-color-ass-7 mb-2">
-                Add the properties on your NFT.
-              </small>
-
-              <div className="flex py-3 border-b border-b-black-shade-800">
-                <i className="fa-solid fa-star"></i>
-                <div className="flex-1 px-3 flex flex-col">
-                  <p className="-mt-1">Define Properties</p>
-                  <small className="text-color-ass-7">
-                    Add the properties on your NFT.
-                  </small>
-
-                  <div className="flex items-center mt-3">
-                    <input name="ss" type="text" className="w-32" />
-                    <input name="ss" type="text" className="w-32 ml-3" />
-                    <i className="fa-solid fa-trash cursor-pointer ml-3"></i>
-                  </div>
-                </div>
-                <i
-                  className="fa-regular fa-square-plus text-2xl cursor-pointer"
-                  onClick={() => setShowAddPropertyModal(true)}
-                ></i>
-              </div>
-
-              <div className="flex py-3 border-b border-b-black-shade-800">
-                <i className="fa-regular fa-grip-lines"></i>
-                <div className="flex-1 px-3">
-                  <p className="-mt-1">Properties</p>
-                  <small className="text-color-ass-7">Add NFT properties</small>
-                </div>
-                <i
-                  className="fa-regular fa-square-plus text-2xl cursor-pointer"
-                  onClick={() => setShowAddPropertyModal(true)}
-                ></i>
-              </div>
-            </div>
-          </div>
-        </section> */}
-
         <Modal
-          show={showAddPropertyModal}
-          handleClose={() => setShowAddPropertyModal(false)}
+          show={showDefinedPropertyModal}
+          handleClose={() => setShowDefinedPropertyModal(false)}
           height={"auto"}
           width={"564"}
         >
@@ -534,16 +508,18 @@ export default function MintNFT(props) {
               properties
             </p>
             <p className="text-color-ass-9 text-sm">Add Properties</p>
-            {propertyList &&
-              propertyList.map((property, index) => (
-                <>
+            {definedPropertyList &&
+              definedPropertyList.map((property, index) => (
+                <div key={`defined-properties-${index}`}>
                   <div className="flex items-center mt-3">
                     <input
                       name={`type-${index}`}
                       type={"text"}
                       className="w-32"
                       defaultValue={property.type}
-                      onChange={(e) => handleOnChangeType(e, index)}
+                      onChange={(e) =>
+                        handleOnChangeDefinedPropertyType(e, index)
+                      }
                     />
 
                     <input
@@ -551,21 +527,23 @@ export default function MintNFT(props) {
                       type={"text"}
                       className="ml-3 w-32"
                       defaultValue={property.name}
-                      onChange={(e) => handleOnChangeName(e, index)}
+                      onChange={(e) =>
+                        handleOnChangeDefinedPropertyName(e, index)
+                      }
                     />
                     <i
                       className="fa-solid fa-trash cursor-pointer ml-3"
-                      onClick={() => removeProperty(index)}
+                      onClick={() => removeDefinedProperty(index)}
                     ></i>
                   </div>
-                </>
+                </div>
               ))}
 
             <div className="mt-5">
               <button
                 type="button"
                 className="btn btn-text-gradient"
-                onClick={() => addProperty()}
+                onClick={() => addDefinedProperty()}
               >
                 Add more +
               </button>
@@ -575,13 +553,62 @@ export default function MintNFT(props) {
               <button
                 type="button"
                 className="btn btn-primary btn-sm"
-                onClick={() => setShowAddPropertyModal(false)}
+                onClick={() => setShowDefinedPropertyModal(false)}
               >
                 SAVE
               </button>
             </div>
           </div>
         </Modal>
+        <Modal
+          show={showConfirmationModal}
+          handleClose={() => setShowConfirmationModal(false)}
+          height={"auto"}
+          width={"864"}
+        >
+          <div className="text-center mt-2">
+            <img className="block mx-auto" src={publishModalSvg} alt="" />
+            <div className="my-4 text-xl font-bold  text-white">
+              You Minting NFT for {project && project.name ? project.name : ""}{" "}
+              ?
+            </div>
+            <div className="flex justify-center">
+              <button
+                type="button"
+                className="btn btn-primary btn-sm mr-4"
+                onClick={(e) => {
+                  uploadAndSaveNFT();
+                }}
+              >
+                <span>Mint NFT</span>
+              </button>
+              <button
+                type="button"
+                className="btn-outline-primary-gradient btn-sm"
+                onClick={(e) => {
+                  setShowConfirmationModal(false);
+                }}
+              >
+                <span>Back</span>
+              </button>
+            </div>
+          </div>
+        </Modal>
+        {showSuccessModal && (
+          <SuccessModal
+            handleClose={() => {
+              setShowSuccessModal(false);
+              history.push(`/project-details/${projectId}`);
+            }}
+            show={showSuccessModal}
+          />
+        )}
+        {showErrorModal && (
+          <ErrorModal
+            handleClose={() => setShowErrorModal(false)}
+            show={showErrorModal}
+          />
+        )}
       </main>
     </>
   );
