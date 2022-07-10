@@ -47,7 +47,6 @@ const Header = () => {
     const userDropDown = document.getElementById("userDropDownWallet");
     userDropDown.classList.toggle("hidden");
   }
-  console.log(showSidebar);
 
   function handelSidebar(e) {
     e.preventDefault();
@@ -177,7 +176,7 @@ const Header = () => {
 
             <form className="mr-6 flex-1 hidden md:block">
               <label
-                for="default-search"
+                htmlFor="default-search"
                 className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300"
               >
                 Search
@@ -256,8 +255,8 @@ const Header = () => {
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
-                          fill-rule="evenodd"
-                          clip-rule="evenodd"
+                          fillRule="evenodd"
+                          clipRule="evenodd"
                           d="M15.7689 5.8818H20C20 2.48459 17.9644 0.5 14.5156 0.5H5.48444C2.03556 0.5 0 2.48459 0 5.83847V13.1615C0 16.5154 2.03556 18.5 5.48444 18.5H14.5156C17.9644 18.5 20 16.5154 20 13.1615V12.8495H15.7689C13.8052 12.8495 12.2133 11.2975 12.2133 9.383C12.2133 7.46849 13.8052 5.91647 15.7689 5.91647V5.8818ZM15.7689 7.37241H19.2533C19.6657 7.37241 20 7.69834 20 8.10039V10.631C19.9952 11.0311 19.6637 11.3543 19.2533 11.3589H15.8489C14.8548 11.372 13.9855 10.7084 13.76 9.76432C13.6471 9.17829 13.8056 8.57357 14.1931 8.11222C14.5805 7.65087 15.1573 7.38007 15.7689 7.37241ZM15.92 10.033H16.2489C16.6711 10.033 17.0133 9.6993 17.0133 9.28767C17.0133 8.87605 16.6711 8.54237 16.2489 8.54237H15.92C15.7181 8.54005 15.5236 8.61664 15.38 8.75504C15.2364 8.89344 15.1555 9.08213 15.1556 9.27901C15.1555 9.69205 15.4964 10.0282 15.92 10.033ZM4.73778 5.8818H10.3822C10.8044 5.8818 11.1467 5.54812 11.1467 5.13649C11.1467 4.72487 10.8044 4.39119 10.3822 4.39119H4.73778C4.31903 4.39116 3.9782 4.7196 3.97333 5.12783C3.97331 5.54087 4.31415 5.87705 4.73778 5.8818Z"
                           fill="white"
                         />
@@ -345,7 +344,7 @@ const Header = () => {
         <div className="md:hidden">
           <form>
             <label
-              for="default-search"
+              htmlFor="default-search"
               className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300"
             >
               Search

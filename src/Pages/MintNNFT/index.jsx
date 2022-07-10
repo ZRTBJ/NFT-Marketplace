@@ -536,7 +536,7 @@ export default function MintNFT(props) {
             <p className="text-color-ass-9 text-sm">Add Properties</p>
             {propertyList &&
               propertyList.map((property, index) => (
-                <>
+                <div key={`defined-properties-${index}`}>
                   <div className="flex items-center mt-3">
                     <input
                       name={`type-${index}`}
@@ -558,7 +558,7 @@ export default function MintNFT(props) {
                       onClick={() => removeProperty(index)}
                     ></i>
                   </div>
-                </>
+                </div>
               ))}
 
             <div className="mt-5">
