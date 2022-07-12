@@ -76,7 +76,7 @@ const Header = () => {
     if (loc.protocol === "https:") {
       host = "wss:";
     }
-  } catch {}
+  } catch { }
   const socketUrl = `${host}//${config.WEB_SOKET}/ws`;
 
   const {
@@ -138,7 +138,7 @@ const Header = () => {
             <button
               onClick={(e) => handelSidebar(e)}
               type="button"
-              className="inline-flex items-center p-2 mr-5 lg:mr-12 cp rounded-lg hover:bg-primary-color focus:outline-none focus:ring-2 focus:ring-gray-200"
+              className="inline-flex items-center p-2 mr-5 lg:mr-14 cp rounded-lg hover:bg-primary-color focus:outline-none focus:ring-2 focus:ring-gray-200"
               aria-controls="side-menu"
               aria-expanded="false"
             >
@@ -168,8 +168,8 @@ const Header = () => {
                 ></path>
               </svg>
             </button>
-            <div className="cp mr-5 lg:mr-14" onClick={() => history.push("/")}>
-              <div className="text-white font-satoshi-bold font-black text-2xl lg:text-3xl relative pr-14 lg:pr-20 logo">
+            <div className="cp mr-5 lg:ml-1 lg:mr-14" onClick={() => history.push("/")}>
+              <div className="text-white font-satoshi-bold font-black text-xl lg:text-3xl relative logo">
                 CREAB
               </div>
             </div>
@@ -202,9 +202,8 @@ const Header = () => {
             )}
 
             <ul
-              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${
-                userId ? "" : "sm:py-2"
-              }`}
+              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${userId ? "" : "sm:py-2"
+                }`}
             >
               {userinfo.id && (
                 <>
