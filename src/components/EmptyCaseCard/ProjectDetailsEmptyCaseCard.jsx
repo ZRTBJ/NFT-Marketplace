@@ -20,6 +20,7 @@ const EmptyCaseCard = (props) => {
           <button
             type="button"
             className="btn-outline-primary-gradient btn-md mt-5"
+            disabled={true}
           >
             <span>
               MINT NFT <i className="fa-thin fa-square-plus ml-2"></i>

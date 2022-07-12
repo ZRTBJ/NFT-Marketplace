@@ -141,7 +141,7 @@ export default function ProjectDetails(props) {
         <main className="container mx-auto px-4">
           {userInfo.id && (
             <>
-              {project.is_owner ? (
+              {project.is_owner && project.project_status !== "published" ? (
                 <>
                   <section className="flex  justify-end py-7">
                     <button
