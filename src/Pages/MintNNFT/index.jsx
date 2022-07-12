@@ -8,7 +8,10 @@ import { generateUploadkey, saveNFT } from "services/nft/nftService";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { getProjectDeploy } from "Slice/projectSlice";
-import { getProjectDetailsById } from "services/project/projectService";
+import {
+  getProjectDetailsById,
+  getUserProjectListById,
+} from "services/project/projectService";
 import { useHistory } from "react-router-dom";
 
 export default function MintNFT(props) {
@@ -30,6 +33,8 @@ export default function MintNFT(props) {
   const [isFileError, setFileError] = useState(false);
   const [jobId, setJobId] = useState("");
   const [project, setProject] = useState({});
+  const [projectList, setProjectList] = useState([]);
+  const [selectedProjectId, setSelectedProjectId] = useState(projectId);
 
   let savingNFT = false;
 
@@ -64,9 +69,7 @@ export default function MintNFT(props) {
   }, [projectDeploy]);
 
   useEffect(() => {
-    if (projectId && !isLoading) {
-      projectDetails(projectId);
-    }
+    getUserProjectList();
   }, []);
 
   function projectDetails(pid) {
@@ -83,6 +86,24 @@ export default function MintNFT(props) {
       });
   }
 
+  async function getUserProjectList() {
+    let payload = {
+      id: localStorage.getItem("user_id"),
+      page: 1,
+      perPage: 1000,
+    };
+
+    getUserProjectListById(payload).then((res) => {
+      if (res && res.data) {
+        const projects = res.data.filter(
+          (p) => p["project_status"] === "published"
+        );
+        setProjectList(projects);
+        setIsLoading(false);
+      }
+    });
+  }
+
   function nftImageChangeHandler(event) {
     try {
       const img = event.currentTarget.files[0];
@@ -95,10 +116,9 @@ export default function MintNFT(props) {
 
   function genUploadKey() {
     const request = new FormData();
-    request.append("project_uid", projectId);
+    request.append("project_uid", watch("selectedProject"));
     generateUploadkey(request)
       .then((res) => {
-        console.log(res);
         if (res.key) {
           uploadAFile(res.key);
         }
@@ -128,10 +148,9 @@ export default function MintNFT(props) {
       headers: headers,
     })
       .then((response) => {
-        console.log(response);
         setJobId(response["job_id"]);
         const deployData = {
-          projectId: projectId,
+          projectId: watch("selectedProject"), // projectId,
           etherscan: "",
           function_uuid: response["job_id"],
           data: "",
@@ -148,7 +167,7 @@ export default function MintNFT(props) {
   function saveNFTDetails(assetId, path) {
     setIsLoading(true);
     const request = new FormData();
-    request.append("project_uuid", projectId);
+    request.append("project_uuid", watch("selectedProject"));
     request.append("name", watch("name"));
     request.append("description", watch("description"));
     request.append("asset_uid", assetId);
@@ -179,7 +198,6 @@ export default function MintNFT(props) {
     }
     saveNFT(request)
       .then((res) => {
-        console.log(res);
         setIsLoading(false);
         setShowConfirmationModal(false);
         setShowSuccessModal(true);
@@ -254,6 +272,19 @@ export default function MintNFT(props) {
     property.name = value;
   }
 
+  function handleOnChangeProject(event) {
+    const value = event.target.value;
+    debugger;
+  }
+
+  useEffect(() => {
+    const selectedProjId = watch("selectedProject");
+    if (selectedProjId && selectedProjId.length > 0) {
+      setSelectedProjectId(selectedProjId);
+      projectDetails(selectedProjId);
+    }
+  }, [watch("selectedProject")]);
+
   return (
     <>
       <main className={`container mx-auto px-4 ${isLoading ? "loading" : ""}`}>
@@ -310,9 +341,43 @@ export default function MintNFT(props) {
                   })}
                   defaultValue={""}
                 ></textarea>
-                {errors.name && (
+                {errors.description && (
                   <p className="text-red-500 text-xs font-medium">
                     {errors.description.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="mb-6">
+                <label
+                  className="block text-sm font-bold font-satoshi-bold"
+                  htmlFor="select-project"
+                >
+                  Select Project
+                </label>
+                <small className="block text-xs text-color-ass-7 mb-2">
+                  What this NFT about or story behind this NFT
+                </small>
+
+                <select
+                  defaultValue={selectedProjectId}
+                  onChange={handleOnChangeProject}
+                  id="select-project"
+                  name="selectedProject"
+                  {...register("selectedProject", {
+                    required: "Select a project is required.",
+                  })}
+                >
+                  <option value={""}>Select Project</option>
+                  {projectList.map((e) => (
+                    <option key={e.id} value={e.id}>
+                      {e.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.selectedProject && (
+                  <p className="text-red-500 text-xs font-medium mt-2">
+                    {errors.selectedProject.message}
                   </p>
                 )}
               </div>
@@ -599,7 +664,13 @@ export default function MintNFT(props) {
           <SuccessModal
             handleClose={() => {
               setShowSuccessModal(false);
-              history.push(`/project-details/${projectId}`);
+              history.push(
+                `/project-details/${
+                  watch("selectedProject")
+                    ? watch("selectedProject")
+                    : projectId
+                }`
+              );
             }}
             show={showSuccessModal}
           />
