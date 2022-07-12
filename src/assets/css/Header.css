@@ -83,21 +83,31 @@
 /* logo */
 .logo::after {
   height: 24px;
-  width: 68px;
-  right: 5px;
-  top: 6px;
+  top: 5px;
   content: '';
+  right: 0;
   border-radius: 20px;
   position: absolute;
   border-color: #ffffff;
   border: 5px solid currentColor;
 }
 
-@media only screen and (max-width: 1024px) {
+@media only screen and (min-width: 1024px) {
+  .logo {
+    padding-right: 70px;
+  }
+  .logo::after { 
+    width: 68px;
+  }
+}
+
+@media only screen and (max-width: 1023px) {
+  .logo {
+    padding-right: 50px;
+  }
   .logo::after {
     width: 48px;
-   right: 3px;
-   top:5px;
+    height: 18px;
   }
 }
 

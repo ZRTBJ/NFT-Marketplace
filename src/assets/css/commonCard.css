@@ -2,7 +2,7 @@
     .swipe-card .swiper-slide{
         width: 317px !important;
     }
-    .swipe-card .swiper-slide img{
+    .swipe-card .swiper-slide img.thumb-img{
         width: 301px;
         height: 301px;
     }
@@ -13,7 +13,7 @@
       width: 153px !important;
     }
 
-    .swipe-card .swiper-slide img{
+    .swipe-card .swiper-slide img.thumb-img{
       width: 137px;
       height: 137px;
     }
