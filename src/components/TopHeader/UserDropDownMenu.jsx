@@ -9,8 +9,9 @@ import { ReactComponent as LogoutLogo } from "../../assets/images/header/ico_log
 import ico_torus from "../../assets/images/header/ico_torus.svg";
 import ico_metamask from "../../assets/images/header/ico_metamask.svg";
 import metamaskIcon from "assets/images/modal/metamask.png";
+import Web3 from "web3";
+import { useEffect, useState } from "react";
 
-import { useState } from "react";
 const UserDropDownMenu = () => {
   let history = useHistory();
   const dispatch = useAuthDispatch();
@@ -19,8 +20,9 @@ const UserDropDownMenu = () => {
   const [showWallet, setShowWallet] = useState(false);
   const context = useAuthState();
   const [selectedWallet, setSelectedWallet] = useState(
-    context ? context.wallet : ""
+    context ? context.walletAddress : ""
   );
+  const [balance, setBalance] = useState(0);
 
   function showHideUserPopup() {
     const userDropDown = document.getElementById("userDropDown");
@@ -37,6 +39,15 @@ const UserDropDownMenu = () => {
     history.push("/");
     window.location.reload();
   }
+
+  useEffect(() => {
+    const web3 = new Web3(window.ethereum);
+    if (selectedWallet && selectedWallet.length > 5) {
+      web3.eth.getBalance(selectedWallet).then((res) => {
+        setBalance(res / 10 ** 18);
+      });
+    }
+  }, []);
 
   return (
     <>
@@ -72,7 +83,7 @@ const UserDropDownMenu = () => {
             <span>Total Balance </span>
           </p>
           <h4 className="text-white text-xl  mb-6 tracking-wide">
-            180.00 USDT
+            {balance ? balance.toFixed(4) : 0} MATIC
           </h4>
           <a className="btn-fund" href="#">
             <span>Add Funds</span>
