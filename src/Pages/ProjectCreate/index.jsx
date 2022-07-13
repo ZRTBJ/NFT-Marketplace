@@ -438,8 +438,8 @@ export default function ProjectCreate() {
             projectInfo.token_category &&
             projectInfo.token_category[0] &&
             projectInfo.token_category[0].id
-          ? projectInfo.token_category[0].id
-          : 1,
+            ? projectInfo.token_category[0].id
+            : 1,
         token_amount: parseInt(numberOfTokens),
       };
       const request = new FormData();
@@ -640,85 +640,94 @@ export default function ProjectCreate() {
   }
 
   return (
-    <div className="text-[white]">
+    <>
       {isDataLoading && <div className="loading"></div>}
-      <div className="cardContainer px-3 md:px-5">
-        {currentStep.length === 1 && (
-          <div>
-            <LeftSideBar currentStep={currentStep} key={currentStep.length} />
-            <Outline
-              key={outlineKey}
-              // name
+
+
+
+      <div className="text-white max-w-[600px] mx-auto md:pt-12">
+
+        <div className="create-project-container">
+
+          {currentStep.length === 1 && (
+            <div>
+              <LeftSideBar currentStep={currentStep} key={currentStep.length} />
+              <Outline
+                key={outlineKey}
+                // name
+                projectName={projectName}
+                emptyProjectName={emptyProjectName}
+                alreadyTakenProjectName={alreadyTakenProjectName}
+                onProjectNameChange={onProjectNameChange}
+                //cover photos
+                coverPhotoUrl={coverPhotoUrl}
+                onCoverPhotoSelect={onCoverPhotoSelect}
+                onCoverPhotoRemove={onCoverPhotoRemove}
+                //photos
+                photosUrl={photosUrl}
+                onPhotosSelect={onPhotosSelect}
+                onPhotosRemove={onPhotosRemove}
+                // overview
+                overview={overview}
+                onOverviewChange={onOverviewChange}
+                // category
+                projectCategory={projectCategory}
+                emptyProjeCtCategory={emptyProjeCtCategory}
+                onProjectCategoryChange={onProjectCategoryChange}
+                // tag
+                tagList={tagList}
+                tagLimit={tagLimit}
+                onTagEnter={onTagEnter}
+                onTagRemove={onTagRemove}
+                // need member
+                needMember={needMember}
+                onNeedMemberChange={onNeedMemberChange}
+                // role list
+                roleList={roleList}
+                onRoleEnter={onRoleEnter}
+                onRoleRemove={onRoleRemove}
+              />
+            </div>
+          )}
+          {currentStep.length === 2 && (
+            <div>
+              <LeftSideBar currentStep={currentStep} key={currentStep.length} />
+              <Token
+                // token name
+                tokenName={tokenName}
+                emptyToken={emptyToken}
+                alreadyTakenTokenName={alreadyTakenTokenName}
+                onTokenNameChange={onTokenNameChange}
+                // token symbol
+                tokenSymbol={tokenSymbol}
+                emptySymbol={emptySymbol}
+                alreadyTakenSymbol={alreadyTakenSymbol}
+                onTokenSymbolChange={onTokenSymbolChange}
+                // number of token
+                numberOfTokens={numberOfTokens}
+                emptyNumberOfToken={emptyNumberOfToken}
+                onNumberOfTokenChange={onNumberOfTokenChange}
+              />
+            </div>
+          )}
+          {currentStep.length === 3 && (
+            <Confirmation
               projectName={projectName}
-              emptyProjectName={emptyProjectName}
-              alreadyTakenProjectName={alreadyTakenProjectName}
-              onProjectNameChange={onProjectNameChange}
-              //cover photos
-              coverPhotoUrl={coverPhotoUrl}
-              onCoverPhotoSelect={onCoverPhotoSelect}
-              onCoverPhotoRemove={onCoverPhotoRemove}
-              //photos
+              projectCover={coverPhotoUrl}
               photosUrl={photosUrl}
-              onPhotosSelect={onPhotosSelect}
-              onPhotosRemove={onPhotosRemove}
-              // overview
               overview={overview}
-              onOverviewChange={onOverviewChange}
-              // category
-              projectCategory={projectCategory}
-              emptyProjeCtCategory={emptyProjeCtCategory}
-              onProjectCategoryChange={onProjectCategoryChange}
-              // tag
+              category={projectCategoryName}
               tagList={tagList}
-              tagLimit={tagLimit}
-              onTagEnter={onTagEnter}
-              onTagRemove={onTagRemove}
-              // need member
               needMember={needMember}
-              onNeedMemberChange={onNeedMemberChange}
-              // role list
               roleList={roleList}
-              onRoleEnter={onRoleEnter}
-              onRoleRemove={onRoleRemove}
-            />
-          </div>
-        )}
-        {currentStep.length === 2 && (
-          <div>
-            <LeftSideBar currentStep={currentStep} key={currentStep.length} />
-            <Token
-              // token name
               tokenName={tokenName}
-              emptyToken={emptyToken}
-              alreadyTakenTokenName={alreadyTakenTokenName}
-              onTokenNameChange={onTokenNameChange}
-              // token symbol
               tokenSymbol={tokenSymbol}
-              emptySymbol={emptySymbol}
-              alreadyTakenSymbol={alreadyTakenSymbol}
-              onTokenSymbolChange={onTokenSymbolChange}
-              // number of token
               numberOfTokens={numberOfTokens}
-              emptyNumberOfToken={emptyNumberOfToken}
-              onNumberOfTokenChange={onNumberOfTokenChange}
             />
-          </div>
-        )}
-        {currentStep.length === 3 && (
-          <Confirmation
-            projectName={projectName}
-            projectCover={coverPhotoUrl}
-            photosUrl={photosUrl}
-            overview={overview}
-            category={projectCategoryName}
-            tagList={tagList}
-            needMember={needMember}
-            roleList={roleList}
-            tokenName={tokenName}
-            tokenSymbol={tokenSymbol}
-            numberOfTokens={numberOfTokens}
-          />
-        )}
+          )}
+        </div>
+
+
         <div className="buttonContainer">
           {projectStatus !== "publishing" && (
             <div className="flex">
@@ -732,16 +741,16 @@ export default function ProjectCreate() {
               )}
               {currentStep.length < 3 && (
                 <button
-                  className="btn-primary w-[100px] h-[38px]"
+                  className="btn btn-primary btn-sm"
                   onClick={() => handelClickNext()}
                 >
-                  NEXT
+                  Next <i class="fa-regular fa-angle-right ml-1"></i>
                 </button>
               )}
               {currentStep.length < 3 && (
                 <button
                   onClick={() => saveDraft("public")}
-                  className={`btn-outline-primary w-[140px] h-[38px] ml-auto`}
+                  className={`btn-secondary-link btn-sm ml-auto`}
                 >
                   Save to Draft
                 </button>
@@ -758,6 +767,7 @@ export default function ProjectCreate() {
           )}
         </div>
       </div>
+
       {showDeployModal && (
         <DeployingProjectModal
           show={showDeployModal}
@@ -789,6 +799,6 @@ export default function ProjectCreate() {
           show={showPublishModal}
         />
       )}
-    </div>
+    </>
   );
 }

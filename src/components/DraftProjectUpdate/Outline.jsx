@@ -53,7 +53,7 @@ export default function Outline({
     });
   }, []);
   return (
-    <div className="text-[white]">
+    <>
       {/* name */}
       <div className="mb-6">
         <div className="label">Project Name</div>
@@ -216,6 +216,6 @@ export default function Outline({
             </div>
           ))}
       </div>
-    </div>
+    </>
   );
 }

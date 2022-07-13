@@ -157,14 +157,14 @@ export default function ProjectDetails(props) {
               ) : (
                 <div className="flex justify-end gap-3">
                   {project.liked ? (
-                    <div className="h-[56px] w-[56px] bg-[#231B39] rounded rounded-[12px] text-center flex justify-center items-center">
+                    <div className="h-[56px] w-[56px] bg-[#231B39] rounded-xl  text-center flex justify-center items-center">
                       <HeartIconFilled
                         className="h-[24px] w-[24px] cursor-pointer"
                         onClick={() => LikeProject(false)}
                       />
                     </div>
                   ) : (
-                    <div className="h-[56px] w-[56px] bg-[#231B39] rounded rounded-[12px] text-center flex justify-center items-center">
+                    <div className="h-[56px] w-[56px] bg-[#231B39] rounded-xl text-center flex justify-center items-center">
                       <HeartIcon
                         className="h-[24px] w-[24px] cursor-pointer"
                         onClick={() => LikeProject(true)}
@@ -173,14 +173,14 @@ export default function ProjectDetails(props) {
                   )}
 
                   {project.bookmarked ? (
-                    <div className="h-[56px] w-[56px] bg-[#231B39] rounded rounded-[12px] text-center flex justify-center items-center">
+                    <div className="h-[56px] w-[56px] bg-[#231B39] rounded-xl text-center flex justify-center items-center">
                       <BookmarkIconFilled
                         className="h-[24px] w-[24px] cursor-pointer"
                         onClick={() => BookmarkProject(false)}
                       />
                     </div>
                   ) : (
-                    <div className="h-[56px] w-[56px] bg-[#231B39] rounded rounded-[12px] text-center flex justify-center items-center">
+                    <div className="h-[56px] w-[56px] bg-[#231B39] rounded-xl text-center flex justify-center items-center">
                       <BookmarkIcon
                         className=" h-[24px] w-[24px] cursor-pointer"
                         onClick={() => BookmarkProject(true)}
@@ -212,9 +212,9 @@ export default function ProjectDetails(props) {
                 src={
                   project && project.assets && project.assets.length > 0
                     ? project.assets.find((x) => x.asset_purpose === "cover")
-                        ?.path
+                      ?.path
                       ? project.assets.find((x) => x.asset_purpose === "cover")
-                          ?.path
+                        ?.path
                       : require(`assets/images/no-image-found.png`)
                     : require(`assets/images/no-image-found.png`)
                 }

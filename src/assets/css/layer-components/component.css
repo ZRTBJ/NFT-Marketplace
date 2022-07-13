@@ -47,6 +47,11 @@
         hover:bg-primary-900;
   }
 
+  .btn-secondary-link {
+    @apply font-satoshi-bold font-black text-base text-white-shade-600;
+  
+  }
+
   .btn-lg {
     @apply px-8 
         py-4;
