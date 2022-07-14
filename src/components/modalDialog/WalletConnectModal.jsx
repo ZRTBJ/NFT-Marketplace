@@ -14,7 +14,7 @@ import { loginUser, useAuthState, useAuthDispatch, logout } from "Context";
 import { useHistory } from "react-router-dom";
 import { getUserInfo } from "../../services/User/userService";
 import { useDispatch } from "react-redux";
-import { setUserInfo } from "../../Slice/userSlice";
+import { setUserInfo, setUserLoading } from "../../Slice/userSlice";
 const WalletConnectModal = ({ showModal, closeModal, navigateToPage }) => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -73,11 +73,14 @@ const WalletConnectModal = ({ showModal, closeModal, navigateToPage }) => {
     }
   }
   async function getUserDetails(userID, isNavigate) {
+    dispatch(setUserLoading("loading"));
     const response = await getUserInfo(userID);
     let userinfoResponse;
     try {
       userinfoResponse = response["user"];
-    } catch {}
+    } catch {
+      dispatch(setUserLoading("idle"));
+    }
     dispatch(setUserInfo(userinfoResponse));
     setIsLoading(false);
     if (isNavigate === true) {
@@ -90,9 +93,11 @@ const WalletConnectModal = ({ showModal, closeModal, navigateToPage }) => {
           history.push(`/${navigateToPage}`);
         } else {
           history.push(`/profile/${localStorage.getItem("user_id")}`);
+          window.location.reload();
         }
       } else {
         history.push("/profile-settings");
+        window.location.reload();
       }
     }
     closeModal();
