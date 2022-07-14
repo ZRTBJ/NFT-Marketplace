@@ -138,7 +138,7 @@ export default function ProjectDetails(props) {
     <>
       {isLoading && <div className="loading"></div>}
       {!isLoading && (
-        <main className="container mx-auto px-4">
+        <>
           {userInfo.id && (
             <>
               {project.is_owner && project.project_status !== "published" ? (
@@ -530,7 +530,7 @@ export default function ProjectDetails(props) {
                 </div>
               </div>
             </section> */}
-        </main>
+        </>
       )}
 
       {/* old code */}
