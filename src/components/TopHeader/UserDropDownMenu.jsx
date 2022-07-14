@@ -10,7 +10,7 @@ import ico_torus from "../../assets/images/header/ico_torus.svg";
 import ico_metamask from "../../assets/images/header/ico_metamask.svg";
 import metamaskIcon from "assets/images/modal/metamask.png";
 import torusIcon from "assets/images/modal/torus.png";
-
+import Config from "../../config";
 import Web3 from "web3";
 import { useEffect, useState } from "react";
 
@@ -49,7 +49,7 @@ const UserDropDownMenu = () => {
     setWallet(context ? context.wallet : "");
     try {
       setIsLoadingBalance(true);
-      const web3 = new Web3(window.ethereum);
+      const web3 = new Web3(new Web3.providers.HttpProvider(Config.RPC_URL));
       if (selectedWallet && selectedWallet.length > 5) {
         web3.eth.getBalance(selectedWallet).then((res) => {
           setBalance(res / 10 ** 18);
