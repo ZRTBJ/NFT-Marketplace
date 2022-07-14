@@ -189,7 +189,7 @@ const ProfileSettingsForm = () => {
 
           {/* photo */}
           <div>
-            <div className="text-xl font-semibold mb-4">
+            <div className="text-xl font-bold mb-4">
               Set your profile Picture
             </div>
             <div className="label">Profile Picture</div>
@@ -304,7 +304,7 @@ const ProfileSettingsForm = () => {
               name="biography"
               placeholder="Add your bio"
               {...register("biography")}
-              className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none resize-none"
+              className="block w-full rounded py-3 px-4 mb-3 leading-tight focus:outline-none resize-none"
               defaultValue={userinfo ? userinfo["biography"] : ""}
             ></textarea>
           </div>
@@ -433,7 +433,7 @@ const ProfileSettingsForm = () => {
         <div className="flex flex-wrap mb-6">
           <div className="w-full px-3 grid grid-cols-3">
             <div>
-              <button
+              {/* <button
                 type="button"
                 className="btn-outline-primary-gradient w-[100px] h-[38px]"
                 onClick={(e) => {
@@ -441,30 +441,30 @@ const ProfileSettingsForm = () => {
                 }}
               >
                 <span>Show More</span>
-              </button>
+              </button> */}
             </div>
             <div className="text-right">
-              <button
+              {/* <button
                 type="button"
                 className="inline-block sm:hidden btn-primary w-[80px] h-[38px] rounded-lg mr-4"
                 onClick={() => history.push(`/profile/${userId ? userId : ""}`)}
               >
                 Skip
-              </button>
+              </button> */}
             </div>
             <div className="text-right">
-              <button
+              {/* <button
                 type="button"
                 className="hidden sm:inline-block btn-primary w-[80px] h-[38px] rounded-lg mr-4"
                 onClick={() => history.push(`/profile/${userId ? userId : ""}`)}
               >
                 Skip
-              </button>
+              </button> */}
               <button
                 type="submit"
                 className="btn-primary w-[100px] h-[38px] rounded-lg"
               >
-                NEXT <i className="fa fa-angle-right" aria-hidden="true"></i>
+                Save
               </button>
             </div>
           </div>

@@ -9,8 +9,11 @@ import { ReactComponent as LogoutLogo } from "../../assets/images/header/ico_log
 import ico_torus from "../../assets/images/header/ico_torus.svg";
 import ico_metamask from "../../assets/images/header/ico_metamask.svg";
 import metamaskIcon from "assets/images/modal/metamask.png";
+import torusIcon from "assets/images/modal/torus.png";
 
-import { useState } from "react";
+import Web3 from "web3";
+import { useEffect, useState } from "react";
+
 const UserDropDownMenu = () => {
   let history = useHistory();
   const dispatch = useAuthDispatch();
@@ -19,8 +22,12 @@ const UserDropDownMenu = () => {
   const [showWallet, setShowWallet] = useState(false);
   const context = useAuthState();
   const [selectedWallet, setSelectedWallet] = useState(
-    context ? context.wallet : ""
+    context ? context.walletAddress : ""
   );
+  const [wallet, setWallet] = useState(context ? context.wallet : "");
+  const [balance, setBalance] = useState(0);
+  const userLoadingStatus = useSelector((state) => state.user.status);
+  const [isLoadingBalance, setIsLoadingBalance] = useState(false);
 
   function showHideUserPopup() {
     const userDropDown = document.getElementById("userDropDown");
@@ -37,6 +44,22 @@ const UserDropDownMenu = () => {
     history.push("/");
     window.location.reload();
   }
+
+  useEffect(() => {
+    setWallet(context ? context.wallet : "");
+    try {
+      setIsLoadingBalance(true);
+      const web3 = new Web3(window.ethereum);
+      if (selectedWallet && selectedWallet.length > 5) {
+        web3.eth.getBalance(selectedWallet).then((res) => {
+          setBalance(res / 10 ** 18);
+          setIsLoadingBalance(false);
+        });
+      }
+    } catch {
+      setIsLoadingBalance(false);
+    }
+  }, [userLoadingStatus]);
 
   return (
     <>
@@ -63,7 +86,13 @@ const UserDropDownMenu = () => {
           <h3 className="text-white text-sm  mb-6 ">Wallet</h3>
           <p className="text-white flex content-center mb-2">
             <img
-              src={metamaskIcon}
+              src={
+                wallet === "metamask"
+                  ? metamaskIcon
+                  : wallet === "torus"
+                  ? torusIcon
+                  : ""
+              }
               alt="mask"
               width={21}
               height={21}
@@ -72,7 +101,8 @@ const UserDropDownMenu = () => {
             <span>Total Balance </span>
           </p>
           <h4 className="text-white text-xl  mb-6 tracking-wide">
-            180.00 USDT
+            {isLoadingBalance && <i class="fa fa-spinner fa-pulse fa-fw"></i>}
+            <span>{balance ? balance.toFixed(4) : 0} MATIC</span>
           </h4>
           <a className="btn-fund" href="#">
             <span>Add Funds</span>

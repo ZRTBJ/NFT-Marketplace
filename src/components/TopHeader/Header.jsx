@@ -26,6 +26,8 @@ const Header = () => {
   const [showSidebarKey, setSideBarKey] = useState(0);
   const loggedIn = useSelector((state) => state.user.loggedIn);
   const [messageHistory, setMessageHistory] = useState([]);
+  const userLoadingStatus = useSelector((state) => state.user.status);
+  const [showWalletpopup, setShowWalletpopup] = useState(false);
 
   useEffect(() => {
     if (userId && userId.length > 0) {
@@ -46,6 +48,7 @@ const Header = () => {
   function showHideUserPopupWallet() {
     const userDropDown = document.getElementById("userDropDownWallet");
     userDropDown.classList.toggle("hidden");
+    setShowWalletpopup(!showWalletpopup);
   }
 
   function handelSidebar(e) {
@@ -76,7 +79,7 @@ const Header = () => {
     if (loc.protocol === "https:") {
       host = "wss:";
     }
-  } catch { }
+  } catch {}
   const socketUrl = `${host}//${config.WEB_SOKET}/ws`;
 
   const {
@@ -168,7 +171,10 @@ const Header = () => {
                 ></path>
               </svg>
             </button>
-            <div className="cp mr-5 lg:ml-1 lg:mr-14" onClick={() => history.push("/")}>
+            <div
+              className="cp mr-5 lg:ml-1 lg:mr-14"
+              onClick={() => history.push("/")}
+            >
               <div className="text-white font-satoshi-bold font-black text-xl lg:text-3xl relative logo">
                 CREAB
               </div>
@@ -202,8 +208,9 @@ const Header = () => {
             )}
 
             <ul
-              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${userId ? "" : "sm:py-2"
-                }`}
+              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${
+                userId ? "" : "sm:py-2"
+              }`}
             >
               {userinfo.id && (
                 <>
@@ -264,7 +271,11 @@ const Header = () => {
 
                     {/* wallet popup */}
                     <div id="userDropDownWallet" className="hidden">
-                      <UserDropDownMenu />
+                      {userLoadingStatus === "idle" && showWalletpopup ? (
+                        <UserDropDownMenu />
+                      ) : (
+                        <></>
+                      )}
                     </div>
                   </li>
                 </>

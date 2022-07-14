@@ -1,6 +1,7 @@
 let user = localStorage.getItem("user_id");
 let token = localStorage.getItem("currentUser");
 let wallet = localStorage.getItem("wallet");
+let walletAddress = localStorage.getItem("walletAddress");
 
 export const initialState = {
   user: "" || user,
@@ -8,6 +9,7 @@ export const initialState = {
   loading: false,
   errorMessage: null,
   wallet: wallet ? wallet : "",
+  walletAddress: walletAddress ? walletAddress : "",
 };
 
 export const AuthReducer = (initialState, action) => {

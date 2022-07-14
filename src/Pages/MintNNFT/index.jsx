@@ -4,7 +4,11 @@ import SuccessModal from "components/modalDialog/SuccessModal";
 import publishModalSvg from "assets/images/modal/publishModalSvg.png";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { generateUploadkey, saveNFT } from "services/nft/nftService";
+import {
+  generateUploadkey,
+  getDefinedProperties,
+  saveNFT,
+} from "services/nft/nftService";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { getProjectDeploy } from "Slice/projectSlice";
@@ -25,6 +29,7 @@ export default function MintNFT(props) {
   const [isLoading, setIsLoading] = useState(false);
   const [showDefinedPropertyModal, setShowDefinedPropertyModal] =
     useState(false);
+  const [showPropertyModal, setShowPropertyModal] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [propertyList, setPropertyList] = useState([]);
   const [definedPropertyList, setDefinedPropertyList] = useState([]);
@@ -37,6 +42,7 @@ export default function MintNFT(props) {
   const [selectedProjectId, setSelectedProjectId] = useState(projectId);
 
   let savingNFT = false;
+  let isNFTSaved = false;
 
   const {
     register,
@@ -58,7 +64,7 @@ export default function MintNFT(props) {
         data.Data["path"] &&
         data.Data["path"].length > 0
       ) {
-        if (!savingNFT) {
+        if (!savingNFT && !isNFTSaved) {
           savingNFT = true;
           saveNFTDetails(data.Data["assetId"], data.Data["path"]);
         }
@@ -79,14 +85,14 @@ export default function MintNFT(props) {
         if (res.code === 0) {
           setProject(res.project);
         }
-        setIsLoading(false);
+        getDefinedProperty(res.project.category_id);
       })
       .catch((error) => {
         setIsLoading(false);
       });
   }
 
-  async function getUserProjectList() {
+  function getUserProjectList() {
     let payload = {
       id: localStorage.getItem("user_id"),
       page: 1,
@@ -99,9 +105,41 @@ export default function MintNFT(props) {
           (p) => p["project_status"] === "published"
         );
         setProjectList(projects);
+        setTimeout(() => {
+          if (projectId && projectId != "undefined" && projectId.length > 0) {
+            setSelectedProjectId(projectId);
+            projectDetails(projectId);
+          }
+        }, 500);
         setIsLoading(false);
       }
     });
+  }
+
+  function getDefinedProperty(category_id) {
+    setIsLoading(true);
+    getDefinedProperties()
+      .then((res) => {
+        if (res && res.categories && res.categories.length > 0) {
+          const category = res.categories.find((c) => c.id === category_id);
+          const definedProperty = [];
+          for (let attr of category.attributes) {
+            const dprop = {
+              key: attr["key"],
+              value: "",
+              value_type: attr["value_type"],
+              display_type: "properties",
+            };
+            definedProperty.push(dprop);
+          }
+          setDefinedPropertyList(definedProperty);
+          setIsLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
   }
 
   function nftImageChangeHandler(event) {
@@ -178,20 +216,27 @@ export default function MintNFT(props) {
       const prop = {
         key: dprop.key,
         value: dprop.value,
-        value_type: "string",
-        display_type: "properties",
+        value_type: dprop.value_type,
+        display_type: dprop.display_type,
       };
       attributes.push(prop);
     }
     // properties
     for (let aprop of propertyList) {
-      const prop = {
-        key: aprop.key,
-        value: aprop.value,
-        value_type: "string",
-        display_type: "properties",
-      };
-      attributes.push(prop);
+      if (
+        aprop.key &&
+        aprop.key.length > 0 &&
+        aprop.value &&
+        aprop.value.length > 0
+      ) {
+        const prop = {
+          key: aprop.key,
+          value: aprop.value,
+          value_type: aprop.value_type,
+          display_type: aprop.display_type,
+        };
+        attributes.push(prop);
+      }
     }
     if (attributes && attributes.length > 0) {
       request.append("attributes", JSON.stringify(attributes));
@@ -201,6 +246,7 @@ export default function MintNFT(props) {
         setIsLoading(false);
         setShowConfirmationModal(false);
         setShowSuccessModal(true);
+        isNFTSaved = true;
       })
       .catch((err) => {
         console.log(err);
@@ -226,7 +272,12 @@ export default function MintNFT(props) {
 
   function addProperty() {
     const tempProperty = [...propertyList];
-    tempProperty.push({ key: "", name: "" });
+    tempProperty.push({
+      key: "",
+      value: "",
+      value_type: "string",
+      display_type: "properties",
+    });
     setPropertyList(tempProperty);
   }
 
@@ -238,7 +289,12 @@ export default function MintNFT(props) {
 
   function addDefinedProperty() {
     const tempProperty = [...definedPropertyList];
-    tempProperty.push({ key: "", name: "" });
+    tempProperty.push({
+      key: "",
+      value: "",
+      value_type: "string",
+      display_type: "properties",
+    });
     setDefinedPropertyList(tempProperty);
   }
 
@@ -257,7 +313,7 @@ export default function MintNFT(props) {
   function handleOnChangePropertyName(event, index) {
     const value = event.target.value;
     const property = propertyList[index];
-    property.name = value;
+    property.value = value;
   }
 
   function handleOnChangeDefinedPropertyType(event, index) {
@@ -269,12 +325,7 @@ export default function MintNFT(props) {
   function handleOnChangeDefinedPropertyName(event, index) {
     const value = event.target.value;
     const property = definedPropertyList[index];
-    property.name = value;
-  }
-
-  function handleOnChangeProject(event) {
-    const value = event.target.value;
-    debugger;
+    property.value = value;
   }
 
   useEffect(() => {
@@ -360,8 +411,7 @@ export default function MintNFT(props) {
                 </small>
 
                 <select
-                  defaultValue={selectedProjectId}
-                  onChange={handleOnChangeProject}
+                  value={selectedProjectId}
                   id="select-project"
                   name="selectedProject"
                   {...register("selectedProject", {
@@ -521,35 +571,29 @@ export default function MintNFT(props) {
                 </div>
                 <i
                   className="fa-regular fa-square-plus text-2xl cursor-pointer"
-                  onClick={() => addProperty()}
+                  onClick={() => setShowPropertyModal(true)}
                 ></i>
               </div>
-              {propertyList &&
-                propertyList.map((property, index) => (
-                  <div key={`properties-${index}`}>
-                    <div className="flex items-center mt-3">
-                      <input
-                        name={`type-${index}`}
-                        type={"text"}
-                        className="w-32"
-                        defaultValue={property.type}
-                        onChange={(e) => handleOnChangePropertyType(e, index)}
-                      />
-
-                      <input
-                        name={`name-${index}`}
-                        type={"text"}
-                        className="ml-3 w-32"
-                        defaultValue={property.name}
-                        onChange={(e) => handleOnChangePropertyName(e, index)}
-                      />
-                      <i
-                        className="fa-solid fa-trash cursor-pointer ml-3"
-                        onClick={() => removeProperty(index)}
-                      ></i>
-                    </div>
-                  </div>
-                ))}
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-4 mt-2">
+                {propertyList &&
+                  propertyList.map((property, index) => (
+                    <>
+                      {property.key.length > 0 && property.value.length && (
+                        <div
+                          key={`properties-${index}`}
+                          className="place-content-center"
+                        >
+                          <div className="h-16 w-24 border rounded text-center  p-2">
+                            <p className="text-primary-color-1 font-semibold">
+                              {property.key}
+                            </p>
+                            <p className="text-sm">{property.value}</p>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  ))}
+              </div>
             </div>
           </div>
         </section>
@@ -582,30 +626,28 @@ export default function MintNFT(props) {
                       name={`type-${index}`}
                       type={"text"}
                       className="w-32"
-                      defaultValue={property.type}
-                      onChange={(e) =>
-                        handleOnChangeDefinedPropertyType(e, index)
-                      }
+                      defaultValue={property.key}
+                      disabled={true}
                     />
 
                     <input
                       name={`name-${index}`}
                       type={"text"}
                       className="ml-3 w-32"
-                      defaultValue={property.name}
+                      defaultValue={property.value}
                       onChange={(e) =>
                         handleOnChangeDefinedPropertyName(e, index)
                       }
                     />
-                    <i
+                    {/* <i
                       className="fa-solid fa-trash cursor-pointer ml-3"
                       onClick={() => removeDefinedProperty(index)}
-                    ></i>
+                    ></i> */}
                   </div>
                 </div>
               ))}
 
-            <div className="mt-5">
+            {/* <div className="mt-5">
               <button
                 type="button"
                 className="btn btn-text-gradient"
@@ -613,7 +655,7 @@ export default function MintNFT(props) {
               >
                 Add more +
               </button>
-            </div>
+            </div> */}
 
             <div className="mt-5">
               <button
@@ -626,6 +668,71 @@ export default function MintNFT(props) {
             </div>
           </div>
         </Modal>
+
+        <Modal
+          show={showPropertyModal}
+          handleClose={() => setShowPropertyModal(false)}
+          height={"auto"}
+          width={"564"}
+        >
+          <h2 className="mb-3">Add your Properties</h2>
+
+          <div className="w-10/12">
+            <p className="mb-4">
+              Add the properties, with value , you can add more than 5
+              properties
+            </p>
+            <p className="text-color-ass-9 text-sm">Add Properties</p>
+            {propertyList &&
+              propertyList.map((property, index) => (
+                <div key={`defined-properties-${index}`}>
+                  <div className="flex items-center mt-3">
+                    <input
+                      name={`type-${index}`}
+                      type={"text"}
+                      className="w-32"
+                      defaultValue={property.key}
+                      onChange={(e) => handleOnChangePropertyType(e, index)}
+                    />
+
+                    <input
+                      name={`name-${index}`}
+                      type={"text"}
+                      className="ml-3 w-32"
+                      defaultValue={property.value}
+                      onChange={(e) => handleOnChangePropertyName(e, index)}
+                    />
+                    <i
+                      className="fa-solid fa-trash cursor-pointer ml-3"
+                      onClick={() => removeProperty(index)}
+                    ></i>
+                  </div>
+                </div>
+              ))}
+
+            <div className="mt-5">
+              <button
+                type="button"
+                className="btn btn-text-gradient"
+                onClick={() => addProperty()}
+              >
+                Add more +
+              </button>
+            </div>
+
+            <div className="mt-5">
+              <button
+                type="button"
+                className="btn btn-primary btn-sm"
+                onClick={() => setShowPropertyModal(false)}
+              >
+                SAVE
+              </button>
+            </div>
+          </div>
+        </Modal>
+
+        {/* Mint popup */}
         <Modal
           show={showConfirmationModal}
           handleClose={() => setShowConfirmationModal(false)}
