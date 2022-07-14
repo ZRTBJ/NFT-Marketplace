@@ -17,6 +17,7 @@ import {
   getUserProjectListById,
 } from "services/project/projectService";
 import { useHistory } from "react-router-dom";
+import { getFunctionStatus } from "services/websocketFunction/webSocketFunctionService";
 
 export default function MintNFT(props) {
   const dispatch = useDispatch();
@@ -31,7 +32,14 @@ export default function MintNFT(props) {
     useState(false);
   const [showPropertyModal, setShowPropertyModal] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-  const [propertyList, setPropertyList] = useState([]);
+  const [propertyList, setPropertyList] = useState([
+    {
+      key: "",
+      value: "",
+      value_type: "string",
+      display_type: "properties",
+    },
+  ]);
   const [definedPropertyList, setDefinedPropertyList] = useState([]);
   const [nftImage, setnftImage] = useState({ image: null, path: "" });
   const projectId = props.match.params.id;
@@ -39,10 +47,10 @@ export default function MintNFT(props) {
   const [jobId, setJobId] = useState("");
   const [project, setProject] = useState({});
   const [projectList, setProjectList] = useState([]);
-  const [selectedProjectId, setSelectedProjectId] = useState(projectId);
-
-  let savingNFT = false;
-  let isNFTSaved = false;
+  const [selectedProjectId, setSelectedProjectId] = useState("");
+  const [savingNFT, setSavingNFT] = useState(false);
+  const [isNFTSaved, setIsNFTSaved] = useState(false);
+  const [mintingfuuid, setMintingfuuid] = useState("");
 
   const {
     register,
@@ -53,6 +61,7 @@ export default function MintNFT(props) {
   } = useForm();
 
   useEffect(() => {
+    // file upload web socket
     const projectDeployStatus = projectDeploy.find(
       (x) => x.function_uuid === jobId
     );
@@ -65,11 +74,33 @@ export default function MintNFT(props) {
         data.Data["path"].length > 0
       ) {
         if (!savingNFT && !isNFTSaved) {
-          savingNFT = true;
+          setSavingNFT(true);
           saveNFTDetails(data.Data["assetId"], data.Data["path"]);
         }
       } else {
-        savingNFT = false;
+        setSavingNFT(false);
+      }
+    }
+    // mint nft web socket
+    if (isNFTSaved) {
+      const mintStatus = projectDeploy.find(
+        (x) => x.function_uuid === mintingfuuid
+      );
+      if (mintStatus && mintStatus.data) {
+        try {
+          const status = JSON.parse(mintStatus.data);
+          if (status["fn_name"] === "createNFTBatch") {
+            const fn_response = status["fn_response_data"];
+            if (fn_response["transactionStatus"] === "mined") {
+              setShowConfirmationModal(false);
+              setShowSuccessModal(true);
+            } else {
+              setShowConfirmationModal(false);
+              setShowErrorModal(true);
+            }
+            setIsLoading(false);
+          }
+        } catch {}
       }
     }
   }, [projectDeploy]);
@@ -109,6 +140,7 @@ export default function MintNFT(props) {
           if (projectId && projectId != "undefined" && projectId.length > 0) {
             setSelectedProjectId(projectId);
             projectDetails(projectId);
+            setValue("selectedProject", projectId);
           }
         }, 500);
         setIsLoading(false);
@@ -211,6 +243,7 @@ export default function MintNFT(props) {
     request.append("asset_uid", assetId);
     request.append("external_url", path);
     const attributes = [];
+
     // defined properties
     for (let dprop of definedPropertyList) {
       const prop = {
@@ -243,17 +276,62 @@ export default function MintNFT(props) {
     }
     saveNFT(request)
       .then((res) => {
-        setIsLoading(false);
-        setShowConfirmationModal(false);
-        setShowSuccessModal(true);
-        isNFTSaved = true;
+        setSavingNFT(false);
+        if (res["code"] === 0) {
+          setMintingfuuid(res["function_uuid"]);
+          setJobId("");
+          setIsNFTSaved(true);
+          const deployData = {
+            projectId: projectId,
+            function_uuid: res["function_uuid"],
+            data: "",
+          };
+          dispatch(getProjectDeploy(deployData));
+          recheckStatus(res["function_uuid"]);
+        } else {
+          setIsLoading(false);
+          setShowConfirmationModal(false);
+          setShowErrorModal(true);
+        }
       })
       .catch((err) => {
         console.log(err);
         setIsLoading(false);
+        setSavingNFT(false);
+        setIsNFTSaved(false);
         setShowConfirmationModal(false);
         setShowErrorModal(true);
       });
+  }
+
+  function recheckStatus(fuuid) {
+    setTimeout(() => {
+      getFunctionStatus(fuuid)
+        .then((res) => {
+          if (res.code === 0) {
+            if (
+              res["fn_name"] === "createNFTBatch" &&
+              res["fn_status"] === "success"
+            ) {
+              if (res["fn_response_data"]["transactionStatus"] === "mined") {
+                const deployData = {
+                  function_uuid: fuuid,
+                  data: JSON.stringify(res),
+                };
+                dispatch(getProjectDeploy(deployData));
+                setShowConfirmationModal(false);
+                setShowSuccessModal(true);
+              } else if (
+                res["fn_name"] === "createNFTBatch" &&
+                res["fn_status"] === "pending"
+              ) {
+                recheckStatus();
+              }
+            }
+          }
+        })
+        .catch((error) => {});
+    }, 30000);
   }
 
   const onSubmit = (data) => {
@@ -613,8 +691,7 @@ export default function MintNFT(props) {
 
         <div className="w-10/12">
           <p className="mb-4">
-            Add the properties, with value , you can add more than 5
-            properties
+            Add the properties, with value , you can add more than 5 properties
           </p>
           <p className="text-color-ass-9 text-sm">Add Properties</p>
           {definedPropertyList &&
@@ -678,13 +755,12 @@ export default function MintNFT(props) {
 
         <div className="w-10/12">
           <p className="mb-4">
-            Add the properties, with value , you can add more than 5
-            properties
+            Add the properties, with value , you can add more than 5 properties
           </p>
           <p className="text-color-ass-9 text-sm">Add Properties</p>
           {propertyList &&
             propertyList.map((property, index) => (
-              <div key={`defined-properties-${index}`}>
+              <div key={`properties-${index}`}>
                 <div className="flex items-center mt-3">
                   <input
                     name={`type-${index}`}
@@ -741,8 +817,7 @@ export default function MintNFT(props) {
         <div className="text-center mt-2">
           <img className="block mx-auto" src={publishModalSvg} alt="" />
           <div className="my-4 text-xl font-bold  text-white">
-            You Minting NFT for {project && project.name ? project.name : ""}{" "}
-            ?
+            You Minting NFT for {project && project.name ? project.name : ""} ?
           </div>
           <div className="flex justify-center">
             <button
@@ -771,9 +846,8 @@ export default function MintNFT(props) {
           handleClose={() => {
             setShowSuccessModal(false);
             history.push(
-              `/project-details/${watch("selectedProject")
-                ? watch("selectedProject")
-                : projectId
+              `/project-details/${
+                watch("selectedProject") ? watch("selectedProject") : projectId
               }`
             );
           }}
