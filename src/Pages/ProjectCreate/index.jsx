@@ -733,10 +733,10 @@ export default function ProjectCreate() {
             <div className="flex">
               {currentStep.length > 1 && (
                 <button
-                  className="btn-outline-primary mr-4 w-[100px] h-[38px]"
+                  className="btn-secondary-link btn-sm"
                   onClick={() => handelClickBack()}
                 >
-                  BACK
+                  <i class="fa-regular fa-angle-left mr-1"></i> BACK
                 </button>
               )}
               {currentStep.length < 3 && (
@@ -758,9 +758,9 @@ export default function ProjectCreate() {
               {currentStep.length === 3 && (
                 <button
                   onClick={() => setShowPublishModal(true)}
-                  className="btn-primary w-[100px] h-[38px] ml-auto"
+                  className="btn btn-primary btn-sm ml-auto"
                 >
-                  PUBLISH
+                  Publish
                 </button>
               )}
             </div>
