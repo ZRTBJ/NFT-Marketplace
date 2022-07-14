@@ -53,7 +53,7 @@ export default function Outline({
     });
   }, []);
   return (
-    <div className="text-[white]">
+    <>
       {/* name */}
       <div className="mb-6">
         <div className="label">Project Name</div>
@@ -81,7 +81,7 @@ export default function Outline({
           Add image up to 4 to showcase your project
         </div>
         <div className="md:flex flex-wrap mb-6">
-          <div className="w-full md:max-w-[186px]">
+          <div className="w-[158px] mr-3 mb-2">
             <FileDragAndDrop
               maxFiles={4}
               height="158px"
@@ -90,23 +90,21 @@ export default function Outline({
               disabled={photosUrl.length > 3 ? true : false}
             />
           </div>
-          <div className="photoPreviewContainer mt-3 md:mt-0  md:max-w-[372px] md:pl-4  md:mx-0 flex md:justify-between flex-wrap">
+          <div className="photoPreviewContainer flex flex-wrap">
             {photosUrl.map((i) => (
               <div
                 key={i.path}
-                className="relative max-w-[158px] md:max-w-full m-2 md:m-0"
+                className="relative upload-file w-[158px] h-[158px] mr-3  mb-2"
               >
                 <img
                   alt=""
-                  className="outlinePhoto md:m-1 block object-cover rounded rounded-[12px]"
+                  className="outlinePhoto block object-cover rounded-xl"
                   src={i.path}
                 />
-                <img
-                  alt=""
-                  src={deleteIcon}
-                  onClick={() => onPhotosRemove(i)}
-                  className="absolute top-0 cursor-pointer  right-0"
-                />
+
+                <div className="upload-photo absolute w-full h-full rounded-xl cursor-pointer  items-center justify-center left-0 top-0">
+                  <i class="fa-solid fa-trash" onClick={() => onPhotosRemove(i)}></i>
+                </div>
               </div>
             ))}
           </div>
@@ -216,6 +214,6 @@ export default function Outline({
             </div>
           ))}
       </div>
-    </div>
+    </>
   );
 }

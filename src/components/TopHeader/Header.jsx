@@ -351,7 +351,7 @@ const Header = () => {
           </div>
         </div>
 
-        <div className="md:hidden">
+        <div className="hidden">
           <form>
             <label
               htmlFor="default-search"

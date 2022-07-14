@@ -86,7 +86,7 @@ const ProfileSettingsForm = () => {
           console.log(ex);
         }
       }
-    } catch {}
+    } catch { }
     dispatch(setUserInfo(userinfo));
     setIsLoading(false);
   }
@@ -143,7 +143,7 @@ const ProfileSettingsForm = () => {
         "country",
         document.getElementById("location-country")?.value
       );
-    } catch {}
+    } catch { }
     request.append("biography", data["biography"]);
     if (profileImage.image) {
       request.append("avatar", profileImage.image);
@@ -260,11 +260,9 @@ const ProfileSettingsForm = () => {
               you can use your name or your nickname.
             </div>
             <input
-              className={`block w-full border ${
-                errors.displayName ? "border-red-500" : "border-dark-300"
-              } rounded py-3 px-4 mb-3 leading-tight ${
-                errors.displayName ? "focus:border focus:border-red-500" : ""
-              }`}
+              className={`block w-full border ${errors.displayName ? "border-red-500" : "border-dark-300"
+                } rounded py-3 px-4 mb-3 leading-tight ${errors.displayName ? "focus:border focus:border-red-500" : ""
+                }`}
               id="display-name"
               name="displayName"
               type="text"
@@ -462,7 +460,7 @@ const ProfileSettingsForm = () => {
               </button> */}
               <button
                 type="submit"
-                className="btn-primary w-[100px] h-[38px] rounded-lg"
+                className="btn btn-primary btn-sm"
               >
                 Save
               </button>

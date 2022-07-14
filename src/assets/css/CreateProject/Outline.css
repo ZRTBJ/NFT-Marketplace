@@ -43,3 +43,10 @@
   height: 158px;
   width: 158px;
 }
+.upload-photo {
+  display: none;
+  background: linear-gradient(0deg, rgba(236, 97, 91, 0.8), rgba(236, 97, 91, 0.8));
+}
+.upload-file:hover  .upload-photo {
+  display:flex;
+ }

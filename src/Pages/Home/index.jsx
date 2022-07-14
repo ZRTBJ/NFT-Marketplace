@@ -73,11 +73,11 @@ function Home() {
   }, []);
 
   return (
-    <main className="container mx-auto px-4 text-white">
-      <section className="text-center  my-11">
+    <>
+      <section className="text-center  my-11 text-white">
         <HomeNavigateCard />
       </section>
-      <div>
+      <div className="text-white">
         <section>
           <h2 className="mb-5">Newest Project</h2>
           {isLoading && <div className="onlySpinner mt-[150px]"></div>}
@@ -156,7 +156,7 @@ function Home() {
           </section>
         )}
       </div>
-    </main>
+    </>
   );
 }
 

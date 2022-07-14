@@ -33,7 +33,7 @@ const CommonCard = ({ project }) => {
         <></>
       )}
       <div
-        className={`rounded-3xl p-2  ${(!project.isNft && project.project_status === "draft") ||
+        className={`rounded-xl  md:rounded-3xl p-2  ${(!project.isNft && project.project_status === "draft") ||
           project.status === "draft"
           ? "bg-[#9499AE] opacity-[0.5]"
           : ""
@@ -42,7 +42,7 @@ const CommonCard = ({ project }) => {
 
         {!project.isNft ? (
           <img
-            className="rounded-3xl w-full h-[137px] lg:h-72 2xl:h-[301px] object-cover thumb-img"
+            className="rounded-xl  md:rounded-3xl w-full h-[137px] lg:h-72 2xl:h-[301px] object-cover thumb-img"
             src={
               project && project.assets && project.assets.length > 0
                 ? project.assets.find((x) => x.asset_purpose === "cover")
@@ -56,7 +56,7 @@ const CommonCard = ({ project }) => {
           />
         ) : (
           <img
-            className="rounded-lg w-full h-[137px] lg:h-[301px] object-cover"
+            className="rounded-lg w-full h-[137px] lg:h-[301px] object-cover pt-0"
             src={project.path}
             alt="card"
           />
