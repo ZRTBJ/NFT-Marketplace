@@ -617,7 +617,7 @@ export default function DraftProjectUpdate() {
   return (
     <div className="text-[white]">
       {isDataLoading && <div className="loading"></div>}
-      <div className="cardContainer px-3 md:px-5">
+      <main className=" max-w-[600px] mx-auto md:pt-12">
         {currentStep.length === 1 && (
           <div>
             <LeftSideBar
@@ -740,7 +740,7 @@ export default function DraftProjectUpdate() {
             </div>
           )}
         </div>
-      </div>
+      </main>
       {showDeployModal && (
         <DeployingProjectModal
           show={showDeployModal}
