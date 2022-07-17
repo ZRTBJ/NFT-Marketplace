@@ -11,6 +11,11 @@ const CommonCard = ({ project }) => {
     } else {
       if (project.project_status === "draft" || project.status === "draft") {
         history.push(`/project-update/${projectId}`);
+      } else if (
+        project.project_status === "publishing" ||
+        project.status === "publishing"
+      ) {
+        history.push(`/project-update/${projectId}`);
       } else {
         history.push(`/project-details/${projectId}`);
       }
@@ -22,9 +27,8 @@ const CommonCard = ({ project }) => {
       onClick={() => gotToDetailPage(project.id)}
       className="border rounded-3xl border-primary-50 cursor-pointer relative"
     >
-
       {(!project.isNft && project.project_status === "draft") ||
-        project.status === "draft" ? (
+      project.status === "draft" ? (
         <div className="absolute left-0 z-10 right-0 flex  items-center justify-center mx-auto max-w-full w-[169px] font-bold top-[50%] h-[35px]  text-color-gold bg-color-brown rounded-lg">
           <img src={edit_icon} className="mr-2" alt="edit" />
           <span>Continue Editing</span>
@@ -33,22 +37,21 @@ const CommonCard = ({ project }) => {
         <></>
       )}
       <div
-        className={`rounded-xl  md:rounded-3xl p-2  ${(!project.isNft && project.project_status === "draft") ||
+        className={`rounded-xl  md:rounded-3xl p-2  ${
+          (!project.isNft && project.project_status === "draft") ||
           project.status === "draft"
-          ? "bg-[#9499AE] opacity-[0.5]"
-          : ""
-          }`}
+            ? "bg-[#9499AE] opacity-[0.5]"
+            : ""
+        }`}
       >
-
         {!project.isNft ? (
           <img
             className="rounded-xl  md:rounded-3xl w-full h-[137px] lg:h-72 2xl:h-[301px] object-cover thumb-img"
             src={
               project && project.assets && project.assets.length > 0
-                ? project.assets.find((x) => x.asset_purpose === "cover")
-                  ?.path
+                ? project.assets.find((x) => x.asset_purpose === "cover")?.path
                   ? project.assets.find((x) => x.asset_purpose === "cover")
-                    ?.path
+                      ?.path
                   : thumbIcon
                 : thumbIcon
             }
