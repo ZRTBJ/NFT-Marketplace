@@ -79,7 +79,7 @@ const Header = () => {
     if (loc.protocol === "https:") {
       host = "wss:";
     }
-  } catch {}
+  } catch { }
   const socketUrl = `${host}//${config.WEB_SOKET}/ws`;
 
   const {
@@ -208,9 +208,8 @@ const Header = () => {
             )}
 
             <ul
-              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${
-                userId ? "" : "sm:py-2"
-              }`}
+              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${userId ? "" : "sm:py-2"
+                }`}
             >
               {userinfo.id && (
                 <>
@@ -351,28 +350,31 @@ const Header = () => {
           </div>
         </div>
 
-        <div className="hidden">
-          <form>
-            <label
-              htmlFor="default-search"
-              className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300"
-            >
-              Search
-            </label>
-            <div className="relative">
-              <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
-                <i className="fa-regular fa-magnifying-glass text-white-shade-600"></i>
+        {window?.location?.pathname === "/" && (
+          <div className="md:hidden">
+            <form>
+              <label
+                htmlFor="default-search"
+                className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300"
+              >
+                Search
+              </label>
+              <div className="relative">
+                <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+                  <i className="fa-regular fa-magnifying-glass text-white-shade-600"></i>
+                </div>
+                <input
+                  type="search"
+                  id="default-search"
+                  className=" bg-color-ass-5 text-lg w-full w-100 text-white rounded-xl pl-10 h-10 placeholder-color-ass-4  focus:pl-10"
+                  placeholder="Search your project by name"
+                  required
+                />
               </div>
-              <input
-                type="search"
-                id="default-search"
-                className=" bg-color-ass-5 text-lg w-full w-100 text-white rounded-xl pl-10 h-10 placeholder-color-ass-4  focus:pl-10"
-                placeholder="Search your project by name"
-                required
-              />
-            </div>
-          </form>
-        </div>
+            </form>
+          </div>
+        )}
+
       </nav>
 
       <WalletConnectModal showModal={showModal} closeModal={hideModal} />
