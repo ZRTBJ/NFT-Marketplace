@@ -141,7 +141,7 @@ export default function ProjectDetails(props) {
         <>
           {userInfo.id && (
             <>
-              {project.is_owner && project.project_status !== "published" ? (
+              {project.is_owner && project.project_status === "published" ? (
                 <>
                   <section className="flex  justify-end py-7">
                     <button
@@ -212,9 +212,9 @@ export default function ProjectDetails(props) {
                 src={
                   project && project.assets && project.assets.length > 0
                     ? project.assets.find((x) => x.asset_purpose === "cover")
-                      ?.path
-                      ? project.assets.find((x) => x.asset_purpose === "cover")
                         ?.path
+                      ? project.assets.find((x) => x.asset_purpose === "cover")
+                          ?.path
                       : require(`assets/images/no-image-found.png`)
                     : require(`assets/images/no-image-found.png`)
                 }
