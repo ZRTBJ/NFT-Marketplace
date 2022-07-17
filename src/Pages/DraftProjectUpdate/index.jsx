@@ -418,7 +418,7 @@ export default function DraftProjectUpdate() {
       setConfirmationKey((pre) => pre + 1);
       setProjectStatus(response.project_status);
       if (response.project_status === "publishing") {
-        setcurrentStep([1, 2, 3, 4, 5, 6, 7]);
+        setcurrentStep([1, 2, 3]);
         setPublishStep(1);
       }
     });
@@ -703,42 +703,50 @@ export default function DraftProjectUpdate() {
           />
         )}
         <div className="buttonContainer">
-          {projectStatus !== "publishing" && (
-            <div className="flex">
-              {currentStep.length > 1 && (
-                <button
-                  className="btn-outline-primary mr-4 w-[100px] h-[38px]"
-                  onClick={() => handelClickBack()}
-                >
-                  BACK
-                </button>
-              )}
-              {currentStep.length < 3 && (
-                <button
-                  className="btn-primary w-[100px] h-[38px]"
-                  onClick={() => handelClickNext()}
-                >
-                  NEXT
-                </button>
-              )}
-              {currentStep.length < 3 && (
-                <button
-                  onClick={() => saveDraft("public")}
-                  className={`btn-outline-primary w-[140px] h-[38px] ml-auto`}
-                >
-                  Save to Draft
-                </button>
-              )}
-              {currentStep.length === 3 && (
-                <button
-                  onClick={() => setShowPublishModal(true)}
-                  className="btn-primary w-[100px] h-[38px] ml-auto"
-                >
-                  PUBLISH
-                </button>
-              )}
-            </div>
-          )}
+          <div className="flex">
+            {projectStatus !== "publishing" && (
+              <>
+                {currentStep.length > 1 && (
+                  <button
+                    className="btn-secondary-link btn-sm"
+                    onClick={() => handelClickBack()}
+                  >
+                    <i class="fa-regular fa-angle-left mr-1"></i> BACK
+                  </button>
+                )}
+                {currentStep.length < 3 && (
+                  <button
+                    className="btn btn-primary btn-sm"
+                    onClick={() => handelClickNext()}
+                  >
+                    Next <i class="fa-regular fa-angle-right ml-1"></i>
+                  </button>
+                )}
+                {currentStep.length < 3 && projectStatus !== "published" && (
+                  <button
+                    onClick={() => saveDraft("public")}
+                    className={`btn-secondary-link btn-sm ml-auto`}
+                  >
+                    Save to Draft
+                  </button>
+                )}
+              </>
+            )}
+            {currentStep.length === 3 && projectStatus !== "published" && (
+              <button
+                onClick={() => {
+                  if (projectStatus === "publishing") {
+                    projectTokenBreakdown();
+                  } else {
+                    setShowPublishModal(true);
+                  }
+                }}
+                className="btn btn-primary btn-sm ml-auto"
+              >
+                Publish
+              </button>
+            )}
+          </div>
         </div>
       </main>
       {showDeployModal && (
@@ -746,7 +754,7 @@ export default function DraftProjectUpdate() {
           show={showDeployModal}
           handleClose={(status) => {
             setShowDeployModal(status);
-            history.push(`/profile/${userId ? userId : ""}`);
+            projectDetails();
           }}
           tnxData={tnxData}
           projectId={id}

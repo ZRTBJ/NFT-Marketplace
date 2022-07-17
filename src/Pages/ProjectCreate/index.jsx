@@ -438,8 +438,8 @@ export default function ProjectCreate() {
             projectInfo.token_category &&
             projectInfo.token_category[0] &&
             projectInfo.token_category[0].id
-            ? projectInfo.token_category[0].id
-            : 1,
+          ? projectInfo.token_category[0].id
+          : 1,
         token_amount: parseInt(numberOfTokens),
       };
       const request = new FormData();
@@ -448,7 +448,6 @@ export default function ProjectCreate() {
         .then((res) => {
           if (res.code === 0) {
             getProjectPublishCost(projectId);
-            setDataIsLoading(false);
           } else {
             setDataIsLoading(false);
             setShowErrorModal(true);
@@ -643,12 +642,8 @@ export default function ProjectCreate() {
     <>
       {isDataLoading && <div className="loading"></div>}
 
-
-
       <div className="text-white max-w-[600px] mx-auto md:pt-12">
-
         <div className="create-project-container">
-
           {currentStep.length === 1 && (
             <div>
               <LeftSideBar currentStep={currentStep} key={currentStep.length} />
@@ -727,44 +722,51 @@ export default function ProjectCreate() {
           )}
         </div>
 
-
         <div className="buttonContainer">
-          {projectStatus !== "publishing" && (
-            <div className="flex">
-              {currentStep.length > 1 && (
-                <button
-                  className="btn-secondary-link btn-sm"
-                  onClick={() => handelClickBack()}
-                >
-                  <i class="fa-regular fa-angle-left mr-1"></i> BACK
-                </button>
-              )}
-              {currentStep.length < 3 && (
-                <button
-                  className="btn btn-primary btn-sm"
-                  onClick={() => handelClickNext()}
-                >
-                  Next <i class="fa-regular fa-angle-right ml-1"></i>
-                </button>
-              )}
-              {currentStep.length < 3 && (
-                <button
-                  onClick={() => saveDraft("public")}
-                  className={`btn-secondary-link btn-sm ml-auto`}
-                >
-                  Save to Draft
-                </button>
-              )}
-              {currentStep.length === 3 && (
-                <button
-                  onClick={() => setShowPublishModal(true)}
-                  className="btn btn-primary btn-sm ml-auto"
-                >
-                  Publish
-                </button>
-              )}
-            </div>
-          )}
+          <div className="flex">
+            {projectStatus !== "publishing" && (
+              <>
+                {currentStep.length > 1 && (
+                  <button
+                    className="btn-secondary-link btn-sm"
+                    onClick={() => handelClickBack()}
+                  >
+                    <i class="fa-regular fa-angle-left mr-1"></i> BACK
+                  </button>
+                )}
+                {currentStep.length < 3 && (
+                  <button
+                    className="btn btn-primary btn-sm"
+                    onClick={() => handelClickNext()}
+                  >
+                    Next <i class="fa-regular fa-angle-right ml-1"></i>
+                  </button>
+                )}
+                {currentStep.length < 3 && projectStatus !== "published" && (
+                  <button
+                    onClick={() => saveDraft("public")}
+                    className={`btn-secondary-link btn-sm ml-auto`}
+                  >
+                    Save to Draft
+                  </button>
+                )}
+              </>
+            )}
+            {currentStep.length === 3 && projectStatus !== "published" && (
+              <button
+                onClick={() => {
+                  if (projectStatus === "publishing") {
+                    intiProjectPublish();
+                  } else {
+                    setShowPublishModal(true);
+                  }
+                }}
+                className="btn btn-primary btn-sm ml-auto"
+              >
+                Publish
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
