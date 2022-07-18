@@ -9,7 +9,7 @@ import { ReactComponent as HeartIcon } from "assets/images/projectDetails/heartI
 import { ReactComponent as BookmarkIcon } from "assets/images/projectDetails/bookmarkIcon.svg";
 import { ReactComponent as HeartIconFilled } from "assets/images/projectDetails/HeartIconFilled.svg";
 import { ReactComponent as BookmarkIconFilled } from "assets/images/projectDetails/BookmarkIconFilled.svg";
-import coverImg from "assets/images/projectDetails/cover.svg";
+import coverImg from "assets/images/no-image-found.png";
 import manImg from "assets/images/projectDetails/man-img.svg";
 import locationIcon from "assets/images/profile/locationIcon.svg";
 import { Link, useHistory } from "react-router-dom";
@@ -212,13 +212,20 @@ export default function ProjectDetails(props) {
                 src={
                   project && project.assets && project.assets.length > 0
                     ? project.assets.find((x) => x.asset_purpose === "cover")
-                        ?.path
+                      ?.path
                       ? project.assets.find((x) => x.asset_purpose === "cover")
-                          ?.path
+                        ?.path
                       : require(`assets/images/no-image-found.png`)
                     : require(`assets/images/no-image-found.png`)
                 }
-                className="rounded-3xl object-cover md:h-[310px] w-full"
+                className={`rounded-3xl object-cover md:h-[310px] w-full 
+                  ${project && project.assets && project.assets.length > 0
+                    ? project.assets.find((x) => x.asset_purpose === "cover")
+                      ?.path
+                      ? project.assets.find((x) => x.asset_purpose === "cover")
+                        ?.path
+                      : 'object-right-top'
+                    : 'object-right-top'}`}
                 alt="Project Cover"
               />
             )}
