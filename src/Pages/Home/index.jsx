@@ -104,6 +104,7 @@ function Home() {
                 spaceBetween: 30,
               },
             }}
+            className="swipe-card"
             navigation={true}
             modules={[Navigation]}
           >
