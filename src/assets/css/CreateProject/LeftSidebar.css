@@ -5,6 +5,7 @@
 .progressBar {
   height: 57px;
   width: 57px;
+  position: relative;
 }
 
 .steps {
@@ -30,4 +31,16 @@
 }
 .active {
   background-color: #7d33a4 !important;
+}
+
+.steps-text {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  border-radius: 50%;
+  position: absolute;
+  align-items: center;
+  justify-content: center;
 }
