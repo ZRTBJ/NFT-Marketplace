@@ -104,7 +104,7 @@ export default function MintNFT(props) {
             }
             setIsLoading(false);
           }
-        } catch {}
+        } catch { }
       }
     }
   }, [projectDeploy]);
@@ -350,7 +350,7 @@ export default function MintNFT(props) {
             }
           }
         })
-        .catch((error) => {});
+        .catch((error) => { });
     }, 30000);
   }
 
@@ -436,39 +436,239 @@ export default function MintNFT(props) {
 
   return (
     <div className={` ${isLoading ? "loading" : ""}`}>
-      <section className="flex py-9 flex-col md:flex-row text-white">
-        <div className="flex-1">
-          <h3 className="mb-8">Start build your NFT</h3>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="mb-6">
-              <label
-                className="block text-sm font-bold font-satoshi-bold"
-                htmlFor="name"
-              >
-                Name
-              </label>
-              <small className="block text-xs text-color-ass-7 mb-2">
-                Fill the name for your NFT
-              </small>
-              <input
-                className="block mb-3"
-                id="name"
-                name="name"
-                type="text"
-                placeholder="Name"
-                {...register("name", {
-                  required: "Name is required.",
-                })}
-                defaultValue={""}
-              />
-              {errors.name && (
-                <p className="text-red-500 text-xs font-medium">
-                  {errors.name.message}
-                </p>
-              )}
-            </div>
+      <section className="text-white">
+        <div className="nft-wrapper flex py-9 flex-col md:flex-row">
+          <div className="flex-1">
+            <h3 className="mb-8">Start build your NFT</h3>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="mb-6">
+                <label
+                  className="block text-sm font-bold font-satoshi-bold"
+                  htmlFor="name"
+                >
+                  Name
+                </label>
+                <small className="block text-xs text-color-ass-7 mb-2">
+                  Fill the name for your NFT
+                </small>
+                <input
+                  className="block mb-3"
+                  id="name"
+                  name="name"
+                  type="text"
+                  placeholder="Name"
+                  {...register("name", {
+                    required: "Name is required.",
+                  })}
+                  defaultValue={""}
+                />
+                {errors.name && (
+                  <p className="text-red-500 text-xs font-medium">
+                    {errors.name.message}
+                  </p>
+                )}
+              </div>
 
-            <div className="mb-6  md:hidden ">
+              <div className="mb-6  md:hidden ">
+                <label
+                  className="block text-sm font-bold font-satoshi-bold"
+                  htmlFor="dropzone-file"
+                >
+                  Upload Assets
+                </label>
+                <small className="block text-xs text-color-ass-7 mb-3">
+                  You can add your assets up to 1GB, you can user format
+                  Jpeg/Mp4/GIF/PNG/Mp3.
+                </small>
+
+                <div
+                  className={`flex justify-center items-center max-w-full ${nftFile.file?.type?.split("/")[0]?.toLowerCase() === "video"
+                    ? ""
+                    : "w-40 h-40"
+                    }`}
+                >
+                  <label
+                    htmlFor="dropzone-file"
+                    className={`flex flex-col justify-center items-center w-full ${nftFile.file?.type?.split("/")[0]?.toLowerCase() === "video"
+                      ? ""
+                      : "h-40"
+                      } ${nftFile.file ? "" : "bg-black-shade-800"
+                      } rounded-xl  cursor-pointer`}
+                  >
+                    <div className="flex flex-col justify-center items-center pt-5 pb-6">
+                      {nftFile.file ? (
+                        <>
+                          {nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
+                            "image" && (
+                              <img
+                                src={nftFile.path}
+                                className="rounded-xl  max-w-full w-40 h-40 object-cover"
+                              />
+                            )}
+                          {nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
+                            "audio" && (
+                              <audio
+                                ref={audioRef}
+                                src={nftFile.path}
+                                controls
+                                autoPlay={false}
+                                className="ml-36"
+                              />
+                            )}
+                          {nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
+                            "video" && (
+                              <video width="650" height="400" controls>
+                                <source src={nftFile.path} type="video/mp4" />
+                              </video>
+                            )}
+                        </>
+                      ) : (
+                        <>
+                          <svg
+                            width="39"
+                            height="39"
+                            viewBox="0 0 39 39"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              opacity="0.4"
+                              d="M27.8167 38.5097H11.4644C5.0695 38.5097 0.773438 34.0245 0.773438 27.3479V11.9373C0.773438 5.2606 5.0695 0.77356 11.4644 0.77356H27.8186C34.2135 0.77356 38.5095 5.2606 38.5095 11.9373V27.3479C38.5095 34.0245 34.2135 38.5097 27.8167 38.5097Z"
+                              fill="#9499AE"
+                            />
+                            <path
+                              fillRule="evenodd"
+                              clipRule="evenodd"
+                              d="M18.2168 13.368C18.2168 15.9529 16.113 18.0567 13.5281 18.0567C10.9413 18.0567 8.83938 15.9529 8.83938 13.368C8.83938 10.783 10.9413 8.67737 13.5281 8.67737C16.113 8.67737 18.2168 10.783 18.2168 13.368ZM33.6045 23.5805C34.0441 24.0069 34.3592 24.4937 34.5667 25.0126C35.195 26.5824 34.8686 28.4692 34.1969 30.0239C33.4007 31.8749 31.8761 33.273 29.9554 33.8843C29.1025 34.1579 28.2082 34.2749 27.3157 34.2749H11.5024C9.92882 34.2749 8.53636 33.9089 7.39484 33.2221C6.67974 32.7919 6.55332 31.8013 7.08352 31.156C7.97031 30.0805 8.84579 29.0013 9.72882 27.9126C11.4118 25.8296 12.5458 25.2258 13.8062 25.756C14.3175 25.9748 14.8307 26.305 15.359 26.6522C16.7666 27.5843 18.7232 28.8635 21.3006 27.4749C23.0623 26.5115 24.085 24.8631 24.9751 23.4283L24.9931 23.3994C25.053 23.3033 25.1124 23.2073 25.1716 23.1116C25.4743 22.6226 25.7724 22.1409 26.1101 21.6975C26.5289 21.1484 28.0837 19.4314 30.0931 20.6541C31.3743 21.4239 32.4516 22.4654 33.6045 23.5805Z"
+                              fill="#9499AE"
+                            />
+                          </svg>
+                          <p className="text-xs mt-2 text-color-ass-8">
+                            Add Assets from
+                          </p>
+                          <p className="text-xs text-primary-color-1">Computer</p>
+                        </>
+                      )}
+                    </div>
+
+                    <input
+                      id="dropzone-file"
+                      type="file"
+                      className="hidden"
+                      accept="audio/*, image/*, video/*"
+                      onChange={(e) => nftFileChangeHandler(e)}
+                    />
+                  </label>
+                </div>
+                {isFileError && (
+                  <p className="text-red-500 text-xs font-medium mt-2">
+                    Please select a vaild file.
+                  </p>
+                )}
+              </div>
+
+              <div className="mb-6">
+                <label
+                  className="block text-sm font-bold font-satoshi-bold"
+                  htmlFor="description"
+                >
+                  Description
+                </label>
+                <small className="block text-xs text-color-ass-7 mb-2">
+                  What this NFT about or story behind this NFT
+                </small>
+
+                <textarea
+                  className="block h-32  mb-3"
+                  id="description"
+                  name="description"
+                  placeholder="description"
+                  {...register("description", {
+                    required: "Description is required.",
+                  })}
+                  defaultValue={""}
+                ></textarea>
+                {errors.description && (
+                  <p className="text-red-500 text-xs font-medium">
+                    {errors.description.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="mb-6">
+                <label
+                  className="block text-sm font-bold font-satoshi-bold"
+                  htmlFor="select-project"
+                >
+                  Select Project
+                </label>
+                <small className="block text-xs text-color-ass-7 mb-2">
+                  What this NFT about or story behind this NFT
+                </small>
+
+                <select
+                  value={selectedProjectId}
+                  id="select-project"
+                  name="selectedProject"
+                  {...register("selectedProject", {
+                    required: "Select a project is required.",
+                  })}
+                >
+                  <option value={""}>Select Project</option>
+                  {projectList.map((e) => (
+                    <option key={e.id} value={e.id}>
+                      {e.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.selectedProject && (
+                  <p className="text-red-500 text-xs font-medium mt-2">
+                    {errors.selectedProject.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="mb-6">
+                <label
+                  className="block text-sm font-bold font-satoshi-bold"
+                  htmlFor="blockchain"
+                >
+                  Blockchain
+                </label>
+                <small className="block text-xs text-color-ass-7 mb-2">
+                  Choose the blockchain you want to use for this NFT
+                </small>
+                <div className="icon-blockchain">
+                  <input
+                    className="block mb-3"
+                    id="blockchain"
+                    name="blockchain"
+                    type="text"
+                    placeholder="Polygon"
+                    {...register("blockchain")}
+                    defaultValue={"Polygon"}
+                    disabled={true}
+                  />
+                  {errors.blockchain && (
+                    <p className="text-red-500 text-xs font-medium">
+                      {errors.blockchain.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="mb-6 hidden md:block">
+                <button type="submit" className="btn btn-primary btn-sm">
+                  CREATE
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div className="w-[1px] bg-black-shade-800  mx-11 hidden md:block"></div>
+
+          <div className="flex-1">
+            <div className="mb-6 hidden md:block ">
               <label
                 className="block text-sm font-bold font-satoshi-bold"
                 htmlFor="dropzone-file"
@@ -481,48 +681,45 @@ export default function MintNFT(props) {
               </small>
 
               <div
-                className={`flex justify-center items-center max-w-full ${
-                  nftFile.file?.type?.split("/")[0]?.toLowerCase() === "video"
-                    ? ""
-                    : "w-40 h-40"
-                }`}
+                className={`flex justify-center items-center max-w-full ${nftFile.file?.type?.split("/")[0]?.toLowerCase() === "video"
+                  ? ""
+                  : "w-40 h-40"
+                  }`}
               >
                 <label
                   htmlFor="dropzone-file"
-                  className={`flex flex-col justify-center items-center w-full ${
-                    nftFile.file?.type?.split("/")[0]?.toLowerCase() === "video"
-                      ? ""
-                      : "h-40"
-                  } ${
-                    nftFile.file ? "" : "bg-black-shade-800"
-                  } rounded-xl  cursor-pointer`}
+                  className={`flex flex-col justify-center items-center w-full  ${nftFile.file?.type?.split("/")[0]?.toLowerCase() === "video"
+                    ? ""
+                    : "h-40"
+                    } ${nftFile.file ? "" : "bg-black-shade-800"
+                    } rounded-xl  cursor-pointer`}
                 >
                   <div className="flex flex-col justify-center items-center pt-5 pb-6">
                     {nftFile.file ? (
                       <>
                         {nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
                           "image" && (
-                          <img
-                            src={nftFile.path}
-                            className="rounded-xl  max-w-full w-40 h-40 object-cover"
-                          />
-                        )}
+                            <img
+                              src={nftFile.path}
+                              className="rounded-xl  max-w-full w-40 h-40 object-cover"
+                            />
+                          )}
                         {nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
                           "audio" && (
-                          <audio
-                            ref={audioRef}
-                            src={nftFile.path}
-                            controls
-                            autoPlay={false}
-                            className="ml-36"
-                          />
-                        )}
+                            <audio
+                              ref={audioRef}
+                              src={nftFile.path}
+                              controls
+                              autoPlay={false}
+                              className="ml-28"
+                            />
+                          )}
                         {nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
                           "video" && (
-                          <video width="650" height="400" controls>
-                            <source src={nftFile.path} type="video/mp4" />
-                          </video>
-                        )}
+                            <video width="650" height="400" controls>
+                              <source src={nftFile.path} type="video/mp4" />
+                            </video>
+                          )}
                       </>
                     ) : (
                       <>
@@ -568,267 +765,65 @@ export default function MintNFT(props) {
                 </p>
               )}
             </div>
-
             <div className="mb-6">
-              <label
-                className="block text-sm font-bold font-satoshi-bold"
-                htmlFor="description"
-              >
-                Description
-              </label>
-              <small className="block text-xs text-color-ass-7 mb-2">
-                What this NFT about or story behind this NFT
-              </small>
-
-              <textarea
-                className="block h-32  mb-3"
-                id="description"
-                name="description"
-                placeholder="description"
-                {...register("description", {
-                  required: "Description is required.",
-                })}
-                defaultValue={""}
-              ></textarea>
-              {errors.description && (
-                <p className="text-red-500 text-xs font-medium">
-                  {errors.description.message}
-                </p>
-              )}
-            </div>
-
-            <div className="mb-6">
-              <label
-                className="block text-sm font-bold font-satoshi-bold"
-                htmlFor="select-project"
-              >
-                Select Project
-              </label>
-              <small className="block text-xs text-color-ass-7 mb-2">
-                What this NFT about or story behind this NFT
-              </small>
-
-              <select
-                value={selectedProjectId}
-                id="select-project"
-                name="selectedProject"
-                {...register("selectedProject", {
-                  required: "Select a project is required.",
-                })}
-              >
-                <option value={""}>Select Project</option>
-                {projectList.map((e) => (
-                  <option key={e.id} value={e.id}>
-                    {e.name}
-                  </option>
-                ))}
-              </select>
-              {errors.selectedProject && (
-                <p className="text-red-500 text-xs font-medium mt-2">
-                  {errors.selectedProject.message}
-                </p>
-              )}
-            </div>
-
-            <div className="mb-6">
-              <label
-                className="block text-sm font-bold font-satoshi-bold"
-                htmlFor="blockchain"
-              >
-                Blockchain
-              </label>
-              <small className="block text-xs text-color-ass-7 mb-2">
-                Choose the blockchain you want to use for this NFT
-              </small>
-              <div className="icon-blockchain">
-                <input
-                  className="block mb-3"
-                  id="blockchain"
-                  name="blockchain"
-                  type="text"
-                  placeholder="Polygon"
-                  {...register("blockchain")}
-                  defaultValue={"Polygon"}
-                  disabled={true}
-                />
-                {errors.blockchain && (
-                  <p className="text-red-500 text-xs font-medium">
-                    {errors.blockchain.message}
-                  </p>
-                )}
+              <div className="text-sm font-bold font-satoshi-bold">
+                Properties
               </div>
-            </div>
+              <small className="block text-xs text-color-ass-7 mb-2">
+                Add the properties on your NFT.
+              </small>
 
-            <div className="mb-6 hidden md:block">
-              <button type="submit" className="btn btn-primary btn-sm">
-                CREATE
-              </button>
-            </div>
-          </form>
-        </div>
-
-        <div className="w-[1px] bg-black-shade-800  mx-11 hidden md:block"></div>
-
-        <div className="flex-1">
-          <div className="mb-6 hidden md:block ">
-            <label
-              className="block text-sm font-bold font-satoshi-bold"
-              htmlFor="dropzone-file"
-            >
-              Upload Assets
-            </label>
-            <small className="block text-xs text-color-ass-7 mb-3">
-              You can add your assets up to 1GB, you can user format
-              Jpeg/Mp4/GIF/PNG/Mp3.
-            </small>
-
-            <div
-              className={`flex justify-center items-center max-w-full ${
-                nftFile.file?.type?.split("/")[0]?.toLowerCase() === "video"
-                  ? ""
-                  : "w-40 h-40"
-              }`}
-            >
-              <label
-                htmlFor="dropzone-file"
-                className={`flex flex-col justify-center items-center w-full  ${
-                  nftFile.file?.type?.split("/")[0]?.toLowerCase() === "video"
-                    ? ""
-                    : "h-40"
-                } ${
-                  nftFile.file ? "" : "bg-black-shade-800"
-                } rounded-xl  cursor-pointer`}
-              >
-                <div className="flex flex-col justify-center items-center pt-5 pb-6">
-                  {nftFile.file ? (
-                    <>
-                      {nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
-                        "image" && (
-                        <img
-                          src={nftFile.path}
-                          className="rounded-xl  max-w-full w-40 h-40 object-cover"
-                        />
-                      )}
-                      {nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
-                        "audio" && (
-                        <audio
-                          ref={audioRef}
-                          src={nftFile.path}
-                          controls
-                          autoPlay={false}
-                          className="ml-28"
-                        />
-                      )}
-                      {nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
-                        "video" && (
-                        <video width="650" height="400" controls>
-                          <source src={nftFile.path} type="video/mp4" />
-                        </video>
-                      )}
-                    </>
-                  ) : (
-                    <>
-                      <svg
-                        width="39"
-                        height="39"
-                        viewBox="0 0 39 39"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          opacity="0.4"
-                          d="M27.8167 38.5097H11.4644C5.0695 38.5097 0.773438 34.0245 0.773438 27.3479V11.9373C0.773438 5.2606 5.0695 0.77356 11.4644 0.77356H27.8186C34.2135 0.77356 38.5095 5.2606 38.5095 11.9373V27.3479C38.5095 34.0245 34.2135 38.5097 27.8167 38.5097Z"
-                          fill="#9499AE"
-                        />
-                        <path
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                          d="M18.2168 13.368C18.2168 15.9529 16.113 18.0567 13.5281 18.0567C10.9413 18.0567 8.83938 15.9529 8.83938 13.368C8.83938 10.783 10.9413 8.67737 13.5281 8.67737C16.113 8.67737 18.2168 10.783 18.2168 13.368ZM33.6045 23.5805C34.0441 24.0069 34.3592 24.4937 34.5667 25.0126C35.195 26.5824 34.8686 28.4692 34.1969 30.0239C33.4007 31.8749 31.8761 33.273 29.9554 33.8843C29.1025 34.1579 28.2082 34.2749 27.3157 34.2749H11.5024C9.92882 34.2749 8.53636 33.9089 7.39484 33.2221C6.67974 32.7919 6.55332 31.8013 7.08352 31.156C7.97031 30.0805 8.84579 29.0013 9.72882 27.9126C11.4118 25.8296 12.5458 25.2258 13.8062 25.756C14.3175 25.9748 14.8307 26.305 15.359 26.6522C16.7666 27.5843 18.7232 28.8635 21.3006 27.4749C23.0623 26.5115 24.085 24.8631 24.9751 23.4283L24.9931 23.3994C25.053 23.3033 25.1124 23.2073 25.1716 23.1116C25.4743 22.6226 25.7724 22.1409 26.1101 21.6975C26.5289 21.1484 28.0837 19.4314 30.0931 20.6541C31.3743 21.4239 32.4516 22.4654 33.6045 23.5805Z"
-                          fill="#9499AE"
-                        />
-                      </svg>
-                      <p className="text-xs mt-2 text-color-ass-8">
-                        Add Assets from
-                      </p>
-                      <p className="text-xs text-primary-color-1">Computer</p>
-                    </>
-                  )}
+              <div className="flex py-3 border-b border-b-black-shade-800">
+                <i className="fa-solid fa-star"></i>
+                <div className="flex-1 px-3">
+                  <p className="-mt-1">Define Properties</p>
+                  <small className="text-color-ass-7">
+                    {definedPropertyList && definedPropertyList.length > 0
+                      ? `${definedPropertyList.length}+ Defined Attributes`
+                      : "Add the properties on your NFT."}
+                  </small>
                 </div>
-
-                <input
-                  id="dropzone-file"
-                  type="file"
-                  className="hidden"
-                  accept="audio/*, image/*, video/*"
-                  onChange={(e) => nftFileChangeHandler(e)}
-                />
-              </label>
-            </div>
-            {isFileError && (
-              <p className="text-red-500 text-xs font-medium mt-2">
-                Please select a vaild file.
-              </p>
-            )}
-          </div>
-          <div className="mb-6">
-            <div className="text-sm font-bold font-satoshi-bold">
-              Properties
-            </div>
-            <small className="block text-xs text-color-ass-7 mb-2">
-              Add the properties on your NFT.
-            </small>
-
-            <div className="flex py-3 border-b border-b-black-shade-800">
-              <i className="fa-solid fa-star"></i>
-              <div className="flex-1 px-3">
-                <p className="-mt-1">Define Properties</p>
-                <small className="text-color-ass-7">
-                  {definedPropertyList && definedPropertyList.length > 0
-                    ? `${definedPropertyList.length}+ Defined Attributes`
-                    : "Add the properties on your NFT."}
-                </small>
+                <i
+                  className="fa-regular fa-square-plus text-2xl cursor-pointer"
+                  onClick={() => setShowDefinedPropertyModal(true)}
+                ></i>
               </div>
-              <i
-                className="fa-regular fa-square-plus text-2xl cursor-pointer"
-                onClick={() => setShowDefinedPropertyModal(true)}
-              ></i>
-            </div>
 
-            <div className="flex py-3 border-b border-b-black-shade-800">
-              <i className="fa-regular fa-grip-lines"></i>
-              <div className="flex-1 px-3">
-                <p className="-mt-1">Properties</p>
-                <small className="text-color-ass-7">Add NFT properties</small>
+              <div className="flex py-3 border-b border-b-black-shade-800">
+                <i className="fa-regular fa-grip-lines"></i>
+                <div className="flex-1 px-3">
+                  <p className="-mt-1">Properties</p>
+                  <small className="text-color-ass-7">Add NFT properties</small>
+                </div>
+                <i
+                  className="fa-regular fa-square-plus text-2xl cursor-pointer"
+                  onClick={() => setShowPropertyModal(true)}
+                ></i>
               </div>
-              <i
-                className="fa-regular fa-square-plus text-2xl cursor-pointer"
-                onClick={() => setShowPropertyModal(true)}
-              ></i>
-            </div>
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-4 mt-2">
-              {propertyList &&
-                propertyList.map((property, index) => (
-                  <>
-                    {property.key.length > 0 && property.value.length && (
-                      <div
-                        key={`properties-${index}`}
-                        className="place-content-center"
-                      >
-                        <div className="h-16 w-24 border rounded text-center  p-2">
-                          <p className="text-primary-color-1 font-semibold">
-                            {property.key}
-                          </p>
-                          <p className="text-sm">{property.value}</p>
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-4 mt-2">
+                {propertyList &&
+                  propertyList.map((property, index) => (
+                    <>
+                      {property.key.length > 0 && property.value.length && (
+                        <div
+                          key={`properties-${index}`}
+                          className="place-content-center"
+                        >
+                          <div className="h-16 w-24 border rounded text-center  p-2">
+                            <p className="text-primary-color-1 font-semibold">
+                              {property.key}
+                            </p>
+                            <p className="text-sm">{property.value}</p>
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </>
-                ))}
+                      )}
+                    </>
+                  ))}
+              </div>
             </div>
           </div>
         </div>
-
-        <div className="mb-6 text-right md:hidden">
+        <div className="text-right fixed-bottom p-4 md:hidden">
           <button type="submit" className="btn btn-primary btn-sm">
             CREATE
           </button>
@@ -1000,8 +995,7 @@ export default function MintNFT(props) {
           handleClose={() => {
             setShowSuccessModal(false);
             history.push(
-              `/project-details/${
-                watch("selectedProject") ? watch("selectedProject") : projectId
+              `/project-details/${watch("selectedProject") ? watch("selectedProject") : projectId
               }`
             );
           }}
