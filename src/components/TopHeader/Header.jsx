@@ -36,7 +36,7 @@ const Header = () => {
         sendMessage(JSON.stringify({ Token: cUser }));
       }
     } else {
-      console.log("no user");
+      // console.log("no user");
     }
   }, [userId]);
 
@@ -60,7 +60,6 @@ const Header = () => {
     }
   }
   function closeSidebar() {
-    console.log("clicked");
     dispatch(setSideBar(false));
     setSideBarKey((pr) => pr + 1);
   }
@@ -79,7 +78,7 @@ const Header = () => {
     if (loc.protocol === "https:") {
       host = "wss:";
     }
-  } catch { }
+  } catch {}
   const socketUrl = `${host}//${config.WEB_SOKET}/ws`;
 
   const {
@@ -91,7 +90,7 @@ const Header = () => {
     getWebSocket,
   } = useWebSocket(socketUrl, {
     onOpen: () => {
-      console.log("webSocket connected");
+      // console.log("webSocket connected");
       const cUser = localStorage.getItem("currentUser");
       if (cUser) {
         sendMessage(JSON.stringify({ Token: cUser }));
@@ -104,7 +103,7 @@ const Header = () => {
   useEffect(() => {
     if (lastMessage !== null) {
       try {
-        console.log(lastMessage);
+        // console.log(lastMessage);
         if (lastMessage.data) {
           const data = JSON.parse(lastMessage.data);
           if (data.type === "functionNotification") {
@@ -208,8 +207,9 @@ const Header = () => {
             )}
 
             <ul
-              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${userId ? "" : "sm:py-2"
-                }`}
+              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${
+                userId ? "" : "sm:py-2"
+              }`}
             >
               {userinfo.id && (
                 <>
@@ -374,7 +374,6 @@ const Header = () => {
             </form>
           </div>
         )}
-
       </nav>
 
       <WalletConnectModal showModal={showModal} closeModal={hideModal} />

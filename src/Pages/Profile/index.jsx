@@ -71,7 +71,7 @@ const Profile = () => {
   const [projectList, setProjectList] = useState([]);
   const [projectListPageNumber, setProjectListPageNumber] = useState(1);
   const [projectListLimit, setProjectListLimit] = useState(10);
-  const [hasMoreProjectListData, setMoreProjectListData] = useState(false);
+  const [hasMoreData, setMoreProjectListData] = useState(false);
 
   // project List End
 
@@ -85,25 +85,43 @@ const Profile = () => {
   // work list
 
   const [workList, setWorkList] = useState([]);
+
   const [nftList, setNftList] = useState([]);
   const [bookmarkList, setBookmarkList] = useState([]);
 
   let initialTabData = [
-    { id: 1, name: "Dao Project List", list: projectList },
-    { id: 2, name: "Works", list: workList },
-    { id: 3, name: "NFTs", list: nftList },
-    { id: 4, name: "Bookmark", list: bookmarkList },
+    {
+      id: 0,
+      name: "Dao Project List",
+      list: projectList,
+      hasMoreData: false,
+    },
+    { id: 1, name: "Works", list: workList, hasMoreData: false },
+    { id: 2, name: "NFTs", list: nftList, hasMoreData: false },
+    {
+      id: 3,
+      name: "Bookmark",
+      list: bookmarkList,
+      hasMoreData: false,
+    },
   ];
   const [activeTab, setActiveTab] = useState(initialTabData[0]);
   const [tabData, setTabData] = useState(initialTabData);
   function OnSetActive(index) {
     setActiveTab(initialTabData[index]);
   }
+  function sortData(index) {
+    activeTab.list = activeTab.list.reverse();
+    console.log(activeTab.list);
+    // setTabKey((pre) => pre + 1);
+    console.log(index);
+    setActiveTab(initialTabData[index]);
+  }
 
   async function onScrollLoadMoreData() {
-    if (hasMore) {
-      setHasMore(false);
-      await userInfo();
+    if (activeTab.hasMoreData) {
+      activeTab.hasMoreData = false;
+      await getProjectList();
     }
   }
 
@@ -115,66 +133,94 @@ const Profile = () => {
     };
 
     await getUserProjectListById(payload).then((e) => {
-      let projectListCards = [];
-      const key = "id";
-      const uniqueProjectList = [
-        ...new Map(e.data.map((item) => [item[key], item])).values(),
-      ];
-      uniqueProjectList.forEach((element) => {
-        // element.category_name = projectCategoryList.find(
-        //   (x) => x.id === element.category_id
-        // ).name;
-        // element.showOverview = true;
-        element.showMembersTag = true;
-      });
-      projectListCards = uniqueProjectList;
-      setTabKey((pre) => pre + 1);
-      const projects = projectList.concat(projectListCards);
-      setProjectList(projects);
-      if (e.data.length === limit) {
-        const pageSize = page + 1;
-        setProjectListPageNumber(pageSize);
-        setMoreProjectListData(true);
+      if (e.data !== null) {
+        let projectListCards = [];
+        const key = "id";
+        const uniqueProjectList = [
+          ...new Map(e.data.map((item) => [item[key], item])).values(),
+        ];
+        uniqueProjectList.forEach((element) => {
+          // element.category_name = projectCategoryList.find(
+          //   (x) => x.id === element.category_id
+          // ).name;
+          // element.showOverview = true;
+          element.showMembersTag = true;
+        });
+        projectListCards = uniqueProjectList;
+        setTabKey((pre) => pre + 1);
+        const projects = projectList.concat(projectListCards);
+        setProjectList(projects);
+        if (e.data.length === limit) {
+          const pageSize = page + 1;
+          setProjectListPageNumber(pageSize);
+          activeTab.hasMoreData = true;
+        }
       }
       setIsLoading(false);
     });
-
-    // let address = localStorage.getItem("walletAddress");
-    // setWalletAddress(address);
-    // let type = "";
-    // if (window.ethereum.networkVersion === "80001") {
-    //   type = "eth";
-    // }
-    // if (address !== null) {
-    //   getExternalNftList(address, type).then((res) => {
-    //     const key = "id.tokenId";
-    //     const uniqueNftList = [
-    //       ...new Map(
-    //         res.external_nft.ownedNfts.map((item) => [
-    //           item["id"]["tokenId"],
-    //           item,
-    //         ])
-    //       ).values(),
-    //     ];
-    //     if (uniqueNftList.length > 0) {
-    //       uniqueNftList.forEach((element) => {
-    //         nftList.push({
-    //           id: element.id.tokenId,
-    //           img: element.metadata.image,
-    //           title: element.title,
-    //           type: "",
-    //           bookmark: "",
-    //           like: "",
-    //           view: "",
-    //           details: element,
-    //         });
-    //       });
-    //     }
-    //   });
-    // }
   }
-  async function getWorksList() {}
-  async function getNftList() {}
+
+  // async function getWorksList() {
+  //   let payload = {
+  //     userId: id,
+  //     page: page,
+  //     perPage: limit,
+  //   };
+  //   // setIsLoading(true);
+  //   await getNftListByProjectId(payload)
+  //     .then((e) => {
+  //       if (e.code === 0 && e.nfts !== null) {
+  //         if (e.nfts.length === limit) {
+  //           let pageSize = page + 1;
+  //           setPage(pageSize);
+  //           setHasMore(true);
+  //         }
+  //         e.nfts.forEach((element) => {
+  //           element.isNft = true;
+  //         });
+  //         const nfts = nftList.concat(e.nfts);
+  //         setNftList(nfts);
+  //       }
+  //       setIsLoading(false);
+  //     })
+  //     .catch(() => {
+  //       setIsLoading(false);
+  //     });
+  // }
+  async function getNftList() {
+    let address = localStorage.getItem("walletAddress");
+    setWalletAddress(address);
+    let type = "";
+    if (window.ethereum.networkVersion === "80001") {
+      type = "eth";
+    }
+    if (address !== null) {
+      getExternalNftList(address, type).then((res) => {
+        const key = "id.tokenId";
+        let nfts = [];
+        const uniqueNftList = [
+          ...new Map(
+            res.external_nft.ownedNfts.map((item) => [
+              item["id"]["tokenId"],
+              item,
+            ])
+          ).values(),
+        ];
+        if (uniqueNftList.length > 0) {
+          uniqueNftList.forEach((element) => {
+            nfts.push({
+              id: element.id.tokenId,
+              path: element.metadata.image,
+              name: element.title,
+              details: element,
+              isNft: true,
+            });
+          });
+          setNftList(nfts);
+        }
+      });
+    }
+  }
   async function getBookmarks() {}
 
   useEffect(() => {
@@ -196,11 +242,20 @@ const Profile = () => {
     getProjectList();
   }, []);
   useEffect(() => {
+    getNftList();
+  }, []);
+  useEffect(() => {
     setProjectList(projectList);
     let oldTabData = [...tabData];
     oldTabData[0].list = projectList;
     setTabData(oldTabData);
   }, [projectList]);
+  useEffect(() => {
+    setNftList(nftList);
+    let oldTabData = [...tabData];
+    oldTabData[2].list = nftList;
+    setTabData(oldTabData);
+  }, [nftList]);
 
   return (
     <>
@@ -400,11 +455,16 @@ const Profile = () => {
           <div>
             {!isLoading && (
               <InfiniteScroll
-                dataLength={projectList.length} //This is important field to render the next data
+                dataLength={activeTab.list.length} //This is important field to render the next data
                 next={onScrollLoadMoreData}
-                hasMore={hasMoreProjectListData}
+                hasMore={activeTab.hasMoreData}
               >
-                <Tab tabs={tabData} key={tabKey} OnSetActive={OnSetActive} />
+                <Tab
+                  tabs={tabData}
+                  key={tabKey}
+                  OnSetActive={OnSetActive}
+                  sortData={sortData}
+                />
               </InfiniteScroll>
             )}
           </div>

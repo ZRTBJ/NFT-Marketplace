@@ -18,16 +18,22 @@ const EmptyCaseCard = (props) => {
             />
             <div className="text-color-ass-2 font-bold text-lg md:text-[26px]">
               You doesn't have any {props.type}.
-              <br /> let’s go create {props.type}!
+              {props.type !== "External NFTs" && (
+                <>
+                  <br /> let’s go create {props.type}!
+                </>
+              )}
             </div>
-            <button
-              type="button"
-              className="btn-outline-primary-gradient btn-md mt-5"
-            >
-              <span>
-                Create New <i className="fa-thin fa-square-plus ml-2"></i>
-              </span>
-            </button>
+            {props.type !== "External NFTs" && (
+              <button
+                type="button"
+                className="btn-outline-primary-gradient btn-md mt-5"
+              >
+                <span>
+                  Create New <i className="fa-thin fa-square-plus ml-2"></i>
+                </span>
+              </button>
+            )}
           </section>
         </>
       ) : (

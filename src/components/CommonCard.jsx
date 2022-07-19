@@ -103,7 +103,7 @@ const CommonCard = ({ project }) => {
                   <span className="ml-1">{project.project_view_count}</span>
                 </div>
                 <div className="flex space-x-2 items-center text-white mr-4">
-                  <i class="fa-thin fa-heart"></i>
+                  <i className="fa-thin fa-heart"></i>
                   <span className="ml-1"> {project.project_like_count}</span>
                 </div>
                 <div className="flex space-x-2 items-center text-white mr-4">
