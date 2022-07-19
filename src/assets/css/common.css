@@ -212,3 +212,15 @@ select {
 .roboto {
   font-family: "Roboto", sans-serif;
 }
+
+/**
+* ======================================================
+* minit nft 
+*=======================================================
+*/
+@media (max-width: 767px) {
+  .nft-wrapper {
+    height: calc(100vh - 180px);
+    overflow: auto;
+  }
+}
