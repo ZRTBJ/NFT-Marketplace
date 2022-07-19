@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import "assets/css/profile.css";
 import profile from "assets/images/profile/profile.svg";
 import profileDummy from "assets/images/profile/profile-dummy.svg";
-
 import Tab from "components/profile/Tab";
 import {
   getUserProjectListById,
@@ -83,7 +82,7 @@ const Profile = () => {
   const [limit, setLimit] = useState(10);
   const [walletAddress, setWalletAddress] = useState(null);
 
-  // project list
+  // work list
 
   const [workList, setWorkList] = useState([]);
   const [nftList, setNftList] = useState([]);

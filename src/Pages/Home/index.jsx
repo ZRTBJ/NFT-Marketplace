@@ -89,19 +89,19 @@ function Home() {
               },
               640: {
                 slidesPerView: 2,
-                spaceBetween: 30,
+                spaceBetween: 15,
               },
               768: {
                 slidesPerView: 3,
-                spaceBetween: 30,
+                spaceBetween: 15,
               },
               1024: {
                 slidesPerView: 4,
-                spaceBetween: 30,
+                spaceBetween: 15,
               },
               1536: {
                 slidesPerView: 5,
-                spaceBetween: 30,
+                spaceBetween: 15,
               },
             }}
             className="swipe-card"
