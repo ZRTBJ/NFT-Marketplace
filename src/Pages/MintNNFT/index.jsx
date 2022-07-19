@@ -2,7 +2,7 @@ import Modal from "components/Modal";
 import ErrorModal from "components/modalDialog/ErrorModal";
 import SuccessModal from "components/modalDialog/SuccessModal";
 import publishModalSvg from "assets/images/modal/publishModalSvg.png";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   generateUploadkey,
@@ -41,7 +41,7 @@ export default function MintNFT(props) {
     },
   ]);
   const [definedPropertyList, setDefinedPropertyList] = useState([]);
-  const [nftImage, setnftImage] = useState({ image: null, path: "" });
+  const [nftFile, setnftFile] = useState({ file: null, path: "" });
   const projectId = props.match.params.id;
   const [isFileError, setFileError] = useState(false);
   const [jobId, setJobId] = useState("");
@@ -51,6 +51,10 @@ export default function MintNFT(props) {
   const [savingNFT, setSavingNFT] = useState(false);
   const [isNFTSaved, setIsNFTSaved] = useState(false);
   const [mintingfuuid, setMintingfuuid] = useState("");
+  const audioRef = useRef();
+  const userinfo = useSelector((state) => state.user.userinfo);
+  const [errorTitle, setErrorTitle] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const {
     register,
@@ -100,7 +104,7 @@ export default function MintNFT(props) {
             }
             setIsLoading(false);
           }
-        } catch { }
+        } catch {}
       }
     }
   }, [projectDeploy]);
@@ -174,11 +178,27 @@ export default function MintNFT(props) {
       });
   }
 
-  function nftImageChangeHandler(event) {
+  function nftFileChangeHandler(event) {
     try {
-      const img = event.currentTarget.files[0];
-      setnftImage({ image: img, path: URL.createObjectURL(img) });
-      setFileError(false);
+      const file = event.currentTarget.files[0];
+      const usedSize = userinfo["storage_usage"];
+      let totalSize = 0;
+      if (usedSize && file) {
+        totalSize = (usedSize + file.size) / 1024 / 1024;
+        if (totalSize > 1024) {
+          setErrorTitle("Maximum file size limit exceeded");
+          setErrorMessage(
+            `You can add your assets up to 1GB. you have a remaining of ${(
+              1024 - totalSize
+            ).toFixed(2)} MB storage`
+          );
+          setShowErrorModal(true);
+          event.currentTarget.value = "";
+        } else {
+          setnftFile({ file: file, path: URL.createObjectURL(file) });
+          setFileError(false);
+        }
+      }
     } catch {
       setFileError(true);
     }
@@ -209,7 +229,7 @@ export default function MintNFT(props) {
 
     let formdata = new FormData();
 
-    formdata.append("file", nftImage.image);
+    formdata.append("file", nftFile.file);
 
     axios({
       method: "POST",
@@ -323,19 +343,19 @@ export default function MintNFT(props) {
                 setShowSuccessModal(true);
               } else if (
                 res["fn_name"] === "createNFTBatch" &&
-                res["fn_status"] === "pending"
+                res["fn_status"] === "processing"
               ) {
                 recheckStatus();
               }
             }
           }
         })
-        .catch((error) => { });
+        .catch((error) => {});
     }, 30000);
   }
 
   const onSubmit = (data) => {
-    if (nftImage && nftImage.image) {
+    if (nftFile && nftFile.file) {
       setFileError(false);
       setShowConfirmationModal(true);
     } else {
@@ -460,17 +480,50 @@ export default function MintNFT(props) {
                 Jpeg/Mp4/GIF/PNG/Mp3.
               </small>
 
-              <div className="flex justify-center items-center max-w-full w-40 h-40">
+              <div
+                className={`flex justify-center items-center max-w-full ${
+                  nftFile.file?.type?.split("/")[0]?.toLowerCase() === "video"
+                    ? ""
+                    : "w-40 h-40"
+                }`}
+              >
                 <label
                   htmlFor="dropzone-file"
-                  className="flex flex-col justify-center items-center w-full h-40 bg-black-shade-800 rounded-xl  cursor-pointer"
+                  className={`flex flex-col justify-center items-center w-full ${
+                    nftFile.file?.type?.split("/")[0]?.toLowerCase() === "video"
+                      ? ""
+                      : "h-40"
+                  } ${
+                    nftFile.file ? "" : "bg-black-shade-800"
+                  } rounded-xl  cursor-pointer`}
                 >
                   <div className="flex flex-col justify-center items-center pt-5 pb-6">
-                    {nftImage.image ? (
-                      <img
-                        src={nftImage.path}
-                        className="rounded-xl  max-w-full w-40 h-40 object-cover"
-                      />
+                    {nftFile.file ? (
+                      <>
+                        {nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
+                          "image" && (
+                          <img
+                            src={nftFile.path}
+                            className="rounded-xl  max-w-full w-40 h-40 object-cover"
+                          />
+                        )}
+                        {nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
+                          "audio" && (
+                          <audio
+                            ref={audioRef}
+                            src={nftFile.path}
+                            controls
+                            autoPlay={false}
+                            className="ml-36"
+                          />
+                        )}
+                        {nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
+                          "video" && (
+                          <video width="650" height="400" controls>
+                            <source src={nftFile.path} type="video/mp4" />
+                          </video>
+                        )}
+                      </>
                     ) : (
                       <>
                         <svg
@@ -504,8 +557,8 @@ export default function MintNFT(props) {
                     id="dropzone-file"
                     type="file"
                     className="hidden"
-                    accept="audio/mpeg3, image/*"
-                    onChange={(e) => nftImageChangeHandler(e)}
+                    accept="audio/*, image/*, video/*"
+                    onChange={(e) => nftFileChangeHandler(e)}
                   />
                 </label>
               </div>
@@ -515,7 +568,6 @@ export default function MintNFT(props) {
                 </p>
               )}
             </div>
-
 
             <div className="mb-6">
               <label
@@ -630,17 +682,50 @@ export default function MintNFT(props) {
               Jpeg/Mp4/GIF/PNG/Mp3.
             </small>
 
-            <div className="flex justify-center items-center max-w-full w-40 h-40">
+            <div
+              className={`flex justify-center items-center max-w-full ${
+                nftFile.file?.type?.split("/")[0]?.toLowerCase() === "video"
+                  ? ""
+                  : "w-40 h-40"
+              }`}
+            >
               <label
                 htmlFor="dropzone-file"
-                className="flex flex-col justify-center items-center w-full h-40 bg-black-shade-800 rounded-xl  cursor-pointer"
+                className={`flex flex-col justify-center items-center w-full  ${
+                  nftFile.file?.type?.split("/")[0]?.toLowerCase() === "video"
+                    ? ""
+                    : "h-40"
+                } ${
+                  nftFile.file ? "" : "bg-black-shade-800"
+                } rounded-xl  cursor-pointer`}
               >
                 <div className="flex flex-col justify-center items-center pt-5 pb-6">
-                  {nftImage.image ? (
-                    <img
-                      src={nftImage.path}
-                      className="rounded-xl  max-w-full w-40 h-40 object-cover"
-                    />
+                  {nftFile.file ? (
+                    <>
+                      {nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
+                        "image" && (
+                        <img
+                          src={nftFile.path}
+                          className="rounded-xl  max-w-full w-40 h-40 object-cover"
+                        />
+                      )}
+                      {nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
+                        "audio" && (
+                        <audio
+                          ref={audioRef}
+                          src={nftFile.path}
+                          controls
+                          autoPlay={false}
+                          className="ml-28"
+                        />
+                      )}
+                      {nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
+                        "video" && (
+                        <video width="650" height="400" controls>
+                          <source src={nftFile.path} type="video/mp4" />
+                        </video>
+                      )}
+                    </>
                   ) : (
                     <>
                       <svg
@@ -674,8 +759,8 @@ export default function MintNFT(props) {
                   id="dropzone-file"
                   type="file"
                   className="hidden"
-                  accept="audio/mpeg3, image/*"
-                  onChange={(e) => nftImageChangeHandler(e)}
+                  accept="audio/*, image/*, video/*"
+                  onChange={(e) => nftFileChangeHandler(e)}
                 />
               </label>
             </div>
@@ -743,17 +828,12 @@ export default function MintNFT(props) {
           </div>
         </div>
 
-
         <div className="mb-6 text-right md:hidden">
           <button type="submit" className="btn btn-primary btn-sm">
             CREATE
           </button>
         </div>
-
-
       </section>
-
-
 
       <Modal
         show={showDefinedPropertyModal}
@@ -920,7 +1000,8 @@ export default function MintNFT(props) {
           handleClose={() => {
             setShowSuccessModal(false);
             history.push(
-              `/project-details/${watch("selectedProject") ? watch("selectedProject") : projectId
+              `/project-details/${
+                watch("selectedProject") ? watch("selectedProject") : projectId
               }`
             );
           }}
@@ -929,8 +1010,14 @@ export default function MintNFT(props) {
       )}
       {showErrorModal && (
         <ErrorModal
-          handleClose={() => setShowErrorModal(false)}
+          handleClose={() => {
+            setShowErrorModal(false);
+            setErrorTitle(null);
+            setErrorMessage(null);
+          }}
           show={showErrorModal}
+          title={errorTitle}
+          message={errorMessage}
         />
       )}
     </div>
