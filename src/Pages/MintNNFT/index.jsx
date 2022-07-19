@@ -436,8 +436,8 @@ export default function MintNFT(props) {
 
   return (
     <div className={` ${isLoading ? "loading" : ""}`}>
-      <section className="flex py-9 flex-col md:flex-row text-white">
-        <div className="nft-wrapper">
+      <section className="text-white">
+        <div className="nft-wrapper flex py-9 flex-col md:flex-row">
           <div className="flex-1">
             <h3 className="mb-8">Start build your NFT</h3>
             <form onSubmit={handleSubmit(onSubmit)}>
