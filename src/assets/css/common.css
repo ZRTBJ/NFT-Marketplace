@@ -206,7 +206,6 @@ select {
   content: "\00d7";
 }
 .validationTag {
-  /* font-family: "Roboto", sans-serif; */
   color: #c82727;
 }
 .roboto {
