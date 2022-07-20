@@ -260,130 +260,141 @@ const DeployingProjectModal = ({
   return (
     <Modal width={800} show={show} handleClose={() => handleClose(false)}>
       <div className={`text-center my-6 ${isLoading ? "loading" : ""}`}>
-        <div className="mx-4">
-          <div>
-            <div className="flex justify-center">
-              <div>
-                <i className="fa fa-check-square fa-xl" aria-hidden="true"></i>
-                <p className="mt-4 text-xs">Fund transfer</p>
-              </div>
-              <div className="h-4 w-36 bg-[#232032]  mt-1"></div>
-              <div>
-                <i
-                  className={`fa fa-check-square fa-xl ${step >= 1 ? "text-white" : "text-gray-700"
-                    }`}
-                  aria-hidden="true"
-                ></i>
-                <p className="mt-4 text-xs">Smartcontrat deployment</p>
-              </div>
+        <div className="md:mx-4">
 
-              <div className="h-4 w-36 bg-[#232032] mt-1"></div>
-              <div>
-                <i
-                  className={`fa fa-check-square fa-xl ${step >= 2 ? "text-white" : "text-gray-700"
-                    }`}
-                  aria-hidden="true"
-                ></i>
-                <p className="mt-4 text-xs">Completed</p>
-              </div>
-            </div>
+          {step === 0 && (
+            <h1>Deplyoing Project...</h1>
+          )}
+
+          {step === 1 && (
+            <h1>Deploying smartcontract...</h1>
+          )}
+
+          {step === 2 && (
+            <h1>Done!</h1>
+          )}
+
+          <div className="hidden md:flex justify-center">
             <div>
-              {step === 0 && (
-                <div className="py-8">
-                  <img className="block mx-auto" src={ico_gas} alt="" />
-                  <div className="text-center my-4">
-                    Estimation of total gas required for these transactions.
-                  </div>
-                  <div className="my-4 bg-[#232032] mx-48 flex flex-row p-6">
-                    <div className="mx-2">
-                      <img className="block mx-auto" src={ico_matic} alt="" />
-                    </div>
-                    <div>Complete Deposit</div>
-                    <div className="ml-8">
-                      <span className="float-right">
-                        {tnxData.amount ? tnxData.amount : 0} MATIC
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
-              {step === 1 && (
-                <div className="py-8 flex justify-center">
-                  <div className="text-center my-4">
-                    <ul className="stepper stepper-vertical">
-                      <li
-                        className={`stepper-step ${deployStatus.step >= 0
-                          ? deployStatus.step === 1 &&
-                            deployStatus.fn_status === "failed"
-                            ? "stepper-failed"
-                            : "stepper-active"
-                          : ""
-                          }`}
-                      >
-                        <div className="stepper-head hover:!bg-transparent">
-                          <span className="stepper-head-icon">
-                            {" "}
-                            <i
-                              className={`fa ${deployStatus.step === 1 &&
-                                deployStatus.fn_status === "failed"
-                                ? "fa-times"
-                                : deployStatus.step === 0
-                                  ? "fa-hourglass"
-                                  : "fa-check"
-                                }`}
-                              aria-hidden="true"
-                            ></i>{" "}
-                          </span>
-                          <span className="stepper-head-text text-sm">
-                            {" "}
-                            Erc20 Deployment{" "}
-                          </span>
-                        </div>
-                      </li>
-                      <li
-                        className={`stepper-step ${deployStatus.step >= 1
-                          ? deployStatus.step === 2 &&
-                            deployStatus.fn_status === "failed"
-                            ? "stepper-failed"
-                            : "stepper-active"
-                          : ""
-                          }`}
-                      >
-                        <div className="stepper-head hover:!bg-transparent">
-                          <span className="stepper-head-icon">
-                            {" "}
-                            <i
-                              className={`fa ${deployStatus.step === 2 &&
-                                deployStatus.fn_status === "failed"
-                                ? "fa-times"
-                                : deployStatus.step === 1
-                                  ? "fa-hourglass"
-                                  : "fa-check"
-                                }`}
-                              aria-hidden="true"
-                            ></i>{" "}
-                          </span>
-                          <span className="stepper-head-text text-sm">
-                            {" "}
-                            ProjectToken Deployment{" "}
-                          </span>
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              )}
-              {step === 2 && (
-                <div className="py-8 flex justify-center">
-                  <div className="text-center mt-12">
-                    <img className="block mx-auto" src={IconSuccess} alt="" />
-                    <div className="my-4 text-xl font-bold  draftModalText">
-                      Congratulation! you success creating project!
-                    </div>
-                  </div>
-                </div>
-              )}
+              <i className="fa fa-check-square fa-xl" aria-hidden="true"></i>
+              <p className="mt-4 text-xs">Fund transfer</p>
             </div>
+            <div className="h-4 w-36 bg-[#232032]  mt-1"></div>
+            <div>
+              <i
+                className={`fa fa-check-square fa-xl ${step >= 1 ? "text-white" : "text-gray-700"
+                  }`}
+                aria-hidden="true"
+              ></i>
+              <p className="mt-4 text-xs">Smartcontrat deployment</p>
+            </div>
+
+            <div className="h-4 w-36 bg-[#232032] mt-1"></div>
+            <div>
+              <i
+                className={`fa fa-check-square fa-xl ${step >= 2 ? "text-white" : "text-gray-700"
+                  }`}
+                aria-hidden="true"
+              ></i>
+              <p className="mt-4 text-xs">Completed</p>
+            </div>
+          </div>
+          <div>
+            {step === 0 && (
+              <div className="py-8">
+                <img className="block mx-auto" src={ico_gas} alt="" />
+                <div className="text-center my-4">
+                  Estimation of total gas required for these transactions.
+                </div>
+                <div className="my-4 bg-[#232032] md:mx-48 flex flex-row p-6">
+                  <div className="mx-2">
+                    <img className="block mx-auto" src={ico_matic} alt="" />
+                  </div>
+                  <div>Complete Deposit</div>
+                  <div className="ml-8">
+                    <span className="float-right">
+                      {tnxData.amount ? tnxData.amount : 0} MATIC
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+            {step === 1 && (
+              <div className="py-8 flex justify-center">
+                <div className="text-center my-4">
+                  <ul className="stepper stepper-vertical">
+                    <li
+                      className={`stepper-step ${deployStatus.step >= 0
+                        ? deployStatus.step === 1 &&
+                          deployStatus.fn_status === "failed"
+                          ? "stepper-failed"
+                          : "stepper-active"
+                        : ""
+                        }`}
+                    >
+                      <div className="stepper-head hover:!bg-transparent">
+                        <span className="stepper-head-icon">
+                          {" "}
+                          <i
+                            className={`fa ${deployStatus.step === 1 &&
+                              deployStatus.fn_status === "failed"
+                              ? "fa-times"
+                              : deployStatus.step === 0
+                                ? "fa-hourglass"
+                                : "fa-check"
+                              }`}
+                            aria-hidden="true"
+                          ></i>{" "}
+                        </span>
+                        <span className="stepper-head-text text-sm">
+                          {" "}
+                          Erc20 Deployment{" "}
+                        </span>
+                      </div>
+                    </li>
+                    <li
+                      className={`stepper-step ${deployStatus.step >= 1
+                        ? deployStatus.step === 2 &&
+                          deployStatus.fn_status === "failed"
+                          ? "stepper-failed"
+                          : "stepper-active"
+                        : ""
+                        }`}
+                    >
+                      <div className="stepper-head hover:!bg-transparent">
+                        <span className="stepper-head-icon">
+                          {" "}
+                          <i
+                            className={`fa ${deployStatus.step === 2 &&
+                              deployStatus.fn_status === "failed"
+                              ? "fa-times"
+                              : deployStatus.step === 1
+                                ? "fa-hourglass"
+                                : "fa-check"
+                              }`}
+                            aria-hidden="true"
+                          ></i>{" "}
+                        </span>
+                        <span className="stepper-head-text text-sm">
+                          {" "}
+                          ProjectToken Deployment{" "}
+                        </span>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            )}
+            {step === 2 && (
+              <div className="py-8 flex justify-center">
+                <div className="text-center mt-12">
+                  <img className="block mx-auto" src={IconSuccess} alt="" />
+                  <div className="my-4 text-xl font-bold  draftModalText">
+                    Congratulation! you success creating project!
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
         {step === 0 && (
@@ -402,7 +413,7 @@ const DeployingProjectModal = ({
           <div className="flex justify-center">
             <button
               type="button"
-              className="btn-outline-primary-gradient h-[38px] cursor-pointer disabled:opacity-50 disabled:bg-gray-500 mr-4"
+              className="btn btn-outline-primary-gradient btn-md cursor-pointer disabled:opacity-50 disabled:bg-gray-500 mr-4"
               onClick={() => {
                 window.open(
                   `https://mumbai.polygonscan.com/tx/${tnxHash ? tnxHash : ""}`,
@@ -412,7 +423,7 @@ const DeployingProjectModal = ({
               }}
               disabled={tnxHash && tnxHash.length > 1 ? false : true}
             >
-              <span className="text-base">&nbsp;{btnText}&nbsp;&nbsp;</span>
+              <span className="px-4">{btnText}</span>
             </button>
             {step === 1 && (
               <button
