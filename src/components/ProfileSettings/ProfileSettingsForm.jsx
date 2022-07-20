@@ -86,7 +86,7 @@ const ProfileSettingsForm = () => {
           console.log(ex);
         }
       }
-    } catch { }
+    } catch {}
     dispatch(setUserInfo(userinfo));
     setIsLoading(false);
   }
@@ -135,15 +135,15 @@ const ProfileSettingsForm = () => {
     request.append("first_name", data["firstName"]);
     request.append("last_name", data["lastName"]);
     request.append("display_name", data["displayName"]);
-    request.append("email", data["emailAddress"]);
+    // request.append("email", data["emailAddress"]);
     request.append("job", data["jobDescription"]);
     request.append("area", data["locationArea"]);
-    try {
-      request.append(
-        "country",
-        document.getElementById("location-country")?.value
-      );
-    } catch { }
+    // try {
+    //   request.append(
+    //     "country",
+    //     document.getElementById("location-country")?.value
+    //   );
+    // } catch {}
     request.append("biography", data["biography"]);
     if (profileImage.image) {
       request.append("avatar", profileImage.image);
@@ -260,9 +260,11 @@ const ProfileSettingsForm = () => {
               you can use your name or your nickname.
             </div>
             <input
-              className={`block w-full border ${errors.displayName ? "border-red-500" : "border-dark-300"
-                } rounded py-3 px-4 mb-3 leading-tight ${errors.displayName ? "focus:border focus:border-red-500" : ""
-                }`}
+              className={`block w-full border ${
+                errors.displayName ? "border-red-500" : "border-dark-300"
+              } rounded py-3 px-4 mb-3 leading-tight ${
+                errors.displayName ? "focus:border focus:border-red-500" : ""
+              }`}
               id="display-name"
               name="displayName"
               type="text"
@@ -327,7 +329,7 @@ const ProfileSettingsForm = () => {
             <div className="inline-flex items-center w-full">
               <img
                 className="cp mr-2 mb-3"
-                src={require(`assets/images/profile/social/insta-icon.png`)}
+                src={require(`assets/images/profile/social/linkInsta.png`)}
                 height={24}
                 width={24}
                 alt="social logo"
@@ -344,7 +346,7 @@ const ProfileSettingsForm = () => {
             <div className="inline-flex items-center w-full">
               <img
                 className="cp mr-2 mb-3"
-                src={require(`assets/images/profile/social/reddit-icon.png`)}
+                src={require(`assets/images/profile/social/linkReddit.png`)}
                 height={24}
                 width={24}
                 alt="social logo"
@@ -362,7 +364,7 @@ const ProfileSettingsForm = () => {
             <div className="inline-flex items-center w-full">
               <img
                 className="cp mr-2 mb-3"
-                src={require(`assets/images/profile/social/twitter-icon.png`)}
+                src={require(`assets/images/profile/social/linkTwitter.png`)}
                 height={24}
                 width={24}
                 alt="social logo"
@@ -380,7 +382,7 @@ const ProfileSettingsForm = () => {
             <div className="inline-flex items-center w-full">
               <img
                 className="cp mr-2 mb-3"
-                src={require(`assets/images/profile/social/facebook-icon.png`)}
+                src={require(`assets/images/profile/social/linkFacebook.png`)}
                 height={24}
                 width={24}
                 alt="social logo"
@@ -431,7 +433,7 @@ const ProfileSettingsForm = () => {
         <div className="flex flex-wrap mb-6">
           <div className="w-full px-3 grid grid-cols-3">
             <div>
-              {/* <button
+              <button
                 type="button"
                 className="btn-outline-primary-gradient w-[100px] h-[38px]"
                 onClick={(e) => {
@@ -439,7 +441,7 @@ const ProfileSettingsForm = () => {
                 }}
               >
                 <span>Show More</span>
-              </button> */}
+              </button>
             </div>
             <div className="text-right">
               {/* <button
@@ -458,10 +460,7 @@ const ProfileSettingsForm = () => {
               >
                 Skip
               </button> */}
-              <button
-                type="submit"
-                className="btn btn-primary btn-sm"
-              >
+              <button type="submit" className="btn btn-primary btn-sm">
                 Save
               </button>
             </div>

@@ -49,7 +49,8 @@ const Sidebar = ({ show, handleClose }) => {
       history.push(`/${type}`);
     }
   }
-  function hideModal() {
+  function hideModal(e) {
+    e.preventDefault();
     dispatch(setSideBar(false));
   }
 
@@ -60,7 +61,7 @@ const Sidebar = ({ show, handleClose }) => {
 
   return (
     <div style={openStyle} className="sidenav" ref={ref}>
-      <div className="closebtn cp" onClick={handleClose}>
+      <div className="closebtn cp" onClick={(e) => handleClose(e)}>
         &times;
       </div>
       <div className="sidebarLinksContainer flex flex-col">

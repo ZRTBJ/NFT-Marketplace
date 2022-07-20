@@ -21,20 +21,25 @@ const Tab = (props) => {
     setActive(type);
     props.OnSetActive(index);
   }
+  function sortData(index) {
+    props.sortData(index);
+  }
   return (
     <>
       <div className="flex-wrap justify-center hidden md:flex">
         {props.tabs.map((type, index) => (
           <button
-            className={`text-white-shade-600 p-3 hover:text-primary-900 active:text-primary-900 ${
-              active.name === type.name ? "text-primary-900" : ""
+            className={` p-3 hover:text-primary-900 active:text-primary-900 ${
+              active.id === type.id
+                ? " text-primary-900 "
+                : "text-white-shade-600"
             }`}
             key={type.id}
             onClick={() => OnSetActive(type, index)}
           >
             {type.name}
             <span className="bg-primary-50 text-color-ass-1 p-1 ml-1 rounded-sm text-sm">
-              {active.list.length}
+              {type.list.length}
             </span>
           </button>
         ))}
@@ -42,22 +47,33 @@ const Tab = (props) => {
       <section className="flex mt-7">
         {userData.id && userData.id === id ? (
           <>
-            <button type="button" className="btn btn-primary btn-sm">
-              <Link to="/project-create">
-                Create New <i className="fa-thin fa-square-plus ml-1"></i>
-              </Link>
-            </button>
+            {active.name !== "NFTs" && active.name !== "Bookmark" && (
+              <button type="button" className="btn btn-primary btn-sm">
+                {active.name === "Dao Project List" ? (
+                  <Link to="/project-create">
+                    Create New <i className="fa-thin fa-square-plus ml-1"></i>
+                  </Link>
+                ) : (
+                  <Link to="/undefined/mint-nft">
+                    Create New <i className="fa-thin fa-square-plus ml-1"></i>
+                  </Link>
+                )}
+              </button>
+            )}
           </>
         ) : (
           <></>
         )}
 
-        <button
-          type="button"
-          className="ml-auto btn btn-outline-primary btn-sm"
-        >
-          Sort By <i className="fa-thin fa-arrow-down-short-wide ml-1"></i>
-        </button>
+        {active.list.length > 0 && (
+          <button
+            type="button"
+            className="ml-auto btn btn-outline-primary btn-sm"
+            onClick={() => sortData(active.id)}
+          >
+            Sort By <i className="fa-thin fa-arrow-down-short-wide ml-1"></i>
+          </button>
+        )}
       </section>
 
       <div className="tabContent">
@@ -79,47 +95,74 @@ const Tab = (props) => {
             
 
             */}
-
-            <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300 py-5">
+            <div>
               {active.list.length === 0 ? (
-                <ProfileEmptyCaseCard type={"Project"}></ProfileEmptyCaseCard>
+                <ProfileEmptyCaseCard
+                  className="mx-auto"
+                  type={"Project"}
+                ></ProfileEmptyCaseCard>
               ) : (
-                <>
+                <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300 py-5">
                   {active.list.map((list) => (
                     <div>
                       <CommonCard key={list.id} project={list} />
                     </div>
                   ))}
-                </>
+                </div>
               )}
             </div>
           </>
         )}
         {active.name === "Works" && (
-          <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300 py-5">
-            {active.list.map((list) => (
-              <div onClick={() => openModal(list)}>
-                <CommonCard key={list.id} project={list} />
+          <>
+            {active.list.length === 0 ? (
+              <ProfileEmptyCaseCard
+                className="mx-auto"
+                type={"Works"}
+              ></ProfileEmptyCaseCard>
+            ) : (
+              <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300 py-5">
+                {active.list.map((list) => (
+                  <CommonCard key={list.id} project={list} />
+                ))}
               </div>
-            ))}
-          </div>
+            )}
+          </>
         )}
         {active.name === "NFTs" && (
-          <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300 py-5">
-            {active.list.map((list) => (
-              <div>
-                <CommonCard key={list.id} project={list} />
+          <>
+            {active.list.length === 0 ? (
+              <ProfileEmptyCaseCard
+                className="mx-auto"
+                type={"External NFTs"}
+              ></ProfileEmptyCaseCard>
+            ) : (
+              <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300 py-5">
+                {active.list.map((list) => (
+                  <div onClick={() => openModal(list)}>
+                    <CommonCard key={list.id} project={list} />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            )}
+          </>
         )}
         {active.name === "Bookmark" && (
-          <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300 py-5">
-            {active.list.map((list) => (
-              <div>
-                <CommonCard key={list.id} project={list} />
+          <div>
+            {active.list.length === 0 ? (
+              <ProfileEmptyCaseCard
+                className="mx-auto"
+                type={"Bookmark"}
+              ></ProfileEmptyCaseCard>
+            ) : (
+              <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300 py-5">
+                {active.list.map((list) => (
+                  <div>
+                    <CommonCard key={list.id} project={list} />
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
         )}
       </div>
@@ -129,8 +172,8 @@ const Tab = (props) => {
             <div className="flex">
               <div>
                 <img
-                  src={modalInfo.img}
-                  className="h-[250px] w-[400px] rounded "
+                  src={modalInfo.path}
+                  className="h-[250px] w-[400px] rounded object-cover"
                   alt=""
                 />
                 <div className="mt-3 font-bold">{modalInfo.title}</div>
