@@ -29,7 +29,7 @@ const DeployingProjectModal = ({
 }) => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const btnText = buttomText ? buttomText : "View on EtherScan";
+  const btnText = buttomText ? buttomText : "View on Polygonscan";
   const selectedWallet = getWalletType();
   const [step, setStep] = useState(publishStep ? publishStep : 0);
   const [isLoading, setIsLoading] = useState(false);
@@ -265,25 +265,23 @@ const DeployingProjectModal = ({
             <div className="flex justify-center">
               <div>
                 <i className="fa fa-check-square fa-xl" aria-hidden="true"></i>
-                <p className="mt-4 text-xs">Deploying Project</p>
+                <p className="mt-4 text-xs">Fund transfer</p>
               </div>
               <div className="h-4 w-36 bg-[#232032]  mt-1"></div>
               <div>
                 <i
-                  className={`fa fa-check-square fa-xl ${
-                    step >= 1 ? "text-white" : "text-gray-700"
-                  }`}
+                  className={`fa fa-check-square fa-xl ${step >= 1 ? "text-white" : "text-gray-700"
+                    }`}
                   aria-hidden="true"
                 ></i>
-                <p className="mt-4 text-xs">Deploying Smartcontrat</p>
+                <p className="mt-4 text-xs">Smartcontrat deployment</p>
               </div>
 
               <div className="h-4 w-36 bg-[#232032] mt-1"></div>
               <div>
                 <i
-                  className={`fa fa-check-square fa-xl ${
-                    step >= 2 ? "text-white" : "text-gray-700"
-                  }`}
+                  className={`fa fa-check-square fa-xl ${step >= 2 ? "text-white" : "text-gray-700"
+                    }`}
                   aria-hidden="true"
                 ></i>
                 <p className="mt-4 text-xs">Completed</p>
@@ -310,31 +308,29 @@ const DeployingProjectModal = ({
                 </div>
               )}
               {step === 1 && (
-                <div className="py-8 flex flex justify-center">
+                <div className="py-8 flex justify-center">
                   <div className="text-center my-4">
                     <ul className="stepper stepper-vertical">
                       <li
-                        className={`stepper-step ${
-                          deployStatus.step >= 0
-                            ? deployStatus.step === 1 &&
-                              deployStatus.fn_status === "failed"
-                              ? "stepper-failed"
-                              : "stepper-active"
-                            : ""
-                        }`}
+                        className={`stepper-step ${deployStatus.step >= 0
+                          ? deployStatus.step === 1 &&
+                            deployStatus.fn_status === "failed"
+                            ? "stepper-failed"
+                            : "stepper-active"
+                          : ""
+                          }`}
                       >
                         <div className="stepper-head hover:!bg-transparent">
                           <span className="stepper-head-icon">
                             {" "}
                             <i
-                              className={`fa ${
-                                deployStatus.step === 1 &&
+                              className={`fa ${deployStatus.step === 1 &&
                                 deployStatus.fn_status === "failed"
-                                  ? "fa-times"
-                                  : deployStatus.step === 0
+                                ? "fa-times"
+                                : deployStatus.step === 0
                                   ? "fa-hourglass"
                                   : "fa-check"
-                              }`}
+                                }`}
                               aria-hidden="true"
                             ></i>{" "}
                           </span>
@@ -345,27 +341,25 @@ const DeployingProjectModal = ({
                         </div>
                       </li>
                       <li
-                        className={`stepper-step ${
-                          deployStatus.step >= 1
-                            ? deployStatus.step === 2 &&
-                              deployStatus.fn_status === "failed"
-                              ? "stepper-failed"
-                              : "stepper-active"
-                            : ""
-                        }`}
+                        className={`stepper-step ${deployStatus.step >= 1
+                          ? deployStatus.step === 2 &&
+                            deployStatus.fn_status === "failed"
+                            ? "stepper-failed"
+                            : "stepper-active"
+                          : ""
+                          }`}
                       >
                         <div className="stepper-head hover:!bg-transparent">
                           <span className="stepper-head-icon">
                             {" "}
                             <i
-                              className={`fa ${
-                                deployStatus.step === 2 &&
+                              className={`fa ${deployStatus.step === 2 &&
                                 deployStatus.fn_status === "failed"
-                                  ? "fa-times"
-                                  : deployStatus.step === 1
+                                ? "fa-times"
+                                : deployStatus.step === 1
                                   ? "fa-hourglass"
                                   : "fa-check"
-                              }`}
+                                }`}
                               aria-hidden="true"
                             ></i>{" "}
                           </span>
@@ -380,7 +374,7 @@ const DeployingProjectModal = ({
                 </div>
               )}
               {step === 2 && (
-                <div className="py-8 flex flex justify-center">
+                <div className="py-8 flex justify-center">
                   <div className="text-center mt-12">
                     <img className="block mx-auto" src={IconSuccess} alt="" />
                     <div className="my-4 text-xl font-bold  draftModalText">
