@@ -261,19 +261,19 @@ const DeployingProjectModal = ({
     <Modal width={800} show={show} handleClose={() => handleClose(false)}>
       <div className={`text-center my-6 ${isLoading ? "loading" : ""}`}>
         <div className="md:mx-4">
+          <div className=" md:hidden">
+            {step === 0 && (
+              <h1>Deplyoing Project...</h1>
+            )}
 
-          {step === 0 && (
-            <h1>Deplyoing Project...</h1>
-          )}
+            {step === 1 && (
+              <h1>Deploying smartcontract...</h1>
+            )}
 
-          {step === 1 && (
-            <h1>Deploying smartcontract...</h1>
-          )}
-
-          {step === 2 && (
-            <h1>Done!</h1>
-          )}
-
+            {step === 2 && (
+              <h1>Done!</h1>
+            )}
+          </div>
           <div className="hidden md:flex justify-center">
             <div>
               <i className="fa fa-check-square fa-xl" aria-hidden="true"></i>
