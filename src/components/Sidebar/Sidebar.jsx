@@ -34,7 +34,7 @@ const Sidebar = ({ show, handleClose }) => {
     let userinfoResponse;
     try {
       userinfoResponse = response["user"];
-    } catch {}
+    } catch { }
     dispatch(setUserInfo(userinfoResponse));
   }
   const history = useHistory();
@@ -65,16 +65,16 @@ const Sidebar = ({ show, handleClose }) => {
         &times;
       </div>
       <div className="sidebarLinksContainer flex flex-col">
-        <div className="pt-10 mx-auto pb-5">
+        <div className="pt-10 pr-10 pb-5 pl-[52px]">
           {userinfo["avatar"] ? (
             <img
-              className="rounded-full border border-gray-100 shadow-sm mb-3 h-16 object-cover"
+              className="rounded-full w-[57px] h-[57px] mb-3 object-cover"
               src={userinfo["avatar"]}
-              width={64}
+              width={57}
               alt={userinfo["display_name"]}
             />
           ) : (
-            <div className="rounded-full  h-[100px] w-[100px] bg-[grey] shadow-sm mb-3 "></div>
+            <div className="rounded-full h-[57px] w-[57px] bg-[grey] mb-3 "></div>
           )}
 
           <h4 className="font-satoshi-bold font-black text-white text-base">
@@ -101,18 +101,18 @@ const Sidebar = ({ show, handleClose }) => {
             className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-white rounded  active:bg-primary-500 active:text-white last:mt-auto  bg-primary-500 text-white cursor-pointer"
           >
             <i className="fa-regular fa-user"></i>
-            <span className="ml-2"> PROFILE</span>
+            <span className="ml-2">Profile</span>
           </div>
           <div
             onClick={() => navigateTo("project-create")}
             className="flex cursor-pointer items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-primary-500 ease-in-out duration-300 hover:text-white rounded  active:bg-primary-500 active:text-white last:mt-auto"
           >
             <i className="fa-regular fa-circle-plus"></i>
-            <span className="ml-2"> Create Project</span>
+            <span className="ml-2">Create Project</span>
           </div>
           <div className="flex items-center  cursor-pointer font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-primary-500 ease-in-out duration-300 hover:text-white rounded  active:bg-primary-500 active:text-white last:mt-auto">
             <i className="fa-regular fa-cubes-stacked"></i>
-            <span className="ml-2"> Ecosystem</span>
+            <span className="ml-2">Ecosystem</span>
           </div>
         </div>
       </div>

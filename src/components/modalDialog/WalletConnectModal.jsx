@@ -172,43 +172,40 @@ const WalletConnectModal = ({ showModal, closeModal, navigateToPage }) => {
         handleClose={() => closeModal()}
       >
         <div
-          className={`text-center px-[11px] md:px-[0px] text-[#FFFFFF] ${
-            isLoading ? "loading" : ""
-          }`}
+          className={`text-center px-[11px] md:px-[0px] text-[#FFFFFF] ${isLoading ? "loading" : ""
+            }`}
         >
-          <div className="mt-[10px] font-black text-[28px] ">
+          <h1 className="mt-[10px]">
             Connect wallet
-          </div>
-          <div className="mt-[12px] text-[#9499AE] font-bold">
+          </h1>
+          <p className="mt-3 text-white-shade-600 font-bold">
             Connect with one of our available wallet providers or create a new
             one.
-          </div>
+          </p>
           <div className="mt-[26px]">
             <div
-              className="w-full max-w-[355px] cursor-pointer h-[52px] bg-[#31224E] rounded-lg block mx-auto px-[14px]"
+              className="w-full max-w-[355px] cursor-pointer  h-[52px] bg-color-primary-1 rounded-lg block mx-auto px-[14px]"
               onClick={handleConnectWallet}
             >
               <div className="flex items-center  pt-[10px]">
                 <div className="flex items-center">
                   <img
-                    className="h-[32px] w-[32px] "
+                    className="h-8 w-8"
                     src={metamaskIcon}
                     alt="metamask wallet login button"
                   />
-                  <div className="ml-[11px]">
+                  <div className="ml-[11px] font-satoshi-bold font-black">
                     {metamaskAccount ? (
-                      <span>
-                        <p>
-                          Login with Address: {metamaskAccount.substring(0, 5)}
-                          ...{" "}
-                        </p>
-                      </span>
+                      <p>
+                        Login with Address: {metamaskAccount.substring(0, 5)}
+                        ...{" "}
+                      </p>
                     ) : (
                       <span>MetaMask</span>
                     )}
                   </div>
                 </div>
-                <div className="ml-auto bg-[#9A5AFF] px-2 py-1 text-[10px] rounded font-black text-[#000000]">
+                <div className="ml-auto bg-primary-900 px-2 py-1 text-[10px] rounded font-satoshi-bold font-black text-black">
                   Popular
                 </div>
               </div>
@@ -223,7 +220,7 @@ const WalletConnectModal = ({ showModal, closeModal, navigateToPage }) => {
                   src={torusIcon}
                   alt="Touras wallet login button"
                 />
-                <div className="ml-[11px]">
+                <div className="ml-[11px] font-satoshi-bold font-black">
                   {torusAccountInfo == null ? (
                     <div className="torusButtonLabel">Torus</div>
                   ) : (
@@ -245,15 +242,15 @@ const WalletConnectModal = ({ showModal, closeModal, navigateToPage }) => {
                 onChange={(e) => handelTermsChecked(e.target.checked)}
               />
               <div>
-                <div className="text-left ml-[8px] font-bold text-[14px]">
+                <div className="text-left ml-[8px] font-medium text-sm">
                   I read and accept{" "}
-                  <span className="text-[#5C008D]">Terms Of services</span> and{" "}
+                  <span className="text-primary-900">Terms Of services</span> and{" "}
                   <br />
-                  <span className="text-[#5C008D]"> Privacy Policy</span>
+                  <span className="text-primary-900"> Privacy Policy</span>
                 </div>
                 {showMessage && (
                   <div className="validationTag">
-                    please accept terms and conditions
+                    Please accept terms and conditions
                   </div>
                 )}
               </div>
