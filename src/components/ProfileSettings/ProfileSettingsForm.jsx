@@ -135,15 +135,15 @@ const ProfileSettingsForm = () => {
     request.append("first_name", data["firstName"]);
     request.append("last_name", data["lastName"]);
     request.append("display_name", data["displayName"]);
-    request.append("email", data["emailAddress"]);
+    // request.append("email", data["emailAddress"]);
     request.append("job", data["jobDescription"]);
     request.append("area", data["locationArea"]);
-    try {
-      request.append(
-        "country",
-        document.getElementById("location-country")?.value
-      );
-    } catch {}
+    // try {
+    //   request.append(
+    //     "country",
+    //     document.getElementById("location-country")?.value
+    //   );
+    // } catch {}
     request.append("biography", data["biography"]);
     if (profileImage.image) {
       request.append("avatar", profileImage.image);
@@ -151,7 +151,7 @@ const ProfileSettingsForm = () => {
     if (coverPhoto) {
       request.append("cover", coverPhoto.image);
     }
-    // request.append("web", JSON.stringify(web));
+    request.append("web", JSON.stringify(web));
     request.append("social", JSON.stringify(social));
     setIsLoading(true);
     updateUserInfo(userId, request)
@@ -433,7 +433,7 @@ const ProfileSettingsForm = () => {
         <div className="flex flex-wrap mb-6">
           <div className="w-full px-3 grid grid-cols-3">
             <div>
-              {/* <button
+              <button
                 type="button"
                 className="btn-outline-primary-gradient w-[100px] h-[38px]"
                 onClick={(e) => {
@@ -441,7 +441,7 @@ const ProfileSettingsForm = () => {
                 }}
               >
                 <span>Show More</span>
-              </button> */}
+              </button>
             </div>
             <div className="text-right">
               {/* <button

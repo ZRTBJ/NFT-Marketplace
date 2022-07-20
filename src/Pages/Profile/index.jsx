@@ -8,7 +8,10 @@ import {
   getExternalNftList,
   getProjectCategory,
 } from "services/project/projectService";
-import { getUserInfo } from "services/User/userService";
+import {
+  getUserInfo,
+  getUserBookmarkedProjectList,
+} from "services/User/userService";
 import { Link, useParams } from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { getNftListByUserId } from "services/nft/nftService";
@@ -19,7 +22,6 @@ const Profile = () => {
   const [user, setUser] = useState({});
   const [websiteList, setWebsiteList] = useState([]);
   const [sncList, setsncList] = useState([]);
-  console.log(sncList);
 
   // user General data end
 
@@ -56,6 +58,8 @@ const Profile = () => {
 
   // bookmark start
   const [bookmarkList, setBookmarkList] = useState([]);
+  const [bookmarkListPageNumber, setbookmarkListPageNumber] = useState(1);
+  const [bookmarkListLimit, setBookmarkListLimit] = useState(10);
   // bookmark end
 
   const [isLoading, setIsLoading] = useState(true);
@@ -118,9 +122,13 @@ const Profile = () => {
   }
 
   async function onScrollLoadMoreData() {
-    if (activeTab.hasMoreData) {
+    if (activeTab.id === 0 && activeTab.hasMoreData) {
       activeTab.hasMoreData = false;
       await getProjectList();
+    }
+    if (activeTab.id === 3 && activeTab.hasMoreData) {
+      activeTab.hasMoreData = false;
+      await getBookmarks();
     }
   }
 
@@ -147,7 +155,9 @@ const Profile = () => {
         if (e.data.length === projectListLimit) {
           const pageSize = projectListPageNumber + 1;
           setProjectListPageNumber(pageSize);
-          activeTab.hasMoreData = true;
+          if (activeTab.id === 0) {
+            activeTab.hasMoreData = true;
+          }
         }
       }
       setIsLoading(false);
@@ -163,17 +173,17 @@ const Profile = () => {
     await getNftListByUserId(payload)
       .then((e) => {
         if (e.code === 0 && e.nfts !== null) {
-          console.log(e);
+          e.nfts.forEach((element) => {
+            element.isNft = true;
+          });
           // if (e.nfts.length === workListLimit) {
           //   let pageSize = workListPageNumber + 1;
           //   setWorkListPageNumber(pageSize);
           //   activeTab.hasMoreData = true;
           // }
-          // e.nfts.forEach((element) => {
-          //   element.isNft = true;
-          // });
           // const nfts = workList.concat(e.nfts);
-          // setWorkList(nfts);
+
+          setWorkList(e.nfts);
         }
       })
       .catch(() => {
@@ -181,14 +191,12 @@ const Profile = () => {
       });
   }
   async function getNftList() {
-    let address = localStorage.getItem("walletAddress");
-    setWalletAddress(address);
     let type = "";
     if (window.ethereum.networkVersion === "80001") {
       type = "eth";
     }
-    if (address !== null) {
-      getExternalNftList(address, type).then((res) => {
+    if (walletAddress) {
+      getExternalNftList(walletAddress, type).then((res) => {
         const key = "id.tokenId";
         let nfts = [];
         const uniqueNftList = [
@@ -214,7 +222,36 @@ const Profile = () => {
       });
     }
   }
-  async function getBookmarks() {}
+  async function getBookmarks() {
+    let payload = {
+      userID: id,
+      page: bookmarkListPageNumber,
+      limit: bookmarkListLimit,
+    };
+    await getUserBookmarkedProjectList(payload).then((e) => {
+      if (e.projects !== null) {
+        let bookmarkProjectListCards = [];
+        const key = "id";
+        const uniqueProjectList = [
+          ...new Map(e.projects.map((item) => [item[key], item])).values(),
+        ];
+        uniqueProjectList.forEach((element) => {
+          element.showMembersTag = true;
+        });
+        bookmarkProjectListCards = uniqueProjectList;
+        // setTabKey((pre) => pre + 1);
+        const projects = bookmarkList.concat(bookmarkProjectListCards);
+        setBookmarkList(projects);
+        if (e.projects.length === bookmarkListLimit) {
+          console.log("entry");
+          const pageSize = bookmarkListPageNumber + 1;
+          setbookmarkListPageNumber(pageSize);
+          let oldTabData = [...tabData];
+          oldTabData[3].hasMoreData = true;
+        }
+      }
+    });
+  }
 
   useEffect(() => {
     projectCategory();
@@ -229,6 +266,7 @@ const Profile = () => {
 
   useEffect(() => {
     setUser(user);
+    setWalletAddress(user.eao);
   }, [user]);
   useEffect(() => {
     getProjectList();
@@ -238,6 +276,9 @@ const Profile = () => {
   }, []);
   useEffect(() => {
     getNftList();
+  }, []);
+  useEffect(() => {
+    getBookmarks();
   }, []);
   useEffect(() => {
     setProjectList(projectList);
@@ -251,6 +292,20 @@ const Profile = () => {
     oldTabData[2].list = nftList;
     setTabData(oldTabData);
   }, [nftList]);
+  useEffect(() => {
+    setWorkList(workList);
+    let oldTabData = [...tabData];
+    oldTabData[1].list = workList;
+    setTabData(oldTabData);
+  }, [workList]);
+  useEffect(() => {
+    setBookmarkList(bookmarkList);
+    let oldTabData = [...tabData];
+    oldTabData[3].list = bookmarkList;
+    setTabData(oldTabData);
+  }, [bookmarkList]);
+
+  // console.log(activeTab);
 
   return (
     <>
@@ -343,37 +398,43 @@ const Profile = () => {
             >
               {sncList &&
                 sncList.map((snc, index) => (
-                  <div
-                    key={`snc-${index}`}
-                    className="cursor-pointer w-12 h-12 mb-4 bg-primary-50 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-primary-400"
-                  >
-                    {snc.title.search("webLink") ? (
-                      <>
-                        <div className="inline-flex p-1.5">
-                          <a href={snc.url} target="_blank" rel="noreferrer">
-                            <img
-                              className="cp"
-                              src={require(`assets/images/profile/social/${snc.title}.png`)}
-                              height={24}
-                              width={24}
-                              alt="social logo"
-                            />
-                          </a>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div className="inline-flex p-1.5">
-                          <a href={snc.url} target="_blank" rel="noreferrer">
-                            <i
-                              className="fa fa-link text-[white]"
-                              aria-hidden="true"
-                            ></i>
-                          </a>
-                        </div>
-                      </>
+                  <>
+                    {snc.url !== "" && (
+                      <div
+                        key={`snc-${index}`}
+                        className="cursor-pointer w-12 h-12 mb-4 bg-primary-50 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-primary-400"
+                      >
+                        {snc.title.search("webLink") ? (
+                          <div className="inline-flex p-1.5">
+                            <a href={snc.url} target="_blank" rel="noreferrer">
+                              <img
+                                className="cp"
+                                src={require(`assets/images/profile/social/${snc.title}.png`)}
+                                height={24}
+                                width={24}
+                                alt="social logo"
+                              />
+                            </a>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="inline-flex p-1.5">
+                              <a
+                                href={snc.url}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                <i
+                                  className="fa fa-link text-[white]"
+                                  aria-hidden="true"
+                                ></i>
+                              </a>
+                            </div>
+                          </>
+                        )}
+                      </div>
                     )}
-                  </div>
+                  </>
                 ))}
             </div>
           </section>
