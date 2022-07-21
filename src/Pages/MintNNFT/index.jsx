@@ -976,6 +976,7 @@ export default function MintNFT(props) {
         handleClose={() => setShowConfirmationModal(false)}
         height={"auto"}
         width={"864"}
+        showCloseIcon={false}
       >
         <div className="text-center mt-2">
           <img className="block mx-auto" src={publishModalSvg} alt="" />

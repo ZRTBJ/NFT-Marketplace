@@ -46,7 +46,7 @@ export default function ProjectDetails(props) {
     if (projectId && !isLoading) {
       projectDetails(projectId);
     }
-  }, []);
+  }, [projectId]);
 
   useEffect(() => {
     fetchNftList();
@@ -62,6 +62,7 @@ export default function ProjectDetails(props) {
             setSelectedImages(res.project.assets[1]);
           }
         }
+        setIsLoading(false);
       })
       .catch((error) => {
         setIsLoading(false);
@@ -212,20 +213,23 @@ export default function ProjectDetails(props) {
                 src={
                   project && project.assets && project.assets.length > 0
                     ? project.assets.find((x) => x.asset_purpose === "cover")
-                      ?.path
-                      ? project.assets.find((x) => x.asset_purpose === "cover")
                         ?.path
+                      ? project.assets.find((x) => x.asset_purpose === "cover")
+                          ?.path
                       : require(`assets/images/no-image-found.png`)
                     : require(`assets/images/no-image-found.png`)
                 }
                 className={`rounded-3xl object-cover md:h-[310px] w-full 
-                  ${project && project.assets && project.assets.length > 0
-                    ? project.assets.find((x) => x.asset_purpose === "cover")
-                      ?.path
+                  ${
+                    project && project.assets && project.assets.length > 0
                       ? project.assets.find((x) => x.asset_purpose === "cover")
-                        ?.path
-                      : 'object-right-top'
-                    : 'object-right-top'}`}
+                          ?.path
+                        ? project.assets.find(
+                            (x) => x.asset_purpose === "cover"
+                          )?.path
+                        : "object-right-top"
+                      : "object-right-top"
+                  }`}
                 alt="Project Cover"
               />
             )}

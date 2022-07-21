@@ -258,21 +258,20 @@ const DeployingProjectModal = ({
   }
 
   return (
-    <Modal width={800} show={show} handleClose={() => handleClose(false)}>
+    <Modal
+      width={800}
+      show={show}
+      showCloseIcon={false}
+      handleClose={() => handleClose(false)}
+    >
       <div className={`text-center my-6 ${isLoading ? "loading" : ""}`}>
         <div className="md:mx-4">
           <div className=" md:hidden">
-            {step === 0 && (
-              <h1>Deplyoing Project...</h1>
-            )}
+            {step === 0 && <h1>Deplyoing Project...</h1>}
 
-            {step === 1 && (
-              <h1>Deploying smartcontract...</h1>
-            )}
+            {step === 1 && <h1>Deploying smartcontract...</h1>}
 
-            {step === 2 && (
-              <h1>Done!</h1>
-            )}
+            {step === 2 && <h1>Done!</h1>}
           </div>
           <div className="hidden md:flex justify-center">
             <div>
@@ -282,8 +281,9 @@ const DeployingProjectModal = ({
             <div className="h-4 w-36 bg-[#232032]  mt-1"></div>
             <div>
               <i
-                className={`fa fa-check-square fa-xl ${step >= 1 ? "text-white" : "text-gray-700"
-                  }`}
+                className={`fa fa-check-square fa-xl ${
+                  step >= 1 ? "text-white" : "text-gray-700"
+                }`}
                 aria-hidden="true"
               ></i>
               <p className="mt-4 text-xs">Smartcontrat deployment</p>
@@ -292,8 +292,9 @@ const DeployingProjectModal = ({
             <div className="h-4 w-36 bg-[#232032] mt-1"></div>
             <div>
               <i
-                className={`fa fa-check-square fa-xl ${step >= 2 ? "text-white" : "text-gray-700"
-                  }`}
+                className={`fa fa-check-square fa-xl ${
+                  step >= 2 ? "text-white" : "text-gray-700"
+                }`}
                 aria-hidden="true"
               ></i>
               <p className="mt-4 text-xs">Completed</p>
@@ -324,25 +325,27 @@ const DeployingProjectModal = ({
                 <div className="text-center my-4">
                   <ul className="stepper stepper-vertical">
                     <li
-                      className={`stepper-step ${deployStatus.step >= 0
-                        ? deployStatus.step === 1 &&
-                          deployStatus.fn_status === "failed"
-                          ? "stepper-failed"
-                          : "stepper-active"
-                        : ""
-                        }`}
+                      className={`stepper-step ${
+                        deployStatus.step >= 0
+                          ? deployStatus.step === 1 &&
+                            deployStatus.fn_status === "failed"
+                            ? "stepper-failed"
+                            : "stepper-active"
+                          : ""
+                      }`}
                     >
                       <div className="stepper-head hover:!bg-transparent">
                         <span className="stepper-head-icon">
                           {" "}
                           <i
-                            className={`fa ${deployStatus.step === 1 &&
+                            className={`fa ${
+                              deployStatus.step === 1 &&
                               deployStatus.fn_status === "failed"
-                              ? "fa-times"
-                              : deployStatus.step === 0
+                                ? "fa-times"
+                                : deployStatus.step === 0
                                 ? "fa-hourglass"
                                 : "fa-check"
-                              }`}
+                            }`}
                             aria-hidden="true"
                           ></i>{" "}
                         </span>
@@ -353,25 +356,27 @@ const DeployingProjectModal = ({
                       </div>
                     </li>
                     <li
-                      className={`stepper-step ${deployStatus.step >= 1
-                        ? deployStatus.step === 2 &&
-                          deployStatus.fn_status === "failed"
-                          ? "stepper-failed"
-                          : "stepper-active"
-                        : ""
-                        }`}
+                      className={`stepper-step ${
+                        deployStatus.step >= 1
+                          ? deployStatus.step === 2 &&
+                            deployStatus.fn_status === "failed"
+                            ? "stepper-failed"
+                            : "stepper-active"
+                          : ""
+                      }`}
                     >
                       <div className="stepper-head hover:!bg-transparent">
                         <span className="stepper-head-icon">
                           {" "}
                           <i
-                            className={`fa ${deployStatus.step === 2 &&
+                            className={`fa ${
+                              deployStatus.step === 2 &&
                               deployStatus.fn_status === "failed"
-                              ? "fa-times"
-                              : deployStatus.step === 1
+                                ? "fa-times"
+                                : deployStatus.step === 1
                                 ? "fa-hourglass"
                                 : "fa-check"
-                              }`}
+                            }`}
                             aria-hidden="true"
                           ></i>{" "}
                         </span>

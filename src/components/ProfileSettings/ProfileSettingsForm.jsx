@@ -419,12 +419,12 @@ const ProfileSettingsForm = () => {
                   <i className="fa fa-link mr-3 mb-3" aria-hidden="true"></i>
                   <input
                     className={`block w-full border border-dark-300 rounded py-3 px-4 mb-3 leading-tight`}
-                    id={`more-link-web-${index}`}
-                    name={`moreWebLink${index}`}
-                    {...register(`moreWebLink${index}`)}
+                    id={`more-link-web-${index + 1}`}
+                    name={link.title}
+                    {...register(`moreWebLink${index + 1}`)}
                     type="text"
                     placeholder="https://"
-                    defaultValue={""}
+                    defaultValue={"https://"}
                   />
                 </div>
               ))}

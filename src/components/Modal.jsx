@@ -1,6 +1,14 @@
 import "../assets/css/Modal.css";
 import ModalCloseLogo from "assets/images/modal/ico_closemodal.png";
-const Modal = ({ handleClose, show, children, height, width, overflow }) => {
+const Modal = ({
+  handleClose,
+  show,
+  children,
+  height,
+  width,
+  overflow,
+  showCloseIcon = true,
+}) => {
   let styleObj = {
     height: height ? height + "px" : "",
     width: width ? width + "px" : "",
@@ -27,10 +35,12 @@ const Modal = ({ handleClose, show, children, height, width, overflow }) => {
           " modal-main bg-dark-background rounded-3xl relative text-white p-11"
         }
       >
-        <i
-          className="fa-light fa-square-xmark cursor-pointer text-2xl absolute top-12 right-8"
-          onClick={handleClose}
-        ></i>
+        {showCloseIcon && (
+          <i
+            className="fa-light fa-square-xmark cursor-pointer text-2xl absolute top-12 right-8"
+            onClick={handleClose}
+          ></i>
+        )}
         <div className="">{children}</div>
       </section>
     </div>
