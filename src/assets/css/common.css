@@ -16,7 +16,7 @@
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.3);
-  z-index: 98;
+  z-index: 999;
   border-radius: 5px;
 }
 
@@ -36,7 +36,7 @@
     -12.72984px -12.72984px 0 0 rgba(10, 180, 175, 0);
   left: 50%;
   top: 50%;
-  z-index: 99;
+  z-index: 999;
   border-radius: 50%;
   animation: dotSpin 1s linear infinite;
 }
@@ -61,7 +61,7 @@
     -12.72984px 12.72984px 0 0 rgba(10, 180, 175, 0),
     -18px 0 0 0 rgba(10, 180, 175, 0),
     -12.72984px -12.72984px 0 0 rgba(10, 180, 175, 0);
-  z-index: 99;
+  z-index: 999;
   border-radius: 50%;
   animation: dotSpin 1s linear infinite;
 }
