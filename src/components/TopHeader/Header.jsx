@@ -13,6 +13,8 @@ import { Link } from "react-router-dom";
 import useWebSocket from "react-use-websocket";
 import config from "config";
 import { getProjectDeploy } from "Slice/projectSlice";
+import { getProjectListBySearch } from "services/project/projectService";
+import SearchBarResult from "./SearchBarResult";
 
 const Header = () => {
   const history = useHistory();
@@ -28,6 +30,10 @@ const Header = () => {
   const [messageHistory, setMessageHistory] = useState([]);
   const userLoadingStatus = useSelector((state) => state.user.status);
   const [showWalletpopup, setShowWalletpopup] = useState(false);
+  const [keyword, setKeyword] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const [projectList, setProjectList] = useState([]);
+  const [showSearchResult, setShowSearchResult] = useState(false);
 
   useEffect(() => {
     if (userId && userId.length > 0) {
@@ -129,6 +135,59 @@ const Header = () => {
 
   // End web socket Implementation
 
+  function handleOnTextChange(event) {
+    try {
+      event.preventDefault();
+      event.stopPropagation();
+      const value = event.currentTarget.value;
+      if (value.length > 2 && value !== keyword) {
+        setTimeout(() => {
+          setKeyword(value);
+          if (!isSearching) {
+            searchProject(value);
+          }
+        }, 2000);
+      }
+    } catch (err) {}
+  }
+
+  function searchProject(keyword) {
+    const payload = {
+      order_by: "newer",
+      page: 1,
+      limit: 20,
+      criteria: "name",
+      keyword: keyword,
+    };
+    setIsSearching(true);
+    setShowSearchResult(true);
+    getProjectListBySearch(payload)
+      .then((response) => {
+        if (response["code"] === 0) {
+          setProjectList(response.data);
+        }
+        setIsSearching(false);
+      })
+      .catch((err) => {
+        setShowSearchResult(false);
+        setIsSearching(false);
+      });
+  }
+
+  function handleSearchClose() {
+    setShowSearchResult(false);
+  }
+
+  function handleOnSearchFocus(event) {
+    if (keyword && keyword.length > 2) {
+      setTimeout(() => {
+        if (!isSearching) {
+          searchProject(keyword);
+        }
+      }, 1000);
+    }
+  }
+
   return (
     <>
       {showSidebar && (
@@ -193,11 +252,22 @@ const Header = () => {
                 <input
                   type="search"
                   id="default-search"
-                  className=" bg-color-ass-5 text-lg w-full max-w-[556px] text-white rounded-xl pl-10 h-10 placeholder-color-ass-4  focus:pl-10"
+                  name="projectSearch2"
+                  autoComplete="off"
+                  className=" bg-color-ass-5 focus:bg-color-ass-5 text-lg w-full max-w-[556px] text-white rounded-xl pl-10 h-10 placeholder-color-ass-4  focus:pl-10"
                   placeholder="Search your project by name"
-                  required
+                  onChange={handleOnTextChange}
+                  onFocus={handleOnSearchFocus}
                 />
               </div>
+              {(isSearching || (projectList && projectList.length) > 0) &&
+                showSearchResult && (
+                  <SearchBarResult
+                    isLoading={isSearching}
+                    projectList={projectList}
+                    handleSearchClose={handleSearchClose}
+                  />
+                )}
             </form>
           </div>
 
@@ -360,16 +430,27 @@ const Header = () => {
                 Search
               </label>
               <div className="relative">
-                <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+                <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none h-10">
                   <i className="fa-regular fa-magnifying-glass text-white-shade-600"></i>
                 </div>
                 <input
-                  type="search"
-                  id="default-search"
-                  className=" bg-color-ass-5 text-lg w-full w-100 text-white rounded-xl pl-10 h-10 placeholder-color-ass-4  focus:pl-10"
+                  type="text"
+                  id="default-search-2"
+                  name="projectSearch1"
+                  autoComplete="off"
+                  className=" bg-color-ass-5 focus:bg-color-ass-5 text-lg w-full w-100 text-white rounded-xl !pl-8 h-10 placeholder-color-ass-4"
                   placeholder="Search your project by name"
-                  required
+                  onChange={handleOnTextChange}
+                  onFocus={handleOnSearchFocus}
                 />
+                {(isSearching || (projectList && projectList.length)) &&
+                  showSearchResult && (
+                    <SearchBarResult
+                      isLoading={isSearching}
+                      projectList={projectList}
+                      handleSearchClose={handleSearchClose}
+                    />
+                  )}
               </div>
             </form>
           </div>
