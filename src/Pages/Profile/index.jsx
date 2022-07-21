@@ -404,16 +404,13 @@ const Profile = () => {
                         key={`snc-${index}`}
                         className="cursor-pointer w-12 h-12 mb-4 bg-primary-50 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-primary-400"
                       >
-                        {snc.title.search("webLink") ? (
+                        {snc.title.toLowerCase().match("weblink") ? (
                           <div className="inline-flex p-1.5">
                             <a href={snc.url} target="_blank" rel="noreferrer">
-                              <img
-                                className="cp"
-                                src={require(`assets/images/profile/social/${snc.title}.png`)}
-                                height={24}
-                                width={24}
-                                alt="social logo"
-                              />
+                              <i
+                                className="fa fa-link text-[white]"
+                                aria-hidden="true"
+                              ></i>
                             </a>
                           </div>
                         ) : (
@@ -424,10 +421,13 @@ const Profile = () => {
                                 target="_blank"
                                 rel="noreferrer"
                               >
-                                <i
-                                  className="fa fa-link text-[white]"
-                                  aria-hidden="true"
-                                ></i>
+                                <img
+                                  className="cp"
+                                  src={require(`assets/images/profile/social/${snc.title}.png`)}
+                                  height={24}
+                                  width={24}
+                                  alt="social logo"
+                                />
                               </a>
                             </div>
                           </>
