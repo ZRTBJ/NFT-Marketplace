@@ -122,16 +122,17 @@ const Profile = () => {
   }
 
   async function onScrollLoadMoreData() {
-    if (activeTab.id === 0 && activeTab.hasMoreData) {
-      activeTab.hasMoreData = false;
-      await getProjectList();
-    }
-    if (activeTab.id === 3 && activeTab.hasMoreData) {
-      activeTab.hasMoreData = false;
+    console.log(activeTab.id);
+    if (activeTab.id === 3) {
       await getBookmarks();
     }
+    await getProjectList();
   }
 
+  async function onScrollLoadMoreDataBookmark() {
+    console.log("onScrollLoadMoreDataBookmark");
+    await getBookmarks();
+  }
   async function getProjectList() {
     let payload = {
       id: id,
@@ -152,6 +153,9 @@ const Profile = () => {
         setTabKey((pre) => pre + 1);
         const projects = projectList.concat(projectListCards);
         setProjectList(projects);
+        if (activeTab.id === 0) {
+          activeTab.hasMoreData = false;
+        }
         if (e.data.length === projectListLimit) {
           const pageSize = projectListPageNumber + 1;
           setProjectListPageNumber(pageSize);
@@ -242,12 +246,22 @@ const Profile = () => {
         // setTabKey((pre) => pre + 1);
         const projects = bookmarkList.concat(bookmarkProjectListCards);
         setBookmarkList(projects);
+        let oldTabData = [...tabData];
+        oldTabData[3].list = projects;
+        oldTabData[3].hasMoreData = true;
+
+        setTabData(oldTabData);
+        if (activeTab.id === 3) {
+          activeTab.hasMoreData = false;
+        }
+
         if (e.projects.length === bookmarkListLimit) {
-          console.log("entry");
           const pageSize = bookmarkListPageNumber + 1;
           setbookmarkListPageNumber(pageSize);
-          let oldTabData = [...tabData];
-          oldTabData[3].hasMoreData = true;
+          if (activeTab.id === 3) {
+            activeTab.hasMoreData = true;
+            console.log("enter");
+          }
         }
       }
     });
@@ -398,7 +412,7 @@ const Profile = () => {
             >
               {sncList &&
                 sncList.map((snc, index) => (
-                  <>
+                  <div key={`snc-${index}`}>
                     {snc.url !== "" && (
                       <div
                         key={`snc-${index}`}
@@ -434,7 +448,7 @@ const Profile = () => {
                         )}
                       </div>
                     )}
-                  </>
+                  </div>
                 ))}
             </div>
           </section>
@@ -466,22 +480,113 @@ const Profile = () => {
             </div>
           </section>
 
-          <div>
-            {!isLoading && (
-              <InfiniteScroll
-                dataLength={activeTab.list.length} //This is important field to render the next data
-                next={onScrollLoadMoreData}
-                hasMore={activeTab.hasMoreData}
-              >
-                <Tab
-                  tabs={tabData}
-                  key={tabKey}
-                  OnSetActive={OnSetActive}
-                  sortData={sortData}
-                />
-              </InfiniteScroll>
-            )}
-          </div>
+          {activeTab.id === 0 && (
+            <div>
+              {!isLoading && (
+                <InfiniteScroll
+                  dataLength={activeTab.list.length} //This is important field to render the next data
+                  next={onScrollLoadMoreData}
+                  hasMore={activeTab.hasMoreData}
+                  endMessage={
+                    <p
+                      className="text-[white] mb-4"
+                      style={{ textAlign: "center" }}
+                    >
+                      <b>Yay! You have seen it all</b>
+                    </p>
+                  }
+                >
+                  <Tab
+                    tabs={tabData}
+                    key={tabKey}
+                    OnSetActive={OnSetActive}
+                    sortData={sortData}
+                    active={activeTab}
+                  />
+                </InfiniteScroll>
+              )}
+            </div>
+          )}
+          {activeTab.id === 1 && (
+            <div>
+              {!isLoading && (
+                <InfiniteScroll
+                  dataLength={activeTab.list.length} //This is important field to render the next data
+                  next={onScrollLoadMoreData}
+                  hasMore={activeTab.hasMoreData}
+                  endMessage={
+                    <p
+                      className="text-[white] mb-4"
+                      style={{ textAlign: "center" }}
+                    >
+                      <b>Yay! You have seen it all</b>
+                    </p>
+                  }
+                >
+                  <Tab
+                    tabs={tabData}
+                    key={tabKey}
+                    OnSetActive={OnSetActive}
+                    sortData={sortData}
+                  />
+                </InfiniteScroll>
+              )}
+            </div>
+          )}
+          {activeTab.id === 2 && (
+            <div>
+              {!isLoading && (
+                <InfiniteScroll
+                  dataLength={activeTab.list.length} //This is important field to render the next data
+                  next={onScrollLoadMoreData}
+                  hasMore={activeTab.hasMoreData}
+                  endMessage={
+                    <p
+                      className="text-[white] mb-4"
+                      style={{ textAlign: "center" }}
+                    >
+                      <b>Yay! You have seen it all</b>
+                    </p>
+                  }
+                >
+                  <Tab
+                    tabs={tabData}
+                    key={tabKey}
+                    OnSetActive={OnSetActive}
+                    sortData={sortData}
+                    active={activeTab}
+                  />
+                </InfiniteScroll>
+              )}
+            </div>
+          )}
+          {activeTab.id === 3 && (
+            <div>
+              {!isLoading && (
+                <InfiniteScroll
+                  dataLength={activeTab.list.length} //This is important field to render the next data
+                  next={onScrollLoadMoreDataBookmark}
+                  hasMore={true}
+                  endMessage={
+                    <p
+                      className="text-[white] mb-4"
+                      style={{ textAlign: "center" }}
+                    >
+                      <b>Yay! You have seen it all</b>
+                    </p>
+                  }
+                >
+                  <Tab
+                    tabs={tabData}
+                    key={tabKey}
+                    OnSetActive={OnSetActive}
+                    sortData={sortData}
+                    active={activeTab}
+                  />
+                </InfiniteScroll>
+              )}
+            </div>
+          )}
         </main>
       )}
     </>
