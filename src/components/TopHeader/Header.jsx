@@ -4,7 +4,7 @@ import Sidebar from "../Sidebar/Sidebar";
 import notificationIcon from "assets/images/header/ico_notification@2x.png";
 import UserDropDownMenu from "./UserDropDownMenu";
 import NotificationMenu from "./NotificationMenu";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setSideBar } from "Slice/userSlice";
 import { useAuthState } from "Context";
@@ -20,6 +20,7 @@ const Header = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const context = useAuthState();
+  const { pathname } = useLocation();
 
   const [userId, setUserId] = useState(context ? context.user : "");
   const [showModal, setShowModal] = useState(false);
@@ -84,7 +85,7 @@ const Header = () => {
     if (loc.protocol === "https:") {
       host = "wss:";
     }
-  } catch {}
+  } catch { }
   const socketUrl = `${host}//${config.WEB_SOKET}/ws`;
 
   const {
@@ -148,7 +149,7 @@ const Header = () => {
           }
         }, 2000);
       }
-    } catch (err) {}
+    } catch (err) { }
   }
 
   function searchProject(keyword) {
@@ -277,9 +278,8 @@ const Header = () => {
             )}
 
             <ul
-              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${
-                userId ? "" : "sm:py-2"
-              }`}
+              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${userId ? "" : "sm:py-2"
+                }`}
             >
               {userinfo.id && (
                 <>
@@ -420,7 +420,7 @@ const Header = () => {
           </div>
         </div>
 
-        {window?.location?.pathname === "/" && (
+        {pathname === "/" && (
           <div className="md:hidden">
             <form>
               <label
