@@ -57,20 +57,27 @@ export default function Outline({
       {/* name */}
       <div className="mb-6">
         <div className="label">Project Name</div>
-        <div className="label-grey">Your Project name</div>
-        <DebounceInput
-          minLength={1}
-          debounceTimeout={300}
-          onChange={(e) => onProjectNameChange(e.target.value)}
-          className="debounceInput"
-          value={projectName}
-          disabled={projectNameDisabled}
-        />
-        {emptyProjectName && (
-          <div className="validationTag">Unique project name is required</div>
+        {!projectName && (
+          <>
+            <div className="label-grey">Your Project name</div>
+            <DebounceInput
+              minLength={1}
+              debounceTimeout={300}
+              onChange={(e) => onProjectNameChange(e.target.value)}
+              className="debounceInput"
+              value={projectName}
+              disabled={projectNameDisabled}
+            />
+            {emptyProjectName && (
+              <div className="validationTag">Unique project name is required</div>
+            )}
+            {alreadyTakenProjectName && (
+              <div className="validationTag">Project name has already taken</div>
+            )}
+          </>
         )}
-        {alreadyTakenProjectName && (
-          <div className="validationTag">Project name has already taken</div>
+        {projectName && (
+          <h3>{projectName}</h3>
         )}
       </div>
 
