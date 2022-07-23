@@ -17,12 +17,12 @@ const Tab = (props) => {
     setShowModal(true);
   }
   function OnSetActive(type, index) {
+    // console.log(index);
     props.OnSetActive(index);
   }
   function sortData(index) {
     props.sortData(index);
   }
-  console.log(props.active?.id);
   return (
     <>
       <div className="flex-wrap justify-center hidden md:flex">

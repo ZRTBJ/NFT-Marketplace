@@ -44,6 +44,7 @@ const Profile = () => {
   const [projectList, setProjectList] = useState([]);
   const [projectListPageNumber, setProjectListPageNumber] = useState(1);
   const [projectListLimit, setProjectListLimit] = useState(10);
+  const [projectListHasMoreData, setprojectListHasMoreData] = useState(false);
   // project List End
 
   // works start
@@ -60,6 +61,7 @@ const Profile = () => {
   const [bookmarkList, setBookmarkList] = useState([]);
   const [bookmarkListPageNumber, setbookmarkListPageNumber] = useState(1);
   const [bookmarkListLimit, setBookmarkListLimit] = useState(10);
+  const [bookmarkListHasMoreData, setBookmarkListHasMoreData] = useState(false);
   // bookmark end
 
   const [isLoading, setIsLoading] = useState(true);
@@ -114,7 +116,10 @@ const Profile = () => {
   }
 
   function OnSetActive(index) {
-    setActiveTab(initialTabData[index]);
+    console.log(index);
+    let activeTabs = initialTabData[index];
+    console.log(activeTabs);
+    setActiveTab(activeTabs);
   }
   function sortData(index) {
     activeTab.list = activeTab.list.reverse();
@@ -122,16 +127,15 @@ const Profile = () => {
   }
 
   async function onScrollLoadMoreData() {
-    console.log(activeTab.id);
-    if (activeTab.id === 3) {
-      await getBookmarks();
+    if (projectListHasMoreData) {
+      await getProjectList();
     }
-    await getProjectList();
   }
 
   async function onScrollLoadMoreDataBookmark() {
-    console.log("onScrollLoadMoreDataBookmark");
-    await getBookmarks();
+    if (bookmarkListHasMoreData) {
+      await getBookmarks();
+    }
   }
   async function getProjectList() {
     let payload = {
@@ -153,15 +157,11 @@ const Profile = () => {
         setTabKey((pre) => pre + 1);
         const projects = projectList.concat(projectListCards);
         setProjectList(projects);
-        if (activeTab.id === 0) {
-          activeTab.hasMoreData = false;
-        }
+        setprojectListHasMoreData(false);
         if (e.data.length === projectListLimit) {
           const pageSize = projectListPageNumber + 1;
           setProjectListPageNumber(pageSize);
-          if (activeTab.id === 0) {
-            activeTab.hasMoreData = true;
-          }
+          setprojectListHasMoreData(true);
         }
       }
       setIsLoading(false);
@@ -251,17 +251,12 @@ const Profile = () => {
         oldTabData[3].hasMoreData = true;
 
         setTabData(oldTabData);
-        if (activeTab.id === 3) {
-          activeTab.hasMoreData = false;
-        }
+        setBookmarkListHasMoreData(false);
 
         if (e.projects.length === bookmarkListLimit) {
           const pageSize = bookmarkListPageNumber + 1;
           setbookmarkListPageNumber(pageSize);
-          if (activeTab.id === 3) {
-            activeTab.hasMoreData = true;
-            console.log("enter");
-          }
+          setBookmarkListHasMoreData(true);
         }
       }
     });
@@ -484,24 +479,16 @@ const Profile = () => {
             <div>
               {!isLoading && (
                 <InfiniteScroll
-                  dataLength={activeTab.list.length} //This is important field to render the next data
+                  dataLength={projectList} //This is important field to render the next data
                   next={onScrollLoadMoreData}
-                  hasMore={activeTab.hasMoreData}
-                  endMessage={
-                    <p
-                      className="text-[white] mb-4"
-                      style={{ textAlign: "center" }}
-                    >
-                      <b>Yay! You have seen it all</b>
-                    </p>
-                  }
+                  hasMore={projectListHasMoreData}
                 >
                   <Tab
                     tabs={tabData}
                     key={tabKey}
                     OnSetActive={OnSetActive}
                     sortData={sortData}
-                    active={activeTab}
+                    active={initialTabData[0]}
                   />
                 </InfiniteScroll>
               )}
@@ -514,20 +501,13 @@ const Profile = () => {
                   dataLength={activeTab.list.length} //This is important field to render the next data
                   next={onScrollLoadMoreData}
                   hasMore={activeTab.hasMoreData}
-                  endMessage={
-                    <p
-                      className="text-[white] mb-4"
-                      style={{ textAlign: "center" }}
-                    >
-                      <b>Yay! You have seen it all</b>
-                    </p>
-                  }
                 >
                   <Tab
                     tabs={tabData}
                     key={tabKey}
                     OnSetActive={OnSetActive}
                     sortData={sortData}
+                    active={activeTab}
                   />
                 </InfiniteScroll>
               )}
@@ -540,14 +520,6 @@ const Profile = () => {
                   dataLength={activeTab.list.length} //This is important field to render the next data
                   next={onScrollLoadMoreData}
                   hasMore={activeTab.hasMoreData}
-                  endMessage={
-                    <p
-                      className="text-[white] mb-4"
-                      style={{ textAlign: "center" }}
-                    >
-                      <b>Yay! You have seen it all</b>
-                    </p>
-                  }
                 >
                   <Tab
                     tabs={tabData}
@@ -564,24 +536,16 @@ const Profile = () => {
             <div>
               {!isLoading && (
                 <InfiniteScroll
-                  dataLength={activeTab.list.length} //This is important field to render the next data
+                  dataLength={bookmarkList.length} //This is important field to render the next data
                   next={onScrollLoadMoreDataBookmark}
-                  hasMore={true}
-                  endMessage={
-                    <p
-                      className="text-[white] mb-4"
-                      style={{ textAlign: "center" }}
-                    >
-                      <b>Yay! You have seen it all</b>
-                    </p>
-                  }
+                  hasMore={bookmarkListHasMoreData}
                 >
                   <Tab
                     tabs={tabData}
                     key={tabKey}
                     OnSetActive={OnSetActive}
                     sortData={sortData}
-                    active={activeTab}
+                    active={initialTabData[3]}
                   />
                 </InfiniteScroll>
               )}
