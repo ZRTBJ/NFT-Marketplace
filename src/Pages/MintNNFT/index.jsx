@@ -262,18 +262,24 @@ export default function MintNFT(props) {
     request.append("name", watch("name"));
     request.append("description", watch("description"));
     request.append("asset_uid", assetId);
-    request.append("external_url", path);
     const attributes = [];
 
     // defined properties
     for (let dprop of definedPropertyList) {
-      const prop = {
-        key: dprop.key,
-        value: dprop.value,
-        value_type: dprop.value_type,
-        display_type: dprop.display_type,
-      };
-      attributes.push(prop);
+      if (
+        dprop.key &&
+        dprop.key.length > 0 &&
+        dprop.value &&
+        dprop.value.length > 0
+      ) {
+        const prop = {
+          key: dprop.key,
+          value: dprop.value,
+          value_type: dprop.value_type,
+          display_type: dprop.display_type,
+        };
+        attributes.push(prop);
+      }
     }
     // properties
     for (let aprop of propertyList) {
