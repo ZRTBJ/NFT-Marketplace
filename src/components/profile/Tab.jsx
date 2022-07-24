@@ -9,7 +9,6 @@ import ProfileEmptyCaseCard from "components/EmptyCaseCard/ProfileEmptyCaseCard"
 
 const Tab = (props) => {
   const { id } = useParams();
-  const [active, setActive] = useState(props.tabs[0]);
   const [modalInfo, setModalInfo] = useState({});
   const [showModal, setShowModal] = useState(false);
   const userData = useSelector((state) => state.user.userinfo);
@@ -18,7 +17,7 @@ const Tab = (props) => {
     setShowModal(true);
   }
   function OnSetActive(type, index) {
-    setActive(type);
+    // console.log(index);
     props.OnSetActive(index);
   }
   function sortData(index) {
@@ -30,7 +29,7 @@ const Tab = (props) => {
         {props.tabs.map((type, index) => (
           <button
             className={` p-3 hover:text-primary-900 active:text-primary-900 ${
-              active.id === type.id
+              props.active?.id === type.id
                 ? " text-primary-900 "
                 : "text-white-shade-600"
             }`}
@@ -47,29 +46,30 @@ const Tab = (props) => {
       <section className="flex mt-7">
         {userData.id && userData.id === id ? (
           <>
-            {active.name !== "NFTs" && active.name !== "Bookmark" && (
-              <button type="button" className="btn btn-primary btn-sm">
-                {active.name === "Dao Project List" ? (
-                  <Link to="/project-create">
-                    Create New <i className="fa-thin fa-square-plus ml-1"></i>
-                  </Link>
-                ) : (
-                  <Link to="/undefined/mint-nft">
-                    Create New <i className="fa-thin fa-square-plus ml-1"></i>
-                  </Link>
-                )}
-              </button>
-            )}
+            {props.active?.name !== "NFTs" &&
+              props.active?.name !== "Bookmark" && (
+                <button type="button" className="btn btn-primary btn-sm">
+                  {props.active?.name === "Dao Project List" ? (
+                    <Link to="/project-create">
+                      Create New <i className="fa-thin fa-square-plus ml-1"></i>
+                    </Link>
+                  ) : (
+                    <Link to="/undefined/mint-nft">
+                      Create New <i className="fa-thin fa-square-plus ml-1"></i>
+                    </Link>
+                  )}
+                </button>
+              )}
           </>
         ) : (
           <></>
         )}
 
-        {active.list.length > 0 && (
+        {props.active?.list.length > 0 && (
           <button
             type="button"
             className="ml-auto btn btn-outline-primary btn-sm"
-            onClick={() => sortData(active.id)}
+            onClick={() => sortData(props.active?.id)}
           >
             Sort By <i className="fa-thin fa-arrow-down-short-wide ml-1"></i>
           </button>
@@ -77,7 +77,7 @@ const Tab = (props) => {
       </section>
 
       <div className="tabContent">
-        {active.name === "Dao Project List" && (
+        {props.active?.name === "Dao Project List" && (
           <>
             {/* 
             
@@ -96,50 +96,48 @@ const Tab = (props) => {
 
             */}
             <div>
-              {active.list.length === 0 ? (
+              {props.active?.list.length === 0 ? (
                 <ProfileEmptyCaseCard
                   className="mx-auto"
                   type={"Project"}
                 ></ProfileEmptyCaseCard>
               ) : (
                 <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300 py-5">
-                  {active.list.map((list) => (
-                    <div>
-                      <CommonCard key={list.id} project={list} />
-                    </div>
+                  {props.active?.list.map((list) => (
+                    <CommonCard key={list.id} project={list} />
                   ))}
                 </div>
               )}
             </div>
           </>
         )}
-        {active.name === "Works" && (
+        {props.active?.name === "Works" && (
           <>
-            {active.list.length === 0 ? (
+            {props.active?.list.length === 0 ? (
               <ProfileEmptyCaseCard
                 className="mx-auto"
                 type={"Works"}
               ></ProfileEmptyCaseCard>
             ) : (
               <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300 py-5">
-                {active.list.map((list) => (
+                {props.active?.list.map((list) => (
                   <CommonCard key={list.id} project={list} />
                 ))}
               </div>
             )}
           </>
         )}
-        {active.name === "NFTs" && (
+        {props.active?.name === "NFTs" && (
           <>
-            {active.list.length === 0 ? (
+            {props.active?.list.length === 0 ? (
               <ProfileEmptyCaseCard
                 className="mx-auto"
                 type={"External NFTs"}
               ></ProfileEmptyCaseCard>
             ) : (
               <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300 py-5">
-                {active.list.map((list) => (
-                  <div onClick={() => openModal(list)}>
+                {props.active?.list.map((list) => (
+                  <div key={list.id} onClick={() => openModal(list)}>
                     <CommonCard key={list.id} project={list} />
                   </div>
                 ))}
@@ -147,19 +145,17 @@ const Tab = (props) => {
             )}
           </>
         )}
-        {active.name === "Bookmark" && (
+        {props.active?.name === "Bookmark" && (
           <div>
-            {active.list.length === 0 ? (
+            {props.active?.list.length === 0 ? (
               <ProfileEmptyCaseCard
                 className="mx-auto"
                 type={"Bookmark"}
               ></ProfileEmptyCaseCard>
             ) : (
               <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300 py-5">
-                {active.list.map((list) => (
-                  <div>
-                    <CommonCard key={list.id} project={list} />
-                  </div>
+                {props.active?.list.map((list) => (
+                  <CommonCard key={list.id} project={list} />
                 ))}
               </div>
             )}
