@@ -91,7 +91,7 @@ const ProfileSettingsForm = () => {
     setIsLoading(false);
   }
 
-  function profileImageChnageHandler(images) {
+  function profileImageChangeHandler(images) {
     const img = images[0];
     setProfileImage({ image: img, path: URL.createObjectURL(img) });
   }
@@ -104,6 +104,10 @@ const ProfileSettingsForm = () => {
   function addMoreWebLink() {
     const count = moreWebLink.length;
     setMoreWebLink([...moreWebLink, { title: `moreWebLink${count}` }]);
+  }
+
+  function removeProfilePhoto() {
+    setProfileImage({ image: null, path: "" });
   }
 
   function removeCoverPhoto() {
@@ -203,7 +207,7 @@ const ProfileSettingsForm = () => {
                   <FileDragAndDrop
                     maxFiles={4}
                     height="158px"
-                    onDrop={(e) => profileImageChnageHandler(e)}
+                    onDrop={(e) => profileImageChangeHandler(e)}
                     sizePlaceholder="Total upto 16MB"
                   />
                 </div>
@@ -219,7 +223,7 @@ const ProfileSettingsForm = () => {
                     alt=""
                     src={deleteIcon}
                     className="absolute top-0 cursor-pointer right-0"
-                    onClick={removeCoverPhoto}
+                    onClick={removeProfilePhoto}
                   />
                 </div>
               )}
