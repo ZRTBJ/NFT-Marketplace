@@ -42,6 +42,7 @@ const ProfileSettingsForm = () => {
 
   async function getUserDetails(userID) {
     setIsLoading(true);
+    setMoreWebLink([]);
     const response = await getUserInfo(userID);
     let userinfo;
     try {
@@ -63,8 +64,16 @@ const ProfileSettingsForm = () => {
       if (userinfo["web"]) {
         try {
           const webs = JSON.parse(userinfo["web"]);
+          const webLinks = [];
           for (let link of webs) {
-            setMoreWebLink([...moreWebLink, { title: Object.keys(link)[0] }]);
+            if (Object.keys(link)[0].startsWith("webLink1")) {
+              setValue("webLink1", Object.values(link)[0]);
+            } else if (Object.keys(link)[0].startsWith("moreWebLink")) {
+              webLinks.push({ title: `moreWebLink${webLinks.length + 1}` });
+            }
+          }
+          if (webLinks.length > 0) {
+            setMoreWebLink(webLinks);
           }
           setTimeout(() => {
             for (let link of webs) {
@@ -103,7 +112,7 @@ const ProfileSettingsForm = () => {
 
   function addMoreWebLink() {
     const count = moreWebLink.length;
-    setMoreWebLink([...moreWebLink, { title: `moreWebLink${count}` }]);
+    setMoreWebLink([...moreWebLink, { title: `moreWebLink${count + 1}` }]);
   }
 
   function removeProfilePhoto() {
@@ -130,7 +139,11 @@ const ProfileSettingsForm = () => {
     const web = [];
     web.push({ webLink1: data["webLink1"] });
     for (let link of moreWebLink) {
-      if (data[link.title] && data[link.title].length > 0) {
+      if (
+        data[link.title] &&
+        data[link.title].length > 0 &&
+        data[link.title] != "https://"
+      ) {
         web.push({ [link.title]: data[link.title] });
       }
     }
@@ -425,7 +438,7 @@ const ProfileSettingsForm = () => {
                     className={`block w-full border border-dark-300 rounded py-3 px-4 mb-3 leading-tight`}
                     id={`more-link-web-${index + 1}`}
                     name={link.title}
-                    {...register(`moreWebLink${index + 1}`)}
+                    {...register(link.title)}
                     type="text"
                     placeholder="https://"
                     defaultValue={"https://"}
