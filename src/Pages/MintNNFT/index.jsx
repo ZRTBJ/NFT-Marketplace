@@ -312,6 +312,9 @@ export default function MintNFT(props) {
         } else {
           setIsLoading(false);
           setShowConfirmationModal(false);
+          setErrorTitle("Create NFT failed");
+          setErrorMessage("Failed to create NFT. Please try again later");
+          setShowSuccessModal(false);
           setShowErrorModal(true);
         }
       })
