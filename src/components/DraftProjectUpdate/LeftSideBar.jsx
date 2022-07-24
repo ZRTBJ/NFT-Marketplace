@@ -11,8 +11,9 @@ export default function LeftSideBar(props) {
 
   return (
     <div className="flex items-center mb-6">
-      <div className="progressBar mr-3">
-        {/* <CircularProgressbarWithChildren
+      {!props.update && (
+        <div className="progressBar mr-3">
+          {/* <CircularProgressbarWithChildren
           value={percentage}
           strokeWidth={2}
           styles={buildStyles({
@@ -30,31 +31,34 @@ export default function LeftSideBar(props) {
           </div>
         </CircularProgressbarWithChildren> */}
 
-        <svg width="57" height="57" viewBox="0 0 57 57" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="28.5" cy="28.5" r="27.5" stroke="url(#paint0_linear_811_35624)" stroke-width="2" />
-          <defs>
-            <linearGradient id="paint0_linear_811_35624" x1="6.26599" y1="14.25" x2="56.1016" y2="54.5485" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#DF9B5D" />
-              <stop offset="0.947917" stop-color="#9A5AFF" />
-            </linearGradient>
-          </defs>
-        </svg>
+          <svg width="57" height="57" viewBox="0 0 57 57" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="28.5" cy="28.5" r="27.5" stroke="url(#paint0_linear_811_35624)" stroke-width="2" />
+            <defs>
+              <linearGradient id="paint0_linear_811_35624" x1="6.26599" y1="14.25" x2="56.1016" y2="54.5485" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#DF9B5D" />
+                <stop offset="0.947917" stop-color="#9A5AFF" />
+              </linearGradient>
+            </defs>
+          </svg>
 
-        <div className="steps-text">
-          <span className="text-lg font-satoshi-bold font-black">
-            {currentStep.length}
-          </span>
-          <span className="text-lg font-satoshi-bold font-black">/2</span>
+          <div className="steps-text">
+            <span className="text-lg font-satoshi-bold font-black">
+              {currentStep.length}
+            </span>
+            <span className="text-lg font-satoshi-bold font-black">/2</span>
+          </div>
+
         </div>
-
-      </div>
+      )}
       <div className="">
         <div className="font-bold text-[22px]">
-          {props.update ? "Update Project" : "Create Project"}
+          {props.update ? "Edit project" : "Create Project"}
         </div>
-        <div className="text-[12px] text-white-shade-600">
-          Make sure you have fill the form with right data.
-        </div>
+        {!props.update && (
+          <div className="text-[12px] text-white-shade-600">
+            Make sure you have fill the form with right data.
+          </div>
+        )}
       </div>
     </div>
   );
