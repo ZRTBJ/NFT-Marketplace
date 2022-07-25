@@ -26,7 +26,7 @@ export default function Token({
           className="debounceInput"
           value={tokenName}
           placeholder="Project Token Name"
-          maxlength="50"
+          maxLength="50"
         />
         {alreadyTakenTokenName && (
           <div className="validationTag">Token name has already taken</div>
