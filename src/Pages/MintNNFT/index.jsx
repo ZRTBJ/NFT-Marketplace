@@ -18,6 +18,7 @@ import {
 import { useHistory } from "react-router-dom";
 import { getFunctionStatus } from "services/websocketFunction/webSocketFunctionService";
 import { getNotificationData } from "Slice/notificationSlice";
+import Config from "config";
 
 export default function MintNFT(props) {
   const dispatch = useDispatch();
@@ -236,14 +237,14 @@ export default function MintNFT(props) {
 
     axios({
       method: "POST",
-      url: "https://fileupload-dev.creabo.io/upload",
+      url: Config.FILE_SERVER_URL,
       data: formdata,
       headers: headers,
     })
       .then((response) => {
         setJobId(response["job_id"]);
         const notificationData = {
-          projectId: watch("selectedProject"), // projectId,
+          projectId: watch("selectedProject"),
           etherscan: "",
           function_uuid: response["job_id"],
           data: "",
