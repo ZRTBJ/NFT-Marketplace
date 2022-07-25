@@ -12,9 +12,9 @@ import WalletConnectModal from "components/modalDialog/WalletConnectModal";
 import { Link } from "react-router-dom";
 import useWebSocket from "react-use-websocket";
 import config from "config";
-import { getProjectDeploy } from "Slice/projectSlice";
 import { getProjectListBySearch } from "services/project/projectService";
 import SearchBarResult from "./SearchBarResult";
+import { getNotificationData } from "Slice/notificationSlice";
 
 const Header = () => {
   const history = useHistory();
@@ -85,7 +85,7 @@ const Header = () => {
     if (loc.protocol === "https:") {
       host = "wss:";
     }
-  } catch { }
+  } catch {}
   const socketUrl = `${host}//${config.WEB_SOKET}/ws`;
 
   const {
@@ -114,17 +114,17 @@ const Header = () => {
         if (lastMessage.data) {
           const data = JSON.parse(lastMessage.data);
           if (data.type === "functionNotification") {
-            const deployData = {
+            const notificationData = {
               function_uuid: data.fn_uuid,
               data: lastMessage.data,
             };
-            dispatch(getProjectDeploy(deployData));
+            dispatch(getNotificationData(notificationData));
           } else if (data.type === "fileUploadNotification") {
-            const deployData = {
+            const notificationData = {
               function_uuid: data.Data.job_id,
               data: lastMessage.data,
             };
-            dispatch(getProjectDeploy(deployData));
+            dispatch(getNotificationData(notificationData));
           }
         }
       } catch (err) {
@@ -149,7 +149,7 @@ const Header = () => {
           }
         }, 2000);
       }
-    } catch (err) { }
+    } catch (err) {}
   }
 
   function searchProject(keyword) {
@@ -278,8 +278,9 @@ const Header = () => {
             )}
 
             <ul
-              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${userId ? "" : "sm:py-2"
-                }`}
+              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${
+                userId ? "" : "sm:py-2"
+              }`}
             >
               {userinfo.id && (
                 <>

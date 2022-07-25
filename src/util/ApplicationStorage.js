@@ -1,28 +1,30 @@
-const KEY_DEPLOYED_PROJECT_LIST = "DEPLOYED_PROJECT_LIST";
+const KEY_NOTIFICATION_LIST = "NOTIFICATION_LIST";
 const KEY_WALLET_TYPE = "wallet";
 
-export function getAllProjectDeployData() {
-  const datas = localStorage.getItem(KEY_DEPLOYED_PROJECT_LIST);
+export function getAllNotificationData() {
+  const datas = localStorage.getItem(KEY_NOTIFICATION_LIST);
   return datas ? JSON.parse(datas) : [];
 }
 
-export function addProjectDeployData({
+export function addNotificationData({
   projectId,
   etherscan,
   function_uuid,
   data,
 }) {
   try {
-    const newDeployObject = { projectId, etherscan, function_uuid, data };
-    const oldData = getAllProjectDeployData();
-    const deployObject = oldData.find((x) => x.function_uuid === function_uuid);
-    if (deployObject) {
-      deployObject.etherscan = etherscan;
-      deployObject.data = data;
+    const newNotificationObject = { projectId, etherscan, function_uuid, data };
+    const oldData = getAllNotificationData();
+    const notificationObject = oldData.find(
+      (x) => x.function_uuid === function_uuid
+    );
+    if (notificationObject) {
+      notificationObject.etherscan = etherscan;
+      notificationObject.data = data;
     } else {
-      oldData.push(newDeployObject);
+      oldData.push(newNotificationObject);
     }
-    localStorage.setItem(KEY_DEPLOYED_PROJECT_LIST, JSON.stringify(oldData));
+    localStorage.setItem(KEY_NOTIFICATION_LIST, JSON.stringify(oldData));
   } catch {
     console.log("Failed to store");
   }

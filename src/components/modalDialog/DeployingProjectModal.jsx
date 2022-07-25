@@ -15,9 +15,9 @@ import {
 import { SendTransactionTorus } from "util/Torus";
 import { getWalletType } from "util/ApplicationStorage";
 import { useDispatch, useSelector } from "react-redux";
-import { getProjectDeploy } from "Slice/projectSlice";
 import { useHistory } from "react-router-dom";
 import { useAuthState } from "Context";
+import { getNotificationData } from "Slice/notificationSlice";
 
 const DeployingProjectModal = ({
   handleClose,
@@ -37,7 +37,9 @@ const DeployingProjectModal = ({
   const context = useAuthState();
   const [userId, setUserId] = useState(context ? context.user : "");
   const projectDeploy = useSelector((state) =>
-    state?.projects?.projectDeploy ? state?.projects?.projectDeploy : []
+    state?.notifications?.notificationData
+      ? state?.notifications?.notificationData
+      : []
   );
   const [deployStatus, setDeployStatus] = useState({
     projectId: "",
@@ -153,7 +155,7 @@ const DeployingProjectModal = ({
             function_uuid: res.function_uuid,
             data: "",
           };
-          dispatch(getProjectDeploy(deployData));
+          dispatch(getNotificationData(deployData));
           recheckStatus();
         } else {
         }
@@ -176,7 +178,7 @@ const DeployingProjectModal = ({
             function_uuid: res.function_uuid,
             data: "",
           };
-          dispatch(getProjectDeploy(deployData));
+          dispatch(getNotificationData(deployData));
           recheckStatus();
         } else {
         }

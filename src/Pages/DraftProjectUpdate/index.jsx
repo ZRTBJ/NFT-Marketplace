@@ -711,7 +711,7 @@ export default function DraftProjectUpdate() {
                     className="btn-secondary-link btn-sm"
                     onClick={() => handelClickBack()}
                   >
-                    <i class="fa-regular fa-angle-left mr-1"></i> BACK
+                    <i className="fa-regular fa-angle-left mr-1"></i> BACK
                   </button>
                 )}
                 {currentStep.length < 3 && (
@@ -719,7 +719,7 @@ export default function DraftProjectUpdate() {
                     className="btn btn-primary btn-sm"
                     onClick={() => handelClickNext()}
                   >
-                    Next <i class="fa-regular fa-angle-right ml-1"></i>
+                    Next <i className="fa-regular fa-angle-right ml-1"></i>
                   </button>
                 )}
                 {currentStep.length < 3 && projectStatus !== "published" && (

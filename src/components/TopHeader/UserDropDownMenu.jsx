@@ -101,7 +101,9 @@ const UserDropDownMenu = () => {
             <span>Total Balance </span>
           </p>
           <h4 className="text-white text-xl  mb-6 tracking-wide">
-            {isLoadingBalance && <i class="fa fa-spinner fa-pulse fa-fw"></i>}
+            {isLoadingBalance && (
+              <i className="fa fa-spinner fa-pulse fa-fw"></i>
+            )}
             <span>{balance ? balance.toFixed(4) : 0} MATIC</span>
           </h4>
           <a className="btn-fund" href="#">

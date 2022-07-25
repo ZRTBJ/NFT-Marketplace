@@ -11,19 +11,21 @@ import {
 } from "services/nft/nftService";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { getProjectDeploy } from "Slice/projectSlice";
 import {
   getProjectDetailsById,
   getUserProjectListById,
 } from "services/project/projectService";
 import { useHistory } from "react-router-dom";
 import { getFunctionStatus } from "services/websocketFunction/webSocketFunctionService";
+import { getNotificationData } from "Slice/notificationSlice";
 
 export default function MintNFT(props) {
   const dispatch = useDispatch();
   const history = useHistory();
   const projectDeploy = useSelector((state) =>
-    state?.projects?.projectDeploy ? state?.projects?.projectDeploy : []
+    state?.notifications?.notificationData
+      ? state?.notifications?.notificationData
+      : []
   );
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -234,19 +236,19 @@ export default function MintNFT(props) {
 
     axios({
       method: "POST",
-      url: "http://34.102.235.130/upload",
+      url: "https://fileupload-dev.creabo.io/upload",
       data: formdata,
       headers: headers,
     })
       .then((response) => {
         setJobId(response["job_id"]);
-        const deployData = {
+        const notificationData = {
           projectId: watch("selectedProject"), // projectId,
           etherscan: "",
           function_uuid: response["job_id"],
           data: "",
         };
-        dispatch(getProjectDeploy(deployData));
+        dispatch(getNotificationData(notificationData));
         // setIsLoading(false);
       })
       .catch((err) => {
@@ -313,7 +315,7 @@ export default function MintNFT(props) {
             function_uuid: res["function_uuid"],
             data: "",
           };
-          dispatch(getProjectDeploy(deployData));
+          dispatch(getNotificationData(deployData));
           recheckStatus(res["function_uuid"]);
         } else {
           setIsLoading(false);
@@ -348,15 +350,15 @@ export default function MintNFT(props) {
                   function_uuid: fuuid,
                   data: JSON.stringify(res),
                 };
-                dispatch(getProjectDeploy(deployData));
+                dispatch(getNotificationData(deployData));
                 setShowConfirmationModal(false);
                 setShowSuccessModal(true);
-              } else if (
-                res["fn_name"] === "createNFTBatch" &&
-                res["fn_status"] === "processing"
-              ) {
-                recheckStatus();
               }
+            } else if (
+              res["fn_name"] === "createNFTBatch" &&
+              res["fn_status"] === "processing"
+            ) {
+              recheckStatus(fuuid);
             }
           }
         })
