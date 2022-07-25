@@ -57,7 +57,7 @@ export default function Outline({
       {/* name */}
       <div className="mb-6">
         <div className="label">Project Name</div>
-        {!projectName && (
+        {!projectNameDisabled && (
           <>
             <div className="label-grey">Your Project name</div>
             <DebounceInput
@@ -76,7 +76,7 @@ export default function Outline({
             )}
           </>
         )}
-        {projectName && (
+        {projectNameDisabled && (
           <h3>{projectName}</h3>
         )}
       </div>
