@@ -4,7 +4,7 @@ import Sidebar from "../Sidebar/Sidebar";
 import notificationIcon from "assets/images/header/ico_notification@2x.png";
 import UserDropDownMenu from "./UserDropDownMenu";
 import NotificationMenu from "./NotificationMenu";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setSideBar } from "Slice/userSlice";
 import { useAuthState } from "Context";
@@ -12,14 +12,15 @@ import WalletConnectModal from "components/modalDialog/WalletConnectModal";
 import { Link } from "react-router-dom";
 import useWebSocket from "react-use-websocket";
 import config from "config";
-import { getProjectDeploy } from "Slice/projectSlice";
 import { getProjectListBySearch } from "services/project/projectService";
 import SearchBarResult from "./SearchBarResult";
+import { getNotificationData } from "Slice/notificationSlice";
 
 const Header = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const context = useAuthState();
+  const { pathname } = useLocation();
 
   const [userId, setUserId] = useState(context ? context.user : "");
   const [showModal, setShowModal] = useState(false);
@@ -113,17 +114,17 @@ const Header = () => {
         if (lastMessage.data) {
           const data = JSON.parse(lastMessage.data);
           if (data.type === "functionNotification") {
-            const deployData = {
+            const notificationData = {
               function_uuid: data.fn_uuid,
               data: lastMessage.data,
             };
-            dispatch(getProjectDeploy(deployData));
+            dispatch(getNotificationData(notificationData));
           } else if (data.type === "fileUploadNotification") {
-            const deployData = {
+            const notificationData = {
               function_uuid: data.Data.job_id,
               data: lastMessage.data,
             };
-            dispatch(getProjectDeploy(deployData));
+            dispatch(getNotificationData(notificationData));
           }
         }
       } catch (err) {
@@ -420,7 +421,7 @@ const Header = () => {
           </div>
         </div>
 
-        {window?.location?.pathname === "/" && (
+        {pathname === "/" && (
           <div className="md:hidden">
             <form>
               <label

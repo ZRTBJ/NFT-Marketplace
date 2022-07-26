@@ -11,19 +11,22 @@ import {
 } from "services/nft/nftService";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { getProjectDeploy } from "Slice/projectSlice";
 import {
   getProjectDetailsById,
   getUserProjectListById,
 } from "services/project/projectService";
 import { useHistory } from "react-router-dom";
 import { getFunctionStatus } from "services/websocketFunction/webSocketFunctionService";
+import { getNotificationData } from "Slice/notificationSlice";
+import Config from "config";
 
 export default function MintNFT(props) {
   const dispatch = useDispatch();
   const history = useHistory();
   const projectDeploy = useSelector((state) =>
-    state?.projects?.projectDeploy ? state?.projects?.projectDeploy : []
+    state?.notifications?.notificationData
+      ? state?.notifications?.notificationData
+      : []
   );
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -234,19 +237,23 @@ export default function MintNFT(props) {
 
     axios({
       method: "POST",
+<<<<<<< HEAD
       url: "https://fileupload-dev.creabo.io/upload",
+=======
+      url: Config.FILE_SERVER_URL,
+>>>>>>> fb32487418c16722a174f533a212fbb47583f04e
       data: formdata,
       headers: headers,
     })
       .then((response) => {
         setJobId(response["job_id"]);
-        const deployData = {
-          projectId: watch("selectedProject"), // projectId,
+        const notificationData = {
+          projectId: watch("selectedProject"),
           etherscan: "",
           function_uuid: response["job_id"],
           data: "",
         };
-        dispatch(getProjectDeploy(deployData));
+        dispatch(getNotificationData(notificationData));
         // setIsLoading(false);
       })
       .catch((err) => {
@@ -262,18 +269,24 @@ export default function MintNFT(props) {
     request.append("name", watch("name"));
     request.append("description", watch("description"));
     request.append("asset_uid", assetId);
-    request.append("external_url", path);
     const attributes = [];
 
     // defined properties
     for (let dprop of definedPropertyList) {
-      const prop = {
-        key: dprop.key,
-        value: dprop.value,
-        value_type: dprop.value_type,
-        display_type: dprop.display_type,
-      };
-      attributes.push(prop);
+      if (
+        dprop.key &&
+        dprop.key.length > 0 &&
+        dprop.value &&
+        dprop.value.length > 0
+      ) {
+        const prop = {
+          key: dprop.key,
+          value: dprop.value,
+          value_type: dprop.value_type,
+          display_type: dprop.display_type,
+        };
+        attributes.push(prop);
+      }
     }
     // properties
     for (let aprop of propertyList) {
@@ -307,11 +320,14 @@ export default function MintNFT(props) {
             function_uuid: res["function_uuid"],
             data: "",
           };
-          dispatch(getProjectDeploy(deployData));
+          dispatch(getNotificationData(deployData));
           recheckStatus(res["function_uuid"]);
         } else {
           setIsLoading(false);
           setShowConfirmationModal(false);
+          setErrorTitle("Create NFT failed");
+          setErrorMessage("Failed to create NFT. Please try again later");
+          setShowSuccessModal(false);
           setShowErrorModal(true);
         }
       })
@@ -339,15 +355,15 @@ export default function MintNFT(props) {
                   function_uuid: fuuid,
                   data: JSON.stringify(res),
                 };
-                dispatch(getProjectDeploy(deployData));
+                dispatch(getNotificationData(deployData));
                 setShowConfirmationModal(false);
                 setShowSuccessModal(true);
-              } else if (
-                res["fn_name"] === "createNFTBatch" &&
-                res["fn_status"] === "processing"
-              ) {
-                recheckStatus();
               }
+            } else if (
+              res["fn_name"] === "createNFTBatch" &&
+              res["fn_status"] === "processing"
+            ) {
+              recheckStatus(fuuid);
             }
           }
         })

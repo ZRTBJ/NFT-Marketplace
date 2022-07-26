@@ -29,10 +29,10 @@ export default function Confirmation(props) {
         </div>
         <div className="flex flex-wrap mb-6">
           {props.photosUrl.length > 0 ? (
-            props.photosUrl.map((i) => (
+            props.photosUrl.map((image, index) => (
               <img
-                src={i.path}
-                key={i.id}
+                src={image.path}
+                key={`image-preview-${index}`}
                 alt=""
                 className="rounded h-[124px] w-[124px] object-cover mr-4 mb-4"
               />
@@ -74,8 +74,11 @@ export default function Confirmation(props) {
             <div>No Tags found</div>
           ) : (
             <div className="flex flex-wrap">
-              {props.tagList.map((tag) => (
-                <div className="bg-[#232032] text-[#9499AE] pr-3 pl-2 mr-2 pt-1 pb-1 mb-3">
+              {props.tagList.map((tag, index) => (
+                <div
+                  key={`tag-preview-${index}`}
+                  className="bg-[#232032] text-[#9499AE] pr-3 pl-2 mr-2 pt-1 pb-1 mb-3"
+                >
                   {tag}
                 </div>
               ))}
