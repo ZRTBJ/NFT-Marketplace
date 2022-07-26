@@ -92,6 +92,7 @@ const Profile = () => {
     await getUserInfo(id)
       .then((response) => {
         setUser(response.user);
+        setWalletAddress(response.user.eao);
         if (response.user["web"]) {
           try {
             const webs = JSON.parse(response.user["web"]);
@@ -199,32 +200,31 @@ const Profile = () => {
     if (window.ethereum.networkVersion === "80001") {
       type = "eth";
     }
-    if (walletAddress) {
-      getExternalNftList(walletAddress, type).then((res) => {
-        const key = "id.tokenId";
-        let nfts = [];
-        const uniqueNftList = [
-          ...new Map(
-            res.external_nft.ownedNfts.map((item) => [
-              item["id"]["tokenId"],
-              item,
-            ])
-          ).values(),
-        ];
-        if (uniqueNftList.length > 0) {
-          uniqueNftList.forEach((element) => {
-            nfts.push({
-              id: element.id.tokenId,
-              path: element.metadata.image,
-              name: element.title,
-              details: element,
-              isNft: true,
-            });
+    getExternalNftList(walletAddress, type).then((res) => {
+      const key = "id.tokenId";
+      let nfts = [];
+      const uniqueNftList = [
+        ...new Map(
+          res.external_nft.ownedNfts.map((item) => [
+            item["id"]["tokenId"],
+            item,
+          ])
+        ).values(),
+      ];
+      if (uniqueNftList.length > 0) {
+        uniqueNftList.forEach((element) => {
+          nfts.push({
+            id: element.id.tokenId,
+            path: element.metadata.image,
+            name: element.title,
+            details: element,
+            isNft: true,
+            isExternalNft: true,
           });
-          setNftList(nfts);
-        }
-      });
-    }
+        });
+        setNftList(nfts);
+      }
+    });
   }
   async function getBookmarks() {
     let payload = {
