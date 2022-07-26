@@ -7,7 +7,9 @@ const CommonCard = ({ project }) => {
   const history = useHistory();
   function gotToDetailPage(projectId) {
     if (project.isNft) {
-      console.log("nft");
+      if (!project.isExternalNft) {
+        history.push(`/${projectId}/nft-details`);
+      }
     } else {
       if (project.project_status === "draft" || project.status === "draft") {
         history.push(`/project-update/${projectId}`);

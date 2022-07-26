@@ -22,3 +22,6 @@ export async function generateUploadkey(payload) {
 export async function getDefinedProperties() {
   return await client("GET", `/meta/category`);
 }
+export async function getNftDetails(id) {
+  return await client("GET", `/nft/${id}`);
+}
