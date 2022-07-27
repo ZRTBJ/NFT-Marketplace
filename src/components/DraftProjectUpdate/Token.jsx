@@ -26,6 +26,7 @@ export default function Token({
           className="debounceInput"
           value={tokenName}
           placeholder="Project Token Name"
+          maxLength="50"
         />
         {alreadyTakenTokenName && (
           <div className="validationTag">Token name has already taken</div>
@@ -67,6 +68,7 @@ export default function Token({
               placeholder=""
               type="number"
               min="0"
+              max="9223372036854775807"
             />
             {emptyNumberOfToken && (
               <div className="validationTag">Number of tokens are required</div>
@@ -80,6 +82,7 @@ export default function Token({
               placeholder="-"
               type="number"
               min="0"
+              max="9223372036854775807"
             />
           </div>
         </div>

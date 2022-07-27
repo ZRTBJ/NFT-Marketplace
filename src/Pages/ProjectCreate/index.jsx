@@ -448,7 +448,6 @@ export default function ProjectCreate() {
         .then((res) => {
           if (res.code === 0) {
             getProjectPublishCost(projectId);
-            setDataIsLoading(false);
           } else {
             setDataIsLoading(false);
             setShowErrorModal(true);
@@ -640,124 +639,137 @@ export default function ProjectCreate() {
   }
 
   return (
-    <div className="text-[white]">
+    <>
       {isDataLoading && <div className="loading"></div>}
-      <div className="cardContainer px-3 md:px-5">
-        {currentStep.length === 1 && (
-          <div>
-            <LeftSideBar currentStep={currentStep} key={currentStep.length} />
-            <Outline
-              key={outlineKey}
-              // name
-              projectName={projectName}
-              emptyProjectName={emptyProjectName}
-              alreadyTakenProjectName={alreadyTakenProjectName}
-              onProjectNameChange={onProjectNameChange}
-              //cover photos
-              coverPhotoUrl={coverPhotoUrl}
-              onCoverPhotoSelect={onCoverPhotoSelect}
-              onCoverPhotoRemove={onCoverPhotoRemove}
-              //photos
-              photosUrl={photosUrl}
-              onPhotosSelect={onPhotosSelect}
-              onPhotosRemove={onPhotosRemove}
-              // overview
-              overview={overview}
-              onOverviewChange={onOverviewChange}
-              // category
-              projectCategory={projectCategory}
-              emptyProjeCtCategory={emptyProjeCtCategory}
-              onProjectCategoryChange={onProjectCategoryChange}
-              // tag
-              tagList={tagList}
-              tagLimit={tagLimit}
-              onTagEnter={onTagEnter}
-              onTagRemove={onTagRemove}
-              // need member
-              needMember={needMember}
-              onNeedMemberChange={onNeedMemberChange}
-              // role list
-              roleList={roleList}
-              onRoleEnter={onRoleEnter}
-              onRoleRemove={onRoleRemove}
-            />
-          </div>
-        )}
-        {currentStep.length === 2 && (
-          <div>
-            <LeftSideBar currentStep={currentStep} key={currentStep.length} />
-            <Token
-              // token name
-              tokenName={tokenName}
-              emptyToken={emptyToken}
-              alreadyTakenTokenName={alreadyTakenTokenName}
-              onTokenNameChange={onTokenNameChange}
-              // token symbol
-              tokenSymbol={tokenSymbol}
-              emptySymbol={emptySymbol}
-              alreadyTakenSymbol={alreadyTakenSymbol}
-              onTokenSymbolChange={onTokenSymbolChange}
-              // number of token
-              numberOfTokens={numberOfTokens}
-              emptyNumberOfToken={emptyNumberOfToken}
-              onNumberOfTokenChange={onNumberOfTokenChange}
-            />
-          </div>
-        )}
-        {currentStep.length === 3 && (
-          <Confirmation
-            projectName={projectName}
-            projectCover={coverPhotoUrl}
-            photosUrl={photosUrl}
-            overview={overview}
-            category={projectCategoryName}
-            tagList={tagList}
-            needMember={needMember}
-            roleList={roleList}
-            tokenName={tokenName}
-            tokenSymbol={tokenSymbol}
-            numberOfTokens={numberOfTokens}
-          />
-        )}
-        <div className="buttonContainer">
-          {projectStatus !== "publishing" && (
-            <div className="flex">
-              {currentStep.length > 1 && (
-                <button
-                  className="btn-outline-primary mr-4 w-[100px] h-[38px]"
-                  onClick={() => handelClickBack()}
-                >
-                  BACK
-                </button>
-              )}
-              {currentStep.length < 3 && (
-                <button
-                  className="btn-primary w-[100px] h-[38px]"
-                  onClick={() => handelClickNext()}
-                >
-                  NEXT
-                </button>
-              )}
-              {currentStep.length < 3 && (
-                <button
-                  onClick={() => saveDraft("public")}
-                  className={`btn-outline-primary w-[140px] h-[38px] ml-auto`}
-                >
-                  Save to Draft
-                </button>
-              )}
-              {currentStep.length === 3 && (
-                <button
-                  onClick={() => setShowPublishModal(true)}
-                  className="btn-primary w-[100px] h-[38px] ml-auto"
-                >
-                  PUBLISH
-                </button>
-              )}
+
+      <div className="text-white max-w-[600px] mx-auto md:pt-12">
+        <div className="create-project-container">
+          {currentStep.length === 1 && (
+            <div>
+              <LeftSideBar currentStep={currentStep} key={currentStep.length} />
+              <Outline
+                key={outlineKey}
+                // name
+                projectName={projectName}
+                emptyProjectName={emptyProjectName}
+                alreadyTakenProjectName={alreadyTakenProjectName}
+                onProjectNameChange={onProjectNameChange}
+                //cover photos
+                coverPhotoUrl={coverPhotoUrl}
+                onCoverPhotoSelect={onCoverPhotoSelect}
+                onCoverPhotoRemove={onCoverPhotoRemove}
+                //photos
+                photosUrl={photosUrl}
+                onPhotosSelect={onPhotosSelect}
+                onPhotosRemove={onPhotosRemove}
+                // overview
+                overview={overview}
+                onOverviewChange={onOverviewChange}
+                // category
+                projectCategory={projectCategory}
+                emptyProjeCtCategory={emptyProjeCtCategory}
+                onProjectCategoryChange={onProjectCategoryChange}
+                // tag
+                tagList={tagList}
+                tagLimit={tagLimit}
+                onTagEnter={onTagEnter}
+                onTagRemove={onTagRemove}
+                // need member
+                needMember={needMember}
+                onNeedMemberChange={onNeedMemberChange}
+                // role list
+                roleList={roleList}
+                onRoleEnter={onRoleEnter}
+                onRoleRemove={onRoleRemove}
+              />
             </div>
           )}
+          {currentStep.length === 2 && (
+            <div>
+              <LeftSideBar currentStep={currentStep} key={currentStep.length} />
+              <Token
+                // token name
+                tokenName={tokenName}
+                emptyToken={emptyToken}
+                alreadyTakenTokenName={alreadyTakenTokenName}
+                onTokenNameChange={onTokenNameChange}
+                // token symbol
+                tokenSymbol={tokenSymbol}
+                emptySymbol={emptySymbol}
+                alreadyTakenSymbol={alreadyTakenSymbol}
+                onTokenSymbolChange={onTokenSymbolChange}
+                // number of token
+                numberOfTokens={numberOfTokens}
+                emptyNumberOfToken={emptyNumberOfToken}
+                onNumberOfTokenChange={onNumberOfTokenChange}
+              />
+            </div>
+          )}
+          {currentStep.length === 3 && (
+            <Confirmation
+              projectName={projectName}
+              projectCover={coverPhotoUrl}
+              photosUrl={photosUrl}
+              overview={overview}
+              category={projectCategoryName}
+              tagList={tagList}
+              needMember={needMember}
+              roleList={roleList}
+              tokenName={tokenName}
+              tokenSymbol={tokenSymbol}
+              numberOfTokens={numberOfTokens}
+            />
+          )}
+        </div>
+
+        <div className="buttonContainer">
+          <div className="flex">
+            {projectStatus !== "publishing" && (
+              <>
+                {currentStep.length > 1 && (
+                  <button
+                    className="btn-secondary-link btn-sm"
+                    onClick={() => handelClickBack()}
+                  >
+                    <i className="fa-regular fa-angle-left mr-1"></i> BACK
+                  </button>
+                )}
+                {currentStep.length < 3 && (
+                  <button
+                    className="btn btn-primary btn-sm"
+                    onClick={() => handelClickNext()}
+                  >
+                    Next <i className="fa-regular fa-angle-right ml-1"></i>
+                  </button>
+                )}
+                {currentStep.length < 3 && projectStatus !== "published" && (
+                  <button
+                    onClick={() => saveDraft("public")}
+                    className={`btn-secondary-link btn-sm ml-auto`}
+                  >
+                    Save to Draft
+                  </button>
+                )}
+              </>
+            )}
+            {currentStep.length === 3 && projectStatus !== "published" && (
+              <button
+                onClick={() => {
+                  if (projectStatus === "publishing") {
+                    intiProjectPublish();
+                  } else {
+                    setShowPublishModal(true);
+                  }
+                }}
+                className="btn btn-primary btn-sm ml-auto"
+              >
+                Publish
+              </button>
+            )}
+          </div>
         </div>
       </div>
+
       {showDeployModal && (
         <DeployingProjectModal
           show={showDeployModal}
@@ -789,6 +801,6 @@ export default function ProjectCreate() {
           show={showPublishModal}
         />
       )}
-    </div>
+    </>
   );
 }

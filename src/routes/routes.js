@@ -12,7 +12,7 @@ import ProjectEditTop from "Pages/ProjectEditTop";
 import projectDetails from "Pages/ProjectDetails";
 import AllProject from "Pages/AllProject";
 import MintNFT from "Pages/MintNNFT";
-
+import DetailsNFT from "Pages/DetailsNFT";
 const routes = [
   {
     path: "/login",
@@ -76,9 +76,14 @@ const routes = [
     isPrivate: false,
   },
   {
-    path: "/mint-nft",
+    path: "/:id/mint-nft",
     component: MintNFT,
     isPrivate: true,
+  },
+  {
+    path: "/:id/nft-details",
+    component: DetailsNFT,
+    isPrivate: false,
   },
   {
     path: "/*",

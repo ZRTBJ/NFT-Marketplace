@@ -42,6 +42,7 @@ const ProfileSettingsForm = () => {
 
   async function getUserDetails(userID) {
     setIsLoading(true);
+    setMoreWebLink([]);
     const response = await getUserInfo(userID);
     let userinfo;
     try {
@@ -63,8 +64,16 @@ const ProfileSettingsForm = () => {
       if (userinfo["web"]) {
         try {
           const webs = JSON.parse(userinfo["web"]);
+          const webLinks = [];
           for (let link of webs) {
-            setMoreWebLink([...moreWebLink, { title: Object.keys(link)[0] }]);
+            if (Object.keys(link)[0].startsWith("webLink1")) {
+              setValue("webLink1", Object.values(link)[0]);
+            } else if (Object.keys(link)[0].startsWith("moreWebLink")) {
+              webLinks.push({ title: `moreWebLink${webLinks.length + 1}` });
+            }
+          }
+          if (webLinks.length > 0) {
+            setMoreWebLink(webLinks);
           }
           setTimeout(() => {
             for (let link of webs) {
@@ -91,7 +100,7 @@ const ProfileSettingsForm = () => {
     setIsLoading(false);
   }
 
-  function profileImageChnageHandler(images) {
+  function profileImageChangeHandler(images) {
     const img = images[0];
     setProfileImage({ image: img, path: URL.createObjectURL(img) });
   }
@@ -103,7 +112,11 @@ const ProfileSettingsForm = () => {
 
   function addMoreWebLink() {
     const count = moreWebLink.length;
-    setMoreWebLink([...moreWebLink, { title: `moreWebLink${count}` }]);
+    setMoreWebLink([...moreWebLink, { title: `moreWebLink${count + 1}` }]);
+  }
+
+  function removeProfilePhoto() {
+    setProfileImage({ image: null, path: "" });
   }
 
   function removeCoverPhoto() {
@@ -126,7 +139,11 @@ const ProfileSettingsForm = () => {
     const web = [];
     web.push({ webLink1: data["webLink1"] });
     for (let link of moreWebLink) {
-      if (data[link.title] && data[link.title].length > 0) {
+      if (
+        data[link.title] &&
+        data[link.title].length > 0 &&
+        data[link.title] != "https://"
+      ) {
         web.push({ [link.title]: data[link.title] });
       }
     }
@@ -135,15 +152,15 @@ const ProfileSettingsForm = () => {
     request.append("first_name", data["firstName"]);
     request.append("last_name", data["lastName"]);
     request.append("display_name", data["displayName"]);
-    request.append("email", data["emailAddress"]);
+    // request.append("email", data["emailAddress"]);
     request.append("job", data["jobDescription"]);
     request.append("area", data["locationArea"]);
-    try {
-      request.append(
-        "country",
-        document.getElementById("location-country")?.value
-      );
-    } catch {}
+    // try {
+    //   request.append(
+    //     "country",
+    //     document.getElementById("location-country")?.value
+    //   );
+    // } catch {}
     request.append("biography", data["biography"]);
     if (profileImage.image) {
       request.append("avatar", profileImage.image);
@@ -174,7 +191,9 @@ const ProfileSettingsForm = () => {
 
   return (
     /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
-    <div className={`grid justify-items-center mt-24`}>
+    <div
+      className={`grid justify-items-center mt-24 ml-4 mr-4 sm:ml-0 sm:mr-0`}
+    >
       {isLoading && <div className="loading"></div>}
       <form
         id="profile-setting"
@@ -187,7 +206,7 @@ const ProfileSettingsForm = () => {
 
           {/* photo */}
           <div>
-            <div className="text-xl font-semibold mb-4">
+            <div className="text-xl font-bold mb-4">
               Set your profile Picture
             </div>
             <div className="label">Profile Picture</div>
@@ -201,7 +220,7 @@ const ProfileSettingsForm = () => {
                   <FileDragAndDrop
                     maxFiles={4}
                     height="158px"
-                    onDrop={(e) => profileImageChnageHandler(e)}
+                    onDrop={(e) => profileImageChangeHandler(e)}
                     sizePlaceholder="Total upto 16MB"
                   />
                 </div>
@@ -217,7 +236,7 @@ const ProfileSettingsForm = () => {
                     alt=""
                     src={deleteIcon}
                     className="absolute top-0 cursor-pointer right-0"
-                    onClick={removeCoverPhoto}
+                    onClick={removeProfilePhoto}
                   />
                 </div>
               )}
@@ -302,7 +321,7 @@ const ProfileSettingsForm = () => {
               name="biography"
               placeholder="Add your bio"
               {...register("biography")}
-              className="block w-full border border-zinc-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none resize-none"
+              className="block w-full rounded py-3 px-4 mb-3 leading-tight focus:outline-none resize-none"
               defaultValue={userinfo ? userinfo["biography"] : ""}
             ></textarea>
           </div>
@@ -327,7 +346,7 @@ const ProfileSettingsForm = () => {
             <div className="inline-flex items-center w-full">
               <img
                 className="cp mr-2 mb-3"
-                src={require(`assets/images/profile/social/insta-icon.png`)}
+                src={require(`assets/images/profile/social/linkInsta.png`)}
                 height={24}
                 width={24}
                 alt="social logo"
@@ -344,7 +363,7 @@ const ProfileSettingsForm = () => {
             <div className="inline-flex items-center w-full">
               <img
                 className="cp mr-2 mb-3"
-                src={require(`assets/images/profile/social/reddit-icon.png`)}
+                src={require(`assets/images/profile/social/linkReddit.png`)}
                 height={24}
                 width={24}
                 alt="social logo"
@@ -362,7 +381,7 @@ const ProfileSettingsForm = () => {
             <div className="inline-flex items-center w-full">
               <img
                 className="cp mr-2 mb-3"
-                src={require(`assets/images/profile/social/twitter-icon.png`)}
+                src={require(`assets/images/profile/social/linkTwitter.png`)}
                 height={24}
                 width={24}
                 alt="social logo"
@@ -380,7 +399,7 @@ const ProfileSettingsForm = () => {
             <div className="inline-flex items-center w-full">
               <img
                 className="cp mr-2 mb-3"
-                src={require(`assets/images/profile/social/facebook-icon.png`)}
+                src={require(`assets/images/profile/social/linkFacebook.png`)}
                 height={24}
                 width={24}
                 alt="social logo"
@@ -396,7 +415,7 @@ const ProfileSettingsForm = () => {
               />
             </div>
             <div className="inline-flex items-center w-full">
-              <i class="fa fa-link mr-3 mb-3" aria-hidden="true"></i>
+              <i className="fa fa-link mr-3 mb-3" aria-hidden="true"></i>
               <input
                 className={`block w-full border border-dark-300 rounded py-3 px-4 mb-3 leading-tight`}
                 id="link-web"
@@ -414,15 +433,15 @@ const ProfileSettingsForm = () => {
                   key={`more-link-${index}`}
                   className="inline-flex items-center w-full"
                 >
-                  <i class="fa fa-link mr-3 mb-3" aria-hidden="true"></i>
+                  <i className="fa fa-link mr-3 mb-3" aria-hidden="true"></i>
                   <input
                     className={`block w-full border border-dark-300 rounded py-3 px-4 mb-3 leading-tight`}
-                    id={`more-link-web-${index}`}
-                    name={`moreWebLink${index}`}
-                    {...register(`moreWebLink${index}`)}
+                    id={`more-link-web-${index + 1}`}
+                    name={link.title}
+                    {...register(link.title)}
                     type="text"
                     placeholder="https://"
-                    defaultValue={""}
+                    defaultValue={"https://"}
                   />
                 </div>
               ))}
@@ -433,7 +452,7 @@ const ProfileSettingsForm = () => {
             <div>
               <button
                 type="button"
-                class="btn-outline-primary-gradient w-[100px] h-[38px]"
+                className="btn-outline-primary-gradient w-[100px] h-[38px]"
                 onClick={(e) => {
                   addMoreWebLink();
                 }}
@@ -441,20 +460,25 @@ const ProfileSettingsForm = () => {
                 <span>Show More</span>
               </button>
             </div>
-            <div className="text-right"></div>
             <div className="text-right">
-              <button
+              {/* <button
                 type="button"
-                className="btn-primary w-[80px] h-[38px] rounded-lg mr-4"
+                className="inline-block sm:hidden btn-primary w-[80px] h-[38px] rounded-lg mr-4"
                 onClick={() => history.push(`/profile/${userId ? userId : ""}`)}
               >
                 Skip
-              </button>
-              <button
-                type="submit"
-                className="btn-primary w-[100px] h-[38px] rounded-lg"
+              </button> */}
+            </div>
+            <div className="text-right">
+              {/* <button
+                type="button"
+                className="hidden sm:inline-block btn-primary w-[80px] h-[38px] rounded-lg mr-4"
+                onClick={() => history.push(`/profile/${userId ? userId : ""}`)}
               >
-                NEXT <i class="fa fa-angle-right" aria-hidden="true"></i>
+                Skip
+              </button> */}
+              <button type="submit" className="btn btn-primary btn-sm">
+                Save
               </button>
             </div>
           </div>

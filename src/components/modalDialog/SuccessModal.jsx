@@ -17,7 +17,7 @@ const SuccessModal = ({ handleClose, show, message, buttomText }) => {
         <div className="flex justify-center">
           <button
             type="button"
-            class="btn-outline-primary-gradient w-[100px] h-[38px]"
+            className="btn-outline-primary-gradient w-[100px] h-[38px]"
             onClick={(e) => {
               handleClose(false);
             }}
