@@ -13,6 +13,9 @@ import projectDetails from "Pages/ProjectDetails";
 import AllProject from "Pages/AllProject";
 import MintNFT from "Pages/MintNNFT";
 import DetailsNFT from "Pages/DetailsNFT";
+import EmbedNFT from "Pages/EmbedNFT";
+import EmbedNFTPreview from "Pages/EmbedNFTPreview";
+
 const routes = [
   {
     path: "/login",
@@ -83,6 +86,16 @@ const routes = [
   {
     path: "/:id/nft-details",
     component: DetailsNFT,
+    isPrivate: false,
+  },
+  {
+    path: "/embed/:id",
+    component: EmbedNFT,
+    isPrivate: false,
+  },
+  {
+    path: "/embed-nft/preview",
+    component: EmbedNFTPreview,
     isPrivate: false,
   },
   {

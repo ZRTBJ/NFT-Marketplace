@@ -237,11 +237,7 @@ export default function MintNFT(props) {
 
     axios({
       method: "POST",
-<<<<<<< HEAD
-      url: "https://fileupload-dev.creabo.io/upload",
-=======
       url: Config.FILE_SERVER_URL,
->>>>>>> fb32487418c16722a174f533a212fbb47583f04e
       data: formdata,
       headers: headers,
     })
