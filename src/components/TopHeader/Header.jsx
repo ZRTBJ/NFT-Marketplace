@@ -15,6 +15,7 @@ import config from "config";
 import { getProjectListBySearch } from "services/project/projectService";
 import SearchBarResult from "./SearchBarResult";
 import { getNotificationData } from "Slice/notificationSlice";
+import NotificatioMenu from "./NotificationMenu";
 
 const Header = () => {
   const history = useHistory();
@@ -35,6 +36,7 @@ const Header = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [projectList, setProjectList] = useState([]);
   const [showSearchResult, setShowSearchResult] = useState(false);
+  const [showNotificationPopup, setShowNotificationPopup] = useState(false);
 
   useEffect(() => {
     if (userId && userId.length > 0) {
@@ -56,6 +58,11 @@ const Header = () => {
     const userDropDown = document.getElementById("userDropDownWallet");
     userDropDown.classList.toggle("hidden");
     setShowWalletpopup(!showWalletpopup);
+  }
+
+  function showHideNotification() {
+    const userDropDown = document.getElementById("notificationDropdown");
+    userDropDown.classList.toggle("hidden");
   }
 
   function handelSidebar(e) {
@@ -179,6 +186,11 @@ const Header = () => {
     setShowSearchResult(false);
   }
 
+  function handleNotifictionClose() {
+    showHideNotification();
+    setShowNotificationPopup(false);
+  }
+
   function handleOnSearchFocus(event) {
     if (keyword && keyword.length > 2) {
       setTimeout(() => {
@@ -285,7 +297,15 @@ const Header = () => {
               {userinfo.id && (
                 <>
                   <li>
-                    <a href="#">
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowNotificationPopup(!showNotificationPopup);
+                        showHideNotification();
+                      }}
+                    >
                       <svg
                         width="18"
                         height="21"
@@ -299,6 +319,14 @@ const Header = () => {
                         />
                       </svg>
                     </a>
+                    {/* wallet popup */}
+                    <div id="notificationDropdown" className="hidden">
+                      {showNotificationPopup && (
+                        <NotificatioMenu
+                          handleNotifictionClose={handleNotifictionClose}
+                        />
+                      )}
+                    </div>
                   </li>
 
                   <li>

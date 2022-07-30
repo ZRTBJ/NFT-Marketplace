@@ -1,76 +1,88 @@
-// import { useHistory } from "react-router-dom";
-import dummyImage from "assets/images/dummy.png";
+import { useEffect, useState } from "react";
+import { useDetectClickOutside } from "react-detect-click-outside";
+import { useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import {
+  getUserNotifications,
+  markNotificationAsRead,
+} from "services/notification/notificationService";
 
-import { useState, useRef, useEffect } from "react";
-const NotificatioMenu = ({
-  showNotificationList,
-  showHideNotificationpopUp,
-}) => {
-  const [notificationsList, setNotificationsList] = useState([
-    {
-      id: 1,
-      img: dummyImage,
-      tag: "MEET UP",
-      text: "  User NAME applied your project “cat cat cat…”.",
-    },
-    {
-      id: 2,
-      img: dummyImage,
-      tag: "PROJECT",
-      text: "  User NAME applied your project “cat cat cat…”.",
-    },
-    {
-      id: 3,
-      img: dummyImage,
-      tag: "POLL",
-      text: "  User NAME applied your project “cat cat cat…”.",
-    },
-    {
-      id: 4,
-      img: dummyImage,
-      tag: "PROJECT",
-      text: "  User NAME applied your project “cat cat cat…”.",
-    },
-    {
-      id: 5,
-      img: dummyImage,
-      tag: "MEET UP",
-      text: "  User NAME applied your project “cat cat cat…”.",
-    },
-  ]);
-  // let history = useHistory();
+const NotificatioMenu = ({ handleNotifictionClose }) => {
+  const history = useHistory();
+  const [notificationList, setNotificationList] = useState([]);
+  const projectDeploy = useSelector((state) =>
+    state?.notifications?.notificationData
+      ? state?.notifications?.notificationData
+      : []
+  );
+  const [isLoading, setIsLoading] = useState(false);
+  const ref = useDetectClickOutside({ onTriggered: handleNotifictionClose });
+
+  useEffect(() => {
+    getNotificationList();
+  }, [projectDeploy]);
+
+  function getNotificationList() {
+    setIsLoading(true);
+    getUserNotifications()
+      .then((res) => {
+        if (res && res.notifications) {
+          setNotificationList(res.notifications);
+        }
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
+  }
+
+  function markAsRead(notification) {
+    if (notification?.data?.project_uid) {
+      markNotificationAsRead(notification.data.project_uid)
+        .then((res) => {})
+        .catch(() => {});
+      history.push(
+        `/project-details/${
+          notification?.data?.project_uid ? notification.data.project_uid : ""
+        }`
+      );
+      handleNotifictionClose();
+    }
+  }
+
   return (
-    <div>
-      {showNotificationList && (
-        <div className="border border-[#F4F4F4]">
-          <div className="shadow-lg roboto ">
-            <div className="flex justify-between px-[11px] mb-2">
-              <div className="text-[14px] text-[#192434] font-semibold roboto mt-[13px]">
-                NOTIFICATION
+    <div
+      ref={ref}
+      className="w-screen md:w-1/4 h-screen md:h-auto md:border border-primary-500  bg-dark-background rounded-xl absolute top-16 right-[-44px] md:right-20 z-20 px-4 pb-2"
+    >
+      <div className="mt-4 text-white">
+        <h3>Notifiction</h3>
+        <small>Recent Activity</small>
+      </div>
+      <div className="grid grid-cols-1 divide-y divide-neutral-700 ">
+        {notificationList.map((notification, index) => (
+          <div className="py-3 px-2" key={`user-notification-${index}`}>
+            <div
+              className="flex items-center"
+              onClick={() => markAsRead(notification)}
+              onTouchStart={() => markAsRead(notification)}
+            >
+              <div className="text-white text-sm cursor-pointer">
+                <p className="ml-2">{notification?.data?.project_name}</p>
+                <p>
+                  <small className="ml-2">{notification?.data?.message}</small>
+                </p>
               </div>
-              <div className="cursor-pointer  w-[60px] bg-[#0AB4AF] text-[#ffff] text-center mt-3 rounded-full text-[12px] font-semibold">
-                more
+              <div className="pl-16">
+                <i className="fa fa-angle-right text-primary-900"></i>
               </div>
             </div>
-            {notificationsList.map((notification) => (
-              <div
-                key={notification.id}
-                className="flex border-t border-b border-[#F4F4F4]  py-4 pl-[12px] pr-[12px] w-full items-start"
-              >
-                <img
-                  src={notification.img}
-                  className="rounded h-[50px] w-[50px]"
-                  alt=""
-                />
-                <div className="ml-3">
-                  <div className="text-[14px] text-[#192434] border border-[#0AB4AF] rounded-2xl w-[78px] text-center font-semibold">
-                    {notification.tag}
-                  </div>
-                  <div className="text-[14px] roboto">{notification.text}</div>
-                </div>
-              </div>
-            ))}
           </div>
+        ))}
+      </div>
+      {isLoading && (
+        <div className="text-center my-4">
+          <i className="fa fa-spinner fa-pulse fa-fw text-primary-900"></i>
         </div>
       )}
     </div>
