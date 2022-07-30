@@ -1,9 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import Sidebar from "../Sidebar/Sidebar";
-import notificationIcon from "assets/images/header/ico_notification@2x.png";
 import UserDropDownMenu from "./UserDropDownMenu";
-import NotificationMenu from "./NotificationMenu";
 import { useHistory, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setSideBar } from "Slice/userSlice";
@@ -16,6 +14,7 @@ import { getProjectListBySearch } from "services/project/projectService";
 import SearchBarResult from "./SearchBarResult";
 import { getNotificationData } from "Slice/notificationSlice";
 import NotificatioMenu from "./NotificationMenu";
+import { getUserNotifications } from "services/notification/notificationService";
 
 const Header = () => {
   const history = useHistory();
@@ -37,6 +36,14 @@ const Header = () => {
   const [projectList, setProjectList] = useState([]);
   const [showSearchResult, setShowSearchResult] = useState(false);
   const [showNotificationPopup, setShowNotificationPopup] = useState(false);
+  const [notificationList, setNotificationList] = useState([]);
+  const [isNotificationLoading, setIsNotificationLoading] = useState(false);
+  const [notificationCount, setnotificationCount] = useState(0);
+  const projectDeploy = useSelector((state) =>
+    state?.notifications?.notificationData
+      ? state?.notifications?.notificationData
+      : []
+  );
 
   useEffect(() => {
     if (userId && userId.length > 0) {
@@ -48,6 +55,30 @@ const Header = () => {
       // console.log("no user");
     }
   }, [userId]);
+
+  useEffect(() => {
+    getNotificationList();
+  }, [projectDeploy]);
+
+  function getNotificationList() {
+    setIsNotificationLoading(true);
+    getUserNotifications()
+      .then((res) => {
+        if (res && res.notifications) {
+          setNotificationList(res.notifications);
+          if (res.notifications.length > 0) {
+            const unreadNotifications = res.notifications.filter(
+              (n) => n.unread === true
+            );
+            setnotificationCount(unreadNotifications.length);
+          }
+        }
+        setIsNotificationLoading(false);
+      })
+      .catch(() => {
+        setIsNotificationLoading(false);
+      });
+  }
 
   function showHideUserPopup() {
     const userDropDown = document.getElementById("userDropDown");
@@ -318,12 +349,19 @@ const Header = () => {
                           fill="white"
                         />
                       </svg>
+                      {notificationCount && notificationCount > 0 && (
+                        <span className="absolute top-2.5 ml-1.5 px-1.5 py-1 cursor-pointer inline-flex items-center justify-center text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full z-2">
+                          {notificationCount}
+                        </span>
+                      )}
                     </a>
                     {/* wallet popup */}
                     <div id="notificationDropdown" className="hidden">
                       {showNotificationPopup && (
                         <NotificatioMenu
                           handleNotifictionClose={handleNotifictionClose}
+                          notificationList={notificationList}
+                          isNotificationLoading={isNotificationLoading}
                         />
                       )}
                     </div>
