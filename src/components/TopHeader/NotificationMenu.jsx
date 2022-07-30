@@ -1,40 +1,14 @@
-import { useEffect, useState } from "react";
 import { useDetectClickOutside } from "react-detect-click-outside";
-import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import {
-  getUserNotifications,
-  markNotificationAsRead,
-} from "services/notification/notificationService";
+import { markNotificationAsRead } from "services/notification/notificationService";
 
-const NotificatioMenu = ({ handleNotifictionClose }) => {
+const NotificatioMenu = ({
+  handleNotifictionClose,
+  notificationList,
+  isNotificationLoading,
+}) => {
   const history = useHistory();
-  const [notificationList, setNotificationList] = useState([]);
-  const projectDeploy = useSelector((state) =>
-    state?.notifications?.notificationData
-      ? state?.notifications?.notificationData
-      : []
-  );
-  const [isLoading, setIsLoading] = useState(false);
   const ref = useDetectClickOutside({ onTriggered: handleNotifictionClose });
-
-  useEffect(() => {
-    getNotificationList();
-  }, [projectDeploy]);
-
-  function getNotificationList() {
-    setIsLoading(true);
-    getUserNotifications()
-      .then((res) => {
-        if (res && res.notifications) {
-          setNotificationList(res.notifications);
-        }
-        setIsLoading(false);
-      })
-      .catch(() => {
-        setIsLoading(false);
-      });
-  }
 
   function markAsRead(notification) {
     if (notification?.data?.project_uid) {
@@ -67,20 +41,20 @@ const NotificatioMenu = ({ handleNotifictionClose }) => {
               onClick={() => markAsRead(notification)}
               onTouchStart={() => markAsRead(notification)}
             >
-              <div className="text-white text-sm cursor-pointer">
+              <div className="w-3/4 text-white text-sm cursor-pointer">
                 <p className="ml-2">{notification?.data?.project_name}</p>
                 <p>
                   <small className="ml-2">{notification?.data?.message}</small>
                 </p>
               </div>
-              <div className="pl-16">
+              <div className="w-1/4 text-right">
                 <i className="fa fa-angle-right text-primary-900"></i>
               </div>
             </div>
           </div>
         ))}
       </div>
-      {isLoading && (
+      {isNotificationLoading && (
         <div className="text-center my-4">
           <i className="fa fa-spinner fa-pulse fa-fw text-primary-900"></i>
         </div>
