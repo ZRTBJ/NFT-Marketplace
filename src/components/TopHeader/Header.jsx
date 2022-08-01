@@ -94,6 +94,9 @@ const Header = () => {
   function showHideNotification() {
     const userDropDown = document.getElementById("notificationDropdown");
     userDropDown.classList.toggle("hidden");
+    if (!isNotificationLoading) {
+      getNotificationList();
+    }
   }
 
   function handelSidebar(e) {
@@ -349,7 +352,7 @@ const Header = () => {
                           fill="white"
                         />
                       </svg>
-                      {notificationCount && notificationCount > 0 && (
+                      {notificationCount > 0 && (
                         <span className="absolute top-2.5 ml-1.5 px-1.5 py-1 cursor-pointer inline-flex items-center justify-center text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full z-2">
                           {notificationCount}
                         </span>

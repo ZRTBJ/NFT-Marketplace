@@ -12,7 +12,7 @@ const NotificatioMenu = ({
 
   function markAsRead(notification) {
     if (notification?.data?.project_uid) {
-      markNotificationAsRead(notification.data.project_uid)
+      markNotificationAsRead(notification.uuid)
         .then((res) => {})
         .catch(() => {});
       history.push(

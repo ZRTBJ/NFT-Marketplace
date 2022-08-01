@@ -8,5 +8,7 @@ export async function getUserNotifications() {
 }
 
 export async function markNotificationAsRead(uuid) {
-  return await client("PUT", `/user/notifications/${uuid}`, { read: true });
+  const request = new FormData();
+  request.append("read", true);
+  return await client("PUT", `/user/notifications/${uuid}`, request);
 }
