@@ -1,17 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
 
-function EmbedNFTPreview() {
+function EmbedNFTPreview(props) {
   const [height, setHeight] = useState(450);
   const [width, setWidth] = useState(350);
   const [iframeContent, setIframeContent] = useState('');
   const [isTextCopied, setIsTextCopied] = useState(false);
   const copyRef = useRef(null);
+  const nftId = props.match.params.id;
 
   let host = window.location.origin;
 
   useEffect(() => {
     setIframeContent(
-      `<iframe src='${host}/embed/1' width='${width}px' height='${height}px' title='NFT'></iframe>`
+      `<iframe src='${host}/embed/${nftId}' width='${width}px' height='${height}px' title='NFT'></iframe>`
     );
   }, [height, width]);
 
@@ -94,7 +95,7 @@ function EmbedNFTPreview() {
       <div className='w-4/4 md:w-3/4 mt-10 md:mt-0 ml-0 md:ml-10'>
         <h2 className='text-white mb-6'>Preview</h2>
         <iframe
-          src='http://localhost:3000/embed/1'
+          src={`http://localhost:3000/embed/${nftId}`}
           width={`${width}px`}
           height={`${height}px`}
           title='NFT'

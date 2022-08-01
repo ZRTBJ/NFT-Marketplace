@@ -94,7 +94,7 @@ const routes = [
     isPrivate: false,
   },
   {
-    path: "/embed-nft/preview",
+    path: "/embed-nft/preview/:id",
     component: EmbedNFTPreview,
     isPrivate: false,
   },

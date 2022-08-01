@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getNftDetails } from "services/nft/nftService";
 import manImg from "assets/images/projectDetails/man-img.svg";
+import {Link} from 'react-router-dom'
 export default function DetailsNFT(props) {
   const nftId = props.match.params.id;
   const [isLoading, setIsLoading] = useState(true);
@@ -47,6 +48,13 @@ export default function DetailsNFT(props) {
                 <p className="text-white-shade-600 text-sm">
                   Your NFT is not listed on any marketplace
                 </p> */}
+                <Link to={`/embed-nft/preview/${nftId}`}>
+                  <button
+                    className="btn-outline-primary-gradient btn-sm"
+                  >
+                    <span>Embed NFT</span>
+                  </button>
+                </Link>
               </div>
 
               <div className="bg-color-dark-1 rounded-3xl p-5 mb-2">
