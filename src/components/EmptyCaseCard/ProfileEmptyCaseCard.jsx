@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import noProject from "assets/images/profile/no-project.svg";
 import emptyProject from "assets/images/profile/empty-project.svg";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const EmptyCaseCard = (props) => {
   const userInfo = useSelector((state) => state.user.userinfo);
@@ -18,16 +18,30 @@ const EmptyCaseCard = (props) => {
             />
             <div className="text-color-ass-2 font-bold text-lg md:text-[26px]">
               You doesn't have any {props.type}.
-              <br /> let’s go create {props.type}!
+              {props.type !== "External NFTs" && props.type !== "Bookmark" && (
+                <>
+                  <br /> let’s go create {props.type}!
+                </>
+              )}
             </div>
-            <button
-              type="button"
-              class="btn-outline-primary-gradient btn-md mt-5"
-            >
-              <span>
-                Create New <i class="fa-thin fa-square-plus ml-2"></i>
-              </span>
-            </button>
+            {props.type !== "External NFTs" && props.type !== "Bookmark" && (
+              <button
+                type="button"
+                className="btn-outline-primary-gradient btn-md mt-5"
+              >
+                <Link
+                  to={
+                    props.type === "Project"
+                      ? "/project-create"
+                      : "/undefined/mint-nft"
+                  }
+                >
+                  <span>
+                    Create New <i className="fa-thin fa-square-plus ml-2"></i>
+                  </span>
+                </Link>
+              </button>
+            )}
           </section>
         </>
       ) : (

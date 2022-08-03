@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 
 const EmptyCaseCard = (props) => {
   return (
-    <div className="mt-[95px]">
+    <>
       {props.userType === "self" ? (
         <section className="text-center py-6">
           <img
@@ -19,18 +19,19 @@ const EmptyCaseCard = (props) => {
           </div>
           <button
             type="button"
-            class="btn-outline-primary-gradient btn-md mt-5"
+            className="btn-outline-primary-gradient btn-md mt-5"
+            disabled={true}
           >
             <span>
-              MINT NFT <i class="fa-thin fa-square-plus ml-2"></i>
+              MINT NFT <i className="fa-thin fa-square-plus ml-2"></i>
             </span>
           </button>
         </section>
       ) : (
         <>
-          <section className="text-center py-6">
+          <section className="text-center py-3">
             <img
-              className="inline-block mb-4 md:mb-7"
+              className="inline-block mb-4"
               src={noProject}
               alt="This user haven’t create any Project."
             />
@@ -40,7 +41,7 @@ const EmptyCaseCard = (props) => {
           </section>
         </>
       )}
-    </div>
+    </>
   );
 };
 

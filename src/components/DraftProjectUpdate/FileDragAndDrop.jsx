@@ -67,7 +67,7 @@ export default function FileDragAndDrop({
           <p className="text-[#646A80] text-[13px] font-bold ">
             Add Image/Drag from
           </p>
-          <div className="text-[#7D33A4] text-[13px] font-bold">Computer</div>
+          <div className=" text-primary-900 text-[13px] font-bold">Computer</div>
           {/* {sizePlaceholder && <div>{sizePlaceholder}</div>} */}
         </div>
       </div>

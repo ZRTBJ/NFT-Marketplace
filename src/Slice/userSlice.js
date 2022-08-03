@@ -11,7 +11,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     userLoading(state, action) {
-      state.status = "loading";
+      state.status = action.payload;
     },
     setUserDetails(state, action) {
       state.userinfo = action.payload;
@@ -35,4 +35,7 @@ export const setUserInfo = (user) => (dispatch) => {
 };
 export const setSideBar = (value) => (dispatch) => {
   dispatch(setShowSideBar(value));
+};
+export const setUserLoading = (value) => (dispatch) => {
+  dispatch(userLoading(value));
 };

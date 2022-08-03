@@ -53,25 +53,34 @@ export default function Outline({
     });
   }, []);
   return (
-    <div className="text-[white]">
+    <>
       {/* name */}
       <div className="mb-6">
         <div className="label">Project Name</div>
-        <div className="label-grey">Your Project name</div>
-        <DebounceInput
-          minLength={1}
-          debounceTimeout={300}
-          onChange={(e) => onProjectNameChange(e.target.value)}
-          className="debounceInput"
-          value={projectName}
-          disabled={projectNameDisabled}
-        />
-        {emptyProjectName && (
-          <div className="validationTag">Unique project name is required</div>
+        {!projectNameDisabled && (
+          <>
+            <div className="label-grey">Your Project name</div>
+            <DebounceInput
+              minLength={1}
+              debounceTimeout={300}
+              onChange={(e) => onProjectNameChange(e.target.value)}
+              className="debounceInput"
+              value={projectName}
+              disabled={projectNameDisabled}
+            />
+            {emptyProjectName && (
+              <div className="validationTag">
+                Unique project name is required
+              </div>
+            )}
+            {alreadyTakenProjectName && (
+              <div className="validationTag">
+                Project name has already taken
+              </div>
+            )}
+          </>
         )}
-        {alreadyTakenProjectName && (
-          <div className="validationTag">Project name has already taken</div>
-        )}
+        {projectNameDisabled && <h3>{projectName}</h3>}
       </div>
 
       {/* photo */}
@@ -81,7 +90,7 @@ export default function Outline({
           Add image up to 4 to showcase your project
         </div>
         <div className="md:flex flex-wrap mb-6">
-          <div className="w-full md:max-w-[186px]">
+          <div className="w-[158px] mr-3 mb-2">
             <FileDragAndDrop
               maxFiles={4}
               height="158px"
@@ -90,23 +99,24 @@ export default function Outline({
               disabled={photosUrl.length > 3 ? true : false}
             />
           </div>
-          <div className="photoPreviewContainer mt-3 md:mt-0  md:max-w-[372px] md:pl-4  md:mx-0 flex md:justify-between flex-wrap">
-            {photosUrl.map((i) => (
+          <div className="photoPreviewContainer flex flex-wrap">
+            {photosUrl.map((image, index) => (
               <div
-                key={i.path}
-                className="relative max-w-[158px] md:max-w-full m-2 md:m-0"
+                key={`project-image-${index}`}
+                className="relative upload-file w-[158px] h-[158px] mr-3  mb-2"
               >
                 <img
                   alt=""
-                  className="outlinePhoto md:m-1 block object-cover rounded rounded-[12px]"
-                  src={i.path}
+                  className="outlinePhoto block object-cover rounded-xl"
+                  src={image.path}
                 />
-                <img
-                  alt=""
-                  src={deleteIcon}
-                  onClick={() => onPhotosRemove(i)}
-                  className="absolute top-0 cursor-pointer  right-0"
-                />
+
+                <div className="upload-photo absolute w-full h-full rounded-xl cursor-pointer  items-center justify-center left-0 top-0">
+                  <i
+                    className="fa-solid fa-trash"
+                    onClick={() => onPhotosRemove(image)}
+                  ></i>
+                </div>
               </div>
             ))}
           </div>
@@ -130,10 +140,10 @@ export default function Outline({
             <img
               className="coverPreview block"
               src={coverPhotoUrl.path}
-              alt=""
+              alt="coverPreview"
             />
             <img
-              alt=""
+              alt="coverPreviewIc"
               src={deleteIcon}
               onClick={onCoverPhotoRemove}
               className="absolute top-2 cp right-0"
@@ -153,8 +163,8 @@ export default function Outline({
           value={overview}
           onChange={onOverviewChange}
           className="mb-6"
-          name=""
-          id=""
+          name="description"
+          id="description"
           cols="30"
           rows="6"
           placeholder="Add description"
@@ -164,7 +174,11 @@ export default function Outline({
       {/* category */}
       <div className="mb-6">
         <div className="label">Category</div>
-        <select value={projectCategory} onChange={onProjectCategoryChange}>
+        <select
+          value={projectCategory}
+          onChange={onProjectCategoryChange}
+          name="category"
+        >
           <option value={"default"} defaultValue>
             Choose an option
           </option>
@@ -190,6 +204,7 @@ export default function Outline({
             placeholder="Type and press enter"
             defaultValue={""}
             onKeyUp={(e) => onTagEnter(e)}
+            name="tag"
           />
           {tagLimit && (
             <div className="validationTag mb-3">Only five tags can save </div>
@@ -216,6 +231,6 @@ export default function Outline({
             </div>
           ))}
       </div>
-    </div>
+    </>
   );
 }

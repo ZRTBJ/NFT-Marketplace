@@ -1,26 +1,85 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import Sidebar from "../Sidebar/Sidebar";
-import notificationIcon from "assets/images/header/ico_notification@2x.png";
 import UserDropDownMenu from "./UserDropDownMenu";
-import NotificationMenu from "./NotificationMenu";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setSideBar } from "Slice/userSlice";
 import { useAuthState } from "Context";
 import WalletConnectModal from "components/modalDialog/WalletConnectModal";
 import { Link } from "react-router-dom";
+import useWebSocket from "react-use-websocket";
+import config from "config";
+import { getProjectListBySearch } from "services/project/projectService";
+import SearchBarResult from "./SearchBarResult";
+import { getNotificationData } from "Slice/notificationSlice";
+import NotificatioMenu from "./NotificationMenu";
+import { getUserNotifications } from "services/notification/notificationService";
 
 const Header = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const context = useAuthState();
+  const { pathname } = useLocation();
 
   const [userId, setUserId] = useState(context ? context.user : "");
   const [showModal, setShowModal] = useState(false);
   const userinfo = useSelector((state) => state.user.userinfo);
   const showSidebar = useSelector((state) => state.user.showSidebar);
   const [showSidebarKey, setSideBarKey] = useState(0);
+  const loggedIn = useSelector((state) => state.user.loggedIn);
+  const [messageHistory, setMessageHistory] = useState([]);
+  const userLoadingStatus = useSelector((state) => state.user.status);
+  const [showWalletpopup, setShowWalletpopup] = useState(false);
+  const [keyword, setKeyword] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const [projectList, setProjectList] = useState([]);
+  const [showSearchResult, setShowSearchResult] = useState(false);
+  const [showNotificationPopup, setShowNotificationPopup] = useState(false);
+  const [notificationList, setNotificationList] = useState([]);
+  const [isNotificationLoading, setIsNotificationLoading] = useState(false);
+  const [notificationCount, setnotificationCount] = useState(0);
+  const projectDeploy = useSelector((state) =>
+    state?.notifications?.notificationData
+      ? state?.notifications?.notificationData
+      : []
+  );
+
+  useEffect(() => {
+    if (userId && userId.length > 0) {
+      const cUser = localStorage.getItem("currentUser");
+      if (cUser) {
+        sendMessage(JSON.stringify({ Token: cUser }));
+      }
+    } else {
+      // console.log("no user");
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    getNotificationList();
+  }, [projectDeploy]);
+
+  function getNotificationList() {
+    setIsNotificationLoading(true);
+    getUserNotifications()
+      .then((res) => {
+        if (res && res.notifications) {
+          setNotificationList(res.notifications);
+          if (res.notifications.length > 0) {
+            const unreadNotifications = res.notifications.filter(
+              (n) => n.unread === true
+            );
+            setnotificationCount(unreadNotifications.length);
+          }
+        }
+        setIsNotificationLoading(false);
+      })
+      .catch(() => {
+        setIsNotificationLoading(false);
+      });
+  }
+
   function showHideUserPopup() {
     const userDropDown = document.getElementById("userDropDown");
     userDropDown.classList.toggle("hidden");
@@ -29,8 +88,16 @@ const Header = () => {
   function showHideUserPopupWallet() {
     const userDropDown = document.getElementById("userDropDownWallet");
     userDropDown.classList.toggle("hidden");
+    setShowWalletpopup(!showWalletpopup);
   }
-  console.log(showSidebar);
+
+  function showHideNotification() {
+    const userDropDown = document.getElementById("notificationDropdown");
+    userDropDown.classList.toggle("hidden");
+    if (!isNotificationLoading) {
+      getNotificationList();
+    }
+  }
 
   function handelSidebar(e) {
     e.preventDefault();
@@ -41,7 +108,6 @@ const Header = () => {
     }
   }
   function closeSidebar() {
-    console.log("clicked");
     dispatch(setSideBar(false));
     setSideBarKey((pr) => pr + 1);
   }
@@ -52,6 +118,123 @@ const Header = () => {
   function hideModal() {
     setShowModal(false);
   }
+
+  // web socket implementation
+  let host = "ws:";
+  try {
+    const loc = window.location;
+    if (loc.protocol === "https:") {
+      host = "wss:";
+    }
+  } catch {}
+  const socketUrl = `${host}//${config.WEB_SOKET}/ws`;
+
+  const {
+    sendMessage,
+    sendJsonMessage,
+    lastMessage,
+    lastJsonMessage,
+    readyState,
+    getWebSocket,
+  } = useWebSocket(socketUrl, {
+    onOpen: () => {
+      // console.log("webSocket connected");
+      const cUser = localStorage.getItem("currentUser");
+      if (cUser) {
+        sendMessage(JSON.stringify({ Token: cUser }));
+      }
+    },
+    //Will attempt to reconnect on all close events, such as server shutting down
+    shouldReconnect: (closeEvent) => true,
+  });
+
+  useEffect(() => {
+    if (lastMessage !== null) {
+      try {
+        // console.log(lastMessage);
+        if (lastMessage.data) {
+          const data = JSON.parse(lastMessage.data);
+          if (data.type === "functionNotification") {
+            const notificationData = {
+              function_uuid: data.fn_uuid,
+              data: lastMessage.data,
+            };
+            dispatch(getNotificationData(notificationData));
+          } else if (data.type === "fileUploadNotification") {
+            const notificationData = {
+              function_uuid: data.Data.job_id,
+              data: lastMessage.data,
+            };
+            dispatch(getNotificationData(notificationData));
+          }
+        }
+      } catch (err) {
+        console.log(err);
+      }
+      setMessageHistory((prev) => prev.concat(lastMessage));
+    }
+  }, [lastMessage, setMessageHistory]);
+
+  // End web socket Implementation
+
+  function handleOnTextChange(event) {
+    try {
+      event.preventDefault();
+      event.stopPropagation();
+      const value = event.currentTarget.value;
+      if (value.length > 2 && value !== keyword) {
+        setTimeout(() => {
+          setKeyword(value);
+          if (!isSearching) {
+            searchProject(value);
+          }
+        }, 2000);
+      }
+    } catch (err) {}
+  }
+
+  function searchProject(keyword) {
+    const payload = {
+      order_by: "newer",
+      page: 1,
+      limit: 20,
+      criteria: "name",
+      keyword: keyword,
+    };
+    setIsSearching(true);
+    setShowSearchResult(true);
+    getProjectListBySearch(payload)
+      .then((response) => {
+        if (response["code"] === 0) {
+          setProjectList(response.data);
+        }
+        setIsSearching(false);
+      })
+      .catch((err) => {
+        setShowSearchResult(false);
+        setIsSearching(false);
+      });
+  }
+
+  function handleSearchClose() {
+    setShowSearchResult(false);
+  }
+
+  function handleNotifictionClose() {
+    showHideNotification();
+    setShowNotificationPopup(false);
+  }
+
+  function handleOnSearchFocus(event) {
+    if (keyword && keyword.length > 2) {
+      setTimeout(() => {
+        if (!isSearching) {
+          searchProject(keyword);
+        }
+      }, 1000);
+    }
+  }
+
   return (
     <>
       {showSidebar && (
@@ -63,7 +246,7 @@ const Header = () => {
             <button
               onClick={(e) => handelSidebar(e)}
               type="button"
-              className="inline-flex items-center p-2 mr-5 lg:mr-12 cp rounded-lg hover:bg-primary-color focus:outline-none focus:ring-2 focus:ring-gray-200"
+              className="inline-flex items-center p-2 mr-5 lg:mr-14 cp rounded-lg hover:bg-primary-color focus:outline-none focus:ring-2 focus:ring-gray-200"
               aria-controls="side-menu"
               aria-expanded="false"
             >
@@ -93,31 +276,45 @@ const Header = () => {
                 ></path>
               </svg>
             </button>
-            <div className="cp mr-5 lg:mr-14" onClick={() => history.push("/")}>
-              <div className="text-white font-satoshi-bold font-black text-2xl lg:text-3xl relative pr-14 lg:pr-20 logo">
+            <div
+              className="cp mr-5 lg:ml-1 lg:mr-14"
+              onClick={() => history.push("/")}
+            >
+              <div className="text-white font-satoshi-bold font-black text-xl lg:text-3xl relative logo">
                 CREAB
               </div>
             </div>
 
             <form className="mr-6 flex-1 hidden md:block">
               <label
-                for="default-search"
+                htmlFor="default-search"
                 className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300"
               >
                 Search
               </label>
               <div className="relative">
                 <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
-                  <i class="fa-regular fa-magnifying-glass text-white-shade-600"></i>
+                  <i className="fa-regular fa-magnifying-glass text-white-shade-600"></i>
                 </div>
                 <input
                   type="search"
                   id="default-search"
-                  className=" bg-color-ass-5 text-lg w-full max-w-[556px] text-white rounded-xl pl-10 h-10 placeholder-color-ass-4  focus:pl-10"
+                  name="projectSearch2"
+                  autoComplete="off"
+                  className=" bg-color-ass-5 focus:bg-color-ass-5 text-lg w-full max-w-[556px] text-white rounded-xl pl-10 h-10 placeholder-color-ass-4  focus:pl-10"
                   placeholder="Search your project by name"
-                  required
+                  onChange={handleOnTextChange}
+                  onFocus={handleOnSearchFocus}
                 />
               </div>
+              {(isSearching || (projectList && projectList.length) > 0) &&
+                showSearchResult && (
+                  <SearchBarResult
+                    isLoading={isSearching}
+                    projectList={projectList}
+                    handleSearchClose={handleSearchClose}
+                  />
+                )}
             </form>
           </div>
 
@@ -134,7 +331,15 @@ const Header = () => {
               {userinfo.id && (
                 <>
                   <li>
-                    <a href="#">
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowNotificationPopup(!showNotificationPopup);
+                        showHideNotification();
+                      }}
+                    >
                       <svg
                         width="18"
                         height="21"
@@ -147,7 +352,22 @@ const Header = () => {
                           fill="white"
                         />
                       </svg>
+                      {notificationCount > 0 && (
+                        <span className="absolute top-2.5 ml-1.5 px-1.5 py-1 cursor-pointer inline-flex items-center justify-center text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full z-2">
+                          {notificationCount}
+                        </span>
+                      )}
                     </a>
+                    {/* wallet popup */}
+                    <div id="notificationDropdown" className="hidden">
+                      {showNotificationPopup && (
+                        <NotificatioMenu
+                          handleNotifictionClose={handleNotifictionClose}
+                          notificationList={notificationList}
+                          isNotificationLoading={isNotificationLoading}
+                        />
+                      )}
+                    </div>
                   </li>
 
                   <li>
@@ -180,8 +400,8 @@ const Header = () => {
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
-                          fill-rule="evenodd"
-                          clip-rule="evenodd"
+                          fillRule="evenodd"
+                          clipRule="evenodd"
                           d="M15.7689 5.8818H20C20 2.48459 17.9644 0.5 14.5156 0.5H5.48444C2.03556 0.5 0 2.48459 0 5.83847V13.1615C0 16.5154 2.03556 18.5 5.48444 18.5H14.5156C17.9644 18.5 20 16.5154 20 13.1615V12.8495H15.7689C13.8052 12.8495 12.2133 11.2975 12.2133 9.383C12.2133 7.46849 13.8052 5.91647 15.7689 5.91647V5.8818ZM15.7689 7.37241H19.2533C19.6657 7.37241 20 7.69834 20 8.10039V10.631C19.9952 11.0311 19.6637 11.3543 19.2533 11.3589H15.8489C14.8548 11.372 13.9855 10.7084 13.76 9.76432C13.6471 9.17829 13.8056 8.57357 14.1931 8.11222C14.5805 7.65087 15.1573 7.38007 15.7689 7.37241ZM15.92 10.033H16.2489C16.6711 10.033 17.0133 9.6993 17.0133 9.28767C17.0133 8.87605 16.6711 8.54237 16.2489 8.54237H15.92C15.7181 8.54005 15.5236 8.61664 15.38 8.75504C15.2364 8.89344 15.1555 9.08213 15.1556 9.27901C15.1555 9.69205 15.4964 10.0282 15.92 10.033ZM4.73778 5.8818H10.3822C10.8044 5.8818 11.1467 5.54812 11.1467 5.13649C11.1467 4.72487 10.8044 4.39119 10.3822 4.39119H4.73778C4.31903 4.39116 3.9782 4.7196 3.97333 5.12783C3.97331 5.54087 4.31415 5.87705 4.73778 5.8818Z"
                           fill="white"
                         />
@@ -190,7 +410,11 @@ const Header = () => {
 
                     {/* wallet popup */}
                     <div id="userDropDownWallet" className="hidden">
-                      <UserDropDownMenu />
+                      {userLoadingStatus === "idle" && showWalletpopup ? (
+                        <UserDropDownMenu />
+                      ) : (
+                        <></>
+                      )}
                     </div>
                   </li>
                 </>
@@ -266,28 +490,41 @@ const Header = () => {
           </div>
         </div>
 
-        <div className="md:hidden">
-          <form>
-            <label
-              for="default-search"
-              className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300"
-            >
-              Search
-            </label>
-            <div className="relative">
-              <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
-                <i class="fa-regular fa-magnifying-glass text-white-shade-600"></i>
+        {pathname === "/" && (
+          <div className="md:hidden">
+            <form>
+              <label
+                htmlFor="default-search"
+                className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300"
+              >
+                Search
+              </label>
+              <div className="relative">
+                <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none h-10">
+                  <i className="fa-regular fa-magnifying-glass text-white-shade-600"></i>
+                </div>
+                <input
+                  type="text"
+                  id="default-search-2"
+                  name="projectSearch1"
+                  autoComplete="off"
+                  className=" bg-color-ass-5 focus:bg-color-ass-5 text-lg w-full w-100 text-white rounded-xl !pl-8 h-10 placeholder-color-ass-4"
+                  placeholder="Search your project by name"
+                  onChange={handleOnTextChange}
+                  onFocus={handleOnSearchFocus}
+                />
+                {(isSearching || (projectList && projectList.length)) &&
+                  showSearchResult && (
+                    <SearchBarResult
+                      isLoading={isSearching}
+                      projectList={projectList}
+                      handleSearchClose={handleSearchClose}
+                    />
+                  )}
               </div>
-              <input
-                type="search"
-                id="default-search"
-                className=" bg-color-ass-5 text-lg w-full w-100 text-white rounded-xl pl-10 h-10 placeholder-color-ass-4  focus:pl-10"
-                placeholder="Search your project by name"
-                required
-              />
-            </div>
-          </form>
-        </div>
+            </form>
+          </div>
+        )}
       </nav>
 
       <WalletConnectModal showModal={showModal} closeModal={hideModal} />

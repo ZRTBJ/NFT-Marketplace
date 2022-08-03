@@ -16,7 +16,7 @@
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.3);
-  z-index: 98;
+  z-index: 999;
   border-radius: 5px;
 }
 
@@ -36,7 +36,7 @@
     -12.72984px -12.72984px 0 0 rgba(10, 180, 175, 0);
   left: 50%;
   top: 50%;
-  z-index: 99;
+  z-index: 999;
   border-radius: 50%;
   animation: dotSpin 1s linear infinite;
 }
@@ -61,7 +61,7 @@
     -12.72984px 12.72984px 0 0 rgba(10, 180, 175, 0),
     -18px 0 0 0 rgba(10, 180, 175, 0),
     -12.72984px -12.72984px 0 0 rgba(10, 180, 175, 0);
-  z-index: 99;
+  z-index: 999;
   border-radius: 50%;
   animation: dotSpin 1s linear infinite;
 }
@@ -159,16 +159,17 @@ input[type="number"],
   height: 42px;
   width: 100%;
 }
-input,
+input[type="text"],
+input[type="email"],
 textarea {
-  padding:10px 15px;
+  padding: 10px 15px;
   border: none;
   background-color: #232032;
   color: #9499ae;
   font-size: 13px;
-  width: 100%; 
+  width: 100%;
   border-radius: 6px;
-  border:  1px solid #232032;
+  border: 1px solid #232032;
 }
 input:focus-visible,
 textarea:focus-visible,
@@ -205,9 +206,20 @@ select {
   content: "\00d7";
 }
 .validationTag {
-  /* font-family: "Roboto", sans-serif; */
   color: #c82727;
 }
 .roboto {
   font-family: "Roboto", sans-serif;
+}
+
+/**
+* ======================================================
+* minit nft 
+*=======================================================
+*/
+@media (max-width: 767px) {
+  .nft-wrapper {
+    height: calc(100vh - 180px);
+    overflow: auto;
+  }
 }

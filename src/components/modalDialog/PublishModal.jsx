@@ -25,13 +25,13 @@ const PublishModal = ({ handleClose, show, publishProject }) => {
         </div>
         <div className="flex justify-center mt-[30px]">
           <button
-            className="btn-primary rounded  px-6 py-2 mr-6"
+            className="btn btn-primary btn-sm mr-6"
             onClick={publishProject}
           >
             Publish Project
           </button>
           <button
-            className="btn-outline-primary px-6 py-2"
+            className="btn btn-text-gradient  btn-sm"
             onClick={() => handleClose(false)}
           >
             Back editing
