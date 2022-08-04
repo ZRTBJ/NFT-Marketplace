@@ -60,8 +60,8 @@ const Sidebar = ({ show, handleClose }) => {
   }
 
   return (
-    <div style={openStyle} className="sidenav" ref={ref}>
-      <div className="closebtn cp" onClick={(e) => handleClose(e)}>
+    <div style={openStyle} className="sidenav bg-light1 dark:dark-background" ref={ref}>
+      <div className="closebtn cp text-primary-900" onClick={(e) => handleClose(e)}>
         &times;
       </div>
       <div className="sidebarLinksContainer flex flex-col">

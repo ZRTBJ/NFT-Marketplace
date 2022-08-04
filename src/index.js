@@ -15,7 +15,7 @@ ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <DAppProvider config={{}}>
-        <div className="bg-dark-background">
+        <div className="bg-light dark:bg-dark-background">
           <App />
         </div>
       </DAppProvider>

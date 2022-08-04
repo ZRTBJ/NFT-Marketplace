@@ -73,8 +73,8 @@ function Home() {
   }, []);
 
   return (
-    <div className="text-white">
-      <section className="text-center  my-11 text-white">
+    <div className="text-txtblack dark:text-white">
+      <section className="text-center  my-11">
         <HomeNavigateCard />
       </section>
       <div className="relative">

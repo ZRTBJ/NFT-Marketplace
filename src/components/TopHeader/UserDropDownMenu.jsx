@@ -81,7 +81,7 @@ const UserDropDownMenu = () => {
         </a>
       </div> */}
 
-      <div className="w-screen md:w-52 h-screen md:h-auto md:border border-primary-500  bg-dark-background rounded-xl absolute top-11 right-[-44px] md:right-0 z-20">
+      <div className="w-screen md:w-52 h-screen md:h-auto md:border border-primary-500  bg-light dark:bg-dark-background rounded-xl absolute top-11 right-[-44px] md:right-0 z-20">
         <div className="pl-10 pr-3 py-3 border-b border-black-shade-800">
           <h3 className="text-white text-sm  mb-6 ">Wallet</h3>
           <p className="text-white flex content-center mb-2">
@@ -90,8 +90,8 @@ const UserDropDownMenu = () => {
                 wallet === "metamask"
                   ? metamaskIcon
                   : wallet === "torus"
-                  ? torusIcon
-                  : ""
+                    ? torusIcon
+                    : ""
               }
               alt="mask"
               width={21}
@@ -170,7 +170,7 @@ const UserDropDownMenu = () => {
           </div>
           {showWallet && (
             <>
-              <div className="bg-dark-background">
+              <div className="bg-light dark:bg-dark-background">
                 <div className="inline-flex p-4">
                   <div className="pt-4">
                     {selectedWallet === "metamask" ? (

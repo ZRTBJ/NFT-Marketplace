@@ -30,6 +30,14 @@ module.exports = {
         "color-yellow": "#FEDA03",
         "color-primary-1": "#31224E",
 
+        //mvp-1.1 colors for light theme 
+
+        "light": "#F9F5FF",
+        "light1": "#FDFDFD",
+        "txtblack": "#303548",
+
+
+
         primary: {
           50: '#231B39',
           100: '#30224F',
