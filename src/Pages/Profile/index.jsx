@@ -22,6 +22,12 @@ const Profile = () => {
   const [user, setUser] = useState({});
   const [websiteList, setWebsiteList] = useState([]);
   const [sncList, setsncList] = useState([]);
+  const socialLinks = [
+    { title: "linkInsta", icon: "instagram" },
+    { title: "linkReddit", icon: "reddit" },
+    { title: "linkTwitter", icon: "twitter" },
+    { title: "linkFacebook", icon: "facebook" },
+  ];
 
   // user General data end
 
@@ -71,18 +77,12 @@ const Profile = () => {
   let initialTabData = [
     {
       id: 0,
-      name: "Dao Project List",
+      name: "DAO",
       list: projectList,
       hasMoreData: false,
     },
-    { id: 1, name: "Works", list: workList, hasMoreData: false },
-    { id: 2, name: "NFTs", list: nftList, hasMoreData: false },
-    {
-      id: 3,
-      name: "Bookmark",
-      list: bookmarkList,
-      hasMoreData: false,
-    },
+    { id: 1, name: "Collection", list: nftList, hasMoreData: false },
+    { id: 2, name: "NFT's", list: workList, hasMoreData: false },
   ];
   const [activeTab, setActiveTab] = useState(initialTabData[0]);
   const [tabData, setTabData] = useState(initialTabData);
@@ -283,12 +283,12 @@ const Profile = () => {
   useEffect(() => {
     getWorksList();
   }, []);
-  useEffect(() => {
-    getNftList();
-  }, []);
-  useEffect(() => {
-    getBookmarks();
-  }, []);
+  // useEffect(() => {
+  //   getNftList();
+  // }, []);
+  // useEffect(() => {
+  //   getBookmarks();
+  // }, []);
   useEffect(() => {
     setProjectList(projectList);
     let oldTabData = [...tabData];
@@ -298,183 +298,137 @@ const Profile = () => {
   useEffect(() => {
     setNftList(nftList);
     let oldTabData = [...tabData];
-    oldTabData[2].list = nftList;
+    oldTabData[1].list = nftList;
     setTabData(oldTabData);
   }, [nftList]);
   useEffect(() => {
     setWorkList(workList);
     let oldTabData = [...tabData];
-    oldTabData[1].list = workList;
+    oldTabData[2].list = workList;
     setTabData(oldTabData);
   }, [workList]);
-  useEffect(() => {
-    setBookmarkList(bookmarkList);
-    let oldTabData = [...tabData];
-    oldTabData[3].list = bookmarkList;
-    setTabData(oldTabData);
-  }, [bookmarkList]);
-
-  // console.log(activeTab);
-
+  // useEffect(() => {
+  //   setBookmarkList(bookmarkList);
+  //   let oldTabData = [...tabData];
+  //   oldTabData[3].list = bookmarkList;
+  //   setTabData(oldTabData);
+  // }, [bookmarkList]);
   return (
     <>
       {isLoading && <div className="loading"></div>}
       {!isLoading && (
-        <main className="container mx-auto px-4">
-          {/* Cover image section */}
-          <section className="mt-5 rounded-3xl">
-            {user.cover === "" ? (
-              <img
-                src={profileDummy}
-                className="rounded-3xl object-cover md:h-[217px] w-full"
-                alt="Profile Cover "
-              />
-            ) : (
-              <img
-                src={user.cover}
-                className="rounded-3xl object-cover md:h-[217px] w-full"
-                alt="Profile Cover "
-              />
-            )}
-          </section>
-
+        <main className="container">
           {/* profile information section */}
-          <section className="flex flex-col md:flex-row pt-5 md:pt-14">
-            <div className="md:w-2/3 text-white">
-              <div className="flex">
-                {user.avatar === "" ? (
-                  <img
-                    src={profile}
-                    className="rounded-lg self-start w-14 h-14 md:w-[98px] object-cover md:h-[98px] bg-color-ass-6"
-                    alt="User profile"
-                  />
-                ) : (
-                  <img
-                    className="rounded-lg self-start w-14 h-14 md:w-[98px] object-cover md:h-[98px] bg-color-ass-6"
-                    src={user.avatar}
-                    width={98}
-                    alt="Muhammad Rifat Abubakar"
-                  />
-                )}
+          <div className="flex flex-wrap">
+            <div className="flex-1 md:mr-4 flex flex-wrap bg-white md:h-[152px] rounded rounded-[8px] p-[13px] md:p-[26px]">
+              <div>
+                <div className="flex">
+                  {user.avatar === "" ? (
+                    <img
+                      src={profile}
+                      className="rounded-lg self-start w-14 h-14 md:w-[102px] object-cover md:h-[102px] bg-color-ass-6"
+                      alt="User profile"
+                    />
+                  ) : (
+                    <img
+                      className="rounded-lg self-start w-14 h-14 md:w-[102px] object-cover md:h-[102px] bg-color-ass-6"
+                      src={user.avatar}
+                      width={98}
+                      alt="user profile"
+                    />
+                  )}
 
-                <div className="flex-1 min-w-0  px-4">
-                  <h1 className="-mt-1 mb-1 md:mb-2 text-ellipsis overflow-hidden whitespace-nowrap">
-                    {user.display_name}
-                  </h1>
-                  <p className="flex">
-                    <svg
-                      className="mt-1 mr-1"
-                      width="14"
-                      height="16"
-                      viewBox="0 0 14 16"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M12.2556 2.76562C10.9417 1.35937 9.00948 0.5 7 0.5C4.99052 0.5 3.05833 1.28125 1.74444 2.76562C0.662416 4.01562 0.121403 5.57812 0.275979 7.14062C0.275979 7.45312 0.353266 7.76562 0.430554 8C1.12614 11.2812 4.68137 14.1719 6.22712 15.2656C6.45899 15.4219 6.69085 15.5 7 15.5C7.30915 15.5 7.54101 15.4219 7.77288 15.2656C9.24134 14.1719 12.8739 11.2812 13.5694 8C13.6467 7.76562 13.6467 7.45312 13.724 7.14062C13.8786 5.57812 13.3376 4.01562 12.2556 2.76562ZM7 9.48438C5.84069 9.48438 4.83595 8.54687 4.83595 7.29687C4.83595 6.04687 5.7634 5.10937 7 5.10937C8.2366 5.10937 9.16405 6.04687 9.16405 7.29687C9.16405 8.54687 8.15931 9.48438 7 9.48438Z"
-                        fill="#D35252"
-                      />
-                    </svg>
-                    {user.area}
-                  </p>
-                  <p className="flex">
-                    <svg
-                      className="mt-1 mr-1"
-                      width="14"
-                      height="16"
-                      viewBox="0 0 14 16"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M12.2556 2.76562C10.9417 1.35937 9.00948 0.5 7 0.5C4.99052 0.5 3.05833 1.28125 1.74444 2.76562C0.662416 4.01562 0.121403 5.57812 0.275979 7.14062C0.275979 7.45312 0.353266 7.76562 0.430554 8C1.12614 11.2812 4.68137 14.1719 6.22712 15.2656C6.45899 15.4219 6.69085 15.5 7 15.5C7.30915 15.5 7.54101 15.4219 7.77288 15.2656C9.24134 14.1719 12.8739 11.2812 13.5694 8C13.6467 7.76562 13.6467 7.45312 13.724 7.14062C13.8786 5.57812 13.3376 4.01562 12.2556 2.76562ZM7 9.48438C5.84069 9.48438 4.83595 8.54687 4.83595 7.29687C4.83595 6.04687 5.7634 5.10937 7 5.10937C8.2366 5.10937 9.16405 6.04687 9.16405 7.29687C9.16405 8.54687 8.15931 9.48438 7 9.48438Z"
-                        fill="#D35252"
-                      />
-                    </svg>
-                    {user.job}
-                  </p>
+                  <div className="flex-1 min-w-0  pl-[20px]">
+                    <h3 className="text-ellipsis mb-[4px] overflow-hidden whitespace-nowrap font-black text-[18px]">
+                      {user.display_name}
+                    </h3>
+                    <p className="text-[13px] text-[#7D849D] ">
+                      {user?.eoa?.slice(0, 14)}..{" "}
+                      <i
+                        onClick={() => {
+                          navigator.clipboard.writeText(user.eoa);
+                        }}
+                        className="fa-solid  fa-copy cursor-pointer pl-[6px]"
+                      ></i>
+                    </p>
+                    <p className="flex items-center mb-[3px]">
+                      <i className="fa-solid fa-map-pin mr-[7px] text-[#FF3C3C] text-[12px]"></i>
+                      <span className="text-[13px] text-[#303548]">
+                        {user.area}
+                      </span>
+                    </p>
+                    <p className="flex items-center">
+                      <i className="fa-solid fa-briefcase mr-[7px] text-[#FF3C3C] text-[12px]"></i>
+                      <span className="text-[13px] text-[#303548]">
+                        {user.job}
+                      </span>
+                    </p>
+                  </div>
                 </div>
               </div>
-
-              <div className="md:pl-28">
-                <p className="md:pl-1">{user.biography}</p>
-              </div>
-            </div>
-
-            <div
-              className="flex flex-wrap mt-3 md:justify-end md:w-1/3  md:mt-0"
-              role="group"
-            >
-              {sncList &&
-                sncList.map((snc, index) => (
-                  <div key={`snc-${index}`}>
-                    {snc.url !== "" && (
-                      <div
-                        key={`snc-${index}`}
-                        className="cursor-pointer w-12 h-12 mb-4 bg-primary-50 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-primary-400"
-                      >
-                        {snc.title.toLowerCase().match("weblink") ? (
-                          <div className="inline-flex p-1.5">
-                            <a href={snc.url} target="_blank" rel="noreferrer">
-                              <i
-                                className="fa fa-link text-[white]"
-                                aria-hidden="true"
-                              ></i>
-                            </a>
-                          </div>
-                        ) : (
-                          <>
-                            <div className="inline-flex p-1.5">
+              <div
+                className="flex flex-wrap mt-3 md:ml-auto  md:mt-0"
+                role="group"
+              >
+                {sncList &&
+                  sncList.map((snc, index) => (
+                    <div key={`snc-${index}`}>
+                      {snc.url !== "" && (
+                        <div
+                          key={`snc-${index}`}
+                          className="cursor-pointer mr-4 w-[44px] h-[44px] mb-4 bg-social-icon-bg flex justify-center gap-2 items-center rounded-md  ease-in-out duration-300 "
+                        >
+                          {snc.title.toLowerCase().match("weblink") ? (
+                            <div className="">
                               <a
                                 href={snc.url}
                                 target="_blank"
                                 rel="noreferrer"
                               >
-                                <img
-                                  className="cp"
-                                  src={require(`assets/images/profile/social/${snc.title}.png`)}
-                                  height={24}
-                                  width={24}
-                                  alt="social logo"
-                                />
+                                <i
+                                  className="fa fa-link text-[20px] text-[#9A5AFF] mt-1"
+                                  aria-hidden="true"
+                                ></i>
                               </a>
                             </div>
-                          </>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                ))}
-            </div>
-          </section>
-
-          {/* Views followers section */}
-
-          <section className="flex justify-center pt-4 md:pt-10">
-            <div className="inline-flex py-4 text-white text-center">
-              <div className="border-r border-color-ass px-5 last:border-0">
-                <strong className="display-block font-black font-satoshi-bold text-[22px]">
-                  {user?.data?.total_view}
-                </strong>
-                <span>Views</span>
-              </div>
-
-              <div className="border-r border-color-ass px-5 last:border-0">
-                <strong className="display-block font-black font-satoshi-bold text-[22px]">
-                  {user?.data?.total_follow}
-                </strong>
-                <span>Followers</span>
-              </div>
-
-              <div className="border-r border-color-ass px-5 last:border-0">
-                <strong className="display-block font-black font-satoshi-bold text-[22px]">
-                  {user?.data?.total_work}
-                </strong>
-                <span>Works</span>
+                          ) : (
+                            <a href={snc.url} target="_blank" rel="noreferrer">
+                              <i
+                                className={`fa-brands fa-${
+                                  socialLinks.find((x) => x.title === snc.title)
+                                    .icon
+                                } text-[20px] text-[#9A5AFF] mt-1`}
+                              ></i>
+                            </a>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))}
               </div>
             </div>
-          </section>
-
+            <div
+              className="w-full text-[#FFFFFF]  md:max-w-[347px]  h-[152px] bg-[#9A5AFF] rounded rounded-[8px]"
+              style={{ boxShadow: "12px 12px 24px #D5BAFF" }}
+            >
+              <h3 className="ml-[24px] mt-[24px] text-[18px] font-black ">
+                Total Earned Amount
+              </h3>
+              <h1 className="font-black text-[28px] ml-[24px] mt-[8px]">
+                $1.505
+              </h1>
+              <p className="ml-[24px] mt-[8px] flex flex-wrap align-center">
+                <div className="bg-[#32E865] h-[26px] w-[26px]  rounded-full">
+                  <i class="fa-solid fa-up text-[#FFFF] ml-1.5  mt-[3px] text-[20px]"></i>
+                </div>
+                <p className="text-[14px] ml-2">
+                  Increased 50% since last month
+                </p>
+              </p>
+            </div>
+          </div>
+          {/* Royalties Table */}
+          <div className="h-[300px] mt-[41px] mb-[49px] w-full border border-[#9A5AFF]"></div>
           {activeTab.id === 0 && (
             <div>
               {!isLoading && (
@@ -527,25 +481,6 @@ const Profile = () => {
                     OnSetActive={OnSetActive}
                     sortData={sortData}
                     active={activeTab}
-                  />
-                </InfiniteScroll>
-              )}
-            </div>
-          )}
-          {activeTab.id === 3 && (
-            <div>
-              {!isLoading && (
-                <InfiniteScroll
-                  dataLength={bookmarkList.length} //This is important field to render the next data
-                  next={onScrollLoadMoreDataBookmark}
-                  hasMore={bookmarkListHasMoreData}
-                >
-                  <Tab
-                    tabs={tabData}
-                    key={tabKey}
-                    OnSetActive={OnSetActive}
-                    sortData={sortData}
-                    active={initialTabData[3]}
                   />
                 </InfiniteScroll>
               )}
