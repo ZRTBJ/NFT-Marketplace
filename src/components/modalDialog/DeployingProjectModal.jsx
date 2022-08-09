@@ -283,9 +283,8 @@ const DeployingProjectModal = ({
             <div className="h-4 w-36 bg-[#232032]  mt-1"></div>
             <div>
               <i
-                className={`fa fa-check-square fa-xl ${
-                  step >= 1 ? "text-white" : "text-gray-700"
-                }`}
+                className={`fa fa-check-square fa-xl ${step >= 1 ? "txtblack dark:text-white" : "text-gray-700"
+                  }`}
                 aria-hidden="true"
               ></i>
               <p className="mt-4 text-xs">Smartcontrat deployment</p>
@@ -294,9 +293,8 @@ const DeployingProjectModal = ({
             <div className="h-4 w-36 bg-[#232032] mt-1"></div>
             <div>
               <i
-                className={`fa fa-check-square fa-xl ${
-                  step >= 2 ? "text-white" : "text-gray-700"
-                }`}
+                className={`fa fa-check-square fa-xl ${step >= 2 ? "txtblack dark:text-white" : "text-gray-700"
+                  }`}
                 aria-hidden="true"
               ></i>
               <p className="mt-4 text-xs">Completed</p>
@@ -327,27 +325,25 @@ const DeployingProjectModal = ({
                 <div className="text-center my-4">
                   <ul className="stepper stepper-vertical">
                     <li
-                      className={`stepper-step ${
-                        deployStatus.step >= 0
+                      className={`stepper-step ${deployStatus.step >= 0
                           ? deployStatus.step === 1 &&
                             deployStatus.fn_status === "failed"
                             ? "stepper-failed"
                             : "stepper-active"
                           : ""
-                      }`}
+                        }`}
                     >
                       <div className="stepper-head hover:!bg-transparent">
                         <span className="stepper-head-icon">
                           {" "}
                           <i
-                            className={`fa ${
-                              deployStatus.step === 1 &&
-                              deployStatus.fn_status === "failed"
+                            className={`fa ${deployStatus.step === 1 &&
+                                deployStatus.fn_status === "failed"
                                 ? "fa-times"
                                 : deployStatus.step === 0
-                                ? "fa-hourglass"
-                                : "fa-check"
-                            }`}
+                                  ? "fa-hourglass"
+                                  : "fa-check"
+                              }`}
                             aria-hidden="true"
                           ></i>{" "}
                         </span>
@@ -358,27 +354,25 @@ const DeployingProjectModal = ({
                       </div>
                     </li>
                     <li
-                      className={`stepper-step ${
-                        deployStatus.step >= 1
+                      className={`stepper-step ${deployStatus.step >= 1
                           ? deployStatus.step === 2 &&
                             deployStatus.fn_status === "failed"
                             ? "stepper-failed"
                             : "stepper-active"
                           : ""
-                      }`}
+                        }`}
                     >
                       <div className="stepper-head hover:!bg-transparent">
                         <span className="stepper-head-icon">
                           {" "}
                           <i
-                            className={`fa ${
-                              deployStatus.step === 2 &&
-                              deployStatus.fn_status === "failed"
+                            className={`fa ${deployStatus.step === 2 &&
+                                deployStatus.fn_status === "failed"
                                 ? "fa-times"
                                 : deployStatus.step === 1
-                                ? "fa-hourglass"
-                                : "fa-check"
-                            }`}
+                                  ? "fa-hourglass"
+                                  : "fa-check"
+                              }`}
                             aria-hidden="true"
                           ></i>{" "}
                         </span>

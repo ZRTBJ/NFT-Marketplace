@@ -5,10 +5,8 @@
   z-index: 98;
   top: 0;
   left: 0;
-  background-color: #111;
   overflow-x: hidden;
   box-shadow: 3px 0px 6px #00000024;
-  background: #161423 0% 0% no-repeat padding-box;
 }
 
 .sidebarContainer {
@@ -19,7 +17,6 @@
 .sidenav .closebtn {
   font-size: 36px;
   margin-left: 29px;
-  color: #fff;
 }
 
 .closebtn:hover {

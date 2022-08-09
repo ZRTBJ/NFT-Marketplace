@@ -13,11 +13,11 @@ const ProjectCover = () => {
         style={{ backgroundColor: `rgb(0, 0, 0, 0.6)` }}
       >
         <div className="text-center">
-          <span className="relative bottom-4 inline-flex items-center justify-center px-3.5 py-1.5 text-lg text-white font-bold leading-none bg-[#0AB4AF] rounded-full">
+          <span className="relative bottom-4 inline-flex items-center justify-center px-3.5 py-1.5 text-lg txtblack dark:text-white font-bold leading-none bg-[#0AB4AF] rounded-full">
             PROJECT PAGE
           </span>
         </div>
-        <div className="text-center text-white text-lg">
+        <div className="text-center txtblack dark:text-white text-lg">
           FINAL FANTASY XVI “AWAKENING”
         </div>
       </div>

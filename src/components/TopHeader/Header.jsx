@@ -126,7 +126,7 @@ const Header = () => {
     if (loc.protocol === "https:") {
       host = "wss:";
     }
-  } catch {}
+  } catch { }
   const socketUrl = `${host}//${config.WEB_SOKET}/ws`;
 
   const {
@@ -190,7 +190,7 @@ const Header = () => {
           }
         }, 2000);
       }
-    } catch (err) {}
+    } catch (err) { }
   }
 
   function searchProject(keyword) {
@@ -236,7 +236,7 @@ const Header = () => {
   }
 
   return (
-    <>
+    <header className="bg-light1">
       {showSidebar && (
         <Sidebar key={showSidebarKey} handleClose={closeSidebar} />
       )}
@@ -253,7 +253,7 @@ const Header = () => {
               <span className="sr-only">Open main menu</span>
               <svg
                 className="w-6 h-6"
-                fill="#fff"
+                fill="#9A5AFF"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
               >
@@ -280,7 +280,7 @@ const Header = () => {
               className="cp mr-5 lg:ml-1 lg:mr-14"
               onClick={() => history.push("/")}
             >
-              <div className="text-white font-satoshi-bold font-black text-xl lg:text-3xl relative logo">
+              <div className="text-primary-900 dark:text-white font-satoshi-bold font-black text-xl lg:text-3xl relative logo">
                 CREAB
               </div>
             </div>
@@ -294,14 +294,14 @@ const Header = () => {
               </label>
               <div className="relative">
                 <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
-                  <i className="fa-regular fa-magnifying-glass text-white-shade-600"></i>
+                  <i className="fa-regular fa-magnifying-glass text-primary-900"></i>
                 </div>
                 <input
                   type="search"
                   id="default-search"
                   name="projectSearch2"
                   autoComplete="off"
-                  className=" bg-color-ass-5 focus:bg-color-ass-5 text-lg w-full max-w-[556px] text-white rounded-xl pl-10 h-10 placeholder-color-ass-4  focus:pl-10"
+                  className="dark:bg-color-ass-5 text-lg w-full max-w-[556px] dark:text-white rounded-xl pl-10 h-10 placeholder-color-ass-4  focus:pl-10"
                   placeholder="Search your project by name"
                   onChange={handleOnTextChange}
                   onFocus={handleOnSearchFocus}
@@ -320,13 +320,12 @@ const Header = () => {
 
           <div className="flex items-center" id="mobile-menu">
             {!userinfo.id && (
-              <h5 className="text-white mr-2 hidden md:block">What’s Creabo</h5>
+              <h5 className="text-primary-900 dark:text-white mr-2 hidden md:block">What’s Creabo</h5>
             )}
 
             <ul
-              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${
-                userId ? "" : "sm:py-2"
-              }`}
+              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${userId ? "" : "sm:py-2"
+                }`}
             >
               {userinfo.id && (
                 <>
@@ -471,7 +470,7 @@ const Header = () => {
                   //       {/* Dropdown menu */}
                   //       <div
                   //         id="userDropDown"
-                  //         className="hidden relative z-10 w-72 bg-dark-background text-base rounded  border border-primary-color divide-y divide-primary-color shadow-xl float-right mt-4"
+                  //         className="hidden relative z-10 w-72 bg-light dark:bg-dark-background text-base rounded  border border-primary-color divide-y divide-primary-color shadow-xl float-right mt-4"
                   //       >
                   //         <UserDropDownMenu />
                   //       </div>
@@ -501,14 +500,14 @@ const Header = () => {
               </label>
               <div className="relative">
                 <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none h-10">
-                  <i className="fa-regular fa-magnifying-glass text-white-shade-600"></i>
+                  <i className="fa-regular fa-magnifying-glass text-primary-900"></i>
                 </div>
                 <input
                   type="text"
                   id="default-search-2"
                   name="projectSearch1"
                   autoComplete="off"
-                  className=" bg-color-ass-5 focus:bg-color-ass-5 text-lg w-full w-100 text-white rounded-xl !pl-8 h-10 placeholder-color-ass-4"
+                  className="dark:bg-color-ass-5 text-lg w-full w-100 text-white rounded-xl !pl-8 h-10 placeholder-color-ass-4"
                   placeholder="Search your project by name"
                   onChange={handleOnTextChange}
                   onFocus={handleOnSearchFocus}
@@ -528,7 +527,7 @@ const Header = () => {
       </nav>
 
       <WalletConnectModal showModal={showModal} closeModal={hideModal} />
-    </>
+    </header>
   );
 };
 export default Header;

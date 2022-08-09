@@ -13,11 +13,10 @@ const NotificatioMenu = ({
   function markAsRead(notification) {
     if (notification?.data?.project_uid) {
       markNotificationAsRead(notification.uuid)
-        .then((res) => {})
-        .catch(() => {});
+        .then((res) => { })
+        .catch(() => { });
       history.push(
-        `/project-details/${
-          notification?.data?.project_uid ? notification.data.project_uid : ""
+        `/project-details/${notification?.data?.project_uid ? notification.data.project_uid : ""
         }`
       );
       handleNotifictionClose();
@@ -27,9 +26,9 @@ const NotificatioMenu = ({
   return (
     <div
       ref={ref}
-      className="w-screen md:w-1/4 h-screen md:h-auto md:border border-primary-500  bg-dark-background rounded-xl absolute top-16 right-[-44px] md:right-20 z-20 px-4 pb-2"
+      className="w-screen md:w-1/4 h-screen md:h-auto md:border border-primary-500  bg-light dark:bg-dark-background rounded-xl absolute top-16 right-[-44px] md:right-20 z-20 px-4 pb-2"
     >
-      <div className="mt-4 text-white">
+      <div className="mt-4 txtblack dark:text-white">
         <h3>Notifiction</h3>
         <small>Recent Activity</small>
       </div>
@@ -41,7 +40,7 @@ const NotificatioMenu = ({
               onClick={() => markAsRead(notification)}
               onTouchStart={() => markAsRead(notification)}
             >
-              <div className="w-3/4 text-white text-sm cursor-pointer">
+              <div className="w-3/4 txtblack dark:text-white text-sm cursor-pointer">
                 <p className="ml-2">{notification?.data?.project_name}</p>
                 <p>
                   <small className="ml-2">{notification?.data?.message}</small>

@@ -171,6 +171,7 @@ textarea {
   border-radius: 6px;
   border: 1px solid #232032;
 }
+/*
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
@@ -178,7 +179,7 @@ select:focus-visible {
   outline: #232032;
   background-color: #232032;
   padding-left: 15px;
-}
+} */
 textarea {
   /* border: 1px solid #cccccc; */
   border-radius: 4px;

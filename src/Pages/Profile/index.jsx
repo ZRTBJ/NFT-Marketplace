@@ -320,7 +320,7 @@ const Profile = () => {
     <>
       {isLoading && <div className="loading"></div>}
       {!isLoading && (
-        <main className="container mx-auto px-4">
+        <>
           {/* Cover image section */}
           <section className="mt-5 rounded-3xl">
             {user.cover === "" ? (
@@ -340,7 +340,7 @@ const Profile = () => {
 
           {/* profile information section */}
           <section className="flex flex-col md:flex-row pt-5 md:pt-14">
-            <div className="md:w-2/3 text-white">
+            <div className="md:w-2/3 txtblack dark:text-white">
               <div className="flex">
                 {user.avatar === "" ? (
                   <img
@@ -451,7 +451,7 @@ const Profile = () => {
           {/* Views followers section */}
 
           <section className="flex justify-center pt-4 md:pt-10">
-            <div className="inline-flex py-4 text-white text-center">
+            <div className="inline-flex py-4 txtblack dark:text-white text-center">
               <div className="border-r border-color-ass px-5 last:border-0">
                 <strong className="display-block font-black font-satoshi-bold text-[22px]">
                   {user?.data?.total_view}
@@ -551,7 +551,7 @@ const Profile = () => {
               )}
             </div>
           )}
-        </main>
+        </>
       )}
     </>
   );
