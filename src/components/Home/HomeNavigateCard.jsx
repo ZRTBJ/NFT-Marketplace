@@ -25,18 +25,18 @@ const HomeNavigateCard = () => {
   }, []);
   return (
     <>
-
-
       <article className=" rounded-xl bg-primary-900 bg-opacity-20 border border-primary-600 h-60 flex items-center justify-center p-4 flex-col">
         <h1 className="text-primary-900 mb-3">Start Creating your Project</h1>
-        <p className="mb-4">You can simply create  DAO or NFT project
-          by simply clicking button.</p>
-        <a onClick={() => navigate("project-create")} className="inline-block bg-secondary-900 px-4 py-3 text-white font-black text-sm  font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">Create Project</a>
+        <p className="mb-4">
+          You can simply create DAO or NFT project by simply clicking button.
+        </p>
+        <a
+          onClick={() => navigate("project-create")}
+          className="inline-block bg-secondary-900 px-4 py-3 text-white font-black text-sm  font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+        >
+          Create Project
+        </a>
       </article>
-
-
-
-
 
       {/* <article className="max-w-lg mx-auto">
         <h1>Simply finf the project and start contributing</h1>
@@ -59,8 +59,6 @@ const HomeNavigateCard = () => {
           </button>
         </div>
       </article> */}
-
-
 
       <WalletConnectModal
         showModal={showModal}
