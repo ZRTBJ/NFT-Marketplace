@@ -5,6 +5,7 @@ import { AuthProvider } from "./Context";
 import AppRoute from "components/AppRoute";
 import Header from "components/TopHeader/Header";
 import FooterPage from "./Pages/Footer";
+import Sidebar from "components/Sidebar/Sidebar";
 
 function App() {
   return (
@@ -13,17 +14,24 @@ function App() {
         <AuthProvider>
           <Header />
           {/* Dynamic Body */}
-          <main className="container mx-auto px-4 min-h-[calc(100vh-71px)]">
-            <Switch>
-              {routes.map((route) => (
-                <AppRoute
-                  key={route.path}
-                  path={route.path}
-                  component={route.component}
-                  isPrivate={route.isPrivate}
-                />
-              ))}
-            </Switch>
+          <main className="container min-h-[calc(100vh-71px)]">
+            <div className="flex flex-row">
+              <div className="mr-4">
+                <Sidebar />
+              </div>
+              <div className="w-[calc(100vw-350px)]">
+                <Switch>
+                  {routes.map((route) => (
+                    <AppRoute
+                      key={route.path}
+                      path={route.path}
+                      component={route.component}
+                      isPrivate={route.isPrivate}
+                    />
+                  ))}
+                </Switch>
+              </div>
+            </div>
           </main>
           {/* <FooterPage /> */}
         </AuthProvider>
