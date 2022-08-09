@@ -35,6 +35,7 @@ module.exports = {
         "light": "#F9F5FF",
         "light1": "#FDFDFD",
         "txtblack": "#303548",
+        "textSubtle": "#7D849D",
 
 
 
@@ -112,6 +113,10 @@ module.exports = {
       height: {
         361: "361px",
       },
+      boxShadow: {
+        'main': '5px 5px 12px rgba(177, 177, 177, 0.1)',
+      }
+
     },
   },
   plugins: [require("tw-elements/dist/plugin")],
