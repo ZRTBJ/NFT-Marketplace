@@ -13,7 +13,7 @@ const Card = ({ cardInfo }) => {
             </h3>
           </a> */}
 
-          <p className="mt-4 text-white  font-bold">
+          <p className="mt-4 txtblack dark:text-white  font-bold">
             Here are the biggest enterprise technology acquisitions of 2021 so
             far, in reverse chronological order.
           </p>
@@ -35,19 +35,19 @@ const Card = ({ cardInfo }) => {
           </div> */}
 
           {/* <div className="flex flex-wrap mt-4">
-            <a className="flex space-x-2 items-center text-white mr-4">
+            <a className="flex space-x-2 items-center txtblack dark:text-white mr-4">
               <i className="fa-thin fa-eye"></i>
 
               <span className=" ml-1">120</span>
             </a>
 
-            <a className="flex space-x-2 items-center text-white mr-4">
+            <a className="flex space-x-2 items-center txtblack dark:text-white mr-4">
               <i className="fa-thin fa-heart"></i>
 
               <span className=" ml-1">120</span>
             </a>
 
-            <a className="flex space-x-2 items-center text-white mr-4">
+            <a className="flex space-x-2 items-center txtblack dark:text-white mr-4">
               <i className="fa-thin fa-bookmark"></i>
 
               <span className=" ml-1">120</span>

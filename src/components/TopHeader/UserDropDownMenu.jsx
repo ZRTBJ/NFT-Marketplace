@@ -83,8 +83,8 @@ const UserDropDownMenu = () => {
 
       <div className="w-screen md:w-52 h-screen md:h-auto md:border border-primary-500  bg-light dark:bg-dark-background rounded-xl absolute top-11 right-[-44px] md:right-0 z-20">
         <div className="pl-10 pr-3 py-3 border-b border-black-shade-800">
-          <h3 className="text-white text-sm  mb-6 ">Wallet</h3>
-          <p className="text-white flex content-center mb-2">
+          <h3 className="txtblack dark:text-white text-sm  mb-6 ">Wallet</h3>
+          <p className="txtblack dark:text-white flex content-center mb-2">
             <img
               src={
                 wallet === "metamask"
@@ -100,7 +100,7 @@ const UserDropDownMenu = () => {
             />
             <span>Total Balance </span>
           </p>
-          <h4 className="text-white text-xl  mb-6 tracking-wide">
+          <h4 className="txtblack dark:text-white text-xl  mb-6 tracking-wide">
             {isLoadingBalance && (
               <i className="fa fa-spinner fa-pulse fa-fw"></i>
             )}
@@ -114,7 +114,7 @@ const UserDropDownMenu = () => {
         <div className="pl-10 pr-3 py-3">
           <div
             onClick={handleLogout}
-            className="text-white flex content-center font-extrabold text-sm cursor-pointer"
+            className="txtblack dark:text-white flex content-center font-extrabold text-sm cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -135,7 +135,7 @@ const UserDropDownMenu = () => {
         </div>
       </div>
 
-      {/* <div className="py-3 px-4 text-white">
+      {/* <div className="py-3 px-4 txtblack dark:text-white">
         <div className="inline-flex items-center justify-center">
           <img
             className="rounded-full border border-gray-100 shadow-sm"
@@ -155,7 +155,7 @@ const UserDropDownMenu = () => {
           </div>
         </div>
       </div>
-      <div className="py-3 px-4 text-white">
+      <div className="py-3 px-4 txtblack dark:text-white">
         <div>
           <div onClick={showHideWallet}>
             WALLET{" "}
@@ -190,7 +190,7 @@ const UserDropDownMenu = () => {
                     )}
                   </div>
                   <div className="pl-2">
-                    <small className="text-white opacity-70 font-['Montserrat']">
+                    <small className="txtblack dark:text-white opacity-70 font-['Montserrat']">
                       Total balance dsaffdad
                     </small>
                     <div className="text-[20px]">$12.00 USD</div>
@@ -203,14 +203,14 @@ const UserDropDownMenu = () => {
                   </div>
                 </div>
               </div>
-              <div className="w-full h-10 text-center text-white bg-primary-color">
+              <div className="w-full h-10 text-center txtblack dark:text-white bg-primary-color">
                 <div className="py-2">Add Funds</div>
               </div>
             </>
           )}
         </div>
       </div>
-      <div className="text-white hover:bg-primary-color">
+      <div className="txtblack dark:text-white hover:bg-primary-color">
         <Link
           to={`/profile/${localStorage.getItem("user_id")}`}
           className="inline-flex user-dropdown-item"
@@ -220,7 +220,7 @@ const UserDropDownMenu = () => {
           <div className="ml-2"> PROFILE</div>
         </Link>
       </div>
-      <div className="text-white hover:bg-primary-color ">
+      <div className="txtblack dark:text-white hover:bg-primary-color ">
         <Link
           to="/profile-settings"
           className="inline-flex user-dropdown-item"
@@ -230,7 +230,7 @@ const UserDropDownMenu = () => {
           <div className="ml-2">SETTING</div>
         </Link>
       </div>
-      <div className="hover:bg-primary-color text-white">
+      <div className="hover:bg-primary-color txtblack dark:text-white">
         <Link
           to="/profile-project-list"
           className="inline-flex user-dropdown-item"
@@ -240,7 +240,7 @@ const UserDropDownMenu = () => {
           <div className="ml-2">PROJECT</div>
         </Link>
       </div>
-      <div className="hover:bg-primary-color text-white" onClick={handleLogout}>
+      <div className="hover:bg-primary-color txtblack dark:text-white" onClick={handleLogout}>
         <Link
           to=""
           className="inline-flex user-dropdown-item"

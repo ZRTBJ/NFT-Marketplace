@@ -58,7 +58,7 @@ function ProjectPoll(props) {
               <div className="text-center sm:text-right">
                 <span
                   onClick={() => setShowNewPost(true)}
-                  className="inline-flex items-center justify-center px-3.5 py-1.5 text-lg text-white font-bold leading-none bg-[#0AB4AF] rounded-full mb-4"
+                  className="inline-flex items-center justify-center px-3.5 py-1.5 text-lg txtblack dark:text-white font-bold leading-none bg-[#0AB4AF] rounded-full mb-4"
                 >
                   New Post
                 </span>
