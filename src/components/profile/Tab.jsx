@@ -28,11 +28,10 @@ const Tab = (props) => {
       <div className="flex-wrap justify-center hidden md:flex">
         {props.tabs.map((type, index) => (
           <button
-            className={` p-3 hover:text-primary-900 active:text-primary-900 ${
-              props.active?.id === type.id
+            className={` p-3 hover:text-primary-900 active:text-primary-900 ${props.active?.id === type.id
                 ? " text-primary-900 "
                 : "text-white-shade-600"
-            }`}
+              }`}
             key={type.id}
             onClick={() => OnSetActive(type, index)}
           >
@@ -82,12 +81,12 @@ const Tab = (props) => {
             {/* 
             
                 //Open Ttitle
-                <h1 className="text-white mt-4 md:hidden"><span className="pr-3">Projects</span> <i className="fa-solid fa-circle-caret-down"></i></h1>
+                <h1 className="txtblack dark:text-white mt-4 md:hidden"><span className="pr-3">Projects</span> <i className="fa-solid fa-circle-caret-down"></i></h1>
 
                 <div className="py-5"> open content</div>
 
                 // Close Title  inside h1 tag icon class name will be changed
-                <h1 className="text-white md:hidden"><span className="pr-3">Projects</span> <i className="fa-solid fa-circle-caret-right"></i></h1> 
+                <h1 className="txtblack dark:text-white md:hidden"><span className="pr-3">Projects</span> <i className="fa-solid fa-circle-caret-right"></i></h1> 
 
                 //Close Content py- class will be removed h-0 class will be added
                 

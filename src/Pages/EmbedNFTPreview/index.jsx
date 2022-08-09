@@ -29,10 +29,10 @@ function EmbedNFTPreview(props) {
   return (
     <div className='block md:flex w-full mt-8'>
       <div className='w-4/4 md:w-1/4 mr-0 md:mr-10'>
-        <h2 className='text-white mb-6'>Configure the view</h2>
+        <h2 className='txtblack dark:text-white mb-6'>Configure the view</h2>
         <div className='mb-6'>
           <label
-            className='block text-sm font-bold font-satoshi-bold text-white'
+            className='block text-sm font-bold font-satoshi-bold txtblack dark:text-white'
             htmlFor='height'
           >
             Set Height
@@ -51,7 +51,7 @@ function EmbedNFTPreview(props) {
         </div>
         <div className='mb-6'>
           <label
-            className='block text-sm font-bold font-satoshi-bold text-white'
+            className='block text-sm font-bold font-satoshi-bold txtblack dark:text-white'
             htmlFor='width'
           >
             Set Width
@@ -69,7 +69,7 @@ function EmbedNFTPreview(props) {
           </div>
         </div>
         <div>
-          <p className='text-white mb-2'>Embed this HTML code to your page</p>
+          <p className='txtblack dark:text-white mb-2'>Embed this HTML code to your page</p>
           <div className='relative'>
             <input
               className='block mb-3 py-[10px] pl-[15px] pr-[40px] bg-[#232032] border-[#232032] text-[#9499ae] w-full rounded border-[1px]'
@@ -86,14 +86,14 @@ function EmbedNFTPreview(props) {
             </div>
           </div>
           {isTextCopied && (
-            <p className='text-white text-center text-xs text-[#9499ae]'>
+            <p className='txtblack dark:text-white text-center text-xs'>
               Copied Successfully!
             </p>
           )}
         </div>
       </div>
       <div className='w-4/4 md:w-3/4 mt-10 md:mt-0 ml-0 md:ml-10'>
-        <h2 className='text-white mb-6'>Preview</h2>
+        <h2 className='txtblack dark:text-white mb-6'>Preview</h2>
         <iframe
           src={`http://localhost:3000/embed/${nftId}`}
           width={`${width}px`}

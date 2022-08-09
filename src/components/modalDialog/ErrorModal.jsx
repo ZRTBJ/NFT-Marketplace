@@ -14,8 +14,8 @@ const ErrorModal = ({ handleClose, show, title, message, buttomText }) => {
     >
       <div className="text-center">
         <img className="block mx-auto" src={IconError} alt="" />
-        <div className="my-4 text-xl font-bold text-white">{titleMsg}</div>
-        <div className="my-4 font-bold text-white">{bodyMsg}</div>
+        <div className="my-4 text-xl font-bold txtblack dark:text-white">{titleMsg}</div>
+        <div className="my-4 font-bold txtblack dark:text-white">{bodyMsg}</div>
         <div className="flex justify-center">
           <button
             type="button"
