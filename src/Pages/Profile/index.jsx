@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "assets/css/profile.css";
-import profile from "assets/images/profile/profile.svg";
-import profileDummy from "assets/images/profile/profile-dummy.svg";
+import DefaultProfilePicture from "assets/images/profile/defaultProfile.svg";
+import DefaultProjectLogo from "assets/images/profile/defaultProjectLogo.svg";
 import Tab from "components/profile/Tab";
 import {
   getUserProjectListById,
@@ -69,6 +69,44 @@ const Profile = () => {
   const [bookmarkListLimit, setBookmarkListLimit] = useState(10);
   const [bookmarkListHasMoreData, setBookmarkListHasMoreData] = useState(false);
   // bookmark end
+
+  // Royalties start
+  const [royaltiesListSortBy, setRoyaltiesListSortBy] = useState("default");
+  const royaltiesSortByList = [
+    { id: 1, name: "Revenue" },
+    { id: 2, name: "Name" },
+    { id: 3, name: "Percentage" },
+  ];
+  const [royaltiesList, setRoyalitiesList] = useState([
+    {
+      id: 1,
+      projectIcon: DefaultProjectLogo,
+      projectName: "The Dark Web",
+      percentage: "15%",
+      role: "Owner",
+      totalRevenue: "$5291",
+    },
+    {
+      id: 2,
+      projectIcon: DefaultProjectLogo,
+      projectName: "Mint World",
+      percentage: "50%",
+      role: "Member",
+      totalRevenue: "$4291",
+    },
+    {
+      id: 3,
+      projectIcon: DefaultProjectLogo,
+      projectName: "Mint World",
+      percentage: "50%",
+      role: "Member",
+      totalRevenue: "$4291",
+    },
+  ]);
+  async function onRoyaltiesListSort(e) {
+    setRoyaltiesListSortBy(e.target.value);
+  }
+  // Royalties End
 
   const [isLoading, setIsLoading] = useState(true);
   const [tabKey, setTabKey] = useState(0);
@@ -319,31 +357,23 @@ const Profile = () => {
       {!isLoading && (
         <main className="container">
           {/* profile information section */}
-          <div className="flex flex-wrap">
-            <div className="flex-1 md:mr-4 flex flex-wrap bg-white md:h-[152px] rounded rounded-[8px] p-[13px] md:p-[26px]">
+          <div className="flex flex-wrap mt-[16px]">
+            <div className="flex-1 md:mr-4 flex flex-wrap bg-white-shade-900 md:h-[152px] rounded rounded-[8px] p-[13px] md:p-[26px]">
               <div>
                 <div className="flex">
-                  {user.avatar === "" ? (
-                    <img
-                      src={profile}
-                      className="rounded-lg self-start w-14 h-14 md:w-[102px] object-cover md:h-[102px] bg-color-ass-6"
-                      alt="User profile"
-                    />
-                  ) : (
-                    <img
-                      className="rounded-lg self-start w-14 h-14 md:w-[102px] object-cover md:h-[102px] bg-color-ass-6"
-                      src={user.avatar}
-                      width={98}
-                      alt="user profile"
-                    />
-                  )}
-
+                  <img
+                    src={
+                      user.avatar === "" ? DefaultProfilePicture : user.avatar
+                    }
+                    className="rounded-lg self-start  w-[102px] object-cover h-[102px]"
+                    alt={user.display_name + "profile picture"}
+                  />
                   <div className="flex-1 min-w-0  pl-[20px]">
-                    <h3 className="text-ellipsis mb-[4px] overflow-hidden whitespace-nowrap font-black text-[18px]">
+                    <h3 className="text-ellipsis text-txtblack mb-[4px] overflow-hidden whitespace-nowrap font-black text-[18px]">
                       {user.display_name}
                     </h3>
-                    <p className="text-[13px] text-[#7D849D] ">
-                      {user?.eoa?.slice(0, 14)}..{" "}
+                    <p className="text-[13px] text-textSubtle ">
+                      {user?.eoa?.slice(0, 20)}..{" "}
                       <i
                         onClick={() => {
                           navigator.clipboard.writeText(user.eoa);
@@ -352,14 +382,14 @@ const Profile = () => {
                       ></i>
                     </p>
                     <p className="flex items-center mb-[3px]">
-                      <i className="fa-solid fa-map-pin mr-[7px] text-[#FF3C3C] text-[12px]"></i>
-                      <span className="text-[13px] text-[#303548]">
+                      <i className="fa-solid fa-map-pin mr-[7px] text-danger-1 text-[12px]"></i>
+                      <span className="text-[13px] text-txtblack">
                         {user.area}
                       </span>
                     </p>
                     <p className="flex items-center">
-                      <i className="fa-solid fa-briefcase mr-[7px] text-[#FF3C3C] text-[12px]"></i>
-                      <span className="text-[13px] text-[#303548]">
+                      <i className="fa-solid fa-briefcase mr-[7px] text-danger-1 text-[12px]"></i>
+                      <span className="text-[13px] text-txtblack">
                         {user.job}
                       </span>
                     </p>
@@ -376,7 +406,7 @@ const Profile = () => {
                       {snc.url !== "" && (
                         <div
                           key={`snc-${index}`}
-                          className="cursor-pointer mr-4 w-[44px] h-[44px] mb-4 bg-social-icon-bg flex justify-center gap-2 items-center rounded-md  ease-in-out duration-300 "
+                          className="cursor-pointer mr-4 w-[44px] h-[44px] mb-4 bg-primary-900/[.09] flex justify-center  items-center rounded-md "
                         >
                           {snc.title.toLowerCase().match("weblink") ? (
                             <div className="">
@@ -386,7 +416,7 @@ const Profile = () => {
                                 rel="noreferrer"
                               >
                                 <i
-                                  className="fa fa-link text-[20px] text-[#9A5AFF] mt-1"
+                                  className="fa fa-link text-[20px] text-primary-900 mt-1"
                                   aria-hidden="true"
                                 ></i>
                               </a>
@@ -397,7 +427,7 @@ const Profile = () => {
                                 className={`fa-brands fa-${
                                   socialLinks.find((x) => x.title === snc.title)
                                     .icon
-                                } text-[20px] text-[#9A5AFF] mt-1`}
+                                } text-[20px] text-primary-900 mt-1`}
                               ></i>
                             </a>
                           )}
@@ -408,7 +438,7 @@ const Profile = () => {
               </div>
             </div>
             <div
-              className="w-full text-[#FFFFFF]  md:max-w-[347px]  h-[152px] bg-[#9A5AFF] rounded rounded-[8px]"
+              className="w-full text-white-shade-900  md:max-w-[347px]  h-[152px] bg-primary-900 rounded rounded-[8px]"
               style={{ boxShadow: "12px 12px 24px #D5BAFF" }}
             >
               <h3 className="ml-[24px] mt-[24px] text-[18px] font-black ">
@@ -418,8 +448,8 @@ const Profile = () => {
                 $1.505
               </h1>
               <p className="ml-[24px] mt-[8px] flex flex-wrap align-center">
-                <div className="bg-[#32E865] h-[26px] w-[26px]  rounded-full">
-                  <i class="fa-solid fa-up text-[#FFFF] ml-1.5  mt-[3px] text-[20px]"></i>
+                <div className="bg-success-1 h-[26px] w-[26px]  rounded-full">
+                  <i className="fa-solid fa-up text-[#FFFF] ml-1.5  mt-[3px] text-[20px]"></i>
                 </div>
                 <p className="text-[14px] ml-2">
                   Increased 50% since last month
@@ -428,7 +458,107 @@ const Profile = () => {
             </div>
           </div>
           {/* Royalties Table */}
-          <div className="h-[300px] mt-[41px] mb-[49px] w-full border border-[#9A5AFF]"></div>
+          <div className="mt-[41px] mb-[36px] pt-[30px] pl-[24px] pr-[24px] pb-[35px] bg-white-shade-900 rounded-[8px]">
+            <div className="flex flex-wrap item-center mb-[24px]">
+              <h2 className="text-[24px] mb-3">Royalties</h2>
+              <div className="flex  flex-wrap items-center md:ml-auto">
+                <p className="mr-4 mb-3">
+                  <span className="text-txtblack mr-2">Total Royalties:</span>
+                  <span className="text-txtblack font-black">$1.505</span>
+                </p>
+                <button className="mb-4 text-primary-900 font-bold bg-primary-900/[0.1] py-1 px-3 rounded mr-4">
+                  Claim All Royalties
+                </button>
+                <select
+                  className="w-[120PX] h-[32px] mb-4 bg-white-shade-900 pl-2 outline-none text-textSubtle border border-[#C7CEE5]"
+                  value={royaltiesListSortBy}
+                  onChange={onRoyaltiesListSort}
+                >
+                  <option disabled value={"default"} defaultValue>
+                    Sort By
+                  </option>
+                  {royaltiesSortByList.map((e) => (
+                    <option key={e.id} value={e.name}>
+                      {e.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="overflow-x-auto relative mb-[54px]">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="text-textSubtle text-[12px] ">
+                    <th scope="col" className="px-5">
+                      Icon
+                    </th>
+                    <th scope="col" className="px-5">
+                      Project Name
+                    </th>
+                    <th scope="col" className="px-5">
+                      Percentage
+                    </th>
+                    <th scope="col" className="px-5">
+                      Role
+                    </th>
+                    <th scope="col" className="px-5">
+                      Total Revenue
+                    </th>
+                    <th scope="col" className="px-5">
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {royaltiesList.map((r, index) => (
+                    <tr
+                      key={r.id}
+                      className={`${
+                        index < royaltiesList.length - 1 ? "border-b" : ""
+                      } text-left text-txtblack text-[14px]`}
+                    >
+                      <td className="py-4 px-5">
+                        <img
+                          src={r.projectIcon}
+                          className="h-[34px] w-[34px] object-cover rounded-full"
+                          alt={r.projectName + "logo"}
+                        />
+                      </td>
+                      <td className="py-4 px-5 font-black ">{r.projectName}</td>
+                      <td className="py-4 px-5">{r.percentage}</td>
+                      <td
+                        className={`py-4 px-5  ${
+                          r.role === "Owner" ? "text-info-1" : " text-success-1"
+                        }`}
+                      >
+                        {r.role}
+                      </td>
+                      <td className="py-4 px-5">{r.totalRevenue}</td>
+                      <td className="py-4 px-5">
+                        <button className="bg-secondary-900/[.20] h-[32px] w-[57px] rounded text-secondary-900">
+                          Claim
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="flex justify-center space-x-1 ">
+              <button className="px-3 py-1   text-primary-900 bg-primary-900 bg-opacity-5 rounded hover:bg-opacity-7">
+                <i className="fa-solid fa-angle-left"></i>
+              </button>
+              <button className="px-3 py-1 font-satoshi-bold  text-primary-900">
+                1
+              </button>
+              <button className="px-3 py-1 font-satoshi-bold text-textSubtle">
+                2
+              </button>
+              <button className="px-3 py-1   text-primary-900 bg-primary-900 bg-opacity-5 rounded hover:bg-opacity-7">
+                <i className="fa-solid fa-angle-right"></i>
+              </button>
+            </div>
+          </div>
           {activeTab.id === 0 && (
             <div>
               {!isLoading && (

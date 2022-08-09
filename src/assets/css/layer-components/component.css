@@ -85,7 +85,8 @@
 
   .btn-outline-primary-gradient span {
     @apply items-center
-        bg-dark-background
+        dark:bg-dark-background
+        bg-light
         rounded-md
         flex
         justify-center

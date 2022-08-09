@@ -13,7 +13,7 @@ const SuccessModal = ({ handleClose, show, message, buttomText }) => {
     >
       <div className="text-center mt-2">
         <img className="block mx-auto" src={IconSuccess} alt="" />
-        <div className="my-4 text-xl font-bold  text-white">{bodyMsg}</div>
+        <div className="my-4 text-xl font-bold  txtblack dark:text-white">{bodyMsg}</div>
         <div className="flex justify-center">
           <button
             type="button"

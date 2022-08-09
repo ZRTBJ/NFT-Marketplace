@@ -31,6 +31,16 @@ module.exports = {
         "color-primary-1": "#31224E",
         "social-icon-bg": "rgba(154, 90, 255, 0.1)",
 
+        //mvp-1.1 colors for light theme
+
+        light: "#F9F5FF",
+        light1: "#FDFDFD",
+        txtblack: "#303548",
+        textSubtle: "#7D849D",
+        "danger-1": "#FF3C3C",
+        "info-1": "#46A6FF",
+        "success-1": "#32E865",
+
         primary: {
           50: "#231B39",
           100: "#30224F",
@@ -53,7 +63,7 @@ module.exports = {
           600: "#A3724C",
           700: "#B78051",
           800: "#CB8D57",
-          900: "#DF9B5D",
+          900: "#FFA800",
         },
 
         "white-shade": {
@@ -103,6 +113,9 @@ module.exports = {
       },
       height: {
         361: "361px",
+      },
+      boxShadow: {
+        main: "5px 5px 12px rgba(177, 177, 177, 0.1)",
       },
     },
   },

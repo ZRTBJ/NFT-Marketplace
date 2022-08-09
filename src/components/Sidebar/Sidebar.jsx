@@ -60,8 +60,8 @@ const Sidebar = ({ show, handleClose }) => {
   }
 
   return (
-    <div style={openStyle} className="sidenav" ref={ref}>
-      <div className="closebtn cp" onClick={(e) => handleClose(e)}>
+    <div style={openStyle} className="sidenav bg-light1 dark:dark-background" ref={ref}>
+      <div className="closebtn cp text-primary-900" onClick={(e) => handleClose(e)}>
         &times;
       </div>
       <div className="sidebarLinksContainer flex flex-col">
@@ -77,7 +77,7 @@ const Sidebar = ({ show, handleClose }) => {
             <div className="rounded-full h-[57px] w-[57px] bg-[grey] mb-3 "></div>
           )}
 
-          <h4 className="font-satoshi-bold font-black text-white text-base">
+          <h4 className="font-satoshi-bold font-black txtblack dark:text-white text-base">
             {userinfo["display_name"]}
           </h4>
         </div>

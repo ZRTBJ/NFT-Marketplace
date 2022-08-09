@@ -92,7 +92,7 @@
 .collectionCardRadialContainer {
   width: 180px;
   height: 180px;
-  background: #ffffff url("../images/profile/circle-gradient.png");
+  /* background: #ffffff url("../images/profile/circle-gradient.png"); */
   background-size: cover;
   display: inline-block;
   border-radius: 100%;

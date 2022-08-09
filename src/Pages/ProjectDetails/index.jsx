@@ -213,22 +213,21 @@ export default function ProjectDetails(props) {
                 src={
                   project && project.assets && project.assets.length > 0
                     ? project.assets.find((x) => x.asset_purpose === "cover")
-                        ?.path
+                      ?.path
                       ? project.assets.find((x) => x.asset_purpose === "cover")
-                          ?.path
+                        ?.path
                       : require(`assets/images/no-image-found.png`)
                     : require(`assets/images/no-image-found.png`)
                 }
                 className={`rounded-3xl object-cover md:h-[310px] w-full 
-                  ${
-                    project && project.assets && project.assets.length > 0
-                      ? project.assets.find((x) => x.asset_purpose === "cover")
-                          ?.path
-                        ? project.assets.find(
-                            (x) => x.asset_purpose === "cover"
-                          )?.path
-                        : "object-right-top"
+                  ${project && project.assets && project.assets.length > 0
+                    ? project.assets.find((x) => x.asset_purpose === "cover")
+                      ?.path
+                      ? project.assets.find(
+                        (x) => x.asset_purpose === "cover"
+                      )?.path
                       : "object-right-top"
+                    : "object-right-top"
                   }`}
                 alt="Project Cover"
               />
@@ -238,21 +237,21 @@ export default function ProjectDetails(props) {
           <section className="flex flex-col lg:flex-row py-9">
             <div className="flex-1 flex items-center py-5">
               <div className="pr-4 lg:pr-28">
-                <h1 className="text-white mb-6">{project.name}</h1>
+                <h1 className="txtblack dark:text-white mb-6">{project.name}</h1>
 
                 <div className="flex flex-wrap mb-6">
-                  <div className="flex space-x-2 items-center text-white mr-4 cursor-pointer">
+                  <div className="flex space-x-2 items-center txtblack dark:text-white mr-4 cursor-pointer">
                     <i className="fa-thin fa-eye"></i>
                     <span className=" ml-1">{project.project_view_count}</span>
                   </div>
 
-                  <div className="flex space-x-2 items-center text-white mr-4 cursor-pointer">
+                  <div className="flex space-x-2 items-center txtblack dark:text-white mr-4 cursor-pointer">
                     <i className="fa-thin fa-heart"></i>
 
                     <span className=" ml-1">{project.project_like_count}</span>
                   </div>
 
-                  <div className="flex space-x-2 items-center text-white mr-4 cursor-pointer">
+                  <div className="flex space-x-2 items-center txtblack dark:text-white mr-4 cursor-pointer">
                     <i className="fa-thin fa-bookmark"></i>
 
                     <span className=" ml-1">{project.project_mark_count}</span>
@@ -350,15 +349,15 @@ export default function ProjectDetails(props) {
 
               <div className="flex-1 flex flex-col justify-between">
                 <div className="bg-color-dark-1 rounded-3xl p-5 mb-2">
-                  <h1 className="text-white  pb-4">Bored Ape #8295</h1>
-                  <p className="text-white text-sm pb-4">Find it On</p>
-                  <p className="text-white-shade-600 text-sm">
+                  <h1 className="txtblack dark:text-white  pb-4">Bored Ape #8295</h1>
+                  <p className="txtblack dark:text-white text-sm pb-4">Find it On</p>
+                  <p className="txtblack dark:text-white-shade-600 text-sm">
                     Your NFT is not listed on any marketplace
                   </p>
                 </div>
 
                 <div className="bg-color-dark-1 rounded-3xl p-5 mb-2">
-                  <h1 className="text-white  pb-4">Description</h1>
+                  <h1 className="txtblack dark:text-white  pb-4">Description</h1>
                   <p className="text-white-shade-600 text-sm pb-4">
                     It is a long established fact that a reader will be
                     distracted by the readable content of a page when looking at

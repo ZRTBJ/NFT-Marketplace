@@ -438,8 +438,8 @@ export default function ProjectCreate() {
             projectInfo.token_category &&
             projectInfo.token_category[0] &&
             projectInfo.token_category[0].id
-          ? projectInfo.token_category[0].id
-          : 1,
+            ? projectInfo.token_category[0].id
+            : 1,
         token_amount: parseInt(numberOfTokens),
       };
       const request = new FormData();
@@ -642,7 +642,7 @@ export default function ProjectCreate() {
     <>
       {isDataLoading && <div className="loading"></div>}
 
-      <div className="text-white max-w-[600px] mx-auto md:pt-12">
+      <div className="txtblack dark:text-white max-w-[600px] mx-auto md:pt-12">
         <div className="create-project-container">
           {currentStep.length === 1 && (
             <div>
