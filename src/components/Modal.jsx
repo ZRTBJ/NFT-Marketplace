@@ -1,5 +1,5 @@
-import "../assets/css/Modal.css";
-import ModalCloseLogo from "assets/images/modal/ico_closemodal.png";
+import '../assets/css/Modal.css';
+import ModalCloseLogo from 'assets/images/modal/ico_closemodal.png';
 const Modal = ({
   handleClose,
   show,
@@ -10,9 +10,9 @@ const Modal = ({
   showCloseIcon = true,
 }) => {
   let styleObj = {
-    height: height ? height + "px" : "",
-    width: width ? width + "px" : "",
-    overflow: overflow ? overflow : "hidden",
+    height: height ? height + 'px' : '',
+    width: width ? width + 'px' : '',
+    overflow: overflow ? overflow : 'hidden',
   };
 
   const modalBodyClicked = (e) => {
@@ -23,25 +23,27 @@ const Modal = ({
   };
   return (
     <div
-      data-toggle="modal"
-      data-backdrop="static"
-      data-keyboard="false"
-      className={`${show ? "modal display-block" : "modal display-none"} z-[99]`}
+      data-toggle='modal'
+      data-backdrop='static'
+      data-keyboard='false'
+      className={`${
+        show ? 'modal display-block' : 'modal display-none'
+      } z-[99]`}
     >
       <section
         onClick={(e) => modalBodyClicked(e)}
         style={styleObj}
         className={
-          " modal-main bg-light dark:bg-dark-background rounded-3xl relative txtblack dark:text-white p-11"
+          ' modal-main bg-light-background rounded-3xl relative txtblack dark:text-white p-11'
         }
       >
         {showCloseIcon && (
           <i
-            className="fa-light fa-square-xmark cursor-pointer text-2xl absolute top-12 right-8"
+            className='fa fa-xmark cursor-pointer text-xl absolute top-12 right-8 text-black'
             onClick={handleClose}
           ></i>
         )}
-        <div className="">{children}</div>
+        <div className=''>{children}</div>
       </section>
     </div>
   );
