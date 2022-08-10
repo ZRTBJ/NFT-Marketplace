@@ -4,7 +4,7 @@ const DAOCard = ({ item }) => {
     return { slicedItems, restSize: users.length - slicedItems.length };
   };
   return (
-    <div className='text-center w-[282px] h-[279px] rounded-[12px] mr-6 relative flex flex-col'>
+    <div className='cursor-pointer text-center w-[282px] h-[279px] rounded-[12px] mr-6 relative flex flex-col'>
       <img
         src={item.coverImage}
         alt={item.name}

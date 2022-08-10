@@ -4,7 +4,7 @@ const NFTCard = ({ item }) => {
     return { slicedItems, restSize: users.length - slicedItems.length };
   };
   return (
-    <div className='rounded-[12px] relative flex flex-col'>
+    <div className='rounded-[12px] relative flex flex-col cursor-pointer'>
       <img src={item.image} alt={item.name} className='w-[276px] h-[276px]' />
       <h3 className='text-[24px] font-bold mt-4'>{item.name}</h3>
       <p className='w-[260px] text-[13px] font-light mt-2 text-[#7D849D]'>
