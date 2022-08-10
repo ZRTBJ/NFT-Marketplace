@@ -80,7 +80,7 @@
   position: initial !important;
 }
 
-.swiper-button-next,
+/* .swiper-button-next,
 .swiper-button-prev,
 .swiper-button-disabled {
   background: #30224f;
@@ -107,4 +107,4 @@
 .swiper-button-next {
   position: absolute !important;
   right: 10px !important;
-}
+} */

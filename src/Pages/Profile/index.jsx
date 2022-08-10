@@ -2,7 +2,21 @@ import { useState, useEffect } from "react";
 import "assets/css/profile.css";
 import DefaultProfilePicture from "assets/images/profile/defaultProfile.svg";
 import DefaultProjectLogo from "assets/images/profile/defaultProjectLogo.svg";
+
+import { Swiper, SwiperSlide } from "swiper/react";
+import SwiperCore, { Autoplay } from "swiper";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+import DAOCard from "components/DAOCard";
+import NFTCard from "components/NFTCard";
+import styles from "Pages/CreateDAOandNFT/style.module.css";
+import { Navigation } from "swiper";
 import Tab from "components/profile/Tab";
+import ProfileImage from "assets/images/createDAO/user.svg";
+import CoverImage from "assets/images/createDAO/cover.svg";
+import CirclePlus from "assets/images/createDAO/circle-plus.svg";
+import NFTSample from "assets/images/createDAO/nft-sample.svg";
 import {
   getUserProjectListById,
   getExternalNftList,
@@ -17,6 +31,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { getNftListByUserId } from "services/nft/nftService";
 
 const Profile = () => {
+  SwiperCore.use([Autoplay]);
   // User general data start
   const { id } = useParams();
   const [user, setUser] = useState({});
@@ -124,6 +139,191 @@ const Profile = () => {
   ];
   const [activeTab, setActiveTab] = useState(initialTabData[0]);
   const [tabData, setTabData] = useState(initialTabData);
+
+  const DAO_ITEMS = [
+    {
+      id: 0,
+      name: "BoredApeYatchClub",
+      value: "1.000.000",
+      coverImage: CoverImage,
+      profileImage: ProfileImage,
+      users: [
+        { id: 0, profileImage: ProfileImage },
+        { id: 1, profileImage: ProfileImage },
+        { id: 2, profileImage: ProfileImage },
+        { id: 3, profileImage: ProfileImage },
+        { id: 4, profileImage: ProfileImage },
+        { id: 5, profileImage: ProfileImage },
+      ],
+    },
+    {
+      id: 1,
+      name: "BoredApeYatchClub",
+      value: "1.000.000",
+      coverImage: CoverImage,
+      profileImage: ProfileImage,
+      users: [
+        { id: 0, profileImage: ProfileImage },
+        { id: 1, profileImage: ProfileImage },
+        { id: 2, profileImage: ProfileImage },
+        { id: 3, profileImage: ProfileImage },
+        { id: 4, profileImage: ProfileImage },
+        { id: 5, profileImage: ProfileImage },
+        { id: 6, profileImage: ProfileImage },
+        { id: 7, profileImage: ProfileImage },
+        { id: 8, profileImage: ProfileImage },
+        { id: 9, profileImage: ProfileImage },
+      ],
+    },
+    {
+      id: 2,
+      name: "BoredApeYatchClub",
+      value: "1.000.000",
+      coverImage: CoverImage,
+      profileImage: ProfileImage,
+      users: [
+        { id: 0, profileImage: ProfileImage },
+        { id: 1, profileImage: ProfileImage },
+        { id: 2, profileImage: ProfileImage },
+        { id: 3, profileImage: ProfileImage },
+        { id: 4, profileImage: ProfileImage },
+        { id: 5, profileImage: ProfileImage },
+        { id: 6, profileImage: ProfileImage },
+        { id: 7, profileImage: ProfileImage },
+        { id: 8, profileImage: ProfileImage },
+        { id: 9, profileImage: ProfileImage },
+      ],
+    },
+    {
+      id: 3,
+      name: "BoredApeYatchClub",
+      value: "1.000.000",
+      coverImage: CoverImage,
+      profileImage: ProfileImage,
+      users: [
+        { id: 0, profileImage: ProfileImage },
+        { id: 1, profileImage: ProfileImage },
+        { id: 2, profileImage: ProfileImage },
+        { id: 3, profileImage: ProfileImage },
+        { id: 4, profileImage: ProfileImage },
+        { id: 5, profileImage: ProfileImage },
+        { id: 6, profileImage: ProfileImage },
+        { id: 7, profileImage: ProfileImage },
+        { id: 8, profileImage: ProfileImage },
+        { id: 9, profileImage: ProfileImage },
+      ],
+    },
+    {
+      id: 4,
+      name: "BoredApeYatchClub",
+      value: "1.000.000",
+      coverImage: CoverImage,
+      profileImage: ProfileImage,
+      users: [
+        { id: 0, profileImage: ProfileImage },
+        { id: 1, profileImage: ProfileImage },
+        { id: 2, profileImage: ProfileImage },
+        { id: 3, profileImage: ProfileImage },
+        { id: 4, profileImage: ProfileImage },
+        { id: 5, profileImage: ProfileImage },
+        { id: 6, profileImage: ProfileImage },
+        { id: 7, profileImage: ProfileImage },
+        { id: 8, profileImage: ProfileImage },
+        { id: 9, profileImage: ProfileImage },
+      ],
+    },
+  ];
+
+  const COLLECTION_ITEMS = [
+    {
+      id: 0,
+      name: "NFT Collection #1",
+      image: NFTSample,
+      description: "There are many variations of passages of Lorem",
+      nfts: [
+        { id: 0, profileImage: ProfileImage },
+        { id: 1, profileImage: ProfileImage },
+        { id: 2, profileImage: ProfileImage },
+      ],
+    },
+    {
+      id: 1,
+      name: "NFT Collection #2",
+      image: NFTSample,
+      description: "There are many variations of passages of Lorem",
+      nfts: [
+        { id: 0, profileImage: ProfileImage },
+        { id: 1, profileImage: ProfileImage },
+        { id: 2, profileImage: ProfileImage },
+        { id: 3, profileImage: ProfileImage },
+      ],
+    },
+    {
+      id: 2,
+      name: "NFT Collection #3",
+      image: NFTSample,
+      description: "There are many variations of passages of Lorem",
+      nfts: [
+        { id: 0, profileImage: ProfileImage },
+        { id: 1, profileImage: ProfileImage },
+        { id: 2, profileImage: ProfileImage },
+        { id: 3, profileImage: ProfileImage },
+        { id: 2, profileImage: ProfileImage },
+        { id: 3, profileImage: ProfileImage },
+      ],
+    },
+    {
+      id: 3,
+      name: "NFT Collection #3",
+      image: NFTSample,
+      description: "There are many variations of passages of Lorem",
+      nfts: [
+        { id: 0, profileImage: ProfileImage },
+        { id: 1, profileImage: ProfileImage },
+        { id: 2, profileImage: ProfileImage },
+        { id: 3, profileImage: ProfileImage },
+        { id: 2, profileImage: ProfileImage },
+        { id: 3, profileImage: ProfileImage },
+      ],
+    },
+    {
+      id: 4,
+      name: "NFT Collection #3",
+      image: NFTSample,
+      description: "There are many variations of passages of Lorem",
+      nfts: [
+        { id: 0, profileImage: ProfileImage },
+        { id: 1, profileImage: ProfileImage },
+        { id: 2, profileImage: ProfileImage },
+        { id: 3, profileImage: ProfileImage },
+        { id: 2, profileImage: ProfileImage },
+        { id: 3, profileImage: ProfileImage },
+      ],
+    },
+  ];
+
+  const settings = {
+    320: {
+      slidesPerView: 2,
+      spaceBetween: 15,
+    },
+    640: {
+      slidesPerView: 2,
+      spaceBetween: 15,
+    },
+    768: {
+      slidesPerView: 3,
+      spaceBetween: 15,
+    },
+    1024: {
+      slidesPerView: 4,
+      spaceBetween: 15,
+    },
+    1536: {
+      slidesPerView: 5,
+      spaceBetween: 15,
+    },
+  };
 
   // function start
   async function userInfo() {
@@ -355,10 +555,10 @@ const Profile = () => {
     <>
       {isLoading && <div className="loading"></div>}
       {!isLoading && (
-        <main className="container">
+        <main className="container mx-auto">
           {/* profile information section */}
-          <div className="flex flex-wrap mt-[16px]">
-            <div className="flex-1 md:mr-4 flex flex-wrap bg-white-shade-900 md:h-[152px] rounded rounded-[8px] p-[13px] md:p-[26px]">
+          <div className="flex flex-wrap mt-[16px] justify-between">
+            <div className="md:mr-4 flex flex-wrap  bg-white-shade-900 flex-1 rounded rounded-[8px] p-[13px] md:p-[20px]">
               <div>
                 <div className="flex">
                   <img
@@ -396,10 +596,7 @@ const Profile = () => {
                   </div>
                 </div>
               </div>
-              <div
-                className="flex flex-wrap mt-3 md:ml-auto  md:mt-0"
-                role="group"
-              >
+              <div className="flex flex-wrap mt-3  ml-auto md:mt-0">
                 {sncList &&
                   sncList.map((snc, index) => (
                     <div key={`snc-${index}`}>
@@ -438,7 +635,7 @@ const Profile = () => {
               </div>
             </div>
             <div
-              className="w-full text-white-shade-900  md:max-w-[347px]  h-[152px] bg-primary-900 rounded rounded-[8px]"
+              className="px-4 text-white-shade-900   h-[152px] bg-primary-900 rounded rounded-[8px]"
               style={{ boxShadow: "12px 12px 24px #D5BAFF" }}
             >
               <h3 className="ml-[24px] mt-[24px] text-[18px] font-black ">
@@ -559,7 +756,72 @@ const Profile = () => {
               </button>
             </div>
           </div>
-          {activeTab.id === 0 && (
+
+          <div className="mb-[50px]">
+            <h1 className="text-[28px] mb-[36px] font-black">Your DAO</h1>
+            <Swiper
+              breakpoints={{
+                320: {
+                  slidesPerView: 2,
+                  spaceBetween: 15,
+                },
+                640: {
+                  slidesPerView: 2,
+                  spaceBetween: 15,
+                },
+                768: {
+                  slidesPerView: 3,
+                  spaceBetween: 15,
+                },
+                1024: {
+                  slidesPerView: 4,
+                  spaceBetween: 15,
+                },
+                1536: {
+                  slidesPerView: 5,
+                  spaceBetween: 15,
+                },
+              }}
+              className="swipe-card"
+              navigation={true}
+              modules={[Navigation]}
+            >
+              <Swiper
+                breakpoints={settings}
+                navigation={true}
+                modules={[Navigation]}
+                className={styles.createSwiper}
+              >
+                <div>
+                  {DAO_ITEMS.map((item) => (
+                    <SwiperSlide key={item.id} className={styles.daoCard}>
+                      <DAOCard item={item} key={item.id} />
+                    </SwiperSlide>
+                  ))}
+                </div>
+              </Swiper>
+            </Swiper>
+          </div>
+
+          <div className="mb-[50px]">
+            <h1 className="text-[28px] mb-[36px] font-black">Collection</h1>
+            <Swiper
+              breakpoints={settings}
+              navigation={true}
+              modules={[Navigation]}
+              className={styles.createSwiper}
+            >
+              <div>
+                {COLLECTION_ITEMS.map((item) => (
+                  <SwiperSlide key={item.id} className={styles.nftCard}>
+                    <NFTCard item={item} key={item.id} />
+                  </SwiperSlide>
+                ))}
+              </div>
+            </Swiper>
+          </div>
+
+          {/* {activeTab.id === 0 && (
             <div>
               {!isLoading && (
                 <InfiniteScroll
@@ -615,7 +877,7 @@ const Profile = () => {
                 </InfiniteScroll>
               )}
             </div>
-          )}
+          )} */}
         </main>
       )}
     </>

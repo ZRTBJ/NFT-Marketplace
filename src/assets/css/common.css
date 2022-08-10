@@ -151,20 +151,22 @@ input[type="number"],
 .debounceInput {
   padding-left: 15px;
   border: none;
-  background-color: #232032;
-  color: #9499ae;
+  /* background-color: #232032; */
+  color: #c7cee5;
   font-size: 13px;
   /* width: 100%; */
   border-radius: 6px;
   height: 42px;
   width: 100%;
+  outline: none;
+  border: 1px solid #c7cee5;
 }
 input[type="text"],
 input[type="email"],
 textarea {
   padding: 10px 15px;
   border: none;
-  background-color: #232032;
+  /* background-color: #232032; */
   color: #9499ae;
   font-size: 13px;
   width: 100%;
@@ -191,6 +193,7 @@ select {
   width: 100%;
   height: 42px;
   border-radius: 6px;
+  outline: none;
 }
 
 /**
