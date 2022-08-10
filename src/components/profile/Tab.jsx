@@ -25,30 +25,35 @@ const Tab = (props) => {
   }
   return (
     <>
-      <div className="flex-wrap justify-center hidden md:flex">
+      <div className="flex-wrap justify-start  md:flex">
         {props.tabs.map((type, index) => (
           <button
-            className={` p-3 hover:text-primary-900 active:text-primary-900 ${props.active?.id === type.id
+            className={` p-3 hover:text-primary-900 active:text-primary-900 ${
+              props.active?.id === type.id
                 ? " text-primary-900 "
                 : "text-white-shade-600"
-              }`}
+            }`}
             key={type.id}
             onClick={() => OnSetActive(type, index)}
           >
             {type.name}
-            <span className="bg-primary-50 text-color-ass-1 p-1 ml-1 rounded-sm text-sm">
+            {/* <span className="bg-primary-50 text-color-ass-1 p-1 ml-1 rounded-sm text-sm">
               {type.list.length}
-            </span>
+            </span> */}
           </button>
         ))}
       </div>
-      <section className="flex mt-7">
+
+      <section className="flex">
         {userData.id && userData.id === id ? (
           <>
             {props.active?.name !== "NFTs" &&
               props.active?.name !== "Bookmark" && (
-                <button type="button" className="btn btn-primary btn-sm">
-                  {props.active?.name === "Dao Project List" ? (
+                <button
+                  type="button"
+                  className="h-[100px] border w-full border-[#9A5AFF] border-dashed bg-social-icon-bg"
+                >
+                  {props.active?.name === "DAO Project List" ? (
                     <Link to="/project-create">
                       Create New <i className="fa-thin fa-square-plus ml-1"></i>
                     </Link>
@@ -64,7 +69,7 @@ const Tab = (props) => {
           <></>
         )}
 
-        {props.active?.list.length > 0 && (
+        {/* {props.active?.list.length > 0 && (
           <button
             type="button"
             className="ml-auto btn btn-outline-primary btn-sm"
@@ -72,11 +77,11 @@ const Tab = (props) => {
           >
             Sort By <i className="fa-thin fa-arrow-down-short-wide ml-1"></i>
           </button>
-        )}
+        )} */}
       </section>
 
       <div className="tabContent">
-        {props.active?.name === "Dao Project List" && (
+        {props.active?.name === "DAO" && (
           <>
             {/* 
             
@@ -110,12 +115,12 @@ const Tab = (props) => {
             </div>
           </>
         )}
-        {props.active?.name === "Works" && (
+        {props.active?.name === "NFT's" && (
           <>
             {props.active?.list.length === 0 ? (
               <ProfileEmptyCaseCard
                 className="mx-auto"
-                type={"Works"}
+                type={"NFT's"}
               ></ProfileEmptyCaseCard>
             ) : (
               <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300 py-5">
@@ -126,12 +131,12 @@ const Tab = (props) => {
             )}
           </>
         )}
-        {props.active?.name === "NFTs" && (
+        {props.active?.name === "Collection" && (
           <>
             {props.active?.list.length === 0 ? (
               <ProfileEmptyCaseCard
                 className="mx-auto"
-                type={"External NFTs"}
+                type={"Collection"}
               ></ProfileEmptyCaseCard>
             ) : (
               <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300 py-5">
@@ -143,22 +148,6 @@ const Tab = (props) => {
               </div>
             )}
           </>
-        )}
-        {props.active?.name === "Bookmark" && (
-          <div>
-            {props.active?.list.length === 0 ? (
-              <ProfileEmptyCaseCard
-                className="mx-auto"
-                type={"Bookmark"}
-              ></ProfileEmptyCaseCard>
-            ) : (
-              <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ease-in-out duration-300 py-5">
-                {props.active?.list.map((list) => (
-                  <CommonCard key={list.id} project={list} />
-                ))}
-              </div>
-            )}
-          </div>
         )}
       </div>
       {showModal && (
