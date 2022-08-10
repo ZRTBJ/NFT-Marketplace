@@ -7,6 +7,8 @@ import { getUserInfo } from "services/User/userService";
 import { setUserInfo, setSideBar } from "Slice/userSlice";
 import WalletConnectModal from "components/modalDialog/WalletConnectModal";
 import { useHistory } from "react-router-dom";
+import ReactTooltip from "react-tooltip";
+
 const openStyle = { width: "271px" };
 const closeStyle = { width: "0px" };
 const linksList = [
@@ -61,7 +63,7 @@ const Sidebar = () => {
       <div className="sidebarLinksContainer flex flex-col">
         <div className="pl-6 pr-10 flex-0 flex flex-col">
           <NavLink
-            to={`/`}
+            to="/"
             activeClassName="active-menu"
             className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
           >
@@ -98,6 +100,19 @@ const Sidebar = () => {
           >
             <span className="ml-2">Create NFT</span>
           </NavLink>
+        </div>
+        <div className="pl-6 pr-10 flex-0 flex flex-col text-primary-900 mt-96">
+          <div className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold cursor-pointer">
+            <i className="fa-solid fa-gas-pump fa-xl"></i>
+            <span className="ml-4">8 USD</span>
+            <i
+              className="ml-4 text-textSubtle fa-solid fa-circle-info"
+              data-for="gas"
+              data-tip="this is a price"
+              data-iscapture="true"
+            ></i>
+            <ReactTooltip id="gas" />
+          </div>
         </div>
       </div>
       <WalletConnectModal
