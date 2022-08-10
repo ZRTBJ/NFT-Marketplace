@@ -172,19 +172,18 @@ const WalletConnectModal = ({ showModal, closeModal, navigateToPage }) => {
         handleClose={() => closeModal()}
       >
         <div
-          className={`text-center px-[11px] md:px-[0px] text-[#FFFFFF] ${isLoading ? "loading" : ""
-            }`}
+          className={`text-center px-[11px] md:px-[0px] text-black ${
+            isLoading ? "loading" : ""
+          }`}
         >
-          <h1 className="mt-[10px]">
-            Connect wallet
-          </h1>
+          <h1 className="mt-[10px]">Connect wallet</h1>
           <p className="mt-3 text-white-shade-600 font-bold">
             Connect with one of our available wallet providers or create a new
             one.
           </p>
           <div className="mt-[26px]">
             <div
-              className="w-full max-w-[355px] cursor-pointer  h-[52px] bg-color-primary-1 rounded-lg block mx-auto px-[14px]"
+              className="w-full max-w-[355px] cursor-pointer  h-[52px] border rounded border-primary-900 rounded-lg block mx-auto px-[14px]"
               onClick={handleConnectWallet}
             >
               <div className="flex items-center  pt-[10px]">
@@ -205,13 +204,13 @@ const WalletConnectModal = ({ showModal, closeModal, navigateToPage }) => {
                     )}
                   </div>
                 </div>
-                <div className="ml-auto bg-primary-900 px-2 py-1 text-[10px] rounded font-satoshi-bold font-black text-black">
+                <div className="ml-auto bg-primary-900 px-2 py-1 text-[10px] rounded-lg font-satoshi-bold font-black text-black">
                   Popular
                 </div>
               </div>
             </div>
             <div
-              className="w-full max-w-[355px] h-[52px] bg-[#31224E] rounded-lg mt-[12px] block mx-auto px-[14px]"
+              className="w-full max-w-[355px] h-[52px] border border-primary-900 rounded-lg mt-[12px] block mx-auto px-[14px]"
               onClick={loginTorus}
             >
               <div className="flex items-center pt-[10px] cursor-pointer">
@@ -244,8 +243,8 @@ const WalletConnectModal = ({ showModal, closeModal, navigateToPage }) => {
               <div>
                 <div className="text-left ml-[8px] font-medium text-sm">
                   I read and accept{" "}
-                  <span className="text-primary-900">Terms Of services</span> and{" "}
-                  <br />
+                  <span className="text-primary-900">Terms Of services</span>{" "}
+                  and <br />
                   <span className="text-primary-900"> Privacy Policy</span>
                 </div>
                 {showMessage && (
