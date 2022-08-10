@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import ProfileImage from '../../assets/images/createDAO/user.svg';
-import CoverImage from '../../assets/images/createDAO/cover.svg';
-import CirclePlus from '../../assets/images/createDAO/circle-plus.svg';
-import NFTSample from '../../assets/images/createDAO/nft-sample.svg';
+import ProfileImage from 'assets/images/createDAO/user.svg';
+import CoverImage from 'assets/images/createDAO/cover.svg';
+import CirclePlus from 'assets/images/createDAO/circle-plus.svg';
+import NFTSample from 'assets/images/createDAO/nft-sample.svg';
 import DAOCard from 'components/DAOCard';
 import NFTCard from 'components/NFTCard';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper';
 import styles from './style.module.css';
 import CreateNFTModal from '../../components/modalDialog/CreateNFTModal';
+import { Link } from 'react-router-dom';
 
 const DAO_ITEMS = [
   {
@@ -124,12 +125,14 @@ const CreateDAOandNFT = () => {
           web3 envoirment.
         </p>
         <div className='flex mt-6'>
-          <div className='cursor-pointer w-[276px] h-[276px] mr-6 flex flex-col items-center justify-center bg-[#32E865] bg-opacity-[0.1] rounded-[12px] border-[#32E865] border-[1px]'>
-            <img src={CirclePlus} alt='add' />
-            <p className='text-[#32E865] text-[18px] font-black mt-3'>
-              Create new
-            </p>
-          </div>
+          <Link to='/project-create'>
+            <div className='cursor-pointer w-[276px] h-[276px] mr-6 flex flex-col items-center justify-center bg-[#32E865] bg-opacity-[0.1] rounded-[12px] border-[#32E865] border-[1px]'>
+              <img src={CirclePlus} alt='add' />
+              <p className='text-[#32E865] text-[18px] font-black mt-3'>
+                Create new
+              </p>
+            </div>
+          </Link>
           <Swiper
             breakpoints={settings}
             navigation={true}
