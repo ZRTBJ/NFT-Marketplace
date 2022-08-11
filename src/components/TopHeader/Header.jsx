@@ -15,6 +15,7 @@ import { getNotificationData } from "Slice/notificationSlice";
 import NotificatioMenu from "./NotificationMenu";
 import { getUserNotifications } from "services/notification/notificationService";
 import UserDropDownMenu from "./UserDropDownMenu";
+import userImg from "assets/images/user-profile.png";
 
 const Header = () => {
   const history = useHistory();
@@ -369,7 +370,7 @@ const Header = () => {
                           </svg>
 
                           <div className="mx-2 font-semibold text-base">
-                            {selectedWallet.substring(0, 5)}...
+                            {selectedWallet.substring(0, 6)}...
                           </div>
                           <i className="fa-solid fa-angle-down"></i>
                         </div>
@@ -396,20 +397,18 @@ const Header = () => {
                     <div className="relative w-16 h-16 pt-2 cursor-pointer">
                       <div
                         className="flex place-items-center"
-                        onClick={() => showHideUserPopup()}
+                        onClick={() => history.push(`/profile/${userId}`)}
                       >
                         <img
                           className="rounded-full border border-gray-100 shadow-sm mr-2"
                           src={
-                            userinfo["avatar"]
-                              ? userinfo["avatar"]
-                              : "/static/media/profile.a33a86e1109f4271bbfa9f4bab01ec4b.svg"
+                            userinfo["avatar"] ? userinfo["avatar"] : userImg
                           }
                           height={42}
                           width={42}
                           alt="user icon"
                         />
-                        <i className="fa-solid fa-angle-down text-textSubtle"></i>
+                        {/* <i className="fa-solid fa-angle-down text-textSubtle"></i> */}
                       </div>
                       {/* Dropdown menu */}
                       <div id="userDropDown" className="hidden">
