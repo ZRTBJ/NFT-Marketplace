@@ -19,7 +19,7 @@ function App() {
               <div className="mr-4">
                 <Sidebar />
               </div>
-              <div className="w-[calc(100vw-350px)]">
+              <div className="min-w-[calc(100vw-350px)]">
                 <Switch>
                   {routes.map((route) => (
                     <AppRoute
