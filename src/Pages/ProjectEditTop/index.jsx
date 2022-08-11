@@ -7,7 +7,7 @@ import { getProjectDetailsById } from "services/project/projectService";
 import SuccessModal from "components/modalDialog/SuccessModal";
 import ErrorModal from "components/modalDialog/ErrorModal";
 import { useSelector } from "react-redux";
-import profile from "assets/images/profile/profile.svg";
+import DefaultProfile from "assets/images/profile/defaultProfile.svg";
 import {
   updateProject,
   deleteAssetsOfProject,
@@ -54,7 +54,11 @@ function ProjectEditOutline(props) {
                 <div className="flex flex-wrap items-center pt-[18px] md:pt-[29px]">
                   <div>
                     <img
-                      src={userinfo.avatar === "" ? profile : userinfo.avatar}
+                      src={
+                        userinfo.avatar === ""
+                          ? DefaultProfile
+                          : userinfo.avatar
+                      }
                       alt=""
                       className="h-[80px] w-[80px] md:h-[100px] md:w-[100px] rounded-[50px] object-cover"
                     />

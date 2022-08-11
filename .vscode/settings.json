@@ -1,5 +1,9 @@
 {
-  "cSpell.words": ["Swiper", "userinfo"],
+  "cSpell.words": [
+    "Swiper",
+    "usedapp",
+    "userinfo"
+  ],
   "editor.formatOnSave": true,
   "editor.formatOnPaste": true
 }

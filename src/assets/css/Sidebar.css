@@ -1,12 +1,6 @@
 .sidenav {
   height: 100%;
-  width: 0;
-  position: fixed;
-  z-index: 98;
-  top: 0;
-  left: 0;
   overflow-x: hidden;
-  box-shadow: 3px 0px 6px #00000024;
 }
 
 .sidebarContainer {
@@ -91,4 +85,10 @@
 /* sidebarLinksContainer */
 .sidebarLinksContainer {
   height: calc(100% - 60px);
+}
+
+.active-menu {
+  border-right-width: 4px;
+  border-color: #9a5aff;
+  color: #9a5aff;
 }

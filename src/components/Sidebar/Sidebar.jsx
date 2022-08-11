@@ -2,22 +2,21 @@ import "assets/css/Sidebar.css";
 import { useAuthState } from "Context";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { getUserInfo } from "services/User/userService";
 import { setUserInfo, setSideBar } from "Slice/userSlice";
-import SidebarNavigationCard from "./SideBarNavigationCard";
-import { useDetectClickOutside } from "react-detect-click-outside";
 import WalletConnectModal from "components/modalDialog/WalletConnectModal";
 import { useHistory } from "react-router-dom";
+import ReactTooltip from "react-tooltip";
+
 const openStyle = { width: "271px" };
 const closeStyle = { width: "0px" };
 const linksList = [
   { id: 0, title: "What’s CREABO", to: "/" },
   { id: 1, title: "Contact", to: "/" },
 ];
-const Sidebar = ({ show, handleClose }) => {
+const Sidebar = () => {
   const dispatch = useDispatch();
-  const ref = useDetectClickOutside({ onTriggered: handleClose });
 
   const context = useAuthState();
   const [userId, setUserId] = useState(context ? context.user : "");
@@ -34,7 +33,7 @@ const Sidebar = ({ show, handleClose }) => {
     let userinfoResponse;
     try {
       userinfoResponse = response["user"];
-    } catch { }
+    } catch {}
     dispatch(setUserInfo(userinfoResponse));
   }
   const history = useHistory();
@@ -60,59 +59,59 @@ const Sidebar = ({ show, handleClose }) => {
   }
 
   return (
-    <div style={openStyle} className="sidenav bg-light1 dark:dark-background" ref={ref}>
-      <div className="closebtn cp text-primary-900" onClick={(e) => handleClose(e)}>
-        &times;
-      </div>
+    <div style={openStyle} className="sidenav bg-light1 dark:dark-background">
       <div className="sidebarLinksContainer flex flex-col">
-        <div className="pt-10 pr-10 pb-5 pl-[52px]">
-          {userinfo["avatar"] ? (
-            <img
-              className="rounded-full w-[57px] h-[57px] mb-3 object-cover"
-              src={userinfo["avatar"]}
-              width={57}
-              alt={userinfo["display_name"]}
-            />
-          ) : (
-            <div className="rounded-full h-[57px] w-[57px] bg-[grey] mb-3 "></div>
-          )}
-
-          <h4 className="font-satoshi-bold font-black txtblack dark:text-white text-base">
-            {userinfo["display_name"]}
-          </h4>
-        </div>
-
-        {/* {linksList.map((i) => (
-            <Link key={i.id} to={i.to} className="cp">
-              {i.title}
-            </Link>
-
-          ))} */}
-        <div
-          onClick={() => navigateTo()}
-          className="pl-6 pr-10 flex-0 flex flex-col"
-        >
-          <div
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              navigateTo(`profile/${userId}`);
-            }}
-            className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-white rounded  active:bg-primary-500 active:text-white last:mt-auto  bg-primary-500 text-white cursor-pointer"
+        <div className="pl-6 pr-10 flex-0 flex flex-col">
+          <NavLink
+            to="/"
+            activeClassName="active-menu"
+            className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
           >
-            <i className="fa-regular fa-user"></i>
-            <span className="ml-2">Profile</span>
-          </div>
-          <div
-            onClick={() => navigateTo("project-create")}
-            className="flex cursor-pointer items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-primary-500 ease-in-out duration-300 hover:text-white rounded  active:bg-primary-500 active:text-white last:mt-auto"
+            <i className="fa-solid fa-home"></i>
+            <span className="ml-2">Home</span>
+          </NavLink>
+          <NavLink
+            to={`/`}
+            activeClassName="active-menu2"
+            className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
           >
-            <i className="fa-regular fa-circle-plus"></i>
+            <i className="fa-solid fa-gauge"></i>
+            <span className="ml-2">Dashboard</span>
+          </NavLink>
+          <NavLink
+            to={`/project-create`}
+            activeClassName="active-menu2"
+            className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
+          >
+            <i className="fa-solid fa-circle-plus"></i>
             <span className="ml-2">Create Project</span>
-          </div>
-          <div className="flex items-center  cursor-pointer font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-primary-500 ease-in-out duration-300 hover:text-white rounded  active:bg-primary-500 active:text-white last:mt-auto">
-            <i className="fa-regular fa-cubes-stacked"></i>
-            <span className="ml-2">Ecosystem</span>
+          </NavLink>
+          <NavLink
+            to={``}
+            activeClassName="active-menu2"
+            className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
+          >
+            <span className="ml-2">Create DAO</span>
+          </NavLink>
+          <NavLink
+            to={``}
+            activeClassName="active-menu2"
+            className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
+          >
+            <span className="ml-2">Create NFT</span>
+          </NavLink>
+        </div>
+        <div className="pl-6 pr-10 flex-0 flex flex-col text-primary-900 mt-96">
+          <div className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold cursor-pointer">
+            <i className="fa-solid fa-gas-pump fa-xl"></i>
+            <span className="ml-4">8 USD</span>
+            <i
+              className="ml-4 text-textSubtle fa-solid fa-circle-info"
+              data-for="gas"
+              data-tip="this is a price"
+              data-iscapture="true"
+            ></i>
+            <ReactTooltip id="gas" />
           </div>
         </div>
       </div>
