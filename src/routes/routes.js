@@ -16,6 +16,7 @@ import DetailsNFT from 'Pages/DetailsNFT';
 import EmbedNFT from 'Pages/EmbedNFT';
 import EmbedNFTPreview from 'Pages/EmbedNFTPreview';
 import CreateDAOandNFT from 'Pages/CreateDAOandNFT';
+import RoyalityManagement from 'Pages/RoyalityManagement';
 
 const routes = [
   {
@@ -102,6 +103,11 @@ const routes = [
   {
     path: '/create',
     component: CreateDAOandNFT,
+    isPrivate: true,
+  },
+  {
+    path: '/royality-management',
+    component: RoyalityManagement,
     isPrivate: true,
   },
   {
