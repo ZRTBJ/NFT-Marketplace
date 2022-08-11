@@ -115,7 +115,9 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose }) => {
             <span>Add Funds</span>
           </a>
         </div>
-        <div className="pl-10 pr-3 py-3 border-b border-slate-300">
+
+        {/* Switch wallet */}
+        {/* <div className="pl-10 pr-3 py-3 border-b border-slate-300">
           <div
             onClick={handleLogout}
             className="items-center txtblack dark:text-white flex content-center font-base text-sm cursor-pointer"
@@ -123,7 +125,7 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose }) => {
             <i className="fa-solid fa-arrow-right-arrow-left"></i>
             <span className="ml-2">Switch Wallet</span>
           </div>
-        </div>
+        </div> */}
         <div className="pl-10 pr-3 py-3">
           <div
             onClick={handleLogout}
