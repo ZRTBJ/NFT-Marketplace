@@ -438,8 +438,8 @@ export default function ProjectCreate() {
             projectInfo.token_category &&
             projectInfo.token_category[0] &&
             projectInfo.token_category[0].id
-            ? projectInfo.token_category[0].id
-            : 1,
+          ? projectInfo.token_category[0].id
+          : 1,
         token_amount: parseInt(numberOfTokens),
       };
       const request = new FormData();
@@ -646,7 +646,12 @@ export default function ProjectCreate() {
         <div className="create-project-container">
           {currentStep.length === 1 && (
             <div>
-              <LeftSideBar currentStep={currentStep} key={currentStep.length} />
+              <h1 className="text-[28px] font-black mb-[6px]">
+                Create New DAO
+              </h1>
+              <p className="text-[14px] text-textSubtle mb-[24px]">
+                Fill the require form to create dao
+              </p>
               <Outline
                 key={outlineKey}
                 // name
