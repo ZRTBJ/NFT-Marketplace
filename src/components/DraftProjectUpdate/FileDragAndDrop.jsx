@@ -18,9 +18,9 @@ export default function FileDragAndDrop({
     height: height,
     borderWidth: 1,
     borderRadius: 12,
-    borderColor: "#232032",
+    borderColor: "#E6E8EE",
     borderStyle: "solid",
-    backgroundColor: "#232032",
+    backgroundColor: "#E6E8EE",
     color: "#bdbdbd",
     outline: "none",
     transition: "border .24s ease-in-out",
@@ -67,7 +67,9 @@ export default function FileDragAndDrop({
           <p className="text-[#646A80] text-[13px] font-bold ">
             Add Image/Drag from
           </p>
-          <div className=" text-primary-900 text-[13px] font-bold">Computer</div>
+          <div className=" text-primary-900 text-[13px] font-bold">
+            Computer
+          </div>
           {/* {sizePlaceholder && <div>{sizePlaceholder}</div>} */}
         </div>
       </div>

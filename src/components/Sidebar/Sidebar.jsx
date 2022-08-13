@@ -101,7 +101,8 @@ const Sidebar = () => {
             <span className="ml-2">Create NFT</span>
           </NavLink>
         </div>
-        <div className="pl-6 pr-10 flex-0 flex flex-col text-primary-900 mt-96">
+        {/* Gas price */}
+        {/* <div className="pl-6 pr-10 flex-0 flex flex-col text-primary-900 mt-96">
           <div className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold cursor-pointer">
             <i className="fa-solid fa-gas-pump fa-xl"></i>
             <span className="ml-4">8 USD</span>
@@ -113,7 +114,7 @@ const Sidebar = () => {
             ></i>
             <ReactTooltip id="gas" />
           </div>
-        </div>
+        </div> */}
       </div>
       <WalletConnectModal
         showModal={showModal}
