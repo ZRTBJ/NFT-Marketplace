@@ -313,7 +313,7 @@ export default function ProjectDetails(props) {
                   alt=""
                 />
               </a>
-              <div className="p-5">
+              <div className="py-5">
                 <div className="flex">
                   <h2 className="mb-2 text-txtblack truncate flex-1 mr-3 m-w-0">
                     NFT Collection #1
