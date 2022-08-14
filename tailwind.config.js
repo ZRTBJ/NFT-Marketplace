@@ -40,6 +40,7 @@ module.exports = {
         "danger-1": "#FF3C3C",
         "info-1": "#46A6FF",
         "success-1": "#32E865",
+        whiteDivider: "#C7CEE5",
 
         primary: {
           50: "#231B39",

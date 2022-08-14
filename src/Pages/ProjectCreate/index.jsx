@@ -25,37 +25,9 @@ import { getProjectCategory } from "services/project/projectService";
 
 export default function ProjectCreate() {
   const history = useHistory();
-  /**
-   * ==============================================
-   * Outline Start
-   * ==============================================
-   */
 
-  // Project Name start
-  const [projectName, setProjectName] = useState("");
-  const [emptyProjectName, setemptyProjectName] = useState(false);
-  const [alreadyTakenProjectName, setAlreadyTakenProjectName] = useState(false);
-  async function onProjectNameChange(e) {
-    let payload = {
-      projectName: e,
-    };
-    setProjectName(payload.projectName);
-    await checkUniqueProjectName(payload)
-      .then((e) => {
-        if (e.code === 0) {
-          setemptyProjectName(false);
-          setAlreadyTakenProjectName(false);
-        } else {
-          setAlreadyTakenProjectName(true);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-  // Project Name End
-
-  // Cover photo start
+  // Logo start
+  // logo is the cover photo
   const [coverPhoto, setCoverPhoto] = useState([]);
   const [coverPhotoUrl, setCoverPhotoUrl] = useState("");
   const onCoverPhotoSelect = useCallback((acceptedFiles) => {
@@ -84,7 +56,59 @@ export default function ProjectCreate() {
       setCoverPhotoUrl("");
     }
   }
-  // Cover photo end
+  // Logo End
+
+  // Project Name start
+  const [projectName, setProjectName] = useState("");
+  const [emptyProjectName, setemptyProjectName] = useState(false);
+  const [alreadyTakenProjectName, setAlreadyTakenProjectName] = useState(false);
+  const [projectNameDisabled, setProjectNameDisabled] = useState(false);
+  async function onProjectNameChange(e) {
+    let payload = {
+      projectName: e,
+    };
+    setProjectName(payload.projectName);
+    await checkUniqueProjectName(payload)
+      .then((e) => {
+        if (e.code === 0) {
+          setemptyProjectName(false);
+          setAlreadyTakenProjectName(false);
+        } else {
+          setAlreadyTakenProjectName(true);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+  // Project Name End
+
+  // Dao symbol start
+  const [daoSymbol, setDaoSymbol] = useState("");
+  const [emptyDaoSymbol, setEmptyDaoSymbol] = useState(false);
+  const [daoSymbolDisable, setDaoSymbolDisable] = useState(false);
+  async function onDaoSymbolChange(e) {
+    setDaoSymbol(e);
+    setEmptyDaoSymbol(false);
+  }
+  // Dao symbol End
+
+  // Dao symbol start
+  const [daoWallet, setDaoWallet] = useState("");
+  const [emptyDaoWallet, setEmptyDaoWallet] = useState(false);
+  const [daoWalletDisable, setDaoWalletDisable] = useState(false);
+  async function onDaoWalletChange(e) {
+    setDaoWallet(e);
+    setEmptyDaoWallet(false);
+  }
+  // Dao symbol End
+
+  // overview start
+  const [overview, setOverview] = useState("");
+  function onOverviewChange(e) {
+    setOverview(e.target.value);
+  }
+  // overview End
 
   // photos start
   const [photosLengthFromResponse, setPhotosLengthFromResponse] = useState(0);
@@ -152,12 +176,21 @@ export default function ProjectCreate() {
   }
   // Photos End
 
-  // overview start
-  const [overview, setOverview] = useState("");
-  function onOverviewChange(e) {
-    setOverview(e.target.value);
+  // webLinks start
+  const links = [
+    { title: "linkInsta", icon: "instagram", value: "" },
+    { title: "linkReddit", icon: "reddit", value: "" },
+    { title: "linkTwitter", icon: "twitter", value: "" },
+    { title: "linkFacebook", icon: "facebook", value: "" },
+    { title: "customLinks1", icon: "link", value: "" },
+  ];
+  const [webLinks, setWebLinks] = useState(links);
+  function onSocialLinkChange(url, index) {
+    let oldLinks = [...webLinks];
+    oldLinks[index].value = url;
+    setWebLinks(oldLinks);
   }
-  // overview End
+  // webLinks end
 
   // category start
   const [projectCategory, setProjectCategory] = useState("");
@@ -173,6 +206,10 @@ export default function ProjectCreate() {
     setProjectCategoryName(categoryName ? categoryName.name : "");
   }
   // category end
+
+  // Blockchain start
+  const [blockchainCategory, setBlockchaainCategory] = useState("polygon");
+  // Blockchain end
 
   // tags start
   const [tagList, setTagList] = useState([]);
@@ -339,50 +376,6 @@ export default function ProjectCreate() {
     let currentIndex = currentStep.pop();
     setcurrentStep(currentStep.filter((x) => x !== currentIndex));
   }
-  function handelClickNext() {
-    // outline
-    if (currentStep.length === 1) {
-      if (projectName === "") {
-        setemptyProjectName(true);
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-      if (projectCategory === "") {
-        setEmptyProjectCategory(true);
-      } else if (
-        projectName !== "" &&
-        projectCategory !== "" &&
-        alreadyTakenProjectName === false
-      ) {
-        setcurrentStep([1, 2]);
-      }
-    }
-
-    // token
-    if (currentStep.length === 2) {
-      if (tokenName === "") {
-        setEmptyToken(true);
-      }
-      if (tokenSymbol === "") {
-        setEmptySymbol(true);
-      }
-      if (numberOfTokens === "") {
-        setEmptyNumberOfToken(true);
-      } else if (
-        tokenName !== "" &&
-        tokenSymbol !== "" &&
-        numberOfTokens !== ""
-      ) {
-        if (!alreadyTakenTokenName && !alreadyTakenSymbol) {
-          setcurrentStep([1, 2, 3]);
-        }
-      }
-      // if (!projectInfo.token_name || projectInfo.token_name.length < 1) {
-      //   setTokenNameError(true);
-      // } else if (!alreadyTakenTokenName && !alreadyTakenSymbol) {
-      //   setcurrentStep([1, 2, 3, 4, 5, 6, 7]); // todo for now
-      // }
-    }
-  }
 
   async function intiProjectPublish() {
     setShowPublishModal(false);
@@ -483,39 +476,36 @@ export default function ProjectCreate() {
         });
     }
   }
-  async function createBlock(id, visibility) {
+  async function createBlock(id) {
     setDataIsLoading(true);
     id = await createNewProject();
-    await updateExistingProject(id, visibility);
+    await updateExistingProject(id);
     await projectDetails(id);
     setDataIsLoading(false);
     setShowSuccessModal(true);
   }
-  async function updateBlock(id, visibility) {
+  async function updateBlock(id) {
     setDataIsLoading(true);
-    await updateExistingProject(id, visibility);
+    await updateExistingProject(id);
     await projectDetails(id);
     setDataIsLoading(false);
     setShowSuccessModal(true);
   }
-  async function saveDraft(visibility) {
+  async function saveDraft() {
     // outline
-    if (currentStep.length === 1) {
-      if (projectName === "") {
-        setemptyProjectName(true);
-      }
-      if (projectCategory === "") {
-        setEmptyProjectCategory(true);
-      } else if (
+    if (currentStep.length === 2) {
+      if (
         projectName !== "" &&
+        daoSymbol !== "" &&
+        daoWallet !== "" &&
         projectCategory !== "" &&
         alreadyTakenProjectName === false
       ) {
         let id = "";
         if (!projectCreated) {
-          await createBlock(id, visibility);
+          await createBlock(id);
         } else if (projectCreated && projectId !== "") {
-          await updateBlock(id, visibility);
+          await updateBlock(id);
         }
       }
     }
@@ -538,9 +528,9 @@ export default function ProjectCreate() {
         if (!alreadyTakenTokenName && !alreadyTakenSymbol) {
           let id = "";
           if (!projectCreated) {
-            await createBlock(id, visibility);
+            await createBlock(id);
           } else if (projectCreated && projectId !== "") {
-            await updateBlock(id, visibility);
+            await updateBlock(id);
           }
         }
       }
@@ -549,7 +539,7 @@ export default function ProjectCreate() {
     // confirmation
     if (currentStep.length === 3) {
       if (!projectCreated) {
-        await createNewProject(visibility);
+        await createNewProject();
       } else if (projectCreated && projectId !== "") {
         await updateExistingProject();
       }
@@ -579,22 +569,20 @@ export default function ProjectCreate() {
       });
     return projectId;
   }
-  async function updateExistingProject(id, visibility) {
+  async function updateExistingProject(id) {
     let updatePayload = {
-      name: projectName,
-      category_id: projectCategory,
-      id: id ? id : projectId,
       cover: coverPhoto.length > 0 ? coverPhoto[0] : null,
+      name: projectName,
+      daoSymbol: daoSymbol,
+      daoWallet: daoWallet,
+      overview: overview,
       photos: photos.length > 0 ? photos : null,
       photosLengthFromResponse: photosLengthFromResponse,
       remainingPhotosName: remainingPhotosName,
-      overview: overview,
-      tags: tagList.toString(),
-      roles: roleList.toString(),
-      visibility: visibility,
-      token_name: tokenName,
-      token_symbol: tokenSymbol,
-      token_amount_total: numberOfTokens,
+      webLinks: JSON.stringify(webLinks),
+      category_id: projectCategory,
+      blockchainCategory: blockchainCategory,
+      id: id,
     };
     await updateProject(updatePayload);
   }
@@ -628,6 +616,54 @@ export default function ProjectCreate() {
       setRemainingPhotosName(remainingPhotosName);
     });
   }
+  function handelClickNext() {
+    // outline
+    if (currentStep.length === 1) {
+      if (projectName === "") {
+        setemptyProjectName(true);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      if (daoSymbol === "") {
+        setEmptyDaoSymbol(true);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      if (daoWallet === "") {
+        setEmptyDaoWallet(true);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      if (projectCategory === "") {
+        setEmptyProjectCategory(true);
+      } else if (
+        projectName !== "" &&
+        daoSymbol !== "" &&
+        daoWallet !== "" &&
+        projectCategory !== "" &&
+        alreadyTakenProjectName === false
+      ) {
+        const payload = {
+          cover: coverPhoto.length > 0 ? coverPhoto[0] : null,
+          name: projectName,
+          daoSymbol: daoSymbol,
+          daoWallet: daoWallet,
+          overview: overview,
+          photos: photos.length > 0 ? photos : null,
+          photosLengthFromResponse: photosLengthFromResponse,
+          remainingPhotosName: remainingPhotosName,
+          webLinks: JSON.stringify(webLinks),
+          category_id: projectCategory,
+          blockchainCategory: blockchainCategory,
+          // tags: tagList.toString(),
+          // roles: roleList.toString(),
+
+          // token_name: tokenName,
+          // token_symbol: tokenSymbol,
+          // token_amount_total: numberOfTokens,
+        };
+        console.log(payload);
+        setcurrentStep([1, 2]);
+      }
+    }
+  }
   useEffect(() => {
     getProjectCategory().then((e) => {
       setProjectCategoryList(e.categories);
@@ -642,7 +678,7 @@ export default function ProjectCreate() {
     <>
       {isDataLoading && <div className="loading"></div>}
 
-      <div className="txtblack dark:text-white max-w-[600px] mx-auto md:pt-12">
+      <div className="txtblack dark:text-white max-w-[600px] mx-auto md:mt-[40px]">
         <div className="create-project-container">
           {currentStep.length === 1 && (
             <div>
@@ -654,26 +690,45 @@ export default function ProjectCreate() {
               </p>
               <Outline
                 key={outlineKey}
-                // name
-                projectName={projectName}
-                emptyProjectName={emptyProjectName}
-                alreadyTakenProjectName={alreadyTakenProjectName}
-                onProjectNameChange={onProjectNameChange}
-                //cover photos
+                // logo
+                logoLabel="DAO Logo"
                 coverPhotoUrl={coverPhotoUrl}
                 onCoverPhotoSelect={onCoverPhotoSelect}
                 onCoverPhotoRemove={onCoverPhotoRemove}
+                // name
+                nameLabel="DAO Name"
+                projectName={projectName}
+                emptyProjectName={emptyProjectName}
+                alreadyTakenProjectName={alreadyTakenProjectName}
+                projectNameDisabled={projectNameDisabled}
+                onProjectNameChange={onProjectNameChange}
+                // Dao symbol
+                showDaoSymbol={true}
+                daoSymbol={daoSymbol}
+                emptyDaoSymbol={emptyDaoSymbol}
+                onDaoSymbolChange={onDaoSymbolChange}
+                daoSymbolDisable={daoSymbolDisable}
+                // Dao Wallet
+                showDaoWallet={true}
+                daoWallet={daoWallet}
+                emptyDaoWallet={emptyDaoWallet}
+                daoWalletDisable={daoWalletDisable}
+                onDaoWalletChange={onDaoWalletChange}
+                // overview
+                overview={overview}
+                onOverviewChange={onOverviewChange}
                 //photos
                 photosUrl={photosUrl}
                 onPhotosSelect={onPhotosSelect}
                 onPhotosRemove={onPhotosRemove}
-                // overview
-                overview={overview}
-                onOverviewChange={onOverviewChange}
+                // webLinks
+                webLinks={webLinks}
+                onSocialLinkChange={onSocialLinkChange}
                 // category
                 projectCategory={projectCategory}
                 emptyProjeCtCategory={emptyProjeCtCategory}
                 onProjectCategoryChange={onProjectCategoryChange}
+                blockchainCategory={blockchainCategory}
                 // tag
                 tagList={tagList}
                 tagLimit={tagLimit}
@@ -690,6 +745,32 @@ export default function ProjectCreate() {
             </div>
           )}
           {currentStep.length === 2 && (
+            <Confirmation
+              key={outlineKey}
+              // logo
+              logoLabel="DAO Logo"
+              coverPhotoUrl={coverPhotoUrl}
+              // name
+              nameLabel="DAO Name"
+              projectName={projectName}
+              // Dao symbol
+              showDaoSymbol={true}
+              daoSymbol={daoSymbol}
+              // Dao Wallet
+              showDaoWallet={true}
+              daoWallet={daoWallet}
+              // overview
+              overview={overview}
+              //photos
+              photosUrl={photosUrl}
+              // webLinks
+              webLinks={webLinks}
+              // category
+              projectCategoryName={projectCategoryName}
+              blockchainCategory={blockchainCategory}
+            />
+          )}
+          {/* {currentStep.length === 3 && (
             <div>
               <LeftSideBar currentStep={currentStep} key={currentStep.length} />
               <Token
@@ -709,55 +790,40 @@ export default function ProjectCreate() {
                 onNumberOfTokenChange={onNumberOfTokenChange}
               />
             </div>
-          )}
-          {currentStep.length === 3 && (
-            <Confirmation
-              projectName={projectName}
-              projectCover={coverPhotoUrl}
-              photosUrl={photosUrl}
-              overview={overview}
-              category={projectCategoryName}
-              tagList={tagList}
-              needMember={needMember}
-              roleList={roleList}
-              tokenName={tokenName}
-              tokenSymbol={tokenSymbol}
-              numberOfTokens={numberOfTokens}
-            />
-          )}
+          )} */}
         </div>
 
-        <div className="buttonContainer">
+        <div className="mb-6">
           <div className="flex">
             {projectStatus !== "publishing" && (
               <>
                 {currentStep.length > 1 && (
                   <button
-                    className="btn-secondary-link btn-sm"
+                    className="bg-primary-900/[0.10] text-primary-900 px-3 font-black"
                     onClick={() => handelClickBack()}
                   >
-                    <i className="fa-regular fa-angle-left mr-1"></i> BACK
+                    <i className="fa-regular fa-angle-left"></i> Back
                   </button>
                 )}
-                {currentStep.length < 3 && (
+                {currentStep.length === 1 && (
                   <button
-                    className="btn btn-primary btn-sm"
+                    className="btn text-white-shade-900 bg-primary-900 btn-sm"
                     onClick={() => handelClickNext()}
                   >
                     Next <i className="fa-regular fa-angle-right ml-1"></i>
                   </button>
                 )}
-                {currentStep.length < 3 && projectStatus !== "published" && (
+                {currentStep.length > 1 && projectStatus !== "published" && (
                   <button
                     onClick={() => saveDraft("public")}
-                    className={`btn-secondary-link btn-sm ml-auto`}
+                    className={`btn text-white-shade-900 bg-primary-900 btn-sm ml-auto`}
                   >
-                    Save to Draft
+                    Submit
                   </button>
                 )}
               </>
             )}
-            {currentStep.length === 3 && projectStatus !== "published" && (
+            {/* {currentStep.length === 3 && projectStatus !== "published" && (
               <button
                 onClick={() => {
                   if (projectStatus === "publishing") {
@@ -770,7 +836,7 @@ export default function ProjectCreate() {
               >
                 Publish
               </button>
-            )}
+            )} */}
           </div>
         </div>
       </div>

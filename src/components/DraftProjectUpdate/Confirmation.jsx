@@ -1,115 +1,167 @@
-import React from "react";
-import { useForm } from "react-hook-form";
+/* eslint-disable react-hooks/exhaustive-deps */
+import "assets/css/CreateProject/Outline.css";
 
-export default function Confirmation(props) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+import { useState, useEffect } from "react";
 
-  const onSubmit = (data) => console.log(data);
+import { getProjectCategory } from "services/project/projectService";
+import Tooltip from "components/Tooltip";
 
+export default function Outline({
+  // logo
+  logoLabel,
+  coverPhotoUrl,
+
+  // name
+  nameLabel,
+  projectName,
+
+  // Dao symbol
+  showDaoSymbol,
+  daoSymbol,
+
+  // Dao wallet
+  showDaoWallet,
+  daoWallet,
+
+  // overview
+  overview,
+
+  // photo
+  photosUrl,
+
+  // webLinks
+  webLinks,
+
+  // category
+  projectCategoryName,
+
+  // Blockchain
+  blockchainCategory,
+}) {
   return (
-    <div>
+    <>
+      <h2 className="mb-4">Preview</h2>
+      {/* Logo */}
       <div>
-        <div className="font-bold text-[22px] mb-[6px]">Review</div>
-        <div className="text-[#9499AE] text-[12px] mb-[24px]">
-          Make sure you have fill the form with right data.
-        </div>
-        <div className="font-bold mb-[6px]">Project name</div>
-        <div className="text-[#9499AE] mb-[12px] text-[12px]">
-          Your Project name
-        </div>
-        <div className="font-black mb-6">{props.projectName}</div>
-
-        <div className=" font-bold mb-[6px]">Photos</div>
-        <div className="text-[#9499AE] mb-[12px] text-[12px]">
-          Add image up to 4 to showcase your project
-        </div>
-        <div className="flex flex-wrap mb-6">
-          {props.photosUrl.length > 0 ? (
-            props.photosUrl.map((image, index) => (
+        <p className="text-[14px] black-shade-900 ">{logoLabel}</p>
+        <div className="w-[131px] mb-[25px]">
+          {coverPhotoUrl === "" ? (
+            <p className="text-textSubtle">No Logo</p>
+          ) : (
+            <div className="relative w-[100px]">
               <img
-                src={image.path}
-                key={`image-preview-${index}`}
-                alt=""
-                className="rounded h-[124px] w-[124px] object-cover mr-4 mb-4"
+                className="h-[85px] w-[85px] rounded-full block object-cover"
+                src={coverPhotoUrl.path}
+                alt="coverPreview"
               />
-            ))
-          ) : (
-            <div className="mx-auto">No Photos</div>
-          )}
-        </div>
-
-        <div className="font-bold mb-[6px]">Cover photo</div>
-        <div className="text-[#9499AE] mb-[12px] text-[12px]">
-          Add your Cover for project profile
-        </div>
-        <img
-          src={props.projectCover.path}
-          alt="No cover found"
-          className="h-[162px] w-full max-w-[546px] rounded rounded-[12px] object-cover mb-6"
-        />
-
-        <div className="font-bold mb-[6px]">Description</div>
-        <div className="text-[#9499AE] mb-[12px] text-[12px]">
-          Tell your audience what’s your project about, so they can easily
-          understand the project.
-        </div>
-        <div className="mb-6">{props.overview}</div>
-
-        <div className="font-bold mb-[6px]">Category</div>
-        <div className="text-[#9499AE] mb-[12px] text-[12px]">
-          What kind of project are you working?
-        </div>
-        <div className="mb-6 font-black">{props.category}</div>
-
-        <div className="font-bold mb-[6px]">Tags (up to 5)</div>
-        <div className="text-[#9499AE] mb-[12px] text-[12px]">
-          Your project tags
-        </div>
-        <div className="mb-6">
-          {props.tagList.length < 0 ? (
-            <div>No Tags found</div>
-          ) : (
-            <div className="flex flex-wrap">
-              {props.tagList.map((tag, index) => (
-                <div
-                  key={`tag-preview-${index}`}
-                  className="bg-[#232032] text-[#9499AE] pr-3 pl-2 mr-2 pt-1 pb-1 mb-3"
-                >
-                  {tag}
-                </div>
-              ))}
             </div>
           )}
         </div>
       </div>
-      <div>
-        <div className="font-bold text-[22px] mb-[6px]">Token Issue</div>
-        <div className="text-[#9499AE] text-[12px] mb-[24px]">
-          Your Token Information
-        </div>
-        <div className="font-bold mb-[6px]">Token name</div>
-        <div className="text-[#9499AE] mb-[12px] text-[12px]">
-          Your Token name
-        </div>
-        <div className="font-black  mb-6">{props.tokenName}</div>
 
-        <div className="font-bold mb-[6px]">
-          Token symbol (Up to 5 characters)
+      {/* name */}
+      <div className="mb-6">
+        <div className="flex flex-wrap items-center">
+          {/* <Tooltip></Tooltip> */}
+          <div className="txtblack text-[14px]">{nameLabel}</div>
         </div>
-        <div className="text-[#9499AE] mb-[12px] text-[12px]">
-          Your token symbol eg: ETH,BTC.CAR,SOL
-        </div>
-        <div className="font-black mb-6">{props.tokenSymbol}</div>
-        <div className="font-bold mb-[6px]">Number of tokens</div>
-        <div className="text-[#9499AE] mb-[12px] text-[12px]">
-          set your token supply
-        </div>
-        <div className="font-black mb-6">{props.numberOfTokens}</div>
+        <p className="text-textSubtle">{projectName}</p>
       </div>
-    </div>
+
+      {/* Dao Symbol */}
+      {showDaoSymbol && (
+        <div className="mb-6" id="daoSymbol">
+          <div className="flex flex-wrap items-center">
+            {/* <Tooltip></Tooltip> */}
+            <div className="txtblack text-[14px]">DAO Symbol</div>
+          </div>
+          <p className="text-textSubtle">{daoSymbol}</p>
+        </div>
+      )}
+
+      {/* Dao Wallet */}
+      {showDaoWallet && (
+        <div className="mb-6">
+          <div className="flex flex-wrap items-center">
+            {/* <Tooltip></Tooltip> */}
+            <div className="txtblack text-[14px]">DAO Wallet</div>
+          </div>
+          <p className="text-textSubtle">{daoWallet}</p>
+        </div>
+      )}
+
+      {/* overview */}
+      <div className="mb-6">
+        <div className="txtblack text-[14px]">Description</div>
+        <p className="text-textSubtle">
+          {overview === "" ? "No description" : overview}
+        </p>
+      </div>
+
+      {/* photo */}
+      <div>
+        <div className="txtblack text-[14px] mb-[6px]">Gallery Picture</div>
+        <div className="md:flex flex-wrap mb-6">
+          <div className="photoPreviewContainer flex flex-wrap">
+            {photosUrl.length === 0 ? (
+              <p className="text-textSubtle">No Files</p>
+            ) : (
+              <>
+                {photosUrl.map((image, index) => (
+                  <div
+                    key={`project-image-${index}`}
+                    className="relative upload-file w-[158px] h-[158px] mr-3  mb-2"
+                  >
+                    <img
+                      alt=""
+                      className="outlinePhoto block object-cover rounded-xl"
+                      src={image.path}
+                    />
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* web Links*/}
+      <div className="mb-3">
+        <div className="txtblack text-[14px] mb-[6px]">Social Link</div>
+        <div className="">
+          {webLinks.map((link, index) => (
+            <div key={index} className="inline-flex items-center w-full my-2">
+              <i
+                className={` ${
+                  link.title.startsWith("customLinks")
+                    ? `fa-solid fa-${link.icon}`
+                    : `fa-brands fa-${link.icon}`
+                }  text-[24px] text-primary-900  mr-2`}
+              ></i>
+              <p
+                className={`block w-full   text-[14px] text-textSubtle rounded  pl-3  outline-none`}
+              >
+                {link.value === "" ? "https://" : link.value}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* category */}
+      <div className="mb-6">
+        <div className="txtblack text-[14px] mb-[6px] ">Category</div>
+        <p className="text-textSubtle">{projectCategoryName}</p>
+      </div>
+
+      {/* blockchain */}
+      <div className="mb-6">
+        <div className="flex flex-wrap items-center">
+          {/* <Tooltip></Tooltip> */}
+          <div className="txtblack text-[14px] mb-[6px]">Blockchain</div>
+        </div>
+        <p className="text-textSubtle">{blockchainCategory}</p>
+      </div>
+    </>
   );
 }

@@ -38,10 +38,11 @@ const Profile = () => {
   const [websiteList, setWebsiteList] = useState([]);
   const [sncList, setsncList] = useState([]);
   const socialLinks = [
-    { title: "linkInsta", icon: "instagram" },
-    { title: "linkReddit", icon: "reddit" },
-    { title: "linkTwitter", icon: "twitter" },
-    { title: "linkFacebook", icon: "facebook" },
+    { title: "linkInsta", icon: "instagram", value: "" },
+    { title: "linkReddit", icon: "reddit", value: "" },
+    { title: "linkTwitter", icon: "twitter", value: "" },
+    { title: "linkFacebook", icon: "facebook", value: "" },
+    { title: "webLink1", icon: "link", value: "" },
   ];
 
   // user General data end
@@ -783,7 +784,7 @@ const Profile = () => {
                 },
               }}
               className="swipe-card"
-              navigation={true}
+              navigation={false}
               modules={[Navigation]}
             >
               <Swiper
@@ -807,7 +808,7 @@ const Profile = () => {
             <h1 className="text-[28px] mb-[36px] font-black">Collection</h1>
             <Swiper
               breakpoints={settings}
-              navigation={true}
+              navigation={false}
               modules={[Navigation]}
               className={styles.createSwiper}
             >

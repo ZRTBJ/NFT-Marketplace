@@ -42,16 +42,27 @@ export async function createProject(payload) {
 }
 export async function updateProject(payload) {
   const bodyFormData = new FormData();
-  if (payload.org_type) {
-    bodyFormData.append("org_type", payload.org_type);
-  }
-  if (payload.name) {
-    bodyFormData.append("name", payload.name);
-  }
+  // if (payload.org_type) {
+  //   bodyFormData.append("org_type", payload.org_type);
+  // }
+
+  // cover is logo
   if (payload.cover) {
     if (payload.cover !== null) {
       bodyFormData.append("cover", payload.cover);
     }
+  }
+  if (payload.name) {
+    bodyFormData.append("name", payload.name);
+  }
+  if (payload.daoSymbol) {
+    bodyFormData.append("dao_symbol", payload.daoSymbol);
+  }
+  if (payload.daoWallet) {
+    bodyFormData.append("dao_wallet", payload.daoWallet);
+  }
+  if (payload.overview) {
+    bodyFormData.append("overview", payload.overview);
   }
   if (payload.photos) {
     if (payload.photos !== null) {
@@ -75,30 +86,34 @@ export async function updateProject(payload) {
       }
     }
   }
-  if (payload.overview) {
-    bodyFormData.append("overview", payload.overview);
+  if (payload.webLinks) {
+    bodyFormData.append("urls", payload.webLinks);
   }
   if (payload.category_id) {
     bodyFormData.append("category_id", payload.category_id);
   }
-  if (payload.tags) {
-    bodyFormData.append("tags", payload.tags);
+  if (payload.blockchainCategory) {
+    bodyFormData.append("blockchain", payload.blockchainCategory);
   }
-  if (payload.roles) {
-    bodyFormData.append("roles", payload.roles);
-  }
-  if (payload.visibility) {
-    bodyFormData.append("visibility", payload.visibility);
-  }
-  if (payload.token_name) {
-    bodyFormData.append("token_name", payload.token_name);
-  }
-  if (payload.token_symbol) {
-    bodyFormData.append("token_symbol", payload.token_symbol);
-  }
-  if (payload.token_amount_total) {
-    bodyFormData.append("token_amount_total", payload.token_amount_total);
-  }
+
+  // if (payload.tags) {
+  //   bodyFormData.append("tags", payload.tags);
+  // }
+  // if (payload.roles) {
+  //   bodyFormData.append("roles", payload.roles);
+  // }
+  // if (payload.visibility) {
+  //   bodyFormData.append("visibility", payload.visibility);
+  // }
+  // if (payload.token_name) {
+  //   bodyFormData.append("token_name", payload.token_name);
+  // }
+  // if (payload.token_symbol) {
+  //   bodyFormData.append("token_symbol", payload.token_symbol);
+  // }
+  // if (payload.token_amount_total) {
+  //   bodyFormData.append("token_amount_total", payload.token_amount_total);
+  // }
   return await client("PUT", `/project/${payload.id}`, bodyFormData);
 }
 
