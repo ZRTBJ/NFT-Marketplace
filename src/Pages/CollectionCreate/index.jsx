@@ -23,7 +23,7 @@ import PublishModal from "components/modalDialog/PublishModal";
 import { useAuthState } from "Context";
 import { getProjectCategory } from "services/project/projectService";
 
-export default function ProjectCreate() {
+export default function CollectionCreate() {
   const history = useHistory();
 
   // Logo start
@@ -83,26 +83,6 @@ export default function ProjectCreate() {
   }
   // Project Name End
 
-  // Dao symbol start
-  const [daoSymbol, setDaoSymbol] = useState("");
-  const [emptyDaoSymbol, setEmptyDaoSymbol] = useState(false);
-  const [daoSymbolDisable, setDaoSymbolDisable] = useState(false);
-  async function onDaoSymbolChange(e) {
-    setDaoSymbol(e);
-    setEmptyDaoSymbol(false);
-  }
-  // Dao symbol End
-
-  // Dao symbol start
-  const [daoWallet, setDaoWallet] = useState("");
-  const [emptyDaoWallet, setEmptyDaoWallet] = useState(false);
-  const [daoWalletDisable, setDaoWalletDisable] = useState(false);
-  async function onDaoWalletChange(e) {
-    setDaoWallet(e);
-    setEmptyDaoWallet(false);
-  }
-  // Dao symbol End
-
   // overview start
   const [overview, setOverview] = useState("");
   function onOverviewChange(e) {
@@ -110,71 +90,48 @@ export default function ProjectCreate() {
   }
   // overview End
 
-  // photos start
-  const [photosLengthFromResponse, setPhotosLengthFromResponse] = useState(0);
-  const [remainingPhotosName, setRemainingPhotosName] = useState([]);
-  const [photos, setPhotos] = useState([]);
-  const [photosUrl, setPhotosUrl] = useState([]);
-  const onPhotosSelect = useCallback((params, photos) => {
-    if (photosLengthFromResponse + params.length > 4) {
-      alert("Maxmimum 4 photos");
-    } else {
-      let totalSize = 0;
-      params.forEach((element) => {
-        totalSize = totalSize + element.size;
-      });
-      if (totalSize > 16000000) {
-        alert("Size Exceed");
-      } else {
-        let objectUrl = [];
-        params.forEach((element) => {
-          objectUrl.push({
-            name: element.name,
-            path: URL.createObjectURL(element),
-          });
-        });
-        let megred = [...photos, ...objectUrl];
-        setPhotosUrl(megred);
-        setPhotos(params);
-      }
+  // logo is the cover photo
+  const [logoPhoto, setLogoPhoto] = useState([]);
+  const [logoPhotoUrl, setLogoPhotoUrl] = useState("");
+  const onLogoPhotoSelect = useCallback((acceptedFiles) => {
+    if (acceptedFiles.length === 1) {
+      setLogoPhoto(acceptedFiles);
+      let objectUrl = URL.createObjectURL(acceptedFiles[0]);
+      let logoPhotoInfo = {
+        path: objectUrl,
+      };
+      setLogoPhotoUrl(logoPhotoInfo.path);
+      setoutlineKey(1);
     }
   }, []);
-  async function onPhotosRemove(i) {
-    if (i.id) {
+  function onLogoPhotoRemove() {
+    if (coverPhotoUrl.id) {
       let payload = {
         projectId: projectInfo.id,
-        assetsId: i.id,
+        assetsId: logoPhotoUrl.id,
       };
-      await deleteAssetsOfProject(payload).then((e) => {
-        setUpPhotos();
+      deleteAssetsOfProject(payload).then((e) => {
+        setLogoPhoto([]);
+        setLogoPhotoUrl("");
       });
     } else {
-      setPhotosUrl(photosUrl.filter((x) => x.name !== i.name));
+      setLogoPhoto([]);
+      setLogoPhotoUrl("");
     }
   }
-  async function setUpPhotos() {
-    let payload = {
-      id: projectInfo.id,
-    };
-    await getProjectDetailsById(payload).then((e) => {
-      let response = e.project;
-      let photosInfoData = response.assets.filter(
-        (x) => x.asset_purpose === "subphoto"
-      );
-      setPhotosLengthFromResponse(photosInfoData.length);
-      setPhotosUrl(photosInfoData);
-      let constPhotosName = ["img1", "img2", "img3", "img4"];
-      let photosname = [];
-      photosname = photosInfoData.map((e) => {
-        return e.name;
-      });
-      let remainingPhotosName = constPhotosName.filter(function (v) {
-        return !photosname.includes(v);
-      });
-      setRemainingPhotosName(remainingPhotosName);
-    });
+  // Logo End
+
+  // Royalties start
+  const [royaltiesDisable, setRoyaltiesDisable] = useState(false);
+  const [primaryRoyalties, setPrimaryRoyalties] = useState(0);
+  const [secondaryRoyalties, setSecondaryRoyalties] = useState(0);
+  function onPrimaryRoyaltiesChange(royalties) {
+    setPrimaryRoyalties(royalties);
   }
-  // Photos End
+  function onSecondaryRoyaltiesChange(royalties) {
+    setSecondaryRoyalties(royalties);
+  }
+  // Royalties End
 
   // webLinks start
   const links = [
@@ -210,6 +167,14 @@ export default function ProjectCreate() {
   // Blockchain start
   const [blockchainCategory, setBlockchaainCategory] = useState("polygon");
   // Blockchain end
+
+  // Freeze MetaData start
+  const [isMetaDaFreezed, setIsMetaDataFreezed] = useState(false);
+  const [freezeMetadataDisabled, setFreezeMetadataDisabled] = useState(false);
+  function onMetadataFreezeChange(data) {
+    setIsMetaDataFreezed(data);
+  }
+  // Freeze MetaData end
 
   // tags start
   const [tagList, setTagList] = useState([]);
@@ -496,8 +461,6 @@ export default function ProjectCreate() {
     if (currentStep.length === 2) {
       if (
         projectName !== "" &&
-        daoSymbol !== "" &&
-        daoWallet !== "" &&
         projectCategory !== "" &&
         alreadyTakenProjectName === false
       ) {
@@ -571,14 +534,10 @@ export default function ProjectCreate() {
   }
   async function updateExistingProject(id) {
     let updatePayload = {
-      cover: coverPhoto.length > 0 ? coverPhoto[0] : null,
+      logo: coverPhoto.length > 0 ? coverPhoto[0] : null,
       name: projectName,
-      daoSymbol: daoSymbol,
-      daoWallet: daoWallet,
       overview: overview,
-      photos: photos.length > 0 ? photos : null,
-      photosLengthFromResponse: photosLengthFromResponse,
-      remainingPhotosName: remainingPhotosName,
+      cover: logoPhoto.length > 0 ? logoPhoto[0] : null,
       webLinks: JSON.stringify(webLinks),
       category_id: projectCategory,
       blockchainCategory: blockchainCategory,
@@ -603,8 +562,7 @@ export default function ProjectCreate() {
       let photosInfoData = response.assets.filter(
         (x) => x.asset_purpose === "subphoto"
       );
-      setPhotosLengthFromResponse(photosInfoData.length);
-      setPhotosUrl(photosInfoData);
+
       let constPhotosName = ["img1", "img2", "img3", "img4"];
       let photosname = [];
       photosname = photosInfoData.map((e) => {
@@ -613,7 +571,6 @@ export default function ProjectCreate() {
       let remainingPhotosName = constPhotosName.filter(function (v) {
         return !photosname.includes(v);
       });
-      setRemainingPhotosName(remainingPhotosName);
     });
   }
   function handelClickNext() {
@@ -623,32 +580,20 @@ export default function ProjectCreate() {
         setemptyProjectName(true);
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
-      if (daoSymbol === "") {
-        setEmptyDaoSymbol(true);
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-      if (daoWallet === "") {
-        setEmptyDaoWallet(true);
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
+
       if (projectCategory === "") {
         setEmptyProjectCategory(true);
       } else if (
         projectName !== "" &&
-        daoSymbol !== "" &&
-        daoWallet !== "" &&
         projectCategory !== "" &&
         alreadyTakenProjectName === false
       ) {
         const payload = {
           cover: coverPhoto.length > 0 ? coverPhoto[0] : null,
           name: projectName,
-          daoSymbol: daoSymbol,
-          daoWallet: daoWallet,
+
           overview: overview,
-          photos: photos.length > 0 ? photos : null,
-          photosLengthFromResponse: photosLengthFromResponse,
-          remainingPhotosName: remainingPhotosName,
+
           webLinks: JSON.stringify(webLinks),
           category_id: projectCategory,
           blockchainCategory: blockchainCategory,
@@ -683,49 +628,46 @@ export default function ProjectCreate() {
           {currentStep.length === 1 && (
             <div>
               <h1 className="text-[28px] font-black mb-[6px]">
-                Create New DAO
+                Create New Collection
               </h1>
               <p className="text-[14px] text-textSubtle mb-[24px]">
-                Fill the require form to create dao
+                Fill the require form to create collection
               </p>
               <Outline
                 key={outlineKey}
                 // logo
-                logoLabel="DAO Logo"
+                logoLabel="Collection Logo"
                 coverPhotoUrl={coverPhotoUrl}
                 onCoverPhotoSelect={onCoverPhotoSelect}
                 onCoverPhotoRemove={onCoverPhotoRemove}
                 // name
-                nameLabel="DAO Name"
+                nameLabel="Collection Name"
                 projectName={projectName}
                 emptyProjectName={emptyProjectName}
                 alreadyTakenProjectName={alreadyTakenProjectName}
                 projectNameDisabled={projectNameDisabled}
                 onProjectNameChange={onProjectNameChange}
                 // Dao symbol
-                showDaoSymbol={true}
-                daoSymbol={daoSymbol}
-                emptyDaoSymbol={emptyDaoSymbol}
-                onDaoSymbolChange={onDaoSymbolChange}
-                daoSymbolDisable={daoSymbolDisable}
+                showDaoSymbol={false}
                 // Dao Wallet
-                showDaoWallet={true}
-                daoWallet={daoWallet}
-                emptyDaoWallet={emptyDaoWallet}
-                daoWalletDisable={daoWalletDisable}
-                onDaoWalletChange={onDaoWalletChange}
+                showDaoWallet={false}
                 // overview
                 overview={overview}
                 onOverviewChange={onOverviewChange}
                 //photos
-                showPhotos={true}
-                photosUrl={photosUrl}
-                onPhotosSelect={onPhotosSelect}
-                onPhotosRemove={onPhotosRemove}
+                showPhotos={false}
                 // cover
-                showCover={false}
+                showCover={true}
+                logoPhotoUrl={logoPhotoUrl}
+                onLogoPhotoSelect={onLogoPhotoSelect}
+                onLogoPhotoRemove={onLogoPhotoRemove}
                 // Royalties
-                showRoyalties={false}
+                showRoyalties={true}
+                royaltiesDisable={royaltiesDisable}
+                primaryRoyalties={primaryRoyalties}
+                secondaryRoyalties={secondaryRoyalties}
+                onPrimaryRoyaltiesChange={onPrimaryRoyaltiesChange}
+                onSecondaryRoyaltiesChange={onSecondaryRoyaltiesChange}
                 // webLinks
                 webLinks={webLinks}
                 onSocialLinkChange={onSocialLinkChange}
@@ -735,7 +677,10 @@ export default function ProjectCreate() {
                 onProjectCategoryChange={onProjectCategoryChange}
                 blockchainCategory={blockchainCategory}
                 // Freeze metadata
-                showFreezeMetadata={false}
+                showFreezeMetadata={true}
+                isMetadataFreezed={isMetaDaFreezed}
+                onMetadataFreezeChange={onMetadataFreezeChange}
+                freezeMetadataDisabled={freezeMetadataDisabled}
                 // tag
                 tagList={tagList}
                 tagLimit={tagLimit}
@@ -762,14 +707,12 @@ export default function ProjectCreate() {
               projectName={projectName}
               // Dao symbol
               showDaoSymbol={true}
-              daoSymbol={daoSymbol}
               // Dao Wallet
               showDaoWallet={true}
-              daoWallet={daoWallet}
               // overview
               overview={overview}
               //photos
-              photosUrl={photosUrl}
+
               // webLinks
               webLinks={webLinks}
               // category

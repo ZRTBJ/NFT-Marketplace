@@ -162,6 +162,7 @@ input[type="number"],
   border: 1px solid #c7cee5;
   height: 48px;
   font-size: 14px;
+  padding-right: 15px;
 }
 input[type="text"],
 input[type="email"],

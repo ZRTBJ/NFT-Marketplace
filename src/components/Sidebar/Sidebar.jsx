@@ -87,7 +87,7 @@ const Sidebar = () => {
             <span className="ml-2">Create Project</span>
           </NavLink>
           <NavLink
-            to={``}
+            to={`/collection-create/`}
             activeClassName="active-menu2"
             className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
           >

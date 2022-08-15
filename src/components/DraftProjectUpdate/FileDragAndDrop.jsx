@@ -18,6 +18,7 @@ export default function FileDragAndDrop({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    justifyContent: "center",
     height: height,
     width: width,
     borderWidth: 1,
@@ -28,7 +29,6 @@ export default function FileDragAndDrop({
     color: "#bdbdbd",
     outline: "none",
     transition: "border .24s ease-in-out",
-    paddingTop: "12%",
   };
 
   const focusedStyle = {
@@ -69,10 +69,10 @@ export default function FileDragAndDrop({
           <input {...getInputProps()} />
 
           {type === "logo" ? (
-            <i className="fa-regular fa-image text-[25px] mt-[15px]"></i>
+            <i className="fa-regular fa-image text-[25px] "></i>
           ) : (
             <>
-              <i className="fa-regular fa-image text-[25px] mt-[30px]"></i>
+              <i className="fa-regular fa-image text-[25px] "></i>
               <p className="text-[#646A80] text-[13px] font-bold ">
                 Add Image/Drag from
               </p>

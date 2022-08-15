@@ -43,6 +43,21 @@ export default function Outline({
   photosUrl,
   onPhotosSelect,
   onPhotosRemove,
+  showPhotos,
+
+  // Cover
+  showCover,
+  logoPhotoUrl,
+  onLogoPhotoSelect,
+  onLogoPhotoRemove,
+
+  // Royalties
+  showRoyalties,
+  royaltiesDisable,
+  primaryRoyalties,
+  secondaryRoyalties,
+  onPrimaryRoyaltiesChange,
+  onSecondaryRoyaltiesChange,
 
   // webLinks
   webLinks,
@@ -57,6 +72,12 @@ export default function Outline({
   blockchainCategory,
   onBlockchainCategoryChange,
   blockchainCategoryList,
+
+  // Freeze MetaData
+  showFreezeMetadata,
+  isMetadataFreezed,
+  onMetadataFreezeChange,
+  freezeMetadataDisabled,
 
   // tag
   // tagList,
@@ -172,7 +193,7 @@ export default function Outline({
               )}
             </>
           )}
-          {daoSymbolDisable && <h3>{projectName}</h3>}
+          {daoSymbolDisable && <h3>{daoSymbol}</h3>}
         </div>
       )}
 
@@ -218,46 +239,128 @@ export default function Outline({
       </div>
 
       {/* photo */}
-      <div>
-        <div className="txtblack text-[14px] mb-[6px]">
-          Upload Gallery Picture
-        </div>
-        <div className="text-textSubtle text-[13px] mb-4">
-          PNG, GIF, WEBP, MP4 or MP3. Max 100mb.
-        </div>
-        <div className="md:flex flex-wrap mb-6">
-          <div className="w-[158px] mr-3 mb-2">
-            <FileDragAndDrop
-              maxFiles={4}
-              height="158px"
-              onDrop={(e) => onPhotosSelect(e, photosUrl)}
-              sizePlaceholder="Total upto 16MB"
-              disabled={photosUrl.length > 3 ? true : false}
-            />
+      {showPhotos && (
+        <div>
+          <div className="txtblack text-[14px] mb-[6px]">
+            Upload Gallery Picture
           </div>
-          <div className="photoPreviewContainer flex flex-wrap">
-            {photosUrl.map((image, index) => (
-              <div
-                key={`project-image-${index}`}
-                className="relative upload-file w-[158px] h-[158px] mr-3  mb-2"
-              >
-                <img
-                  alt=""
-                  className="outlinePhoto block object-cover rounded-xl"
-                  src={image.path}
-                />
+          <div className="text-textSubtle text-[13px] mb-4">
+            PNG, GIF, WEBP, MP4 or MP3. Max 100mb.
+          </div>
+          <div className="md:flex flex-wrap mb-6">
+            <div className="w-[158px] mr-3 mb-2">
+              <FileDragAndDrop
+                maxFiles={4}
+                height="158px"
+                width="158px"
+                onDrop={(e) => onPhotosSelect(e, photosUrl)}
+                sizePlaceholder="Total upto 16MB"
+                disabled={photosUrl.length > 3 ? true : false}
+              />
+            </div>
+            <div className="photoPreviewContainer flex flex-wrap">
+              {photosUrl.map((image, index) => (
+                <div
+                  key={`project-image-${index}`}
+                  className="relative upload-file w-[158px] h-[158px] mr-3  mb-2"
+                >
+                  <img
+                    alt=""
+                    className="outlinePhoto block object-cover rounded-xl"
+                    src={image.path}
+                  />
 
-                <div className="upload-photo absolute w-full h-full rounded-xl cursor-pointer  items-center justify-center left-0 top-0">
-                  <i
-                    className="fa-solid fa-trash"
-                    onClick={() => onPhotosRemove(image)}
-                  ></i>
+                  <div className="upload-photo absolute w-full h-full rounded-xl cursor-pointer  items-center justify-center left-0 top-0">
+                    <i
+                      className="fa-solid fa-trash"
+                      onClick={() => onPhotosRemove(image)}
+                    ></i>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* cover */}
+      {showCover && (
+        <div className=" mb-[25px]">
+          {logoPhotoUrl === "" ? (
+            <>
+              <FileDragAndDrop
+                maxFiles={1}
+                height="180px"
+                width="100%"
+                type="cover"
+                onDrop={(e) => onLogoPhotoSelect(e)}
+                sizePlaceholder=""
+                rounded={false}
+                maxSize={4000000}
+              />
+            </>
+          ) : (
+            <div className="relative w-[100px]">
+              <img
+                className="h-[85px] w-[85px] rounded-full block object-cover"
+                src={logoPhotoUrl.path}
+                alt="coverPreview"
+              />
+              <img
+                alt="coverPreviewIc"
+                src={deleteIcon}
+                onClick={onLogoPhotoRemove}
+                className="absolute top-2 cp right-0"
+              />
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Royalties */}
+      {showRoyalties && (
+        <div>
+          <div className="mb-6">
+            <div className="flex flex-wrap items-center">
+              <Tooltip></Tooltip>
+              <div className="txtblack text-[14px]">
+                Primary Sales Royalty (in Percentage)
+              </div>
+            </div>
+            {!royaltiesDisable && (
+              <DebounceInput
+                type="number"
+                minLength={1}
+                debounceTimeout={300}
+                onChange={(e) => onPrimaryRoyaltiesChange(e.target.value)}
+                className="debounceInput mt-1"
+                value={primaryRoyalties}
+              />
+            )}
+            {royaltiesDisable && <h3>{primaryRoyalties}</h3>}
+          </div>
+
+          <div className="mb-6">
+            <div className="flex flex-wrap items-center">
+              <Tooltip></Tooltip>
+              <div className="txtblack text-[14px]">
+                Secondary Sales Royalty(in Percentage)
+              </div>
+            </div>
+            {!royaltiesDisable && (
+              <DebounceInput
+                type="number"
+                minLength={1}
+                debounceTimeout={300}
+                onChange={(e) => onSecondaryRoyaltiesChange(e.target.value)}
+                className="debounceInput mt-1"
+                value={secondaryRoyalties}
+              />
+            )}
+            {royaltiesDisable && <h3>{secondaryRoyalties}</h3>}
+          </div>
+        </div>
+      )}
 
       {/* web Links*/}
       <div className="mb-3">
@@ -330,6 +433,32 @@ export default function Outline({
           ))} */}
         </select>
       </div>
+
+      {showFreezeMetadata && (
+        <div className="mb-6">
+          <p className="text-txtblack text-[16px] mb-[8px]">Freeze Metadata</p>
+          <div className="flex flex-wrap items-center">
+            <p className="text-txtSubtle text-[14px] md:max-w-[400px]">
+              Freezing your metadata will allow you to permanently lock and
+              store all of this item's content in decentralized file storage.
+            </p>
+
+            <label
+              htmlFor="checked-toggle"
+              className="inline-flex relative items-center cursor-pointer ml-auto"
+            >
+              <input
+                type="checkbox"
+                value={isMetadataFreezed}
+                id="checked-toggle"
+                className="sr-only peer outline-none"
+                onChange={(e) => onMetadataFreezeChange(e.target.value)}
+              />
+              <div className="w-11 outline-none h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-900"></div>
+            </label>
+          </div>
+        </div>
+      )}
 
       {/* tags */}
       {/* <div className="flex flex-wrap mb-6">
