@@ -9,22 +9,26 @@ export default function FileDragAndDrop({
   sizePlaceholder,
   maxSize,
   disabled,
+  type,
+  width,
+  rounded,
 }) {
   const baseStyle = {
     flex: 1,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    justifyContent: "center",
     height: height,
+    width: width,
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: rounded ? "50% " : 12,
     borderColor: "#E6E8EE",
     borderStyle: "solid",
     backgroundColor: "#E6E8EE",
     color: "#bdbdbd",
     outline: "none",
     transition: "border .24s ease-in-out",
-    paddingTop: "12%",
   };
 
   const focusedStyle = {
@@ -63,14 +67,20 @@ export default function FileDragAndDrop({
       <div className="Filecontainer">
         <div {...getRootProps({ style })}>
           <input {...getInputProps()} />
-          <img src={dragSvg} alt="" />
-          <p className="text-[#646A80] text-[13px] font-bold ">
-            Add Image/Drag from
-          </p>
-          <div className=" text-primary-900 text-[13px] font-bold">
-            Computer
-          </div>
-          {/* {sizePlaceholder && <div>{sizePlaceholder}</div>} */}
+
+          {type === "logo" ? (
+            <i className="fa-regular fa-image text-[25px] "></i>
+          ) : (
+            <>
+              <i className="fa-regular fa-image text-[25px] "></i>
+              <p className="text-[#646A80] text-[13px] font-bold ">
+                Add Image/Drag from
+              </p>
+              <div className=" text-primary-900 text-[13px] font-bold">
+                Computer
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

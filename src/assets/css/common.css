@@ -152,7 +152,7 @@ input[type="number"],
   padding-left: 15px;
   border: none;
   /* background-color: #232032; */
-  color: #c7cee5;
+  color: #7d849d;
   font-size: 13px;
   /* width: 100%; */
   border-radius: 6px;
@@ -160,18 +160,22 @@ input[type="number"],
   width: 100%;
   outline: none;
   border: 1px solid #c7cee5;
+  height: 48px;
+  font-size: 14px;
+  padding-right: 15px;
 }
 input[type="text"],
 input[type="email"],
 textarea {
   padding: 10px 15px;
-  border: none;
+  outline: none;
   /* background-color: #232032; */
   color: #9499ae;
   font-size: 13px;
   width: 100%;
   border-radius: 6px;
-  border: 1px solid #232032;
+  color: #7d849d;
+  border: 1px solid #c7cee5;
 }
 /*
 input:focus-visible,
@@ -206,7 +210,8 @@ select {
   content: "\00d7";
 }
 .validationTag {
-  color: #c82727;
+  color: #ff3c3c;
+  margin-top: 6px;
 }
 .roboto {
   font-family: "Roboto", sans-serif;
