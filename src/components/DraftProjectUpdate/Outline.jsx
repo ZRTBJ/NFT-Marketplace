@@ -376,7 +376,7 @@ export default function Outline({
                 }  text-[24px] text-primary-900  mr-2`}
               ></i>
               <input
-                className={`block w-full border border-whiteDivider h-[48px] text-[14px] text-textSubtle rounded  pl-3  outline-none`}
+                className={`block w-full border border-divider h-[48px] text-[14px] text-textSubtle rounded  pl-3  outline-none`}
                 placeholder="https://"
                 value={link.value}
                 onChange={(event) =>
@@ -395,7 +395,7 @@ export default function Outline({
           value={projectCategory}
           onChange={onProjectCategoryChange}
           name="category"
-          className="h-[44px] border border-whiteDivider text-textSubtle bg-white-shade-900 pl-3"
+          className="h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3"
         >
           <option value={"default"} defaultValue>
             Choose an option
@@ -421,7 +421,7 @@ export default function Outline({
           value={blockchainCategory}
           onChange={onBlockchainCategoryChange}
           disabled
-          className="h-[44px] border border-whiteDivider text-textSubtle bg-white-shade-900 pl-3"
+          className="h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3"
         >
           <option value={blockchainCategory} defaultValue>
             Polygon
