@@ -167,7 +167,7 @@ export default function ProjectCreate() {
   // webLinks start
   const links = [
     { title: "linkInsta", icon: "instagram", value: "" },
-    { title: "linkReddit", icon: "reddit", value: "" },
+    { title: "linkGithub", icon: "github", value: "" },
     { title: "linkTwitter", icon: "twitter", value: "" },
     { title: "linkFacebook", icon: "facebook", value: "" },
     { title: "customLinks1", icon: "link", value: "" },
