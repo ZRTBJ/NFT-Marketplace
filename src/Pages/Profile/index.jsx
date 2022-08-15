@@ -794,7 +794,7 @@ const Profile = () => {
                 className={styles.createSwiper}
               >
                 <div>
-                  {DAO_ITEMS.map((item) => (
+                  {projectList.map((item) => (
                     <SwiperSlide key={item.id} className={styles.daoCard}>
                       <DAOCard item={item} key={item.id} />
                     </SwiperSlide>

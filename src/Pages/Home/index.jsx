@@ -14,6 +14,7 @@ import CommonCard from "components/CommonCard";
 import { Navigation } from "swiper";
 import thumbIcon from "assets/images/profile/card.svg";
 import avatar from "assets/images/dummy-img.svg";
+import DAOCard from "components/DAOCard";
 
 function Home() {
   SwiperCore.use([Autoplay]);
@@ -146,8 +147,13 @@ function Home() {
       </section>
 
       <section className="grid md:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
+        {projectList.map((item, index) => (
+          <div key={index}>
+            <DAOCard item={item} key={item.id} />
+          </div>
+        ))}
         {/* Card */}
-        <div className="bg-white rounded-xl  min-h-[390px]">
+        {/* <div className="bg-white rounded-xl  min-h-[390px]">
           <a href="#">
             <img
               className="rounded-t-xl h-36 object-cover w-full"
@@ -200,10 +206,10 @@ function Home() {
               </span>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Card */}
-        <div className="bg-white rounded-xl min-h-[390px]">
+        {/* <div className="bg-white rounded-xl min-h-[390px]">
           <a href="#">
             <img
               className="rounded-t-lg h-36 object-cover w-full"
@@ -256,10 +262,10 @@ function Home() {
               </span>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Card */}
-        <div className="bg-white rounded-xl min-h-[390px]">
+        {/* <div className="bg-white rounded-xl min-h-[390px]">
           <a href="#">
             <img
               className="rounded-t-xl h-36 object-cover w-full"
@@ -312,10 +318,10 @@ function Home() {
               </span>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Card */}
-        <div className="bg-white rounded-xl min-h-[390px]">
+        {/* <div className="bg-white rounded-xl min-h-[390px]">
           <a href="#">
             <img
               className="rounded-t-xl h-36 object-cover w-full"
@@ -368,10 +374,10 @@ function Home() {
               </span>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Card */}
-        <div className="bg-white rounded-xl  min-h-[390px]">
+        {/* <div className="bg-white rounded-xl  min-h-[390px]">
           <a href="#">
             <img
               className="rounded-t-xl h-36 object-cover w-full"
@@ -424,7 +430,7 @@ function Home() {
               </span>
             </div>
           </div>
-        </div>
+        </div> */}
       </section>
       {/* ----- End Card Section ---- */}
 
@@ -655,12 +661,7 @@ function Home() {
 
       {/* END New UI MVP-1.1 */}
 
-      <br />
-      <br />
-      <br />
-      <br />
-
-      <div className="relative">
+      {/* <div className="relative">
         <h2 className="mb-5">Newest Project</h2>
         {isLoading && <div className="onlySpinner mt-[150px]"></div>}
         {!isLoading && (
@@ -700,9 +701,9 @@ function Home() {
             </div>
           </Swiper>
         )}
-      </div>
+      </div> */}
 
-      {!isLoading && (
+      {/* {!isLoading && (
         <section className="mt-16 pb-16 relative">
           <h2 className="mb-5">Popular Project</h2>
           <Swiper
@@ -741,7 +742,7 @@ function Home() {
             </div>
           </Swiper>
         </section>
-      )}
+      )} */}
     </div>
   );
 }
