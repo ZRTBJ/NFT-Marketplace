@@ -49,8 +49,10 @@ const Sidebar = () => {
     }
   }
   function hideModal(e) {
-    e.preventDefault();
-    dispatch(setSideBar(false));
+    try {
+      e.preventDefault();
+      dispatch(setSideBar(false));
+    } catch {}
   }
 
   function navigateTo(type) {
