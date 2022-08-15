@@ -9,7 +9,7 @@ import Tooltip from "components/Tooltip";
 export default function Outline({
   // logo
   logoLabel,
-  coverPhotoUrl,
+  logoPhotoUrl,
 
   // name
   nameLabel,
@@ -26,7 +26,14 @@ export default function Outline({
   // overview
   overview,
 
+  showCover,
+  coverPhotoUrl,
+  showRoyalties,
+  primaryRoyalties,
+  secondaryRoyalties,
+
   // photo
+  showPhotos,
   photosUrl,
 
   // webLinks
@@ -37,6 +44,9 @@ export default function Outline({
 
   // Blockchain
   blockchainCategory,
+
+  showFreezeMetadata,
+  isMetaDaFreezed,
 }) {
   return (
     <>
@@ -45,13 +55,13 @@ export default function Outline({
       <div>
         <p className="text-[14px] black-shade-900 ">{logoLabel}</p>
         <div className="w-[131px] mb-[25px]">
-          {coverPhotoUrl === "" ? (
+          {logoPhotoUrl === "" ? (
             <p className="text-textSubtle">No Logo</p>
           ) : (
             <div className="relative w-[100px]">
               <img
                 className="h-[85px] w-[85px] rounded-full block object-cover"
-                src={coverPhotoUrl.path}
+                src={logoPhotoUrl.path}
                 alt="coverPreview"
               />
             </div>
@@ -97,33 +107,61 @@ export default function Outline({
           {overview === "" ? "No description" : overview}
         </p>
       </div>
+      {/* Cover */}
+      {showCover && (
+        <div className="mb-6">
+          <div className="txtblack text-[14px] mb-[6px]">Cover</div>
+          {coverPhotoUrl === "" ? (
+            <div className="text-textSubtle">No Cover</div>
+          ) : (
+            <img
+              className="h-[180px] w-full rounded block object-cover"
+              src={coverPhotoUrl.path}
+              alt="coverPreview"
+            />
+          )}
+        </div>
+      )}
+
+      {showRoyalties && (
+        <div className="mb-6">
+          <div className="mb-6">
+            <div className="txtblack text-[14px]">Primary Royalties</div>
+            <p className="text-textSubtle">{primaryRoyalties}</p>
+          </div>
+          <div className="txtblack text-[14px] ">Secondary Royalties</div>
+          <p className="text-textSubtle">{secondaryRoyalties}</p>
+        </div>
+      )}
 
       {/* photo */}
-      <div>
-        <div className="txtblack text-[14px] mb-[6px]">Gallery Picture</div>
-        <div className="md:flex flex-wrap mb-6">
-          <div className="photoPreviewContainer flex flex-wrap">
-            {photosUrl.length === 0 ? (
-              <p className="text-textSubtle">No Files</p>
-            ) : (
-              <>
-                {photosUrl.map((image, index) => (
-                  <div
-                    key={`project-image-${index}`}
-                    className="relative upload-file w-[158px] h-[158px] mr-3  mb-2"
-                  >
-                    <img
-                      alt=""
-                      className="outlinePhoto block object-cover rounded-xl"
-                      src={image.path}
-                    />
-                  </div>
-                ))}
-              </>
-            )}
+      {showPhotos && (
+        <div>
+          <div className="txtblack text-[14px] mb-[6px]">Gallery Picture</div>
+          <div className="md:flex flex-wrap mb-6">
+            <div className="photoPreviewContainer flex flex-wrap">
+              {photosUrl.length === 0 ? (
+                <p className="text-textSubtle">No Files</p>
+              ) : (
+                <>
+                  {photosUrl.map((image, index) => (
+                    <div
+                      key={`project-image-${index}`}
+                      className="relative upload-file w-[158px] h-[158px] mr-3  mb-2"
+                    >
+                      <img
+                        alt=""
+                        className="outlinePhoto block object-cover rounded-xl"
+                        src={image.path}
+                      />
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* web Links*/}
       <div className="mb-3">
@@ -162,6 +200,18 @@ export default function Outline({
         </div>
         <p className="text-textSubtle">{blockchainCategory}</p>
       </div>
+
+      {showFreezeMetadata && (
+        <div className="mb-6">
+          <div className="flex flex-wrap items-center">
+            {/* <Tooltip></Tooltip> */}
+            <div className="txtblack text-[14px] mb-[6px]">Freeze Metadata</div>
+          </div>
+          <p className="text-textSubtle">
+            {isMetaDaFreezed.toString().toUpperCase()}
+          </p>
+        </div>
+      )}
     </>
   );
 }

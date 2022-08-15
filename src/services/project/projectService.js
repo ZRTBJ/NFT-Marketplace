@@ -198,6 +198,9 @@ export async function getExternalNftList(address, type) {
   // );
 }
 
+export async function mockCreateProject() {
+  return await client("POST", `/project`);
+}
 export async function tokenBreakdown(projectId, payload) {
   return await client("PUT", `/project/${projectId}/token_breakdown`, payload);
 }
