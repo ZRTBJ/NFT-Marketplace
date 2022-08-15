@@ -22,7 +22,6 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import thumbIcon from "assets/images/profile/card.svg";
 import avatar from "assets/images/dummy-img.svg";
 
-
 import { useSelector } from "react-redux";
 import ProjectDetailsEmptyCaseCard from "components/EmptyCaseCard/ProjectDetailsEmptyCaseCard";
 import CommonCard from "components/CommonCard";
@@ -32,13 +31,14 @@ export default function ProjectDetails(props) {
   const [isLoading, setIsLoading] = useState(false);
   const [project, setProject] = useState({});
   const projectId = props.match.params.id;
-  const [selectedImages, setSelectedImages] = useState({});
+  const [coverImages, setCoverImages] = useState({});
   const userInfo = useSelector((state) => state.user.userinfo);
   // nft list
   const [hasMore, setHasMore] = useState(false);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [nftList, setNftList] = useState([]);
+  const [links, setLinks] = useState([]);
 
   async function fetchData() {
     if (hasMore) {
@@ -64,8 +64,23 @@ export default function ProjectDetails(props) {
       .then((res) => {
         if (res.code === 0) {
           setProject(res.project);
-          if (res?.project?.assets[1]) {
-            setSelectedImages(res.project.assets[1]);
+          if (res?.project?.assets && res?.project?.assets.length > 0) {
+            setCoverImages(
+              res.project.assets.find((img) => img["asset_purpose"] === "cover")
+            );
+            if (project.urls && project.urls.length > 0) {
+              const webLinks = [];
+              try {
+                const urls = JSON.parse(project.urls);
+                for (let url of urls) {
+                  webLinks.push({
+                    title: Object.values(url)[0],
+                    value: Object.values(url)[2],
+                  });
+                }
+              } catch {}
+              setLinks(webLinks);
+            }
           }
         }
         setIsLoading(false);
@@ -110,7 +125,7 @@ export default function ProjectDetails(props) {
   }
 
   function changeImagePreview(image) {
-    setSelectedImages(image);
+    setCoverImages(image);
   }
 
   async function fetchNftList() {
@@ -143,34 +158,30 @@ export default function ProjectDetails(props) {
 
   return (
     <>
-
-
       <section className="grid sm:grid-cols-5 gap-4 mt-6">
-
         <div className="row-span-2 col-span-2">
-          <img className="rounded-xl object-cover h-[254px] w-full" src={bigImg} alt="" />
+          <img
+            className="rounded-xl object-cover h-[260px] w-full"
+            src={coverImages ? coverImages.path : bigImg}
+            alt=""
+          />
         </div>
-        <div className="">
-          <img className="rounded-xl object-cover h-[122px] w-full" src={manImg} alt="" />
-        </div>
-        <div className="">
-          <img className="rounded-xl object-cover h-[122px] w-full" src={galleryImg} alt="" />
-        </div>
-        <div className="">
-          <img className="rounded-xl object-cover h-[122px] w-full" src={bigImg} alt="" />
-        </div>
-        <div className="">
-          <img className="rounded-xl object-cover h-[122px] w-full" src={bigImg} alt="" />
-        </div>
-        <div className="">
-          <img className="rounded-xl object-cover h-[122px] w-full" src={manImg} alt="" />
-        </div>
-        <div className="">
-          <img className="rounded-xl object-cover h-[122px] w-full" src={galleryImg} alt="" />
-        </div>
+        {project?.assets?.length > 0 &&
+          project.assets.map((img, index) => (
+            <>
+              {img["asset_purpose"] !== "cover" && (
+                <div key={`dao-image-${index}`}>
+                  <img
+                    className="rounded-xl object-cover h-[122px] w-full"
+                    src={img ? img.path : manImg}
+                    alt=""
+                  />
+                </div>
+              )}
+            </>
+          ))}
       </section>
       {/* end gallery */}
-
 
       {/* profile information section */}
       <section className="bg-light3 rounded-b-xl mt-4 p-6">
@@ -183,93 +194,137 @@ export default function ProjectDetails(props) {
                 alt="User profile"
               />
               <div className="flex-1 min-w-0  px-4">
-                <h1 className="-mt-1 mb-1 md:mb-2 truncate">
-                  DAO Name
-                </h1>
+                <h1 className="-mt-1 mb-1 md:mb-2 truncate">{project.name}</h1>
                 <p className="text-textLight text-sm">
                   Smart COntract not released
-                  <i class="fa-solid fa-copy ml-2"></i>
+                  <i className="fa-solid fa-copy ml-2"></i>
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="flex flex-wrap mt-3 items-start md:justify-end md:w-1/3 md:mt-0" role="group">
-            <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5" >
-              <a href="" target="_blank" rel="noreferrer">
-                <i class="fa-brands fa-facebook text-primary-900"></i>
-              </a>
-            </div>
+          <div
+            className="flex flex-wrap mt-3 items-start md:justify-end md:w-1/3 md:mt-0"
+            role="group"
+          >
+            {links.find((link) => link.title === "linkFacebook") &&
+              links.find((link) => link.title === "linkFacebook").value
+                ?.length > 0 && (
+                <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5">
+                  <a
+                    href={`${
+                      links.find((link) => link.title === "linkFacebook").value
+                    }`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <i className="fa-brands fa-facebook text-primary-900"></i>
+                  </a>
+                </div>
+              )}
 
-            <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5" >
-              <a href="" target="_blank" rel="noreferrer">
-                <i class="fa-brands fa-instagram text-primary-900"></i>
-              </a>
-            </div>
+            {links.find((link) => link.title === "linkInsta") &&
+              links.find((link) => link.title === "linkInsta").value?.length >
+                0 && (
+                <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5">
+                  <a
+                    href={`${
+                      links.find((link) => link.title === "linkInsta").value
+                    }`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <i className="fa-brands fa-instagram text-primary-900"></i>
+                  </a>
+                </div>
+              )}
 
-            <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5" >
-              <a href="" target="_blank" rel="noreferrer">
-                <i class="fa-solid fa-globe text-primary-900"></i>
-              </a>
-            </div>
-            <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5" >
-              <a href="" target="_blank" rel="noreferrer">
-                <i class="fa-solid fa-headphones text-primary-900"></i>
-              </a>
-            </div>
+            {links.find((link) => link.title === "linkTwitter") &&
+              links.find((link) => link.title === "linkTwitter").value?.length >
+                0 && (
+                <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5">
+                  <a
+                    href={`${
+                      links.find((link) => link.title === "linkTwitter").value
+                    }`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <i className="fa-brands fa-twitter text-primary-900"></i>
+                  </a>
+                </div>
+              )}
 
-            <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5" >
-              <a href="" target="_blank" rel="noreferrer">
-                <i class="fa-brands fa-twitter text-primary-900"></i>
-              </a>
-            </div>
+            {links.find((link) => link.title === "linkGitub") &&
+              links.find((link) => link.title === "linkGitub").value?.length >
+                0 && (
+                <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5">
+                  <a
+                    href={`${
+                      links.find((link) => link.title === "linkGitub").value
+                    }`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <i className="fa-brands fa-github text-primary-900"></i>
+                  </a>
+                </div>
+              )}
 
-            <a className="inline-block ml-4 bg-primary-900 px-3 py-2 text-white font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">Publish</a>
+            {links.find((link) => link.title === "customLinks1") &&
+              links.find((link) => link.title === "customLinks1").value
+                ?.length > 0 && (
+                <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5">
+                  <a
+                    href={`${
+                      links.find((link) => link.title === "customLinks1").value
+                    }`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <i className="fa-solid fa-globe text-primary-900"></i>
+                  </a>
+                </div>
+              )}
 
+            <a className="inline-block ml-4 bg-primary-900 px-3 py-2 text-white font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+              Publish
+            </a>
           </div>
         </div>
 
         <div className="flex flex-col md:flex-row pt-5">
           <div className="md:w-2/3">
-            <h3>About The Collection</h3>
-            <p className="text-textLight text-sm" >It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point tsfd now use</p>
+            <h3>About</h3>
+            <p className="text-textLight text-sm">{project.overview}</p>
             <div className="flex items-center mt-3">
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <span className="ml-2 bg-primary-900 bg-opacity-5  text-primary-900 rounded p-1 text-xs  ">
-                +12
-              </span>
+              {project &&
+                project.members &&
+                project.members.length > 0 &&
+                project.members.map((img, index) => (
+                  <>
+                    {index < 5 && (
+                      <img
+                        key={`member-img-${index}`}
+                        className="rounded-full w-9 h-9 -ml-1 border-2 border-white"
+                        src={img.path ? img.path : avatar}
+                        alt=""
+                      />
+                    )}
+                  </>
+                ))}
+              {project && project.members && project.members.length > 5 && (
+                <span className="ml-2 bg-primary-900 bg-opacity-5  text-primary-900 rounded p-1 text-xs  ">
+                  +{project.members.length - 5}
+                </span>
+              )}
             </div>
           </div>
 
           <div className="flex items-center justify-center flex-wrap mt-3 md:justify-end md:w-1/3  md:mt-0">
-
-
-            <a className="inline-block ml-4 mb-3 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out">Transger Funds</a>
-
+            <a className="inline-block ml-4 mb-3 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+              Transger Funds
+            </a>
 
             <div className="bg-primary-900 ml-3 bg-opacity-10 rounded-md p-3 px-5 relative w-56">
               <i className="fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3"></i>
@@ -277,33 +332,69 @@ export default function ProjectDetails(props) {
               <h4>1.400.000 MATIC</h4>
               <p className="text-sm text-textSubtle">($1,400.00)</p>
             </div>
-
-
-
           </div>
         </div>
       </section>
 
-
       {/* Tab Section */}
       <section className="mb-10">
-        <div class="mb-4">
-          <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
-            <li class="mr-2" role="presentation">
-              <button class="inline-block p-4 text-lg rounded-t-lg border-b-2 border-primary-900 text-primary-900 hover:text-primary-600" id="membership_nft" data-tabs-target="#membership_nft" type="button" role="tab" aria-controls="MembershipNFT" aria-selected="true">Membership NFT</button>
+        <div className="mb-4">
+          <ul
+            className="flex flex-wrap -mb-px text-sm font-medium text-center"
+            id="myTab"
+            data-tabs-toggle="#myTabContent"
+            role="tablist"
+          >
+            <li className="mr-2" role="presentation">
+              <button
+                className="inline-block p-4 text-lg rounded-t-lg border-b-2 border-primary-900 text-primary-900 hover:text-primary-600"
+                id="membership_nft"
+                data-tabs-target="#membership_nft"
+                type="button"
+                role="tab"
+                aria-controls="MembershipNFT"
+                aria-selected="true"
+              >
+                Membership NFT
+              </button>
             </li>
-            <li class="mr-2" role="presentation">
-              <button class="inline-block p-4 text-lg rounded-t-lg border-b-2 border-transparent  text-textSubtle  hover:text-primary-900" id="dashboard-tab" data-tabs-target="#dashboard" type="button" role="tab" aria-controls="dashboard" aria-selected="false">Product NFT</button>
+            <li className="mr-2" role="presentation">
+              <button
+                className="inline-block p-4 text-lg rounded-t-lg border-b-2 border-transparent  text-textSubtle  hover:text-primary-900"
+                id="dashboard-tab"
+                data-tabs-target="#dashboard"
+                type="button"
+                role="tab"
+                aria-controls="dashboard"
+                aria-selected="false"
+              >
+                Product NFT
+              </button>
             </li>
-            <li class="mr-2" role="presentation">
-              <button class="inline-block p-4 text-lg rounded-t-lg border-b-2 border-transparent  text-textSubtle  hover:text-primary-900" id="settings-tab" data-tabs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">Rights Attached NFT</button>
+            <li className="mr-2" role="presentation">
+              <button
+                className="inline-block p-4 text-lg rounded-t-lg border-b-2 border-transparent  text-textSubtle  hover:text-primary-900"
+                id="settings-tab"
+                data-tabs-target="#settings"
+                type="button"
+                role="tab"
+                aria-controls="settings"
+                aria-selected="false"
+              >
+                Rights Attached NFT
+              </button>
             </li>
           </ul>
         </div>
 
         <div id="myTabContent">
           {/* TAB 1 */}
-          <section className="grid md:grid-cols-3 xl:grid-cols-4 gap-4 mb-6" id="membership_nft" role="tabpanel" aria-labelledby="membership-nft-tab">
+          <section
+            className="grid md:grid-cols-3 xl:grid-cols-4 gap-4 mb-6"
+            id="membership_nft"
+            role="tabpanel"
+            aria-labelledby="membership-nft-tab"
+          >
             {/* Card */}
             <div className="min-h-[390px] rounded-x">
               <a href="#">
@@ -319,18 +410,35 @@ export default function ProjectDetails(props) {
                     NFT Collection #1
                   </h2>
                   <div className="relative">
-                    <button type="button"><i class="fa-regular fa-ellipsis-vertical text-textSubtle"></i></button>
+                    <button type="button">
+                      <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
+                    </button>
                     {/* Dropdown menu  */}
                     <div className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 block">
-                      <ul class="text-sm">
+                      <ul className="text-sm">
                         <li className="border-b border-divide">
-                          <a href="#" className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600">Sales Page</a>
+                          <a
+                            href="#"
+                            className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                          >
+                            Sales Page
+                          </a>
                         </li>
                         <li className="border-b border-divide">
-                          <a href="#" className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600">Edit Collections</a>
+                          <a
+                            href="#"
+                            className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                          >
+                            Edit Collections
+                          </a>
                         </li>
                         <li className="border-b border-divide">
-                          <a href="#" className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600">Embed Collection</a>
+                          <a
+                            href="#"
+                            className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                          >
+                            Embed Collection
+                          </a>
                         </li>
                       </ul>
                     </div>
@@ -367,8 +475,12 @@ export default function ProjectDetails(props) {
                   />
                 </div>
                 <div className="my-4">
-                  <a className="inline-block mr-3 bg-primary-900 p-3 text-white  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer hover:bg-opacity-60 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">Review</a>
-                  <a className="inline-block bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out">Publish</a>
+                  <a className="inline-block mr-3 bg-primary-900 p-3 text-white  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer hover:bg-opacity-60 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+                    Review
+                  </a>
+                  <a className="inline-block bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+                    Publish
+                  </a>
                 </div>
               </div>
             </div>
@@ -376,25 +488,44 @@ export default function ProjectDetails(props) {
             {/* Create New */}
             <div className="rounded-xl h-[276px] w-full bg-success-1 bg-opacity-20 flex flex-col items-center justify-center">
               <i className="fa-solid fa-circle-plus text-success-1 text-2xl mb-2"></i>
-              <p className="text-success-1 text-lg font-black font-satoshi-bold">Create new</p>
+              <p className="text-success-1 text-lg font-black font-satoshi-bold">
+                Create new
+              </p>
             </div>
           </section>
 
           {/* TAB 2 */}
-          <section className="hidden p-4" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
-            <p class="text-sm text-gray-500 dark:text-gray-400">This is some placeholder content the <strong class="font-medium text-gray-800 dark:text-white">Dashboard tab's associated content</strong>. Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content visibility and styling.</p>
+          <section
+            className="hidden p-4"
+            id="dashboard"
+            role="tabpanel"
+            aria-labelledby="dashboard-tab"
+          >
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              This is some placeholder content the{" "}
+              <strong className="font-medium text-gray-800 dark:text-white">
+                Dashboard tab's associated content
+              </strong>
+              . Clicking another tab will toggle the visibility of this one for
+              the next. The tab JavaScript swaps classes to control the content
+              visibility and styling.
+            </p>
           </section>
 
           {/* TAB 3 */}
-          <section class="p-4" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+          <section
+            className="p-4"
+            id="settings"
+            role="tabpanel"
+            aria-labelledby="settings-tab"
+          >
             <article className=" rounded-xl bg-secondary-900 bg-opacity-20 border border-secondary-900 h-60 flex items-center justify-center p-4 flex-col">
               <h2 className="text-textBlack mb-3">Enable Right Attached NFT</h2>
               <p className="mb-4">
-                Create your Right attached NFT and share the royalty fairly with your teams,
+                Create your Right attached NFT and share the royalty fairly with
+                your teams,
               </p>
-              <a
-                className="inline-block bg-secondary-900 px-4 py-3 text-white font-black text-sm  font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
-              >
+              <a className="inline-block bg-secondary-900 px-4 py-3 text-white font-black text-sm  font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
                 Enable Now
               </a>
             </article>
@@ -402,27 +533,19 @@ export default function ProjectDetails(props) {
         </div>
       </section>
 
-
-
       {/* NO DAO */}
-
 
       <article className="rounded-xl bg-danger-900 bg-opacity-40 border border-danger-900 h-60 flex items-center justify-center p-4 flex-col">
         <h2 className="text-danger-900 mb-4">You haven’t Created DAO yet.</h2>
-        <a
-          className="inline-block bg-danger-900 px-4 py-3 text-white font-black text-sm font-satoshi-bold rounded cursor-pointer hover:bg-opacity-80 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
-        >
+        <a className="inline-block bg-danger-900 px-4 py-3 text-white font-black text-sm font-satoshi-bold rounded cursor-pointer hover:bg-opacity-80 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
           Create Now
         </a>
       </article>
 
-
-
       {isLoading && <div className="loading"></div>}
-      {
-        !isLoading && (
-          <>
-            {/* {userInfo.id && (
+      {!isLoading && (
+        <>
+          {/* {userInfo.id && (
               <>
                 {project.is_owner && project.project_status === "published" ? (
                   <>
@@ -475,8 +598,8 @@ export default function ProjectDetails(props) {
               </>
             )} */}
 
-            {/* Cover image section */}
-            {/* <section className="pt-5 rounded-3xl">
+          {/* Cover image section */}
+          {/* <section className="pt-5 rounded-3xl">
               {!isLoading && (
                 <img
                   src={
@@ -563,7 +686,7 @@ export default function ProjectDetails(props) {
               )}
             </section> */}
 
-            {/* {nftList.length === 0 ? (
+          {/* {nftList.length === 0 ? (
               <>
                 {project.is_owner ? (
                   <ProjectDetailsEmptyCaseCard userType="self"></ProjectDetailsEmptyCaseCard>
@@ -575,7 +698,7 @@ export default function ProjectDetails(props) {
               <></>
             )} */}
 
-            {/* {!isLoading && (
+          {/* {!isLoading && (
               <InfiniteScroll
                 dataLength={nftList.length} //This is important field to render the next data
                 next={fetchData}
@@ -592,9 +715,8 @@ export default function ProjectDetails(props) {
                 </div>
               </InfiniteScroll>
             )} */}
-          </>
-        )
-      }
+        </>
+      )}
     </>
   );
 }
