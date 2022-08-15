@@ -35,11 +35,14 @@ module.exports = {
 
         light: "#F9F5FF",
         light1: "#FDFDFD",
+        light3: "#F7F7F7",
         txtblack: "#303548",
         textSubtle: "#7D849D",
+        textLight: '#5F6479',
         "danger-1": "#FF3C3C",
         "info-1": "#46A6FF",
         "success-1": "#32E865",
+        "divider": "#C7CEE5",
 
         primary: {
           50: "#231B39",
