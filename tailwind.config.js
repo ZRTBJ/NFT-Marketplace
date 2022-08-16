@@ -43,6 +43,7 @@ module.exports = {
         "info-1": "#46A6FF",
         "success-1": "#32E865",
         divider: "#C7CEE5",
+        "white-filled-form": "#E6E8EE",
 
         primary: {
           50: "#231B39",

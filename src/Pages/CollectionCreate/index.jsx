@@ -230,7 +230,7 @@ export default function CollectionCreate() {
     let createPayload = {
       name: projectName,
       dao_id: dao_id,
-      collection_type: "membership",
+      collection_type: "product",
     };
 
     let projectId = "";

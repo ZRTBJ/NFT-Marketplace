@@ -18,6 +18,7 @@ import EmbedNFT from "Pages/EmbedNFT";
 import EmbedNFTPreview from "Pages/EmbedNFTPreview";
 import CreateDAOandNFT from "Pages/CreateDAOandNFT";
 import RoyalityManagement from "Pages/RoyalityManagement";
+import MembershipNFT from "Pages/MembershipNFT";
 
 const routes = [
   {
@@ -89,6 +90,11 @@ const routes = [
   {
     path: "/:id/mint-nft",
     component: MintNFT,
+    isPrivate: true,
+  },
+  {
+    path: "/membershipNFT",
+    component: MembershipNFT,
     isPrivate: true,
   },
   {
