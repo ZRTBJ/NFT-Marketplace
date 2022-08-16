@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { useAuthState } from "Context";
 import { getNotificationData } from "Slice/notificationSlice";
+import deploySuccessSvg from "assets/images/modal/deploySuccessSvg.svg";
 
 const DeployingProjectModal = ({
   handleClose,
@@ -48,7 +49,7 @@ const DeployingProjectModal = ({
     fn_name: "",
     fn_status: "",
     message: "",
-    step: 0,
+    step: 1,
   });
 
   useEffect(() => {
@@ -84,7 +85,7 @@ const DeployingProjectModal = ({
         fn_name: "",
         fn_status: "pending",
         message: "",
-        step: 0,
+        step: 1,
       };
       setDeployStatus(status);
     } else {
@@ -95,7 +96,7 @@ const DeployingProjectModal = ({
         fn_name: "",
         fn_status: "pending",
         message: "",
-        step: 0,
+        step: 1,
       };
       setDeployStatus(status);
     }
@@ -211,7 +212,7 @@ const DeployingProjectModal = ({
                 fn_name: "",
                 fn_status: "",
                 message: "",
-                step: 0,
+                step: 1,
               };
               for (let deploy of project.deploys) {
                 if (deploy.type === "fund_transfer") {
@@ -248,6 +249,9 @@ const DeployingProjectModal = ({
               // debugger;
             }
           }
+          if (project && project["project_status"] === "draft") {
+            publishThisProject("noscan");
+          }
           if (project && project["project_status"] === "publishing") {
             recheckStatus();
           }
@@ -267,191 +271,56 @@ const DeployingProjectModal = ({
       handleClose={() => handleClose(false)}
     >
       <div className={`text-center my-6 ${isLoading ? "loading" : ""}`}>
-        <div className="md:mx-4">
-          <div className=" md:hidden">
-            {step === 0 && <h1>Deplyoing Project...</h1>}
-
-            {step === 1 && <h1>Deploying smartcontract...</h1>}
-
-            {step === 2 && <h1>Done!</h1>}
-          </div>
-          <div className="hidden md:flex justify-center">
-            <div>
-              <i className="fa fa-check-square fa-xl" aria-hidden="true"></i>
-              <p className="mt-4 text-xs">Fund transfer</p>
+        {step === 1 && (
+          <div className="mx-16">
+            <h1>Please wait we’re publishing your DAO</h1>
+            <div className="overflow-hidden rounded-full h-4 w-full mt-12 mb-8 relative animated fadeIn">
+              <div className="animated-process-bar"></div>
             </div>
-            <div className="h-4 w-36 bg-[#232032]  mt-1"></div>
-            <div>
-              <i
-                className={`fa fa-check-square fa-xl ${step >= 1 ? "txtblack dark:text-white" : "text-gray-700"
-                  }`}
-                aria-hidden="true"
-              ></i>
-              <p className="mt-4 text-xs">Smartcontrat deployment</p>
-            </div>
-
-            <div className="h-4 w-36 bg-[#232032] mt-1"></div>
-            <div>
-              <i
-                className={`fa fa-check-square fa-xl ${step >= 2 ? "txtblack dark:text-white" : "text-gray-700"
-                  }`}
-                aria-hidden="true"
-              ></i>
-              <p className="mt-4 text-xs">Completed</p>
+            {deployStatus.step === 1 && (
+              <div className="text-center">Erc20 Deployment</div>
+            )}
+            {deployStatus.step === 2 && (
+              <div className="text-center">ProjectToken Deployment</div>
+            )}
+            <div className="flex justify-center mt-[30px]">
+              <button
+                className="btn text-white-shade-900 bg-primary-900 btn-sm"
+                onClick={() => handleClose(false)}
+              >
+                Cancel Publishing
+              </button>
             </div>
           </div>
-          <div>
-            {step === 0 && (
-              <div className="py-8">
-                <img className="block mx-auto" src={ico_gas} alt="" />
-                <div className="text-center my-4">
-                  Estimation of total gas required for these transactions.
-                </div>
-                <div className="my-4 bg-[#232032] md:mx-48 flex flex-row p-6">
-                  <div className="mx-2">
-                    <img className="block mx-auto" src={ico_matic} alt="" />
-                  </div>
-                  <div>Complete Deposit</div>
-                  <div className="ml-8">
-                    <span className="float-right">
-                      {tnxData.amount ? tnxData.amount : 0} MATIC
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
-            {step === 1 && (
-              <div className="py-8 flex justify-center">
-                <div className="text-center my-4">
-                  <ul className="stepper stepper-vertical">
-                    <li
-                      className={`stepper-step ${deployStatus.step >= 0
-                          ? deployStatus.step === 1 &&
-                            deployStatus.fn_status === "failed"
-                            ? "stepper-failed"
-                            : "stepper-active"
-                          : ""
-                        }`}
-                    >
-                      <div className="stepper-head hover:!bg-transparent">
-                        <span className="stepper-head-icon">
-                          {" "}
-                          <i
-                            className={`fa ${deployStatus.step === 1 &&
-                                deployStatus.fn_status === "failed"
-                                ? "fa-times"
-                                : deployStatus.step === 0
-                                  ? "fa-hourglass"
-                                  : "fa-check"
-                              }`}
-                            aria-hidden="true"
-                          ></i>{" "}
-                        </span>
-                        <span className="stepper-head-text text-sm">
-                          {" "}
-                          Erc20 Deployment{" "}
-                        </span>
-                      </div>
-                    </li>
-                    <li
-                      className={`stepper-step ${deployStatus.step >= 1
-                          ? deployStatus.step === 2 &&
-                            deployStatus.fn_status === "failed"
-                            ? "stepper-failed"
-                            : "stepper-active"
-                          : ""
-                        }`}
-                    >
-                      <div className="stepper-head hover:!bg-transparent">
-                        <span className="stepper-head-icon">
-                          {" "}
-                          <i
-                            className={`fa ${deployStatus.step === 2 &&
-                                deployStatus.fn_status === "failed"
-                                ? "fa-times"
-                                : deployStatus.step === 1
-                                  ? "fa-hourglass"
-                                  : "fa-check"
-                              }`}
-                            aria-hidden="true"
-                          ></i>{" "}
-                        </span>
-                        <span className="stepper-head-text text-sm">
-                          {" "}
-                          ProjectToken Deployment{" "}
-                        </span>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            )}
-            {step === 2 && (
-              <div className="py-8 flex justify-center">
-                <div className="text-center mt-12">
-                  <img className="block mx-auto" src={IconSuccess} alt="" />
-                  <div className="my-4 text-xl font-bold  draftModalText">
-                    Congratulation! you success creating project!
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-        {step === 0 && (
-          <button
-            type="button"
-            className="btn-outline-primary-gradient w-[100px] h-[38px]"
-            disabled={isLoading}
-            onClick={() => {
-              transferFund();
-            }}
-          >
-            <span>Transfer</span>
-          </button>
         )}
-        {step >= 1 && (
-          <div className="flex justify-center">
-            <button
-              type="button"
-              className="btn btn-outline-primary-gradient btn-md cursor-pointer disabled:opacity-50 disabled:bg-gray-500 mr-4"
-              onClick={() => {
-                window.open(
-                  `https://mumbai.polygonscan.com/tx/${tnxHash ? tnxHash : ""}`,
-                  "_blank",
-                  "noopener,noreferrer"
-                );
-              }}
-              disabled={tnxHash && tnxHash.length > 1 ? false : true}
-            >
-              <span className="px-4">{btnText}</span>
-            </button>
-            {step === 1 && (
-              <button
-                type="button"
-                className="btn-outline-primary-gradient h-[38px] cursor-pointer disabled:opacity-50 disabled:bg-gray-500"
-                disabled={
-                  deployStatus && deployStatus.fn_status === "failed"
-                    ? false
-                    : true
-                }
-                onClick={() => {
-                  publishThisProject(tnxHash);
-                }}
-              >
-                <span>&nbsp;&nbsp;Retry&nbsp;&nbsp;</span>
-              </button>
-            )}
-            {step === 2 && (
-              <button
-                type="button"
-                className="btn-outline-primary-gradient h-[38px] cursor-pointer disabled:opacity-50 disabled:bg-gray-500"
-                onClick={() => history.push(`/profile/${userId ? userId : ""}`)}
-              >
-                <span>&nbsp;&nbsp;Back to Profile&nbsp;&nbsp;</span>
-              </button>
-            )}
-          </div>
+        {step === 2 && (
+          <>
+            <img
+              className="h-[200px] w-[300px] mx-auto"
+              src={deploySuccessSvg}
+              alt=""
+            />
+            <div className="mx-16">
+              <h1>You finish publishing your DAO!</h1>
+              <div className="text-[#9499AE] mt-[12px]">
+                Now you can publish your collection!
+              </div>
+              <div className="flex justify-center mt-[30px]">
+                <button
+                  className="btn text-white-shade-900 bg-primary-900 btn-sm"
+                  onClick={() => handleClose(false)}
+                >
+                  Publish Collection
+                </button>
+                <button
+                  className="ml-4 bg-primary-900/[0.20] text-primary-900 px-3 font-semibold rounded w-[110px] h-[38px]"
+                  onClick={() => handleClose(false)}
+                >
+                  Back
+                </button>
+              </div>
+            </div>
+          </>
         )}
       </div>
     </Modal>

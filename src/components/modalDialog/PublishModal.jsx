@@ -1,41 +1,43 @@
-import publishModalSvg from "assets/images/modal/publishModalSvg.png";
+import publishModalSvg from "assets/images/modal/publishModalSvg.svg";
 import Modal from "../Modal";
 
 const PublishModal = ({ handleClose, show, publishProject }) => {
   return (
     <Modal
-      height={480}
+      height={580}
       width={800}
       show={show}
       handleClose={() => handleClose(false)}
     >
       <div className="text-center">
         <img
-          className="h-[181px] w-[241px] mx-auto"
+          className="h-[200px] w-[300px] mx-auto"
           src={publishModalSvg}
           alt=""
         />
-        <h1> Ready to Publish a project?</h1>
-        <div className="text-[#9499AE] mt-[12px]">
-          Make sure you already check your project and fill the right data on
-          it.
-        </div>
-        <div className="mt-[12px] max-w-[207px] mx-auto text-[13px] h-[35px]  rounded rounded-[8px] text-[##FFCF52] bg-secondary-100 px-[10px] py-[6px]">
-          Polygon might taking some fee
-        </div>
-        <div className="flex justify-center mt-[30px]">
-          <button
-            className="btn btn-primary btn-sm mr-6"
-            onClick={publishProject}
-          >
-            Publish Project
-          </button>
-          <button
-            className="btn btn-text-gradient  btn-sm"
-            onClick={() => handleClose(false)}
-          >
-            Back editing
-          </button>
+        <div className="mx-16">
+          <h1>You can’t Change some Field once you this Publish Collection</h1>
+          <div className="text-[#9499AE] mt-[12px]">
+            Do you want to publish anyway?
+          </div>
+          <div className="message-info">
+            Once transaction has made, Collection and NFT data will not be
+            changeable except benefits fields.
+          </div>
+          <div className="flex justify-center mt-[30px]">
+            <button
+              className="btn text-white-shade-900 bg-primary-900 btn-sm"
+              onClick={publishProject}
+            >
+              Publish Now
+            </button>
+            <button
+              className="ml-4 bg-primary-900/[0.20] text-primary-900 px-3 font-semibold rounded w-[110px] h-[38px]"
+              onClick={() => handleClose(false)}
+            >
+              Back
+            </button>
+          </div>
         </div>
       </div>
     </Modal>

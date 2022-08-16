@@ -1,7 +1,7 @@
 import Modal from "components/Modal";
 import ErrorModal from "components/modalDialog/ErrorModal";
 import SuccessModal from "components/modalDialog/SuccessModal";
-import publishModalSvg from "assets/images/modal/publishModalSvg.png";
+import publishModalSvg from "assets/images/modal/publishModalSvg.svg";
 import manImg from "assets/images/projectDetails/man-img.svg";
 import avatar from "assets/images/dummy-img.svg";
 import thumbIcon from "assets/images/profile/card.svg";
@@ -111,7 +111,7 @@ export default function MintNFT(props) {
             }
             setIsLoading(false);
           }
-        } catch { }
+        } catch {}
       }
     }
   }, [projectDeploy]);
@@ -367,7 +367,7 @@ export default function MintNFT(props) {
             }
           }
         })
-        .catch((error) => { });
+        .catch((error) => {});
     }, 30000);
   }
 
@@ -452,14 +452,10 @@ export default function MintNFT(props) {
   }, [watch("selectedProject")]);
 
   return (
-
-
     <>
       {/* Cover image section */}
       <section className="pt-5 rounded-xl">
-        <img
-          src={manImg}
-          className="rounded-xl object-cover md:h-64 w-full " />
+        <img src={manImg} className="rounded-xl object-cover md:h-64 w-full " />
       </section>
 
       {/* profile information section */}
@@ -484,43 +480,49 @@ export default function MintNFT(props) {
             </div>
           </div>
 
-          <div className="flex flex-wrap mt-3 items-start md:justify-end md:w-1/3 md:mt-0" role="group">
-            <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5" >
+          <div
+            className="flex flex-wrap mt-3 items-start md:justify-end md:w-1/3 md:mt-0"
+            role="group"
+          >
+            <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5">
               <a href="" target="_blank" rel="noreferrer">
                 <i class="fa-brands fa-facebook text-primary-900"></i>
               </a>
             </div>
 
-            <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5" >
+            <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5">
               <a href="" target="_blank" rel="noreferrer">
                 <i class="fa-brands fa-instagram text-primary-900"></i>
               </a>
             </div>
 
-            <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5" >
+            <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5">
               <a href="" target="_blank" rel="noreferrer">
                 <i class="fa-solid fa-globe text-primary-900"></i>
               </a>
             </div>
-            <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5" >
+            <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5">
               <a href="" target="_blank" rel="noreferrer">
                 <i class="fa-solid fa-headphones text-primary-900"></i>
               </a>
             </div>
 
-            <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5" >
+            <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5">
               <a href="" target="_blank" rel="noreferrer">
                 <i class="fa-brands fa-twitter text-primary-900"></i>
               </a>
             </div>
-
           </div>
         </div>
 
         <div className="flex flex-col md:flex-row pt-5">
           <div className="md:w-2/3">
             <h3>About The Collection</h3>
-            <p className="text-textLight text-sm" >It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point tsfd now use</p>
+            <p className="text-textLight text-sm">
+              It is a long established fact that a reader will be distracted by
+              the readable content of a page when looking at its layout. The
+              point tsfd now use
+            </p>
             <div className="flex items-center mt-3">
               <img
                 className="rounded-full w-9 h-9 -ml-1 "
@@ -554,7 +556,6 @@ export default function MintNFT(props) {
           </div>
 
           <div className="flex flex-col items-end justify-center flex-wrap mt-3 md:justify-end md:w-1/3  md:mt-0">
-
             <div className="bg-primary-900 ml-3 bg-opacity-10 rounded-md p-3 px-5 relative w-56">
               <i className="fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3"></i>
               <p className=" text-sm text-textSubtle ">Net Worth</p>
@@ -563,14 +564,16 @@ export default function MintNFT(props) {
             </div>
 
             <div className="mt-3">
-              <a className="inline-block mr-3 bg-primary-900 bg-opacity-10 px-4 py-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out">Edit Collection</a>
-              <a className="inline-block bg-primary-900 px-4 py-3 text-white font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">Publish</a>
+              <a className="inline-block mr-3 bg-primary-900 bg-opacity-10 px-4 py-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+                Edit Collection
+              </a>
+              <a className="inline-block bg-primary-900 px-4 py-3 text-white font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+                Publish
+              </a>
             </div>
-
           </div>
         </div>
       </section>
-
 
       <section className="mt-4">
         <a className="inline-block bg-primary-900 px-4 py-3 text-white font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
@@ -579,7 +582,12 @@ export default function MintNFT(props) {
         </a>
       </section>
 
-      <section className="mt-4 grid md:grid-cols-3 xl:grid-cols-4 gap-4 mb-6" id="membership_nft" role="tabpanel" aria-labelledby="membership-nft-tab">
+      <section
+        className="mt-4 grid md:grid-cols-3 xl:grid-cols-4 gap-4 mb-6"
+        id="membership_nft"
+        role="tabpanel"
+        aria-labelledby="membership-nft-tab"
+      >
         {/* Card */}
         <div className="min-h-[390px] rounded-x">
           <a href="#">
@@ -595,18 +603,35 @@ export default function MintNFT(props) {
                 NFT Collection #1
               </h2>
               <div className="relative">
-                <button type="button"><i class="fa-regular fa-ellipsis-vertical text-textSubtle"></i></button>
+                <button type="button">
+                  <i class="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
+                </button>
                 {/* Dropdown menu  */}
                 <div className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 block">
                   <ul class="text-sm">
                     <li className="border-b border-divide">
-                      <a href="#" className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600">Sales Page</a>
+                      <a
+                        href="#"
+                        className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                      >
+                        Sales Page
+                      </a>
                     </li>
                     <li className="border-b border-divide">
-                      <a href="#" className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600">Edit Collections</a>
+                      <a
+                        href="#"
+                        className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                      >
+                        Edit Collections
+                      </a>
                     </li>
                     <li className="border-b border-divide">
-                      <a href="#" className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600">Embed Collection</a>
+                      <a
+                        href="#"
+                        className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                      >
+                        Embed Collection
+                      </a>
                     </li>
                   </ul>
                 </div>
@@ -616,23 +641,10 @@ export default function MintNFT(props) {
               <span>0.01 ETH</span>
               <span>Blockchain Logo</span>
             </p>
-
           </div>
         </div>
-
-
-
-
       </section>
-
     </>
-
-
-
-
-
-
-
 
     // <div className={` ${isLoading ? "loading" : ""}`}>
     //   <section className="txtblack dark:text-white">

@@ -30,8 +30,17 @@
   height: 24px;
   width: 26px;
 }
-@media (max-width: 767px) { 
+@media (max-width: 767px) {
   .modal-main {
     height: auto !important;
-  } 
+  }
+}
+
+.message-info {
+  margin-top: 10px;
+  background-color: rgba(255, 168, 0, 0.2);
+  color: #ffa800;
+  max-width: 200ppx;
+  padding: 20px 30px;
+  border-radius: 10px;
 }
