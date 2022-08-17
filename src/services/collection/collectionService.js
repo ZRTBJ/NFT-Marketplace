@@ -41,3 +41,10 @@ export async function updateCollection(payload) {
 export async function getCollectionDetailsById(payload) {
   return await client("GET", `/collection/${payload.id}`);
 }
+
+export async function getCollections(listType, projectId, page, limit) {
+  return await client(
+    "GET",
+    `/collection?list_type=${listType}&project_id=${projectId}&page=${page}&limit=${limit}`
+  );
+}
