@@ -106,6 +106,17 @@ export default function CollectionCreate() {
   }
   // Project Name End
 
+  // Dao symbol start
+  // dao symbol is collection symbol
+  const [daoSymbol, setDaoSymbol] = useState("");
+  const [emptyDaoSymbol, setEmptyDaoSymbol] = useState(false);
+  const [daoSymbolDisable, setDaoSymbolDisable] = useState(false);
+  async function onDaoSymbolChange(e) {
+    setDaoSymbol(e);
+    setEmptyDaoSymbol(false);
+  }
+  // Dao symbol End
+
   // overview start
   const [overview, setOverview] = useState("");
   function onOverviewChange(e) {
@@ -164,10 +175,28 @@ export default function CollectionCreate() {
   const [isMetaDaFreezed, setIsMetaDataFreezed] = useState(false);
   const [freezeMetadataDisabled, setFreezeMetadataDisabled] = useState(false);
   function onMetadataFreezeChange(data) {
-    console.log(data);
     setIsMetaDataFreezed((o) => !o);
   }
   // Freeze MetaData end
+  // Token Transferable start
+  const [isTokenTransferable, setIsTokenTransferable] = useState(false);
+  const [tokenTransferableDisabled, setTokenTransferableDisabled] =
+    useState(false);
+  function onTokenTransferableChange(data) {
+    setIsTokenTransferable((o) => !o);
+  }
+  // Token Transferable End
+
+  // Royalty Percentage start
+  const [royaltyPercentageDisable, setRoyaltyPercentageDisable] =
+    useState(false);
+  const [royaltyPercentage, setRoyaltyPercentage] = useState(0);
+
+  function onRoyaltyPercentageChange(royalties) {
+    setRoyaltyPercentage(royalties);
+  }
+
+  // Royalty Percentage end
 
   const [outlineKey, setoutlineKey] = useState(0);
   let query = useQuery();
@@ -259,6 +288,8 @@ export default function CollectionCreate() {
       category_id: projectCategory,
       blockchainCategory: blockchainCategory,
       isMetaDaFreezed: isMetaDaFreezed,
+      isTokenTransferable: isTokenTransferable,
+      royaltyPercentage: royaltyPercentage,
       id: id,
     };
     await updateCollection(updatePayload);
@@ -308,14 +339,16 @@ export default function CollectionCreate() {
           name: projectName,
           overview: overview,
           cover: coverPhoto.length > 0 ? coverPhoto[0] : null,
-          primaryRoyalties: primaryRoyalties,
-          secondaryRoyalties: secondaryRoyalties,
+          // primaryRoyalties: primaryRoyalties,
+          // secondaryRoyalties: secondaryRoyalties,
           webLinks: JSON.stringify(webLinks),
           category_id: projectCategory,
           blockchainCategory: blockchainCategory,
           isMetaDaFreezed: isMetaDaFreezed,
+          isTokenTransferable: isTokenTransferable,
+          royaltyPercentage: royaltyPercentage,
         };
-        console.log(payload);
+        // console.log(payload);
         setcurrentStep([1, 2]);
       }
     }
@@ -346,9 +379,9 @@ export default function CollectionCreate() {
 
   useEffect(() => {
     if (query.get("dao_id")) {
-      console.log(query.get("dao_id"));
+      // console.log(query.get("dao_id"));
       setDao_id(query.get("dao_id"));
-      console.log(dao_id);
+      // console.log(dao_id);
     }
   }, []);
 
@@ -385,7 +418,12 @@ export default function CollectionCreate() {
                 projectNameDisabled={projectNameDisabled}
                 onProjectNameChange={onProjectNameChange}
                 // Dao symbol
-                showDaoSymbol={false}
+                symbolTitle="Collection Symbol"
+                showDaoSymbol={true}
+                daoSymbol={daoSymbol}
+                emptyDaoSymbol={emptyDaoSymbol}
+                onDaoSymbolChange={onDaoSymbolChange}
+                daoSymbolDisable={daoSymbolDisable}
                 // Dao Wallet
                 showDaoWallet={false}
                 // overview
@@ -399,8 +437,8 @@ export default function CollectionCreate() {
                 onLogoPhotoSelect={onLogoPhotoSelect}
                 onLogoPhotoRemove={onLogoPhotoRemove}
                 // Royalties
-                showRoyalties={true}
-                royaltiesDisable={royaltiesDisable}
+                showRoyalties={false}
+                royaltiesDiisTokenTransferablesable={royaltiesDisable}
                 primaryRoyalties={primaryRoyalties}
                 secondaryRoyalties={secondaryRoyalties}
                 onPrimaryRoyaltiesChange={onPrimaryRoyaltiesChange}
@@ -418,6 +456,16 @@ export default function CollectionCreate() {
                 isMetadataFreezed={isMetaDaFreezed}
                 onMetadataFreezeChange={onMetadataFreezeChange}
                 freezeMetadataDisabled={freezeMetadataDisabled}
+                // Token Transferable
+                showTokenTransferable={true}
+                isTokenTransferable={isTokenTransferable}
+                onTokenTransferableChange={onTokenTransferableChange}
+                tokenTransferableDisabled={tokenTransferableDisabled}
+                // Royalty Percentage
+                showRoyaltyPercentage={true}
+                royaltyPercentageDisable={royaltyPercentageDisable}
+                royaltyPercentage={royaltyPercentage}
+                onRoyaltyPercentageChange={onRoyaltyPercentageChange}
               />
             </div>
           )}
@@ -431,7 +479,9 @@ export default function CollectionCreate() {
               nameLabel="Collection Name"
               projectName={projectName}
               // Dao symbol
-              showDaoSymbol={false}
+              symbolTitle="Collection Symbol"
+              showDaoSymbol={true}
+              daoSymbol={daoSymbol}
               // Dao Wallet
               showDaoWallet={false}
               // overview
@@ -445,7 +495,7 @@ export default function CollectionCreate() {
               showCover={true}
               coverPhotoUrl={coverPhotoUrl}
               // Royalties
-              showRoyalties={true}
+              showRoyalties={false}
               primaryRoyalties={primaryRoyalties}
               secondaryRoyalties={secondaryRoyalties}
               // category
@@ -453,6 +503,10 @@ export default function CollectionCreate() {
               blockchainCategory={blockchainCategory}
               showFreezeMetadata={true}
               isMetaDaFreezed={isMetaDaFreezed}
+              showTokenTransferable={true}
+              isTokenTransferable={isTokenTransferable}
+              showRoyaltyPercentage={true}
+              royaltyPercentage={royaltyPercentage}
             />
           )}
         </div>
