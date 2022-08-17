@@ -81,7 +81,7 @@ export default function ProjectCreate() {
   }
   // Dao symbol End
 
-  // Dao symbol start
+  // Dao wallet start
   const [daoWallet, setDaoWallet] = useState("");
   const [emptyDaoWallet, setEmptyDaoWallet] = useState(false);
   const [daoWalletDisable, setDaoWalletDisable] = useState(false);
@@ -89,7 +89,7 @@ export default function ProjectCreate() {
     setDaoWallet(e);
     setEmptyDaoWallet(false);
   }
-  // Dao symbol End
+  // Dao wallet End
 
   // overview start
   const [overview, setOverview] = useState("");
@@ -236,7 +236,7 @@ export default function ProjectCreate() {
     if (currentStep.length === 2) {
       if (
         projectName !== "" &&
-        daoSymbol !== "" &&
+        // daoSymbol !== "" &&
         daoWallet !== "" &&
         projectCategory !== "" &&
         alreadyTakenProjectName === false
@@ -327,10 +327,10 @@ export default function ProjectCreate() {
         setemptyProjectName(true);
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
-      if (daoSymbol === "") {
-        setEmptyDaoSymbol(true);
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
+      // if (daoSymbol === "") {
+      //   setEmptyDaoSymbol(true);
+      //   window.scrollTo({ top: 0, behavior: "smooth" });
+      // }
       if (daoWallet === "") {
         setEmptyDaoWallet(true);
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -339,7 +339,7 @@ export default function ProjectCreate() {
         setEmptyProjectCategory(true);
       } else if (
         projectName !== "" &&
-        daoSymbol !== "" &&
+        // daoSymbol !== "" &&
         daoWallet !== "" &&
         projectCategory !== "" &&
         alreadyTakenProjectName === false
@@ -347,7 +347,7 @@ export default function ProjectCreate() {
         const payload = {
           cover: logoPhoto.length > 0 ? logoPhoto[0] : null,
           name: projectName,
-          daoSymbol: daoSymbol,
+          // daoSymbol: daoSymbol,
           daoWallet: daoWallet,
           overview: overview,
           photos: photos.length > 0 ? photos : null,
@@ -402,7 +402,7 @@ export default function ProjectCreate() {
                 projectNameDisabled={projectNameDisabled}
                 onProjectNameChange={onProjectNameChange}
                 // Dao symbol
-                showDaoSymbol={true}
+                showDaoSymbol={false}
                 daoSymbol={daoSymbol}
                 emptyDaoSymbol={emptyDaoSymbol}
                 onDaoSymbolChange={onDaoSymbolChange}
@@ -448,7 +448,7 @@ export default function ProjectCreate() {
               nameLabel="DAO Name"
               projectName={projectName}
               // Dao symbol
-              showDaoSymbol={true}
+              showDaoSymbol={false}
               daoSymbol={daoSymbol}
               // Dao Wallet
               showDaoWallet={true}

@@ -16,6 +16,7 @@ export default function Outline({
   projectName,
 
   // Dao symbol
+  symbolTitle,
   showDaoSymbol,
   daoSymbol,
 
@@ -47,6 +48,10 @@ export default function Outline({
 
   showFreezeMetadata,
   isMetaDaFreezed,
+  showTokenTransferable,
+  isTokenTransferable,
+  showRoyaltyPercentage,
+  royaltyPercentage,
 }) {
   return (
     <>
@@ -83,7 +88,7 @@ export default function Outline({
         <div className="mb-6" id="daoSymbol">
           <div className="flex flex-wrap items-center">
             {/* <Tooltip></Tooltip> */}
-            <div className="txtblack text-[14px]">DAO Symbol</div>
+            <div className="txtblack text-[14px]">{symbolTitle}</div>
           </div>
           <p className="text-textSubtle">{daoSymbol}</p>
         </div>
@@ -94,7 +99,7 @@ export default function Outline({
         <div className="mb-6">
           <div className="flex flex-wrap items-center">
             {/* <Tooltip></Tooltip> */}
-            <div className="txtblack text-[14px]">DAO Wallet</div>
+            <div className="txtblack text-[14px]">Treasury Wallet</div>
           </div>
           <p className="text-textSubtle">{daoWallet}</p>
         </div>
@@ -210,6 +215,27 @@ export default function Outline({
           <p className="text-textSubtle">
             {isMetaDaFreezed.toString().toUpperCase()}
           </p>
+        </div>
+      )}
+      {showTokenTransferable && (
+        <div className="mb-6">
+          <div className="flex flex-wrap items-center">
+            {/* <Tooltip></Tooltip> */}
+            <div className="txtblack text-[14px] mb-[6px]">
+              Transferable Token
+            </div>
+          </div>
+          <p className="text-textSubtle">
+            {isTokenTransferable.toString().toUpperCase()}
+          </p>
+        </div>
+      )}
+      {showRoyaltyPercentage && (
+        <div className="mb-6">
+          <div className="mb-6">
+            <div className="txtblack text-[14px]">Royalty Percentage</div>
+            <p className="text-textSubtle">{royaltyPercentage}</p>
+          </div>
         </div>
       )}
     </>
