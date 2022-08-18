@@ -54,7 +54,7 @@ const DAOCard = ({ item }) => {
 
       <h3 className="mt-10 font-bold text-[24px]">{item.name}</h3>
       <p className="text-[13px] mt-3 text-[#7D849D]">Value: 10000 USD</p>
-      <div className="flex mx-auto mt-3">
+      <div className="flex mx-auto mt-3 mb-4">
         {item.members &&
           item.members.length > 0 &&
           truncateArray(item.members).slicedItems.map((member) => (
