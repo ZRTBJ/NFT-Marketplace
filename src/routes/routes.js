@@ -19,6 +19,7 @@ import EmbedNFTPreview from 'Pages/EmbedNFTPreview';
 import CreateDAOandNFT from 'Pages/CreateDAOandNFT';
 import RoyalityManagement from 'Pages/RoyalityManagement';
 import MembershipNFT from 'Pages/MembershipNFT';
+import CollectionDetail from 'Pages/CollectionDetail';
 
 const routes = [
   {
@@ -83,6 +84,11 @@ const routes = [
     isPrivate: false,
   },
   {
+    path: '/collection-details/:collectionId',
+    component: CollectionDetail,
+    isPrivate: true,
+  },
+  {
     path: '/all-project',
     component: AllProject,
     isPrivate: false,
@@ -118,7 +124,7 @@ const routes = [
     isPrivate: true,
   },
   {
-    path: '/royality-management/:ranftId',
+    path: '/royality-management/:collectionId',
     component: RoyalityManagement,
     isPrivate: true,
   },
