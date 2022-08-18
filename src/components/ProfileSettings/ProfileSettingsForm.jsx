@@ -152,7 +152,7 @@ const ProfileSettingsForm = () => {
     request.append("first_name", data["firstName"]);
     request.append("last_name", data["lastName"]);
     request.append("display_name", data["displayName"]);
-    // request.append("email", data["emailAddress"]);
+    request.append("email", data["email"]);
     request.append("job", data["jobDescription"]);
     request.append("area", data["locationArea"]);
     // try {
@@ -201,7 +201,7 @@ const ProfileSettingsForm = () => {
         className="w-full max-w-2xl"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <div className="text-[white]">
+        <div className="txtblack">
           {/* name */}
 
           {/* photo */}
@@ -294,6 +294,30 @@ const ProfileSettingsForm = () => {
             {errors.displayName && (
               <p className="text-red-500 text-xs font-medium">
                 {errors.displayName.message}
+              </p>
+            )}
+          </div>
+          <div className="mb-4">
+            <div className="label">Email</div>
+            <div className="label-grey">Enter your email address.</div>
+            <input
+              className={`block w-full border ${
+                errors.email ? "border-red-500" : "border-dark-300"
+              } rounded py-3 px-4 mb-3 leading-tight ${
+                errors.email ? "focus:border focus:border-red-500" : ""
+              }`}
+              id="email"
+              name="email"
+              type="text"
+              placeholder="example@domain.com"
+              {...register("email", {
+                pattern: /^\w+([-+.']\w+)*[\-]?@\w+([-.]\w+)*\.\w+([-.]\w+)*$/,
+              })}
+              defaultValue={userinfo ? userinfo["email"] : ""}
+            />
+            {errors.email && (
+              <p className="text-red-500 text-xs font-medium">
+                Please enter a valid email address (example: example@domain.com)
               </p>
             )}
           </div>
@@ -452,7 +476,7 @@ const ProfileSettingsForm = () => {
             <div>
               <button
                 type="button"
-                className="btn-outline-primary-gradient w-[100px] h-[38px]"
+                className="bg-primary-900/[0.10] text-primary-900 px-3 font-semibold rounded w-[110px] h-[38px]"
                 onClick={(e) => {
                   addMoreWebLink();
                 }}
@@ -477,7 +501,10 @@ const ProfileSettingsForm = () => {
               >
                 Skip
               </button> */}
-              <button type="submit" className="btn btn-primary btn-sm">
+              <button
+                type="submit"
+                className="btn text-white-shade-900 bg-primary-900 btn-sm"
+              >
                 Save
               </button>
             </div>

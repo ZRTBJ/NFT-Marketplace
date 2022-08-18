@@ -758,7 +758,7 @@ const Profile = () => {
             </div>
           </div>
 
-          <div className="mb-[50px]">
+          {/* <div className="mb-[50px]">
             <h1 className="text-[28px] mb-[36px] font-black">Your DAO</h1>
             <Swiper
               breakpoints={{
@@ -820,7 +820,7 @@ const Profile = () => {
                 ))}
               </div>
             </Swiper>
-          </div>
+          </div> */}
 
           {/* {activeTab.id === 0 && (
             <div>

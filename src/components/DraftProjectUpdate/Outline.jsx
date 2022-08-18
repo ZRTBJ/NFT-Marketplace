@@ -10,9 +10,9 @@ import Tooltip from "components/Tooltip";
 export default function Outline({
   // logo
   logoLabel,
-  coverPhotoUrl,
-  onCoverPhotoSelect,
-  onCoverPhotoRemove,
+  logoPhotoUrl,
+  onLogoPhotoSelect,
+  onLogoPhotoRemove,
 
   // name
   nameLabel,
@@ -40,16 +40,16 @@ export default function Outline({
   onOverviewChange,
 
   // photo
+  showPhotos,
   photosUrl,
   onPhotosSelect,
   onPhotosRemove,
-  showPhotos,
 
   // Cover
   showCover,
-  logoPhotoUrl,
-  onLogoPhotoSelect,
-  onLogoPhotoRemove,
+  coverPhotoUrl,
+  onCoverPhotoSelect,
+  onCoverPhotoRemove,
 
   // Royalties
   showRoyalties,
@@ -78,19 +78,6 @@ export default function Outline({
   isMetadataFreezed,
   onMetadataFreezeChange,
   freezeMetadataDisabled,
-
-  // tag
-  // tagList,
-  // tagLimit,
-  // onTagEnter,
-  // onTagRemove,
-  // need member
-  // needMember,
-  // onNeedMemberChange,
-  // role list
-  // roleList,
-  // onRoleEnter,
-  // onRoleRemove,
 }) {
   const [projectCategoryList, setProjectCategoryList] = useState([]);
   useEffect(() => {
@@ -104,14 +91,14 @@ export default function Outline({
       <div>
         <p className="text-[14px] black-shade-900 mb-[15px]">{logoLabel}</p>
         <div className="w-[131px] mb-[25px]">
-          {coverPhotoUrl === "" ? (
+          {logoPhotoUrl === "" ? (
             <>
               <FileDragAndDrop
                 maxFiles={1}
                 height="85px"
                 width="85px"
                 type="logo"
-                onDrop={(e) => onCoverPhotoSelect(e)}
+                onDrop={(e) => onLogoPhotoSelect(e)}
                 sizePlaceholder=""
                 rounded={true}
                 maxSize={4000000}
@@ -127,13 +114,13 @@ export default function Outline({
             <div className="relative w-[100px]">
               <img
                 className="h-[85px] w-[85px] rounded-full block object-cover"
-                src={coverPhotoUrl.path}
+                src={logoPhotoUrl.path}
                 alt="coverPreview"
               />
               <img
                 alt="coverPreviewIc"
                 src={deleteIcon}
-                onClick={onCoverPhotoRemove}
+                onClick={onLogoPhotoRemove}
                 className="absolute top-2 cp right-0"
               />
             </div>
@@ -286,31 +273,30 @@ export default function Outline({
       {/* cover */}
       {showCover && (
         <div className=" mb-[25px]">
-          {logoPhotoUrl === "" ? (
+          {coverPhotoUrl === "" ? (
             <>
               <FileDragAndDrop
                 maxFiles={1}
                 height="180px"
                 width="100%"
                 type="cover"
-                onDrop={(e) => onLogoPhotoSelect(e)}
+                onDrop={(e) => onCoverPhotoSelect(e)}
                 sizePlaceholder=""
-                rounded={false}
                 maxSize={4000000}
               />
             </>
           ) : (
-            <div className="relative w-[100px]">
+            <div className="relative w-full">
               <img
-                className="h-[85px] w-[85px] rounded-full block object-cover"
-                src={logoPhotoUrl.path}
+                className="h-[180px] w-full rounded block object-cover"
+                src={coverPhotoUrl.path}
                 alt="coverPreview"
               />
               <img
                 alt="coverPreviewIc"
                 src={deleteIcon}
-                onClick={onLogoPhotoRemove}
-                className="absolute top-2 cp right-0"
+                onClick={onCoverPhotoRemove}
+                className="absolute top-0 cp right-0"
               />
             </div>
           )}
@@ -451,53 +437,15 @@ export default function Outline({
                 type="checkbox"
                 value={isMetadataFreezed}
                 id="checked-toggle"
+                checked={isMetadataFreezed}
                 className="sr-only peer outline-none"
-                onChange={(e) => onMetadataFreezeChange(e.target.value)}
+                onChange={(e) => onMetadataFreezeChange(isMetadataFreezed)}
               />
               <div className="w-11 outline-none h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-900"></div>
             </label>
           </div>
         </div>
       )}
-
-      {/* tags */}
-      {/* <div className="flex flex-wrap mb-6">
-        <div className="w-full">
-          <div className="label">Tags</div>
-          <div className="label-grey">Add tags on your project</div>
-          <input
-            className="outlineTags mb-2"
-            type="text"
-            placeholder="Type and press enter"
-            defaultValue={""}
-            onKeyUp={(e) => onTagEnter(e)}
-            name="tag"
-          />
-          {tagLimit && (
-            <div className="validationTag mb-3">Only five tags can save </div>
-          )}
-        </div>
-        {tagList &&
-          tagList.length > 0 &&
-          tagList.map((role, index) => (
-            <div className="px-3 pb-4 " key={`rolw-${index}`}>
-              <div className="h-8 w-auto border border-[#232032] rounded bg-[#232032] ">
-                <div className="flex flex-row items-center">
-                  <div className="pr-1 pl-2 pt-1 label-grey  break-all">
-                    {role}
-                  </div>
-                  <div className="px-2 pt-0">
-                    <i
-                      onClick={() => onTagRemove(index)}
-                      className="fa fa-times-thin  cursor-pointer"
-                      aria-hidden="true"
-                    ></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-      </div> */}
     </>
   );
 }

@@ -25,3 +25,11 @@ export async function getDefinedProperties() {
 export async function getNftDetails(id) {
   return await client('GET', `/nft/${id}`);
 }
+
+export async function saveRightAttachedNFT(payload) {
+  return await client('POST', `/ranft`, payload, 'formdata');
+}
+
+export async function getRightAttachedNFT(id) {
+  return await client('GET', `/ranft/${id}`);
+}
