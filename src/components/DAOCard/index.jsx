@@ -30,7 +30,7 @@ const DAOCard = ({ item }) => {
 
   return (
     <div
-      className="cursor-pointer bg-white-shade-900 text-center w-[282px] h-[279px] rounded-[12px] mr-6 relative flex flex-col"
+      className="cursor-pointer bg-white-shade-900 text-center w-[282px] rounded-[12px] mr-6 relative flex flex-col"
       onClick={() => gotToDetailPage(item.id)}
     >
       <img
@@ -53,14 +53,14 @@ const DAOCard = ({ item }) => {
       />
       <h3 className="mt-10 font-bold text-[24px]">{item.name}</h3>
       <p className="text-[13px] mt-3 text-[#7D849D]">Value: 10000 USD</p>
-      <div className="flex mx-auto mt-3">
+      <div className="flex mx-auto mt-3 mb-4">
         {item.members &&
           item.members.length > 0 &&
           truncateArray(item.members).slicedItems.map((member) => (
             <img
-              src={member.profileImage}
+              src={member.avatar}
               alt={member.id}
-              className="w-[36px] h-[36px] -ml-3"
+              className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
             />
           ))}
         {item.members && item.members.length > 3 && (

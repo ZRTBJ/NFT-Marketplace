@@ -15,6 +15,7 @@ import { Navigation } from "swiper";
 import thumbIcon from "assets/images/profile/card.svg";
 import avatar from "assets/images/dummy-img.svg";
 import DAOCard from "components/DAOCard";
+import { getCollections } from "services/collection/collectionService";
 
 function Home() {
   SwiperCore.use([Autoplay]);
@@ -22,6 +23,7 @@ function Home() {
   const [popularProjectList, setPopularProjectList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [sortType, setSortType] = useState("newer");
+  const [collectionList, setCollectionList] = useState([]);
 
   const payload = {
     order_by: "newer",
@@ -76,6 +78,7 @@ function Home() {
   }
   useEffect(() => {
     getProjectList(payload, "new");
+    getCollectionList();
   }, []);
   useEffect(() => {
     getProjectList(popularPayload, "popular");
@@ -98,6 +101,25 @@ function Home() {
       }, 2000);
     }
   }
+
+  async function getCollectionList() {
+    setIsLoading(true);
+    await getCollections("", "", 1, 20)
+      .then((e) => {
+        if (e.code === 0 && e.data !== null) {
+          setCollectionList(e.data);
+        }
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
+  }
+
+  const truncateArray = (members) => {
+    let slicedItems = members.slice(0, 3);
+    return { slicedItems, restSize: members.length - slicedItems.length };
+  };
 
   return (
     <div className="text-txtblack dark:text-white">
@@ -224,187 +246,58 @@ function Home() {
       <h2 className="mb-5">Best Collection</h2>
       <section className="grid md:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
         {/* Card */}
-        <div className="min-h-[390px] rounded-x">
-          <a href="#">
-            <img
-              className="rounded-xl h-[276px] object-cover w-full"
-              src={thumbIcon}
-              alt=""
-            />
-          </a>
+        {collectionList &&
+          collectionList.length > 0 &&
+          collectionList.map((collection, index) => (
+            <div
+              className="min-h-[390px] rounded-x"
+              key={`best-collection-${index}`}
+            >
+              <a href="#">
+                <img
+                  className="rounded-xl h-[276px] object-cover w-full"
+                  src={
+                    collection && collection.assets && collection.assets[0]
+                      ? collection.assets[0].path
+                      : thumbIcon
+                  }
+                  alt=""
+                />
+              </a>
 
-          <div className="p-5">
-            <h2 className="mb-2 text-txtblack truncate">NFT Collection #1</h2>
-            <p className="mb-3 text-textSubtle text-[13px]">
-              There are many variations of passages of Lorem
-            </p>
+              <div className="p-5">
+                <h2 className="pb-2 text-txtblack truncate">
+                  {collection.name}
+                </h2>
+                <p className="mb-3 text-textSubtle text-[13px]">
+                  {collection.description && collection.description.length > 70
+                    ? collection.description.substring(0, 67) + "..."
+                    : collection.description}
+                </p>
 
-            <div className="flex items-center">
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
+                <div className="flex items-center">
+                  {collection.members &&
+                    collection.members.length > 0 &&
+                    truncateArray(collection.members).slicedItems.map(
+                      (member) => (
+                        <img
+                          src={member.avatar}
+                          alt={member.id}
+                          className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
+                        />
+                      )
+                    )}
+                  {collection.members && collection.members.length > 3 && (
+                    <div className="flex items-center mt-[6px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]">
+                      <p className="text-[12px] text-[#9A5AFF]">
+                        +{truncateArray(collection.members).restSize}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        {/* Card */}
-        <div className="min-h-[390px] rounded-x">
-          <a href="#">
-            <img
-              className="rounded-xl h-[276px] object-cover w-full"
-              src={thumbIcon}
-              alt=""
-            />
-          </a>
-
-          <div className="p-5">
-            <h2 className="mb-2 text-txtblack truncate">NFT Collection #1</h2>
-            <p className="mb-3 text-textSubtle text-[13px]">
-              There are many variations of passages of Lorem
-            </p>
-
-            <div className="flex items-center">
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Card */}
-        <div className="min-h-[390px] rounded-x">
-          <a href="#">
-            <img
-              className="rounded-xl h-[276px] object-cover w-full"
-              src={thumbIcon}
-              alt=""
-            />
-          </a>
-
-          <div className="p-5">
-            <h2 className="mb-2 text-txtblack truncate">NFT Collection #1</h2>
-            <p className="mb-3 text-textSubtle text-[13px]">
-              There are many variations of passages of Lorem
-            </p>
-
-            <div className="flex items-center">
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Card */}
-        <div className="min-h-[390px] rounded-x">
-          <a href="#">
-            <img
-              className="rounded-xl h-[276px] object-cover w-full"
-              src={thumbIcon}
-              alt=""
-            />
-          </a>
-
-          <div className="p-5">
-            <h2 className="mb-2 text-txtblack truncate">NFT Collection #1</h2>
-            <p className="mb-3 text-textSubtle text-[13px]">
-              There are many variations of passages of Lorem
-            </p>
-
-            <div className="flex items-center">
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-            </div>
-          </div>
-        </div>
+          ))}
       </section>
       {/* ----- End Card Section ---- */}
 
