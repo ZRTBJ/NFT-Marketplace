@@ -8,10 +8,13 @@ export async function getUserProjectListById(payload) {
 }
 export async function getPublicProjectList(payload) {
   if (payload) {
-    let limit = `${payload.limit ? `limit=${payload.limit}` : ""}`;
-    let page = `${payload.page ? `page=${payload.page}&` : ""}`;
-    let order_by = `${payload.order_by ? `order_by=${payload.order_by}&` : ""}`;
-    return await client("GET", `/project?${order_by}${page}${limit}`);
+    const limit = `${payload.limit ? `limit=${payload.limit}` : ""}`;
+    const page = `${payload.page ? `page=${payload.page}&` : ""}`;
+    const order_by = `${
+      payload.order_by ? `order_by=${payload.order_by}&` : ""
+    }`;
+    const keyword = `${payload.keyword ? `keyword=${payload.keyword}&` : ""}`;
+    return await client("GET", `/project?${keyword}${order_by}${page}${limit}`);
   } else {
     return await client("GET", `/project`);
   }
