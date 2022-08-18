@@ -5,8 +5,10 @@ import { DebounceInput } from "react-debounce-input";
 import Tooltip from "components/Tooltip";
 import Modal from "components/Modal";
 import SuccessModal from "components/modalDialog/SuccessModal";
+import { useLocation } from "react-router-dom";
 
 export default function MembershipNFT() {
+  let query = useQuery();
   const userinfo = useSelector((state) => state.user.userinfo);
   const [isDataLoading, setDataIsLoading] = useState(false);
   const nftList = [
@@ -44,6 +46,12 @@ export default function MembershipNFT() {
   const [indexOfNfts, setIndexOfNfts] = useState("");
   const [isPreview, setIsPreview] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [dao_id, setDao_id] = useState(null);
+  const [collection_id, setCollection_id] = useState(null);
+  const [projectCreated, setProjectCreated] = useState(false);
+  const [projectId, setProjectId] = useState("");
+  const [projectInfo, setProjectInfo] = useState({});
+
   function onTextfieldChange(index, fieldName, value) {
     setValue(index, fieldName, value);
   }
@@ -172,7 +180,29 @@ export default function MembershipNFT() {
     setShowPropertyModal(false);
     setPropertyList([]);
   }
-  function nextHandle() {
+  async function createBlock(id) {
+    setDataIsLoading(true);
+    if (query.get("collection_id")) {
+      id = await createNewProject(dao_id);
+      await updateExistingProject(id);
+      await projectDetails(id);
+    } else {
+      const dao_id = await daoCreate();
+      id = await createNewProject(dao_id);
+      await updateExistingProject(id);
+      await projectDetails(id);
+    }
+    setDataIsLoading(false);
+    setShowSuccessModal(true);
+  }
+  // async function updateBlock(id) {
+  //   setDataIsLoading(true);
+  //   await updateExistingProject(id);
+  //   await projectDetails(id);
+  //   setDataIsLoading(false);
+  //   setShowSuccessModal(true);
+  // }
+  async function nextHandle() {
     const validateNfts = nfts.filter(
       (element) =>
         element.tierName !== "" &&
@@ -183,7 +213,13 @@ export default function MembershipNFT() {
         element.supply !== ""
     );
     if (isPreview) {
-      setShowSuccessModal(true);
+      // setShowSuccessModal(true);
+      let id = "";
+      if (!projectCreated) {
+        await createBlock(id);
+      } else if (projectCreated && projectId !== "") {
+        await updateBlock(projectId);
+      }
     } else {
       setCheckedValidation(true);
       if (validateNfts.length === nfts.length) {
@@ -192,6 +228,10 @@ export default function MembershipNFT() {
       }
     }
   }
+  function useQuery() {
+    const { search } = useLocation();
+    return React.useMemo(() => new URLSearchParams(search), [search]);
+  }
 
   useEffect(() => {
     setPropertyList(propertyList);
@@ -199,6 +239,9 @@ export default function MembershipNFT() {
   useEffect(() => {
     setNfts(nfts);
   }, [nfts]);
+  useEffect(() => {
+    setCollection_id(collection_id);
+  }, [collection_id]);
 
   return (
     <>
