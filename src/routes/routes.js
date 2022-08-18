@@ -19,6 +19,7 @@ import EmbedNFTPreview from 'Pages/EmbedNFTPreview';
 import CreateDAOandNFT from 'Pages/CreateDAOandNFT';
 import RoyalityManagement from 'Pages/RoyalityManagement';
 import MembershipNFT from 'Pages/MembershipNFT';
+import CollectionDetail from 'Pages/CollectionDetail';
 
 const routes = [
   {
@@ -81,6 +82,11 @@ const routes = [
     path: '/project-details/:id',
     component: projectDetails,
     isPrivate: false,
+  },
+  {
+    path: '/collection-details/:collectionId',
+    component: CollectionDetail,
+    isPrivate: true,
   },
   {
     path: '/all-project',

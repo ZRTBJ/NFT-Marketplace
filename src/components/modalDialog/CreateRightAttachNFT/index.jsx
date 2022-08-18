@@ -124,7 +124,6 @@ const CreateRightAttachedNFT = ({ handleClose, show }) => {
   };
 
   const handleImage = (e) => {
-    console.log(e.target.files[0]);
     setAsset(e.target.files[0]);
     setAssetPreview(URL.createObjectURL(e.target.files[0]));
   };
