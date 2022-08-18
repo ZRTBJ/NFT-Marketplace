@@ -403,7 +403,7 @@ export default function ProjectDetails(props) {
                         {index < 5 && (
                           <img
                             key={`member-img-${index}`}
-                            className="rounded-full w-9 h-9 -ml-1 border-2 border-white"
+                            className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
                             src={img.path ? img.path : avatar}
                             alt=""
                           />
@@ -579,7 +579,10 @@ export default function ProjectDetails(props) {
                             </div>
                           </div>
                           <p className="mb-3 text-textSubtle text-[13px]">
-                            {collection.description}
+                            {collection.description &&
+                            collection.description.length > 70
+                              ? collection.description.substring(0, 67) + "..."
+                              : collection.description}
                           </p>
                           <div className="flex items-center">
                             {collection.members &&
@@ -587,9 +590,9 @@ export default function ProjectDetails(props) {
                               truncateArray(collection.members).slicedItems.map(
                                 (member) => (
                                   <img
-                                    src={member.profileImage}
+                                    src={member.avatar}
                                     alt={member.id}
-                                    className="rounded-full w-9 h-9 -ml-1 "
+                                    className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
                                   />
                                 )
                               )}
@@ -697,7 +700,10 @@ export default function ProjectDetails(props) {
                             </div>
                           </div>
                           <p className="mb-3 text-textSubtle text-[13px]">
-                            {collection.description}
+                            {collection.description &&
+                            collection.description.length > 70
+                              ? collection.description.substring(0, 67) + "..."
+                              : collection.description}
                           </p>
                           <div className="flex items-center">
                             {collection.members &&
@@ -705,9 +711,9 @@ export default function ProjectDetails(props) {
                               truncateArray(collection.members).slicedItems.map(
                                 (member) => (
                                   <img
-                                    src={member.profileImage}
+                                    src={member.avatar}
                                     alt={member.id}
-                                    className="rounded-full w-9 h-9 -ml-1 "
+                                    className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
                                   />
                                 )
                               )}
@@ -840,7 +846,11 @@ export default function ProjectDetails(props) {
                                   </div>
                                 </div>
                                 <p className="mb-3 text-textSubtle text-[13px]">
-                                  {collection.description}
+                                  {collection.description &&
+                                  collection.description.length > 70
+                                    ? collection.description.substring(0, 67) +
+                                      "..."
+                                    : collection.description}
                                 </p>
                                 <div className="flex items-center">
                                   {collection.members &&
@@ -849,9 +859,9 @@ export default function ProjectDetails(props) {
                                       collection.members
                                     ).slicedItems.map((member) => (
                                       <img
-                                        src={member.profileImage}
+                                        src={member.avatar}
                                         alt={member.id}
-                                        className="rounded-full w-9 h-9 -ml-1 "
+                                        className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
                                       />
                                     ))}
                                   {collection.members &&
