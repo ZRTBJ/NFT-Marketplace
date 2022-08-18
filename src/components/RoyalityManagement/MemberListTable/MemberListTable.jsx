@@ -50,11 +50,11 @@ const MemberListTable = ({ headers, list, handlePublish }) => {
                   {r.role}
                 </p>
               </td>
-              <td className='py-4 px-5'>
+              {/* <td className='py-4 px-5'>
                 <div className='w-[32px] h-[32px] bg-[#FF3C3C] rounded-[4px] flex items-center justify-center cursor-pointer'>
                   <img src={Trash} alt='delete' />
                 </div>
-              </td>
+              </td> */}
             </tr>
           ))}
         </tbody>

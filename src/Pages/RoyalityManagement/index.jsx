@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import DropdownCreabo from 'components/DropdownCreabo';
 import CirclePlus from 'assets/images/icons/plus-circle.svg';
 import MemberListTable from 'components/RoyalityManagement/MemberListTable/MemberListTable';
@@ -9,6 +9,8 @@ import reddit from 'assets/images/icons/reddit.svg';
 import instagram from 'assets/images/icons/instagram.svg';
 import NFTSample from 'assets/images/createDAO/nft-sample.svg';
 import NewPublishModal from 'components/modalDialog/NewPublishModal';
+import { useParams } from 'react-router-dom';
+import { getRightAttachedNFT } from 'services/nft/nftService';
 
 const COLLECTIONS = [
   { id: '0', name: 'Collection one' },
@@ -23,7 +25,7 @@ const TABLE_HEADERS = [
   { id: 3, label: 'Percentage' },
   { id: 4, label: 'Token ID' },
   { id: 5, label: 'Role' },
-  { id: 6, label: 'Action' },
+  // { id: 6, label: 'Action' },
 ];
 
 const LIST = [
@@ -59,6 +61,24 @@ const LIST = [
 const RoyalityManagement = () => {
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
   const [showPublish, setShowPublish] = useState(false);
+  const [data, setData] = useState();
+  const [IsLoading, setIsLoading] = useState(false);
+
+  const { ranftId } = useParams();
+
+  useEffect(() => {
+    setIsLoading(true);
+    getRightAttachedNFT(ranftId)
+      .then((resp) => {
+        setIsLoading(false);
+        setData(resp);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }, []);
+
   const handleChange = (e) => {
     setSelectedCollectionId(e.target.value);
   };
@@ -70,8 +90,9 @@ const RoyalityManagement = () => {
       '  http:/MinttheNFT.com/abcsijuoeirhussd24234jsdsk2'
     );
   };
+
   return (
-    <div className='mt-3'>
+    <div className={`mt-3 ${IsLoading ? 'loading' : ''}`}>
       <NewPublishModal
         show={showPublish}
         handleClose={() => setShowPublish(false)}
@@ -186,7 +207,11 @@ const RoyalityManagement = () => {
         </div>
         <div className='bg-white mt-6 p-6 w-2/4 ml-2 rounded-[12px] flex items-center justify-center flex-col'>
           <h3 className='text-[18px] font-black'>Right Attached NFT</h3>
-          <img src={NFTSample} alt='NFT' className='mt-5 h-[189px] w-[189px]' />
+          <img
+            src={data?.lnft?.asset?.path}
+            alt='NFT'
+            className='mt-5 h-[189px] w-[189px]'
+          />
         </div>
       </div>
     </div>

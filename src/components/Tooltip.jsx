@@ -1,16 +1,18 @@
-import React from "react";
-import TooltipIcon from "assets/images/createDAO/tooltip.svg";
-import ReactTooltip from "react-tooltip";
-export default function Tooltip() {
+import React from 'react';
+import TooltipIcon from 'assets/images/createDAO/tooltip.svg';
+import ReactTooltip from 'react-tooltip';
+export default function Tooltip({
+  message = 'This field is can’t be changed once your contract created',
+}) {
   return (
-    <div className="relative">
+    <div className='relative'>
       <img
-        className="h-[15px] w-[15px] cursor-pointer mr-[6px] "
-        data-tip="This field is can’t be changed once your contract created"
+        className='h-[15px] w-[15px] cursor-pointer mr-[6px] '
+        data-tip={message}
         src={TooltipIcon}
-        alt=""
+        alt=''
       />
-      <ReactTooltip place="top" type="info" effect="solid" />
+      <ReactTooltip place='top' type='info' effect='solid' />
     </div>
   );
 }

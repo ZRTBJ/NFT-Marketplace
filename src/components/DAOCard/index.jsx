@@ -35,8 +35,8 @@ const DAOCard = ({ item }) => {
     >
       <img
         src={
-          item.assets.find((pic) => pic.name === "cover")
-            ? item.assets.find((pic) => pic.name === "cover").path
+          item.assets?.find((pic) => pic.name === "cover")
+            ? item.assets?.find((pic) => pic.name === "cover").path
             : thumbIcon
         }
         alt={item.name}
@@ -44,16 +44,17 @@ const DAOCard = ({ item }) => {
       />
       <img
         src={
-          item.assets.find((pic) => pic.name === "img1")
-            ? item.assets.find((pic) => pic.name === "img1").path
+          item.assets?.find((pic) => pic.name === "img1")
+            ? item.assets?.find((pic) => pic.name === "img1").path
             : avatar
         }
         alt={item.name}
         className="rounded-full w-24 h-24 absolute top-20 left-1/2 z-10 -ml-12 border-4 border-white"
       />
+
       <h3 className="mt-10 font-bold text-[24px]">{item.name}</h3>
       <p className="text-[13px] mt-3 text-[#7D849D]">Value: 10000 USD</p>
-      <div className="flex mx-auto mt-3 mb-4">
+      <div className="flex mx-auto mt-3">
         {item.members &&
           item.members.length > 0 &&
           truncateArray(item.members).slicedItems.map((member) => (
