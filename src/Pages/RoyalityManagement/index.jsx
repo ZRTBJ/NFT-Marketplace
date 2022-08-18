@@ -10,7 +10,7 @@ import instagram from 'assets/images/icons/instagram.svg';
 import NFTSample from 'assets/images/createDAO/nft-sample.svg';
 import NewPublishModal from 'components/modalDialog/NewPublishModal';
 import { useParams } from 'react-router-dom';
-import { getRightAttachedNFT } from 'services/nft/nftService';
+import { getCollectionNFTs } from 'services/collection/collectionService';
 
 const COLLECTIONS = [
   { id: '0', name: 'Collection one' },
@@ -64,14 +64,16 @@ const RoyalityManagement = () => {
   const [data, setData] = useState();
   const [IsLoading, setIsLoading] = useState(false);
 
-  const { ranftId } = useParams();
+  const { collectionId } = useParams();
 
   useEffect(() => {
     setIsLoading(true);
-    getRightAttachedNFT(ranftId)
+    getCollectionNFTs(collectionId)
       .then((resp) => {
         setIsLoading(false);
-        setData(resp);
+        if (resp.code === 0) {
+          setData(resp.lnfts[0]);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -90,6 +92,8 @@ const RoyalityManagement = () => {
       '  http:/MinttheNFT.com/abcsijuoeirhussd24234jsdsk2'
     );
   };
+
+  console.log(data);
 
   return (
     <div className={`mt-3 ${IsLoading ? 'loading' : ''}`}>
@@ -151,7 +155,7 @@ const RoyalityManagement = () => {
             Invite anothe contributor to get the royalties by copy this link and
             ask the to claim the Right Attached NFT
           </p>
-          <div className='w-full'>
+          {/* <div className='w-full'>
             <label for='invite-address' className='text-[12px] text-[#5F6479]'>
               Invite with Wallet Address
             </label>
@@ -164,7 +168,7 @@ const RoyalityManagement = () => {
             <button className='ml-auto block rounded-[4px] p-2 bg-[#9A5AFF] bg-opacity-[0.1] text-[#9A5AFF] text-[12px] font-bold w-[110px]'>
               Invite
             </button>
-          </div>
+          </div> */}
           <div className='mt-2'>
             <p className='text-[12px] text-[#5F6479] mb-1'>Invite with link</p>
             <div className='relative'>
@@ -174,7 +178,8 @@ const RoyalityManagement = () => {
               >
                 Link:{' '}
                 <span className='font-black'>
-                  http:/MinttheNFT.com/abcsijuoeirhussd24234jsdsk2
+                  http:/MinttheNFT.com/
+                  {data?.invitation_code ? data?.invitation_code : 'null'}
                 </span>
               </p>
               <div className='text-[#9A5AFF] absolute top-2 right-2'>
@@ -208,7 +213,7 @@ const RoyalityManagement = () => {
         <div className='bg-white mt-6 p-6 w-2/4 ml-2 rounded-[12px] flex items-center justify-center flex-col'>
           <h3 className='text-[18px] font-black'>Right Attached NFT</h3>
           <img
-            src={data?.lnft?.asset?.path}
+            src={data?.asset?.path}
             alt='NFT'
             className='mt-5 h-[189px] w-[189px]'
           />

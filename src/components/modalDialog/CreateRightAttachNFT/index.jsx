@@ -203,7 +203,10 @@ const CreateRightAttachedNFT = ({ handleClose, show }) => {
   const handleTemplate = (image) => {
     setAssetPreview(image);
     toDataURL(image, function (dataUrl) {
-      let data = dataURLToFile(dataUrl, 'Right Attached NFT.png');
+      let data = dataURLToFile(
+        dataUrl,
+        `Right Attached NFT-${Math.random()}.png`
+      );
       setAsset(data);
       console.log(data);
     });
@@ -244,7 +247,7 @@ const CreateRightAttachedNFT = ({ handleClose, show }) => {
 a Right Attached NFT!'
           subMessage='Do you want to create New NFT? if yes let’s go!'
           buttonText='Done'
-          redirection={`/royality-management/${RANFTId}`}
+          redirection={`/royality-management/${CollectionID}`}
         />
         <h3 className='text-[28px] font-black mb-5'>
           Upload Right attached NFT

@@ -124,7 +124,7 @@ const routes = [
     isPrivate: true,
   },
   {
-    path: '/royality-management/:ranftId',
+    path: '/royality-management/:collectionId',
     component: RoyalityManagement,
     isPrivate: true,
   },
