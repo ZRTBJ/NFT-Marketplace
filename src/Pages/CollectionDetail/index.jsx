@@ -1,0 +1,354 @@
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import {
+  getCollectionNFTs,
+  getCollectionDetailsById,
+} from 'services/collection/collectionService';
+import Cover from 'assets/images/collection-cover.svg';
+import manImg from 'assets/images/projectDetails/man-img.svg';
+import avatar from 'assets/images/dummy-img.svg';
+
+const CollectionDetail = () => {
+  const [Collection, setCollection] = useState();
+  const [CoverImages, setCoverImages] = useState({});
+  const [NFTs, setNFTs] = useState([]);
+  const [Links, setLinks] = useState([]);
+  const [ShowOptions, setShowOptions] = useState(null);
+  const { collectionId } = useParams();
+  useEffect(() => {
+    if (collectionId) {
+      getCollectionDetail();
+      getNFTs();
+    }
+  }, []);
+
+  const getNFTs = () => {
+    getCollectionNFTs(collectionId)
+      .then((resp) => {
+        if (resp.code === 0) {
+          console.log(resp);
+          setNFTs(resp.lnfts);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const getCollectionDetail = () => {
+    let payload = {
+      id: collectionId,
+    };
+    getCollectionDetailsById(payload)
+      .then((resp) => {
+        if (resp.code === 0) {
+          console.log(resp);
+          setCollection(resp.collection);
+          if (resp?.collection?.assets && resp?.collection?.assets.length > 0) {
+            setCoverImages(
+              resp.collection.assets.find(
+                (img) => img['asset_purpose'] === 'cover'
+              )
+            );
+            if (Collection.urls && Collection.urls.length > 0) {
+              const webLinks = [];
+              try {
+                const urls = JSON.parse(Collection.links);
+                for (let url of urls) {
+                  webLinks.push({
+                    title: Object.values(url)[0],
+                    value: Object.values(url)[2],
+                  });
+                }
+              } catch {}
+              setLinks(webLinks);
+            }
+          }
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
+  console.log(NFTs);
+
+  function copyToClipboard(text) {
+    navigator.clipboard.writeText(text);
+    const copyEl = document.getElementById('copied-message');
+    copyEl.classList.toggle('hidden');
+    setTimeout(() => {
+      copyEl.classList.toggle('hidden');
+    }, 2000);
+  }
+
+  const handleShowOptions = (value) => {
+    setShowOptions(value);
+  };
+
+  const handleEditNFT = (id) => {
+    setShowOptions(null);
+  };
+
+  const handleUpdateMeta = (id) => {
+    setShowOptions(null);
+  };
+  return (
+    <div>
+      <section className='mt-6'>
+        <div className='row-span-2 col-span-2'>
+          <img
+            className='rounded-xl object-cover h-[260px] w-full'
+            src={Cover}
+            alt=''
+          />
+        </div>
+      </section>
+      <section className='bg-light3 rounded-b-xl mt-4 p-6'>
+        <div className='flex flex-col md:flex-row'>
+          <div className='md:w-2/3'>
+            <div className='flex'>
+              <img
+                src={
+                  Collection && Collection.assets && Collection.assets[1]
+                    ? Collection.assets[1].path
+                    : manImg
+                }
+                className='rounded-full self-start w-14 h-14 md:w-[98px] object-cover md:h-[98px] bg-color-ass-6'
+                alt='User profile'
+              />
+              <div className='flex-1 min-w-0  px-4'>
+                <h1 className='-mt-1 mb-1 md:mb-2 truncate'>
+                  {Collection?.name}
+                </h1>
+                <p className='text-textLight text-sm'>
+                  {Collection?.contract_address
+                    ? Collection.contract_address
+                    : 'Smart Contract not released'}
+                  <i
+                    className={`fa-solid fa-copy ml-2 ${
+                      Collection?.contract_address
+                        ? 'cursor-pointer'
+                        : 'cursor-not-allowed'
+                    }`}
+                    disabled={!Collection?.contract_address}
+                    onClick={() =>
+                      copyToClipboard(Collection?.contract_address)
+                    }
+                  ></i>
+                  <span id='copied-message' className='hidden ml-2'>
+                    Copied !
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div
+            className='flex flex-wrap mt-3 items-start md:justify-end md:w-1/3 md:mt-0'
+            role='group'
+          >
+            {Links.find((link) => link.title === 'linkFacebook') &&
+              Links.find((link) => link.title === 'linkFacebook').value
+                ?.length > 0 && (
+                <div className='cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5'>
+                  <a
+                    href={`${
+                      Links.find((link) => link.title === 'linkFacebook').value
+                    }`}
+                    target='_blank'
+                    rel='noreferrer'
+                  >
+                    <i className='fa-brands fa-facebook text-primary-900'></i>
+                  </a>
+                </div>
+              )}
+
+            {Links.find((link) => link.title === 'linkInsta') &&
+              Links.find((link) => link.title === 'linkInsta').value?.length >
+                0 && (
+                <div className='cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5'>
+                  <a
+                    href={`${
+                      Links.find((link) => link.title === 'linkInsta').value
+                    }`}
+                    target='_blank'
+                    rel='noreferrer'
+                  >
+                    <i className='fa-brands fa-instagram text-primary-900'></i>
+                  </a>
+                </div>
+              )}
+
+            {Links.find((link) => link.title === 'linkTwitter') &&
+              Links.find((link) => link.title === 'linkTwitter').value?.length >
+                0 && (
+                <div className='cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5'>
+                  <a
+                    href={`${
+                      Links.find((link) => link.title === 'linkTwitter').value
+                    }`}
+                    target='_blank'
+                    rel='noreferrer'
+                  >
+                    <i className='fa-brands fa-twitter text-primary-900'></i>
+                  </a>
+                </div>
+              )}
+
+            {Links.find((link) => link.title === 'linkGitub') &&
+              Links.find((link) => link.title === 'linkGitub').value?.length >
+                0 && (
+                <div className='cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5'>
+                  <a
+                    href={`${
+                      Links.find((link) => link.title === 'linkGitub').value
+                    }`}
+                    target='_blank'
+                    rel='noreferrer'
+                  >
+                    <i className='fa-brands fa-github text-primary-900'></i>
+                  </a>
+                </div>
+              )}
+
+            {Links.find((link) => link.title === 'customLinks1') &&
+              Links.find((link) => link.title === 'customLinks1').value
+                ?.length > 0 && (
+                <div className='cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5'>
+                  <a
+                    href={`${
+                      Links.find((link) => link.title === 'customLinks1').value
+                    }`}
+                    target='_blank'
+                    rel='noreferrer'
+                  >
+                    <i className='fa-solid fa-globe text-primary-900'></i>
+                  </a>
+                </div>
+              )}
+          </div>
+        </div>
+
+        <div className='flex flex-col md:flex-row pt-5'>
+          <div className='md:w-2/3'>
+            <h3>About</h3>
+            <p className='text-textLight text-sm'>{Collection?.description}</p>
+            <div className='flex items-center mt-3'>
+              {Collection &&
+                Collection.members &&
+                Collection.members.length > 0 &&
+                Collection.members.map((img, index) => (
+                  <>
+                    {index < 5 && (
+                      <img
+                        key={`member-img-${index}`}
+                        className='rounded-full w-9 h-9 -ml-1 border-2 border-white'
+                        src={img.path ? img.path : avatar}
+                        alt=''
+                      />
+                    )}
+                  </>
+                ))}
+              {Collection &&
+                Collection.members &&
+                Collection.members.length > 5 && (
+                  <span className='ml-2 bg-primary-900 bg-opacity-5  text-primary-900 rounded p-1 text-xs  '>
+                    +{Collection.members.length - 5}
+                  </span>
+                )}
+            </div>
+          </div>
+
+          <div className='flex items-end justify-center flex-col mt-3 md:justify-end md:w-1/3  md:mt-0'>
+            <div className='bg-primary-900 ml-3 bg-opacity-10 rounded-md p-3 px-5 relative w-56'>
+              <i className='fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3'></i>
+              <p className=' text-sm text-textSubtle '>Net Worth</p>
+              <h4>1.400.000 MATIC</h4>
+              <p className='text-sm text-textSubtle'>($1,400.00)</p>
+            </div>
+            <div className='mt-6 flex items-center'>
+              <a className='inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>
+                Sales Setting
+              </a>
+              <a className='inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>
+                Edit Collection
+              </a>
+              {Collection?.status !== 'published' && (
+                <a
+                  // onClick={() => setShowPublishModal(true)}
+                  className='inline-block ml-4 bg-primary-900 p-3 text-white font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out'
+                >
+                  Publish
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+      <section>
+        <a
+          // onClick={() => setShowPublishModal(true)}
+          className='inline-block ml-4 mt-3 bg-primary-900 p-3 text-white font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out'
+        >
+          Mint NFT
+        </a>
+        <div className='mt-4'>
+          {NFTs.map((nft) => {
+            return (
+              <div className='min-h-[390px] rounded-x w-[276px]'>
+                <a href='#'>
+                  <img
+                    className='rounded-xl h-[276px] object-cover w-[276px]'
+                    src={nft?.asset?.path}
+                    alt=''
+                  />
+                </a>
+                <div className='py-5'>
+                  <div className='flex'>
+                    <h2 className='mb-2 text-txtblack truncate flex-1 mr-3 m-w-0 text-[24px]'>
+                      NFT Collection #1
+                    </h2>
+                    <div className='relative'>
+                      <button
+                        type='button'
+                        onClick={() => handleShowOptions(nft.id)}
+                      >
+                        <i class='fa-regular fa-ellipsis-vertical text-textSubtle'></i>
+                      </button>
+                      {/* Dropdown menu  */}
+                      {ShowOptions === nft.id && (
+                        <div className='z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 block'>
+                          <ul class='text-sm'>
+                            <li className='border-b border-divide'>
+                              <a
+                                onClick={() => handleEditNFT(nft.id)}
+                                className='block p-4 hover:bg-gray-100 dark:hover:bg-gray-600'
+                              >
+                                Edit NFT
+                              </a>
+                            </li>
+                            <li className='border-b border-divide'>
+                              <a
+                                onClick={() => handleUpdateMeta(nft.id)}
+                                className='block p-4 hover:bg-gray-100 dark:hover:bg-gray-600'
+                              >
+                                Update Metadata
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <p className='mb-3 text-black text-[13px] flex justify-between'>
+                    <span>0 ETH</span>
+                    <span>Blockchain Logo</span>
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default CollectionDetail;
