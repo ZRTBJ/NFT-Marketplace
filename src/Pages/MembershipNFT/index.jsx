@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { DebounceInput } from "react-debounce-input";
 import Tooltip from "components/Tooltip";
 import Modal from "components/Modal";
+import SuccessModal from "components/modalDialog/SuccessModal";
 
 export default function MembershipNFT() {
   const userinfo = useSelector((state) => state.user.userinfo);
@@ -40,6 +41,9 @@ export default function MembershipNFT() {
   const [checkedValidation, setCheckedValidation] = useState(false);
   const [showPropertyModal, setShowPropertyModal] = useState(false);
   const [propertyList, setPropertyList] = useState([]);
+  const [indexOfNfts, setIndexOfNfts] = useState("");
+  const [isPreview, setIsPreview] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   function onTextfieldChange(index, fieldName, value) {
     setValue(index, fieldName, value);
   }
@@ -122,13 +126,17 @@ export default function MembershipNFT() {
   }
   function handleOnChangePropertyType(event, index) {
     const value = event.target.value;
+    let tempProperty = [...propertyList];
     const property = propertyList[index];
     property.key = value;
+    setPropertyList(tempProperty);
   }
   function handleOnChangePropertyName(event, index) {
     const value = event.target.value;
-    const property = propertyList[index];
+    let tempProperty = [...propertyList];
+    const property = tempProperty[index];
     property.value = value;
+    setPropertyList(tempProperty);
   }
   function addProperty() {
     const tempProperty = [...propertyList];
@@ -141,9 +149,10 @@ export default function MembershipNFT() {
     setPropertyList(tempProperty);
   }
   function removeProperty(index) {
-    const tempProperty = [...propertyList];
-    tempProperty.splice(index - 1, 1);
+    let tempProperty = [...propertyList];
+    tempProperty = tempProperty.filter((prop) => prop !== tempProperty[index]);
     setPropertyList(tempProperty);
+    console.log(tempProperty);
   }
   function onSensitiveContentChange(index) {
     let oldNfts = [...nfts];
@@ -151,13 +160,46 @@ export default function MembershipNFT() {
     setNfts(oldNfts);
   }
   function openPropertyModal(index) {
+    setIndexOfNfts(index);
     let oldNfts = [...nfts];
     setPropertyList(oldNfts[index].properties);
     setShowPropertyModal(true);
   }
-  function nextHandle() {
-    console.log(nfts);
+  function onSavePropertiesChange() {
+    let oldNfts = [...nfts];
+    oldNfts[indexOfNfts].properties = propertyList;
+    setNfts(oldNfts);
+    setShowPropertyModal(false);
+    setPropertyList([]);
   }
+  function nextHandle() {
+    const validateNfts = nfts.filter(
+      (element) =>
+        element.tierName !== "" &&
+        element.assets.file !== null &&
+        element.assets.isFileError === false &&
+        element.assets.limitExceeded === false &&
+        element.nftName !== "" &&
+        element.supply !== ""
+    );
+    if (isPreview) {
+      setShowSuccessModal(true);
+    } else {
+      setCheckedValidation(true);
+      if (validateNfts.length === nfts.length) {
+        window.scroll({ top: 0, behavior: "smooth" });
+        setIsPreview(true);
+      }
+    }
+  }
+
+  useEffect(() => {
+    setPropertyList(propertyList);
+  }, [propertyList]);
+  useEffect(() => {
+    setNfts(nfts);
+  }, [nfts]);
+
   return (
     <>
       {isDataLoading && <div className="loading"></div>}
@@ -166,10 +208,12 @@ export default function MembershipNFT() {
           <div className="max-w-[600px] mx-auto md:mt-[40px]">
             <div className="mb-[24px]">
               <h1 className="text-[28px] font-black mb-[6px]">
-                Create Membership NFT
+                {isPreview ? "Review Membership NFT" : "Create Membership NFT"}
               </h1>
               <p className="text-[14px] text-textSubtle ">
-                Fill the require form to create NFT
+                {isPreview
+                  ? " Review the form to create NFT"
+                  : " Fill the require form to create NFT"}
               </p>
             </div>
             <div>
@@ -178,7 +222,7 @@ export default function MembershipNFT() {
                   key={index}
                   className="mb-6 rounded-[12px]  border border-divider  p-4"
                 >
-                  {nfts.length > 1 && (
+                  {nfts.length > 1 && !isPreview && (
                     <div className="text-right">
                       <i
                         onClick={() => deleteNfs(index)}
@@ -192,7 +236,10 @@ export default function MembershipNFT() {
                       <DebounceInput
                         minLength={1}
                         debounceTimeout={0}
-                        className="debounceInput mt-1"
+                        className={`debounceInput mt-1 ${
+                          isPreview ? " !border-none bg-transparent" : ""
+                        } `}
+                        disabled={isPreview}
                         value={nft.tierName}
                         onChange={(e) =>
                           onTextfieldChange(index, "tierName", e.target.value)
@@ -303,6 +350,7 @@ export default function MembershipNFT() {
                         </div>
 
                         <input
+                          disabled={isPreview}
                           key={index}
                           id={`dropzone-file${index}`}
                           type="file"
@@ -335,10 +383,13 @@ export default function MembershipNFT() {
                       <DebounceInput
                         minLength={1}
                         debounceTimeout={0}
-                        className="debounceInput mt-1"
+                        className={`debounceInput mt-1 ${
+                          isPreview ? " !border-none bg-transparent" : ""
+                        } `}
+                        disabled={isPreview}
                         value={nft.nftName}
                         onChange={(e) =>
-                          onTextfieldChange(index, "name", e.target.value)
+                          onTextfieldChange(index, "nftName", e.target.value)
                         }
                         placeholder="Name for the NFT"
                       />
@@ -353,7 +404,10 @@ export default function MembershipNFT() {
                       <DebounceInput
                         minLength={1}
                         debounceTimeout={0}
-                        className="debounceInput mt-1"
+                        className={`debounceInput mt-1 ${
+                          isPreview ? " !border-none bg-transparent" : ""
+                        } `}
+                        disabled={isPreview}
                         value={nft.externalLink}
                         onChange={(e) =>
                           onTextfieldChange(
@@ -378,6 +432,10 @@ export default function MembershipNFT() {
                       cols="30"
                       rows="6"
                       placeholder="Add brief description about this NFT"
+                      className={`mt-1 ${
+                        isPreview ? " !border-none bg-transparent" : ""
+                      } `}
+                      disabled={isPreview}
                     ></textarea>
                   </div>
                   <div className="mb-6">
@@ -390,14 +448,17 @@ export default function MembershipNFT() {
                         <DebounceInput
                           minLength={1}
                           debounceTimeout={0}
-                          className="debounceInput mt-1"
+                          className={`debounceInput mt-1 ${
+                            isPreview ? " !border-none bg-transparent" : ""
+                          } `}
+                          disabled={isPreview}
                           value={benefit.title}
                           onChange={(e) =>
                             onBenefitChange(index, benefitIndex, e.target.value)
                           }
                           placeholder="https://"
                         />
-                        {nft.benefits.length > 1 && (
+                        {nft.benefits.length > 1 && !isPreview && (
                           <div className="ml-4">
                             <i
                               onClick={() =>
@@ -409,12 +470,14 @@ export default function MembershipNFT() {
                         )}
                       </div>
                     ))}
-                    <button
-                      onClick={() => addMoreBenefits(index)}
-                      className="h-[43px] mb-4 mr-4 px-4 py-2 text-[14px]  bg-primary-900/[.20] font-black  rounded text-primary-900   "
-                    >
-                      Add More Benefit
-                    </button>
+                    {!isPreview && (
+                      <button
+                        onClick={() => addMoreBenefits(index)}
+                        className="h-[43px] mb-4 mr-4 px-4 py-2 text-[14px]  bg-primary-900/[.20] font-black  rounded text-primary-900   "
+                      >
+                        Add More Benefit
+                      </button>
+                    )}
                   </div>
 
                   <div className="mb-6">
@@ -430,10 +493,12 @@ export default function MembershipNFT() {
                           Add NFT properties
                         </small>
                       </div>
-                      <i
-                        className="fa-regular fa-square-plus text-2xl text-primary-900 cursor-pointer"
-                        onClick={() => openPropertyModal(index)}
-                      ></i>
+                      {!isPreview && (
+                        <i
+                          className="fa-regular fa-square-plus text-2xl text-primary-900 cursor-pointer"
+                          onClick={() => openPropertyModal(index)}
+                        ></i>
+                      )}
                     </div>
                     <div className="flex py-3 border-b border-b-divider">
                       <p className="text-txtblack text-[18px] font-black">
@@ -445,32 +510,38 @@ export default function MembershipNFT() {
                           Defined properties on your NFT
                         </small>
                       </div>
-                      <div className="flex flex-wrap items-center">
-                        <label
-                          htmlFor={`checked-toggle-${index}`}
-                          className="inline-flex relative items-center cursor-pointer ml-auto"
-                        >
-                          <input
-                            type="checkbox"
-                            value={nft.sensitiveContent}
-                            id={`checked-toggle-${index}`}
-                            checked={nft.sensitiveContent}
-                            className="sr-only peer outline-none"
-                            onChange={(e) =>
-                              onSensitiveContentChange(
-                                index,
-                                nft.sensitiveContent
-                              )
-                            }
-                          />
-                          <div className="w-11 outline-none h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-900"></div>
-                        </label>
-                      </div>
+                      {isPreview ? (
+                        <div className="text-[14px] text-textSubtle">
+                          {nft.sensitiveContent.toString().toLocaleUpperCase()}
+                        </div>
+                      ) : (
+                        <div className="flex flex-wrap items-center">
+                          <label
+                            htmlFor={`checked-toggle-${index}`}
+                            className="inline-flex relative items-center cursor-pointer ml-auto"
+                          >
+                            <input
+                              type="checkbox"
+                              value={nft.sensitiveContent}
+                              id={`checked-toggle-${index}`}
+                              checked={nft.sensitiveContent}
+                              className="sr-only peer outline-none"
+                              onChange={(e) =>
+                                onSensitiveContentChange(
+                                  index,
+                                  nft.sensitiveContent
+                                )
+                              }
+                            />
+                            <div className="w-11 outline-none h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-900"></div>
+                          </label>
+                        </div>
+                      )}
                     </div>
-                    <div className="grid grid-cols-3 sm:grid-cols-6 gap-4 mt-2">
-                      {propertyList &&
-                        propertyList.map((property, index) => (
-                          <>
+                    <div className="mt-2 flex flex-wrap">
+                      {nft.properties &&
+                        nft.properties.map((property, index) => (
+                          <div key={index} className="m-2">
                             {property.key.length > 0 && property.value.length && (
                               <div
                                 key={`properties-${index}`}
@@ -484,7 +555,7 @@ export default function MembershipNFT() {
                                 </div>
                               </div>
                             )}
-                          </>
+                          </div>
                         ))}
                     </div>
                   </div>
@@ -498,7 +569,10 @@ export default function MembershipNFT() {
                       <DebounceInput
                         minLength={1}
                         debounceTimeout={0}
-                        className="debounceInput mt-1"
+                        className={`debounceInput mt-1 ${
+                          isPreview ? " !border-none bg-transparent" : ""
+                        } `}
+                        disabled={isPreview}
                         value={nft.supply}
                         type="number"
                         onChange={(e) =>
@@ -521,7 +595,9 @@ export default function MembershipNFT() {
                     <select
                       value={nft.blockchainCategory}
                       disabled
-                      className="h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3"
+                      className={`h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3 ${
+                        isPreview ? " !border-none bg-transparent" : ""
+                      } `}
                     >
                       <option value={nft.blockchainCategory} defaultValue>
                         Polygon
@@ -532,18 +608,37 @@ export default function MembershipNFT() {
               ))}
             </div>
             <div className="my-6 md:flex">
-              <button
-                onClick={addMoreTier}
-                className="h-[43px] mb-4 mr-4 px-6 py-2 bg-primary-900/[.20] font-black  rounded text-primary-900   "
-              >
-                Add More Tier
-              </button>
-              <button
-                onClick={nextHandle}
-                className="h-[43px] px-6 py-2 bg-primary-900 rounded font-black text-white-shade-900   md:ml-auto"
-              >
-                Next
-              </button>
+              {isPreview ? (
+                <>
+                  <button
+                    onClick={() => setIsPreview(false)}
+                    className="h-[43px] mb-4 mr-4 px-6 py-2 bg-primary-900/[.20] font-black  rounded text-primary-900   "
+                  >
+                    Back
+                  </button>
+                  <button
+                    onClick={nextHandle}
+                    className="h-[43px] px-6 py-2 bg-primary-900 rounded font-black text-white-shade-900   md:ml-auto"
+                  >
+                    Submit
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={addMoreTier}
+                    className="h-[43px] mb-4 mr-4 px-6 py-2 bg-primary-900/[.20] font-black  rounded text-primary-900   "
+                  >
+                    Add More Tier
+                  </button>
+                  <button
+                    onClick={nextHandle}
+                    className="h-[43px] px-6 py-2 bg-primary-900 rounded font-black text-white-shade-900   md:ml-auto"
+                  >
+                    Next
+                  </button>
+                </>
+              )}
             </div>
           </div>
           <Modal
@@ -562,7 +657,7 @@ export default function MembershipNFT() {
               <p className="text-color-ass-9 text-sm">Add Properties</p>
               {propertyList &&
                 propertyList.map((property, index) => (
-                  <div key={`properties-${index}`}>
+                  <div key={index}>
                     <div className="flex items-center mt-3">
                       <input
                         name={`type-${index}`}
@@ -579,10 +674,13 @@ export default function MembershipNFT() {
                         defaultValue={property.value}
                         onChange={(e) => handleOnChangePropertyName(e, index)}
                       />
-                      <i
-                        className="fa-solid fa-trash cursor-pointer ml-3"
-                        onClick={() => removeProperty(index)}
-                      ></i>
+
+                      {propertyList.length > 1 && (
+                        <i
+                          className="cursor-pointer fa-solid fa-trash text-danger-1/[0.7] ml-3"
+                          onClick={() => removeProperty(index)}
+                        ></i>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -590,7 +688,7 @@ export default function MembershipNFT() {
               <div className="mt-5">
                 <button
                   type="button"
-                  className="btn btn-text-gradient"
+                  className="h-[43px] mb-4 mr-4 px-6 py-2 bg-primary-900/[.20] font-black  rounded text-primary-900"
                   onClick={() => addProperty()}
                 >
                   Add more +
@@ -600,8 +698,8 @@ export default function MembershipNFT() {
               <div className="mt-5">
                 <button
                   type="button"
-                  className="btn btn-primary btn-sm"
-                  onClick={() => setShowPropertyModal(false)}
+                  className="h-[43px] px-6 py-2 bg-primary-900 rounded font-black text-white-shade-900"
+                  onClick={onSavePropertiesChange}
                 >
                   SAVE
                 </button>
@@ -609,6 +707,14 @@ export default function MembershipNFT() {
             </div>
           </Modal>
         </>
+      )}
+      {showSuccessModal && (
+        <SuccessModal
+          message="Successfully created your Membership NFT"
+          secondaryMessage="Do you also want to mint the NFT?"
+          handleClose={() => setShowSuccessModal(false)}
+          show={showSuccessModal}
+        />
       )}
     </>
   );
