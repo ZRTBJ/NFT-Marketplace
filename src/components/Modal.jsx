@@ -16,9 +16,8 @@ const Modal = ({
   };
 
   const modalBodyClicked = (e) => {
-    e.preventDefault();
+    // e.preventDefault();
     e.stopPropagation();
-
     // e.stopImmediatePropagation();
   };
   return (

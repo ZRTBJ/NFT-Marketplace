@@ -711,7 +711,7 @@ export default function MembershipNFT() {
       {showSuccessModal && (
         <SuccessModal
           message="Successfully created your Membership NFT"
-          secondaryMessage="Do you also want to mint the NFT?"
+          subMessage="Do you also want to mint the NFT?"
           handleClose={() => setShowSuccessModal(false)}
           show={showSuccessModal}
         />
