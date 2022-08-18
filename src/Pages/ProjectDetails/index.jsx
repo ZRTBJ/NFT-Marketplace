@@ -1,40 +1,45 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   getProjectDetailsById,
   projectLike,
   projectBookmark,
-} from 'services/project/projectService';
-import { getNftListByProjectId } from 'services/nft/nftService';
-import { ReactComponent as HeartIcon } from 'assets/images/projectDetails/heartIcon.svg';
-import { ReactComponent as BookmarkIcon } from 'assets/images/projectDetails/bookmarkIcon.svg';
-import { ReactComponent as HeartIconFilled } from 'assets/images/projectDetails/HeartIconFilled.svg';
-import { ReactComponent as BookmarkIconFilled } from 'assets/images/projectDetails/BookmarkIconFilled.svg';
-import coverImg from 'assets/images/no-image-found.png';
-import manImg from 'assets/images/projectDetails/man-img.svg';
-import locationIcon from 'assets/images/profile/locationIcon.svg';
-import { Link, useHistory } from 'react-router-dom';
-import Slider from 'components/slider/slider';
-import Card from 'components/profile/Card';
-import InfiniteScroll from 'react-infinite-scroll-component';
+} from "services/project/projectService";
+import { getNftListByProjectId } from "services/nft/nftService";
+import manImg from "assets/images/projectDetails/man-img.svg";
+import bigImg from "assets/images/gallery/big-img.svg";
+import { useHistory } from "react-router-dom";
 
-import { useSelector } from 'react-redux';
-import ProjectDetailsEmptyCaseCard from 'components/EmptyCaseCard/ProjectDetailsEmptyCaseCard';
-import CommonCard from 'components/CommonCard';
-import CreateRightAttachedNFT from 'components/modalDialog/CreateRightAttachNFT';
+import thumbIcon from "assets/images/profile/card.svg";
+import avatar from "assets/images/dummy-img.svg";
+
+import { useSelector } from "react-redux";
+import PublishModal from "components/modalDialog/PublishModal";
+import ErrorModal from "components/modalDialog/ErrorModal";
+import SuccessModal from "components/modalDialog/SuccessModal";
+import DeployingProjectModal from "components/modalDialog/DeployingProjectModal";
+import { getCollections } from "services/collection/collectionService";
 
 export default function ProjectDetails(props) {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
   const [project, setProject] = useState({});
   const projectId = props.match.params.id;
-  const [selectedImages, setSelectedImages] = useState({});
+  const [coverImages, setCoverImages] = useState({});
   const userInfo = useSelector((state) => state.user.userinfo);
   // nft list
   const [hasMore, setHasMore] = useState(false);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [nftList, setNftList] = useState([]);
-  const [showCreate, setShowCreate] = useState(false);
+  const [links, setLinks] = useState([]);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showPublishModal, setShowPublishModal] = useState(false);
+  const [showDeployModal, setShowDeployModal] = useState(false);
+  const [tnxData, setTnxData] = useState({});
+  const [publishStep, setPublishStep] = useState(1);
+  const [selectedTab, setSelectedTab] = useState(1);
+  const [collectionList, setCollectionList] = useState([]);
 
   async function fetchData() {
     if (hasMore) {
@@ -51,7 +56,7 @@ export default function ProjectDetails(props) {
   }, [projectId]);
 
   useEffect(() => {
-    fetchNftList();
+    getCollectionList();
   }, []);
 
   async function projectDetails(pid) {
@@ -60,8 +65,23 @@ export default function ProjectDetails(props) {
       .then((res) => {
         if (res.code === 0) {
           setProject(res.project);
-          if (res?.project?.assets[1]) {
-            setSelectedImages(res.project.assets[1]);
+          if (res?.project?.assets && res?.project?.assets.length > 0) {
+            setCoverImages(
+              res.project.assets.find((img) => img["asset_purpose"] === "cover")
+            );
+            if (project.urls && project.urls.length > 0) {
+              const webLinks = [];
+              try {
+                const urls = JSON.parse(project.urls);
+                for (let url of urls) {
+                  webLinks.push({
+                    title: Object.values(url)[0],
+                    value: Object.values(url)[2],
+                  });
+                }
+              } catch {}
+              setLinks(webLinks);
+            }
           }
         }
         setIsLoading(false);
@@ -74,7 +94,7 @@ export default function ProjectDetails(props) {
   function LikeProject(value) {
     setIsLoading(true);
     const request = new FormData();
-    request.append('like', value);
+    request.append("like", value);
     projectLike(projectId, request)
       .then((res) => {
         if (res.code === 0) {
@@ -91,7 +111,7 @@ export default function ProjectDetails(props) {
   function BookmarkProject(value) {
     setIsLoading(true);
     const request = new FormData();
-    request.append('bookmark', value);
+    request.append("bookmark", value);
     projectBookmark(projectId, request)
       .then((res) => {
         if (res.code === 0) {
@@ -106,7 +126,7 @@ export default function ProjectDetails(props) {
   }
 
   function changeImagePreview(image) {
-    setSelectedImages(image);
+    setCoverImages(image);
   }
 
   async function fetchNftList() {
@@ -137,632 +157,619 @@ export default function ProjectDetails(props) {
       });
   }
 
+  async function intiProjectPublish() {
+    setShowPublishModal(false);
+    if (project.project_status === "publishing") {
+      setPublishStep(1);
+      setShowDeployModal(true);
+    } else {
+      setShowDeployModal(true);
+    }
+  }
+
+  function copyToClipboard(text) {
+    navigator.clipboard.writeText(text);
+    const copyEl = document.getElementById("copied-message");
+    copyEl.classList.toggle("hidden");
+    setTimeout(() => {
+      copyEl.classList.toggle("hidden");
+    }, 2000);
+  }
+
+  async function getCollectionList() {
+    setIsLoading(true);
+    await getCollections("project", projectId, page, limit)
+      .then((e) => {
+        if (e.code === 0 && e.collections !== null) {
+          if (e.collections.length === limit) {
+            let pageSize = page + 1;
+            setPage(pageSize);
+            setHasMore(true);
+          }
+
+          const cols = collectionList.concat(e.collections);
+          setCollectionList(cols);
+        }
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
+  }
+
   return (
     <>
-      <CreateRightAttachedNFT
-        show={showCreate}
-        handleClose={() => setShowCreate(false)}
-      />
-      {isLoading && <div className='loading'></div>}
+      {isLoading && <div className="loading"></div>}
       {!isLoading && (
         <>
-          {userInfo.id && (
-            <>
-              {project.is_owner && project.project_status === 'published' ? (
+          <section className="grid sm:grid-cols-5 gap-4 mt-6">
+            <div className="row-span-2 col-span-2">
+              <img
+                className="rounded-xl object-cover h-[260px] w-full"
+                src={coverImages ? coverImages.path : bigImg}
+                alt=""
+              />
+            </div>
+            {project?.assets?.length > 0 &&
+              project.assets.map((img, index) => (
                 <>
-                  <section className='flex  justify-end py-7'>
-                    <button
-                      type='button'
-                      className='btn btn-outline-primary-gradient btn-md'
-                    >
-                      <Link to={`/project-edit/${project.id}/outline`}>
-                        <span>Edit Project</span>
-                      </Link>
-                    </button>
-                  </section>
+                  {img["asset_purpose"] !== "cover" && (
+                    <div key={`dao-image-${index}`}>
+                      <img
+                        className="rounded-xl object-cover h-[122px] w-full"
+                        src={img ? img.path : manImg}
+                        alt=""
+                      />
+                    </div>
+                  )}
                 </>
-              ) : (
-                <div className='flex justify-end gap-3'>
-                  {project.liked ? (
-                    <div className='h-[56px] w-[56px] bg-[#231B39] rounded-xl  text-center flex justify-center items-center'>
-                      <HeartIconFilled
-                        className='h-[24px] w-[24px] cursor-pointer'
-                        onClick={() => LikeProject(false)}
-                      />
-                    </div>
-                  ) : (
-                    <div className='h-[56px] w-[56px] bg-[#231B39] rounded-xl text-center flex justify-center items-center'>
-                      <HeartIcon
-                        className='h-[24px] w-[24px] cursor-pointer'
-                        onClick={() => LikeProject(true)}
-                      />
-                    </div>
-                  )}
-
-                  {project.bookmarked ? (
-                    <div className='h-[56px] w-[56px] bg-[#231B39] rounded-xl text-center flex justify-center items-center'>
-                      <BookmarkIconFilled
-                        className='h-[24px] w-[24px] cursor-pointer'
-                        onClick={() => BookmarkProject(false)}
-                      />
-                    </div>
-                  ) : (
-                    <div className='h-[56px] w-[56px] bg-[#231B39] rounded-xl text-center flex justify-center items-center'>
-                      <BookmarkIcon
-                        className=' h-[24px] w-[24px] cursor-pointer'
-                        onClick={() => BookmarkProject(true)}
-                      />
-                    </div>
-                  )}
-
-                  {/* <img
-                    className="h-[56px] w-[56px] mr-3 cursor-pointer"
-                    src={heartIcon}
-                    alt=""
-                    onClick={LikeProject}
-                  />
-                  <img
-                    className="h-[56px] w-[56px]  cursor-pointer"
-                    src={bookmarkIcon}
-                    alt=""
-                    onClick={BookmarkProject}
-                  /> */}
-                </div>
-              )}
-            </>
-          )}
-
-          {/* Cover image section */}
-          <section className='pt-5 rounded-3xl'>
-            <button onClick={() => setShowCreate(true)}>Create</button>
-            {!isLoading && (
-              <img
-                src={
-                  project && project.assets && project.assets.length > 0
-                    ? project.assets.find((x) => x.asset_purpose === 'cover')
-                        ?.path
-                      ? project.assets.find((x) => x.asset_purpose === 'cover')
-                          ?.path
-                      : require(`assets/images/no-image-found.png`)
-                    : require(`assets/images/no-image-found.png`)
-                }
-                className={`rounded-3xl object-cover md:h-[310px] w-full 
-                  ${
-                    project && project.assets && project.assets.length > 0
-                      ? project.assets.find((x) => x.asset_purpose === 'cover')
-                          ?.path
-                        ? project.assets.find(
-                            (x) => x.asset_purpose === 'cover'
-                          )?.path
-                        : 'object-right-top'
-                      : 'object-right-top'
-                  }`}
-                alt='Project Cover'
-              />
-            )}
+              ))}
           </section>
+          {/* end gallery */}
 
-          <section className='flex flex-col lg:flex-row py-9'>
-            <div className='flex-1 flex items-center py-5'>
-              <div className='pr-4 lg:pr-28'>
-                <h1 className='text-white mb-6'>{project.name}</h1>
-
-                <div className='flex flex-wrap mb-6'>
-                  <div className='flex space-x-2 items-center text-white mr-4 cursor-pointer'>
-                    <i className='fa-thin fa-eye'></i>
-                    <span className=' ml-1'>{project.project_view_count}</span>
-                  </div>
-
-                  <div className='flex space-x-2 items-center text-white mr-4 cursor-pointer'>
-                    <i className='fa-thin fa-heart'></i>
-
-                    <span className=' ml-1'>{project.project_like_count}</span>
-                  </div>
-
-                  <div className='flex space-x-2 items-center text-white mr-4 cursor-pointer'>
-                    <i className='fa-thin fa-bookmark'></i>
-
-                    <span className=' ml-1'>{project.project_mark_count}</span>
-                  </div>
-                </div>
-                <p className='text-color-asss-3 text-sm font-satoshi-bold font-black mb-3'>
-                  {project.overview}
-                </p>
-              </div>
-            </div>
-
-            <div className='max-w-full lg:w-[553px] lg:h-[690px] mx-auto'>
-              <Slider imagesUrl={project.assets} />
-            </div>
-          </section>
-
-          <section className='flex  my-4'>
-            {project.is_owner &&
-              project.your_token_category &&
-              project.project_status === 'published' && (
-                <button
-                  type='button'
-                  className='btn btn-primary btn-sm'
-                  onClick={() =>
-                    history.push(`/${project.id ? project.id : ''}/mint-nft`)
-                  }
-                >
-                  MINT NFT <i className='fa-thin fa-square-plus ml-1'></i>
-                </button>
-              )}
-
-            {nftList.length !== 0 && (
-              <button
-                type='button'
-                className='ml-auto btn btn-outline-primary btn-sm'
-              >
-                Sort By{' '}
-                <i className='fa-thin fa-arrow-down-short-wide ml-1'></i>
-              </button>
-            )}
-          </section>
-
-          {nftList.length === 0 ? (
-            <>
-              {project.is_owner ? (
-                <ProjectDetailsEmptyCaseCard userType='self'></ProjectDetailsEmptyCaseCard>
-              ) : (
-                <ProjectDetailsEmptyCaseCard userType='visitor'></ProjectDetailsEmptyCaseCard>
-              )}
-            </>
-          ) : (
-            <></>
-          )}
-
-          {!isLoading && (
-            <InfiniteScroll
-              dataLength={nftList.length} //This is important field to render the next data
-              next={fetchData}
-              hasMore={hasMore}
-            >
-              <div className='py-5 grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 '>
-                {nftList.map((nft) => (
-                  <div key={nft.id}>
-                    <div className=''>
-                      <CommonCard project={nft} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </InfiniteScroll>
-          )}
-
-          {/* 
-            <div className="py-3 grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
-              <Card />
-              <Card />
-              <Card />
-              <Card />
-              <Card />
-            </div> */}
-
-          {/* ========== nft deatils page murkup */}
-          {/* <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br /> */}
-          {/* 
-            <section className="flex flex-col lg:flex-row py-5">
-              <div className="flex-1 pr-4 mb-5 md:mb-0">
-                <img src={manImg} className="rounded-3xl" alt="image" />
-              </div>
-              <div className="flex-1 flex flex-col justify-between">
-                <div className="bg-color-dark-1 rounded-3xl p-5 mb-2">
-                  <h1 className="text-white  pb-4">Bored Ape #8295</h1>
-                  <p className="text-white text-sm pb-4">Find it On</p>
-                  <p className="text-white-shade-600 text-sm">
-                    Your NFT is not listed on any marketplace
-                  </p>
-                </div>
-                <div className="bg-color-dark-1 rounded-3xl p-5 mb-2">
-                  <h1 className="text-white  pb-4">Description</h1>
-                  <p className="text-white-shade-600 text-sm pb-4">
-                    It is a long established fact that a reader will be
-                    distracted by the readable content of a page when looking at
-                    its layout. It is a long established fact that a reader will
-                    be distracted by the readable content of a page when looking
-                    at its layout. It is a long established fact that a reader
-                    will be distracted by
-                  </p>
-                </div>
-                <div className="bg-color-dark-1 rounded-3xl p-5 ">
-                  <h1 className="text-white  pb-4">Properties</h1>
-                  <div className="flex  flex-wrap">
-                    <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
-                      <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
-                        <p className="text-white-shade-600 text-sm">
-                          Background
-                        </p>
-                        <h5 className="text-white">Green</h5>
-                        <p className="text-white-shade-600 text-sm">
-                          Add 5% this trait
-                        </p>
-                      </div>
-                    </div>
-                    <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
-                      <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
-                        <p className="text-white-shade-600 text-sm">
-                          Background
-                        </p>
-                        <h5 className="text-white">Green</h5>
-                        <p className="text-white-shade-600 text-sm">
-                          Add 5% this trait
-                        </p>
-                      </div>
-                    </div>
-                    <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
-                      <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
-                        <p className="text-white-shade-600 text-sm">
-                          Background
-                        </p>
-                        <h5 className="text-white">Green</h5>
-                        <p className="text-white-shade-600 text-sm">
-                          Add 5% this trait
-                        </p>
-                      </div>
-                    </div>
-                    <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
-                      <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
-                        <p className="text-white-shade-600 text-sm">
-                          Background
-                        </p>
-                        <h5 className="text-white">Green</h5>
-                        <p className="text-white-shade-600 text-sm">
-                          Add 5% this trait
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-            <section>
-              <div className="bg-color-dark-1 rounded-3xl p-5 mb-4 lg:w-2/5">
-                <div className="flex text-white mb-3">
-                  <div className="font-bold w-1/3 flex justify-between mr-1">
-                    <span>Smart Contract </span>
-                    <span>:</span>
-                  </div>
-                  <div className="text-ellipsis overflow-hidden flex-1 pr-4 relative">
-                    Xysd29479q3hfu39238yXysd29479q3hfu39238yXysd29479q3hfu39238yXysd29479q3hfu39238y
-                    <i className="fa-thin fa-copy cursor-pointer absolute top-1 right-0"></i>
-                  </div>
-                </div>
-                <div className="flex text-white">
-                  <div className="font-bold w-1/3 flex justify-between mr-1">
-                    <span>Token ID </span>
-                    <span>:</span>
-                  </div>
-                  <div className="text-ellipsis overflow-hidden">12342</div>
-                </div>
-              </div>
-            </section> */}
-
-          {/* ========== nft deatils page murkup */}
-          {/* <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br /> */}
-
-          {/* <section className="flex flex-col lg:flex-row py-5">
-              <div className="flex-1 pr-4 mb-5 md:mb-0">
-                <img src={manImg} className="rounded-3xl" alt="image" />
-              </div>
-              <div className="flex-1 flex flex-col justify-between">
-                <div className="bg-color-dark-1 rounded-3xl p-5 mb-2">
-                  <h1 className="text-white  pb-4">Bored Ape #8295</h1>
-                  <p className="text-white text-sm pb-4">Find it On</p>
-                  <div className="flex">
-                    <button className="border border-color-blue rounded-xl p-5 text-color-blue font-semibold mr-4 hover:text-white hover:bg-color-blue">
-                      <i className="fa-regular fa-aperture mr-1"></i> Opensea
-                    </button>
-                    <button className="border border-color-yellow rounded-xl p-5 text-color-yellow font-semibold hover:text-white hover:bg-color-yellow">
-                      <i className="fa-regular fa-square-r mr-1"></i> Rarible
-                    </button>
-                  </div>
-                </div>
-                <div className="bg-color-dark-1 rounded-3xl p-5 mb-2">
-                  <h1 className="text-white  pb-4">Description</h1>
-                  <p className="text-white-shade-600 text-sm pb-4">
-                    It is a long established fact that a reader will be
-                    distracted by the readable content of a page when looking at
-                    its layout. It is a long established fact that a reader will
-                    be distracted by the readable content of a page when looking
-                    at its layout. It is a long established fact that a reader
-                    will be distracted by
-                  </p>
-                </div>
-                <div className="bg-color-dark-1 rounded-3xl p-5 ">
-                  <h1 className="text-white  pb-4">Properties</h1>
-                  <div className="flex  flex-wrap">
-                    <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
-                      <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
-                        <p className="text-white-shade-600 text-sm">
-                          Background
-                        </p>
-                        <h5 className="text-white">Green</h5>
-                        <p className="text-white-shade-600 text-sm">
-                          Add 5% this trait
-                        </p>
-                      </div>
-                    </div>
-                    <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
-                      <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
-                        <p className="text-white-shade-600 text-sm">
-                          Background
-                        </p>
-                        <h5 className="text-white">Green</h5>
-                        <p className="text-white-shade-600 text-sm">
-                          Add 5% this trait
-                        </p>
-                      </div>
-                    </div>
-                    <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
-                      <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
-                        <p className="text-white-shade-600 text-sm">
-                          Background
-                        </p>
-                        <h5 className="text-white">Green</h5>
-                        <p className="text-white-shade-600 text-sm">
-                          Add 5% this trait
-                        </p>
-                      </div>
-                    </div>
-                    <div className="rounded-3xl w-32 h-28  mr-3 mb-3 bg-gradient-to-r p-[1px] from-[#DF9B5D]  to-[#9A5AFF]">
-                      <div className="flex flex-col justify-between text-center h-full bg-color-dark-1 text-white rounded-3xl p-3">
-                        <p className="text-white-shade-600 text-sm">
-                          Background
-                        </p>
-                        <h5 className="text-white">Green</h5>
-                        <p className="text-white-shade-600 text-sm">
-                          Add 5% this trait
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section> */}
-        </>
-      )}
-
-      {/* old code */}
-
-      {/* <div className={`my-4 ${isLoading ? "loading" : ""}`}>
-        {!isLoading && project && !project.name && (
-          <div className="text-center text-red-500">Project not Found</div>
-        )}
-        {!isLoading && project && project.name && (
-          <div>
-            <div className="ml-12 text-2xl font-bold">{project.name}</div>
-            <div className="py-4">
-              <img
-                src={
-                  project?.assets[0]?.path
-                    ? project.assets[0].path
-                    : require(`assets/images/no-image-found.png`)
-                }
-                alt="cover"
-                className="w-full h-96"
-              />
-            </div>
-            <div className="float-right mr-10">
-              <div
-                className="relative bottom-10 left-1 rounded-full h-14 w-14 bg-[#B9CCD5] hover:bg-[#0AB4AF] grid grid-cols-1 content-center cursor-pointer"
-                onClick={LikeProject}
-              >
-                <LikeIcon className="ml-1.5" />
-              </div>
-              <div className="relative bottom-10 left-0 text-sm">Appreciate</div>
-            </div>
-            <div className="h-4"></div> */}
-
-      {/* <div className="flex flex-row mt-24 mx-8">
-            <div className="w-2/4 border border-gray-300 float-right">
-              <div className="grid grid-cols-4 divide-x divide-gray-300 text-gray-400">
-                <div className="h-28 text-center">
-                  <div className="m-4">
-                    <p className="text-sm font-semibold">TOKEN SALE</p>
-                    <p className="text-black font-semibold my-2">
-                      {project.token_amount_total
-                        ? project.token_amount_total
-                        : 0}
-                    </p>
-                    <p className="text-xs">(0000MATIC)</p>
-                  </div>
-                </div>
-                <div className="h-28 text-center">
-                  <div className="m-4">
-                    <p className="text-sm font-semibold">TOKEN PRICE</p>
-                    <p className="text-black font-semibold my-2">0 MATIC</p>
-                    <p className="text-xs">(0000MATIC)</p>
-                  </div>
-                </div>
-                <div className="h-28 text-center">
-                  <div className="m-4">
-                    <p className="text-sm font-semibold">BALANCE</p>
-                    <p className="text-black font-semibold my-2">0 MATIC</p>
-                    <p className="text-xs">(0000MATIC)</p>
-                  </div>
-                </div>
-                <div className="h-28 text-center">
-                  <div className="m-4">
-                    <p className="text-sm font-semibold">IN WALLET</p>
-                    <p className="text-black font-semibold my-2">0 MATIC</p>
-                    <p className="text-xs">(0000MATIC)</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-row w-2/4 ml-14">
-              <div className="bg-gray-300 text-white text-center h-14 w-1/2 rounded p-4 mr-2">
-                TOKEN NOT SALE
-              </div>
-              <div className="bg-gray-300 text-white text-center h-14 w-1/2 rounded p-4">
-                FIXED MEMBER
-              </div>
-            </div>
-          </div> */}
-      {/* <div className="flex flex-row mt-8 mx-8">
-            <div className="w-2/4">
-              <div className="flex justify-center">
-                {project.voting_power === "TknW8" && (
+          {/* profile information section */}
+          <section className="bg-light3 rounded-b-xl mt-4 p-6">
+            <div className="flex flex-col md:flex-row">
+              <div className="md:w-2/3">
+                <div className="flex">
                   <img
-                    src={require(`assets/images/projectDetails/badge/badge_vr_weighted.png`)}
-                    alt="weighted"
-                    className="h-40 w-40"
-                  />
-                )}
-                {project.voting_power === "1VPM" && (
-                  <img
-                    src={require(`assets/images/projectDetails/badge/badge_vr_1vote.png`)}
-                    alt="weighted"
-                    className="h-40 w-40"
-                  />
-                )}
-              </div>
-            </div>
-            <div className="w-2/4">
-              <div className="flex ml-12">
-                <div className="w-1/2">
-                  <p>
-                    <strong>INVESTER</strong> <span>0 people</span>
-                  </p>
-                  <div className="mt-12 border-2 rounded h-36 w-72"></div>
-                </div>
-                <div className="w-1/2">
-                  <p>
-                    <strong>MEMBERS</strong> <span>3 people</span>
-                  </p>
-                  <div>
-                    <div className="flex flex-row">
-                      <img
-                        className="rounded border-8 border-gray-300 shadow-sm h-14 w-14 mr-2"
-                        src={require(`assets/images/ico_profilephoto@2x.png`)}
-                        alt="user icon"
-                      />
-                      <img
-                        className="rounded border-8 border-gray-300 shadow-sm h-14 w-14 mr-2"
-                        src={require(`assets/images/ico_profilephoto@2x.png`)}
-                        alt="user icon"
-                      />
-                      <img
-                        className="rounded border-8 border-gray-300 shadow-sm h-14 w-14"
-                        src={require(`assets/images/ico_profilephoto@2x.png`)}
-                        alt="user icon"
-                      />
-                    </div>
-                  </div>
-                  <div className="border-2 rounded h-36 w-72 p-2">
-                    <div className="flex">
-                      <p className="text-sm font-semibold">NAME </p>
-                      <img className="h-5 w-5" src={locationIcon} alt="" />
-                      <p className="text-sm">Tokyo, Japan</p>
-                    </div>
-                    <div className="text-xs">
-                      Designer, Web Analytics Consultant
-                    </div>
-                    <div className="text-sm mt-2">
-                      Profile text Profile text Profile text Profile text
-                      Profile text Profile text Profile text Profile text
-                      Profile text Profile text Profile text Profile text
-                      Profile text …
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div> */}
-
-      {/* <div className="text-center w-full my-8 border-t">
-              <div className="text-2xl font-semibold my-8">About Project</div>
-            </div>
-            <div className="flex flex-row mt-8 mx-8">
-              <div className="w-2/4 pr-8">
-                {!!project?.assets[1] && (
-                  <img
-                    className="rounded-lg shadow-sm h-96 w-full"
                     src={
-                      selectedImages?.path
-                        ? selectedImages.path
-                        : require(`assets/images/no-image-found-square.png`)
+                      project.assets && project.assets[1]
+                        ? project.assets[1].path
+                        : manImg
                     }
-                    alt="user icon"
+                    className="rounded-full self-start w-14 h-14 md:w-[98px] object-cover md:h-[98px] bg-color-ass-6"
+                    alt="User profile"
                   />
+                  <div className="flex-1 min-w-0  px-4">
+                    <h1 className="-mt-1 mb-1 md:mb-2 truncate">
+                      {project.name}
+                    </h1>
+                    <p className="text-textLight text-sm">
+                      {project?.contract_address
+                        ? project.contract_address
+                        : "Smart Contract not released"}
+                      <i
+                        className={`fa-solid fa-copy ml-2 ${
+                          project?.contract_address
+                            ? "cursor-pointer"
+                            : "cursor-not-allowed"
+                        }`}
+                        disabled={!project?.contract_address}
+                        onClick={() =>
+                          copyToClipboard(project?.contract_address)
+                        }
+                      ></i>
+                      <span id="copied-message" className="hidden ml-2">
+                        Copied !
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className="flex flex-wrap mt-3 items-start md:justify-end md:w-1/3 md:mt-0"
+                role="group"
+              >
+                {links.find((link) => link.title === "linkFacebook") &&
+                  links.find((link) => link.title === "linkFacebook").value
+                    ?.length > 0 && (
+                    <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5">
+                      <a
+                        href={`${
+                          links.find((link) => link.title === "linkFacebook")
+                            .value
+                        }`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <i className="fa-brands fa-facebook text-primary-900"></i>
+                      </a>
+                    </div>
+                  )}
+
+                {links.find((link) => link.title === "linkInsta") &&
+                  links.find((link) => link.title === "linkInsta").value
+                    ?.length > 0 && (
+                    <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5">
+                      <a
+                        href={`${
+                          links.find((link) => link.title === "linkInsta").value
+                        }`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <i className="fa-brands fa-instagram text-primary-900"></i>
+                      </a>
+                    </div>
+                  )}
+
+                {links.find((link) => link.title === "linkTwitter") &&
+                  links.find((link) => link.title === "linkTwitter").value
+                    ?.length > 0 && (
+                    <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5">
+                      <a
+                        href={`${
+                          links.find((link) => link.title === "linkTwitter")
+                            .value
+                        }`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <i className="fa-brands fa-twitter text-primary-900"></i>
+                      </a>
+                    </div>
+                  )}
+
+                {links.find((link) => link.title === "linkGitub") &&
+                  links.find((link) => link.title === "linkGitub").value
+                    ?.length > 0 && (
+                    <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5">
+                      <a
+                        href={`${
+                          links.find((link) => link.title === "linkGitub").value
+                        }`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <i className="fa-brands fa-github text-primary-900"></i>
+                      </a>
+                    </div>
+                  )}
+
+                {links.find((link) => link.title === "customLinks1") &&
+                  links.find((link) => link.title === "customLinks1").value
+                    ?.length > 0 && (
+                    <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5">
+                      <a
+                        href={`${
+                          links.find((link) => link.title === "customLinks1")
+                            .value
+                        }`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <i className="fa-solid fa-globe text-primary-900"></i>
+                      </a>
+                    </div>
+                  )}
+
+                {project?.project_status !== "published" && (
+                  <a
+                    onClick={() => setShowPublishModal(true)}
+                    className="inline-block ml-4 bg-primary-900 px-3 py-2 text-white font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+                  >
+                    Publish
+                  </a>
                 )}
-                <div className="flex flex-row mt-2">
+              </div>
+            </div>
+
+            <div className="flex flex-col md:flex-row pt-5">
+              <div className="md:w-2/3">
+                <h3>About</h3>
+                <p className="text-textLight text-sm">{project.overview}</p>
+                <div className="flex items-center mt-3">
                   {project &&
-                    project.assets &&
-                    project.assets.length > 0 &&
-                    project.assets.map((image, index) => (
+                    project.members &&
+                    project.members.length > 0 &&
+                    project.members.map((img, index) => (
                       <>
-                        {index > 0 && (
+                        {index < 5 && (
                           <img
-                            key={`project-image-${index}`}
-                            className={`rounded-lg shadow-sm h-24 w-30 mr-2 ${image.path === selectedImages?.path
-                              ? "border-4 border-[#0AB4AF]"
-                              : ""
-                              }`}
-                            src={
-                              image.path
-                                ? image.path
-                                : require(`assets/images/no-image-found-square.png`)
-                            }
-                            alt={`project pic-${index}`}
-                            onClick={() => changeImagePreview(image)}
+                            key={`member-img-${index}`}
+                            className="rounded-full w-9 h-9 -ml-1 border-2 border-white"
+                            src={img.path ? img.path : avatar}
+                            alt=""
                           />
                         )}
                       </>
                     ))}
+                  {project && project.members && project.members.length > 5 && (
+                    <span className="ml-2 bg-primary-900 bg-opacity-5  text-primary-900 rounded p-1 text-xs  ">
+                      +{project.members.length - 5}
+                    </span>
+                  )}
                 </div>
               </div>
-              <div className="w-2/4">
-                <p>{project.overview}</p>
-              </div>
-            </div>
-            <div className="flex justify-center my-8 border-t">
-              <div className="bg-gray-200 text-center text-white h-14 w-1/4 rounded p-4 mr-2 mt-8">
-                TOKEN NOT SALE
-              </div>
-            </div>
-            <div className="flex justify-center">
-              <div className="mt-4 justify-center text-center">
-                <div className="rounded-full h-14 w-14 bg-[#B9CCD5] hover:bg-[#0AB4AF] grid grid-cols-1 content-center cursor-pointer m-4">
-                  <LikeIcon className="ml-1.5" />
-                </div>
-                <div className="text-sm mt-1">Appreciate</div>
-              </div>
-              <div className="mt-4 justify-center text-center">
-                <div className="rounded-full h-14 w-14 bg-[#B9CCD5] hover:bg-[#0AB4AF] grid grid-cols-1 content-center cursor-pointer m-4">
-                  <ViewIcon className="ml-1.5" />
-                </div>
-                <div className="text-sm mt-1">
-                  {project?.project_view_count ? project.project_view_count : 0}
+
+              <div className="flex items-center justify-center flex-wrap mt-3 md:justify-end md:w-1/3  md:mt-0">
+                <a className="inline-block ml-4 mb-3 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+                  Transger Funds
+                </a>
+
+                <div className="bg-primary-900 ml-3 bg-opacity-10 rounded-md p-3 px-5 relative w-56">
+                  <i className="fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3"></i>
+                  <p className=" text-sm text-textSubtle ">Net Worth</p>
+                  <h4>1.400.000 MATIC</h4>
+                  <p className="text-sm text-textSubtle">($1,400.00)</p>
                 </div>
               </div>
             </div>
-            <div
-              className="flex justify-center cursor-pointer"
-              onClick={() => history.push("/all-project")}
-            >
-              <div className="border rounded-full text-center text-black h-14 w-1/4 rounded p-4 mr-2 mt-8 hover:border-[#0AB4AF] hover:text-[#0AB4AF]">
-                Back to project list
-              </div>
+          </section>
+
+          {/* Tab Section */}
+          <section className="mb-10">
+            <div className="mb-4">
+              <ul
+                className="flex flex-wrap -mb-px text-sm font-medium text-center"
+                id="myTab"
+                data-tabs-toggle="#myTabContent"
+                role="tablist"
+              >
+                <li
+                  className="mr-2"
+                  role="presentation"
+                  onClick={() => setSelectedTab(1)}
+                >
+                  <button
+                    className={`inline-block p-4 text-lg rounded-t-lg ${
+                      selectedTab === 1
+                        ? "border-b-2 border-primary-900 text-primary-900"
+                        : "border-transparent text-textSubtle"
+                    } hover:text-primary-600`}
+                    id="membership_nft"
+                    data-tabs-target="#membership_nft"
+                    type="button"
+                    role="tab"
+                    aria-controls="MembershipNFT"
+                    aria-selected="true"
+                  >
+                    Membership NFT
+                  </button>
+                </li>
+                <li
+                  className="mr-2"
+                  role="presentation"
+                  onClick={() => setSelectedTab(2)}
+                >
+                  <button
+                    className={`inline-block p-4 text-lg rounded-t-lg ${
+                      selectedTab === 2
+                        ? "border-b-2 border-primary-900 text-primary-900"
+                        : "border-transparent text-textSubtle"
+                    } hover:text-primary-900`}
+                    id="dashboard-tab"
+                    data-tabs-target="#dashboard"
+                    type="button"
+                    role="tab"
+                    aria-controls="dashboard"
+                    aria-selected="false"
+                  >
+                    Product NFT
+                  </button>
+                </li>
+                <li
+                  className="mr-2"
+                  role="presentation"
+                  onClick={() => setSelectedTab(3)}
+                >
+                  <button
+                    className={`inline-block p-4 text-lg rounded-t-lg ${
+                      selectedTab === 3
+                        ? "border-b-2 border-primary-900 text-primary-900"
+                        : "border-transparent text-textSubtle"
+                    }  hover:text-primary-900`}
+                    id="settings-tab"
+                    data-tabs-target="#settings"
+                    type="button"
+                    role="tab"
+                    aria-controls="settings"
+                    aria-selected="false"
+                  >
+                    Rights Attached NFT
+                  </button>
+                </li>
+              </ul>
             </div>
-          </div>
-        )}
-      </div> */}
+
+            <div id="myTabContent">
+              {/* TAB 1 */}
+              {selectedTab === 1 && (
+                <section
+                  className="grid md:grid-cols-3 xl:grid-cols-4 gap-4 mb-6"
+                  id="membership_nft"
+                  role="tabpanel"
+                  aria-labelledby="membership-nft-tab"
+                >
+                  {/* Card */}
+                  <div className="min-h-[390px] rounded-x">
+                    <a href="#">
+                      <img
+                        className="rounded-xl h-[276px] object-cover w-full"
+                        src={thumbIcon}
+                        alt=""
+                      />
+                    </a>
+                    <div className="py-5">
+                      <div className="flex">
+                        <h2 className="mb-2 text-txtblack truncate flex-1 mr-3 m-w-0">
+                          NFT Collection #1
+                        </h2>
+                        <div className="relative">
+                          <button type="button">
+                            <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
+                          </button>
+                          {/* Dropdown menu  */}
+                          <div className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden">
+                            <ul className="text-sm">
+                              <li className="border-b border-divide">
+                                <a
+                                  href="#"
+                                  className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                >
+                                  Sales Page
+                                </a>
+                              </li>
+                              <li className="border-b border-divide">
+                                <a
+                                  href="#"
+                                  className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                >
+                                  Edit Collections
+                                </a>
+                              </li>
+                              <li className="border-b border-divide">
+                                <a
+                                  href="#"
+                                  className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                >
+                                  Embed Collection
+                                </a>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                      <p className="mb-3 text-textSubtle text-[13px]">
+                        There are many variations of passages of Lorem
+                      </p>
+                      <div className="flex items-center">
+                        <img
+                          className="rounded-full w-9 h-9 -ml-1 "
+                          src={avatar}
+                          alt=""
+                        />
+                        <img
+                          className="rounded-full w-9 h-9 -ml-1 "
+                          src={avatar}
+                          alt=""
+                        />
+                        <img
+                          className="rounded-full w-9 h-9 -ml-1 "
+                          src={avatar}
+                          alt=""
+                        />
+                        <img
+                          className="rounded-full w-9 h-9 -ml-1 "
+                          src={avatar}
+                          alt=""
+                        />
+                        <img
+                          className="rounded-full w-9 h-9 -ml-1 "
+                          src={avatar}
+                          alt=""
+                        />
+                      </div>
+                      <div className="my-4">
+                        <a className="inline-block mr-3 bg-primary-900 p-3 text-white  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer hover:bg-opacity-60 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+                          Review
+                        </a>
+                        <a className="inline-block bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+                          Publish
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Create New */}
+                  <div className="rounded-xl h-[276px] w-full bg-success-1 bg-opacity-20 flex flex-col items-center justify-center">
+                    <i className="fa-solid fa-circle-plus text-success-1 text-2xl mb-2"></i>
+                    <p className="text-success-1 text-lg font-black font-satoshi-bold">
+                      Create new
+                    </p>
+                  </div>
+                </section>
+              )}
+
+              {/* TAB 2 */}
+              {selectedTab === 2 && (
+                <section
+                  className="grid md:grid-cols-3 xl:grid-cols-4 gap-4 mb-6"
+                  id="product-nft"
+                  role="tabpanel"
+                  aria-labelledby="product-nft-tab"
+                >
+                  {/* Card */}
+                  <div className="min-h-[390px] rounded-x">
+                    <a href="#">
+                      <img
+                        className="rounded-xl h-[276px] object-cover w-full"
+                        src={thumbIcon}
+                        alt=""
+                      />
+                    </a>
+                    <div className="py-5">
+                      <div className="flex">
+                        <h2 className="mb-2 text-txtblack truncate flex-1 mr-3 m-w-0">
+                          NFT Collection #1
+                        </h2>
+                        <div className="relative">
+                          <button type="button">
+                            <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
+                          </button>
+                          {/* Dropdown menu  */}
+                          <div className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden">
+                            <ul className="text-sm">
+                              <li className="border-b border-divide">
+                                <a
+                                  href="#"
+                                  className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                >
+                                  Sales Page
+                                </a>
+                              </li>
+                              <li className="border-b border-divide">
+                                <a
+                                  href="#"
+                                  className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                >
+                                  Edit Collections
+                                </a>
+                              </li>
+                              <li className="border-b border-divide">
+                                <a
+                                  href="#"
+                                  className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                >
+                                  Embed Collection
+                                </a>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                      <p className="mb-3 text-textSubtle text-[13px]">
+                        There are many variations of passages of Lorem
+                      </p>
+                      <div className="flex items-center">
+                        <img
+                          className="rounded-full w-9 h-9 -ml-1 "
+                          src={avatar}
+                          alt=""
+                        />
+                        <img
+                          className="rounded-full w-9 h-9 -ml-1 "
+                          src={avatar}
+                          alt=""
+                        />
+                        <img
+                          className="rounded-full w-9 h-9 -ml-1 "
+                          src={avatar}
+                          alt=""
+                        />
+                        <img
+                          className="rounded-full w-9 h-9 -ml-1 "
+                          src={avatar}
+                          alt=""
+                        />
+                        <img
+                          className="rounded-full w-9 h-9 -ml-1 "
+                          src={avatar}
+                          alt=""
+                        />
+                      </div>
+                      <div className="my-4">
+                        <a className="inline-block mr-3 bg-primary-900 p-3 text-white  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer hover:bg-opacity-60 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+                          Review
+                        </a>
+                        <a className="inline-block bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+                          Publish
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Create New */}
+                  <div className="rounded-xl h-[276px] w-full bg-success-1 bg-opacity-20 flex flex-col items-center justify-center">
+                    <i className="fa-solid fa-circle-plus text-success-1 text-2xl mb-2"></i>
+                    <p className="text-success-1 text-lg font-black font-satoshi-bold">
+                      Create new
+                    </p>
+                  </div>
+                </section>
+              )}
+
+              {/* TAB 3 */}
+              {selectedTab === 3 && (
+                <section
+                  className="p-4"
+                  id="settings"
+                  role="tabpanel"
+                  aria-labelledby="settings-tab"
+                >
+                  <article className=" rounded-xl bg-secondary-900 bg-opacity-20 border border-secondary-900 h-60 flex items-center justify-center p-4 flex-col">
+                    <h2 className="text-textBlack mb-3">
+                      Enable Right Attached NFT
+                    </h2>
+                    <p className="mb-4">
+                      Create your Right attached NFT and share the royalty
+                      fairly with your teams,
+                    </p>
+                    <a className="inline-block bg-secondary-900 px-4 py-3 text-white font-black text-sm  font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+                      Enable Now
+                    </a>
+                  </article>
+                </section>
+              )}
+            </div>
+          </section>
+
+          {/* NO DAO */}
+
+          {/* <article className="rounded-xl bg-danger-900 bg-opacity-40 border border-danger-900 h-60 flex items-center justify-center p-4 flex-col">
+            <h2 className="text-danger-900 mb-4">
+              You haven’t Created DAO yet.
+            </h2>
+            <a className="inline-block bg-danger-900 px-4 py-3 text-white font-black text-sm font-satoshi-bold rounded cursor-pointer hover:bg-opacity-80 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+              Create Now
+            </a>
+          </article> */}
+
+          {showDeployModal && (
+            <DeployingProjectModal
+              show={showDeployModal}
+              handleClose={(status) => {
+                setShowDeployModal(status);
+                projectDetails(projectId);
+              }}
+              tnxData={tnxData}
+              projectId={projectId}
+              publishStep={publishStep}
+            />
+          )}
+          {showSuccessModal && (
+            <SuccessModal
+              handleClose={() => setShowSuccessModal(false)}
+              show={showSuccessModal}
+            />
+          )}
+          {showErrorModal && (
+            <ErrorModal
+              handleClose={() => setShowErrorModal(false)}
+              show={showErrorModal}
+            />
+          )}
+          {showPublishModal && (
+            <PublishModal
+              handleClose={() => setShowPublishModal(false)}
+              publishProject={intiProjectPublish}
+              show={showPublishModal}
+            />
+          )}
+        </>
+      )}
     </>
   );
 }

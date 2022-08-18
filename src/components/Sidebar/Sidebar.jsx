@@ -86,14 +86,14 @@ const Sidebar = () => {
             className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
           >
             <i className="fa-solid fa-circle-plus"></i>
-            <span className="ml-2">Create Project</span>
+            <span className="ml-2">Create DAO</span>
           </NavLink>
           <NavLink
             to={`/collection-create/`}
             activeClassName="active-menu2"
             className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
           >
-            <span className="ml-2">Create DAO</span>
+            <span className="ml-2">Create Collection</span>
           </NavLink>
           <NavLink
             to={``}

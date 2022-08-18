@@ -23,6 +23,7 @@ export default function Outline({
   projectNameDisabled,
 
   // Dao symbol
+  symbolTitle,
   showDaoSymbol,
   daoSymbol,
   emptyDaoSymbol,
@@ -78,6 +79,18 @@ export default function Outline({
   isMetadataFreezed,
   onMetadataFreezeChange,
   freezeMetadataDisabled,
+
+  // Token Transferable
+  showTokenTransferable,
+  isTokenTransferable,
+  onTokenTransferableChange,
+  tokenTransferableDisabled,
+
+  // Royalty Percentage
+  showRoyaltyPercentage,
+  royaltyPercentageDisable,
+  royaltyPercentage,
+  onRoyaltyPercentageChange,
 }) {
   const [projectCategoryList, setProjectCategoryList] = useState([]);
   useEffect(() => {
@@ -163,7 +176,7 @@ export default function Outline({
         <div className="mb-6" id="daoSymbol">
           <div className="flex flex-wrap items-center">
             <Tooltip></Tooltip>
-            <div className="txtblack text-[14px]">DAO Symbol</div>
+            <div className="txtblack text-[14px]">{symbolTitle}</div>
           </div>
           {!daoSymbolDisable && (
             <>
@@ -176,7 +189,7 @@ export default function Outline({
                 placeholder="e.g : KTL"
               />
               {emptyDaoSymbol && (
-                <div className="validationTag">DAO Symbol is required</div>
+                <div className="validationTag">{symbolTitle} is required</div>
               )}
             </>
           )}
@@ -189,7 +202,7 @@ export default function Outline({
         <div className="mb-6">
           <div className="flex flex-wrap items-center">
             <Tooltip></Tooltip>
-            <div className="txtblack text-[14px]">DAO Wallet</div>
+            <div className="txtblack text-[14px]">Treasury Wallet</div>
           </div>
           {!daoWalletDisable && (
             <>
@@ -202,11 +215,11 @@ export default function Outline({
                 placeholder="Add Address"
               />
               {emptyDaoWallet && (
-                <div className="validationTag">DAO Wallet is required</div>
+                <div className="validationTag">Treasury Wallet is required</div>
               )}
             </>
           )}
-          {daoSymbolDisable && <h3>{projectName}</h3>}
+          {daoSymbolDisable && <h3>{daoWallet}</h3>}
         </div>
       )}
 
@@ -443,6 +456,56 @@ export default function Outline({
               />
               <div className="w-11 outline-none h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-900"></div>
             </label>
+          </div>
+        </div>
+      )}
+
+      {showTokenTransferable && (
+        <div className="mb-6">
+          <div className="flex flex-wrap items-center">
+            <p className="text-txtSubtle text-[14px] md:max-w-[400px]">
+              Transferable Token
+            </p>
+
+            <label
+              htmlFor="token-transferable"
+              className="inline-flex relative items-center cursor-pointer ml-auto"
+            >
+              <input
+                type="checkbox"
+                value={isTokenTransferable}
+                id="token-transferable"
+                checked={isTokenTransferable}
+                className="sr-only peer outline-none"
+                onChange={(e) => onTokenTransferableChange(isTokenTransferable)}
+              />
+              <div className="w-11 outline-none h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-900"></div>
+            </label>
+          </div>
+        </div>
+      )}
+
+      {/* Royalties */}
+      {showRoyaltyPercentage && (
+        <div>
+          <div className="mb-6">
+            <div className="flex flex-wrap items-center">
+              <Tooltip></Tooltip>
+              <div className="txtblack text-[14px]">
+                Royalty Percentage (in Percentage)
+              </div>
+            </div>
+            {!royaltyPercentageDisable && (
+              <DebounceInput
+                type="number"
+                minLength={1}
+                debounceTimeout={300}
+                onChange={(e) => onRoyaltyPercentageChange(e.target.value)}
+                className="debounceInput mt-1"
+                value={royaltyPercentage}
+              />
+            )}
+            {royaltyPercentageDisable && <h3>{royaltyPercentage}</h3>}
           </div>
         </div>
       )}

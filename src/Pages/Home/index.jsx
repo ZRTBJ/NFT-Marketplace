@@ -21,10 +21,13 @@ function Home() {
   const [projectList, setProjectList] = useState([]);
   const [popularProjectList, setPopularProjectList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [sortType, setSortType] = useState("newer");
+
   const payload = {
     order_by: "newer",
     page: 1,
     limit: 10,
+    keyword: "",
   };
   const popularPayload = {
     order_by: "view",
@@ -39,23 +42,26 @@ function Home() {
     await getPublicProjectList(payload)
       .then((response) => {
         let data = [];
-        data = response.data;
-        data.forEach((element) => {
-          element.category_name = categoryList.find(
-            (x) => x.id === element.category_id
-          ).name;
-          // if (element.project_fundraising !== null) {
-          //   let allocation = "";
-          //   let user_allocated_percent = "";
-          //   allocation =
-          //     (element.token_total_amount / 100) *
-          //     element.project_fundraising.allocation_percent;
-          //   user_allocated_percent =
-          //     (allocation / 100) *
-          //     element.project_fundraising.user_allocated_percent;
-          //   element.project_fundraising.total_allocation = user_allocated_percent;
-          // }
-        });
+        if (response.data && response.data.length > 0) {
+          data = response.data;
+          data.forEach((element) => {
+            element.category_name = categoryList.find(
+              (x) => x.id === element.category_id
+            ).name;
+
+            // if (element.project_fundraising !== null) {
+            //   let allocation = "";
+            //   let user_allocated_percent = "";
+            //   allocation =
+            //     (element.token_total_amount / 100) *
+            //     element.project_fundraising.allocation_percent;
+            //   user_allocated_percent =
+            //     (allocation / 100) *
+            //     element.project_fundraising.user_allocated_percent;
+            //   element.project_fundraising.total_allocation = user_allocated_percent;
+            // }
+          });
+        }
         if (type === "new") {
           setProjectList(data);
         } else if (type === "popular") {
@@ -74,6 +80,24 @@ function Home() {
   useEffect(() => {
     getProjectList(popularPayload, "popular");
   }, []);
+
+  function handleSortType(type) {
+    setSortType(type);
+    payload.order_by = type;
+    getProjectList(payload, "new");
+  }
+
+  function searchProject(event) {
+    const text = event.currentTarget.value;
+    if (text && text.length > 2) {
+      setTimeout(() => {
+        if (payload.keyword !== text) {
+          payload.keyword = text;
+          getProjectList(payload, "new");
+        }
+      }, 2000);
+    }
+  }
 
   return (
     <div className="text-txtblack dark:text-white">
@@ -98,6 +122,7 @@ function Home() {
               autoComplete="off"
               className="text-lg shadow-main w-full rounded-lg  pl-12 placeholder-color-ass-4 py-4 pr-4 h-[72px]"
               placeholder="Search DAO by name"
+              onChange={searchProject}
             />
           </div>
         </form>
@@ -118,323 +143,47 @@ function Home() {
             className="dropdown-menu w-full absolute hidden bg-white text-base z-50 py-2 list-none rounded-lg shadow-main  mt-1 "
             aria-labelledby="dropdownMenuButton1"
           >
-            <li>
+            <li onClick={() => handleSortType("newer")}>
               <a
-                className="dropdown-item py-2 px-4 block whitespace-nowrap text-txtblack hover:bg-slate-50 transition duration-150 ease-in-out"
-                href="#"
+                className={`dropdown-item py-2 px-4 block whitespace-nowrap ${
+                  sortType === "newer" ? "text-primary-900" : "text-txtblack"
+                } hover:bg-slate-50 transition duration-150 ease-in-out`}
               >
-                Action
+                Newer
               </a>
             </li>
-            <li>
+            <li onClick={() => handleSortType("older")}>
               <a
-                className="dropdown-item py-2 px-4 block whitespace-nowrap text-txtblack hover:bg-slate-50 transition duration-150 ease-in-out"
-                href="#"
+                className={`dropdown-item py-2 px-4 block whitespace-nowrap ${
+                  sortType === "older" ? "text-primary-900" : "text-txtblack"
+                } hover:bg-slate-50 transition duration-150 ease-in-out`}
               >
-                Action
+                older
               </a>
             </li>
-            <li>
+            <li onClick={() => handleSortType("view")}>
               <a
-                className="dropdown-item py-2 px-4 block whitespace-nowrap text-txtblack hover:bg-slate-50 transition duration-150 ease-in-out"
-                href="#"
+                className={`dropdown-item py-2 px-4 block whitespace-nowrap ${
+                  sortType === "view" ? "text-primary-900" : "text-txtblack"
+                } hover:bg-slate-50 transition duration-150 ease-in-out`}
               >
-                Action
+                view
               </a>
             </li>
           </ul>
         </div>
       </section>
 
-      <section className="grid md:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
+      <section className="grid md:grid-cols-3 xl:grid-cols-4 gap-4 mb-24">
         {projectList.map((item, index) => (
           <div key={index}>
             <DAOCard item={item} key={item.id} />
           </div>
         ))}
-        {/* Card */}
-        {/* <div className="bg-white rounded-xl  min-h-[390px]">
-          <a href="#">
-            <img
-              className="rounded-t-xl h-36 object-cover w-full"
-              src={thumbIcon}
-              alt=""
-            />
-          </a>
-
-          <div className="p-5 relative text-center">
-            <div className="h-14 w-full">
-              <img
-                className="rounded-full w-28 h-28 absolute -top-14 left-1/2 z-10 -ml-14 "
-                src={avatar}
-                alt=""
-              />
-            </div>
-            <h2 className="mb-2 text-txtblack truncate">BoredApeYatchClub</h2>
-            <p className="mb-3 text-textSubtle text-[13px]">
-              Value : 1.000.000 USD
-            </p>
-
-            <div className="flex justify-center items-center">
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <span className="ml-2 bg-primary-900 bg-opacity-5  text-primary-900 rounded p-1 text-xs  ">
-                +12
-              </span>
-            </div>
-          </div>
-        </div> */}
-
-        {/* Card */}
-        {/* <div className="bg-white rounded-xl min-h-[390px]">
-          <a href="#">
-            <img
-              className="rounded-t-lg h-36 object-cover w-full"
-              src={thumbIcon}
-              alt=""
-            />
-          </a>
-
-          <div className="p-5 relative text-center">
-            <div className="h-14 w-full">
-              <img
-                className="rounded-full w-28 h-28 absolute -top-14 left-1/2 z-10 -ml-14 "
-                src={avatar}
-                alt=""
-              />
-            </div>
-            <h2 className="mb-2 text-txtblack truncate">BoredApeYatchClub</h2>
-            <p className="mb-3 text-textSubtle text-[13px]">
-              Value : 1.000.000 USD
-            </p>
-
-            <div className="flex justify-center items-center">
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <span className="ml-2 bg-primary-900 bg-opacity-5  text-primary-900 rounded p-1 text-xs  ">
-                +12
-              </span>
-            </div>
-          </div>
-        </div> */}
-
-        {/* Card */}
-        {/* <div className="bg-white rounded-xl min-h-[390px]">
-          <a href="#">
-            <img
-              className="rounded-t-xl h-36 object-cover w-full"
-              src={thumbIcon}
-              alt=""
-            />
-          </a>
-
-          <div className="p-5 relative text-center">
-            <div className="h-14 w-full">
-              <img
-                className="rounded-full w-28 h-28 absolute -top-14 left-1/2 z-10 -ml-14 "
-                src={avatar}
-                alt=""
-              />
-            </div>
-            <h2 className="mb-2 text-txtblack truncate">BoredApeYatchClub</h2>
-            <p className="mb-3 text-textSubtle text-[13px]">
-              Value : 1.000.000 USD
-            </p>
-
-            <div className="flex justify-center items-center">
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <span className="ml-2 bg-primary-900 bg-opacity-5  text-primary-900 rounded p-1 text-xs  ">
-                +12
-              </span>
-            </div>
-          </div>
-        </div> */}
-
-        {/* Card */}
-        {/* <div className="bg-white rounded-xl min-h-[390px]">
-          <a href="#">
-            <img
-              className="rounded-t-xl h-36 object-cover w-full"
-              src={thumbIcon}
-              alt=""
-            />
-          </a>
-
-          <div className="p-5 relative text-center">
-            <div className="h-14 w-full">
-              <img
-                className="rounded-full w-28 h-28 absolute -top-14 left-1/2 z-10 -ml-14 "
-                src={avatar}
-                alt=""
-              />
-            </div>
-            <h2 className="mb-2 text-txtblack truncate">BoredApeYatchClub</h2>
-            <p className="mb-3 text-textSubtle text-[13px]">
-              Value : 1.000.000 USD
-            </p>
-
-            <div className="flex justify-center items-center">
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <span className="ml-2 bg-primary-900 bg-opacity-5  text-primary-900 rounded p-1 text-xs  ">
-                +12
-              </span>
-            </div>
-          </div>
-        </div> */}
-
-        {/* Card */}
-        {/* <div className="bg-white rounded-xl  min-h-[390px]">
-          <a href="#">
-            <img
-              className="rounded-t-xl h-36 object-cover w-full"
-              src={thumbIcon}
-              alt=""
-            />
-          </a>
-
-          <div className="p-5 relative text-center">
-            <div className="h-14 w-full">
-              <img
-                className="rounded-full w-28 h-28 absolute -top-14 left-1/2 z-10 -ml-14 "
-                src={avatar}
-                alt=""
-              />
-            </div>
-            <h2 className="mb-2 text-txtblack truncate">BoredApeYatchClub</h2>
-            <p className="mb-3 text-textSubtle text-[13px]">
-              Value : 1.000.000 USD
-            </p>
-
-            <div className="flex justify-center items-center">
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <img
-                className="rounded-full w-9 h-9 -ml-1 "
-                src={avatar}
-                alt=""
-              />
-              <span className="ml-2 bg-primary-900 bg-opacity-5  text-primary-900 rounded p-1 text-xs  ">
-                +12
-              </span>
-            </div>
-          </div>
-        </div> */}
       </section>
       {/* ----- End Card Section ---- */}
 
-      <section className="mb-5">
+      {/* <section className="mb-5">
         <div className="flex justify-center space-x-1">
           <a className="px-3 py-1 text-sm  text-primary-900 bg-primary-900 bg-opacity-5 rounded hover:bg-opacity-7">
             <i className="fa-solid fa-angle-left"></i>
@@ -469,7 +218,7 @@ function Home() {
             <i className="fa-solid fa-angle-right"></i>
           </a>
         </div>
-      </section>
+      </section> */}
       {/* End pagination */}
 
       <h2 className="mb-5">Best Collection</h2>
