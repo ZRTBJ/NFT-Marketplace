@@ -105,7 +105,7 @@ const routes = [
     isPrivate: true,
   },
   {
-    path: "/product-nft/:id",
+    path: "/product-nft",
     component: ProductNFT,
     isPrivate: true,
   },
