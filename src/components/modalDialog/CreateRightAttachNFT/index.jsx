@@ -77,6 +77,10 @@ const CreateRightAttachedNFT = ({ handleClose, show }) => {
     if (!id && !ProjectID) {
       handleCreateProject();
     }
+
+    if (id) {
+      handleCreateCollection(id);
+    }
   }, [id]);
 
   useEffect(() => {

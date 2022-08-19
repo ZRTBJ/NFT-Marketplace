@@ -4,7 +4,7 @@ import Trash from 'assets/images/icons/trash.svg';
 import Left from 'assets/images/icons/chevron-left.svg';
 import Right from 'assets/images/icons/chevron-right.svg';
 
-const MemberListTable = ({ headers, list, handlePublish }) => {
+const MemberListTable = ({ headers, list, isEdit, setIsEdit }) => {
   return (
     <div className='overflow-x-auto relative mb-[54px] relative'>
       <table className='w-full text-left'>
@@ -29,26 +29,41 @@ const MemberListTable = ({ headers, list, handlePublish }) => {
                 index < list.length - 1 ? 'border-b' : ''
               } text-left text-[13px]`}
             >
-              <td className='py-4 px-5'>{r.walletAddress}</td>
-              <td className='py-4 px-5'>{r.name}</td>
+              <td className='py-4 px-5'>{r.eoa}</td>
+              <td className='py-4 px-5'>{r.display_name}</td>
               <td className='py-4 px-5'>{r.email}</td>
               <td className={`py-4 px-5 flex`}>
-                <span className='w-[40px]'>
-                  {r.percentage ? r.percentage : '-'}
-                </span>
-                <img src={Edit} alt='edit' className='cursor-pointer' />
+                {isEdit === r.id ? (
+                  <div className='w-[100px]'>
+                    <input type='text' />
+                  </div>
+                ) : (
+                  <span className='w-[40px]'>
+                    {r.royalty_percent ? `${r.royalty_percent}%` : '-'}
+                  </span>
+                )}
+                <img
+                  src={Edit}
+                  alt='edit'
+                  className='cursor-pointer'
+                  onClick={() => setIsEdit(r.id)}
+                />
               </td>
-              <td className={`py-4 px-5`}>{r.tokenID}</td>
+              <td className={`py-4 px-5`}>{r.token_id ? r.token_id : '-'}</td>
               <td className={`py-4 px-5`}>
-                <p
-                  className={`text-[13px] bg-opacity-[0.2] py-1 px-2 w-fit rounded-[4px] font-bold ${
-                    r.role === 'Owner'
-                      ? 'text-info-1 bg-[#46A6FF]'
-                      : ' text-success-1 bg-[#32E865]'
-                  }`}
-                >
-                  {r.role}
-                </p>
+                {r.role ? (
+                  <p
+                    className={`text-[13px] bg-opacity-[0.2] py-1 px-2 w-fit rounded-[4px] font-bold ${
+                      r.role === 'Owner'
+                        ? 'text-info-1 bg-[#46A6FF]'
+                        : ' text-success-1 bg-[#32E865]'
+                    }`}
+                  >
+                    {r.role}
+                  </p>
+                ) : (
+                  '-'
+                )}
               </td>
               {/* <td className='py-4 px-5'>
                 <div className='w-[32px] h-[32px] bg-[#FF3C3C] rounded-[4px] flex items-center justify-center cursor-pointer'>
@@ -59,7 +74,7 @@ const MemberListTable = ({ headers, list, handlePublish }) => {
           ))}
         </tbody>
       </table>
-      <div className='flex items-center justify-center mt-10 w-fit mx-auto'>
+      {/* <div className='flex items-center justify-center mt-10 w-fit mx-auto'>
         <div className='w-[32px] h-[32px] bg-[#9A5AFF] bg-opacity-[0.1] flex align-items justify-center'>
           <img src={Left} alt='Previous' className='w-[8px]' />
         </div>
@@ -70,13 +85,7 @@ const MemberListTable = ({ headers, list, handlePublish }) => {
         <div className='w-[32px] h-[32px] bg-[#9A5AFF] bg-opacity-[0.1] flex align-items justify-center'>
           <img src={Right} alt='Next' className='w-[8px]' />
         </div>
-      </div>
-      <button
-        className='absolute right-12 bottom-0 rounded-[4px] bg-[#9A5AFF] text-white text-[12px] font-bold px-4 py-2'
-        onClick={() => handlePublish(true)}
-      >
-        Publish
-      </button>
+      </div> */}
     </div>
   );
 };

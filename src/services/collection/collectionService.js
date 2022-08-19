@@ -54,3 +54,13 @@ export async function getCollections(listType, projectId, page, limit) {
 export async function getCollectionNFTs(id) {
   return await client('GET', `/collection/${id}/nft`);
 }
+
+export async function connectCollection(ranknftid, collectionId) {
+  const bodyFormData = new FormData();
+  bodyFormData.append('collection_id', collectionId);
+  return await client(
+    'POST',
+    `/ranft/${ranknftid}/connect_collection`,
+    bodyFormData
+  );
+}

@@ -19,6 +19,7 @@ import ErrorModal from 'components/modalDialog/ErrorModal';
 import SuccessModal from 'components/modalDialog/SuccessModal';
 import DeployingProjectModal from 'components/modalDialog/DeployingProjectModal';
 import { getCollections } from 'services/collection/collectionService';
+import CreateRightAttachedNFT from 'components/modalDialog/CreateRightAttachNFT';
 
 export default function ProjectDetails(props) {
   const history = useHistory();
@@ -45,6 +46,7 @@ export default function ProjectDetails(props) {
   const [rightAttachCollectionList, setRightAttachCollectionList] = useState(
     []
   );
+  const [showCreateRANFT, setShowCreateRANFT] = useState(false);
 
   async function fetchData() {
     if (hasMore) {
@@ -224,6 +226,10 @@ export default function ProjectDetails(props) {
 
   return (
     <>
+      <CreateRightAttachedNFT
+        show={showCreateRANFT}
+        handleClose={() => setShowCreateRANFT(false)}
+      />
       {isLoading && <div className='loading'></div>}
       {!isLoading && (
         <>
@@ -771,7 +777,10 @@ export default function ProjectDetails(props) {
                           Create your Right attached NFT and share the royalty
                           fairly with your teams,
                         </p>
-                        <a className='inline-block bg-secondary-900 px-4 py-3 text-white font-black text-sm  font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>
+                        <a
+                          className='inline-block bg-secondary-900 px-4 py-3 text-white font-black text-sm  font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out'
+                          onClick={() => setShowCreateRANFT(true)}
+                        >
                           Enable Now
                         </a>
                       </article>
@@ -894,7 +903,10 @@ export default function ProjectDetails(props) {
                             </div>
                           ))}
                         {/* Create New */}
-                        <div className='rounded-xl h-[276px] w-full bg-success-1 bg-opacity-20 flex flex-col items-center justify-center'>
+                        <div
+                          className='rounded-xl h-[276px] w-full bg-success-1 bg-opacity-20 flex flex-col items-center justify-center cursor-pointer'
+                          onClick={() => setShowCreateRANFT(true)}
+                        >
                           <i className='fa-solid fa-circle-plus text-success-1 text-2xl mb-2'></i>
                           <p className='text-success-1 text-lg font-black font-satoshi-bold'>
                             Create new

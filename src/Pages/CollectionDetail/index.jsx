@@ -7,12 +7,15 @@ import {
 import Cover from 'assets/images/collection-cover.svg';
 import manImg from 'assets/images/projectDetails/man-img.svg';
 import avatar from 'assets/images/dummy-img.svg';
+import { Link } from 'react-router-dom';
+import PublishModal from 'components/modalDialog/PublishModal';
 
 const CollectionDetail = () => {
   const [Collection, setCollection] = useState();
   const [CoverImages, setCoverImages] = useState({});
   const [NFTs, setNFTs] = useState([]);
   const [Links, setLinks] = useState([]);
+  const [ShowPublishModal, setShowPublishModal] = useState(false);
   const [ShowOptions, setShowOptions] = useState(null);
   const { collectionId } = useParams();
   useEffect(() => {
@@ -89,8 +92,15 @@ const CollectionDetail = () => {
   const handleUpdateMeta = (id) => {
     setShowOptions(null);
   };
+
+  const handlePublish = () => {};
   return (
     <div>
+      <PublishModal
+        show={ShowPublishModal}
+        handleClose={() => setShowPublishModal(false)}
+        publishProject={handlePublish}
+      />
       <section className='mt-6'>
         <div className='row-span-2 col-span-2'>
           <img
@@ -264,15 +274,18 @@ const CollectionDetail = () => {
               <p className='text-sm text-textSubtle'>($1,400.00)</p>
             </div>
             <div className='mt-6 flex items-center'>
-              <a className='inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>
+              {/* <a className='inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>
                 Sales Setting
-              </a>
-              <a className='inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>
+              </a> */}
+              <Link
+                to='/collection-create'
+                className='inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'
+              >
                 Edit Collection
-              </a>
+              </Link>
               {Collection?.status !== 'published' && (
                 <a
-                  // onClick={() => setShowPublishModal(true)}
+                  onClick={() => setShowPublishModal(true)}
                   className='inline-block ml-4 bg-primary-900 p-3 text-white font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out'
                 >
                   Publish
@@ -290,61 +303,62 @@ const CollectionDetail = () => {
           Mint NFT
         </a>
         <div className='mt-4'>
-          {NFTs.map((nft) => {
-            return (
-              <div className='min-h-[390px] rounded-x w-[276px]'>
-                <a href='#'>
-                  <img
-                    className='rounded-xl h-[276px] object-cover w-[276px]'
-                    src={nft?.asset?.path}
-                    alt=''
-                  />
-                </a>
-                <div className='py-5'>
-                  <div className='flex'>
-                    <h2 className='mb-2 text-txtblack truncate flex-1 mr-3 m-w-0 text-[24px]'>
-                      NFT Collection #1
-                    </h2>
-                    <div className='relative'>
-                      <button
-                        type='button'
-                        onClick={() => handleShowOptions(nft.id)}
-                      >
-                        <i class='fa-regular fa-ellipsis-vertical text-textSubtle'></i>
-                      </button>
-                      {/* Dropdown menu  */}
-                      {ShowOptions === nft.id && (
-                        <div className='z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 block'>
-                          <ul class='text-sm'>
-                            <li className='border-b border-divide'>
-                              <a
-                                onClick={() => handleEditNFT(nft.id)}
-                                className='block p-4 hover:bg-gray-100 dark:hover:bg-gray-600'
-                              >
-                                Edit NFT
-                              </a>
-                            </li>
-                            <li className='border-b border-divide'>
-                              <a
-                                onClick={() => handleUpdateMeta(nft.id)}
-                                className='block p-4 hover:bg-gray-100 dark:hover:bg-gray-600'
-                              >
-                                Update Metadata
-                              </a>
-                            </li>
-                          </ul>
-                        </div>
-                      )}
+          {NFTs &&
+            NFTs.map((nft) => {
+              return (
+                <div className='min-h-[390px] rounded-x w-[276px]'>
+                  <a href='#'>
+                    <img
+                      className='rounded-xl h-[276px] object-cover w-[276px]'
+                      src={nft?.asset?.path}
+                      alt=''
+                    />
+                  </a>
+                  <div className='py-5'>
+                    <div className='flex'>
+                      <h2 className='mb-2 text-txtblack truncate flex-1 mr-3 m-w-0 text-[24px]'>
+                        {nft?.name}
+                      </h2>
+                      <div className='relative'>
+                        <button
+                          type='button'
+                          onClick={() => handleShowOptions(nft.id)}
+                        >
+                          <i class='fa-regular fa-ellipsis-vertical text-textSubtle'></i>
+                        </button>
+                        {/* Dropdown menu  */}
+                        {ShowOptions === nft.id && (
+                          <div className='z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 block'>
+                            <ul class='text-sm'>
+                              <li className='border-b border-divide'>
+                                <a
+                                  onClick={() => handleEditNFT(nft.id)}
+                                  className='block p-4 hover:bg-gray-100 dark:hover:bg-gray-600'
+                                >
+                                  Edit NFT
+                                </a>
+                              </li>
+                              <li className='border-b border-divide'>
+                                <a
+                                  onClick={() => handleUpdateMeta(nft.id)}
+                                  className='block p-4 hover:bg-gray-100 dark:hover:bg-gray-600'
+                                >
+                                  Update Metadata
+                                </a>
+                              </li>
+                            </ul>
+                          </div>
+                        )}
+                      </div>
                     </div>
+                    <p className='mb-3 text-black text-[13px] flex justify-between'>
+                      <span>0 ETH</span>
+                      <span>Logo</span>
+                    </p>
                   </div>
-                  <p className='mb-3 text-black text-[13px] flex justify-between'>
-                    <span>0 ETH</span>
-                    <span>Blockchain Logo</span>
-                  </p>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
       </section>
     </div>
