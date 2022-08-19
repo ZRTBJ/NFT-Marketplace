@@ -13,9 +13,12 @@ import {
   getDefinedProperties,
   createMembershipNft,
 } from "services/nft/nftService";
+
 import axios from "axios";
 import Config from "config";
 import { getNotificationData } from "Slice/notificationSlice";
+import { getFunctionStatus } from "services/websocketFunction/webSocketFunctionService";
+import { getAsset } from "services/notification/notificationService";
 export default function MembershipNFT() {
   const fileUploadNotification = useSelector((state) =>
     state?.notifications?.notificationData
@@ -93,6 +96,7 @@ export default function MembershipNFT() {
   const [projectId, setProjectId] = useState("");
   const [projectInfo, setProjectInfo] = useState({});
   const [jobId, setJobId] = useState("");
+  const [calledIds, setCalledIds] = useState([]);
 
   const [showDataUploadingModal, setShowDataUploadingModal] = useState(false);
   function onTextfieldChange(index, fieldName, value) {
@@ -288,6 +292,8 @@ export default function MembershipNFT() {
     request.append("sensitive_content", nft.sensitive_content);
     request.append("benefit_array", JSON.stringify(nft.benefit_array));
     request.append("attributes", JSON.stringify(nft.properties));
+    request.append("job_id", nft.job_id);
+
     // const properties = [];
 
     // properties
@@ -311,6 +317,13 @@ export default function MembershipNFT() {
     createMembershipNft(request)
       .then((res) => {
         localStorage.removeItem(`${jobId}`);
+        const upload_number = localStorage.getItem("upload_number");
+        const update_upload_number = parseInt(upload_number) - 1;
+        localStorage.setItem("upload_number", update_upload_number);
+        if (update_upload_number === 0) {
+          setShowDataUploadingModal(false);
+          setShowSuccessModal(true);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -386,14 +399,19 @@ export default function MembershipNFT() {
     } else {
       const daoId = await daoCreate();
       const collection_id = await collectionCreate(daoId);
+      localStorage.setItem("upload_number", validateNfts.length);
       for (const iterator of validateNfts) {
         const key = await genUploadKey(daoId, collection_id, iterator);
         if (key !== "") {
           await uploadAFile(key, daoId, iterator);
         }
       }
-      setShowDataUploadingModal(false);
-      setShowSuccessModal(true);
+
+      const process_status = localStorage.getItem("upload_number");
+      // console.log(process_status);
+      // if (parseInt(process_status) === 1) {
+
+      // }
 
       // console.log(nfts);
 
@@ -437,23 +455,80 @@ export default function MembershipNFT() {
       }
     }
   }
-  useEffect(() => {
-    console.log(fileUploadNotification);
-    const projectDeployStatus = fileUploadNotification.find(
-      (x) => x.data !== "" && localStorage.getItem(`${x.function_uuid}`)
+  function recheckStatus(fuuid) {
+    setTimeout(() => {
+      getFunctionStatus(fuuid)
+        .then((res) => {
+          if (res.code === 0) {
+            if (
+              res["fn_name"] === "createNFTBatch" &&
+              res["fn_status"] === "success"
+            ) {
+              if (res["fn_response_data"]["transactionStatus"] === "mined") {
+                const deployData = {
+                  function_uuid: fuuid,
+                  data: JSON.stringify(res),
+                };
+                dispatch(getNotificationData(deployData));
+              }
+            } else if (
+              res["fn_name"] === "createNFTBatch" &&
+              res["fn_status"] === "processing"
+            ) {
+              recheckStatus(fuuid);
+            }
+          }
+        })
+        .catch((error) => {});
+    }, 30000);
+  }
+  function validate() {
+    const projectDeployStatus = fileUploadNotification.find((x) =>
+      localStorage.getItem(`${x.function_uuid}`)
     );
     console.log(projectDeployStatus);
     if (projectDeployStatus && projectDeployStatus.data) {
-      const data = JSON.parse(projectDeployStatus.data);
-      if (
-        data.Data["assetId"] &&
-        data.Data["assetId"].length > 0 &&
-        data.Data["path"] &&
-        data.Data["path"].length > 0
-      ) {
-        saveNFTDetails(data.Data["assetId"], projectDeployStatus.function_uuid);
+      try {
+        const data = JSON.parse(projectDeployStatus.data);
+        if (
+          data.Data["assetId"] &&
+          data.Data["assetId"].length > 0 &&
+          data.Data["path"] &&
+          data.Data["path"].length > 0
+        ) {
+          if (!calledIds.includes(data.Data["assetId"])) {
+            saveNFTDetails(
+              data.Data["assetId"],
+              projectDeployStatus.function_uuid
+            );
+             let nftId = [...calledIds, data.Data["assetId"]];
+             setCalledIds(nftId);
+          }
+
+         
+        } else {
+          getAsset(projectDeployStatus.function_uuid).then((res) => {
+            console.log(res);
+            if (res.code === 0) {
+              const notificationData = {
+                projectId: dao_id,
+                etherscan: "",
+                function_uuid: projectDeployStatus.function_uuid,
+                data: res.asset,
+              };
+              dispatch(getNotificationData(notificationData));
+            }
+          });
+        }
+      } catch (error) {
+        console.log(error);
       }
     }
+  }
+
+  useEffect(() => {
+    // console.log(fileUploadNotification);
+    validate();
   }, [fileUploadNotification]);
   useEffect(() => {
     setPropertyList(propertyList);
