@@ -12,3 +12,6 @@ export async function markNotificationAsRead(uuid) {
   request.append("read", true);
   return await client("PUT", `/user/notifications/${uuid}`, request);
 }
+export async function getAsset(fuuid) {
+  return await client("GET", `/asset?job_id=${fuuid}`);
+}
