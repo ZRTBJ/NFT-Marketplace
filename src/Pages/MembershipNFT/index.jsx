@@ -1,11 +1,33 @@
 import React from "react";
 import { useState, useCallback, useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { DebounceInput } from "react-debounce-input";
 import Tooltip from "components/Tooltip";
 import Modal from "components/Modal";
+import SuccessModal from "components/modalDialog/SuccessModal";
+import { useLocation } from "react-router-dom";
+import { mockCreateProject } from "services/project/projectService";
+import { mockCreateCollection } from "services/collection/collectionService";
+import {
+  generateUploadkey,
+  getDefinedProperties,
+  createMembershipNft,
+} from "services/nft/nftService";
 
+import axios from "axios";
+import Config from "config";
+import { getNotificationData } from "Slice/notificationSlice";
+import { getFunctionStatus } from "services/websocketFunction/webSocketFunctionService";
+import { getAsset } from "services/notification/notificationService";
 export default function MembershipNFT() {
+  const fileUploadNotification = useSelector((state) =>
+    state?.notifications?.notificationData
+      ? state?.notifications?.notificationData
+      : []
+  );
+
+  let query = useQuery();
+  const dispatch = useDispatch();
   const userinfo = useSelector((state) => state.user.userinfo);
   const [isDataLoading, setDataIsLoading] = useState(false);
   const nftList = [
@@ -17,7 +39,7 @@ export default function MembershipNFT() {
         isFileError: false,
         limitExceeded: false,
       },
-      nftName: "",
+      // nftName: "",
       externalLink: "",
       description: "",
       benefits: [{ title: "" }],
@@ -34,12 +56,49 @@ export default function MembershipNFT() {
       isOpen: true,
       blockchainCategory: "polygon",
     },
+    // {
+    //   tierName: "erere",
+    //   assets: {
+    //     file: null,
+    //     path: null,
+    //     isFileError: false,
+    //     limitExceeded: false,
+    //   },
+    //   nftName: "ererer",
+    //   externalLink: "",
+    //   description: "",
+    //   benefits: [{ title: "" }],
+    //   properties: [
+    //     {
+    //       key: "",
+    //       value: "",
+    //       value_type: "string",
+    //       display_type: "properties",
+    //     },
+    //   ],
+    //   sensitiveContent: false,
+    //   supply: "1232132",
+    //   isOpen: true,
+    //   blockchainCategory: "polygon",
+    // },
   ];
   const [nfts, setNfts] = useState(nftList);
   const audioRef = useRef();
   const [checkedValidation, setCheckedValidation] = useState(false);
   const [showPropertyModal, setShowPropertyModal] = useState(false);
   const [propertyList, setPropertyList] = useState([]);
+  const [indexOfNfts, setIndexOfNfts] = useState("");
+  const [isPreview, setIsPreview] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [dao_id, setDao_id] = useState(null);
+  const [collection_id, setCollection_id] = useState(null);
+  const [projectCreated, setProjectCreated] = useState(false);
+  const [projectId, setProjectId] = useState("");
+  const [projectInfo, setProjectInfo] = useState({});
+  const [jobId, setJobId] = useState("");
+  const [calledIds, setCalledIds] = useState([]);
+
+  const [showDataUploadingModal, setShowDataUploadingModal] = useState(false);
   function onTextfieldChange(index, fieldName, value) {
     setValue(index, fieldName, value);
   }
@@ -58,7 +117,7 @@ export default function MembershipNFT() {
         isFileError: false,
         limitExceeded: false,
       },
-      nftName: "",
+      // nftName: "",
       externalLink: "",
       description: "",
       benefits: [{ title: "" }],
@@ -122,13 +181,17 @@ export default function MembershipNFT() {
   }
   function handleOnChangePropertyType(event, index) {
     const value = event.target.value;
+    let tempProperty = [...propertyList];
     const property = propertyList[index];
     property.key = value;
+    setPropertyList(tempProperty);
   }
   function handleOnChangePropertyName(event, index) {
     const value = event.target.value;
-    const property = propertyList[index];
+    let tempProperty = [...propertyList];
+    const property = tempProperty[index];
     property.value = value;
+    setPropertyList(tempProperty);
   }
   function addProperty() {
     const tempProperty = [...propertyList];
@@ -141,9 +204,10 @@ export default function MembershipNFT() {
     setPropertyList(tempProperty);
   }
   function removeProperty(index) {
-    const tempProperty = [...propertyList];
-    tempProperty.splice(index - 1, 1);
+    let tempProperty = [...propertyList];
+    tempProperty = tempProperty.filter((prop) => prop !== tempProperty[index]);
     setPropertyList(tempProperty);
+    // console.log(tempProperty);
   }
   function onSensitiveContentChange(index) {
     let oldNfts = [...nfts];
@@ -151,13 +215,336 @@ export default function MembershipNFT() {
     setNfts(oldNfts);
   }
   function openPropertyModal(index) {
+    setIndexOfNfts(index);
     let oldNfts = [...nfts];
     setPropertyList(oldNfts[index].properties);
     setShowPropertyModal(true);
   }
-  function nextHandle() {
-    console.log(nfts);
+  function onSavePropertiesChange() {
+    let oldNfts = [...nfts];
+    oldNfts[indexOfNfts].properties = propertyList;
+    setNfts(oldNfts);
+    setShowPropertyModal(false);
+    setPropertyList([]);
   }
+  function useQuery() {
+    const { search } = useLocation();
+    return React.useMemo(() => new URLSearchParams(search), [search]);
+  }
+  async function daoCreate() {
+    let daoId = "";
+    await mockCreateProject().then((res) => {
+      daoId = res.project.id;
+      setDao_id(daoId);
+    });
+    return daoId;
+  }
+  async function collectionCreate(dao_id) {
+    let collection_id = "";
+    let payload = {
+      dao_id: dao_id,
+      collection_type: "membership",
+    };
+    await mockCreateCollection(payload).then((res) => {
+      collection_id = res.collection.id;
+      setCollection_id(collection_id);
+      // const newUrl =
+      //   window.location.protocol +
+      //   "//" +
+      //   window.location.host +
+      //   window.location.pathname +
+      //   `?collection_id=${collection_id}`;
+      // window.history.pushState({ path: newUrl }, "", newUrl);
+    });
+    return collection_id;
+  }
+  // async function createNewProject(dao_id) {
+  //   let createPayload = {
+  //     name: projectName,
+  //     dao_id: dao_id,
+  //     collection_type: "product",
+  //   };
+
+  //   let projectId = "";
+  //   await createCollection(createPayload)
+  //     .then((res) => {
+  //       if (res.code === 0) {
+  //         projectId = res.collection.id;
+  //         setProjectCreated(true);
+  //         setProjectId(projectId);
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  //   return projectId;
+  // }
+  async function saveNFTDetails(assetId, jobId) {
+    let nft = JSON.parse(localStorage.getItem(`${jobId}`));
+    const request = new FormData();
+    request.append("asset_uid", assetId);
+    request.append("collection_uid", collection_id);
+    request.append("tier_name", nft.tier_name);
+    request.append("supply", nft.supply);
+    request.append("blockchain", nft.blockchain);
+    request.append("description", nft.description);
+    request.append("external_link", nft.external_link);
+    request.append("sensitive_content", nft.sensitive_content);
+    request.append("benefit_array", JSON.stringify(nft.benefit_array));
+    request.append("attributes", JSON.stringify(nft.properties));
+    request.append("job_id", nft.job_id);
+
+    // const properties = [];
+
+    // properties
+    // for (let aprop of nft.properties) {
+    //   if (
+    //     aprop.key &&
+    //     aprop.key.length > 0 &&
+    //     aprop.value &&
+    //     aprop.value.length > 0
+    //   ) {
+    //     const prop = {
+    //       key: aprop.key,
+    //       value: aprop.value,
+    //       value_type: aprop.value_type,
+    //       display_type: aprop.display_type,
+    //     };
+    //     properties.push(prop);
+    //   }
+    // }
+
+    createMembershipNft(request)
+      .then((res) => {
+        localStorage.removeItem(`${jobId}`);
+        const upload_number = localStorage.getItem("upload_number");
+        const update_upload_number = parseInt(upload_number) - 1;
+        localStorage.setItem("upload_number", update_upload_number);
+        if (update_upload_number === 0) {
+          setShowDataUploadingModal(false);
+          setShowSuccessModal(true);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  async function uploadAFile(uploadKey, daoId, nft) {
+    let headers;
+    headers = {
+      "Content-Type": "multipart/form-data",
+      "Access-Control-Allow-Origin": "*",
+      key: uploadKey,
+    };
+    let formdata = new FormData();
+    formdata.append("file", nft.assets.file);
+    await axios({
+      method: "POST",
+      url: Config.FILE_SERVER_URL,
+      data: formdata,
+      headers: headers,
+    })
+      .then((response) => {
+        let data = {
+          collection_uid: collection_id,
+          tier_name: nft.tierName,
+          supply: nft.supply,
+          blockchain: nft.blockchainCategory,
+          description: nft.description,
+          external_link: nft.externalLink,
+          sensitive_content: nft.sensitiveContent,
+          benefit_array: nft.benefits,
+          job_id: response["job_id"],
+          properties: nft.properties,
+        };
+        localStorage.setItem(`${response["job_id"]}`, JSON.stringify(data));
+        const notificationData = {
+          projectId: daoId,
+          etherscan: "",
+          function_uuid: response["job_id"],
+          data: "",
+        };
+        dispatch(getNotificationData(notificationData));
+      })
+      .catch((err) => {
+        console.log(err);
+        // setIsLoading(false);
+      });
+  }
+
+  async function genUploadKey(daoId) {
+    let key = "";
+    const request = new FormData();
+    request.append("project_uid", daoId);
+    await generateUploadkey(request)
+      .then((res) => {
+        if (res.key) {
+          key = res.key;
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    return key;
+  }
+
+  async function createBlock(validateNfts) {
+    setShowDataUploadingModal(true);
+    if (query.get("collection_id")) {
+      // console.log(collection_id);
+      // id = await createNewProject(dao_id);
+      // await updateExistingProject(id);
+      // await projectDetails(id);
+    } else {
+      const daoId = await daoCreate();
+      const collection_id = await collectionCreate(daoId);
+      localStorage.setItem("upload_number", validateNfts.length);
+      for (const iterator of validateNfts) {
+        const key = await genUploadKey(daoId, collection_id, iterator);
+        if (key !== "") {
+          await uploadAFile(key, daoId, iterator);
+        }
+      }
+
+      const process_status = localStorage.getItem("upload_number");
+      // console.log(process_status);
+      // if (parseInt(process_status) === 1) {
+
+      // }
+
+      // console.log(nfts);
+
+      // console.log(dao_id, collection_id);
+      // id = await createNewProject(dao_id);
+      // await updateExistingProject(id);
+      // await projectDetails(id);
+    }
+    // setDataIsLoading(false);
+    // setShowSuccessModal(true);
+  }
+  async function updateBlock(id) {
+    setDataIsLoading(true);
+    // await updateExistingProject(id);
+    // await projectDetails(id);
+    setDataIsLoading(false);
+    setShowSuccessModal(true);
+  }
+  async function nextHandle() {
+    const validateNfts = nfts.filter(
+      (element) =>
+        element.tierName !== "" &&
+        element.assets.file !== null &&
+        element.assets.isFileError === false &&
+        element.assets.limitExceeded === false &&
+        element.nftName !== "" &&
+        element.supply !== ""
+    );
+
+    if (isPreview) {
+      if (!projectCreated) {
+        await createBlock(validateNfts);
+      } else if (projectCreated && projectId !== "") {
+        await updateBlock(projectId);
+      }
+    } else {
+      setCheckedValidation(true);
+      if (validateNfts.length === nfts.length) {
+        window.scroll({ top: 0, behavior: "smooth" });
+        setIsPreview(true);
+      }
+    }
+  }
+  function recheckStatus(fuuid) {
+    setTimeout(() => {
+      getFunctionStatus(fuuid)
+        .then((res) => {
+          if (res.code === 0) {
+            if (
+              res["fn_name"] === "createNFTBatch" &&
+              res["fn_status"] === "success"
+            ) {
+              if (res["fn_response_data"]["transactionStatus"] === "mined") {
+                const deployData = {
+                  function_uuid: fuuid,
+                  data: JSON.stringify(res),
+                };
+                dispatch(getNotificationData(deployData));
+              }
+            } else if (
+              res["fn_name"] === "createNFTBatch" &&
+              res["fn_status"] === "processing"
+            ) {
+              recheckStatus(fuuid);
+            }
+          }
+        })
+        .catch((error) => {});
+    }, 30000);
+  }
+  function validate() {
+    const projectDeployStatus = fileUploadNotification.find((x) =>
+      localStorage.getItem(`${x.function_uuid}`)
+    );
+    console.log(projectDeployStatus);
+    if (projectDeployStatus && projectDeployStatus.data) {
+      try {
+        const data = JSON.parse(projectDeployStatus.data);
+        if (
+          data.Data["assetId"] &&
+          data.Data["assetId"].length > 0 &&
+          data.Data["path"] &&
+          data.Data["path"].length > 0
+        ) {
+          if (!calledIds.includes(data.Data["assetId"])) {
+            saveNFTDetails(
+              data.Data["assetId"],
+              projectDeployStatus.function_uuid
+            );
+             let nftId = [...calledIds, data.Data["assetId"]];
+             setCalledIds(nftId);
+          }
+
+         
+        } else {
+          getAsset(projectDeployStatus.function_uuid).then((res) => {
+            console.log(res);
+            if (res.code === 0) {
+              const notificationData = {
+                projectId: dao_id,
+                etherscan: "",
+                function_uuid: projectDeployStatus.function_uuid,
+                data: res.asset,
+              };
+              dispatch(getNotificationData(notificationData));
+            }
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+
+  useEffect(() => {
+    // console.log(fileUploadNotification);
+    validate();
+  }, [fileUploadNotification]);
+  useEffect(() => {
+    setPropertyList(propertyList);
+  }, [propertyList]);
+  useEffect(() => {
+    setNfts(nfts);
+  }, [nfts]);
+  useEffect(() => {
+    setCollection_id(collection_id);
+  }, [collection_id]);
+  useEffect(() => {
+    if (query.get("collection_id")) {
+      setCollection_id(query.get("collection_id"));
+    }
+  }, []);
+
   return (
     <>
       {isDataLoading && <div className="loading"></div>}
@@ -166,10 +553,12 @@ export default function MembershipNFT() {
           <div className="max-w-[600px] mx-auto md:mt-[40px]">
             <div className="mb-[24px]">
               <h1 className="text-[28px] font-black mb-[6px]">
-                Create Membership NFT
+                {isPreview ? "Review Membership NFT" : "Create Membership NFT"}
               </h1>
               <p className="text-[14px] text-textSubtle ">
-                Fill the require form to create NFT
+                {isPreview
+                  ? " Review the form to create NFT"
+                  : " Fill the require form to create NFT"}
               </p>
             </div>
             <div>
@@ -178,7 +567,7 @@ export default function MembershipNFT() {
                   key={index}
                   className="mb-6 rounded-[12px]  border border-divider  p-4"
                 >
-                  {nfts.length > 1 && (
+                  {nfts.length > 1 && !isPreview && (
                     <div className="text-right">
                       <i
                         onClick={() => deleteNfs(index)}
@@ -192,7 +581,10 @@ export default function MembershipNFT() {
                       <DebounceInput
                         minLength={1}
                         debounceTimeout={0}
-                        className="debounceInput mt-1"
+                        className={`debounceInput mt-1 ${
+                          isPreview ? " !border-none bg-transparent" : ""
+                        } `}
+                        disabled={isPreview}
                         value={nft.tierName}
                         onChange={(e) =>
                           onTextfieldChange(index, "tierName", e.target.value)
@@ -303,6 +695,7 @@ export default function MembershipNFT() {
                         </div>
 
                         <input
+                          disabled={isPreview}
                           key={index}
                           id={`dropzone-file${index}`}
                           type="file"
@@ -329,16 +722,19 @@ export default function MembershipNFT() {
                       </p>
                     )}
                   </div>
-                  <div className="mb-6">
+                  {/* <div className="mb-6">
                     <div className="txtblack text-[14px]">Name</div>
                     <>
                       <DebounceInput
                         minLength={1}
                         debounceTimeout={0}
-                        className="debounceInput mt-1"
+                        className={`debounceInput mt-1 ${
+                          isPreview ? " !border-none bg-transparent" : ""
+                        } `}
+                        disabled={isPreview}
                         value={nft.nftName}
                         onChange={(e) =>
-                          onTextfieldChange(index, "name", e.target.value)
+                          onTextfieldChange(index, "nftName", e.target.value)
                         }
                         placeholder="Name for the NFT"
                       />
@@ -346,14 +742,17 @@ export default function MembershipNFT() {
                         <div className="validationTag">Name is required</div>
                       )}
                     </>
-                  </div>
+                  </div> */}
                   <div className="mb-6">
                     <div className="txtblack text-[14px]">External Links</div>
                     <>
                       <DebounceInput
                         minLength={1}
                         debounceTimeout={0}
-                        className="debounceInput mt-1"
+                        className={`debounceInput mt-1 ${
+                          isPreview ? " !border-none bg-transparent" : ""
+                        } `}
+                        disabled={isPreview}
                         value={nft.externalLink}
                         onChange={(e) =>
                           onTextfieldChange(
@@ -378,6 +777,10 @@ export default function MembershipNFT() {
                       cols="30"
                       rows="6"
                       placeholder="Add brief description about this NFT"
+                      className={`mt-1 ${
+                        isPreview ? " !border-none bg-transparent" : ""
+                      } `}
+                      disabled={isPreview}
                     ></textarea>
                   </div>
                   <div className="mb-6">
@@ -390,14 +793,17 @@ export default function MembershipNFT() {
                         <DebounceInput
                           minLength={1}
                           debounceTimeout={0}
-                          className="debounceInput mt-1"
+                          className={`debounceInput mt-1 ${
+                            isPreview ? " !border-none bg-transparent" : ""
+                          } `}
+                          disabled={isPreview}
                           value={benefit.title}
                           onChange={(e) =>
                             onBenefitChange(index, benefitIndex, e.target.value)
                           }
                           placeholder="https://"
                         />
-                        {nft.benefits.length > 1 && (
+                        {nft.benefits.length > 1 && !isPreview && (
                           <div className="ml-4">
                             <i
                               onClick={() =>
@@ -409,12 +815,14 @@ export default function MembershipNFT() {
                         )}
                       </div>
                     ))}
-                    <button
-                      onClick={() => addMoreBenefits(index)}
-                      className="h-[43px] mb-4 mr-4 px-4 py-2 text-[14px]  bg-primary-900/[.20] font-black  rounded text-primary-900   "
-                    >
-                      Add More Benefit
-                    </button>
+                    {!isPreview && (
+                      <button
+                        onClick={() => addMoreBenefits(index)}
+                        className="h-[43px] mb-4 mr-4 px-4 py-2 text-[14px]  bg-primary-900/[.20] font-black  rounded text-primary-900   "
+                      >
+                        Add More Benefit
+                      </button>
+                    )}
                   </div>
 
                   <div className="mb-6">
@@ -430,10 +838,12 @@ export default function MembershipNFT() {
                           Add NFT properties
                         </small>
                       </div>
-                      <i
-                        className="fa-regular fa-square-plus text-2xl text-primary-900 cursor-pointer"
-                        onClick={() => openPropertyModal(index)}
-                      ></i>
+                      {!isPreview && (
+                        <i
+                          className="fa-regular fa-square-plus text-2xl text-primary-900 cursor-pointer"
+                          onClick={() => openPropertyModal(index)}
+                        ></i>
+                      )}
                     </div>
                     <div className="flex py-3 border-b border-b-divider">
                       <p className="text-txtblack text-[18px] font-black">
@@ -445,46 +855,54 @@ export default function MembershipNFT() {
                           Defined properties on your NFT
                         </small>
                       </div>
-                      <div className="flex flex-wrap items-center">
-                        <label
-                          htmlFor={`checked-toggle-${index}`}
-                          className="inline-flex relative items-center cursor-pointer ml-auto"
-                        >
-                          <input
-                            type="checkbox"
-                            value={nft.sensitiveContent}
-                            id={`checked-toggle-${index}`}
-                            checked={nft.sensitiveContent}
-                            className="sr-only peer outline-none"
-                            onChange={(e) =>
-                              onSensitiveContentChange(
-                                index,
-                                nft.sensitiveContent
-                              )
-                            }
-                          />
-                          <div className="w-11 outline-none h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-900"></div>
-                        </label>
-                      </div>
+                      {isPreview ? (
+                        <div className="text-[14px] text-textSubtle">
+                          {nft.sensitiveContent.toString().toLocaleUpperCase()}
+                        </div>
+                      ) : (
+                        <div className="flex flex-wrap items-center">
+                          <label
+                            htmlFor={`checked-toggle-${index}`}
+                            className="inline-flex relative items-center cursor-pointer ml-auto"
+                          >
+                            <input
+                              type="checkbox"
+                              value={nft.sensitiveContent}
+                              id={`checked-toggle-${index}`}
+                              checked={nft.sensitiveContent}
+                              className="sr-only peer outline-none"
+                              onChange={(e) =>
+                                onSensitiveContentChange(
+                                  index,
+                                  nft.sensitiveContent
+                                )
+                              }
+                            />
+                            <div className="w-11 outline-none h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-900"></div>
+                          </label>
+                        </div>
+                      )}
                     </div>
-                    <div className="grid grid-cols-3 sm:grid-cols-6 gap-4 mt-2">
-                      {propertyList &&
-                        propertyList.map((property, index) => (
-                          <>
+                    <div className="mt-2 flex flex-wrap">
+                      {nft.properties &&
+                        nft.properties.map((property, index) => (
+                          <div key={index} className="m-2">
                             {property.key.length > 0 && property.value.length && (
                               <div
                                 key={`properties-${index}`}
                                 className="place-content-center"
                               >
-                                <div className="h-16 w-24 border rounded text-center  p-2">
-                                  <p className="text-primary-color-1 font-semibold">
+                                <div className="min-16 w-auto border rounded text-center  p-2">
+                                  <p className="text-primary-color-1 font-semibold text-ellipsis">
                                     {property.key}
                                   </p>
-                                  <p className="text-sm">{property.value}</p>
+                                  <p className="text-sm text-ellipsis">
+                                    {property.value}
+                                  </p>
                                 </div>
                               </div>
                             )}
-                          </>
+                          </div>
                         ))}
                     </div>
                   </div>
@@ -498,7 +916,10 @@ export default function MembershipNFT() {
                       <DebounceInput
                         minLength={1}
                         debounceTimeout={0}
-                        className="debounceInput mt-1"
+                        className={`debounceInput mt-1 ${
+                          isPreview ? " !border-none bg-transparent" : ""
+                        } `}
+                        disabled={isPreview}
                         value={nft.supply}
                         type="number"
                         onChange={(e) =>
@@ -521,7 +942,9 @@ export default function MembershipNFT() {
                     <select
                       value={nft.blockchainCategory}
                       disabled
-                      className="h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3"
+                      className={`h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3 ${
+                        isPreview ? " !border-none bg-transparent" : ""
+                      } `}
                     >
                       <option value={nft.blockchainCategory} defaultValue>
                         Polygon
@@ -532,18 +955,37 @@ export default function MembershipNFT() {
               ))}
             </div>
             <div className="my-6 md:flex">
-              <button
-                onClick={addMoreTier}
-                className="h-[43px] mb-4 mr-4 px-6 py-2 bg-primary-900/[.20] font-black  rounded text-primary-900   "
-              >
-                Add More Tier
-              </button>
-              <button
-                onClick={nextHandle}
-                className="h-[43px] px-6 py-2 bg-primary-900 rounded font-black text-white-shade-900   md:ml-auto"
-              >
-                Next
-              </button>
+              {isPreview ? (
+                <>
+                  <button
+                    onClick={() => setIsPreview(false)}
+                    className="h-[43px] mb-4 mr-4 px-6 py-2 bg-primary-900/[.20] font-black  rounded text-primary-900   "
+                  >
+                    Back
+                  </button>
+                  <button
+                    onClick={nextHandle}
+                    className="h-[43px] px-6 py-2 bg-primary-900 rounded font-black text-white-shade-900   md:ml-auto"
+                  >
+                    Submit
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={addMoreTier}
+                    className="h-[43px] mb-4 mr-4 px-6 py-2 bg-primary-900/[.20] font-black  rounded text-primary-900   "
+                  >
+                    Add More Tier
+                  </button>
+                  <button
+                    onClick={nextHandle}
+                    className="h-[43px] px-6 py-2 bg-primary-900 rounded font-black text-white-shade-900   md:ml-auto"
+                  >
+                    Next
+                  </button>
+                </>
+              )}
             </div>
           </div>
           <Modal
@@ -562,7 +1004,7 @@ export default function MembershipNFT() {
               <p className="text-color-ass-9 text-sm">Add Properties</p>
               {propertyList &&
                 propertyList.map((property, index) => (
-                  <div key={`properties-${index}`}>
+                  <div key={index}>
                     <div className="flex items-center mt-3">
                       <input
                         name={`type-${index}`}
@@ -579,10 +1021,13 @@ export default function MembershipNFT() {
                         defaultValue={property.value}
                         onChange={(e) => handleOnChangePropertyName(e, index)}
                       />
-                      <i
-                        className="fa-solid fa-trash cursor-pointer ml-3"
-                        onClick={() => removeProperty(index)}
-                      ></i>
+
+                      {propertyList.length > 1 && (
+                        <i
+                          className="cursor-pointer fa-solid fa-trash text-danger-1/[0.7] ml-3"
+                          onClick={() => removeProperty(index)}
+                        ></i>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -590,7 +1035,7 @@ export default function MembershipNFT() {
               <div className="mt-5">
                 <button
                   type="button"
-                  className="btn btn-text-gradient"
+                  className="h-[43px] mb-4 mr-4 px-6 py-2 bg-primary-900/[.20] font-black  rounded text-primary-900"
                   onClick={() => addProperty()}
                 >
                   Add more +
@@ -600,8 +1045,8 @@ export default function MembershipNFT() {
               <div className="mt-5">
                 <button
                   type="button"
-                  className="btn btn-primary btn-sm"
-                  onClick={() => setShowPropertyModal(false)}
+                  className="h-[43px] px-6 py-2 bg-primary-900 rounded font-black text-white-shade-900"
+                  onClick={onSavePropertiesChange}
                 >
                   SAVE
                 </button>
@@ -609,6 +1054,33 @@ export default function MembershipNFT() {
             </div>
           </Modal>
         </>
+      )}
+      {showSuccessModal && (
+        <SuccessModal
+          message="You successfully Create
+                    a Membership NFT!"
+          subMessage="Do you want to create New NFT? if yes let’s go!"
+          buttonText="Done"
+          redirection={`/create`}
+          handleClose={() => setShowSuccessModal(false)}
+          show={showSuccessModal}
+        />
+      )}
+      {showDataUploadingModal && (
+        <Modal
+          width={800}
+          show={showDataUploadingModal}
+          showCloseIcon={false}
+          handleClose={() => setShowDataUploadingModal(false)}
+        >
+          <div className="text-center my-6 mx-16">
+            <h1>Do not close the Tab</h1>
+            <h1>Your Assets is uploading</h1>
+            <div className="overflow-hidden rounded-full h-4 w-full mt-12 mb-8 relative animated fadeIn">
+              <div className="animated-process-bar"></div>
+            </div>
+          </div>
+        </Modal>
       )}
     </>
   );

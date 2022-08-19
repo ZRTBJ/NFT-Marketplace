@@ -14,6 +14,9 @@ export async function getNftListByUserId(payload) {
 export async function saveNFT(payload) {
   return await client('POST', `/nft`, payload, 'formdata');
 }
+export async function createMembershipNft(payload) {
+  return await client("POST", `/membership-nft`, payload, "formdata");
+}
 
 export async function generateUploadkey(payload) {
   return await client('POST', `/upload/genKey`, payload, 'formdata');

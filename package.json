@@ -29,6 +29,7 @@
     "react-scripts": "5.0.0",
     "react-tooltip": "^4.2.21",
     "react-use-websocket": "^3.0.0",
+    "rsuite": "^5.16.5",
     "swiper": "^8.1.1",
     "tw-elements": "^1.0.0-alpha12",
     "web-vitals": "^2.1.4",

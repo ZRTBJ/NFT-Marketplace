@@ -379,9 +379,7 @@ export default function CollectionCreate() {
 
   useEffect(() => {
     if (query.get("dao_id")) {
-      // console.log(query.get("dao_id"));
       setDao_id(query.get("dao_id"));
-      // console.log(dao_id);
     }
   }, []);
 
