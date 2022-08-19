@@ -1,14 +1,30 @@
 import React from "react";
 import { useState, useCallback, useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { DebounceInput } from "react-debounce-input";
 import Tooltip from "components/Tooltip";
 import Modal from "components/Modal";
 import SuccessModal from "components/modalDialog/SuccessModal";
 import { useLocation } from "react-router-dom";
-
+import { mockCreateProject } from "services/project/projectService";
+import { mockCreateCollection } from "services/collection/collectionService";
+import {
+  generateUploadkey,
+  getDefinedProperties,
+  createMembershipNft,
+} from "services/nft/nftService";
+import axios from "axios";
+import Config from "config";
+import { getNotificationData } from "Slice/notificationSlice";
 export default function MembershipNFT() {
+  const fileUploadNotification = useSelector((state) =>
+    state?.notifications?.notificationData
+      ? state?.notifications?.notificationData
+      : []
+  );
+
   let query = useQuery();
+  const dispatch = useDispatch();
   const userinfo = useSelector((state) => state.user.userinfo);
   const [isDataLoading, setDataIsLoading] = useState(false);
   const nftList = [
@@ -20,7 +36,7 @@ export default function MembershipNFT() {
         isFileError: false,
         limitExceeded: false,
       },
-      nftName: "",
+      // nftName: "",
       externalLink: "",
       description: "",
       benefits: [{ title: "" }],
@@ -37,6 +53,31 @@ export default function MembershipNFT() {
       isOpen: true,
       blockchainCategory: "polygon",
     },
+    // {
+    //   tierName: "erere",
+    //   assets: {
+    //     file: null,
+    //     path: null,
+    //     isFileError: false,
+    //     limitExceeded: false,
+    //   },
+    //   nftName: "ererer",
+    //   externalLink: "",
+    //   description: "",
+    //   benefits: [{ title: "" }],
+    //   properties: [
+    //     {
+    //       key: "",
+    //       value: "",
+    //       value_type: "string",
+    //       display_type: "properties",
+    //     },
+    //   ],
+    //   sensitiveContent: false,
+    //   supply: "1232132",
+    //   isOpen: true,
+    //   blockchainCategory: "polygon",
+    // },
   ];
   const [nfts, setNfts] = useState(nftList);
   const audioRef = useRef();
@@ -51,7 +92,9 @@ export default function MembershipNFT() {
   const [projectCreated, setProjectCreated] = useState(false);
   const [projectId, setProjectId] = useState("");
   const [projectInfo, setProjectInfo] = useState({});
+  const [jobId, setJobId] = useState("");
 
+  const [showDataUploadingModal, setShowDataUploadingModal] = useState(false);
   function onTextfieldChange(index, fieldName, value) {
     setValue(index, fieldName, value);
   }
@@ -70,7 +113,7 @@ export default function MembershipNFT() {
         isFileError: false,
         limitExceeded: false,
       },
-      nftName: "",
+      // nftName: "",
       externalLink: "",
       description: "",
       benefits: [{ title: "" }],
@@ -160,7 +203,7 @@ export default function MembershipNFT() {
     let tempProperty = [...propertyList];
     tempProperty = tempProperty.filter((prop) => prop !== tempProperty[index]);
     setPropertyList(tempProperty);
-    console.log(tempProperty);
+    // console.log(tempProperty);
   }
   function onSensitiveContentChange(index) {
     let oldNfts = [...nfts];
@@ -180,28 +223,195 @@ export default function MembershipNFT() {
     setShowPropertyModal(false);
     setPropertyList([]);
   }
-  async function createBlock(id) {
-    setDataIsLoading(true);
+  function useQuery() {
+    const { search } = useLocation();
+    return React.useMemo(() => new URLSearchParams(search), [search]);
+  }
+  async function daoCreate() {
+    let daoId = "";
+    await mockCreateProject().then((res) => {
+      daoId = res.project.id;
+      setDao_id(daoId);
+    });
+    return daoId;
+  }
+  async function collectionCreate(dao_id) {
+    let collection_id = "";
+    let payload = {
+      dao_id: dao_id,
+      collection_type: "membership",
+    };
+    await mockCreateCollection(payload).then((res) => {
+      collection_id = res.collection.id;
+      setCollection_id(collection_id);
+      // const newUrl =
+      //   window.location.protocol +
+      //   "//" +
+      //   window.location.host +
+      //   window.location.pathname +
+      //   `?collection_id=${collection_id}`;
+      // window.history.pushState({ path: newUrl }, "", newUrl);
+    });
+    return collection_id;
+  }
+  // async function createNewProject(dao_id) {
+  //   let createPayload = {
+  //     name: projectName,
+  //     dao_id: dao_id,
+  //     collection_type: "product",
+  //   };
+
+  //   let projectId = "";
+  //   await createCollection(createPayload)
+  //     .then((res) => {
+  //       if (res.code === 0) {
+  //         projectId = res.collection.id;
+  //         setProjectCreated(true);
+  //         setProjectId(projectId);
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  //   return projectId;
+  // }
+  async function saveNFTDetails(assetId, jobId) {
+    let nft = JSON.parse(localStorage.getItem(`${jobId}`));
+    const request = new FormData();
+    request.append("asset_uid", assetId);
+    request.append("collection_uid", collection_id);
+    request.append("tier_name", nft.tier_name);
+    request.append("supply", nft.supply);
+    request.append("blockchain", nft.blockchain);
+    request.append("description", nft.description);
+    request.append("external_link", nft.external_link);
+    request.append("sensitive_content", nft.sensitive_content);
+    request.append("benefit_array", JSON.stringify(nft.benefit_array));
+    request.append("attributes", JSON.stringify(nft.properties));
+    // const properties = [];
+
+    // properties
+    // for (let aprop of nft.properties) {
+    //   if (
+    //     aprop.key &&
+    //     aprop.key.length > 0 &&
+    //     aprop.value &&
+    //     aprop.value.length > 0
+    //   ) {
+    //     const prop = {
+    //       key: aprop.key,
+    //       value: aprop.value,
+    //       value_type: aprop.value_type,
+    //       display_type: aprop.display_type,
+    //     };
+    //     properties.push(prop);
+    //   }
+    // }
+
+    createMembershipNft(request)
+      .then((res) => {
+        localStorage.removeItem(`${jobId}`);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  async function uploadAFile(uploadKey, daoId, nft) {
+    let headers;
+    headers = {
+      "Content-Type": "multipart/form-data",
+      "Access-Control-Allow-Origin": "*",
+      key: uploadKey,
+    };
+    let formdata = new FormData();
+    formdata.append("file", nft.assets.file);
+    await axios({
+      method: "POST",
+      url: Config.FILE_SERVER_URL,
+      data: formdata,
+      headers: headers,
+    })
+      .then((response) => {
+        let data = {
+          collection_uid: collection_id,
+          tier_name: nft.tierName,
+          supply: nft.supply,
+          blockchain: nft.blockchainCategory,
+          description: nft.description,
+          external_link: nft.externalLink,
+          sensitive_content: nft.sensitiveContent,
+          benefit_array: nft.benefits,
+          job_id: response["job_id"],
+          properties: nft.properties,
+        };
+        localStorage.setItem(`${response["job_id"]}`, JSON.stringify(data));
+        const notificationData = {
+          projectId: daoId,
+          etherscan: "",
+          function_uuid: response["job_id"],
+          data: "",
+        };
+        dispatch(getNotificationData(notificationData));
+      })
+      .catch((err) => {
+        console.log(err);
+        // setIsLoading(false);
+      });
+  }
+
+  async function genUploadKey(daoId) {
+    let key = "";
+    const request = new FormData();
+    request.append("project_uid", daoId);
+    await generateUploadkey(request)
+      .then((res) => {
+        if (res.key) {
+          key = res.key;
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    return key;
+  }
+
+  async function createBlock(validateNfts) {
+    setShowDataUploadingModal(true);
     if (query.get("collection_id")) {
-      id = await createNewProject(dao_id);
-      await updateExistingProject(id);
-      await projectDetails(id);
+      // console.log(collection_id);
+      // id = await createNewProject(dao_id);
+      // await updateExistingProject(id);
+      // await projectDetails(id);
     } else {
-      const dao_id = await daoCreate();
-      id = await createNewProject(dao_id);
-      await updateExistingProject(id);
-      await projectDetails(id);
+      const daoId = await daoCreate();
+      const collection_id = await collectionCreate(daoId);
+      for (const iterator of validateNfts) {
+        const key = await genUploadKey(daoId, collection_id, iterator);
+        if (key !== "") {
+          await uploadAFile(key, daoId, iterator);
+        }
+      }
+      setShowDataUploadingModal(false);
+      setShowSuccessModal(true);
+
+      // console.log(nfts);
+
+      // console.log(dao_id, collection_id);
+      // id = await createNewProject(dao_id);
+      // await updateExistingProject(id);
+      // await projectDetails(id);
     }
+    // setDataIsLoading(false);
+    // setShowSuccessModal(true);
+  }
+  async function updateBlock(id) {
+    setDataIsLoading(true);
+    // await updateExistingProject(id);
+    // await projectDetails(id);
     setDataIsLoading(false);
     setShowSuccessModal(true);
   }
-  // async function updateBlock(id) {
-  //   setDataIsLoading(true);
-  //   await updateExistingProject(id);
-  //   await projectDetails(id);
-  //   setDataIsLoading(false);
-  //   setShowSuccessModal(true);
-  // }
   async function nextHandle() {
     const validateNfts = nfts.filter(
       (element) =>
@@ -212,11 +422,10 @@ export default function MembershipNFT() {
         element.nftName !== "" &&
         element.supply !== ""
     );
+
     if (isPreview) {
-      // setShowSuccessModal(true);
-      let id = "";
       if (!projectCreated) {
-        await createBlock(id);
+        await createBlock(validateNfts);
       } else if (projectCreated && projectId !== "") {
         await updateBlock(projectId);
       }
@@ -228,11 +437,24 @@ export default function MembershipNFT() {
       }
     }
   }
-  function useQuery() {
-    const { search } = useLocation();
-    return React.useMemo(() => new URLSearchParams(search), [search]);
-  }
-
+  useEffect(() => {
+    console.log(fileUploadNotification);
+    const projectDeployStatus = fileUploadNotification.find(
+      (x) => x.data !== "" && localStorage.getItem(`${x.function_uuid}`)
+    );
+    console.log(projectDeployStatus);
+    if (projectDeployStatus && projectDeployStatus.data) {
+      const data = JSON.parse(projectDeployStatus.data);
+      if (
+        data.Data["assetId"] &&
+        data.Data["assetId"].length > 0 &&
+        data.Data["path"] &&
+        data.Data["path"].length > 0
+      ) {
+        saveNFTDetails(data.Data["assetId"], projectDeployStatus.function_uuid);
+      }
+    }
+  }, [fileUploadNotification]);
   useEffect(() => {
     setPropertyList(propertyList);
   }, [propertyList]);
@@ -242,6 +464,11 @@ export default function MembershipNFT() {
   useEffect(() => {
     setCollection_id(collection_id);
   }, [collection_id]);
+  useEffect(() => {
+    if (query.get("collection_id")) {
+      setCollection_id(query.get("collection_id"));
+    }
+  }, []);
 
   return (
     <>
@@ -420,7 +647,7 @@ export default function MembershipNFT() {
                       </p>
                     )}
                   </div>
-                  <div className="mb-6">
+                  {/* <div className="mb-6">
                     <div className="txtblack text-[14px]">Name</div>
                     <>
                       <DebounceInput
@@ -440,7 +667,7 @@ export default function MembershipNFT() {
                         <div className="validationTag">Name is required</div>
                       )}
                     </>
-                  </div>
+                  </div> */}
                   <div className="mb-6">
                     <div className="txtblack text-[14px]">External Links</div>
                     <>
@@ -590,11 +817,13 @@ export default function MembershipNFT() {
                                 key={`properties-${index}`}
                                 className="place-content-center"
                               >
-                                <div className="h-16 w-24 border rounded text-center  p-2">
-                                  <p className="text-primary-color-1 font-semibold">
+                                <div className="min-16 w-auto border rounded text-center  p-2">
+                                  <p className="text-primary-color-1 font-semibold text-ellipsis">
                                     {property.key}
                                   </p>
-                                  <p className="text-sm">{property.value}</p>
+                                  <p className="text-sm text-ellipsis">
+                                    {property.value}
+                                  </p>
                                 </div>
                               </div>
                             )}
@@ -753,11 +982,30 @@ export default function MembershipNFT() {
       )}
       {showSuccessModal && (
         <SuccessModal
-          message="Successfully created your Membership NFT"
-          subMessage="Do you also want to mint the NFT?"
+          message="You successfully Create
+                    a Membership NFT!"
+          subMessage="Do you want to create New NFT? if yes let’s go!"
+          buttonText="Done"
+          redirection={`/create`}
           handleClose={() => setShowSuccessModal(false)}
           show={showSuccessModal}
         />
+      )}
+      {showDataUploadingModal && (
+        <Modal
+          width={800}
+          show={showDataUploadingModal}
+          showCloseIcon={false}
+          handleClose={() => setShowDataUploadingModal(false)}
+        >
+          <div className="text-center my-6 mx-16">
+            <h1>Do not close the Tab</h1>
+            <h1>Your Assets is uploading</h1>
+            <div className="overflow-hidden rounded-full h-4 w-full mt-12 mb-8 relative animated fadeIn">
+              <div className="animated-process-bar"></div>
+            </div>
+          </div>
+        </Modal>
       )}
     </>
   );
