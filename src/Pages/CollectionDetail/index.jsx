@@ -23,6 +23,7 @@ const CollectionDetail = () => {
   const { collectionId } = useParams();
   const [showSalesPageModal, setShowSalesPageModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [collectionType, setCollectionType] = useState("");
 
   useEffect(() => {
     if (collectionId) {
@@ -51,6 +52,7 @@ const CollectionDetail = () => {
         if (resp.code === 0) {
           console.log(resp);
           setCollection(resp.collection);
+          setCollectionType(resp.collection.type);
           if (resp?.collection?.assets && resp?.collection?.assets.length > 0) {
             setCoverImages(
               resp.collection.assets.find(
@@ -377,6 +379,7 @@ const CollectionDetail = () => {
         <SalesPageModal
           show={showSalesPageModal}
           collectionId={collectionId}
+          collectionType={`${collectionType}`}
           handleClose={() => setShowSalesPageModal(false)}
           successClose={() => {
             setShowSalesPageModal(false);

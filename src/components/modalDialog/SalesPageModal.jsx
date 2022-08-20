@@ -8,7 +8,13 @@ import ErrorModal from "./ErrorModal";
 import { duration } from "moment";
 import SuccessModal from "./SuccessModal";
 
-const SalesPageModal = ({ handleClose, show, collectionId, successClose }) => {
+const SalesPageModal = ({
+  handleClose,
+  show,
+  collectionId,
+  successClose,
+  collectionType,
+}) => {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -40,7 +46,7 @@ const SalesPageModal = ({ handleClose, show, collectionId, successClose }) => {
     request.append("reserve_EOA", data["eoa"]);
 
     setIsLoading(true);
-    setSalesPage(collectionId, request)
+    setSalesPage(collectionType, collectionId, request)
       .then((res) => {
         if (res.code === 0) {
           console.log(res);
