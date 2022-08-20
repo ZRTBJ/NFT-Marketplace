@@ -27,7 +27,7 @@ const SuccessModal = ({
         </div>
         <p className="text-[#7D849D] text-[16px]">{subMessage}</p>
         <div className="flex justify-center">
-          <Link to={redirection}>
+          <Link to={`${redirection ? redirection : "/"}`}>
             <button
               type="button"
               className="rounded-[4px] py-2 mt-2 mb-4 px-4 bg-[#9A5AFF] bg-opacity-[0.1] text-[#9A5AFF] w-[125px] text-[14px] font-black"
