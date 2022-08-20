@@ -22,6 +22,7 @@ import deploySuccessSvg from "assets/images/modal/deploySuccessSvg.svg";
 
 const DeployingProjectModal = ({
   handleClose,
+  errorClose,
   show,
   buttomText,
   tnxData,
@@ -182,6 +183,7 @@ const DeployingProjectModal = ({
           dispatch(getNotificationData(deployData));
           recheckStatus();
         } else {
+          errorClose(res.message);
         }
       })
       .catch((err) => {

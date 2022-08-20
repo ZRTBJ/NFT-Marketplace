@@ -7,19 +7,21 @@ const ErrorModal = ({ handleClose, show, title, message, buttomText }) => {
   const bodyMsg = message ? message : "Please try again.";
   return (
     <Modal
-      height={450}
+      height={460}
       width={800}
       show={show}
       handleClose={() => handleClose(false)}
     >
       <div className="text-center">
         <img className="block mx-auto" src={IconError} alt="" />
-        <div className="my-4 text-xl font-bold txtblack dark:text-white">{titleMsg}</div>
+        <div className="my-4 text-xl font-bold txtblack dark:text-white">
+          {titleMsg}
+        </div>
         <div className="my-4 font-bold txtblack dark:text-white">{bodyMsg}</div>
         <div className="flex justify-center">
           <button
             type="button"
-            className="btn-outline-primary-gradient w-[100px] h-[38px]"
+            className="btn text-white-shade-900 bg-primary-900 btn-sm"
             onClick={(e) => {
               handleClose(false);
             }}
