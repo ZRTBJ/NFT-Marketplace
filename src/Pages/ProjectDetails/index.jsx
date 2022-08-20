@@ -47,6 +47,7 @@ export default function ProjectDetails(props) {
     []
   );
   const [showCreateRANFT, setShowCreateRANFT] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(null);
 
   async function fetchData() {
     if (hasMore) {
@@ -937,6 +938,11 @@ export default function ProjectDetails(props) {
                 setShowDeployModal(status);
                 projectDetails(projectId);
               }}
+              errorClose={(msg) => {
+                setErrorMsg(msg);
+                setShowDeployModal(false);
+                setShowErrorModal(true);
+              }}
               tnxData={tnxData}
               projectId={projectId}
               publishStep={publishStep}
@@ -950,7 +956,12 @@ export default function ProjectDetails(props) {
           )}
           {showErrorModal && (
             <ErrorModal
-              handleClose={() => setShowErrorModal(false)}
+              title={"DAO Publish failed !"}
+              message={`${errorMsg}`}
+              handleClose={() => {
+                setShowErrorModal(false);
+                setErrorMsg(null);
+              }}
               show={showErrorModal}
             />
           )}
