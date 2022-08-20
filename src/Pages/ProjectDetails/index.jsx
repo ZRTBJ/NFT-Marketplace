@@ -20,6 +20,7 @@ import SuccessModal from "components/modalDialog/SuccessModal";
 import DeployingProjectModal from "components/modalDialog/DeployingProjectModal";
 import { getCollections } from "services/collection/collectionService";
 import CreateRightAttachedNFT from "components/modalDialog/CreateRightAttachNFT";
+import SalesPageModal from "components/modalDialog/SalesPageModal";
 
 export default function ProjectDetails(props) {
   const history = useHistory();
@@ -48,6 +49,9 @@ export default function ProjectDetails(props) {
   );
   const [showCreateRANFT, setShowCreateRANFT] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [showSalesPageModal, setShowSalesPageModal] = useState(false);
+  const [showSalesSuccessModal, setShowSalesSuccessModal] = useState(false);
+  const [collectionId, setCollectionId] = useState("");
 
   async function fetchData() {
     if (hasMore) {
@@ -556,13 +560,13 @@ export default function ProjectDetails(props) {
                                 <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
                               </button>
                               {/* Dropdown menu  */}
-                              <div className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden">
+                              <div
+                                id="membership-option"
+                                className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden"
+                              >
                                 <ul className="text-sm">
-                                  <li className="border-b border-divide">
-                                    <a
-                                      href="#"
-                                      className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
-                                    >
+                                  <li className="border-b border-divide vursor-pointer">
+                                    <a className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600">
                                       Sales Page
                                     </a>
                                   </li>
@@ -673,15 +677,30 @@ export default function ProjectDetails(props) {
                               {collection.name}
                             </h2>
                             <div className="relative">
-                              <button type="button">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const el =
+                                    document.getElementById(
+                                      "collection-option"
+                                    );
+                                  el.classList.toggle("hidden");
+                                }}
+                              >
                                 <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
                               </button>
                               {/* Dropdown menu  */}
-                              <div className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden">
+                              <div
+                                id="collection-option"
+                                className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden"
+                              >
                                 <ul className="text-sm">
-                                  <li className="border-b border-divide">
+                                  <li className="border-b border-divide cursor-pointer">
                                     <a
-                                      href="#"
+                                      onClick={() => {
+                                        setShowSalesPageModal(true);
+                                        setCollectionId(collection?.id);
+                                      }}
                                       className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
                                     >
                                       Sales Page
@@ -828,13 +847,13 @@ export default function ProjectDetails(props) {
                                       <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
                                     </button>
                                     {/* Dropdown menu  */}
-                                    <div className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden">
+                                    <div
+                                      id="rightattach-option"
+                                      className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden"
+                                    >
                                       <ul className="text-sm">
-                                        <li className="border-b border-divide">
-                                          <a
-                                            href="#"
-                                            className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
-                                          >
+                                        <li className="border-b border-divide vursor-pointer">
+                                          <a className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600">
                                             Sales Page
                                           </a>
                                         </li>
@@ -970,6 +989,29 @@ export default function ProjectDetails(props) {
               handleClose={() => setShowPublishModal(false)}
               publishProject={intiProjectPublish}
               show={showPublishModal}
+            />
+          )}
+          {showSalesPageModal && (
+            <SalesPageModal
+              show={showSalesPageModal}
+              collectionId={`${collectionId}`}
+              handleClose={() => setShowSalesPageModal(false)}
+              successClose={() => {
+                setShowSalesPageModal(false);
+                setShowSalesSuccessModal(true);
+              }}
+            />
+          )}
+          {showSalesSuccessModal && (
+            <SuccessModal
+              message={"Sale information updated successfully"}
+              subMessage={"You can mint NFT now"}
+              buttonText={"Close"}
+              handleClose={() => {
+                setShowSalesSuccessModal(false);
+                getCollectionList();
+              }}
+              show={showSalesSuccessModal}
             />
           )}
         </>
