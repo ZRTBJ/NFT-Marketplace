@@ -52,6 +52,7 @@ export default function ProjectDetails(props) {
   const [showSalesPageModal, setShowSalesPageModal] = useState(false);
   const [showSalesSuccessModal, setShowSalesSuccessModal] = useState(false);
   const [collectionId, setCollectionId] = useState("");
+  const [collectionType, setCollectionType] = useState("");
 
   async function fetchData() {
     if (hasMore) {
@@ -556,7 +557,16 @@ export default function ProjectDetails(props) {
                               {collection.name}
                             </h2>
                             <div className="relative">
-                              <button type="button">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const el =
+                                    document.getElementById(
+                                      "membership-option"
+                                    );
+                                  el.classList.toggle("hidden");
+                                }}
+                              >
                                 <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
                               </button>
                               {/* Dropdown menu  */}
@@ -566,7 +576,14 @@ export default function ProjectDetails(props) {
                               >
                                 <ul className="text-sm">
                                   <li className="border-b border-divide vursor-pointer">
-                                    <a className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600">
+                                    <a
+                                      onClick={() => {
+                                        setShowSalesPageModal(true);
+                                        setCollectionId(collection?.id);
+                                        setCollectionType("membership");
+                                      }}
+                                      className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                    >
                                       Sales Page
                                     </a>
                                   </li>
@@ -700,6 +717,7 @@ export default function ProjectDetails(props) {
                                       onClick={() => {
                                         setShowSalesPageModal(true);
                                         setCollectionId(collection?.id);
+                                        setCollectionType("product");
                                       }}
                                       className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
                                     >
@@ -843,7 +861,16 @@ export default function ProjectDetails(props) {
                                     {collection.name}
                                   </h2>
                                   <div className="relative">
-                                    <button type="button">
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const el =
+                                          document.getElementById(
+                                            "rightattach-option"
+                                          );
+                                        el.classList.toggle("hidden");
+                                      }}
+                                    >
                                       <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
                                     </button>
                                     {/* Dropdown menu  */}
@@ -852,11 +879,6 @@ export default function ProjectDetails(props) {
                                       className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden"
                                     >
                                       <ul className="text-sm">
-                                        <li className="border-b border-divide vursor-pointer">
-                                          <a className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600">
-                                            Sales Page
-                                          </a>
-                                        </li>
                                         <li className="border-b border-divide">
                                           <a
                                             href="#"
@@ -995,6 +1017,7 @@ export default function ProjectDetails(props) {
             <SalesPageModal
               show={showSalesPageModal}
               collectionId={`${collectionId}`}
+              collectionType={`${collectionType}`}
               handleClose={() => setShowSalesPageModal(false)}
               successClose={() => {
                 setShowSalesPageModal(false);
