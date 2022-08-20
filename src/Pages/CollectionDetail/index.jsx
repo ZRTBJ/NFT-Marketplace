@@ -9,6 +9,8 @@ import manImg from "assets/images/projectDetails/man-img.svg";
 import avatar from "assets/images/dummy-img.svg";
 import { Link } from "react-router-dom";
 import PublishModal from "components/modalDialog/PublishModal";
+import SalesPageModal from "components/modalDialog/SalesPageModal";
+import SuccessModal from "components/modalDialog/SuccessModal";
 
 const CollectionDetail = () => {
   const history = useHistory();
@@ -19,6 +21,9 @@ const CollectionDetail = () => {
   const [ShowPublishModal, setShowPublishModal] = useState(false);
   const [ShowOptions, setShowOptions] = useState(null);
   const { collectionId } = useParams();
+  const [showSalesPageModal, setShowSalesPageModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
   useEffect(() => {
     if (collectionId) {
       getCollectionDetail();
@@ -278,6 +283,12 @@ const CollectionDetail = () => {
               {/* <a className='inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>
                 Sales Setting
               </a> */}
+              <a
+                onClick={() => setShowSalesPageModal(true)}
+                className="inline-block ml-4 bg-primary-900 p-3 text-white font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+              >
+                Sales Setting
+              </a>
               <Link
                 to="/collection-create"
                 className="inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
@@ -325,12 +336,12 @@ const CollectionDetail = () => {
                           type="button"
                           onClick={() => handleShowOptions(nft.id)}
                         >
-                          <i class="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
+                          <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
                         </button>
                         {/* Dropdown menu  */}
                         {ShowOptions === nft.id && (
                           <div className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 block">
-                            <ul class="text-sm">
+                            <ul className="text-sm">
                               <li className="border-b border-divide">
                                 <a
                                   onClick={() => handleEditNFT(nft.id)}
@@ -362,6 +373,29 @@ const CollectionDetail = () => {
             })}
         </div>
       </section>
+      {showSalesPageModal && (
+        <SalesPageModal
+          show={showSalesPageModal}
+          collectionId={collectionId}
+          handleClose={() => setShowSalesPageModal(false)}
+          successClose={() => {
+            setShowSalesPageModal(false);
+            setShowSuccessModal(true);
+          }}
+        />
+      )}
+      {showSuccessModal && (
+        <SuccessModal
+          message={"Sale information updated successfully"}
+          subMessage={"You can mint NFT now"}
+          buttonText={"Close"}
+          handleClose={() => {
+            setShowSuccessModal(false);
+            getCollectionDetail();
+          }}
+          show={showSuccessModal}
+        />
+      )}
     </div>
   );
 };
