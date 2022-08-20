@@ -10,10 +10,15 @@ import { generateUploadkey, saveProductNFT } from "services/nft/nftService";
 import Config from "config";
 import { getNotificationData } from "Slice/notificationSlice";
 import { getFunctionStatus } from "services/websocketFunction/webSocketFunctionService";
+import SuccessModal from "components/modalDialog/SuccessModal";
+import { useHistory } from "react-router-dom";
+import { createProject } from "services/project/projectService";
+import { createCollection } from "services/collection/collectionService";
 
 export default function ProductNFT(props) {
   const audioRef = useRef();
   const dispatch = useDispatch();
+  const history = useHistory();
   const userinfo = useSelector((state) => state.user.userinfo);
   const [isLoading, setIsLoading] = useState(false);
   const [showPropertyModal, setShowPropertyModal] = useState(false);
@@ -24,7 +29,7 @@ export default function ProductNFT(props) {
   const [errorMessage, setErrorMessage] = useState(null);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [isFileError, setFileError] = useState(false);
-  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
   const [jobId, setJobId] = useState("");
   const fileUploadNotification = useSelector((state) =>
     state?.notifications?.notificationData
@@ -33,9 +38,9 @@ export default function ProductNFT(props) {
   );
   const [isNFTSaved, setIsNFTSaved] = useState(false);
   const [savingNFT, setSavingNFT] = useState(false);
-  const [mintingfuuid, setMintingfuuid] = useState("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const projectId = "e5ac3187-2dba-4713-b049-a81249302fdd";
+  const [projectId, setProjectId] = useState("");
+  const [collectionId, setCollectionId] = useState("");
 
   const {
     register,
@@ -66,29 +71,15 @@ export default function ProductNFT(props) {
         setSavingNFT(false);
       }
     }
-    // product nft web socket
-    if (isNFTSaved) {
-      const mintStatus = fileUploadNotification.find(
-        (x) => x.function_uuid === mintingfuuid
-      );
-      if (mintStatus && mintStatus.data) {
-        try {
-          const status = JSON.parse(mintStatus.data);
-          if (status["fn_name"] === "createNFTBatch") {
-            const fn_response = status["fn_response_data"];
-            if (fn_response["transactionStatus"] === "mined") {
-              setShowConfirmationModal(false);
-              setShowSuccessModal(true);
-            } else {
-              setShowConfirmationModal(false);
-              setShowErrorModal(true);
-            }
-            setIsLoading(false);
-          }
-        } catch {}
-      }
-    }
   }, [fileUploadNotification]);
+
+  useEffect(() => {
+    try {
+      const query = new URLSearchParams(history.location.search);
+      const cid = query.get("collectionId");
+      setCollectionId(cid ? cid : "");
+    } catch {}
+  }, []);
 
   function addProperty() {
     const tempProperty = [...propertyList];
@@ -125,7 +116,7 @@ export default function ProductNFT(props) {
       let totalSize = 0;
       if (usedSize && file) {
         totalSize = (usedSize + file.size) / 1024 / 1024;
-        if (file.size / 1024 > 100) {
+        if (file.size / 1024 / 1024 > 100) {
           setErrorTitle("Maximum file size limit exceeded");
           setErrorMessage(`You can add your assets up to 100MB.`);
           setShowErrorModal(true);
@@ -154,7 +145,11 @@ export default function ProductNFT(props) {
     if (nftFile && nftFile.file) {
       setFileError(false);
       setIsLoading(true);
-      genUploadKey();
+      if (!collectionId || collectionId === "") {
+        createNewProject();
+      } else {
+        genUploadKey();
+      }
     } else {
       setFileError(true);
     }
@@ -201,7 +196,7 @@ export default function ProductNFT(props) {
           data: "",
         };
         dispatch(getNotificationData(notificationData));
-        // setIsLoading(false);
+        recheckStatus(response["job_id"]);
       })
       .catch((err) => {
         console.log(err);
@@ -210,70 +205,82 @@ export default function ProductNFT(props) {
   }
 
   function saveNFTDetails(assetId) {
-    setIsLoading(true);
-    const request = new FormData();
-    request.append("collection_uid", "da6738bc-9160-4911-8422-02723ceefbad");
-    request.append("name", watch("name"));
-    request.append("asset_uid", assetId);
-    request.append("supply", watch("supply"));
-    request.append("blockchain", "polygon");
-    request.append("description", watch("description"));
-    request.append("external_link", watch("externalLink"));
-    request.append("sensitive_content", watch("sensitiveContent"));
+    if (
+      assetId &&
+      assetId.length > 0 &&
+      collectionId &&
+      collectionId.length > 0
+    ) {
+      setIsLoading(true);
+      const request = new FormData();
+      request.append("collection_uid", collectionId);
+      request.append("name", watch("name"));
+      request.append("asset_uid", assetId);
+      request.append("supply", watch("supply"));
+      request.append("blockchain", "polygon");
+      request.append("description", watch("description"));
+      request.append("external_link", watch("externalLink"));
+      request.append("sensitive_content", watch("sensitiveContent"));
 
-    const attributes = [];
+      const attributes = [];
 
-    // properties
-    for (let aprop of propertyList) {
-      if (
-        aprop.key &&
-        aprop.key.length > 0 &&
-        aprop.value &&
-        aprop.value.length > 0
-      ) {
-        const prop = {
-          key: aprop.key,
-          value: aprop.value,
-          value_type: aprop.value_type,
-          display_type: aprop.display_type,
-        };
-        attributes.push(prop);
-      }
-    }
-    if (attributes && attributes.length > 0) {
-      request.append("attributes", JSON.stringify(attributes));
-    }
-    saveProductNFT(request)
-      .then((res) => {
-        setSavingNFT(false);
-        if (res["code"] === 0) {
-          setMintingfuuid(res["function_uuid"]);
-          setJobId("");
-          setIsNFTSaved(true);
-          const deployData = {
-            projectId: projectId,
-            function_uuid: res["function_uuid"],
-            data: "",
+      // properties
+      for (let aprop of propertyList) {
+        if (
+          aprop.key &&
+          aprop.key.length > 0 &&
+          aprop.value &&
+          aprop.value.length > 0
+        ) {
+          const prop = {
+            key: aprop.key,
+            value: aprop.value,
+            value_type: aprop.value_type,
+            display_type: aprop.display_type,
           };
-          dispatch(getNotificationData(deployData));
-          recheckStatus(res["function_uuid"]);
-        } else {
-          setIsLoading(false);
-          setShowConfirmationModal(false);
-          setErrorTitle("Create NFT failed");
-          setErrorMessage("Failed to create NFT. Please try again later");
-          setShowSuccessModal(false);
-          setShowErrorModal(true);
+          attributes.push(prop);
         }
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-        setSavingNFT(false);
-        setIsNFTSaved(false);
-        setShowConfirmationModal(false);
-        setShowErrorModal(true);
-      });
+      }
+      if (attributes && attributes.length > 0) {
+        request.append("attributes", JSON.stringify(attributes));
+      }
+      saveProductNFT(request)
+        .then((res) => {
+          setSavingNFT(false);
+          if (res["code"] === 0) {
+            setJobId("");
+            setIsNFTSaved(true);
+            setIsLoading(false);
+            setShowSuccessModal(true);
+          } else {
+            setIsLoading(false);
+            setShowConfirmation(false);
+            setErrorTitle("Create Product NFT Failed");
+            setErrorMessage(
+              "Failed to create product NFT. Please try again later"
+            );
+            setShowSuccessModal(false);
+            setShowErrorModal(true);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+          setSavingNFT(false);
+          setIsNFTSaved(false);
+          setShowConfirmation(false);
+          setShowErrorModal(true);
+        });
+    } else {
+      setIsLoading(false);
+      setShowConfirmation(false);
+      setErrorTitle("Create Product NFT Failed");
+      setErrorMessage(
+        "AssetID and/or CollectionID not found. Please try again later"
+      );
+      setShowSuccessModal(false);
+      setShowErrorModal(true);
+    }
   }
 
   function recheckStatus(fuuid) {
@@ -281,17 +288,18 @@ export default function ProductNFT(props) {
       getFunctionStatus(fuuid)
         .then((res) => {
           if (res.code === 0) {
+            debugger;
             if (
-              res["fn_name"] === "createNFTBatch" &&
+              res["fn_name"] === "fileUploadNotification" &&
               res["fn_status"] === "success"
             ) {
-              if (res["fn_response_data"]["transactionStatus"] === "mined") {
+              if (res["fn_response_data"]["fn_status"] === "success") {
                 const deployData = {
                   function_uuid: fuuid,
                   data: JSON.stringify(res),
                 };
                 dispatch(getNotificationData(deployData));
-                setShowConfirmationModal(false);
+                setShowConfirmation(false);
                 setShowSuccessModal(true);
               }
             } else if (
@@ -304,6 +312,38 @@ export default function ProductNFT(props) {
         })
         .catch((error) => {});
     }, 30000);
+  }
+
+  function createNewProject() {
+    createProject()
+      .then((res) => {
+        if (res.code === 0) {
+          setProjectId(res.project.id);
+          createNewCollection(res.project.name, res.project.id);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  function createNewCollection(projectName, dao_id) {
+    let createPayload = {
+      name: projectName,
+      dao_id: dao_id,
+      collection_type: "product",
+    };
+
+    createCollection(createPayload)
+      .then((res) => {
+        if (res.code === 0) {
+          setCollectionId(res.collection.id);
+          genUploadKey();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   return (
@@ -418,6 +458,7 @@ export default function ProductNFT(props) {
                         type="file"
                         className="hidden"
                         accept="audio/*, image/*, video/*"
+                        disabled={showConfirmation}
                         onChange={(e) => nftFileChangeHandler(e)}
                       />
                     </label>
@@ -429,18 +470,26 @@ export default function ProductNFT(props) {
                   )}
                 </div>
                 <div className="mb-6">
-                  <div className="txtblack text-[14px]">Name</div>
+                  <div className="flex items-center mb-2">
+                    <Tooltip></Tooltip>
+                    <div className="txtblack text-[14px]">Name</div>
+                  </div>
                   <>
                     <input
                       id="name"
                       name="name"
-                      className="debounceInput mt-1"
+                      className={`debounceInput mt-1 ${
+                        showConfirmation ? "hidden" : ""
+                      }`}
                       {...register("name", {
                         required: "Name is required.",
                       })}
                       defaultValue={""}
                       placeholder="Name for the NFT"
                     />
+                    <p className={`${showConfirmation ? "" : "hidden"}`}>
+                      {watch("name")}
+                    </p>
                     {errors.name && (
                       <p className="text-red-500 text-xs font-medium">
                         {errors.name.message}
@@ -453,13 +502,18 @@ export default function ProductNFT(props) {
                   <input
                     id="externalLink"
                     name="externalLink"
-                    className="debounceInput mt-1"
+                    className={`debounceInput mt-1 ${
+                      showConfirmation ? "hidden" : ""
+                    }`}
                     defaultValue={""}
                     {...register("externalLink", {
                       required: "External Link is required.",
                     })}
                     placeholder="https://"
                   />
+                  <p className={`${showConfirmation ? "" : "hidden"}`}>
+                    {watch("externalLink")}
+                  </p>
                   {errors.externalLink && (
                     <p className="text-red-500 text-xs font-medium">
                       {errors.externalLink.message}
@@ -473,12 +527,16 @@ export default function ProductNFT(props) {
                     name="description"
                     cols="30"
                     rows="6"
+                    className={`${showConfirmation ? "hidden" : ""}`}
                     placeholder="Add brief description about this NFT"
                     {...register("description", {
                       required: "Description is required.",
                     })}
                     defaultValue={""}
                   ></textarea>
+                  <p className={`${showConfirmation ? "" : "hidden"}`}>
+                    {watch("description")}
+                  </p>
                   {errors.description && (
                     <p className="text-red-500 text-xs font-medium">
                       {errors.description.message}
@@ -499,7 +557,9 @@ export default function ProductNFT(props) {
                       </small>
                     </div>
                     <i
-                      className="fa-regular fa-square-plus text-2xl text-primary-900 cursor-pointer"
+                      className={`fa-regular fa-square-plus text-2xl text-primary-900 cursor-pointer ${
+                        showConfirmation ? "hidden" : ""
+                      }`}
                       onClick={() => setShowPropertyModal(true)}
                     ></i>
                   </div>
@@ -521,6 +581,7 @@ export default function ProductNFT(props) {
                           id={`sensitiveContent`}
                           name="sensitiveContent"
                           defaultChecked={false}
+                          disabled={showConfirmation}
                           className="sr-only peer outline-none"
                           {...register("sensitiveContent")}
                         />
@@ -549,7 +610,9 @@ export default function ProductNFT(props) {
                               defaultValue={property.value}
                             />
                             <i
-                              className="fa-solid fa-trash cursor-pointer ml-3 text-primary-900"
+                              className={`fa-solid fa-trash cursor-pointer ml-3 text-primary-900 ${
+                                showConfirmation ? "hidden" : ""
+                              }`}
                               onClick={() => removeProperty(index)}
                             ></i>
                           </div>
@@ -557,7 +620,6 @@ export default function ProductNFT(props) {
                       ))}
                   </div>
                 </div>
-
                 <div className="mb-6 ">
                   <div className="flex items-center mb-2">
                     <Tooltip></Tooltip>
@@ -567,7 +629,9 @@ export default function ProductNFT(props) {
                     <input
                       id="supply"
                       name="supply"
-                      className="debounceInput mt-1"
+                      className={`debounceInput mt-1 ${
+                        showConfirmation ? "hidden" : ""
+                      }`}
                       defaultValue={""}
                       {...register("supply", {
                         required: "Supply Link is required.",
@@ -575,6 +639,9 @@ export default function ProductNFT(props) {
                       type="number"
                       placeholder="Supply for the NFT"
                     />
+                    <p className={`${showConfirmation ? "" : "hidden"}`}>
+                      {watch("supply")}
+                    </p>
                     {errors.supply && (
                       <p className="text-red-500 text-xs font-medium">
                         {errors.supply.message}
@@ -599,13 +666,25 @@ export default function ProductNFT(props) {
                     </option>
                   </select>
                 </div>
-                <button
-                  type="submit"
-                  className="!w-full px-6 py-2 bg-primary-900 rounded font-black text-white-shade-900"
-                >
-                  Next
-                  <i className="ml-4 fa-solid fa-arrow-right"></i>
-                </button>
+
+                {showConfirmation === false && (
+                  <button
+                    type="button"
+                    className="!w-full px-6 py-2 bg-primary-900 rounded font-black text-white-shade-900"
+                    onClick={() => setShowConfirmation(true)}
+                  >
+                    Next
+                    <i className="ml-4 fa-solid fa-arrow-right"></i>
+                  </button>
+                )}
+                {showConfirmation && (
+                  <button
+                    type="submit"
+                    className="!w-full px-6 py-2 bg-primary-900 rounded font-black text-white-shade-900"
+                  >
+                    Submit
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -682,6 +761,18 @@ export default function ProductNFT(props) {
             show={showErrorModal}
             title={errorTitle}
             message={errorMessage}
+          />
+        )}
+        {showSuccessModal && (
+          <SuccessModal
+            message={"You successfully created product NFT"}
+            subMessage={"Do you also want to mint the NFT?"}
+            buttonText={"Mint NFT"}
+            redirection={`/collection-details/${collectionId}`}
+            handleClose={() => {
+              setShowSuccessModal(false);
+            }}
+            show={showSuccessModal}
           />
         )}
       </>
