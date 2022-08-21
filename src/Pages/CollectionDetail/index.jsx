@@ -386,7 +386,11 @@ const CollectionDetail = () => {
           {NFTs &&
             NFTs.map((nft) => {
               return (
-                <div className='min-h-[390px] rounded-xl mr-4 mb-4 bg-white p-4'>
+                <Link
+                  key={nft.id}
+                  to={`/nft-details/${nft.nft_type}/${nft.id}`}
+                  className='min-h-[390px] rounded-xl mr-4 mb-4 bg-white p-4'
+                >
                   <img
                     className='rounded-xl h-[276px] w-[276px]'
                     src={nft?.asset?.path}
@@ -446,7 +450,7 @@ const CollectionDetail = () => {
                       <span>Logo</span>
                     </p>
                   </div>
-                </div>
+                </Link>
               );
             })}
         </div>
