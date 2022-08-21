@@ -49,3 +49,7 @@ export async function setSalesPage(collectionType, collectionId, payload) {
     "formdata"
   );
 }
+
+export async function getassetDetails(id) {
+  return await client("GET", `/asset?job_id=${id}`);
+}
