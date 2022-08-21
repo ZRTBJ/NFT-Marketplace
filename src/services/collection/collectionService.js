@@ -61,7 +61,7 @@ export async function getCollections(listType, projectId, page, limit) {
 export async function getUserCollections(payload) {
   return await client(
     "GET",
-    `/collection?page=${payload.page}&limit=${payload.limit}`
+    `/collection?list_type=user&page=${payload.page}&limit=${payload.limit}`
   );
 }
 

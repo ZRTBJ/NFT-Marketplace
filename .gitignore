@@ -28,3 +28,4 @@ build /logo512.png
 build /manifest.json
 build /robots.txt
 .next
+thunder-tests
