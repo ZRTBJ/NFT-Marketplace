@@ -36,7 +36,7 @@ const Profile = () => {
   ];
 
   const [projectList, setProjectList] = useState([]);
-  const [projectListPageNumber, setProjectListPageNumber] = useState(19);
+  const [projectListPageNumber, setProjectListPageNumber] = useState(1);
   const [projectListLimit, setProjectListLimit] = useState(10);
   const [projectListHasMoreData, setprojectListHasMoreData] = useState(false);
   // project List End
