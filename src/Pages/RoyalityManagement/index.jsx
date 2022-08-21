@@ -16,9 +16,11 @@ import {
   getCollectionDetailsById,
   connectCollection,
 } from 'services/collection/collectionService';
-import { getRightAttachedNFT } from 'services/nft/nftService';
+import { getRightAttachedNFT, updateRoyalty } from 'services/nft/nftService';
 import ColImage from 'assets/images/collection-wrapper.svg';
 import { Link } from 'react-router-dom';
+import ConfirmationModal from 'components/modalDialog/ConfirmationModal';
+import SuccessModal from 'components/modalDialog/SuccessModal';
 
 const TABLE_HEADERS = [
   { id: 0, label: 'Wallet Address' },
@@ -42,6 +44,10 @@ const RoyalityManagement = () => {
   const [AutoAssign, setAutoAssign] = useState(false);
   const [isEdit, setIsEdit] = useState(null);
   const [ConnectedSuccessfully, setConnectedSuccessfully] = useState(false);
+  const [IsAutoFillLoading, setIsAutoFillLoading] = useState(false);
+  const [RoyaltyUpdatedSuccessfully, setRoyaltyUpdatedSuccessfully] =
+    useState(false);
+  const [ShowPercentError, setShowPercentError] = useState(false);
 
   const { collectionId } = useParams();
   let origin = window.location.origin;
@@ -67,10 +73,13 @@ const RoyalityManagement = () => {
         setIsLoading(false);
       });
     getCollectionDetail();
+
+    return () => {
+      setShowPercentError(false);
+    };
   }, []);
 
   const handleAutoAssign = (e) => {
-    console.log(e);
     setAutoAssign(!AutoAssign);
     let memberCount = data.members.length;
     let value = 100 / memberCount;
@@ -155,15 +164,85 @@ const RoyalityManagement = () => {
       .catch((err) => console.log(err));
   };
 
-  // console.log(Collection, data);
+  const handleAutoFill = () => {
+    let members = data.members.map((mem) => {
+      return {
+        user_id: mem.id,
+        royalty: mem.royalty_percent,
+      };
+    });
+    let formData = new FormData();
+    formData.append('royalties', JSON.stringify(members));
+    if (!ShowPercentError) {
+      setIsAutoFillLoading(true);
+      updateRoyalty(data?.lnft?.id, formData)
+        .then((resp) => {
+          if (resp.code === 0) {
+            setIsAutoFillLoading(false);
+            setRoyaltyUpdatedSuccessfully(true);
+            setAutoAssign(false);
+            setIsEdit(null);
+          } else {
+            setIsAutoFillLoading(false);
+            setRoyaltyUpdatedSuccessfully(false);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsAutoFillLoading(false);
+          setRoyaltyUpdatedSuccessfully(false);
+        });
+    }
+  };
+
+  const handleValueChange = (e, id) => {
+    let values = {
+      ...data,
+      members: data.members.map((mem) => {
+        if (id === mem.id) {
+          return {
+            ...mem,
+            royalty_percent: parseInt(e.target.value),
+          };
+        }
+        return mem;
+      }),
+    };
+
+    let percent = values.members.reduce(
+      (acc, val) => acc + val.royalty_percent,
+      0
+    );
+
+    if (percent > 100) {
+      setShowPercentError(true);
+    } else {
+      setShowPercentError(false);
+    }
+
+    setData(values);
+  };
 
   return (
     <div
-      className={`mt-3 ${IsLoading || IsConnectionLoading ? 'loading' : ''}`}
+      className={`mt-3 ${
+        IsLoading || IsConnectionLoading || IsAutoFillLoading ? 'loading' : ''
+      }`}
     >
       <NewPublishModal
         show={showPublish}
         handleClose={() => setShowPublish(false)}
+      />
+      <ConfirmationModal
+        show={AutoAssign}
+        handleClose={setAutoAssign}
+        handleApply={handleAutoFill}
+      />
+      <SuccessModal
+        show={RoyaltyUpdatedSuccessfully}
+        handleClose={setRoyaltyUpdatedSuccessfully}
+        message='Royalty Percentage Updated Successfully'
+        btnText='Done'
       />
       <div
         className={`${styles.memberSection} bg-white rounded-[12px] p-6 flex`}
@@ -254,12 +333,18 @@ const RoyalityManagement = () => {
           This collection does not have Right Attached NFT
         </p>
       )}
-      {IsNFTAvailable && data?.members ? (
-        <div
-          className={`bg-white mt-6 rounded-[12px] p-6 ${styles.memberSection}`}
-        >
-          <div className='flex justify-between pb-7 border-b-[1px] mb-6 border-[#E3DEEA]'>
-            <h3 className='text-[18px] font-black'>Member List</h3>
+      {/* {data?.members ? ( */}
+      <div
+        className={`bg-white mt-6 rounded-[12px] p-6 ${styles.memberSection}`}
+      >
+        <div className='flex justify-between pb-7 border-b-[1px] mb-6 border-[#E3DEEA]'>
+          <h3 className='text-[18px] font-black'>Member List</h3>
+          {ShowPercentError ? (
+            <p className='text-red-400 text-[14px] mt-1'>
+              Total percent of members should equal to or lesser than 100%
+            </p>
+          ) : null}
+          {data?.members?.length ? (
             <div class='flex items-center justify-center'>
               <div class='form-check form-switch flex items-center'>
                 <p class='text-[#303548] text-[12px] mr-5'>
@@ -274,35 +359,46 @@ const RoyalityManagement = () => {
                 />
               </div>
             </div>
-          </div>
+          ) : null}
+        </div>
+        {data?.members?.length ? (
           <MemberListTable
             list={data?.members}
             headers={TABLE_HEADERS}
             handlePublish={setShowPublish}
             setIsEdit={setIsEdit}
             isEdit={isEdit}
+            handleValueChange={handleValueChange}
+            handleAutoFill={handleAutoFill}
           />
-          {CollectionDetail.status !== 'published' ? (
-            <div className='w-full'>
-              <button
-                className='block ml-auto rounded-[4px] bg-[#9A5AFF] text-white text-[12px] font-bold px-4 py-2'
-                onClick={() => setShowPublish(true)}
-              >
-                Publish
-              </button>
-            </div>
-          ) : null}
-        </div>
-      ) : null}
+        ) : (
+          <p className='text-center mt-4'>
+            There is no collaborator yet, please publish collection and you can
+            start inviting members.
+          </p>
+        )}
+        {CollectionDetail.status !== 'published' ? (
+          <div className='w-full'>
+            <button
+              className='block ml-auto rounded-[4px] bg-[#9A5AFF] text-white text-[12px] font-bold px-4 py-2'
+              onClick={() => setShowPublish(true)}
+            >
+              Publish
+            </button>
+          </div>
+        ) : null}
+      </div>
+      {/* ) : null} */}
       <div className='flex mb-8'>
-        {data?.lnft?.invitation_code ? (
-          <div className='bg-white mt-6 p-6 w-2/4 mr-2 rounded-[12px]'>
-            <h3 className='text-[18px] font-black'>Invite Contributor</h3>
-            <p className='text-[12px] text-[#5F6479] mb-6'>
-              Invite anothe contributor to get the royalties by copy this link
-              and ask the to claim the Right Attached NFT
-            </p>
-            {/* <div className='w-full'>
+        <div className='bg-white mt-6 p-6 w-2/4 mr-2 rounded-[12px]'>
+          <h3 className='text-[18px] font-black'>Invite Contributor</h3>
+          {data?.lnft?.invitation_code ? (
+            <>
+              <p className='text-[12px] text-[#5F6479] mb-6'>
+                Invite anothe contributor to get the royalties by copy this link
+                and ask the to claim the Right Attached NFT
+              </p>
+              {/* <div className='w-full'>
             <label for='invite-address' className='text-[12px] text-[#5F6479]'>
               Invite with Wallet Address
             </label>
@@ -316,59 +412,64 @@ const RoyalityManagement = () => {
               Invite
             </button>
           </div> */}
-            <div className='mt-2'>
-              <p className='text-[12px] text-[#5F6479] mb-1'>
-                Invite with link
-              </p>
-              <div className='relative w-fit'>
-                <p
-                  className='text-[16px] block py-[10px] pl-[15px] pr-[40px] bg-opacity-[0.1] bg-[#9A5AFF] text-[#9A5AFF] w-full rounded-[12px]'
-                  id='iframe'
-                >
-                  Link:{' '}
-                  <span className='font-black'>
-                    {origin}/{data?.lnft?.invitation_code}
-                  </span>
+              <div className='mt-2'>
+                <p className='text-[12px] text-[#5F6479] mb-1'>
+                  Invite with link
                 </p>
-                <div className='text-[#9A5AFF] absolute top-2 right-2'>
-                  <i
-                    className='fa fa-copy text-lg cursor-pointer'
-                    onClick={() =>
-                      copyToClipboardShare(
-                        `${origin}/${data?.lnft?.invitation_code}`
-                      )
-                    }
-                  ></i>
-                </div>
-                <p
-                  id='copied-share-message'
-                  className='hidden text-green-500 text-[14px] text-center'
-                >
-                  Copied Successfully!
-                </p>
-              </div>
-            </div>
-            <div>
-              <p className='text-[12px] text-[#5F6479] mt-[46px] mb-1'>
-                Invite with
-              </p>
-              <div className='flex items-center'>
-                <div className='rounded-[4px] bg-opacity-[0.1] bg-[#9A5AFF] h-[44px] w-[44px] flex items-center justify-center mr-2'>
-                  <img src={FB} alt='facebook' />
-                </div>
-                <div className='rounded-[4px] bg-opacity-[0.1] bg-[#9A5AFF] h-[44px] w-[44px] flex items-center justify-center mr-2'>
-                  <img src={twitter} alt='twitter' />
-                </div>
-                <div className='rounded-[4px] bg-opacity-[0.1] bg-[#9A5AFF] h-[44px] w-[44px] flex items-center justify-center mr-2'>
-                  <img src={reddit} alt='reddit' />
-                </div>
-                <div className='rounded-[4px] bg-opacity-[0.1] bg-[#9A5AFF] h-[44px] w-[44px] flex items-center justify-center mr-2'>
-                  <img src={instagram} alt='instagram' />
+                <div className='relative w-fit'>
+                  <p
+                    className='text-[16px] block py-[10px] pl-[15px] pr-[40px] bg-opacity-[0.1] bg-[#9A5AFF] text-[#9A5AFF] w-full rounded-[12px]'
+                    id='iframe'
+                  >
+                    Link:{' '}
+                    <span className='font-black'>
+                      {origin}/{data?.lnft?.invitation_code}
+                    </span>
+                  </p>
+                  <div className='text-[#9A5AFF] absolute top-2 right-2'>
+                    <i
+                      className='fa fa-copy text-lg cursor-pointer'
+                      onClick={() =>
+                        copyToClipboardShare(
+                          `${origin}/${data?.lnft?.invitation_code}`
+                        )
+                      }
+                    ></i>
+                  </div>
+                  <p
+                    id='copied-share-message'
+                    className='hidden text-green-500 text-[14px] text-center'
+                  >
+                    Copied Successfully!
+                  </p>
                 </div>
               </div>
-            </div>
-          </div>
-        ) : null}
+              <div>
+                <p className='text-[12px] text-[#5F6479] mt-[46px] mb-1'>
+                  Invite with
+                </p>
+                <div className='flex items-center'>
+                  <div className='rounded-[4px] bg-opacity-[0.1] bg-[#9A5AFF] h-[44px] w-[44px] flex items-center justify-center mr-2'>
+                    <img src={FB} alt='facebook' />
+                  </div>
+                  <div className='rounded-[4px] bg-opacity-[0.1] bg-[#9A5AFF] h-[44px] w-[44px] flex items-center justify-center mr-2'>
+                    <img src={twitter} alt='twitter' />
+                  </div>
+                  <div className='rounded-[4px] bg-opacity-[0.1] bg-[#9A5AFF] h-[44px] w-[44px] flex items-center justify-center mr-2'>
+                    <img src={reddit} alt='reddit' />
+                  </div>
+                  <div className='rounded-[4px] bg-opacity-[0.1] bg-[#9A5AFF] h-[44px] w-[44px] flex items-center justify-center mr-2'>
+                    <img src={instagram} alt='instagram' />
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <p className='text-[12px] text-[#5F6479] mb-6'>
+              Please publish collection to view invitation link
+            </p>
+          )}
+        </div>
         {data?.lnft?.asset?.path ? (
           <div className='bg-white mt-6 p-6 w-2/4 ml-2 rounded-[12px] flex items-center justify-center flex-col'>
             <h3 className='text-[18px] font-black'>Right Attached NFT</h3>
