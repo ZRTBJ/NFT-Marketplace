@@ -21,6 +21,8 @@ import ColImage from 'assets/images/collection-wrapper.svg';
 import { Link } from 'react-router-dom';
 import ConfirmationModal from 'components/modalDialog/ConfirmationModal';
 import SuccessModal from 'components/modalDialog/SuccessModal';
+import DeployingCollectiontModal from 'components/modalDialog/DeployingCollectionModal';
+import ErrorModal from 'components/modalDialog/ErrorModal';
 
 const TABLE_HEADERS = [
   { id: 0, label: 'Wallet Address' },
@@ -47,7 +49,12 @@ const RoyalityManagement = () => {
   const [IsAutoFillLoading, setIsAutoFillLoading] = useState(false);
   const [RoyaltyUpdatedSuccessfully, setRoyaltyUpdatedSuccessfully] =
     useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
   const [ShowPercentError, setShowPercentError] = useState(false);
+  const [showDeployModal, setShowDeployModal] = useState(false);
+  const [publishStep, setPublishStep] = useState(1);
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [tnxData, setTnxData] = useState({});
 
   const { collectionId } = useParams();
   let origin = window.location.origin;
@@ -223,6 +230,16 @@ const RoyalityManagement = () => {
     setData(values);
   };
 
+  async function collectionPublish() {
+    setShowPublish(false);
+    if (CollectionDetail.status === 'publishing') {
+      setPublishStep(1);
+      setShowDeployModal(true);
+    } else {
+      setShowDeployModal(true);
+    }
+  }
+
   return (
     <div
       className={`mt-3 ${
@@ -232,6 +249,7 @@ const RoyalityManagement = () => {
       <NewPublishModal
         show={showPublish}
         handleClose={() => setShowPublish(false)}
+        publish={collectionPublish}
       />
       <ConfirmationModal
         show={AutoAssign}
@@ -244,6 +262,37 @@ const RoyalityManagement = () => {
         message='Royalty Percentage Updated Successfully'
         btnText='Done'
       />
+      {showErrorModal && (
+        <ErrorModal
+          title={'Collection Publish failed !'}
+          message={`${errorMsg}`}
+          handleClose={() => {
+            setShowErrorModal(false);
+            setErrorMsg(null);
+          }}
+          show={showErrorModal}
+        />
+      )}
+      {showDeployModal && (
+        <DeployingCollectiontModal
+          show={showDeployModal}
+          handleClose={(status) => {
+            setShowDeployModal(status);
+            const payload = {
+              id: collectionId,
+            };
+            getCollectionDetail(payload);
+          }}
+          errorClose={(msg) => {
+            setErrorMsg(msg);
+            setShowDeployModal(false);
+            setShowErrorModal(true);
+          }}
+          tnxData={tnxData}
+          collectionId={collectionId}
+          publishStep={publishStep}
+        />
+      )}
       <div
         className={`${styles.memberSection} bg-white rounded-[12px] p-6 flex`}
       >
@@ -328,11 +377,7 @@ const RoyalityManagement = () => {
             </button>
           </Link>
         </div>
-      ) : (
-        <p className='text-center mt-4'>
-          This collection does not have Right Attached NFT
-        </p>
-      )}
+      ) : null}
       {/* {data?.members ? ( */}
       <div
         className={`bg-white mt-6 rounded-[12px] p-6 ${styles.memberSection}`}
@@ -361,7 +406,13 @@ const RoyalityManagement = () => {
             </div>
           ) : null}
         </div>
-        {data?.members?.length ? (
+        {CollectionDetail?.status !== 'published' ? (
+          <p className='text-center mt-4'>
+            There is no collaborator yet, please publish collection and you can
+            start inviting members.
+          </p>
+        ) : null}
+        {CollectionDetail?.status === 'published' && data?.members?.length ? (
           <MemberListTable
             list={data?.members}
             headers={TABLE_HEADERS}
@@ -373,8 +424,7 @@ const RoyalityManagement = () => {
           />
         ) : (
           <p className='text-center mt-4'>
-            There is no collaborator yet, please publish collection and you can
-            start inviting members.
+            There is no collaborator yet, please start inviting members.
           </p>
         )}
         {CollectionDetail.status !== 'published' ? (
