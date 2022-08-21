@@ -136,3 +136,6 @@ body {
     transform: translateX(46px);
   }
 }
+.rdrDefinedRangesWrapper {
+  display: none !important;
+}
