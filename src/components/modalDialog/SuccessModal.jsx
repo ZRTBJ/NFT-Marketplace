@@ -1,7 +1,7 @@
 import IconSuccess from "assets/images/modal/success/success_modal_img.svg";
 import Modal from "../Modal";
 import NewSuccess from "assets/images/new-success.svg";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 const SuccessModal = ({
   handleClose,
@@ -12,6 +12,8 @@ const SuccessModal = ({
   redirection = "/",
   showCloseIcon = false,
 }) => {
+  const history = useHistory();
+
   const btnText = buttonText ? buttonText : "CLOSE";
   const bodyMsg = message ? message : "Successfully saved.";
   return (
@@ -28,17 +30,18 @@ const SuccessModal = ({
         </div>
         <p className="text-[#7D849D] text-[16px]">{subMessage}</p>
         <div className="flex justify-center">
-          <Link to={`${redirection ? redirection : "/"}`}>
-            <button
-              type="button"
-              className="rounded-[4px] py-2 mt-2 mb-4 px-4 bg-[#9A5AFF] bg-opacity-[0.1] text-[#9A5AFF] w-[125px] text-[14px] font-black"
-              onClick={(e) => {
-                handleClose(false);
-              }}
-            >
-              <span>{btnText}</span>
-            </button>
-          </Link>
+          <button
+            type="button"
+            className="rounded-[4px] py-2 mt-2 mb-4 px-4 bg-[#9A5AFF] bg-opacity-[0.1] text-[#9A5AFF] w-[125px] text-[14px] font-black"
+            onClick={(e) => {
+              if (redirection) {
+                history.push(redirection);
+              }
+              handleClose(false);
+            }}
+          >
+            <span>{btnText}</span>
+          </button>
         </div>
       </div>
     </Modal>
