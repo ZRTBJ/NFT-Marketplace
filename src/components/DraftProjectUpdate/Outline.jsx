@@ -286,6 +286,7 @@ export default function Outline({
       {/* cover */}
       {showCover && (
         <div className=" mb-[25px]">
+          <div className="txtblack text-[14px] mb-[6px]">Cover Photo</div>
           {coverPhotoUrl === "" ? (
             <>
               <FileDragAndDrop

@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import "assets/css/profile.css";
 import DefaultProfilePicture from "assets/images/profile/defaultProfile.svg";
 import DefaultProjectLogo from "assets/images/profile/defaultProjectLogo.svg";
-
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Autoplay } from "swiper";
 import "swiper/css";
@@ -12,30 +11,21 @@ import DAOCard from "components/DAOCard";
 import NFTCard from "components/NFTCard";
 import styles from "Pages/CreateDAOandNFT/style.module.css";
 import { Navigation } from "swiper";
-import Tab from "components/profile/Tab";
 import ProfileImage from "assets/images/createDAO/user.svg";
-import CoverImage from "assets/images/createDAO/cover.svg";
-import CirclePlus from "assets/images/createDAO/circle-plus.svg";
 import NFTSample from "assets/images/createDAO/nft-sample.svg";
-import {
-  getUserProjectListById,
-  getExternalNftList,
-  getProjectCategory,
-} from "services/project/projectService";
-import {
-  getUserInfo,
-  getUserBookmarkedProjectList,
-} from "services/User/userService";
+import { getUserProjectListById } from "services/project/projectService";
+import { getUserInfo, getRoyalties } from "services/User/userService";
 import { Link, useParams } from "react-router-dom";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { getNftListByUserId } from "services/nft/nftService";
+import SuccessModal from "components/modalDialog/SuccessModal";
+import { getUserCollections } from "services/collection/collectionService";
+import thumbIcon from "assets/images/profile/card.svg";
 
 const Profile = () => {
   SwiperCore.use([Autoplay]);
   // User general data start
   const { id } = useParams();
   const [user, setUser] = useState({});
-  const [websiteList, setWebsiteList] = useState([]);
+  const [royaltyEarned, setRoyaltyEarned] = useState({});
   const [sncList, setsncList] = useState([]);
   const socialLinks = [
     { title: "linkInsta", icon: "instagram", value: "" },
@@ -45,47 +35,16 @@ const Profile = () => {
     { title: "webLink1", icon: "link", value: "" },
   ];
 
-  // user General data end
-
-  // project category List start
-  const [projectCategoryList, setProjectCategoryList] = useState([]);
-  async function projectCategory() {
-    await getProjectCategory()
-      .then((response) => {
-        setProjectCategoryList(response.categories);
-      })
-      .catch(() => {
-        setIsLoading(false);
-      });
-  }
-  // project category List end
-
-  // 4 Tab Data
-
-  // project List start
   const [projectList, setProjectList] = useState([]);
   const [projectListPageNumber, setProjectListPageNumber] = useState(1);
   const [projectListLimit, setProjectListLimit] = useState(10);
   const [projectListHasMoreData, setprojectListHasMoreData] = useState(false);
   // project List End
-
-  // works start
-  const [workList, setWorkList] = useState([]);
-  const [workListPageNumber, setWorkListPageNumber] = useState(1);
-  const [workListLimit, setworkListLimit] = useState(10);
-  // works end
-
-  // external nft start
-  const [nftList, setNftList] = useState([]);
-  // external nft end
-
-  // bookmark start
-  const [bookmarkList, setBookmarkList] = useState([]);
-  const [bookmarkListPageNumber, setbookmarkListPageNumber] = useState(1);
-  const [bookmarkListLimit, setBookmarkListLimit] = useState(10);
-  const [bookmarkListHasMoreData, setBookmarkListHasMoreData] = useState(false);
-  // bookmark end
-
+  // Collection start
+  const [collectionList, setCollectionList] = useState([]);
+  const [collectionListPageNumber, setCollectionListPageNumber] = useState(1);
+  const [collectionListLimit, setCollectionListLimit] = useState(10);
+  // collection end
   // Royalties start
   const [royaltiesListSortBy, setRoyaltiesListSortBy] = useState("default");
   const royaltiesSortByList = [
@@ -93,147 +52,20 @@ const Profile = () => {
     { id: 2, name: "Name" },
     { id: 3, name: "Percentage" },
   ];
-  const [royaltiesList, setRoyalitiesList] = useState([
-    {
-      id: 1,
-      projectIcon: DefaultProjectLogo,
-      projectName: "The Dark Web",
-      percentage: "15%",
-      role: "Owner",
-      totalRevenue: "$5291",
-    },
-    {
-      id: 2,
-      projectIcon: DefaultProjectLogo,
-      projectName: "Mint World",
-      percentage: "50%",
-      role: "Member",
-      totalRevenue: "$4291",
-    },
-    {
-      id: 3,
-      projectIcon: DefaultProjectLogo,
-      projectName: "Mint World",
-      percentage: "50%",
-      role: "Member",
-      totalRevenue: "$4291",
-    },
-  ]);
+  const [royaltiesList, setRoyaltiesList] = useState([]);
+
+  const [totalRoyality, setTotalRoyality] = useState(0);
   async function onRoyaltiesListSort(e) {
     setRoyaltiesListSortBy(e.target.value);
+    let oldRoyalties = [...royaltiesList];
+    const sorted = oldRoyalties.reverse();
+    setRoyaltiesList(sorted);
   }
   // Royalties End
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [tabKey, setTabKey] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const [walletAddress, setWalletAddress] = useState(null);
-
-  let initialTabData = [
-    {
-      id: 0,
-      name: "DAO",
-      list: projectList,
-      hasMoreData: false,
-    },
-    { id: 1, name: "Collection", list: nftList, hasMoreData: false },
-    { id: 2, name: "NFT's", list: workList, hasMoreData: false },
-  ];
-  const [activeTab, setActiveTab] = useState(initialTabData[0]);
-  const [tabData, setTabData] = useState(initialTabData);
-
-  const DAO_ITEMS = [
-    {
-      id: 0,
-      name: "BoredApeYatchClub",
-      value: "1.000.000",
-      coverImage: CoverImage,
-      profileImage: ProfileImage,
-      users: [
-        { id: 0, profileImage: ProfileImage },
-        { id: 1, profileImage: ProfileImage },
-        { id: 2, profileImage: ProfileImage },
-        { id: 3, profileImage: ProfileImage },
-        { id: 4, profileImage: ProfileImage },
-        { id: 5, profileImage: ProfileImage },
-      ],
-    },
-    {
-      id: 1,
-      name: "BoredApeYatchClub",
-      value: "1.000.000",
-      coverImage: CoverImage,
-      profileImage: ProfileImage,
-      users: [
-        { id: 0, profileImage: ProfileImage },
-        { id: 1, profileImage: ProfileImage },
-        { id: 2, profileImage: ProfileImage },
-        { id: 3, profileImage: ProfileImage },
-        { id: 4, profileImage: ProfileImage },
-        { id: 5, profileImage: ProfileImage },
-        { id: 6, profileImage: ProfileImage },
-        { id: 7, profileImage: ProfileImage },
-        { id: 8, profileImage: ProfileImage },
-        { id: 9, profileImage: ProfileImage },
-      ],
-    },
-    {
-      id: 2,
-      name: "BoredApeYatchClub",
-      value: "1.000.000",
-      coverImage: CoverImage,
-      profileImage: ProfileImage,
-      users: [
-        { id: 0, profileImage: ProfileImage },
-        { id: 1, profileImage: ProfileImage },
-        { id: 2, profileImage: ProfileImage },
-        { id: 3, profileImage: ProfileImage },
-        { id: 4, profileImage: ProfileImage },
-        { id: 5, profileImage: ProfileImage },
-        { id: 6, profileImage: ProfileImage },
-        { id: 7, profileImage: ProfileImage },
-        { id: 8, profileImage: ProfileImage },
-        { id: 9, profileImage: ProfileImage },
-      ],
-    },
-    {
-      id: 3,
-      name: "BoredApeYatchClub",
-      value: "1.000.000",
-      coverImage: CoverImage,
-      profileImage: ProfileImage,
-      users: [
-        { id: 0, profileImage: ProfileImage },
-        { id: 1, profileImage: ProfileImage },
-        { id: 2, profileImage: ProfileImage },
-        { id: 3, profileImage: ProfileImage },
-        { id: 4, profileImage: ProfileImage },
-        { id: 5, profileImage: ProfileImage },
-        { id: 6, profileImage: ProfileImage },
-        { id: 7, profileImage: ProfileImage },
-        { id: 8, profileImage: ProfileImage },
-        { id: 9, profileImage: ProfileImage },
-      ],
-    },
-    {
-      id: 4,
-      name: "BoredApeYatchClub",
-      value: "1.000.000",
-      coverImage: CoverImage,
-      profileImage: ProfileImage,
-      users: [
-        { id: 0, profileImage: ProfileImage },
-        { id: 1, profileImage: ProfileImage },
-        { id: 2, profileImage: ProfileImage },
-        { id: 3, profileImage: ProfileImage },
-        { id: 4, profileImage: ProfileImage },
-        { id: 5, profileImage: ProfileImage },
-        { id: 6, profileImage: ProfileImage },
-        { id: 7, profileImage: ProfileImage },
-        { id: 8, profileImage: ProfileImage },
-        { id: 9, profileImage: ProfileImage },
-      ],
-    },
-  ];
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const COLLECTION_ITEMS = [
     {
@@ -269,8 +101,8 @@ const Profile = () => {
         { id: 1, profileImage: ProfileImage },
         { id: 2, profileImage: ProfileImage },
         { id: 3, profileImage: ProfileImage },
-        { id: 2, profileImage: ProfileImage },
-        { id: 3, profileImage: ProfileImage },
+        { id: 4, profileImage: ProfileImage },
+        { id: 5, profileImage: ProfileImage },
       ],
     },
     {
@@ -282,9 +114,6 @@ const Profile = () => {
         { id: 0, profileImage: ProfileImage },
         { id: 1, profileImage: ProfileImage },
         { id: 2, profileImage: ProfileImage },
-        { id: 3, profileImage: ProfileImage },
-        { id: 2, profileImage: ProfileImage },
-        { id: 3, profileImage: ProfileImage },
       ],
     },
     {
@@ -296,9 +125,6 @@ const Profile = () => {
         { id: 0, profileImage: ProfileImage },
         { id: 1, profileImage: ProfileImage },
         { id: 2, profileImage: ProfileImage },
-        { id: 3, profileImage: ProfileImage },
-        { id: 2, profileImage: ProfileImage },
-        { id: 3, profileImage: ProfileImage },
       ],
     },
   ];
@@ -331,6 +157,7 @@ const Profile = () => {
     await getUserInfo(id)
       .then((response) => {
         setUser(response.user);
+        setRoyaltyEarned(response.royalty_earned);
         setWalletAddress(response.user.eao);
         if (response.user["web"]) {
           try {
@@ -355,28 +182,13 @@ const Profile = () => {
       });
   }
 
-  function OnSetActive(index) {
-    console.log(index);
-    let activeTabs = initialTabData[index];
-    console.log(activeTabs);
-    setActiveTab(activeTabs);
-  }
-  function sortData(index) {
-    activeTab.list = activeTab.list.reverse();
-    setActiveTab(initialTabData[index]);
+  async function getUserRoyaltiesInfo() {
+    await getRoyalties(id).then((res) => {
+      // console.log(res.royalties);
+      setRoyaltiesList(res.royalties);
+    });
   }
 
-  async function onScrollLoadMoreData() {
-    if (projectListHasMoreData) {
-      await getProjectList();
-    }
-  }
-
-  async function onScrollLoadMoreDataBookmark() {
-    if (bookmarkListHasMoreData) {
-      await getBookmarks();
-    }
-  }
   async function getProjectList() {
     let payload = {
       id: id,
@@ -385,128 +197,37 @@ const Profile = () => {
     };
     await getUserProjectListById(payload).then((e) => {
       if (e.data !== null) {
-        let projectListCards = [];
-        const key = "id";
-        const uniqueProjectList = [
-          ...new Map(e.data.map((item) => [item[key], item])).values(),
-        ];
-        uniqueProjectList.forEach((element) => {
-          element.showMembersTag = true;
-        });
-        projectListCards = uniqueProjectList;
-        setTabKey((pre) => pre + 1);
-        const projects = projectList.concat(projectListCards);
-        setProjectList(projects);
-        setprojectListHasMoreData(false);
-        if (e.data.length === projectListLimit) {
-          const pageSize = projectListPageNumber + 1;
-          setProjectListPageNumber(pageSize);
-          setprojectListHasMoreData(true);
-        }
+        console.log(e.data);
+        setProjectList(e.data);
       }
-      setIsLoading(false);
     });
   }
-
-  async function getWorksList() {
-    let payload = {
-      userId: id,
-      page: workListPageNumber,
-      perPage: workListLimit,
+  async function calculateTotalRoyalties() {
+    const sum = royaltiesList
+      .map((item) => item.earnable_amount)
+      .reduce((prev, curr) => prev + curr, 0);
+    setTotalRoyality(sum);
+  }
+  async function claimAllRoyalty() {
+    setShowSuccessModal(true);
+  }
+  async function getCollectionList() {
+    const payload = {
+      id: id,
+      page: 1,
+      limit: 10,
     };
-    await getNftListByUserId(payload)
-      .then((e) => {
-        if (e.code === 0 && e.nfts !== null) {
-          e.nfts.forEach((element) => {
-            element.isNft = true;
-          });
-          // if (e.nfts.length === workListLimit) {
-          //   let pageSize = workListPageNumber + 1;
-          //   setWorkListPageNumber(pageSize);
-          //   activeTab.hasMoreData = true;
-          // }
-          // const nfts = workList.concat(e.nfts);
-
-          setWorkList(e.nfts);
-        }
-      })
-      .catch(() => {
-        setIsLoading(false);
-      });
-  }
-  async function getNftList() {
-    let type = "";
-    if (window.ethereum.networkVersion === "80001") {
-      type = "eth";
-    }
-    getExternalNftList(walletAddress, type).then((res) => {
-      const key = "id.tokenId";
-      let nfts = [];
-      const uniqueNftList = [
-        ...new Map(
-          res.external_nft.ownedNfts.map((item) => [
-            item["id"]["tokenId"],
-            item,
-          ])
-        ).values(),
-      ];
-      if (uniqueNftList.length > 0) {
-        uniqueNftList.forEach((element) => {
-          nfts.push({
-            id: element.id.tokenId,
-            path: element.metadata.image,
-            name: element.title,
-            details: element,
-            isNft: true,
-            isExternalNft: true,
-          });
-        });
-        setNftList(nfts);
-      }
-    });
-  }
-  async function getBookmarks() {
-    let payload = {
-      userID: id,
-      page: bookmarkListPageNumber,
-      limit: bookmarkListLimit,
-    };
-    await getUserBookmarkedProjectList(payload).then((e) => {
-      if (e.projects !== null) {
-        let bookmarkProjectListCards = [];
-        const key = "id";
-        const uniqueProjectList = [
-          ...new Map(e.projects.map((item) => [item[key], item])).values(),
-        ];
-        uniqueProjectList.forEach((element) => {
-          element.showMembersTag = true;
-        });
-        bookmarkProjectListCards = uniqueProjectList;
-        // setTabKey((pre) => pre + 1);
-        const projects = bookmarkList.concat(bookmarkProjectListCards);
-        setBookmarkList(projects);
-        let oldTabData = [...tabData];
-        oldTabData[3].list = projects;
-        oldTabData[3].hasMoreData = true;
-
-        setTabData(oldTabData);
-        setBookmarkListHasMoreData(false);
-
-        if (e.projects.length === bookmarkListLimit) {
-          const pageSize = bookmarkListPageNumber + 1;
-          setbookmarkListPageNumber(pageSize);
-          setBookmarkListHasMoreData(true);
-        }
+    await getUserCollections(payload).then((e) => {
+      if (e.code === 0 && e.data !== null) {
+        setCollectionList(e.data);
       }
     });
   }
 
-  useEffect(() => {
-    projectCategory();
-  }, []);
-  useEffect(() => {
-    setProjectCategoryList(projectCategoryList);
-  }, [projectCategoryList]);
+  const truncateArray = (members) => {
+    let slicedItems = members.slice(0, 3);
+    return { slicedItems, restSize: members.length - slicedItems.length };
+  };
 
   useEffect(() => {
     userInfo();
@@ -517,41 +238,16 @@ const Profile = () => {
     setWalletAddress(user.eao);
   }, [user]);
   useEffect(() => {
+    getUserRoyaltiesInfo();
+    calculateTotalRoyalties();
+  }, []);
+  useEffect(() => {
     getProjectList();
   }, []);
   useEffect(() => {
-    getWorksList();
+    getCollectionList();
   }, []);
-  // useEffect(() => {
-  //   getNftList();
-  // }, []);
-  // useEffect(() => {
-  //   getBookmarks();
-  // }, []);
-  useEffect(() => {
-    setProjectList(projectList);
-    let oldTabData = [...tabData];
-    oldTabData[0].list = projectList;
-    setTabData(oldTabData);
-  }, [projectList]);
-  useEffect(() => {
-    setNftList(nftList);
-    let oldTabData = [...tabData];
-    oldTabData[1].list = nftList;
-    setTabData(oldTabData);
-  }, [nftList]);
-  useEffect(() => {
-    setWorkList(workList);
-    let oldTabData = [...tabData];
-    oldTabData[2].list = workList;
-    setTabData(oldTabData);
-  }, [workList]);
-  // useEffect(() => {
-  //   setBookmarkList(bookmarkList);
-  //   let oldTabData = [...tabData];
-  //   oldTabData[3].list = bookmarkList;
-  //   setTabData(oldTabData);
-  // }, [bookmarkList]);
+
   return (
     <>
       {isLoading && <div className="loading"></div>}
@@ -567,7 +263,7 @@ const Profile = () => {
                       user.avatar === "" ? DefaultProfilePicture : user.avatar
                     }
                     className="rounded-lg self-start  w-[102px] object-cover h-[102px]"
-                    alt={user.display_name + "profile picture"}
+                    alt={"profile"}
                   />
                   <div className="flex-1 min-w-0  pl-[20px]">
                     <h3 className="text-ellipsis text-txtblack mb-[4px] overflow-hidden whitespace-nowrap font-black text-[18px]">
@@ -643,16 +339,17 @@ const Profile = () => {
                 Total Earned Amount
               </h3>
               <h1 className="font-black text-[28px] ml-[24px] mt-[8px]">
-                $1.505
+                ${royaltyEarned.total_earn}
               </h1>
-              <p className="ml-[24px] mt-[8px] flex flex-wrap align-center">
+              <div className="ml-[24px] mt-[8px] flex flex-wrap align-center">
                 <div className="bg-success-1 h-[26px] w-[26px]  rounded-full">
                   <i className="fa-solid fa-up text-[#FFFF] ml-1.5  mt-[3px] text-[20px]"></i>
                 </div>
                 <p className="text-[14px] ml-2">
-                  Increased 50% since last month
+                  {/* Increased 50% since last month */}
+                  Last month earned ${royaltyEarned.last_month_earn}
                 </p>
-              </p>
+              </div>
             </div>
           </div>
           {/* Royalties Table */}
@@ -662,87 +359,109 @@ const Profile = () => {
               <div className="flex  flex-wrap items-center md:ml-auto">
                 <p className="mr-4 mb-3">
                   <span className="text-txtblack mr-2">Total Royalties:</span>
-                  <span className="text-txtblack font-black">$1.505</span>
+                  <span className="text-txtblack font-black">
+                    {royaltiesList.length > 0 ? totalRoyality : `0`}
+                  </span>
                 </p>
-                <button className="mb-4 text-primary-900 font-bold bg-primary-900/[0.1] py-1 px-3 rounded mr-4">
-                  Claim All Royalties
-                </button>
-                <select
-                  className="w-[120PX] h-[32px] mb-4 bg-white-shade-900 pl-2 outline-none text-textSubtle border border-[#C7CEE5]"
-                  value={royaltiesListSortBy}
-                  onChange={onRoyaltiesListSort}
-                >
-                  <option disabled value={"default"} defaultValue>
-                    Sort By
-                  </option>
-                  {royaltiesSortByList.map((e) => (
-                    <option key={e.id} value={e.name}>
-                      {e.name}
-                    </option>
-                  ))}
-                </select>
+                {royaltiesList.length > 0 && (
+                  <>
+                    <button
+                      onClick={claimAllRoyalty}
+                      className="mb-4 text-primary-900 font-bold bg-primary-900/[0.1] py-1 px-3 rounded mr-4"
+                    >
+                      Claim All Royalties
+                    </button>
+                    <select
+                      className="w-[120PX] h-[32px] mb-4 bg-white-shade-900 pl-2 outline-none text-textSubtle border border-[#C7CEE5]"
+                      value={royaltiesListSortBy}
+                      onChange={onRoyaltiesListSort}
+                    >
+                      <option disabled value={"default"} defaultValue>
+                        Sort By
+                      </option>
+                      {royaltiesSortByList.map((e) => (
+                        <option key={e.id} value={e.name}>
+                          {e.name}
+                        </option>
+                      ))}
+                    </select>
+                  </>
+                )}
               </div>
             </div>
-            <div className="overflow-x-auto relative mb-[54px]">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="text-textSubtle text-[12px] ">
-                    <th scope="col" className="px-5">
-                      Icon
-                    </th>
-                    <th scope="col" className="px-5">
-                      Project Name
-                    </th>
-                    <th scope="col" className="px-5">
-                      Percentage
-                    </th>
-                    <th scope="col" className="px-5">
-                      Role
-                    </th>
-                    <th scope="col" className="px-5">
-                      Total Revenue
-                    </th>
-                    <th scope="col" className="px-5">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {royaltiesList.map((r, index) => (
-                    <tr
-                      key={r.id}
-                      className={`${
-                        index < royaltiesList.length - 1 ? "border-b" : ""
-                      } text-left text-txtblack text-[14px]`}
-                    >
-                      <td className="py-4 px-5">
-                        <img
-                          src={r.projectIcon}
-                          className="h-[34px] w-[34px] object-cover rounded-full"
-                          alt={r.projectName + "logo"}
-                        />
-                      </td>
-                      <td className="py-4 px-5 font-black ">{r.projectName}</td>
-                      <td className="py-4 px-5">{r.percentage}</td>
-                      <td
-                        className={`py-4 px-5  ${
-                          r.role === "Owner" ? "text-info-1" : " text-success-1"
-                        }`}
-                      >
-                        {r.role}
-                      </td>
-                      <td className="py-4 px-5">{r.totalRevenue}</td>
-                      <td className="py-4 px-5">
-                        <button className="bg-secondary-900/[.20] h-[32px] w-[57px] rounded text-secondary-900">
-                          Claim
-                        </button>
-                      </td>
+            {royaltiesList.length > 0 ? (
+              <div className="overflow-x-auto relative mb-[54px]">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="text-textSubtle text-[12px] ">
+                      <th scope="col" className="px-5">
+                        Icon
+                      </th>
+                      <th scope="col" className="px-5">
+                        Project Name
+                      </th>
+                      <th scope="col" className="px-5">
+                        Percentage
+                      </th>
+                      <th scope="col" className="px-5">
+                        Role
+                      </th>
+                      <th scope="col" className="px-5">
+                        Earnable Amount
+                      </th>
+                      <th scope="col" className="px-5">
+                        Action
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="flex justify-center space-x-1 ">
+                  </thead>
+                  <tbody>
+                    {royaltiesList.map((r, index) => (
+                      <tr
+                        key={r.index}
+                        className={`${
+                          index < royaltiesList.length - 1 ? "border-b" : ""
+                        } text-left text-txtblack text-[14px]`}
+                      >
+                        <td className="py-4 px-5">
+                          <img
+                            src={DefaultProjectLogo}
+                            className="h-[34px] w-[34px] object-cover rounded-full"
+                            alt={r.project_name + "logo"}
+                          />
+                        </td>
+                        <td className="py-4 px-5 font-black ">
+                          {r.project_name}
+                        </td>
+                        <td className="py-4 px-5">{r.royalty_percent}</td>
+                        <td
+                          className={`py-4 px-5  ${
+                            r.is_owner ? "text-info-1" : " text-success-1"
+                          }`}
+                        >
+                          {r.is_owner ? "Owner" : "Member"}
+                        </td>
+                        <td className="py-4 px-5">${r.earnable_amount}</td>
+                        <td className="py-4 px-5">
+                          <button
+                            onClick={claimAllRoyalty}
+                            className="bg-secondary-900/[.20] h-[32px] w-[57px] rounded text-secondary-900"
+                          >
+                            Claim
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="text-center ">
+                <h2 className="text-textSubtle mb-6">
+                  You don't have any Royalty yet
+                </h2>
+              </div>
+            )}
+            {/* <div className="flex justify-center space-x-1 ">
               <button className="px-3 py-1   text-primary-900 bg-primary-900 bg-opacity-5 rounded hover:bg-opacity-7">
                 <i className="fa-solid fa-angle-left"></i>
               </button>
@@ -755,131 +474,155 @@ const Profile = () => {
               <button className="px-3 py-1   text-primary-900 bg-primary-900 bg-opacity-5 rounded hover:bg-opacity-7">
                 <i className="fa-solid fa-angle-right"></i>
               </button>
-            </div>
+            </div> */}
           </div>
 
           <div className="mb-[50px]">
             <h1 className="text-[28px] mb-[36px] font-black">Your DAO</h1>
-            <Swiper
-              breakpoints={{
-                320: {
-                  slidesPerView: 2,
-                  spaceBetween: 15,
-                },
-                640: {
-                  slidesPerView: 2,
-                  spaceBetween: 15,
-                },
-                768: {
-                  slidesPerView: 3,
-                  spaceBetween: 15,
-                },
-                1024: {
-                  slidesPerView: 4,
-                  spaceBetween: 15,
-                },
-                1536: {
-                  slidesPerView: 5,
-                  spaceBetween: 15,
-                },
-              }}
-              className="swipe-card"
-              navigation={false}
-              modules={[Navigation]}
-            >
+
+            {projectList.length > 0 ? (
               <Swiper
-                breakpoints={settings}
-                navigation={true}
+                breakpoints={{
+                  320: {
+                    slidesPerView: 2,
+                    spaceBetween: 15,
+                  },
+                  640: {
+                    slidesPerView: 2,
+                    spaceBetween: 15,
+                  },
+                  768: {
+                    slidesPerView: 3,
+                    spaceBetween: 15,
+                  },
+                  1024: {
+                    slidesPerView: 4,
+                    spaceBetween: 15,
+                  },
+                  1536: {
+                    slidesPerView: 5,
+                    spaceBetween: 15,
+                  },
+                }}
+                className="swipe-card"
+                navigation={false}
                 modules={[Navigation]}
-                className={styles.createSwiper}
               >
-                <div>
-                  {projectList.map((item) => (
-                    <SwiperSlide key={item.id} className={styles.daoCard}>
-                      <DAOCard item={item} key={item.id} />
-                    </SwiperSlide>
-                  ))}
-                </div>
+                <Swiper
+                  breakpoints={settings}
+                  navigation={true}
+                  modules={[Navigation]}
+                  className={styles.createSwiper}
+                >
+                  <div>
+                    {projectList.map((item) => (
+                      <SwiperSlide key={item.id} className={styles.daoCard}>
+                        <DAOCard item={item} key={item.id} />
+                      </SwiperSlide>
+                    ))}
+                  </div>
+                </Swiper>
               </Swiper>
-            </Swiper>
+            ) : (
+              <div className="text-center mt-6">
+                <h2 className="text-textSubtle">You don't have any DAO yet</h2>
+              </div>
+            )}
           </div>
 
           <div className="mb-[50px]">
             <h1 className="text-[28px] mb-[36px] font-black">Collection</h1>
-            <Swiper
-              breakpoints={settings}
-              navigation={false}
-              modules={[Navigation]}
-              className={styles.createSwiper}
-            >
-              <div>
-                {COLLECTION_ITEMS.map((item) => (
-                  <SwiperSlide key={item.id} className={styles.nftCard}>
-                    <NFTCard item={item} key={item.id} />
-                  </SwiperSlide>
-                ))}
-              </div>
-            </Swiper>
-          </div>
+            {collectionList.length > 0 ? (
+              <Swiper
+                breakpoints={settings}
+                navigation={false}
+                modules={[Navigation]}
+                className={styles.createSwiper}
+              >
+                <div>
+                  {collectionList.map((collection, index) => (
+                    <SwiperSlide key={index.id} className={styles.nftCard}>
+                      <div
+                        className="min-h-[390px] rounded-x"
+                        key={`best-collection-${index}`}
+                      >
+                        <Link
+                          to={
+                            collection.type === "right_attach"
+                              ? `/royality-management/${collection.id}`
+                              : `/collection-details/${collection.id}`
+                          }
+                        >
+                          <img
+                            className="rounded-xl h-[276px] object-cover w-full"
+                            src={
+                              collection &&
+                              collection.assets &&
+                              collection.assets[0]
+                                ? collection.assets[0].path
+                                : thumbIcon
+                            }
+                            alt=""
+                          />
+                        </Link>
 
-          {/* {activeTab.id === 0 && (
-            <div>
-              {!isLoading && (
-                <InfiniteScroll
-                  dataLength={projectList} //This is important field to render the next data
-                  next={onScrollLoadMoreData}
-                  hasMore={projectListHasMoreData}
-                >
-                  <Tab
-                    tabs={tabData}
-                    key={tabKey}
-                    OnSetActive={OnSetActive}
-                    sortData={sortData}
-                    active={initialTabData[0]}
-                  />
-                </InfiniteScroll>
-              )}
-            </div>
-          )}
-          {activeTab.id === 1 && (
-            <div>
-              {!isLoading && (
-                <InfiniteScroll
-                  dataLength={activeTab.list.length} //This is important field to render the next data
-                  next={onScrollLoadMoreData}
-                  hasMore={activeTab.hasMoreData}
-                >
-                  <Tab
-                    tabs={tabData}
-                    key={tabKey}
-                    OnSetActive={OnSetActive}
-                    sortData={sortData}
-                    active={activeTab}
-                  />
-                </InfiniteScroll>
-              )}
-            </div>
-          )}
-          {activeTab.id === 2 && (
-            <div>
-              {!isLoading && (
-                <InfiniteScroll
-                  dataLength={activeTab.list.length} //This is important field to render the next data
-                  next={onScrollLoadMoreData}
-                  hasMore={activeTab.hasMoreData}
-                >
-                  <Tab
-                    tabs={tabData}
-                    key={tabKey}
-                    OnSetActive={OnSetActive}
-                    sortData={sortData}
-                    active={activeTab}
-                  />
-                </InfiniteScroll>
-              )}
-            </div>
-          )} */}
+                        <div className="p-5">
+                          <h2 className="pb-2 text-txtblack truncate">
+                            {collection.name}
+                          </h2>
+                          <p className="mb-3 text-textSubtle text-[13px]">
+                            {collection.description &&
+                            collection.description.length > 70
+                              ? collection.description.substring(0, 67) + "..."
+                              : collection.description}
+                          </p>
+
+                          <div className="flex items-center">
+                            {collection.members &&
+                              collection.members.length > 0 &&
+                              truncateArray(collection.members).slicedItems.map(
+                                (member) => (
+                                  <img
+                                    src={member.avatar}
+                                    alt={member.id}
+                                    className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
+                                  />
+                                )
+                              )}
+                            {collection.members &&
+                              collection.members.length > 3 && (
+                                <div className="flex items-center mt-[6px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]">
+                                  <p className="text-[12px] text-[#9A5AFF]">
+                                    +
+                                    {truncateArray(collection.members).restSize}
+                                  </p>
+                                </div>
+                              )}
+                          </div>
+                        </div>
+                      </div>
+                    </SwiperSlide>
+                  ))}
+                </div>
+              </Swiper>
+            ) : (
+              <div className="text-center mt-6 text-textSubtle">
+                <h2>You don't have any Collection yet</h2>
+              </div>
+            )}
+          </div>
         </main>
+      )}
+      {showSuccessModal && (
+        <SuccessModal
+          show={showSuccessModal}
+          message="This feature is not support yet, please wait"
+          subMessage="Coming Soon"
+          buttonText="OK"
+          redirection={`/profile/${id}`}
+          showCloseIcon={true}
+          handleClose={() => setShowSuccessModal(false)}
+        />
       )}
     </>
   );

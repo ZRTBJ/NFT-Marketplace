@@ -650,12 +650,16 @@ export default function ProjectDetails(props) {
                     ))}
 
                   {/* Create New */}
-                  <div className="rounded-xl h-[276px] w-full bg-success-1 bg-opacity-20 flex flex-col items-center justify-center">
-                    <i className="fa-solid fa-circle-plus text-success-1 text-2xl mb-2"></i>
-                    <p className="text-success-1 text-lg font-black font-satoshi-bold">
-                      Create new
-                    </p>
-                  </div>
+                  <Link
+                    to={`/collection-create/?dao_id=${projectId}&type=membership`}
+                  >
+                    <div className="rounded-xl h-[276px] w-full bg-success-1 bg-opacity-20 flex flex-col items-center justify-center">
+                      <i className="fa-solid fa-circle-plus text-success-1 text-2xl mb-2"></i>
+                      <p className="text-success-1 text-lg font-black font-satoshi-bold">
+                        Create new
+                      </p>
+                    </div>
+                  </Link>
                 </section>
               )}
 
@@ -787,12 +791,16 @@ export default function ProjectDetails(props) {
                     ))}
 
                   {/* Create New */}
-                  <div className="rounded-xl h-[276px] w-full bg-success-1 bg-opacity-20 flex flex-col items-center justify-center">
-                    <i className="fa-solid fa-circle-plus text-success-1 text-2xl mb-2"></i>
-                    <p className="text-success-1 text-lg font-black font-satoshi-bold">
-                      Create new
-                    </p>
-                  </div>
+                  <Link
+                    to={`/collection-create/?dao_id=${projectId}&type=product`}
+                  >
+                    <div className="rounded-xl h-[276px] w-full bg-success-1 bg-opacity-20 flex flex-col items-center justify-center">
+                      <i className="fa-solid fa-circle-plus text-success-1 text-2xl mb-2"></i>
+                      <p className="text-success-1 text-lg font-black font-satoshi-bold">
+                        Create new
+                      </p>
+                    </div>
+                  </Link>
                 </section>
               )}
 
