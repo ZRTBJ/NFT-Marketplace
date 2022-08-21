@@ -35,9 +35,9 @@ const SalesPageModal = ({
     }
 
     const today = new Date();
-    const startTime = today.getTime();
+    const startTime = Math.floor(today.getTime() / 1000);
     today.setDate(today.getDate() + Number(duration));
-    const endTime = today.getTime();
+    const endTime = Math.floor(today.getTime() / 1000);
 
     const request = new FormData();
     request.append("price", data["price"]);
