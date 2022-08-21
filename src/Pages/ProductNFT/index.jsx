@@ -6,7 +6,11 @@ import Tooltip from "components/Tooltip";
 import Modal from "components/Modal";
 import { useForm } from "react-hook-form";
 import ErrorModal from "components/modalDialog/ErrorModal";
-import { generateUploadkey, saveProductNFT } from "services/nft/nftService";
+import {
+  generateUploadkey,
+  getassetDetails,
+  saveProductNFT,
+} from "services/nft/nftService";
 import Config from "config";
 import { getNotificationData } from "Slice/notificationSlice";
 import { getFunctionStatus } from "services/websocketFunction/webSocketFunctionService";
@@ -57,12 +61,7 @@ export default function ProductNFT(props) {
     );
     if (projectDeployStatus && projectDeployStatus.data) {
       const data = JSON.parse(projectDeployStatus.data);
-      if (
-        data.Data["assetId"] &&
-        data.Data["assetId"].length > 0 &&
-        data.Data["path"] &&
-        data.Data["path"].length > 0
-      ) {
+      if (data.Data["assetId"] && data.Data["assetId"].length > 0) {
         if (!savingNFT && !isNFTSaved) {
           setSavingNFT(true);
           saveNFTDetails(data.Data["assetId"]);
@@ -143,12 +142,17 @@ export default function ProductNFT(props) {
 
   const onSubmit = (data) => {
     if (nftFile && nftFile.file) {
-      setFileError(false);
-      setIsLoading(true);
-      if (!collectionId || collectionId === "") {
-        createNewProject();
-      } else {
-        genUploadKey();
+      if (showConfirmation) {
+        setFileError(false);
+        setIsLoading(true);
+        if (!collectionId || collectionId === "") {
+          createNewProject();
+        } else {
+          genUploadKey();
+        }
+      }
+      {
+        setShowConfirmation(true);
       }
     } else {
       setFileError(true);
@@ -283,31 +287,23 @@ export default function ProductNFT(props) {
     }
   }
 
-  function recheckStatus(fuuid) {
+  function recheckStatus(jobId) {
     setTimeout(() => {
-      getFunctionStatus(fuuid)
+      getassetDetails(jobId)
         .then((res) => {
           if (res.code === 0) {
-            debugger;
-            if (
-              res["fn_name"] === "fileUploadNotification" &&
-              res["fn_status"] === "success"
-            ) {
-              if (res["fn_response_data"]["fn_status"] === "success") {
-                const deployData = {
-                  function_uuid: fuuid,
-                  data: JSON.stringify(res),
-                };
-                dispatch(getNotificationData(deployData));
-                setShowConfirmation(false);
-                setShowSuccessModal(true);
-              }
-            } else if (
-              res["fn_name"] === "createNFTBatch" &&
-              res["fn_status"] === "processing"
-            ) {
-              recheckStatus(fuuid);
+            if (res["asset"] && res["asset"]["id"]) {
+              const asstdata = {
+                Data: { assetId: res["asset"]["id"] },
+              };
+              const deployData = {
+                function_uuid: jobId,
+                data: JSON.stringify(asstdata),
+              };
+              dispatch(getNotificationData(deployData));
             }
+          } else {
+            recheckStatus(jobId);
           }
         })
         .catch((error) => {});
@@ -506,9 +502,7 @@ export default function ProductNFT(props) {
                       showConfirmation ? "hidden" : ""
                     }`}
                     defaultValue={""}
-                    {...register("externalLink", {
-                      required: "External Link is required.",
-                    })}
+                    {...register("externalLink")}
                     placeholder="https://"
                   />
                   <p className={`${showConfirmation ? "" : "hidden"}`}>
@@ -529,9 +523,7 @@ export default function ProductNFT(props) {
                     rows="6"
                     className={`${showConfirmation ? "hidden" : ""}`}
                     placeholder="Add brief description about this NFT"
-                    {...register("description", {
-                      required: "Description is required.",
-                    })}
+                    {...register("description")}
                     defaultValue={""}
                   ></textarea>
                   <p className={`${showConfirmation ? "" : "hidden"}`}>
@@ -635,6 +627,7 @@ export default function ProductNFT(props) {
                       defaultValue={""}
                       {...register("supply", {
                         required: "Supply Link is required.",
+                        min: 1,
                       })}
                       type="number"
                       placeholder="Supply for the NFT"
@@ -645,6 +638,11 @@ export default function ProductNFT(props) {
                     {errors.supply && (
                       <p className="text-red-500 text-xs font-medium">
                         {errors.supply.message}
+                      </p>
+                    )}
+                    {errors.supply && errors.supply.type === "min" && (
+                      <p className="text-red-500 text-xs font-medium">
+                        Supply must be moe the 0.
                       </p>
                     )}
                   </>
@@ -669,9 +667,8 @@ export default function ProductNFT(props) {
 
                 {showConfirmation === false && (
                   <button
-                    type="button"
+                    type="submit"
                     className="!w-full px-6 py-2 bg-primary-900 rounded font-black text-white-shade-900"
-                    onClick={() => setShowConfirmation(true)}
                   >
                     Next
                     <i className="ml-4 fa-solid fa-arrow-right"></i>
