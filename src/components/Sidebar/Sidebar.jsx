@@ -8,6 +8,7 @@ import { setUserInfo, setSideBar } from "Slice/userSlice";
 import WalletConnectModal from "components/modalDialog/WalletConnectModal";
 import { useHistory } from "react-router-dom";
 import ReactTooltip from "react-tooltip";
+import CreateRightAttachedNFT from "components/modalDialog/CreateRightAttachNFT";
 
 const openStyle = { width: "271px" };
 const closeStyle = { width: "0px" };
@@ -17,10 +18,12 @@ const linksList = [
 ];
 const Sidebar = () => {
   const dispatch = useDispatch();
-
+  const history = useHistory();
   const context = useAuthState();
   const [userId, setUserId] = useState(context ? context.user : "");
   const userinfo = useSelector((state) => state.user.userinfo);
+  const [isExpend, setIsExpend] = useState(false);
+  const [ShowCreateRANFT, setShowCreateRANFT] = useState(false);
 
   useEffect(() => {
     if (userId && !userinfo.display_name) {
@@ -36,7 +39,7 @@ const Sidebar = () => {
     } catch {}
     dispatch(setUserInfo(userinfoResponse));
   }
-  const history = useHistory();
+
   const [showModal, setShowModal] = useState(false);
   const [navigateToPage, setNavigateToPage] = useState("");
   async function navigate(type) {
@@ -65,8 +68,9 @@ const Sidebar = () => {
       <div className="sidebarLinksContainer flex flex-col">
         <div className="pl-6 pr-10 flex-0 flex flex-col">
           <NavLink
-            to="/"
-            activeClassName="active-menu"
+            to={"/"}
+            id="nav-home"
+            activeClassName="active-menu2 "
             className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
           >
             <i className="fa-solid fa-home"></i>
@@ -74,34 +78,65 @@ const Sidebar = () => {
           </NavLink>
           <NavLink
             to={`/profile/${userId}`}
-            activeClassName="active-menu2"
+            activeClassName="active-menu"
             className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
           >
             <i className="fa-solid fa-gauge"></i>
             <span className="ml-2">Dashboard</span>
           </NavLink>
           <NavLink
-            to={`/project-create`}
-            activeClassName="active-menu2"
+            to={`/create`}
+            activeClassName="active-menu"
             className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
           >
             <i className="fa-solid fa-circle-plus"></i>
-            <span className="ml-2">Create DAO</span>
+            <span className="ml-2">Create Project</span>
           </NavLink>
-          {/* <NavLink
-            to={`/collection-create/`}
-            activeClassName="active-menu2"
-            className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
-          >
-            <span className="ml-2">Create Collection</span>
-          </NavLink> */}
           <NavLink
-            to={``}
-            activeClassName="active-menu2"
+            to={`/project-create`}
+            activeClassName="active-menu"
             className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
           >
-            <span className="ml-2">Create NFT</span>
+            <span>Create DAO</span>
           </NavLink>
+
+          <div
+            onClick={() => setIsExpend(!isExpend)}
+            activeClassName="active-menu2"
+            className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer"
+          >
+            <div className="w-32">Create NFT</div>
+            <div className="w-24 text-right">
+              <i
+                className={`fa-solid fa-angle-${isExpend ? "down" : "right"}`}
+              ></i>
+            </div>
+          </div>
+          {isExpend && (
+            <div className="ml-4">
+              <NavLink
+                to={`/membershipNFT`}
+                activeClassName="active-menu"
+                className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-sm ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
+              >
+                <span>Create Membership</span>
+              </NavLink>
+              <NavLink
+                to={`/product-nft`}
+                activeClassName="active-menu"
+                className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-sm ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
+              >
+                <span>Create Product</span>
+              </NavLink>
+              <div
+                onClick={() => setShowCreateRANFT(true)}
+                activeClassName="active-menu"
+                className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-sm ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
+              >
+                <span>Create Right Attached</span>
+              </div>
+            </div>
+          )}
         </div>
         {/* Gas price */}
         {/* <div className="pl-6 pr-10 flex-0 flex flex-col text-primary-900 mt-96">
@@ -123,6 +158,12 @@ const Sidebar = () => {
         closeModal={hideModal}
         navigateToPage={navigateToPage}
       />
+      {ShowCreateRANFT && (
+        <CreateRightAttachedNFT
+          show={ShowCreateRANFT}
+          handleClose={() => setShowCreateRANFT(false)}
+        />
+      )}
     </div>
   );
 };
