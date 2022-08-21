@@ -392,7 +392,7 @@ export default function ProjectDetails(props) {
                     </div>
                   )}
 
-                {project?.project_status !== "published" && (
+                {project?.project_status !== "published" && project?.is_owner && (
                   <a
                     onClick={() => setShowPublishModal(true)}
                     className="inline-block ml-4 bg-primary-900 px-3 py-2 text-white font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
@@ -432,9 +432,11 @@ export default function ProjectDetails(props) {
               </div>
 
               <div className="flex items-center justify-center flex-wrap mt-3 md:justify-end md:w-1/3  md:mt-0">
-                <a className="inline-block ml-4 mb-3 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
-                  Transger Funds
-                </a>
+                {project?.is_owner && (
+                  <a className="inline-block ml-4 mb-3 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
+                    Transfer Funds
+                  </a>
+                )}
 
                 <div className="bg-primary-900 ml-3 bg-opacity-10 rounded-md p-3 px-5 relative w-56">
                   <i className="fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3"></i>
@@ -643,12 +645,14 @@ export default function ProjectDetails(props) {
                     ))}
 
                   {/* Create New */}
-                  <div className="rounded-xl h-[276px] w-full bg-success-1 bg-opacity-20 flex flex-col items-center justify-center">
-                    <i className="fa-solid fa-circle-plus text-success-1 text-2xl mb-2"></i>
-                    <p className="text-success-1 text-lg font-black font-satoshi-bold">
-                      Create new
-                    </p>
-                  </div>
+                  {project?.is_owner && (
+                    <div className="rounded-xl h-[276px] w-full bg-success-1 bg-opacity-20 flex flex-col items-center justify-center">
+                      <i className="fa-solid fa-circle-plus text-success-1 text-2xl mb-2"></i>
+                      <p className="text-success-1 text-lg font-black font-satoshi-bold">
+                        Create new
+                      </p>
+                    </div>
+                  )}
                 </section>
               )}
 
@@ -780,12 +784,14 @@ export default function ProjectDetails(props) {
                     ))}
 
                   {/* Create New */}
-                  <div className="rounded-xl h-[276px] w-full bg-success-1 bg-opacity-20 flex flex-col items-center justify-center">
-                    <i className="fa-solid fa-circle-plus text-success-1 text-2xl mb-2"></i>
-                    <p className="text-success-1 text-lg font-black font-satoshi-bold">
-                      Create new
-                    </p>
-                  </div>
+                  {project?.is_owner && (
+                    <div className="rounded-xl h-[276px] w-full bg-success-1 bg-opacity-20 flex flex-col items-center justify-center">
+                      <i className="fa-solid fa-circle-plus text-success-1 text-2xl mb-2"></i>
+                      <p className="text-success-1 text-lg font-black font-satoshi-bold">
+                        Create new
+                      </p>
+                    </div>
+                  )}
                 </section>
               )}
 
@@ -793,30 +799,31 @@ export default function ProjectDetails(props) {
               {selectedTab === 3 && (
                 <>
                   {(!rightAttachCollectionList ||
-                    rightAttachCollectionList.length < 1) && (
-                    <section
-                      className="p-4"
-                      id="right-attached"
-                      role="tabpanel"
-                      aria-labelledby="right-attached-tab"
-                    >
-                      <article className=" rounded-xl bg-secondary-900 bg-opacity-20 border border-secondary-900 h-60 flex items-center justify-center p-4 flex-col">
-                        <h2 className="text-textBlack mb-3">
-                          Enable Right Attached NFT
-                        </h2>
-                        <p className="mb-4">
-                          Create your Right attached NFT and share the royalty
-                          fairly with your teams,
-                        </p>
-                        <a
-                          className="inline-block bg-secondary-900 px-4 py-3 text-white font-black text-sm  font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
-                          onClick={() => setShowCreateRANFT(true)}
-                        >
-                          Enable Now
-                        </a>
-                      </article>
-                    </section>
-                  )}
+                    rightAttachCollectionList.length < 1) &&
+                    project?.is_owner && (
+                      <section
+                        className="p-4"
+                        id="right-attached"
+                        role="tabpanel"
+                        aria-labelledby="right-attached-tab"
+                      >
+                        <article className=" rounded-xl bg-secondary-900 bg-opacity-20 border border-secondary-900 h-60 flex items-center justify-center p-4 flex-col">
+                          <h2 className="text-textBlack mb-3">
+                            Enable Right Attached NFT
+                          </h2>
+                          <p className="mb-4">
+                            Create your Right attached NFT and share the royalty
+                            fairly with your teams,
+                          </p>
+                          <a
+                            className="inline-block bg-secondary-900 px-4 py-3 text-white font-black text-sm  font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+                            onClick={() => setShowCreateRANFT(true)}
+                          >
+                            Enable Now
+                          </a>
+                        </article>
+                      </section>
+                    )}
                   {rightAttachCollectionList &&
                     rightAttachCollectionList.length > 0 && (
                       <section
@@ -938,15 +945,17 @@ export default function ProjectDetails(props) {
                             </div>
                           ))}
                         {/* Create New */}
-                        <div
-                          className="rounded-xl h-[276px] w-full bg-success-1 bg-opacity-20 flex flex-col items-center justify-center cursor-pointer"
-                          onClick={() => setShowCreateRANFT(true)}
-                        >
-                          <i className="fa-solid fa-circle-plus text-success-1 text-2xl mb-2"></i>
-                          <p className="text-success-1 text-lg font-black font-satoshi-bold">
-                            Create new
-                          </p>
-                        </div>
+                        {project?.is_owner && (
+                          <div
+                            className="rounded-xl h-[276px] w-full bg-success-1 bg-opacity-20 flex flex-col items-center justify-center cursor-pointer"
+                            onClick={() => setShowCreateRANFT(true)}
+                          >
+                            <i className="fa-solid fa-circle-plus text-success-1 text-2xl mb-2"></i>
+                            <p className="text-success-1 text-lg font-black font-satoshi-bold">
+                              Create new
+                            </p>
+                          </div>
+                        )}
                       </section>
                     )}
                 </>
