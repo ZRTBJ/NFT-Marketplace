@@ -286,7 +286,11 @@ const CollectionDetail = () => {
                 Sales Setting
               </a> */}
               <a
-                onClick={() => setShowSalesPageModal(true)}
+                onClick={() => {
+                  if (Collection.type === "product") {
+                    setShowSalesPageModal(true);
+                  }
+                }}
                 className="inline-block ml-4 bg-primary-900 p-3 text-white font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
               >
                 Sales Setting

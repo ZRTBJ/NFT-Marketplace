@@ -576,14 +576,7 @@ export default function ProjectDetails(props) {
                               >
                                 <ul className="text-sm">
                                   <li className="border-b border-divide vursor-pointer">
-                                    <a
-                                      onClick={() => {
-                                        setShowSalesPageModal(true);
-                                        setCollectionId(collection?.id);
-                                        setCollectionType("membership");
-                                      }}
-                                      className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
-                                    >
+                                    <a className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600">
                                       Sales Page
                                     </a>
                                   </li>
