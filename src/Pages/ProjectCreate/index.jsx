@@ -12,10 +12,12 @@ import {
 import ErrorModal from "components/modalDialog/ErrorModal";
 import SuccessModal from "components/modalDialog/SuccessModal";
 import { getProjectCategory } from "services/project/projectService";
+import { useHistory } from "react-router-dom";
 
 export default function ProjectCreate() {
   // Logo start
   // logo is the cover photo
+  const history = useHistory();
   const [logoPhoto, setLogoPhoto] = useState([]);
   const [logoPhotoUrl, setLogoPhotoUrl] = useState("");
   const onLogoPhotoSelect = useCallback((acceptedFiles) => {
@@ -223,6 +225,7 @@ export default function ProjectCreate() {
     await projectDetails(id);
     setDataIsLoading(false);
     setShowSuccessModal(true);
+    setProjectId(id);
   }
   async function updateBlock(id) {
     setDataIsLoading(true);
@@ -230,6 +233,7 @@ export default function ProjectCreate() {
     await projectDetails(id);
     setDataIsLoading(false);
     setShowSuccessModal(true);
+    setProjectId(id);
   }
   async function saveDraft() {
     // outline
@@ -506,7 +510,10 @@ export default function ProjectCreate() {
       </div>
       {showSuccessModal && (
         <SuccessModal
-          handleClose={() => setShowSuccessModal(false)}
+          handleClose={() => {
+            setShowSuccessModal(false);
+            history.push(`/project-details/${projectId}`);
+          }}
           show={showSuccessModal}
         />
       )}
