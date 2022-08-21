@@ -397,7 +397,7 @@ const Header = () => {
                     <div className="relative w-16 h-16 pt-2 cursor-pointer">
                       <div
                         className="flex place-items-center"
-                        onClick={() => history.push(`/profile/${userId}`)}
+                        onClick={() => history.push(`/profile-settings`)}
                       >
                         <img
                           className="rounded-full border border-gray-100 shadow-sm mr-2"
