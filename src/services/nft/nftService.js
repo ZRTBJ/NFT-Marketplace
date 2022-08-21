@@ -25,8 +25,15 @@ export async function generateUploadkey(payload) {
 export async function getDefinedProperties() {
   return await client('GET', `/meta/category`);
 }
-export async function getNftDetails(id) {
-  return await client('GET', `/nft/${id}`);
+
+export async function getNftDetails(type, id) {
+  let typeValue =
+    type === 'membership'
+      ? '/membership-nft/'
+      : type === 'product'
+      ? '/product-nft/'
+      : '/nft/';
+  return await client('GET', `${typeValue}${id}`);
 }
 
 export async function saveRightAttachedNFT(payload) {
@@ -49,9 +56,9 @@ export async function setSalesPage(
 ) {
   console.log(collectionId);
   return await client(
-    "PUT",
+    'PUT',
     `/${collectionType}-nft/${
-      collectionType === "product" ? collectionId : nftId
+      collectionType === 'product' ? collectionId : nftId
     }/sale`,
     payload,
     'formdata'
