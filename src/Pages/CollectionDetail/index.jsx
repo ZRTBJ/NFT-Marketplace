@@ -24,6 +24,7 @@ const CollectionDetail = () => {
   const [showSalesPageModal, setShowSalesPageModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [collectionType, setCollectionType] = useState("");
+  const [nftId, setNftId] = useState("");
 
   useEffect(() => {
     if (collectionId) {
@@ -78,8 +79,6 @@ const CollectionDetail = () => {
       .catch((err) => console.log(err));
   };
 
-  console.log(NFTs);
-
   function copyToClipboard(text) {
     navigator.clipboard.writeText(text);
     const copyEl = document.getElementById("copied-message");
@@ -100,6 +99,13 @@ const CollectionDetail = () => {
   const handleUpdateMeta = (id) => {
     setShowOptions(null);
   };
+
+  function salesPageModal(type, id) {
+    if (type === "membership") {
+      setNftId(id);
+    }
+    setShowSalesPageModal(true);
+  }
 
   const handlePublish = () => {};
   return (
@@ -285,16 +291,16 @@ const CollectionDetail = () => {
               {/* <a className='inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>
                 Sales Setting
               </a> */}
-              <a
-                onClick={() => {
-                  if (Collection.type === "product") {
-                    setShowSalesPageModal(true);
-                  }
-                }}
-                className="inline-block ml-4 bg-primary-900 p-3 text-white font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
-              >
-                Sales Setting
-              </a>
+
+              {Collection?.type === "product" && (
+                <div
+                  onClick={() => salesPageModal("product")}
+                  className="inline-block ml-4 bg-primary-900 p-3 text-white font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+                >
+                  Sales Setting
+                </div>
+              )}
+
               <Link
                 to="/collection-create"
                 className="inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
@@ -317,14 +323,18 @@ const CollectionDetail = () => {
         <div
           onClick={() =>
             history.push(
-              `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}`
+              `${
+                Collection.type === "product"
+                  ? `/product-nft?collectionId=${collectionId}`
+                  : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}`
+              }`
             )
           }
           className="cursor-pointer inline-block ml-4 mt-3 bg-primary-900 p-3 text-white font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
         >
           Mint NFT
         </div>
-        <div className="flex mt-4">
+        <div className="flex flex-wrap mt-4 mb-[60px]">
           {NFTs &&
             NFTs.map((nft) => {
               return (
@@ -348,24 +358,36 @@ const CollectionDetail = () => {
                         </button>
                         {/* Dropdown menu  */}
                         {ShowOptions === nft.id && (
-                          <div className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 block">
+                          <div className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 mb-6 block">
                             <ul className="text-sm">
                               <li className="border-b border-divide">
-                                <a
+                                <div
                                   onClick={() => handleEditNFT(nft.id)}
-                                  className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                  className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
                                 >
                                   Edit NFT
-                                </a>
+                                </div>
                               </li>
                               <li className="border-b border-divide">
-                                <a
+                                <div
                                   onClick={() => handleUpdateMeta(nft.id)}
-                                  className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                  className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
                                 >
                                   Update Metadata
-                                </a>
+                                </div>
                               </li>
+                              {Collection.type === "membership" && (
+                                <li className="border-b border-divide">
+                                  <div
+                                    onClick={() =>
+                                      salesPageModal("membership", nft.id)
+                                    }
+                                    className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
+                                  >
+                                    Sales Settings
+                                  </div>
+                                </li>
+                              )}
                             </ul>
                           </div>
                         )}
@@ -386,6 +408,7 @@ const CollectionDetail = () => {
           show={showSalesPageModal}
           collectionId={collectionId}
           collectionType={`${collectionType}`}
+          nftId={nftId}
           handleClose={() => setShowSalesPageModal(false)}
           successClose={() => {
             setShowSalesPageModal(false);
@@ -402,6 +425,7 @@ const CollectionDetail = () => {
             setShowSuccessModal(false);
             getCollectionDetail();
           }}
+          redirection={`/collection-details/${collectionId}`}
           show={showSuccessModal}
         />
       )}
