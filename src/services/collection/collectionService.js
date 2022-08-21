@@ -58,6 +58,12 @@ export async function getCollections(listType, projectId, page, limit) {
     `/collection?list_type=${listType}&project_id=${projectId}&page=${page}&limit=${limit}`
   );
 }
+export async function getUserCollections(payload) {
+  return await client(
+    "GET",
+    `/collection?list_type=user&page=${payload.page}&limit=${payload.limit}`
+  );
+}
 
 export async function getCollectionNFTs(id) {
   return await client("GET", `/collection/${id}/nft`);
@@ -65,9 +71,9 @@ export async function getCollectionNFTs(id) {
 
 export async function connectCollection(ranknftid, collectionId) {
   const bodyFormData = new FormData();
-  bodyFormData.append('collection_id', collectionId);
+  bodyFormData.append("collection_id", collectionId);
   return await client(
-    'POST',
+    "POST",
     `/ranft/${ranknftid}/connect_collection`,
     bodyFormData
   );

@@ -28,12 +28,12 @@ const CreateNFTModal = ({ handleClose, show }) => {
           <div className="mr-6 h-[74px] w-[74px] bg-[#FFA800] bg-opacity-[0.5] flex items-center justify-center rounded-[8px]">
             <img src={Users} alt="Users" />
           </div>
-          <div>
+          <div onClick={() => history.push("/membershipNFT")}>
             <h3 className="text-[24px] font-bold text-[#303548]">
               Membership NFT
             </h3>
             <p className="text-[14px] text-[#5F6479] w-[470px] mt-2">
-              Get fundraise by creating NFT Membership and make your own
+              Get fundraiser by creating NFT Membership and make your own
               Decentralize Community
             </p>
           </div>

@@ -346,6 +346,7 @@ export default function MembershipNFT() {
       headers: headers,
     })
       .then((response) => {
+        console.log(response);
         let data = {
           collection_uid: collection_id,
           tier_name: nft.tierName,
@@ -373,10 +374,10 @@ export default function MembershipNFT() {
       });
   }
 
-  async function genUploadKey(daoId) {
+  async function genUploadKey() {
     let key = "";
     const request = new FormData();
-    request.append("project_uid", daoId);
+
     await generateUploadkey(request)
       .then((res) => {
         if (res.key) {
@@ -392,10 +393,13 @@ export default function MembershipNFT() {
   async function createBlock(validateNfts) {
     setShowDataUploadingModal(true);
     if (query.get("collection_id")) {
-      // console.log(collection_id);
-      // id = await createNewProject(dao_id);
-      // await updateExistingProject(id);
-      // await projectDetails(id);
+      localStorage.setItem("upload_number", validateNfts.length);
+      for (const iterator of validateNfts) {
+        const key = await genUploadKey();
+        if (key !== "") {
+          await uploadAFile(key, dao_id, iterator);
+        }
+      }
     } else {
       const daoId = await daoCreate();
       const collection_id = await collectionCreate(daoId);
@@ -501,11 +505,9 @@ export default function MembershipNFT() {
               data.Data["assetId"],
               projectDeployStatus.function_uuid
             );
-             let nftId = [...calledIds, data.Data["assetId"]];
-             setCalledIds(nftId);
+            let nftId = [...calledIds, data.Data["assetId"]];
+            setCalledIds(nftId);
           }
-
-         
         } else {
           getAsset(projectDeployStatus.function_uuid).then((res) => {
             console.log(res);
@@ -540,8 +542,14 @@ export default function MembershipNFT() {
     setCollection_id(collection_id);
   }, [collection_id]);
   useEffect(() => {
+    setDao_id(dao_id);
+  }, [dao_id]);
+  useEffect(() => {
     if (query.get("collection_id")) {
       setCollection_id(query.get("collection_id"));
+    }
+    if (query.get("dao_id")) {
+      setDao_id(query.get("collection_id"));
     }
   }, []);
 
@@ -1061,7 +1069,7 @@ export default function MembershipNFT() {
                     a Membership NFT!"
           subMessage="Do you want to create New NFT? if yes let’s go!"
           buttonText="Done"
-          redirection={`/create`}
+          redirection={`/collection-details/${collection_id}`}
           handleClose={() => setShowSuccessModal(false)}
           show={showSuccessModal}
         />

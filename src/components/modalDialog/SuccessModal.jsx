@@ -9,7 +9,8 @@ const SuccessModal = ({
   message,
   subMessage,
   buttonText,
-  redirection,
+  redirection = "/",
+  showCloseIcon = false,
 }) => {
   const history = useHistory();
 
@@ -20,7 +21,7 @@ const SuccessModal = ({
       width={800}
       show={show}
       handleClose={() => handleClose(false)}
-      showCloseIcon={false}
+      showCloseIcon={showCloseIcon}
     >
       <div className="text-center mt-2">
         <img className="block mx-auto" src={NewSuccess} alt="" />

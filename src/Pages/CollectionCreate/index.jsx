@@ -16,6 +16,7 @@ import {
 import ErrorModal from "components/modalDialog/ErrorModal";
 import SuccessModal from "components/modalDialog/SuccessModal";
 import { getProjectCategory } from "services/project/projectService";
+
 import { useLocation } from "react-router-dom";
 
 export default function CollectionCreate() {
@@ -211,6 +212,7 @@ export default function CollectionCreate() {
   const [projectInfo, setProjectInfo] = useState({});
   const [projectCategoryList, setProjectCategoryList] = useState([]);
   const [dao_id, setDao_id] = useState(null);
+  const [collectionType, setCollectionType] = useState(null);
 
   function handelClickBack() {
     let currentIndex = currentStep.pop();
@@ -218,18 +220,31 @@ export default function CollectionCreate() {
   }
   async function createBlock(id) {
     setDataIsLoading(true);
-    if (query.get("dao_id")) {
+
+    if (query.get("dao_id") && query.get("type")) {
       id = await createNewProject(dao_id);
-      await updateExistingProject(id);
-      await projectDetails(id);
+      if (id !== "") {
+        await updateExistingProject(id);
+        await projectDetails(id);
+        setDataIsLoading(false);
+        setShowSuccessModal(true);
+      }
     } else {
-      const dao_id = await daoCreate();
-      id = await createNewProject(dao_id);
-      await updateExistingProject(id);
-      await projectDetails(id);
+      setShowErrorModal(true);
     }
-    setDataIsLoading(false);
-    setShowSuccessModal(true);
+
+    // if (query.get("dao_id") && query.get("type")) {
+    //   console.log(dao_id, collectionType);
+    //   // id = await createNewProject(dao_id);
+    //   // await updateExistingProject(id);
+    //   // await projectDetails(id);
+    // }
+    // else {
+    //   const dao_id = await daoCreate();
+    //   id = await createNewProject(dao_id);
+    //   await updateExistingProject(id);
+    //   await projectDetails(id);
+    // }
   }
   async function updateBlock(id) {
     setDataIsLoading(true);
@@ -259,7 +274,7 @@ export default function CollectionCreate() {
     let createPayload = {
       name: projectName,
       dao_id: dao_id,
-      collection_type: "product",
+      collection_type: collectionType,
     };
 
     let projectId = "";
@@ -269,9 +284,13 @@ export default function CollectionCreate() {
           projectId = res.collection.id;
           setProjectCreated(true);
           setProjectId(projectId);
+        } else if (res.code === 5001) {
+          setDataIsLoading(false);
+          setShowErrorModal(true);
         }
       })
       .catch((err) => {
+        setDataIsLoading(false);
         console.log(err);
       });
     return projectId;
@@ -376,10 +395,16 @@ export default function CollectionCreate() {
   useEffect(() => {
     setDao_id(dao_id);
   }, [dao_id]);
+  useEffect(() => {
+    setCollectionType(collectionType);
+  }, [collectionType]);
 
   useEffect(() => {
     if (query.get("dao_id")) {
       setDao_id(query.get("dao_id"));
+    }
+    if (query.get("type")) {
+      setCollectionType(query.get("type"));
     }
   }, []);
 
@@ -545,12 +570,17 @@ export default function CollectionCreate() {
         <SuccessModal
           handleClose={() => setShowSuccessModal(false)}
           show={showSuccessModal}
+          redirection={`/project-details/${dao_id}`}
         />
       )}
       {showErrorModal && (
         <ErrorModal
           handleClose={() => setShowErrorModal(false)}
           show={showErrorModal}
+          title="DAO and Collection Type are not found in the URL"
+          message="Please do not change anything in the URL"
+          buttomText="Try Again"
+          redirection={`/`}
         />
       )}
     </>

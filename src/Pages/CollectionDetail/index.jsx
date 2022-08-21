@@ -314,14 +314,16 @@ const CollectionDetail = () => {
         </div>
       </section>
       <section>
-        <a
+        <div
           onClick={() =>
-            history.push(`/product-nft?collectionId=${collectionId}`)
+            history.push(
+              `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}`
+            )
           }
-          className="inline-block ml-4 mt-3 bg-primary-900 p-3 text-white font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+          className="cursor-pointer inline-block ml-4 mt-3 bg-primary-900 p-3 text-white font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
         >
           Mint NFT
-        </a>
+        </div>
         <div className="flex mt-4">
           {NFTs &&
             NFTs.map((nft) => {
