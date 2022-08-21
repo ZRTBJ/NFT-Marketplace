@@ -41,10 +41,18 @@ export async function saveProductNFT(payload) {
   return await client("POST", `/product-nft`, payload, "formdata");
 }
 
-export async function setSalesPage(collectionType, collectionId, payload) {
+export async function setSalesPage(
+  collectionType,
+  collectionId,
+  payload,
+  nftId
+) {
+  console.log(collectionId);
   return await client(
     "PUT",
-    `/${collectionType}-nft/${collectionId}/sale`,
+    `/${collectionType}-nft/${
+      collectionType === "product" ? collectionId : nftId
+    }/sale`,
     payload,
     "formdata"
   );

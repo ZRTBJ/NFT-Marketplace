@@ -290,9 +290,10 @@ export default function MembershipNFT() {
     request.append("description", nft.description);
     request.append("external_link", nft.external_link);
     request.append("sensitive_content", nft.sensitive_content);
-    request.append("benefit_array", JSON.stringify(nft.benefit_array));
     request.append("attributes", JSON.stringify(nft.properties));
     request.append("job_id", nft.job_id);
+    const benefit_array = nft.benefit_array.filter((x) => x.title !== "");
+    request.append("benefit_array", JSON.stringify(benefit_array));
 
     // const properties = [];
 
@@ -346,7 +347,6 @@ export default function MembershipNFT() {
       headers: headers,
     })
       .then((response) => {
-        console.log(response);
         let data = {
           collection_uid: collection_id,
           tier_name: nft.tierName,
@@ -355,10 +355,11 @@ export default function MembershipNFT() {
           description: nft.description,
           external_link: nft.externalLink,
           sensitive_content: nft.sensitiveContent,
-          benefit_array: nft.benefits,
+          benefit_array: nft.benefits.filter((x) => x.title !== ""),
           job_id: response["job_id"],
           properties: nft.properties,
         };
+
         localStorage.setItem(`${response["job_id"]}`, JSON.stringify(data));
         const notificationData = {
           projectId: daoId,
@@ -510,7 +511,7 @@ export default function MembershipNFT() {
           }
         } else {
           getAsset(projectDeployStatus.function_uuid).then((res) => {
-            console.log(res);
+            // console.log(res);
             if (res.code === 0) {
               const notificationData = {
                 projectId: dao_id,
