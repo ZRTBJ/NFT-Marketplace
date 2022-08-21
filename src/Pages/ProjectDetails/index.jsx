@@ -271,8 +271,13 @@ export default function ProjectDetails(props) {
                 <div className="flex">
                   <img
                     src={
-                      project.assets && project.assets[1]
-                        ? project.assets[1].path
+                      project.assets &&
+                      project.assets.find(
+                        (img) => img["asset_purpose"] === "subphoto"
+                      )
+                        ? project.assets.find(
+                            (img) => img["asset_purpose"] === "subphoto"
+                          ).path
                         : manImg
                     }
                     className="rounded-full self-start w-14 h-14 md:w-[98px] object-cover md:h-[98px] bg-color-ass-6"
@@ -325,7 +330,6 @@ export default function ProjectDetails(props) {
                       </a>
                     </div>
                   )}
-
                 {links.find((link) => link.title === "linkInsta") &&
                   links.find((link) => link.title === "linkInsta").value
                     ?.length > 0 && (
@@ -341,7 +345,6 @@ export default function ProjectDetails(props) {
                       </a>
                     </div>
                   )}
-
                 {links.find((link) => link.title === "linkTwitter") &&
                   links.find((link) => link.title === "linkTwitter").value
                     ?.length > 0 && (
@@ -358,7 +361,6 @@ export default function ProjectDetails(props) {
                       </a>
                     </div>
                   )}
-
                 {links.find((link) => link.title === "linkGitub") &&
                   links.find((link) => link.title === "linkGitub").value
                     ?.length > 0 && (
@@ -374,7 +376,6 @@ export default function ProjectDetails(props) {
                       </a>
                     </div>
                   )}
-
                 {links.find((link) => link.title === "customLinks1") &&
                   links.find((link) => link.title === "customLinks1").value
                     ?.length > 0 && (
@@ -391,7 +392,13 @@ export default function ProjectDetails(props) {
                       </a>
                     </div>
                   )}
-
+                {project?.is_owner && (
+                  <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 text-white flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-secondary-800">
+                    <Link to={`/project-create?id=${project?.id}`}>
+                      <i className="fa-solid fa-pen-to-square"></i>
+                    </Link>
+                  </div>
+                )}
                 {project?.project_status !== "published" && project?.is_owner && (
                   <a
                     onClick={() => setShowPublishModal(true)}
@@ -546,8 +553,8 @@ export default function ProjectDetails(props) {
                             src={
                               collection &&
                               collection.assets &&
-                              collection.assets[0]
-                                ? collection.assets[0].path
+                              collection.assets[1]
+                                ? collection.assets[1].path
                                 : thumbIcon
                             }
                             alt=""
@@ -634,7 +641,7 @@ export default function ProjectDetails(props) {
                                 </div>
                               )}
                           </div>
-                          <div className="my-4">
+                          {/* <div className="my-4">
                             <a className="inline-block mr-3 bg-primary-900 p-3 text-white  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer hover:bg-opacity-60 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
                               Review
                             </a>
@@ -644,7 +651,7 @@ export default function ProjectDetails(props) {
                                   Publish
                                 </a>
                               )}
-                          </div>
+                          </div> */}
                         </div>
                       </div>
                     ))}
@@ -687,8 +694,8 @@ export default function ProjectDetails(props) {
                             src={
                               collection &&
                               collection.assets &&
-                              collection.assets[0]
-                                ? collection.assets[0].path
+                              collection.assets[1]
+                                ? collection.assets[1].path
                                 : thumbIcon
                             }
                             alt=""
@@ -782,7 +789,7 @@ export default function ProjectDetails(props) {
                                 </div>
                               )}
                           </div>
-                          <div className="my-4">
+                          {/* <div className="my-4">
                             <a className="inline-block mr-3 bg-primary-900 p-3 text-white  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer hover:bg-opacity-60 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
                               Review
                             </a>
@@ -792,7 +799,7 @@ export default function ProjectDetails(props) {
                                   Publish
                                 </a>
                               )}
-                          </div>
+                          </div> */}
                         </div>
                       </div>
                     ))}
@@ -866,8 +873,8 @@ export default function ProjectDetails(props) {
                                   src={
                                     collection &&
                                     collection.assets &&
-                                    collection.assets[0]
-                                      ? collection.assets[0].path
+                                    collection.assets[1]
+                                      ? collection.assets[1].path
                                       : thumbIcon
                                   }
                                   alt=""
@@ -953,7 +960,7 @@ export default function ProjectDetails(props) {
                                       </div>
                                     )}
                                 </div>
-                                <div className="my-4">
+                                {/* <div className="my-4">
                                   <a className="inline-block mr-3 bg-primary-900 p-3 text-white  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer hover:bg-opacity-60 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
                                     Review
                                   </a>
@@ -963,7 +970,7 @@ export default function ProjectDetails(props) {
                                         Publish
                                       </a>
                                     )}
-                                </div>
+                                </div> */}
                               </div>
                             </div>
                           ))}
