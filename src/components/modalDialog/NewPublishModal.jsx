@@ -1,7 +1,7 @@
 import Publish from 'assets/images/images/sure.svg';
 import Modal from '../Modal';
 
-const NewPublishModal = ({ handleClose, show }) => {
+const NewPublishModal = ({ handleClose, show, publish }) => {
   return (
     <Modal
       width={600}
@@ -18,7 +18,10 @@ const NewPublishModal = ({ handleClose, show }) => {
           Do you really want to publish?
         </p>
         <div className='flex mt-4'>
-          <button className='rounded-[4px] bg-[#9A5AFF] text-white text-[12px] font-bold px-4 py-2'>
+          <button
+            className='rounded-[4px] bg-[#9A5AFF] text-white text-[12px] font-bold px-4 py-2'
+            onClick={publish}
+          >
             Publish Now
           </button>
           <button
