@@ -42,25 +42,21 @@ const Sidebar = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [navigateToPage, setNavigateToPage] = useState("");
-  async function navigate(type) {
-    setNavigateToPage(type);
-    console.log(userinfo.id);
-    if (!userinfo.id) {
-      setShowModal(true);
-    } else {
-      history.push(`/${type}`);
-    }
-  }
+
   function hideModal(e) {
+    setShowModal(false);
     try {
       e.preventDefault();
       dispatch(setSideBar(false));
     } catch {}
   }
 
-  function navigateTo(type) {
-    navigate(type);
-    // handleClose();
+  function accessCheck(e) {
+    if (!userId || userId.length < 1) {
+      e.preventDefault();
+      e.stopPropagation();
+      setShowModal(true);
+    }
   }
 
   return (
@@ -77,6 +73,7 @@ const Sidebar = () => {
             <span className="ml-2">Home</span>
           </NavLink>
           <NavLink
+            onClick={accessCheck}
             to={`/profile/${userId}`}
             activeClassName="active-menu"
             className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
@@ -85,6 +82,7 @@ const Sidebar = () => {
             <span className="ml-2">Dashboard</span>
           </NavLink>
           <NavLink
+            onClick={accessCheck}
             to={`/create`}
             activeClassName="active-menu"
             className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
@@ -93,6 +91,7 @@ const Sidebar = () => {
             <span className="ml-2">Create Project</span>
           </NavLink>
           <NavLink
+            onClick={accessCheck}
             to={`/project-create`}
             activeClassName="active-menu"
             className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
@@ -115,6 +114,7 @@ const Sidebar = () => {
           {isExpend && (
             <div className="ml-4">
               <NavLink
+                onClick={accessCheck}
                 to={`/membershipNFT`}
                 activeClassName="active-menu"
                 className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-sm ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
@@ -122,6 +122,7 @@ const Sidebar = () => {
                 <span>Create Membership</span>
               </NavLink>
               <NavLink
+                onClick={accessCheck}
                 to={`/product-nft`}
                 activeClassName="active-menu"
                 className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-sm ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
@@ -129,7 +130,13 @@ const Sidebar = () => {
                 <span>Create Product</span>
               </NavLink>
               <div
-                onClick={() => setShowCreateRANFT(true)}
+                onClick={() => {
+                  if (userId && userId.length > 1) {
+                    setShowCreateRANFT(true);
+                  } else {
+                    setShowModal(true);
+                  }
+                }}
                 activeClassName="active-menu"
                 className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-sm ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
               >
