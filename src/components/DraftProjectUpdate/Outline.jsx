@@ -235,6 +235,7 @@ export default function Outline({
           cols="30"
           rows="6"
           placeholder="Description"
+          maxLength={1000}
         ></textarea>
       </div>
 

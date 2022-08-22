@@ -3,6 +3,7 @@ import {
   getProjectDetailsById,
   projectLike,
   projectBookmark,
+  getBalance,
 } from "services/project/projectService";
 import { getNftListByProjectId } from "services/nft/nftService";
 import manImg from "assets/images/projectDetails/man-img.svg";
@@ -22,6 +23,7 @@ import { getCollections } from "services/collection/collectionService";
 import CreateRightAttachedNFT from "components/modalDialog/CreateRightAttachNFT";
 import SalesPageModal from "components/modalDialog/SalesPageModal";
 import TransferFundModal from "components/modalDialog/TransferFundModal";
+import { cryptoConvert } from "services/chainlinkService";
 
 export default function ProjectDetails(props) {
   const history = useHistory();
@@ -55,6 +57,9 @@ export default function ProjectDetails(props) {
   const [collectionId, setCollectionId] = useState("");
   const [collectionType, setCollectionType] = useState("");
   const [showTransferFundModal, setShowTransferFundModal] = useState(false);
+  const [balance, setBalance] = useState("---");
+  const [isLoadingBalance, setIsLoadingBalance] = useState(false);
+  const [usdUnitPrice, setUsdUnitPrice] = useState(0);
 
   async function fetchData() {
     if (hasMore) {
@@ -72,6 +77,7 @@ export default function ProjectDetails(props) {
 
   useEffect(() => {
     getCollectionList();
+    getUnitPriceUSD();
   }, []);
 
   async function projectDetails(pid) {
@@ -100,6 +106,7 @@ export default function ProjectDetails(props) {
           }
         }
         setIsLoading(false);
+        getProjectBalance(projectId);
       })
       .catch((error) => {
         setIsLoading(false);
@@ -231,6 +238,36 @@ export default function ProjectDetails(props) {
     let slicedItems = members.slice(0, 3);
     return { slicedItems, restSize: members.length - slicedItems.length };
   };
+
+  function getProjectBalance(pid) {
+    setIsLoadingBalance(true);
+    getBalance(pid)
+      .then((res) => {
+        if (res.code === 0) {
+          if (res.balance && res.balance != "") {
+            setBalance(res.balance);
+          }
+        }
+        setIsLoadingBalance(false);
+      })
+      .catch((error) => {
+        setIsLoadingBalance(false);
+      });
+  }
+
+  function getUnitPriceUSD() {
+    setIsLoadingBalance(true);
+    cryptoConvert("MATIC", "USD")
+      .then((res) => {
+        if (res.USD && res.USD > 0) {
+          setUsdUnitPrice(res.USD);
+        }
+        setIsLoadingBalance(false);
+      })
+      .catch((error) => {
+        setIsLoadingBalance(false);
+      });
+  }
 
   return (
     <>
@@ -446,10 +483,24 @@ export default function ProjectDetails(props) {
                 )}
 
                 <div className="bg-primary-900 ml-3 bg-opacity-10 rounded-md p-3 px-5 relative w-56">
-                  <i className="fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3"></i>
+                  <i
+                    onClick={() => {
+                      getProjectBalance(projectId);
+                      getUnitPriceUSD();
+                    }}
+                    className={`fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3 ${
+                      isLoadingBalance ? "fa-spin" : ""
+                    } cursor-pointer`}
+                  ></i>
                   <p className=" text-sm text-textSubtle ">Net Worth</p>
-                  <h4>1.400.000 MATIC</h4>
-                  <p className="text-sm text-textSubtle">($1,400.00)</p>
+                  <h4>{balance} MATIC</h4>
+                  <p className="text-sm text-textSubtle">
+                    (~$
+                    {balance && Number(balance) >= 0 && usdUnitPrice > 0
+                      ? balance * usdUnitPrice
+                      : "0.00"}
+                    )
+                  </p>
                 </div>
               </div>
             </div>
