@@ -95,8 +95,14 @@ const CollectionDetail = () => {
     }, 2000);
   }
 
-  const handleShowOptions = (value) => {
-    setShowOptions(value);
+  const handleShowOptions = (e, value) => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (ShowOptions) {
+      setShowOptions(null);
+    } else {
+      setShowOptions(value);
+    }
   };
 
   const handleEditNFT = (id) => {
@@ -404,7 +410,8 @@ const CollectionDetail = () => {
                       <div className='relative'>
                         <button
                           type='button'
-                          onClick={() => handleShowOptions(nft.id)}
+                          className='w-[20px]'
+                          onClick={(e) => handleShowOptions(e, nft.id)}
                         >
                           <i className='fa-regular fa-ellipsis-vertical text-textSubtle'></i>
                         </button>
