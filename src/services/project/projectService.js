@@ -3,18 +3,18 @@ import { client } from '../httpClient';
 export async function getUserProjectListById(payload) {
   return await client(
     'GET',
-    `/user/${payload.id}/project?page=${payload.page}&limit=${payload.perPage}`
+    `/user/${payload.id}/project?page=${payload?.page}&limit=${payload?.perPage}`
   );
 }
 export async function getPublicProjectList(payload) {
   if (payload) {
-    const limit = `${payload.limit ? `limit=${payload.limit}` : ""}`;
-    const page = `${payload.page ? `page=${payload.page}&` : ""}`;
+    const limit = `${payload.limit ? `limit=${payload.limit}` : ''}`;
+    const page = `${payload.page ? `page=${payload.page}&` : ''}`;
     const order_by = `${
-      payload.order_by ? `order_by=${payload.order_by}&` : ""
+      payload.order_by ? `order_by=${payload.order_by}&` : ''
     }`;
-    const keyword = `${payload.keyword ? `keyword=${payload.keyword}&` : ""}`;
-    return await client("GET", `/project?${keyword}${order_by}${page}${limit}`);
+    const keyword = `${payload.keyword ? `keyword=${payload.keyword}&` : ''}`;
+    return await client('GET', `/project?${keyword}${order_by}${page}${limit}`);
   } else {
     return await client('GET', `/project`);
   }
@@ -66,7 +66,7 @@ export async function updateProject(payload) {
   //   bodyFormData.append("dao_symbol", payload.daoSymbol);
   // }
   if (payload.daoWallet) {
-    bodyFormData.append("treasury_wallet", payload.daoWallet);
+    bodyFormData.append('treasury_wallet', payload.daoWallet);
   }
   if (payload.overview) {
     bodyFormData.append('overview', payload.overview);
