@@ -273,16 +273,7 @@ export default function ProjectDetails(props) {
               <div className="md:w-2/3">
                 <div className="flex">
                   <img
-                    src={
-                      project.assets &&
-                      project.assets.find(
-                        (img) => img["asset_purpose"] === "subphoto"
-                      )
-                        ? project.assets.find(
-                            (img) => img["asset_purpose"] === "subphoto"
-                          ).path
-                        : manImg
-                    }
+                    src={coverImages?.path ? coverImages.path : bigImg}
                     className="rounded-full self-start w-14 h-14 md:w-[98px] object-cover md:h-[98px] bg-color-ass-6"
                     alt="User profile"
                   />
