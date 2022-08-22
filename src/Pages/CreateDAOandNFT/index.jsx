@@ -2,7 +2,6 @@ import { useState } from 'react';
 import ProfileImage from 'assets/images/createDAO/user.svg';
 import CoverImage from 'assets/images/createDAO/cover.svg';
 import CirclePlus from 'assets/images/createDAO/circle-plus.svg';
-import NFTSample from 'assets/images/createDAO/nft-sample.svg';
 import DAOCard from 'components/DAOCard';
 import NFTCard from 'components/NFTCard';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -13,46 +12,6 @@ import { Link } from 'react-router-dom';
 import { getUserProjectListById } from 'services/project/projectService';
 import { useEffect } from 'react';
 import { getCollections } from 'services/collection/collectionService';
-
-const NFT_ITEMS = [
-  {
-    id: 0,
-    name: 'NFT Collection #1',
-    image: NFTSample,
-    description: 'There are many variations of passages of Lorem',
-    nfts: [
-      { id: 0, profileImage: ProfileImage },
-      { id: 1, profileImage: ProfileImage },
-      { id: 2, profileImage: ProfileImage },
-    ],
-  },
-  {
-    id: 1,
-    name: 'NFT Collection #2',
-    image: NFTSample,
-    description: 'There are many variations of passages of Lorem',
-    nfts: [
-      { id: 0, profileImage: ProfileImage },
-      { id: 1, profileImage: ProfileImage },
-      { id: 2, profileImage: ProfileImage },
-      { id: 3, profileImage: ProfileImage },
-    ],
-  },
-  {
-    id: 2,
-    name: 'NFT Collection #3',
-    image: NFTSample,
-    description: 'There are many variations of passages of Lorem',
-    nfts: [
-      { id: 0, profileImage: ProfileImage },
-      { id: 1, profileImage: ProfileImage },
-      { id: 2, profileImage: ProfileImage },
-      { id: 3, profileImage: ProfileImage },
-      { id: 2, profileImage: ProfileImage },
-      { id: 3, profileImage: ProfileImage },
-    ],
-  },
-];
 
 const CreateDAOandNFT = () => {
   const [ShowCreateNFT, setShowCreateNFT] = useState(false);
@@ -152,9 +111,9 @@ const CreateDAOandNFT = () => {
           Sstart creating your NFT with many of choiche, you can create 3 type
           of NFT such like Membership,Pre-Product and Product.
         </p>
-        <div className='flex flex-wrap mt-6'>
+        <div className='flex mt-6'>
           <div
-            className='cursor-pointer w-[276px] h-[276px] mr-6 flex flex-col items-center justify-center bg-[#32E865] bg-opacity-[0.1] rounded-[12px] border-[#32E865] border-[1px]'
+            className='cursor-pointer min-w-[276px] h-[276px] mr-6 flex flex-col items-center justify-center bg-[#32E865] bg-opacity-[0.1] rounded-[12px] border-[#32E865] border-[1px]'
             onClick={() => setShowCreateNFT(true)}
           >
             <img src={CirclePlus} alt='add' />
@@ -169,7 +128,7 @@ const CreateDAOandNFT = () => {
             className={styles.createSwiper}
           >
             <div>
-              {NFT_ITEMS.map((item) => (
+              {Collections.map((item) => (
                 <SwiperSlide key={item.id} className={styles.nftCard}>
                   <NFTCard item={item} key={item.id} />
                 </SwiperSlide>
