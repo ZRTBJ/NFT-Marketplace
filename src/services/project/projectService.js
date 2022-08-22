@@ -205,3 +205,7 @@ export async function mockCreateProject() {
 export async function tokenBreakdown(projectId, payload) {
   return await client("PUT", `/project/${projectId}/token_breakdown`, payload);
 }
+
+export async function getBalance(pid) {
+  return await client("GET", `/project/${pid}/balance`);
+}
