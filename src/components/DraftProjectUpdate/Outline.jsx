@@ -168,7 +168,7 @@ export default function Outline({
             )}
           </>
         )}
-        {projectNameDisabled && <h3>{projectName}</h3>}
+        {projectNameDisabled && <h3 className="mt-3 ml-3">{projectName}</h3>}
       </div>
 
       {/* Dao Symbol */}
@@ -219,7 +219,7 @@ export default function Outline({
               )}
             </>
           )}
-          {daoSymbolDisable && <h3>{daoWallet}</h3>}
+          {daoWalletDisable && <h3 className="mt-3 ml-3">{daoWallet}</h3>}
         </div>
       )}
 

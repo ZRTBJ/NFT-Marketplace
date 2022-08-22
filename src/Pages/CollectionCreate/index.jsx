@@ -16,7 +16,6 @@ import {
 import ErrorModal from "components/modalDialog/ErrorModal";
 import SuccessModal from "components/modalDialog/SuccessModal";
 import { getProjectCategory } from "services/project/projectService";
-
 import { useLocation } from "react-router-dom";
 
 export default function CollectionCreate() {
