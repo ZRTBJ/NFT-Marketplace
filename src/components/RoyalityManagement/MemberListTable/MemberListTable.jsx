@@ -74,21 +74,17 @@ const MemberListTable = ({
                   />
                 )}
               </td>
-              <td className={`py-4 px-5`}>{r.token_id ? r.token_id : '-'}</td>
+              <td className={`py-4 px-5`}>{r.eoa ? r.eoa : '-'}</td>
               <td className={`py-4 px-5`}>
-                {r.role ? (
-                  <p
-                    className={`text-[13px] bg-opacity-[0.2] py-1 px-2 w-fit rounded-[4px] font-bold ${
-                      r.role === 'Owner'
-                        ? 'text-info-1 bg-[#46A6FF]'
-                        : ' text-success-1 bg-[#32E865]'
-                    }`}
-                  >
-                    {r.role}
-                  </p>
-                ) : (
-                  '-'
-                )}
+                <p
+                  className={`text-[13px] bg-opacity-[0.2] py-1 px-2 w-fit rounded-[4px] font-bold ${
+                    r.is_owner
+                      ? 'text-info-1 bg-[#46A6FF]'
+                      : ' text-success-1 bg-[#32E865]'
+                  }`}
+                >
+                  {r.is_owner ? 'Owenr' : 'Contributor'}
+                </p>
               </td>
               {/* <td className='py-4 px-5'>
                 <div className='w-[32px] h-[32px] bg-[#FF3C3C] rounded-[4px] flex items-center justify-center cursor-pointer'>
