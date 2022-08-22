@@ -105,15 +105,21 @@ const CollectionDetail = () => {
     }
   };
 
-  const handleEditNFT = (id) => {
+  const handleEditNFT = (e, id) => {
+    e.stopPropagation();
+    e.preventDefault();
     setShowOptions(null);
   };
 
-  const handleUpdateMeta = (id) => {
+  const handleUpdateMeta = (e, id) => {
+    e.stopPropagation();
+    e.preventDefault();
     setShowOptions(null);
   };
 
-  function salesPageModal(type, id) {
+  function salesPageModal(e, type, id) {
+    e.stopPropagation();
+    e.preventDefault();
     if (type === 'membership') {
       setNftId(id);
     }
@@ -129,6 +135,8 @@ const CollectionDetail = () => {
       setShowDeployModal(true);
     }
   };
+
+  console.log(Collection);
   return (
     <div>
       {ShowPublishModal && (
@@ -345,8 +353,7 @@ const CollectionDetail = () => {
               {/* <a className='inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>
                 Sales Setting
               </a> */}
-
-              {Collection?.type === 'product' && (
+              {Collection?.type === 'product' && Collection?.is_owner && (
                 <div
                   onClick={() => salesPageModal('product')}
                   className='inline-block ml-4 bg-primary-900 p-3 text-white font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out'
@@ -354,14 +361,15 @@ const CollectionDetail = () => {
                   Sales Setting
                 </div>
               )}
-
-              <Link
-                to='/collection-create'
-                className='inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'
-              >
-                Edit Collection
-              </Link>
-              {Collection?.status !== 'published' && (
+              {Collection?.is_owner && (
+                <Link
+                  to='/collection-create'
+                  className='inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'
+                >
+                  Edit Collection
+                </Link>
+              )}
+              {Collection?.status !== 'published' && Collection?.is_owner && (
                 <a
                   onClick={() => setShowPublishModal(true)}
                   className='inline-block ml-4 bg-primary-900 p-3 text-white font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out'
@@ -374,20 +382,22 @@ const CollectionDetail = () => {
         </div>
       </section>
       <section>
-        <div
-          onClick={() =>
-            history.push(
-              `${
-                Collection.type === 'product'
-                  ? `/product-nft?collectionId=${collectionId}`
-                  : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}`
-              }`
-            )
-          }
-          className='cursor-pointer inline-block ml-4 mt-3 bg-primary-900 p-3 text-white font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out'
-        >
-          Mint NFT
-        </div>
+        {Collection?.is_owner && (
+          <div
+            onClick={() =>
+              history.push(
+                `${
+                  Collection.type === 'product'
+                    ? `/product-nft?collectionId=${collectionId}`
+                    : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}`
+                }`
+              )
+            }
+            className='cursor-pointer inline-block ml-4 mt-3 bg-primary-900 p-3 text-white font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out'
+          >
+            Mint NFT
+          </div>
+        )}
         <div className='flex flex-wrap mt-4 mb-[60px]'>
           {NFTs &&
             NFTs.map((nft) => {
@@ -421,7 +431,7 @@ const CollectionDetail = () => {
                             <ul className='text-sm'>
                               <li className='border-b border-divide'>
                                 <div
-                                  onClick={() => handleEditNFT(nft.id)}
+                                  onClick={(e) => handleEditNFT(e, nft.id)}
                                   className='block p-4 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer'
                                 >
                                   Edit NFT
@@ -429,7 +439,7 @@ const CollectionDetail = () => {
                               </li>
                               <li className='border-b border-divide'>
                                 <div
-                                  onClick={() => handleUpdateMeta(nft.id)}
+                                  onClick={(e) => handleUpdateMeta(e, nft.id)}
                                   className='block p-4 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer'
                                 >
                                   Update Metadata
@@ -438,8 +448,8 @@ const CollectionDetail = () => {
                               {Collection.type === 'membership' && (
                                 <li className='border-b border-divide'>
                                   <div
-                                    onClick={() =>
-                                      salesPageModal('membership', nft.id)
+                                    onClick={(e) =>
+                                      salesPageModal(e, 'membership', nft.id)
                                     }
                                     className='block p-4 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer'
                                   >
