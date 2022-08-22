@@ -177,9 +177,7 @@ const SalesPageModal = ({
                       name="eoa"
                       className={`debounceInput mt-1`}
                       defaultValue={""}
-                      {...register("eoa", {
-                        required: "Reserve for specific buyer is required.",
-                      })}
+                      {...register("eoa")}
                       type="text"
                       placeholder="0xfdrgj..."
                     />

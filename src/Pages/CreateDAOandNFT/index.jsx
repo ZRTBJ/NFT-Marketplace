@@ -10,43 +10,9 @@ import { Navigation } from 'swiper';
 import styles from './style.module.css';
 import CreateNFTModal from '../../components/modalDialog/CreateNFTModal';
 import { Link } from 'react-router-dom';
-
-const DAO_ITEMS = [
-  {
-    id: 0,
-    name: 'BoredApeYatchClub',
-    value: '1.000.000',
-    coverImage: CoverImage,
-    profileImage: ProfileImage,
-    users: [
-      { id: 0, profileImage: ProfileImage },
-      { id: 1, profileImage: ProfileImage },
-      { id: 2, profileImage: ProfileImage },
-      { id: 3, profileImage: ProfileImage },
-      { id: 4, profileImage: ProfileImage },
-      { id: 5, profileImage: ProfileImage },
-    ],
-  },
-  {
-    id: 1,
-    name: 'BoredApeYatchClub',
-    value: '1.000.000',
-    coverImage: CoverImage,
-    profileImage: ProfileImage,
-    users: [
-      { id: 0, profileImage: ProfileImage },
-      { id: 1, profileImage: ProfileImage },
-      { id: 2, profileImage: ProfileImage },
-      { id: 3, profileImage: ProfileImage },
-      { id: 4, profileImage: ProfileImage },
-      { id: 5, profileImage: ProfileImage },
-      { id: 6, profileImage: ProfileImage },
-      { id: 7, profileImage: ProfileImage },
-      { id: 8, profileImage: ProfileImage },
-      { id: 9, profileImage: ProfileImage },
-    ],
-  },
-];
+import { getUserProjectListById } from 'services/project/projectService';
+import { useEffect } from 'react';
+import { getCollections } from 'services/collection/collectionService';
 
 const NFT_ITEMS = [
   {
@@ -90,6 +56,9 @@ const NFT_ITEMS = [
 
 const CreateDAOandNFT = () => {
   const [ShowCreateNFT, setShowCreateNFT] = useState(false);
+  const [IsLoading, setIsLoading] = useState(false);
+  const [DAOs, setDAOs] = useState([]);
+  const [Collections, setCollections] = useState([]);
   const settings = {
     320: {
       slidesPerView: 2,
@@ -112,8 +81,36 @@ const CreateDAOandNFT = () => {
       spaceBetween: 15,
     },
   };
+
+  useEffect(() => {
+    let userId = localStorage.getItem('user_id');
+    console.log(userId);
+    let payload = {
+      id: userId,
+    };
+    setIsLoading(true);
+    getUserProjectListById(payload)
+      .then((resp) => {
+        setIsLoading(false);
+        if (resp.code === 0) {
+          setDAOs(resp.data);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+    getCollections('user')
+      .then((resp) => {
+        if (resp.code === 0) {
+          setCollections(resp.data);
+        }
+      })
+      .catch((err) => console.log(err));
+  }, []);
+  console.log(Collections);
   return (
-    <div className='bg-white mt-4 py-6 pl-6'>
+    <div className={`bg-white mt-4 py-6 pl-6 ${IsLoading ? 'loading' : ''}`}>
       <CreateNFTModal
         show={ShowCreateNFT}
         handleClose={() => setShowCreateNFT(false)}
@@ -140,7 +137,7 @@ const CreateDAOandNFT = () => {
             className={styles.createSwiper}
           >
             <div>
-              {DAO_ITEMS.map((item) => (
+              {DAOs.map((item) => (
                 <SwiperSlide key={item.id} className={styles.daoCard}>
                   <DAOCard item={item} key={item.id} />
                 </SwiperSlide>

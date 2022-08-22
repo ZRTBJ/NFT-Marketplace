@@ -408,8 +408,8 @@ const RoyalityManagement = () => {
         </div>
         {CollectionDetail?.status !== 'published' ? (
           <p className='text-center mt-4'>
-            There is no collaborator yet, please publish collection and you can
-            start inviting members.
+            There is no collaborator yet. Please publish your collection and you
+            can start inviting members.
           </p>
         ) : null}
         {CollectionDetail?.status === 'published' && data?.members?.length ? (
@@ -422,11 +422,12 @@ const RoyalityManagement = () => {
             handleValueChange={handleValueChange}
             handleAutoFill={handleAutoFill}
           />
-        ) : (
+        ) : null}
+        {CollectionDetail?.status === 'published' ? (
           <p className='text-center mt-4'>
-            There is no collaborator yet, please start inviting members.
+            There is no collaborator yet. Please start inviting members.
           </p>
-        )}
+        ) : null}
         {CollectionDetail.status !== 'published' ? (
           <div className='w-full'>
             <button
@@ -515,8 +516,8 @@ const RoyalityManagement = () => {
               </div>
             </>
           ) : (
-            <p className='text-[12px] text-[#5F6479] mb-6'>
-              Please publish collection to view invitation link
+            <p className='text-center text-[#5F6479] mb-6'>
+              Please publish your collection to view invitation link
             </p>
           )}
         </div>
