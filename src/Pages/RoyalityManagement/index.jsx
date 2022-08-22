@@ -55,6 +55,8 @@ const RoyalityManagement = () => {
   const [publishStep, setPublishStep] = useState(1);
   const [errorMsg, setErrorMsg] = useState(null);
   const [tnxData, setTnxData] = useState({});
+  const [showConnectErrorModal, setShowConnectErrorModal] = useState(false);
+  const [connectErrorMessage, setConnectErrorMessage] = useState(null);
 
   const { collectionId } = useParams();
   let origin = window.location.origin;
@@ -66,7 +68,6 @@ const RoyalityManagement = () => {
         setIsLoading(false);
         if (resp.code === 0) {
           if (resp?.lnfts?.[0]) {
-            console.log(resp);
             setIsNFTAvailable(true);
             let ranftId = resp?.lnfts?.[0];
             handleGetNftDetail(ranftId.id);
@@ -154,10 +155,17 @@ const RoyalityManagement = () => {
           setTimeout(() => {
             setConnectedSuccessfully(false);
           }, [2500]);
+        } else if (resp.code === 5001) {
+          setShowConnectErrorModal(true);
+          setConnectErrorMessage(
+            'It seems this collection is already connected to other '
+          );
         }
-        console.log(resp);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        setShowConnectErrorModal(true);
+        console.log(err);
+      });
   };
 
   const handleGetNftDetail = (id) => {
@@ -262,6 +270,12 @@ const RoyalityManagement = () => {
         message='Royalty Percentage Updated Successfully'
         btnText='Done'
       />
+      <SuccessModal
+        show={ConnectedSuccessfully}
+        handleClose={setConnectedSuccessfully}
+        message='Collection Connected Successfully'
+        btnText='Done'
+      />
       {showErrorModal && (
         <ErrorModal
           title={'Collection Publish failed !'}
@@ -271,6 +285,17 @@ const RoyalityManagement = () => {
             setErrorMsg(null);
           }}
           show={showErrorModal}
+        />
+      )}
+      {showConnectErrorModal && (
+        <ErrorModal
+          title={'Failed to connect the Collection!'}
+          message={`${connectErrorMessage}`}
+          handleClose={() => {
+            setShowConnectErrorModal(false);
+            setConnectErrorMessage(null);
+          }}
+          show={showConnectErrorModal}
         />
       )}
       {showDeployModal && (
@@ -327,13 +352,15 @@ const RoyalityManagement = () => {
             {CollectionDetail?.description}
           </p>
         </div>
-        <div className='ml-auto'>
-          <Link to='/collection-create'>
-            <button className='rounded-[4px] p-2 bg-[#9A5AFF] bg-opacity-[0.1] text-[#9A5AFF] text-[12px] font-black w-[127px] '>
-              Edit Collection
-            </button>
-          </Link>
-        </div>
+        {CollectionDetail.is_owner && (
+          <div className='ml-auto'>
+            <Link to='/collection-create'>
+              <button className='rounded-[4px] p-2 bg-[#9A5AFF] bg-opacity-[0.1] text-[#9A5AFF] text-[12px] font-black w-[127px] '>
+                Edit Collection
+              </button>
+            </Link>
+          </div>
+        )}
       </div>
       {/* <h3 className='text-[28px] font-black'>Rights Attached NFT</h3>
       <p className='text-[14px] font-regular text-[#5F6479] mt-2'>
@@ -345,7 +372,7 @@ const RoyalityManagement = () => {
           Upgrade Plan
         </button>
       </div> */}
-      {IsNFTAvailable ? (
+      {CollectionDetail.is_owner && IsNFTAvailable ? (
         <div className='w-[680px] mt-4'>
           <div className='flex items-end'>
             <DropdownCreabo
@@ -364,11 +391,6 @@ const RoyalityManagement = () => {
                 Connect
               </button>
             </div>
-            {ConnectedSuccessfully ? (
-              <p className='text-green-600 mb-2 text-[14px] ml-2'>
-                Connected Successfully!
-              </p>
-            ) : null}
           </div>
           <Link to='/collection-create'>
             <button className='rounded-[4px] p-2 mt-4 bg-[#9A5AFF] bg-opacity-[0.1] text-[#9A5AFF] text-[12px] font-bold flex items-center w-[127px] justify-center'>
@@ -378,7 +400,6 @@ const RoyalityManagement = () => {
           </Link>
         </div>
       ) : null}
-      {/* {data?.members ? ( */}
       <div
         className={`bg-white mt-6 rounded-[12px] p-6 ${styles.memberSection}`}
       >
@@ -423,12 +444,13 @@ const RoyalityManagement = () => {
             handleAutoFill={handleAutoFill}
           />
         ) : null}
-        {CollectionDetail?.status === 'published' ? (
+        {CollectionDetail?.status === 'published' && !data?.members?.length ? (
           <p className='text-center mt-4'>
             There is no collaborator yet. Please start inviting members.
           </p>
         ) : null}
-        {CollectionDetail.status !== 'published' ? (
+        {CollectionDetail.is_owner &&
+        CollectionDetail.status !== 'published' ? (
           <div className='w-full'>
             <button
               className='block ml-auto rounded-[4px] bg-[#9A5AFF] text-white text-[12px] font-bold px-4 py-2'
@@ -439,7 +461,6 @@ const RoyalityManagement = () => {
           </div>
         ) : null}
       </div>
-      {/* ) : null} */}
       <div className='flex mb-8'>
         <div className='bg-white mt-6 p-6 w-2/4 mr-2 rounded-[12px]'>
           <h3 className='text-[18px] font-black'>Invite Contributor</h3>
