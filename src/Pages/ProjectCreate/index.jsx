@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import "assets/css/CreateProject/mainView.css";
 import { checkUniqueProjectName } from "services/project/projectService";
 import Outline from "components/DraftProjectUpdate/Outline";
@@ -12,12 +12,11 @@ import {
 import ErrorModal from "components/modalDialog/ErrorModal";
 import SuccessModal from "components/modalDialog/SuccessModal";
 import { getProjectCategory } from "services/project/projectService";
-import { useHistory } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 export default function ProjectCreate() {
   // Logo start
   // logo is the cover photo
-  const history = useHistory();
   const [logoPhoto, setLogoPhoto] = useState([]);
   const [logoPhotoUrl, setLogoPhotoUrl] = useState("");
   const onLogoPhotoSelect = useCallback((acceptedFiles) => {
@@ -31,15 +30,17 @@ export default function ProjectCreate() {
       setoutlineKey((pre) => pre + 1);
     }
   }, []);
-  function onLogoPhotoRemove() {
+  async function onLogoPhotoRemove() {
     if (logoPhotoUrl.id) {
       let payload = {
-        projectId: projectInfo.id,
+        projectId: projectId,
         assetsId: logoPhotoUrl.id,
       };
-      deleteAssetsOfProject(payload).then((e) => {
+      setDataIsLoading(true);
+      await deleteAssetsOfProject(payload).then((e) => {
         setLogoPhoto([]);
         setLogoPhotoUrl("");
+        setDataIsLoading(false);
       });
     } else {
       setLogoPhoto([]);
@@ -56,6 +57,7 @@ export default function ProjectCreate() {
   async function onProjectNameChange(e) {
     let payload = {
       projectName: e,
+      project_uuid: projectId,
     };
     setProjectName(payload.projectName);
     await checkUniqueProjectName(payload)
@@ -107,7 +109,7 @@ export default function ProjectCreate() {
   const [photosUrl, setPhotosUrl] = useState([]);
   const onPhotosSelect = useCallback((params, photos) => {
     if (photosLengthFromResponse + params.length > 4) {
-      alert("Maxmimum 4 photos");
+      alert("Maximum 4 photos");
     } else {
       let totalSize = 0;
       params.forEach((element) => {
@@ -132,11 +134,13 @@ export default function ProjectCreate() {
   async function onPhotosRemove(i) {
     if (i.id) {
       let payload = {
-        projectId: projectInfo.id,
+        projectId: projectId,
         assetsId: i.id,
       };
+      setDataIsLoading(true);
       await deleteAssetsOfProject(payload).then((e) => {
         setUpPhotos();
+        setDataIsLoading(false);
       });
     } else {
       setPhotosUrl(photosUrl.filter((x) => x.name !== i.name));
@@ -144,7 +148,7 @@ export default function ProjectCreate() {
   }
   async function setUpPhotos() {
     let payload = {
-      id: projectInfo.id,
+      id: projectId,
     };
     await getProjectDetailsById(payload).then((e) => {
       let response = e.project;
@@ -200,17 +204,14 @@ export default function ProjectCreate() {
   // Blockchain start
   const [blockchainCategory, setBlockchaainCategory] = useState("polygon");
   // Blockchain end
-
+  let query = useQuery();
   const [outlineKey, setoutlineKey] = useState(0);
   const [currentStep, setcurrentStep] = useState([1]);
   const [projectCreated, setProjectCreated] = useState(false);
   const [projectId, setProjectId] = useState("");
-  const [projectStatus, setProjectStatus] = useState("");
-
   const [isDataLoading, setDataIsLoading] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [projectInfo, setProjectInfo] = useState({});
   const [projectCategoryList, setProjectCategoryList] = useState([]);
 
   function handelClickBack() {
@@ -222,7 +223,7 @@ export default function ProjectCreate() {
     setDataIsLoading(true);
     id = await createNewProject();
     await updateExistingProject(id);
-    await projectDetails(id);
+    // await projectDetails(id);
     setDataIsLoading(false);
     setShowSuccessModal(true);
     setProjectId(id);
@@ -230,7 +231,7 @@ export default function ProjectCreate() {
   async function updateBlock(id) {
     setDataIsLoading(true);
     await updateExistingProject(id);
-    await projectDetails(id);
+    // await projectDetails(id);
     setDataIsLoading(false);
     setShowSuccessModal(true);
     setProjectId(id);
@@ -249,7 +250,6 @@ export default function ProjectCreate() {
         if (!projectCreated) {
           await createBlock(id);
         } else if (projectCreated && projectId !== "") {
-          console.log(projectId);
           await updateBlock(projectId);
         }
       }
@@ -294,34 +294,54 @@ export default function ProjectCreate() {
       blockchainCategory: blockchainCategory,
       id: id,
     };
+    // console.log(updatePayload);
     await updateProject(updatePayload);
   }
   async function projectDetails(id) {
+    setDataIsLoading(true);
     let payload = {
       id: id ? id : projectId,
     };
     await getProjectDetailsById(payload).then((e) => {
       let response = e.project;
-      console.log(response);
-      // setProjectInfo(e.project);
-      // setProjectStatus(response.project_status);
-
-      // let cover = response.assets.find((x) => x.asset_purpose === "cover");
-      // setLogoPhotoUrl(cover ? cover : "");
-      // let photosInfoData = response.assets.filter(
-      //   (x) => x.asset_purpose === "subphoto"
-      // );
-      // setPhotosLengthFromResponse(photosInfoData.length);
-      // setPhotosUrl(photosInfoData);
-      // let constPhotosName = ["img1", "img2", "img3", "img4"];
-      // let photosname = [];
-      // photosname = photosInfoData.map((e) => {
-      //   return e.name;
-      // });
-      // let remainingPhotosName = constPhotosName.filter(function (v) {
-      //   return !photosname.includes(v);
-      // });
-      // setRemainingPhotosName(remainingPhotosName);
+      if (e.code === 4040 && !response) {
+        setDataIsLoading(false);
+        setShowErrorModal(true);
+      } else {
+        // console.log(response);
+        setProjectCategory(response.category_id);
+        setProjectName(response.name);
+        setDaoWallet(response.treasury_wallet);
+        setProjectCreated(true);
+        setProjectId(id);
+        setOverview(response.overview);
+        try {
+          setWebLinks(JSON.parse(response.urls));
+        } catch (error) {
+          console.log(error);
+        }
+        const logo = response.assets.find((x) => x.asset_purpose === "cover");
+        setLogoPhotoUrl(logo ? logo : "");
+        let photosInfoData = response.assets.filter(
+          (x) => x.asset_purpose === "subphoto"
+        );
+        setPhotosLengthFromResponse(photosInfoData.length);
+        setPhotosUrl(photosInfoData);
+        let constPhotosName = ["img1", "img2", "img3", "img4"];
+        let photosname = [];
+        photosname = photosInfoData.map((e) => {
+          return e.name;
+        });
+        let remainingPhotosName = constPhotosName.filter(function (v) {
+          return !photosname.includes(v);
+        });
+        setRemainingPhotosName(remainingPhotosName);
+        if (response.project_status === "published") {
+          setProjectNameDisabled(true);
+          setDaoWalletDisable(true);
+        }
+        setDataIsLoading(false);
+      }
     });
   }
   function handelClickNext() {
@@ -367,15 +387,27 @@ export default function ProjectCreate() {
           // token_symbol: tokenSymbol,
           // token_amount_total: numberOfTokens,
         };
-        console.log(payload);
+        // console.log(payload);
         setcurrentStep([1, 2]);
       }
     }
+  }
+  function useQuery() {
+    const { search } = useLocation();
+    return React.useMemo(() => new URLSearchParams(search), [search]);
   }
   useEffect(() => {
     getProjectCategory().then((e) => {
       setProjectCategoryList(e.categories);
     });
+  }, []);
+  useEffect(() => {
+    if (query.get("id")) {
+      setProjectId(query.get("id"));
+      projectDetails(query.get("id"));
+      setProjectCreated(true);
+      // setProjectId(query.get("id"));
+    }
   }, []);
 
   return (
@@ -386,10 +418,11 @@ export default function ProjectCreate() {
           {currentStep.length === 1 && (
             <div>
               <h1 className="text-[28px] font-black mb-[6px]">
-                Create New DAO
+                {!projectCreated ? "Create New" : "Update"} DAO
               </h1>
               <p className="text-[14px] text-textSubtle mb-[24px]">
-                Fill the require form to create dao
+                Fill the require form to {!projectCreated ? "create" : "update"}{" "}
+                dao
               </p>
               <Outline
                 key={outlineKey}
@@ -477,50 +510,49 @@ export default function ProjectCreate() {
         </div>
         <div className="mb-6">
           <div className="flex">
-            {projectStatus !== "publishing" && (
-              <>
-                {currentStep.length > 1 && (
-                  <button
-                    className="bg-primary-900/[0.10] text-primary-900 px-3 font-black"
-                    onClick={() => handelClickBack()}
-                  >
-                    <i className="fa-regular fa-angle-left"></i> Back
-                  </button>
-                )}
-                {currentStep.length === 1 && (
-                  <button
-                    className="btn text-white-shade-900 bg-primary-900 btn-sm"
-                    onClick={() => handelClickNext()}
-                  >
-                    Next <i className="fa-regular fa-angle-right ml-1"></i>
-                  </button>
-                )}
-                {currentStep.length > 1 && projectStatus !== "published" && (
-                  <button
-                    onClick={() => saveDraft("public")}
-                    className={`btn text-white-shade-900 bg-primary-900 btn-sm ml-auto`}
-                  >
-                    Submit
-                  </button>
-                )}
-              </>
-            )}
+            <>
+              {currentStep.length > 1 && (
+                <button
+                  className="bg-primary-900/[0.10] text-primary-900 px-3 font-black"
+                  onClick={() => handelClickBack()}
+                >
+                  <i className="fa-regular fa-angle-left"></i> Back
+                </button>
+              )}
+              {currentStep.length === 1 && (
+                <button
+                  className="btn text-white-shade-900 bg-primary-900 btn-sm"
+                  onClick={() => handelClickNext()}
+                >
+                  Next <i className="fa-regular fa-angle-right ml-1"></i>
+                </button>
+              )}
+              {currentStep.length > 1 && (
+                <button
+                  onClick={() => saveDraft("public")}
+                  className={`btn text-white-shade-900 bg-primary-900 btn-sm ml-auto`}
+                >
+                  Submit
+                </button>
+              )}
+            </>
           </div>
         </div>
       </div>
       {showSuccessModal && (
         <SuccessModal
-          handleClose={() => {
-            setShowSuccessModal(false);
-            history.push(`/project-details/${projectId}`);
-          }}
+          redirection={`/project-details/${projectId}`}
           show={showSuccessModal}
+          message={"DAO successfully  saved"}
+          subMessage={"Let's explore the DAO"}
+          buttonText="VIEW DAO"
         />
       )}
       {showErrorModal && (
         <ErrorModal
           handleClose={() => setShowErrorModal(false)}
           show={showErrorModal}
+          redirection={"/project-create"}
         />
       )}
     </>
