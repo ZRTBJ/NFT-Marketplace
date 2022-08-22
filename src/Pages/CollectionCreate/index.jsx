@@ -309,8 +309,10 @@ export default function CollectionCreate() {
       isMetaDaFreezed: isMetaDaFreezed,
       isTokenTransferable: isTokenTransferable,
       royaltyPercentage: royaltyPercentage,
+      collectionSymbol: daoSymbol,
       id: id,
     };
+    console.log(updatePayload);
     await updateCollection(updatePayload);
   }
   async function projectDetails(id) {
