@@ -308,7 +308,7 @@ export default function ProjectCreate() {
         setDataIsLoading(false);
         setShowErrorModal(true);
       } else {
-        console.log(response);
+        // console.log(response);
         setProjectCategory(response.category_id);
         setProjectName(response.name);
         setDaoWallet(response.treasury_wallet);

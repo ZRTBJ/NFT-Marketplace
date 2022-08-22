@@ -810,7 +810,7 @@ export default function MembershipNFT() {
                           onChange={(e) =>
                             onBenefitChange(index, benefitIndex, e.target.value)
                           }
-                          placeholder="https://"
+                          placeholder=""
                         />
                         {nft.benefits.length > 1 && !isPreview && (
                           <div className="ml-4">
