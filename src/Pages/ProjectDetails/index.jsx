@@ -84,10 +84,10 @@ export default function ProjectDetails(props) {
             setCoverImages(
               res.project.assets.find((img) => img["asset_purpose"] === "cover")
             );
-            if (project.urls && project.urls.length > 0) {
+            if (res.project.urls && res.project.urls.length > 0) {
               const webLinks = [];
               try {
-                const urls = JSON.parse(project.urls);
+                const urls = JSON.parse(res.project.urls);
                 for (let url of urls) {
                   webLinks.push({
                     title: Object.values(url)[0],
@@ -365,13 +365,14 @@ export default function ProjectDetails(props) {
                       </a>
                     </div>
                   )}
-                {links.find((link) => link.title === "linkGitub") &&
-                  links.find((link) => link.title === "linkGitub").value
+                {links.find((link) => link.title === "linkGithub") &&
+                  links.find((link) => link.title === "linkGithub").value
                     ?.length > 0 && (
                     <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5">
                       <a
                         href={`${
-                          links.find((link) => link.title === "linkGitub").value
+                          links.find((link) => link.title === "linkGithub")
+                            .value
                         }`}
                         target="_blank"
                         rel="noreferrer"
