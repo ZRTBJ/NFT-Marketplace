@@ -172,8 +172,7 @@ const DeployingProjectModal = ({
     publishProject(projectId)
       .then((res) => {
         setIsLoading(false);
-        if (res.code === 0) {
-          console.log(res);
+        if (res && res.code && res.code === 0) {
           const deployData = {
             projectId: projectId,
             etherscan: etherscan ? etherscan : tnxHash,
@@ -183,7 +182,9 @@ const DeployingProjectModal = ({
           dispatch(getNotificationData(deployData));
           recheckStatus();
         } else {
-          errorClose(res.message);
+          try {
+            errorClose(res.message);
+          } catch {}
         }
       })
       .catch((err) => {
