@@ -5,6 +5,19 @@ export async function checkUniqueCollectionName(payload) {
   bodyFormData.append(`collection_uuid`, payload.project_uuid);
   return await client("POST", `/collection/validate`, bodyFormData);
 }
+export async function deleteAssetsOfCollection(payload) {
+  return await client(
+    "DELETE",
+    `/collection/${payload.projectId}/asset/${payload.assetsId}`
+  );
+}
+
+export async function checkUniqueCollectionSymbol(payload) {
+  const bodyFormData = new FormData();
+  bodyFormData.append("collection_symbol", payload.collectionSymbol);
+  bodyFormData.append(`collection_uuid`, payload.project_uuid);
+  return await client("POST", `/collection/validate`, bodyFormData);
+}
 export async function createCollection(payload) {
   const bodyFormData = new FormData();
   payload?.name && bodyFormData.append("name", payload?.name);

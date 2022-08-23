@@ -14,6 +14,12 @@ export default function Outline({
   onLogoPhotoSelect,
   onLogoPhotoRemove,
 
+  // Collection Type
+  showCollectionType,
+  collectionType,
+  emptyCollectionType,
+  onCollectionTypeSelect,
+
   // name
   nameLabel,
   projectName,
@@ -29,6 +35,7 @@ export default function Outline({
   emptyDaoSymbol,
   daoSymbolDisable,
   onDaoSymbolChange,
+  alreadyTakenDaoSymbol,
 
   // Dao wallet
   showDaoWallet,
@@ -91,6 +98,7 @@ export default function Outline({
   royaltyPercentageDisable,
   royaltyPercentage,
   onRoyaltyPercentageChange,
+  isRoyaltyPercentageValid,
 }) {
   const [projectCategoryList, setProjectCategoryList] = useState([]);
   useEffect(() => {
@@ -141,6 +149,32 @@ export default function Outline({
         </div>
       </div>
 
+      {/*  type */}
+      {showCollectionType && (
+        <>
+          <div className="mb-6">
+            <div className="flex flex-wrap items-center">
+              <Tooltip></Tooltip>
+              <div className="txtblack text-[14px] mb-[6px]">NFT Type</div>
+            </div>
+            <select
+              value={collectionType}
+              onChange={onCollectionTypeSelect}
+              className="h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3"
+            >
+              <option value={"default"} defaultValue>
+                Select Type
+              </option>
+              <option value={"membership"}>Membership</option>
+              <option value={"product"}>Product</option>
+            </select>
+            {emptyCollectionType && (
+              <div className="validationTag">NFT type is required</div>
+            )}
+          </div>
+        </>
+      )}
+
       {/* name */}
       <div className="mb-6">
         <div className="flex flex-wrap items-center">
@@ -182,6 +216,7 @@ export default function Outline({
             <>
               <DebounceInput
                 minLength={1}
+                maxLength={5}
                 debounceTimeout={300}
                 onChange={(e) => onDaoSymbolChange(e.target.value)}
                 className="debounceInput mt-1"
@@ -190,6 +225,11 @@ export default function Outline({
               />
               {emptyDaoSymbol && (
                 <div className="validationTag">{symbolTitle} is required</div>
+              )}
+              {alreadyTakenDaoSymbol && (
+                <div className="validationTag">
+                  {symbolTitle} has already taken
+                </div>
               )}
             </>
           )}
@@ -434,34 +474,6 @@ export default function Outline({
           ))} */}
         </select>
       </div>
-
-      {showFreezeMetadata && (
-        <div className="mb-6">
-          <p className="text-txtblack text-[16px] mb-[8px]">Freeze Metadata</p>
-          <div className="flex flex-wrap items-center">
-            <p className="text-txtSubtle text-[14px] md:max-w-[400px]">
-              Freezing your metadata will allow you to permanently lock and
-              store all of this item's content in decentralized file storage.
-            </p>
-
-            <label
-              htmlFor="checked-toggle"
-              className="inline-flex relative items-center cursor-pointer ml-auto"
-            >
-              <input
-                type="checkbox"
-                value={isMetadataFreezed}
-                id="checked-toggle"
-                checked={isMetadataFreezed}
-                className="sr-only peer outline-none"
-                onChange={(e) => onMetadataFreezeChange(isMetadataFreezed)}
-              />
-              <div className="w-11 outline-none h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-900"></div>
-            </label>
-          </div>
-        </div>
-      )}
-
       {showTokenTransferable && (
         <div className="mb-6">
           <div className="flex flex-wrap items-center">
@@ -487,6 +499,26 @@ export default function Outline({
         </div>
       )}
 
+      {showFreezeMetadata && (
+        <div className="mb-6 flex flex-wrap items-center">
+          <p className="text-txtSubtle text-[14px]">Metadata update</p>
+          <label
+            htmlFor="checked-toggle"
+            className="inline-flex relative items-center cursor-pointer ml-auto"
+          >
+            <input
+              type="checkbox"
+              value={isMetadataFreezed}
+              id="checked-toggle"
+              checked={isMetadataFreezed}
+              className="sr-only peer outline-none"
+              onChange={(e) => onMetadataFreezeChange(isMetadataFreezed)}
+            />
+            <div className="w-11 outline-none h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-900"></div>
+          </label>
+        </div>
+      )}
+
       {/* Royalties */}
       {showRoyaltyPercentage && (
         <div>
@@ -498,14 +530,21 @@ export default function Outline({
               </div>
             </div>
             {!royaltyPercentageDisable && (
-              <DebounceInput
-                type="number"
-                minLength={1}
-                debounceTimeout={300}
-                onChange={(e) => onRoyaltyPercentageChange(e.target.value)}
-                className="debounceInput mt-1"
-                value={royaltyPercentage}
-              />
+              <>
+                <input
+                  type="number"
+                  min="0"
+                  debounceTimeout={300}
+                  onChange={(e) => onRoyaltyPercentageChange(e.target.value)}
+                  className="debounceInput mt-1"
+                  value={royaltyPercentage}
+                />
+                {!isRoyaltyPercentageValid && (
+                  <div className="validationTag">
+                    Royalty percentage should be between 0~10%
+                  </div>
+                )}
+              </>
             )}
             {royaltyPercentageDisable && <h3>{royaltyPercentage}</h3>}
           </div>
