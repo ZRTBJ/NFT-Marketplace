@@ -72,3 +72,11 @@ export async function getassetDetails(id) {
 export async function updateRoyalty(id, payload) {
   return await client('PUT', `/ranft/${id}/royalty`, payload, 'formdata');
 }
+
+export async function getIdbyCode(id) {
+  return await client('GET', `/ranft/invitation?invitation_code=${id}`);
+}
+
+export async function mintRANFT(id) {
+  return await client('POST', `/ranft/${id}/mint`);
+}
