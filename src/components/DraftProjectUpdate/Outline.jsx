@@ -453,27 +453,29 @@ export default function Outline({
       </div>
 
       {/* blockchain */}
-      <div className="mb-6">
-        <div className="flex flex-wrap items-center">
-          <Tooltip></Tooltip>
-          <div className="txtblack text-[14px] mb-[6px]">Blockchain</div>
-        </div>
-        <select
-          value={blockchainCategory}
-          onChange={onBlockchainCategoryChange}
-          disabled
-          className="h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3"
-        >
-          <option value={blockchainCategory} defaultValue>
-            Polygon
-          </option>
-          {/* {blockchainCategoryList.map((e) => (
+      {blockchainCategory && (
+        <div className="mb-6">
+          <div className="flex flex-wrap items-center">
+            <Tooltip></Tooltip>
+            <div className="txtblack text-[14px] mb-[6px]">Blockchain</div>
+          </div>
+          <select
+            value={blockchainCategory}
+            onChange={onBlockchainCategoryChange}
+            disabled
+            className="h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3"
+          >
+            <option value={blockchainCategory} defaultValue>
+              Ethereum
+            </option>
+            {/* {blockchainCategoryList.map((e) => (
             <option key={e.id} value={e.id}>
               {e.name}
             </option>
           ))} */}
-        </select>
-      </div>
+          </select>
+        </div>
+      )}
       {showTokenTransferable && (
         <div className="mb-6">
           <div className="flex flex-wrap items-center">

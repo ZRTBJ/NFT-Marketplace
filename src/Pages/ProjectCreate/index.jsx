@@ -202,7 +202,7 @@ export default function ProjectCreate() {
   // category end
 
   // Blockchain start
-  const [blockchainCategory, setBlockchaainCategory] = useState("polygon");
+  const [blockchainCategory, setBlockchaainCategory] = useState("ethereum");
   // Blockchain end
   let query = useQuery();
   const [outlineKey, setoutlineKey] = useState(0);

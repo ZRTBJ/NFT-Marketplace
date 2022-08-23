@@ -198,13 +198,15 @@ export default function Outline({
       </div>
 
       {/* blockchain */}
-      <div className="mb-6">
-        <div className="flex flex-wrap items-center">
-          {/* <Tooltip></Tooltip> */}
-          <div className="txtblack text-[14px] mb-[6px]">Blockchain</div>
+      {blockchainCategory && (
+        <div className="mb-6">
+          <div className="flex flex-wrap items-center">
+            {/* <Tooltip></Tooltip> */}
+            <div className="txtblack text-[14px] mb-[6px]">Blockchain</div>
+          </div>
+          <p className="text-textSubtle">{blockchainCategory}</p>
         </div>
-        <p className="text-textSubtle">{blockchainCategory}</p>
-      </div>
+      )}
 
       {showFreezeMetadata && (
         <div className="mb-6">

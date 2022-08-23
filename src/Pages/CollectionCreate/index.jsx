@@ -508,11 +508,11 @@ export default function CollectionCreate() {
           {currentStep.length === 1 && (
             <div>
               <h1 className="text-[28px] font-black mb-[6px]">
-                {projectCreated ? " Create New" : "Update"} Collection
+                {projectCreated ? "Update" : "Create New"} Collection
               </h1>
               <p className="text-[14px] text-textSubtle mb-[24px]">
-                Fill the require form to {projectCreated ? "create " : "Update"}{" "}
-                collection
+                Fill the require form to{" "}
+                {!projectCreated ? "create " : "Update"} collection
               </p>
               <Outline
                 key={outlineKey}
@@ -567,7 +567,7 @@ export default function CollectionCreate() {
                 projectCategory={projectCategory}
                 emptyProjeCtCategory={emptyProjeCtCategory}
                 onProjectCategoryChange={onProjectCategoryChange}
-                blockchainCategory={blockchainCategory}
+                // blockchainCategory={blockchainCategory}
                 // Freeze metadata
                 showFreezeMetadata={true}
                 isMetadataFreezed={isMetaDaFreezed}
@@ -618,7 +618,6 @@ export default function CollectionCreate() {
               secondaryRoyalties={secondaryRoyalties}
               // category
               projectCategoryName={projectCategoryName}
-              blockchainCategory={blockchainCategory}
               showFreezeMetadata={true}
               isMetaDaFreezed={isMetaDaFreezed}
               showTokenTransferable={true}
