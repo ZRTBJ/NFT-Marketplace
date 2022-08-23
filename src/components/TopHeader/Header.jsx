@@ -235,7 +235,7 @@ const Header = () => {
               className="cp mr-5 lg:ml-1 lg:mr-14"
               onClick={() => history.push("/")}
             >
-              <div className="text-primary-900 dark:text-white font-satoshi-bold font-black text-xl lg:text-3xl relative logo">
+              <div className="text-primary-900 font-satoshi-bold font-black text-xl lg:text-3xl relative logo">
                 CREAB
               </div>
             </div>
@@ -256,7 +256,7 @@ const Header = () => {
                   id="default-search"
                   name="projectSearch2"
                   autoComplete="off"
-                  className="dark:bg-color-ass-5 text-lg w-full max-w-[556px] dark:text-white rounded-xl pl-10 h-10 placeholder-color-ass-4  focus:pl-10"
+                  className="text-lg w-full max-w-[556px] rounded-xl pl-10 h-10 placeholder-color-ass-4  focus:pl-10"
                   placeholder="Search your project by name"
                   onChange={handleOnTextChange}
                   onFocus={handleOnSearchFocus}
@@ -275,7 +275,7 @@ const Header = () => {
 
           <div className="flex items-center" id="mobile-menu">
             {!userinfo.id && (
-              <h5 className="text-primary-900 dark:text-white mr-2 hidden md:block">
+              <h5 className="text-primary-900 mr-2 hidden md:block">
                 What’s Creabo
               </h5>
             )}
@@ -447,10 +447,9 @@ const Header = () => {
 
         {pathname === "/" && (
           <div className="md:hidden">
-            <form>
               <label
                 htmlFor="default-search"
-                className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300"
+                className="mb-2 text-sm font-medium text-gray-900 sr-only"
               >
                 Search
               </label>
@@ -477,7 +476,6 @@ const Header = () => {
                     />
                   )}
               </div>
-            </form>
           </div>
         )}
       </nav>
