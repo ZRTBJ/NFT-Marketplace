@@ -355,7 +355,7 @@ const CollectionDetail = () => {
               </a> */}
               {Collection?.type === "product" && Collection?.is_owner && (
                 <div
-                  onClick={() => salesPageModal("product")}
+                  onClick={(e) => salesPageModal(e, "product")}
                   className="inline-block ml-4 bg-primary-900 p-3 text-white font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
                 >
                   Sales Setting
