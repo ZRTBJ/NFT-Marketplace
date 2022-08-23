@@ -1,6 +1,7 @@
 import thumbIcon from "assets/images/profile/card.svg";
 import defaultImage from "assets/images/defaultImage.svg";
 import { useHistory } from "react-router-dom";
+import avatar from "assets/images/dummy-img.svg";
 
 const DAOCard = ({ item }) => {
   const history = useHistory();
