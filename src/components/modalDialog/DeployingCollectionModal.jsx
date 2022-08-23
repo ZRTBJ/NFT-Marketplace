@@ -52,7 +52,7 @@ const DeployingCollectiontModal = ({
     const collectionDeployStatus = collectionDeploy.find(
       (x) => x.function_uuid === funcId
     );
-    console.log(collectionDeploy, collectionDeployStatus);
+
     if (
       collectionDeployStatus &&
       collectionDeployStatus.function_uuid &&

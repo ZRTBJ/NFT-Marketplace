@@ -63,6 +63,10 @@ const RoyalityManagement = () => {
   let origin = window.location.origin;
 
   useEffect(() => {
+    if (data?.lnft?.id) handleGetNftDetail(data?.lnft?.id);
+  }, [CollectionDetail.status]);
+
+  useEffect(() => {
     setIsLoading(true);
     getCollectionNFTs(collectionId)
       .then((resp) => {
@@ -174,7 +178,9 @@ const RoyalityManagement = () => {
       .then((resp) => {
         if (resp.code === 0) {
           setData(resp);
-          let conCollections = resp.connected_collections.map((con) => con.id);
+          let conCollections = resp?.connected_collections?.map(
+            (con) => con.id
+          );
           setConnectedCollections(conCollections);
           getAllCollections(resp?.project_id);
         }
@@ -250,7 +256,7 @@ const RoyalityManagement = () => {
       setShowDeployModal(true);
     }
   }
-
+  console.log(CollectionDetail);
   return (
     <div
       className={`mt-3 ${
@@ -414,7 +420,7 @@ const RoyalityManagement = () => {
               Total percent of members should equal to or lesser than 100%
             </p>
           ) : null}
-          {data?.members?.length ? (
+          {CollectionDetail?.is_owner && data?.members?.length ? (
             <div class='flex items-center justify-center'>
               <div class='form-check form-switch flex items-center'>
                 <p class='text-[#303548] text-[12px] mr-5'>
@@ -446,6 +452,7 @@ const RoyalityManagement = () => {
             isEdit={isEdit}
             handleValueChange={handleValueChange}
             handleAutoFill={handleAutoFill}
+            isOwner={CollectionDetail?.is_owner}
           />
         ) : null}
         {CollectionDetail?.status === 'published' && !data?.members?.length ? (

@@ -1,29 +1,29 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import {
   getProjectDetailsById,
   projectLike,
   projectBookmark,
   getBalance,
-} from "services/project/projectService";
-import { getNftListByProjectId } from "services/nft/nftService";
-import manImg from "assets/images/projectDetails/man-img.svg";
-import bigImg from "assets/images/gallery/big-img.svg";
-import { useHistory } from "react-router-dom";
+} from 'services/project/projectService';
+import { getNftListByProjectId } from 'services/nft/nftService';
+import manImg from 'assets/images/projectDetails/man-img.svg';
+import bigImg from 'assets/images/gallery/big-img.svg';
+import { useHistory } from 'react-router-dom';
 
-import thumbIcon from "assets/images/profile/card.svg";
-import avatar from "assets/images/dummy-img.svg";
-import { Link } from "react-router-dom";
+import thumbIcon from 'assets/images/profile/card.svg';
+import avatar from 'assets/images/dummy-img.svg';
+import { Link } from 'react-router-dom';
 
-import { useSelector } from "react-redux";
-import PublishModal from "components/modalDialog/PublishModal";
-import ErrorModal from "components/modalDialog/ErrorModal";
-import SuccessModal from "components/modalDialog/SuccessModal";
-import DeployingProjectModal from "components/modalDialog/DeployingProjectModal";
-import { getCollections } from "services/collection/collectionService";
-import CreateRightAttachedNFT from "components/modalDialog/CreateRightAttachNFT";
-import SalesPageModal from "components/modalDialog/SalesPageModal";
-import TransferFundModal from "components/modalDialog/TransferFundModal";
-import { cryptoConvert } from "services/chainlinkService";
+import { useSelector } from 'react-redux';
+import PublishModal from 'components/modalDialog/PublishModal';
+import ErrorModal from 'components/modalDialog/ErrorModal';
+import SuccessModal from 'components/modalDialog/SuccessModal';
+import DeployingProjectModal from 'components/modalDialog/DeployingProjectModal';
+import { getCollections } from 'services/collection/collectionService';
+import CreateRightAttachedNFT from 'components/modalDialog/CreateRightAttachNFT';
+import SalesPageModal from 'components/modalDialog/SalesPageModal';
+import TransferFundModal from 'components/modalDialog/TransferFundModal';
+import { cryptoConvert } from 'services/chainlinkService';
 
 export default function ProjectDetails(props) {
   const history = useHistory();
@@ -54,10 +54,10 @@ export default function ProjectDetails(props) {
   const [errorMsg, setErrorMsg] = useState(null);
   const [showSalesPageModal, setShowSalesPageModal] = useState(false);
   const [showSalesSuccessModal, setShowSalesSuccessModal] = useState(false);
-  const [collectionId, setCollectionId] = useState("");
-  const [collectionType, setCollectionType] = useState("");
+  const [collectionId, setCollectionId] = useState('');
+  const [collectionType, setCollectionType] = useState('');
   const [showTransferFundModal, setShowTransferFundModal] = useState(false);
-  const [balance, setBalance] = useState("---");
+  const [balance, setBalance] = useState('---');
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
   const [usdUnitPrice, setUsdUnitPrice] = useState(0);
 
@@ -88,7 +88,7 @@ export default function ProjectDetails(props) {
           setProject(res.project);
           if (res?.project?.assets && res?.project?.assets.length > 0) {
             setCoverImages(
-              res.project.assets.find((img) => img["asset_purpose"] === "cover")
+              res.project.assets.find((img) => img['asset_purpose'] === 'cover')
             );
             if (res.project.urls && res.project.urls.length > 0) {
               const webLinks = [];
@@ -116,7 +116,7 @@ export default function ProjectDetails(props) {
   function LikeProject(value) {
     setIsLoading(true);
     const request = new FormData();
-    request.append("like", value);
+    request.append('like', value);
     projectLike(projectId, request)
       .then((res) => {
         if (res.code === 0) {
@@ -133,7 +133,7 @@ export default function ProjectDetails(props) {
   function BookmarkProject(value) {
     setIsLoading(true);
     const request = new FormData();
-    request.append("bookmark", value);
+    request.append('bookmark', value);
     projectBookmark(projectId, request)
       .then((res) => {
         if (res.code === 0) {
@@ -181,7 +181,7 @@ export default function ProjectDetails(props) {
 
   async function intiProjectPublish() {
     setShowPublishModal(false);
-    if (project.project_status === "publishing") {
+    if (project.project_status === 'publishing') {
       setPublishStep(1);
       setShowDeployModal(true);
     } else {
@@ -191,16 +191,16 @@ export default function ProjectDetails(props) {
 
   function copyToClipboard(text) {
     navigator.clipboard.writeText(text);
-    const copyEl = document.getElementById("copied-message");
-    copyEl.classList.toggle("hidden");
+    const copyEl = document.getElementById('copied-message');
+    copyEl.classList.toggle('hidden');
     setTimeout(() => {
-      copyEl.classList.toggle("hidden");
+      copyEl.classList.toggle('hidden');
     }, 2000);
   }
 
   async function getCollectionList() {
     setIsLoading(true);
-    await getCollections("project", projectId, page, limit)
+    await getCollections('project', projectId, page, limit)
       .then((e) => {
         if (e.code === 0 && e.data !== null) {
           // if (e.data.length === limit) {
@@ -211,17 +211,17 @@ export default function ProjectDetails(props) {
 
           // const cols = membershipCollectionList.concat(e.data);
           const membershipcoll = e.data.filter(
-            (col) => col.type === "membership"
+            (col) => col.type === 'membership'
           );
           if (membershipcoll) {
             setMembershipCollectionList(membershipcoll);
           }
-          const productcoll = e.data.filter((col) => col.type === "product");
+          const productcoll = e.data.filter((col) => col.type === 'product');
           if (productcoll) {
             setProductCollectionList(productcoll);
           }
           const rightattachcoll = e.data.filter(
-            (col) => col.type === "right_attach"
+            (col) => col.type === 'right_attach'
           );
           if (rightattachcoll) {
             setRightAttachCollectionList(rightattachcoll);
@@ -244,7 +244,7 @@ export default function ProjectDetails(props) {
     getBalance(pid)
       .then((res) => {
         if (res.code === 0) {
-          if (res.balance && res.balance != "") {
+          if (res.balance && res.balance != '') {
             setBalance(res.balance);
           }
         }
@@ -257,7 +257,7 @@ export default function ProjectDetails(props) {
 
   function getUnitPriceUSD() {
     setIsLoadingBalance(true);
-    cryptoConvert("MATIC", "USD")
+    cryptoConvert('MATIC', 'USD')
       .then((res) => {
         if (res.USD && res.USD > 0) {
           setUsdUnitPrice(res.USD);
@@ -268,6 +268,7 @@ export default function ProjectDetails(props) {
         setIsLoadingBalance(false);
       });
   }
+  console.log(rightAttachCollectionList);
 
   return (
     <>
@@ -277,26 +278,26 @@ export default function ProjectDetails(props) {
           handleClose={() => setShowCreateRANFT(false)}
         />
       )}
-      {isLoading && <div className="loading"></div>}
+      {isLoading && <div className='loading'></div>}
       {!isLoading && (
         <>
-          <section className="grid sm:grid-cols-5 gap-4 mt-6">
-            <div className="row-span-2 col-span-2">
+          <section className='grid sm:grid-cols-5 gap-4 mt-6'>
+            <div className='row-span-2 col-span-2'>
               <img
-                className="rounded-xl object-cover h-[260px] w-full"
+                className='rounded-xl object-cover h-[260px] w-full'
                 src={coverImages?.path ? coverImages.path : bigImg}
-                alt=""
+                alt=''
               />
             </div>
             {project?.assets?.length > 0 &&
               project.assets.map((img, index) => (
                 <>
-                  {img["asset_purpose"] !== "cover" && (
+                  {img['asset_purpose'] !== 'cover' && (
                     <div key={`dao-image-${index}`}>
                       <img
-                        className="rounded-xl object-cover h-[122px] w-full"
+                        className='rounded-xl object-cover h-[122px] w-full'
                         src={img ? img.path : manImg}
-                        alt=""
+                        alt=''
                       />
                     </div>
                   )}
@@ -305,35 +306,35 @@ export default function ProjectDetails(props) {
           </section>
           {/* end gallery */}
           {/* profile information section */}
-          <section className="bg-light3 rounded-b-xl mt-4 p-6">
-            <div className="flex flex-col md:flex-row">
-              <div className="md:w-2/3">
-                <div className="flex">
+          <section className='bg-light3 rounded-b-xl mt-4 p-6'>
+            <div className='flex flex-col md:flex-row'>
+              <div className='md:w-2/3'>
+                <div className='flex'>
                   <img
                     src={coverImages?.path ? coverImages.path : bigImg}
-                    className="rounded-full self-start w-14 h-14 md:w-[98px] object-cover md:h-[98px] bg-color-ass-6"
-                    alt="User profile"
+                    className='rounded-full self-start w-14 h-14 md:w-[98px] object-cover md:h-[98px] bg-color-ass-6'
+                    alt='User profile'
                   />
-                  <div className="flex-1 min-w-0  px-4">
-                    <h1 className="-mt-1 mb-1 md:mb-2 truncate">
+                  <div className='flex-1 min-w-0  px-4'>
+                    <h1 className='-mt-1 mb-1 md:mb-2 truncate'>
                       {project.name}
                     </h1>
-                    <p className="text-textLight text-sm">
+                    <p className='text-textLight text-sm'>
                       {project?.contract_address
                         ? project.contract_address
-                        : "Smart Contract not released"}
+                        : 'Smart Contract not released'}
                       <i
                         className={`fa-solid fa-copy ml-2 ${
                           project?.contract_address
-                            ? "cursor-pointer"
-                            : "cursor-not-allowed"
+                            ? 'cursor-pointer'
+                            : 'cursor-not-allowed'
                         }`}
                         disabled={!project?.contract_address}
                         onClick={() =>
                           copyToClipboard(project?.contract_address)
                         }
                       ></i>
-                      <span id="copied-message" className="hidden ml-2">
+                      <span id='copied-message' className='hidden ml-2'>
                         Copied !
                       </span>
                     </p>
@@ -342,101 +343,101 @@ export default function ProjectDetails(props) {
               </div>
 
               <div
-                className="flex flex-wrap mt-3 items-start md:justify-end md:w-1/3 md:mt-0"
-                role="group"
+                className='flex flex-wrap mt-3 items-start md:justify-end md:w-1/3 md:mt-0'
+                role='group'
               >
-                {links.find((link) => link.title === "linkFacebook") &&
-                  links.find((link) => link.title === "linkFacebook").value
+                {links.find((link) => link.title === 'linkFacebook') &&
+                  links.find((link) => link.title === 'linkFacebook').value
                     ?.length > 0 && (
-                    <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5">
+                    <div className='cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5'>
                       <a
                         href={`${
-                          links.find((link) => link.title === "linkFacebook")
+                          links.find((link) => link.title === 'linkFacebook')
                             .value
                         }`}
-                        target="_blank"
-                        rel="noreferrer"
+                        target='_blank'
+                        rel='noreferrer'
                       >
-                        <i className="fa-brands fa-facebook text-primary-900"></i>
+                        <i className='fa-brands fa-facebook text-primary-900'></i>
                       </a>
                     </div>
                   )}
 
-                {links.find((link) => link.title === "linkInsta") &&
-                  links.find((link) => link.title === "linkInsta").value
+                {links.find((link) => link.title === 'linkInsta') &&
+                  links.find((link) => link.title === 'linkInsta').value
                     ?.length > 0 && (
-                    <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5">
+                    <div className='cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5'>
                       <a
                         href={`${
-                          links.find((link) => link.title === "linkInsta").value
+                          links.find((link) => link.title === 'linkInsta').value
                         }`}
-                        target="_blank"
-                        rel="noreferrer"
+                        target='_blank'
+                        rel='noreferrer'
                       >
-                        <i className="fa-brands fa-instagram text-primary-900"></i>
+                        <i className='fa-brands fa-instagram text-primary-900'></i>
                       </a>
                     </div>
                   )}
-                {links.find((link) => link.title === "linkTwitter") &&
-                  links.find((link) => link.title === "linkTwitter").value
+                {links.find((link) => link.title === 'linkTwitter') &&
+                  links.find((link) => link.title === 'linkTwitter').value
                     ?.length > 0 && (
-                    <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5">
+                    <div className='cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5'>
                       <a
                         href={`${
-                          links.find((link) => link.title === "linkTwitter")
+                          links.find((link) => link.title === 'linkTwitter')
                             .value
                         }`}
-                        target="_blank"
-                        rel="noreferrer"
+                        target='_blank'
+                        rel='noreferrer'
                       >
-                        <i className="fa-brands fa-twitter text-primary-900"></i>
+                        <i className='fa-brands fa-twitter text-primary-900'></i>
                       </a>
                     </div>
                   )}
-                {links.find((link) => link.title === "linkGithub") &&
-                  links.find((link) => link.title === "linkGithub").value
+                {links.find((link) => link.title === 'linkGithub') &&
+                  links.find((link) => link.title === 'linkGithub').value
                     ?.length > 0 && (
-                    <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5">
+                    <div className='cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5'>
                       <a
                         href={`${
-                          links.find((link) => link.title === "linkGithub")
+                          links.find((link) => link.title === 'linkGithub')
                             .value
                         }`}
-                        target="_blank"
-                        rel="noreferrer"
+                        target='_blank'
+                        rel='noreferrer'
                       >
-                        <i className="fa-brands fa-github text-primary-900"></i>
+                        <i className='fa-brands fa-github text-primary-900'></i>
                       </a>
                     </div>
                   )}
-                {links.find((link) => link.title === "customLinks1") &&
-                  links.find((link) => link.title === "customLinks1").value
+                {links.find((link) => link.title === 'customLinks1') &&
+                  links.find((link) => link.title === 'customLinks1').value
                     ?.length > 0 && (
-                    <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5">
+                    <div className='cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5'>
                       <a
                         href={`${
-                          links.find((link) => link.title === "customLinks1")
+                          links.find((link) => link.title === 'customLinks1')
                             .value
                         }`}
-                        target="_blank"
-                        rel="noreferrer"
+                        target='_blank'
+                        rel='noreferrer'
                       >
-                        <i className="fa-solid fa-globe text-primary-900"></i>
+                        <i className='fa-solid fa-globe text-primary-900'></i>
                       </a>
                     </div>
                   )}
 
                 {project?.is_owner && (
-                  <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 text-white flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-secondary-800">
+                  <div className='cursor-pointer w-8 h-8 mb-4 bg-primary-900 text-white flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-secondary-800'>
                     <Link to={`/project-create?id=${project?.id}`}>
-                      <i className="fa-solid fa-pen-to-square"></i>
+                      <i className='fa-solid fa-pen-to-square'></i>
                     </Link>
                   </div>
                 )}
-                {project?.project_status !== "published" && project?.is_owner && (
+                {project?.project_status !== 'published' && project?.is_owner && (
                   <a
                     onClick={() => setShowPublishModal(true)}
-                    className="inline-block ml-4 bg-primary-900 px-3 py-2 text-white font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+                    className='inline-block ml-4 bg-primary-900 px-3 py-2 text-white font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out'
                   >
                     Publish
                   </a>
@@ -444,11 +445,11 @@ export default function ProjectDetails(props) {
               </div>
             </div>
 
-            <div className="flex flex-col md:flex-row pt-5">
-              <div className="md:w-2/3">
+            <div className='flex flex-col md:flex-row pt-5'>
+              <div className='md:w-2/3'>
                 <h3>About</h3>
-                <p className="text-textLight text-sm">{project.overview}</p>
-                <div className="flex items-center mt-3">
+                <p className='text-textLight text-sm'>{project.overview}</p>
+                <div className='flex items-center mt-3'>
                   {project &&
                     project.members &&
                     project.members.length > 0 &&
@@ -457,48 +458,48 @@ export default function ProjectDetails(props) {
                         {index < 5 && (
                           <img
                             key={`member-img-${index}`}
-                            className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
+                            className='rounded-full w-9 h-9 -ml-2 border-2 border-white'
                             src={img.path ? img.path : avatar}
-                            alt=""
+                            alt=''
                           />
                         )}
                       </>
                     ))}
                   {project && project.members && project.members.length > 5 && (
-                    <span className="ml-2 bg-primary-900 bg-opacity-5  text-primary-900 rounded p-1 text-xs  ">
+                    <span className='ml-2 bg-primary-900 bg-opacity-5  text-primary-900 rounded p-1 text-xs  '>
                       +{project.members.length - 5}
                     </span>
                   )}
                 </div>
               </div>
 
-              <div className="flex items-center justify-center flex-wrap mt-3 md:justify-end md:w-1/3  md:mt-0">
+              <div className='flex items-center justify-center flex-wrap mt-3 md:justify-end md:w-1/3  md:mt-0'>
                 {project?.is_owner && (
                   <a
                     onClick={() => setShowTransferFundModal(true)}
-                    className="inline-block ml-4 mb-3 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+                    className='inline-block ml-4 mb-3 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'
                   >
                     Transfer Funds
                   </a>
                 )}
 
-                <div className="bg-primary-900 ml-3 bg-opacity-10 rounded-md p-3 px-5 relative w-56">
+                <div className='bg-primary-900 ml-3 bg-opacity-10 rounded-md p-3 px-5 relative w-56'>
                   <i
                     onClick={() => {
                       getProjectBalance(projectId);
                       getUnitPriceUSD();
                     }}
                     className={`fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3 ${
-                      isLoadingBalance ? "fa-spin" : ""
+                      isLoadingBalance ? 'fa-spin' : ''
                     } cursor-pointer`}
                   ></i>
-                  <p className=" text-sm text-textSubtle ">Net Worth</p>
+                  <p className=' text-sm text-textSubtle '>Net Worth</p>
                   <h4>{balance} MATIC</h4>
-                  <p className="text-sm text-textSubtle">
+                  <p className='text-sm text-textSubtle'>
                     (~$
                     {balance && Number(balance) >= 0 && usdUnitPrice > 0
                       ? balance * usdUnitPrice
-                      : "0.00"}
+                      : '0.00'}
                     )
                   </p>
                 </div>
@@ -506,73 +507,73 @@ export default function ProjectDetails(props) {
             </div>
           </section>
           {/* Tab Section */}
-          <section className="mb-10">
-            <div className="mb-4">
+          <section className='mb-10'>
+            <div className='mb-4'>
               <ul
-                className="flex flex-wrap -mb-px text-sm font-medium text-center"
-                id="myTab"
-                data-tabs-toggle="#myTabContent"
-                role="tablist"
+                className='flex flex-wrap -mb-px text-sm font-medium text-center'
+                id='myTab'
+                data-tabs-toggle='#myTabContent'
+                role='tablist'
               >
                 <li
-                  className="mr-2"
-                  role="presentation"
+                  className='mr-2'
+                  role='presentation'
                   onClick={() => setSelectedTab(1)}
                 >
                   <button
                     className={`inline-block p-4 text-lg rounded-t-lg ${
                       selectedTab === 1
-                        ? "border-b-2 border-primary-900 text-primary-900"
-                        : "border-transparent text-textSubtle"
+                        ? 'border-b-2 border-primary-900 text-primary-900'
+                        : 'border-transparent text-textSubtle'
                     } hover:text-primary-600`}
-                    id="membership_nft"
-                    data-tabs-target="#membership_nft"
-                    type="button"
-                    role="tab"
-                    aria-controls="MembershipNFT"
-                    aria-selected="true"
+                    id='membership_nft'
+                    data-tabs-target='#membership_nft'
+                    type='button'
+                    role='tab'
+                    aria-controls='MembershipNFT'
+                    aria-selected='true'
                   >
                     Membership NFT
                   </button>
                 </li>
                 <li
-                  className="mr-2"
-                  role="presentation"
+                  className='mr-2'
+                  role='presentation'
                   onClick={() => setSelectedTab(2)}
                 >
                   <button
                     className={`inline-block p-4 text-lg rounded-t-lg ${
                       selectedTab === 2
-                        ? "border-b-2 border-primary-900 text-primary-900"
-                        : "border-transparent text-textSubtle"
+                        ? 'border-b-2 border-primary-900 text-primary-900'
+                        : 'border-transparent text-textSubtle'
                     } hover:text-primary-900`}
-                    id="dashboard-tab"
-                    data-tabs-target="#dashboard"
-                    type="button"
-                    role="tab"
-                    aria-controls="dashboard"
-                    aria-selected="false"
+                    id='dashboard-tab'
+                    data-tabs-target='#dashboard'
+                    type='button'
+                    role='tab'
+                    aria-controls='dashboard'
+                    aria-selected='false'
                   >
                     Product NFT
                   </button>
                 </li>
                 <li
-                  className="mr-2"
-                  role="presentation"
+                  className='mr-2'
+                  role='presentation'
                   onClick={() => setSelectedTab(3)}
                 >
                   <button
                     className={`inline-block p-4 text-lg rounded-t-lg ${
                       selectedTab === 3
-                        ? "border-b-2 border-primary-900 text-primary-900"
-                        : "border-transparent text-textSubtle"
+                        ? 'border-b-2 border-primary-900 text-primary-900'
+                        : 'border-transparent text-textSubtle'
                     }  hover:text-primary-900`}
-                    id="settings-tab"
-                    data-tabs-target="#settings"
-                    type="button"
-                    role="tab"
-                    aria-controls="settings"
-                    aria-selected="false"
+                    id='settings-tab'
+                    data-tabs-target='#settings'
+                    type='button'
+                    role='tab'
+                    aria-controls='settings'
+                    aria-selected='false'
                   >
                     Rights Attached NFT
                   </button>
@@ -580,26 +581,26 @@ export default function ProjectDetails(props) {
               </ul>
             </div>
 
-            <div id="myTabContent">
+            <div id='myTabContent'>
               {/* TAB 1 */}
               {selectedTab === 1 && (
                 <section
-                  className="grid md:grid-cols-3 xl:grid-cols-4 gap-4 mb-6"
-                  id="membership_nft"
-                  role="tabpanel"
-                  aria-labelledby="membership-nft-tab"
+                  className='grid md:grid-cols-3 xl:grid-cols-4 gap-4 mb-6'
+                  id='membership_nft'
+                  role='tabpanel'
+                  aria-labelledby='membership-nft-tab'
                 >
                   {/* Card */}
                   {membershipCollectionList &&
                     membershipCollectionList.length > 0 &&
                     membershipCollectionList.map((collection, index) => (
                       <div
-                        className="min-h-[390px] rounded-x"
+                        className='min-h-[390px] rounded-x'
                         key={`nft-collection-membership-${index}`}
                       >
                         <Link to={`/collection-details/${collection?.id}`}>
                           <img
-                            className="rounded-xl h-[276px] object-cover w-full"
+                            className='rounded-xl h-[276px] object-cover w-full'
                             src={
                               collection &&
                               collection.assets &&
@@ -607,53 +608,53 @@ export default function ProjectDetails(props) {
                                 ? collection.assets[1].path
                                 : thumbIcon
                             }
-                            alt=""
+                            alt=''
                           />
                         </Link>
-                        <div className="py-5">
-                          <div className="flex">
-                            <h2 className="pb-2 text-txtblack truncate flex-1 mr-3 m-w-0">
+                        <div className='py-5'>
+                          <div className='flex'>
+                            <h2 className='pb-2 text-txtblack truncate flex-1 mr-3 m-w-0'>
                               {collection.name}
                             </h2>
-                            <div className="relative">
+                            <div className='relative'>
                               <button
-                                type="button"
+                                type='button'
                                 onClick={() => {
                                   const el =
                                     document.getElementById(
-                                      "membership-option"
+                                      'membership-option'
                                     );
-                                  el.classList.toggle("hidden");
+                                  el.classList.toggle('hidden');
                                 }}
                               >
                                 {project?.is_owner && (
-                                  <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
+                                  <i className='fa-regular fa-ellipsis-vertical text-textSubtle'></i>
                                 )}
                               </button>
                               {/* Dropdown menu  */}
                               {project?.is_owner && (
                                 <div
-                                  id="membership-option"
-                                  className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden"
+                                  id='membership-option'
+                                  className='z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden'
                                 >
-                                  <ul className="text-sm">
-                                    <li className="border-b border-divide vursor-pointer">
-                                      <a className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600">
+                                  <ul className='text-sm'>
+                                    <li className='border-b border-divide vursor-pointer'>
+                                      <a className='block p-4 hover:bg-gray-100 dark:hover:bg-gray-600'>
                                         Sales Page
                                       </a>
                                     </li>
-                                    <li className="border-b border-divide">
+                                    <li className='border-b border-divide'>
                                       <a
-                                        href="#"
-                                        className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                        href='#'
+                                        className='block p-4 hover:bg-gray-100 dark:hover:bg-gray-600'
                                       >
                                         Edit Collections
                                       </a>
                                     </li>
-                                    <li className="border-b border-divide">
+                                    <li className='border-b border-divide'>
                                       <a
-                                        href="#"
-                                        className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                        href='#'
+                                        className='block p-4 hover:bg-gray-100 dark:hover:bg-gray-600'
                                       >
                                         Embed Collection
                                       </a>
@@ -663,13 +664,13 @@ export default function ProjectDetails(props) {
                               )}
                             </div>
                           </div>
-                          <p className="mb-3 text-textSubtle text-[13px]">
+                          <p className='mb-3 text-textSubtle text-[13px]'>
                             {collection.description &&
                             collection.description.length > 70
-                              ? collection.description.substring(0, 67) + "..."
+                              ? collection.description.substring(0, 67) + '...'
                               : collection.description}
                           </p>
-                          <div className="flex items-center">
+                          <div className='flex items-center'>
                             {collection.members &&
                               collection.members.length > 0 &&
                               truncateArray(collection.members).slicedItems.map(
@@ -677,14 +678,14 @@ export default function ProjectDetails(props) {
                                   <img
                                     src={member.avatar}
                                     alt={member.id}
-                                    className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
+                                    className='rounded-full w-9 h-9 -ml-2 border-2 border-white'
                                   />
                                 )
                               )}
                             {collection.members &&
                               collection.members.length > 3 && (
-                                <div className="flex items-center mt-[6px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]">
-                                  <p className="text-[12px] text-[#9A5AFF]">
+                                <div className='flex items-center mt-[6px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]'>
+                                  <p className='text-[12px] text-[#9A5AFF]'>
                                     +
                                     {truncateArray(collection.members).restSize}
                                   </p>
@@ -711,9 +712,9 @@ export default function ProjectDetails(props) {
                     <Link
                       to={`/collection-create/?dao_id=${projectId}&type=membership`}
                     >
-                      <div className="rounded-xl h-[276px] w-full bg-success-1 bg-opacity-20 flex flex-col items-center justify-center">
-                        <i className="fa-solid fa-circle-plus text-success-1 text-2xl mb-2"></i>
-                        <p className="text-success-1 text-lg font-black font-satoshi-bold">
+                      <div className='rounded-xl h-[276px] w-full bg-success-1 bg-opacity-20 flex flex-col items-center justify-center'>
+                        <i className='fa-solid fa-circle-plus text-success-1 text-2xl mb-2'></i>
+                        <p className='text-success-1 text-lg font-black font-satoshi-bold'>
                           Create new
                         </p>
                       </div>
@@ -725,22 +726,22 @@ export default function ProjectDetails(props) {
               {/* TAB 2 */}
               {selectedTab === 2 && (
                 <section
-                  className="grid md:grid-cols-3 xl:grid-cols-4 gap-4 mb-6"
-                  id="product-nft"
-                  role="tabpanel"
-                  aria-labelledby="product-nft-tab"
+                  className='grid md:grid-cols-3 xl:grid-cols-4 gap-4 mb-6'
+                  id='product-nft'
+                  role='tabpanel'
+                  aria-labelledby='product-nft-tab'
                 >
                   {/* Card */}
                   {productCollectionList &&
                     productCollectionList.length > 0 &&
                     productCollectionList.map((collection, index) => (
                       <div
-                        className="min-h-[390px] rounded-x"
+                        className='min-h-[390px] rounded-x'
                         key={`nft-collection-membership-${index}`}
                       >
                         <Link to={`/collection-details/${collection?.id}`}>
                           <img
-                            className="rounded-xl h-[276px] object-cover w-full"
+                            className='rounded-xl h-[276px] object-cover w-full'
                             src={
                               collection &&
                               collection.assets &&
@@ -748,60 +749,60 @@ export default function ProjectDetails(props) {
                                 ? collection.assets[1].path
                                 : thumbIcon
                             }
-                            alt=""
+                            alt=''
                           />
                         </Link>
-                        <div className="py-5">
-                          <div className="flex">
-                            <h2 className="pb-2 text-txtblack truncate flex-1 mr-3 m-w-0">
+                        <div className='py-5'>
+                          <div className='flex'>
+                            <h2 className='pb-2 text-txtblack truncate flex-1 mr-3 m-w-0'>
                               {collection.name}
                             </h2>
-                            <div className="relative">
+                            <div className='relative'>
                               <button
-                                type="button"
+                                type='button'
                                 onClick={() => {
                                   const el =
                                     document.getElementById(
-                                      "collection-option"
+                                      'collection-option'
                                     );
-                                  el.classList.toggle("hidden");
+                                  el.classList.toggle('hidden');
                                 }}
                               >
                                 {project?.is_owner && (
-                                  <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
+                                  <i className='fa-regular fa-ellipsis-vertical text-textSubtle'></i>
                                 )}
                               </button>
                               {/* Dropdown menu  */}
                               {project?.is_owner && (
                                 <div
-                                  id="collection-option"
-                                  className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden"
+                                  id='collection-option'
+                                  className='z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden'
                                 >
-                                  <ul className="text-sm">
-                                    <li className="border-b border-divide cursor-pointer">
+                                  <ul className='text-sm'>
+                                    <li className='border-b border-divide cursor-pointer'>
                                       <a
                                         onClick={() => {
                                           setShowSalesPageModal(true);
                                           setCollectionId(collection?.id);
-                                          setCollectionType("product");
+                                          setCollectionType('product');
                                         }}
-                                        className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                        className='block p-4 hover:bg-gray-100 dark:hover:bg-gray-600'
                                       >
                                         Sales Page
                                       </a>
                                     </li>
-                                    <li className="border-b border-divide">
+                                    <li className='border-b border-divide'>
                                       <a
-                                        href="#"
-                                        className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                        href='#'
+                                        className='block p-4 hover:bg-gray-100 dark:hover:bg-gray-600'
                                       >
                                         Edit Collections
                                       </a>
                                     </li>
-                                    <li className="border-b border-divide">
+                                    <li className='border-b border-divide'>
                                       <a
-                                        href="#"
-                                        className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                        href='#'
+                                        className='block p-4 hover:bg-gray-100 dark:hover:bg-gray-600'
                                       >
                                         Embed Collection
                                       </a>
@@ -811,13 +812,13 @@ export default function ProjectDetails(props) {
                               )}
                             </div>
                           </div>
-                          <p className="mb-3 text-textSubtle text-[13px]">
+                          <p className='mb-3 text-textSubtle text-[13px]'>
                             {collection.description &&
                             collection.description.length > 70
-                              ? collection.description.substring(0, 67) + "..."
+                              ? collection.description.substring(0, 67) + '...'
                               : collection.description}
                           </p>
-                          <div className="flex items-center">
+                          <div className='flex items-center'>
                             {collection.members &&
                               collection.members.length > 0 &&
                               truncateArray(collection.members).slicedItems.map(
@@ -825,14 +826,14 @@ export default function ProjectDetails(props) {
                                   <img
                                     src={member.avatar}
                                     alt={member.id}
-                                    className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
+                                    className='rounded-full w-9 h-9 -ml-2 border-2 border-white'
                                   />
                                 )
                               )}
                             {collection.members &&
                               collection.members.length > 3 && (
-                                <div className="flex items-center mt-[6px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]">
-                                  <p className="text-[12px] text-[#9A5AFF]">
+                                <div className='flex items-center mt-[6px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]'>
+                                  <p className='text-[12px] text-[#9A5AFF]'>
                                     +
                                     {truncateArray(collection.members).restSize}
                                   </p>
@@ -859,9 +860,9 @@ export default function ProjectDetails(props) {
                     <Link
                       to={`/collection-create/?dao_id=${projectId}&type=product`}
                     >
-                      <div className="rounded-xl h-[276px] w-full bg-success-1 bg-opacity-20 flex flex-col items-center justify-center">
-                        <i className="fa-solid fa-circle-plus text-success-1 text-2xl mb-2"></i>
-                        <p className="text-success-1 text-lg font-black font-satoshi-bold">
+                      <div className='rounded-xl h-[276px] w-full bg-success-1 bg-opacity-20 flex flex-col items-center justify-center'>
+                        <i className='fa-solid fa-circle-plus text-success-1 text-2xl mb-2'></i>
+                        <p className='text-success-1 text-lg font-black font-satoshi-bold'>
                           Create new
                         </p>
                       </div>
@@ -877,21 +878,21 @@ export default function ProjectDetails(props) {
                     rightAttachCollectionList.length < 1) &&
                     project?.is_owner && (
                       <section
-                        className="p-4"
-                        id="right-attached"
-                        role="tabpanel"
-                        aria-labelledby="right-attached-tab"
+                        className='p-4'
+                        id='right-attached'
+                        role='tabpanel'
+                        aria-labelledby='right-attached-tab'
                       >
-                        <article className=" rounded-xl bg-secondary-900 bg-opacity-20 border border-secondary-900 h-60 flex items-center justify-center p-4 flex-col">
-                          <h2 className="text-textBlack mb-3">
+                        <article className=' rounded-xl bg-secondary-900 bg-opacity-20 border border-secondary-900 h-60 flex items-center justify-center p-4 flex-col'>
+                          <h2 className='text-textBlack mb-3'>
                             Enable Right Attached NFT
                           </h2>
-                          <p className="mb-4">
+                          <p className='mb-4'>
                             Create your Right attached NFT and share the royalty
                             fairly with your teams,
                           </p>
                           <a
-                            className="inline-block bg-secondary-900 px-4 py-3 text-white font-black text-sm  font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+                            className='inline-block bg-secondary-900 px-4 py-3 text-white font-black text-sm  font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out'
                             onClick={() => setShowCreateRANFT(true)}
                           >
                             Enable Now
@@ -902,24 +903,24 @@ export default function ProjectDetails(props) {
                   {rightAttachCollectionList &&
                     rightAttachCollectionList.length > 0 && (
                       <section
-                        className="grid md:grid-cols-3 xl:grid-cols-4 gap-4 mb-6"
-                        id="right-attached"
-                        role="tabpanel"
-                        aria-labelledby="right-attached-tab"
+                        className='grid md:grid-cols-3 xl:grid-cols-4 gap-4 mb-6'
+                        id='right-attached'
+                        role='tabpanel'
+                        aria-labelledby='right-attached-tab'
                       >
                         {/* Card */}
                         {rightAttachCollectionList &&
                           rightAttachCollectionList.length > 0 &&
                           rightAttachCollectionList.map((collection, index) => (
                             <div
-                              className="min-h-[390px] rounded-x"
+                              className='min-h-[390px] rounded-x'
                               key={`nft-collection-membership-${index}`}
                             >
                               <Link
                                 to={`/royality-management/${collection.id}`}
                               >
                                 <img
-                                  className="rounded-xl h-[276px] object-cover w-full"
+                                  className='rounded-xl h-[276px] object-cover w-full'
                                   src={
                                     collection &&
                                     collection.assets &&
@@ -927,48 +928,48 @@ export default function ProjectDetails(props) {
                                       ? collection.assets[1].path
                                       : thumbIcon
                                   }
-                                  alt=""
+                                  alt=''
                                 />
                               </Link>
-                              <div className="py-5">
-                                <div className="flex">
-                                  <h2 className="pb-2 text-txtblack truncate flex-1 mr-3 m-w-0">
+                              <div className='py-5'>
+                                <div className='flex'>
+                                  <h2 className='pb-2 text-txtblack truncate flex-1 mr-3 m-w-0'>
                                     {collection.name}
                                   </h2>
-                                  <div className="relative">
+                                  <div className='relative'>
                                     <button
-                                      type="button"
+                                      type='button'
                                       onClick={() => {
                                         const el =
                                           document.getElementById(
-                                            "rightattach-option"
+                                            'rightattach-option'
                                           );
-                                        el.classList.toggle("hidden");
+                                        el.classList.toggle('hidden');
                                       }}
                                     >
                                       {project?.is_owner && (
-                                        <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
+                                        <i className='fa-regular fa-ellipsis-vertical text-textSubtle'></i>
                                       )}
                                     </button>
                                     {/* Dropdown menu  */}
                                     {project?.is_owner && (
                                       <div
-                                        id="rightattach-option"
-                                        className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden"
+                                        id='rightattach-option'
+                                        className='z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden'
                                       >
-                                        <ul className="text-sm">
-                                          <li className="border-b border-divide">
+                                        <ul className='text-sm'>
+                                          <li className='border-b border-divide'>
                                             <a
-                                              href="#"
-                                              className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                              href='#'
+                                              className='block p-4 hover:bg-gray-100 dark:hover:bg-gray-600'
                                             >
                                               Edit Collections
                                             </a>
                                           </li>
-                                          <li className="border-b border-divide">
+                                          <li className='border-b border-divide'>
                                             <a
-                                              href="#"
-                                              className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                              href='#'
+                                              className='block p-4 hover:bg-gray-100 dark:hover:bg-gray-600'
                                             >
                                               Embed Collection
                                             </a>
@@ -978,14 +979,14 @@ export default function ProjectDetails(props) {
                                     )}
                                   </div>
                                 </div>
-                                <p className="mb-3 text-textSubtle text-[13px]">
+                                <p className='mb-3 text-textSubtle text-[13px]'>
                                   {collection.description &&
                                   collection.description.length > 70
                                     ? collection.description.substring(0, 67) +
-                                      "..."
+                                      '...'
                                     : collection.description}
                                 </p>
-                                <div className="flex items-center">
+                                <div className='flex items-center'>
                                   {collection.members &&
                                     collection.members.length > 0 &&
                                     truncateArray(
@@ -994,13 +995,13 @@ export default function ProjectDetails(props) {
                                       <img
                                         src={member.avatar}
                                         alt={member.id}
-                                        className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
+                                        className='rounded-full w-9 h-9 -ml-2 border-2 border-white'
                                       />
                                     ))}
                                   {collection.members &&
                                     collection.members.length > 3 && (
-                                      <div className="flex items-center mt-[6px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]">
-                                        <p className="text-[12px] text-[#9A5AFF]">
+                                      <div className='flex items-center mt-[6px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]'>
+                                        <p className='text-[12px] text-[#9A5AFF]'>
                                           +
                                           {
                                             truncateArray(collection.members)
@@ -1027,11 +1028,11 @@ export default function ProjectDetails(props) {
                         {/* Create New */}
                         {project?.is_owner && (
                           <div
-                            className="rounded-xl h-[276px] w-full bg-success-1 bg-opacity-20 flex flex-col items-center justify-center cursor-pointer"
+                            className='rounded-xl h-[276px] w-full bg-success-1 bg-opacity-20 flex flex-col items-center justify-center cursor-pointer'
                             onClick={() => setShowCreateRANFT(true)}
                           >
-                            <i className="fa-solid fa-circle-plus text-success-1 text-2xl mb-2"></i>
-                            <p className="text-success-1 text-lg font-black font-satoshi-bold">
+                            <i className='fa-solid fa-circle-plus text-success-1 text-2xl mb-2'></i>
+                            <p className='text-success-1 text-lg font-black font-satoshi-bold'>
                               Create new
                             </p>
                           </div>
@@ -1076,7 +1077,7 @@ export default function ProjectDetails(props) {
           )}
           {showErrorModal && (
             <ErrorModal
-              title={"DAO Publish failed !"}
+              title={'DAO Publish failed !'}
               message={`${errorMsg}`}
               handleClose={() => {
                 setShowErrorModal(false);
@@ -1106,9 +1107,9 @@ export default function ProjectDetails(props) {
           )}
           {showSalesSuccessModal && (
             <SuccessModal
-              message={"Sale information updated successfully"}
-              subMessage={"You can mint NFT now"}
-              buttonText={"Close"}
+              message={'Sale information updated successfully'}
+              subMessage={'You can mint NFT now'}
+              buttonText={'Close'}
               handleClose={() => {
                 setShowSalesSuccessModal(false);
                 getCollectionList();

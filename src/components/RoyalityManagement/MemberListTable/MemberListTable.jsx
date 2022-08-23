@@ -11,6 +11,7 @@ const MemberListTable = ({
   setIsEdit,
   handleValueChange,
   handleAutoFill,
+  isOwner,
 }) => {
   return (
     <div className='overflow-x-auto relative mb-[54px] relative'>
@@ -40,7 +41,7 @@ const MemberListTable = ({
               <td className='py-4 px-5'>{r.display_name}</td>
               <td className='py-4 px-5'>{r.email}</td>
               <td className={`py-4 px-5 flex items-center`}>
-                {isEdit === r.id ? (
+                {isEdit === r.id && isOwner ? (
                   <div className='w-[75px] mr-2'>
                     <input
                       type='number'
@@ -54,24 +55,28 @@ const MemberListTable = ({
                     {r.royalty_percent ? `${r.royalty_percent}%` : '-'}
                   </span>
                 )}
-                {isEdit === r.id ? (
-                  <div>
-                    <i
-                      class='fa-solid fa-check bg-green-400 rounded-[4px] text-white flex items-center justify-center h-[24px] w-[24px] text-[20px] cursor-pointer'
-                      onClick={handleAutoFill}
-                    ></i>
-                    <i
-                      class='fa-solid fa-xmark bg-red-400 rounded-[4px] text-white flex items-center justify-center h-[24px] w-[24px] text-[20px] cursor-pointer'
-                      onClick={() => setIsEdit(null)}
-                    ></i>
-                  </div>
-                ) : (
-                  <img
-                    src={Edit}
-                    alt='edit'
-                    className='cursor-pointer'
-                    onClick={() => setIsEdit(r.id)}
-                  />
+                {isOwner && (
+                  <>
+                    {isEdit === r.id ? (
+                      <div>
+                        <i
+                          class='fa-solid fa-check bg-green-400 rounded-[4px] text-white flex items-center justify-center h-[24px] w-[24px] text-[20px] cursor-pointer'
+                          onClick={handleAutoFill}
+                        ></i>
+                        <i
+                          class='fa-solid fa-xmark bg-red-400 rounded-[4px] text-white flex items-center justify-center h-[24px] w-[24px] text-[20px] cursor-pointer'
+                          onClick={() => setIsEdit(null)}
+                        ></i>
+                      </div>
+                    ) : (
+                      <img
+                        src={Edit}
+                        alt='edit'
+                        className='cursor-pointer'
+                        onClick={() => setIsEdit(r.id)}
+                      />
+                    )}
+                  </>
                 )}
               </td>
               <td className={`py-4 px-5`}>{r.eoa ? r.eoa : '-'}</td>
