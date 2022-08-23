@@ -152,6 +152,29 @@ const Profile = () => {
     },
   };
 
+  const daosettings = {
+    320: {
+      slidesPerView: 2,
+      spaceBetween: 100,
+    },
+    640: {
+      slidesPerView: 2,
+      spaceBetween: 100,
+    },
+    768: {
+      slidesPerView: 3,
+      spaceBetween: 100,
+    },
+    1024: {
+      slidesPerView: 4,
+      spaceBetween: 100,
+    },
+    1536: {
+      slidesPerView: 5,
+      spaceBetween: 100,
+    },
+  };
+
   // function start
   async function userInfo() {
     await getUserInfo(id)
@@ -493,7 +516,7 @@ const Profile = () => {
 
             {projectList.length > 0 ? (
               <Swiper
-                breakpoints={settings}
+                breakpoints={daosettings}
                 navigation={false}
                 modules={[Navigation]}
                 className={styles.createSwiper}
