@@ -24,6 +24,9 @@ import { useSelector } from 'react-redux';
 
 function Home() {
   SwiperCore.use([Autoplay]);
+  const [categories, setCategories] = useState([]);
+  const [searchKeyword, setSearchKeyword] = useState([]);
+  const [searchList, setSearchList] = useState([]);
   const [projectList, setProjectList] = useState([]);
   const [popularProjectList, setPopularProjectList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -61,51 +64,35 @@ function Home() {
   }, []);
 
   async function getProjectList(payload, type) {
-    let categoryList = [];
-    await getProjectCategory().then((response) => {
-      categoryList = response.categories;
-    });
-    await getPublicProjectList(payload)
-      .then((response) => {
-        let data = [];
-        if (response.data && response.data.length > 0) {
-          data = response.data;
-          data.forEach((element) => {
-            element.category_name = categoryList.find(
-              (x) => x.id === element.category_id
-            ).name;
+    const categoriesRes = await getProjectCategory();
+    const projectRes = await getPublicProjectList(payload);
 
-            // if (element.project_fundraising !== null) {
-            //   let allocation = "";
-            //   let user_allocated_percent = "";
-            //   allocation =
-            //     (element.token_total_amount / 100) *
-            //     element.project_fundraising.allocation_percent;
-            //   user_allocated_percent =
-            //     (allocation / 100) *
-            //     element.project_fundraising.user_allocated_percent;
-            //   element.project_fundraising.total_allocation = user_allocated_percent;
-            // }
-          });
-        }
-        if (type === 'new') {
-          setProjectList(data);
-        } else if (type === 'popular') {
-          setPopularProjectList(data);
-        }
-
-        setIsLoading(false);
-      })
-      .catch(() => {
-        setIsLoading(false);
+    if (categoriesRes?.categories && projectRes?.data) {
+      const projects = projectRes.data.map((project) => {
+        project.category_name = categoriesRes.categories.find(
+          (category) => category.id === project.category_id
+        )?.name;
+        return project;
       });
+      // types
+      if (type === "new") {
+        setProjectList(projects);
+      }
+      if (type === "popular") {
+        setPopularProjectList(projects);
+      }
+      // if (type === "search") {
+      //   setSearchList(projects);
+      // }
+    }
+    setIsLoading(false);
   }
   useEffect(() => {
-    getProjectList(payload, 'new');
-    getCollectionList();
-  }, []);
-  useEffect(() => {
-    getProjectList(popularPayload, 'popular');
+    (async () => {
+      await getProjectList(payload, "new");
+      await getProjectList(popularPayload, "popular");
+      await getCollectionList();
+    })();
   }, []);
 
   function handleSortType(type) {
@@ -115,14 +102,14 @@ function Home() {
   }
 
   function searchProject(event) {
+    event.stopPropagation();
+    event.preventDefault();
     const text = event.currentTarget.value;
+    setSearchKeyword(text);
     if (text && text.length > 2) {
-      setTimeout(() => {
-        if (payload.keyword !== text) {
-          payload.keyword = text;
-          getProjectList(payload, 'new');
-        }
-      }, 2000);
+      // todo: use debounce
+      payload.keyword = text;
+      getProjectList(payload, "new");
     }
   }
 
@@ -181,13 +168,17 @@ function Home() {
               <i className='fa-regular fa-magnifying-glass text-primary-900 text-lg'></i>
             </div>
             <input
-              type='search'
-              id='default-search'
-              name='projectSearch2'
-              autoComplete='off'
-              className='text-lg shadow-main w-full rounded-lg  pl-12 placeholder-color-ass-4 py-4 pr-4 h-[72px]'
-              placeholder='Search DAO by name'
+              type="text"
+              id="default-search"
+              className="text-lg shadow-main w-full rounded-lg  pl-12 placeholder-color-ass-4 py-4 pr-4 h-[72px] text-[#000]"
+              placeholder="Search DAO by name"
               onChange={searchProject}
+              value={searchKeyword}
+              onKeyPress={(event) => {
+                if (event.key === "Enter") {
+                  searchProject(event);
+                }
+              }}
             />
           </div>
         </form>
@@ -239,9 +230,10 @@ function Home() {
         </div>
       </section>
 
-      <section className='grid md:grid-cols-3 xl:grid-cols-4 gap-4 mb-24'>
+      <section className="grid md:grid-cols-2 xl:grid-cols-3 xl:gap-1">
+
         {projectList.map((item, index) => (
-          <div key={index}>
+          <div key={item.id}>
             <DAOCard item={item} key={item.id} />
           </div>
         ))}
