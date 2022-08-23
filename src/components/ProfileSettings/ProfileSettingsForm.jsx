@@ -272,7 +272,12 @@ const ProfileSettingsForm = () => {
             )}
           </div>
           <div className="mb-4">
-            <div className="label">Username</div>
+            <div className="label">
+              Username{" "}
+              <small className="ml-2 text-red-500 text-xs">
+                * This field is required
+              </small>
+            </div>
             <div className="label-grey">
               you can use your name or your nickname.
             </div>
