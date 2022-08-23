@@ -1,17 +1,18 @@
 import React from "react";
 import { useState, useCallback, useEffect } from "react";
 import "assets/css/CreateProject/mainView.css";
-import { checkUniqueCollectionName } from "services/collection/collectionService";
+import {
+  checkUniqueCollectionName,
+  checkUniqueCollectionSymbol,
+} from "services/collection/collectionService";
 import Outline from "components/DraftProjectUpdate/Outline";
 import Confirmation from "components/DraftProjectUpdate/Confirmation";
-import {
-  deleteAssetsOfProject,
-  mockCreateProject,
-} from "services/project/projectService";
+import { mockCreateProject } from "services/project/projectService";
 import {
   createCollection,
   updateCollection,
   getCollectionDetailsById,
+  deleteAssetsOfCollection,
 } from "services/collection/collectionService";
 import ErrorModal from "components/modalDialog/ErrorModal";
 import SuccessModal from "components/modalDialog/SuccessModal";
@@ -33,15 +34,17 @@ export default function CollectionCreate() {
       setoutlineKey(1);
     }
   }, []);
-  function onLogoPhotoRemove() {
+  async function onLogoPhotoRemove() {
     if (coverPhotoUrl.id) {
       let payload = {
         projectId: projectInfo.id,
         assetsId: logoPhotoUrl.id,
       };
-      deleteAssetsOfProject(payload).then((e) => {
+      setDataIsLoading(true);
+      await deleteAssetsOfCollection(payload).then((e) => {
         setLogoPhoto([]);
         setLogoPhotoUrl("");
+        setDataIsLoading(false);
       });
     } else {
       setLogoPhoto([]);
@@ -49,6 +52,16 @@ export default function CollectionCreate() {
     }
   }
   // Logo End
+
+  // collection Type start
+  const [collectionType, setCollectionType] = useState("");
+  const [showCollectionType, setShowCollectionType] = useState(true);
+  const [emptyCollectionType, setEmptyCollectionType] = useState(false);
+  function onCollectionTypeSelect(e) {
+    setCollectionType(e.target.value);
+    setEmptyCollectionType(false);
+  }
+  // collection type End
 
   // cover start
   const [coverPhoto, setCoverPhoto] = useState([]);
@@ -64,15 +77,17 @@ export default function CollectionCreate() {
       setoutlineKey(1);
     }
   }, []);
-  function onCoverPhotoRemove() {
+  async function onCoverPhotoRemove() {
     if (coverPhotoUrl.id) {
       let payload = {
         projectId: projectInfo.id,
         assetsId: coverPhotoUrl.id,
       };
-      deleteAssetsOfProject(payload).then((e) => {
+      setDataIsLoading(true);
+      await deleteAssetsOfCollection(payload).then((e) => {
         setCoverPhoto([]);
         setCoverPhotoUrl("");
+        setDataIsLoading(false);
       });
     } else {
       setCoverPhoto([]);
@@ -89,8 +104,10 @@ export default function CollectionCreate() {
   async function onProjectNameChange(e) {
     let payload = {
       projectName: e,
+      project_uuid: projectId,
     };
     setProjectName(payload.projectName);
+    setemptyProjectName(false);
     await checkUniqueCollectionName(payload)
       .then((e) => {
         if (e.code === 0) {
@@ -111,9 +128,26 @@ export default function CollectionCreate() {
   const [daoSymbol, setDaoSymbol] = useState("");
   const [emptyDaoSymbol, setEmptyDaoSymbol] = useState(false);
   const [daoSymbolDisable, setDaoSymbolDisable] = useState(false);
+  const [alreadyTakenDaoSymbol, setAlreadyTakenDaoSymbol] = useState(false);
   async function onDaoSymbolChange(e) {
-    setDaoSymbol(e);
+    let payload = {
+      collectionSymbol: e,
+      project_uuid: projectId,
+    };
+    setDaoSymbol(payload.collectionSymbol);
     setEmptyDaoSymbol(false);
+    await checkUniqueCollectionSymbol(payload)
+      .then((e) => {
+        if (e.code === 0) {
+          setEmptyDaoSymbol(false);
+          setAlreadyTakenDaoSymbol(false);
+        } else {
+          setAlreadyTakenDaoSymbol(true);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
   // Dao symbol End
 
@@ -191,9 +225,25 @@ export default function CollectionCreate() {
   const [royaltyPercentageDisable, setRoyaltyPercentageDisable] =
     useState(false);
   const [royaltyPercentage, setRoyaltyPercentage] = useState(0);
+  const [isRoyaltyPercentageValid, setIsRoyaltyPercentageValid] =
+    useState(true);
 
   function onRoyaltyPercentageChange(royalties) {
     setRoyaltyPercentage(royalties);
+    if (royalties === "") {
+      setIsRoyaltyPercentageValid(false);
+    } else {
+      if (!isNaN(royalties)) {
+        let value = parseInt(royalties);
+        if (value < 0) {
+          setIsRoyaltyPercentageValid(false);
+        } else if (value > 0 && value > 10) {
+          setIsRoyaltyPercentageValid(false);
+        } else {
+          setIsRoyaltyPercentageValid(true);
+        }
+      }
+    }
   }
 
   // Royalty Percentage end
@@ -211,44 +261,33 @@ export default function CollectionCreate() {
   const [projectInfo, setProjectInfo] = useState({});
   const [projectCategoryList, setProjectCategoryList] = useState([]);
   const [dao_id, setDao_id] = useState(null);
-  const [collectionType, setCollectionType] = useState(null);
 
   function handelClickBack() {
     let currentIndex = currentStep.pop();
     setcurrentStep(currentStep.filter((x) => x !== currentIndex));
   }
   async function createBlock(id) {
-    setDataIsLoading(true);
-
-    if (query.get("dao_id") && query.get("type")) {
+    if (dao_id) {
+      setDataIsLoading(true);
       id = await createNewProject(dao_id);
-      if (id !== "") {
-        await updateExistingProject(id);
-        await projectDetails(id);
-        setDataIsLoading(false);
-        setShowSuccessModal(true);
-      }
+      await updateExistingProject(id);
+      // await projectDetails(id);
+      setDataIsLoading(false);
+      setShowSuccessModal(true);
     } else {
-      setShowErrorModal(true);
+      setDataIsLoading(true);
+      const daoId = await daoCreate();
+      id = await createNewProject(daoId);
+      await updateExistingProject(id);
+      // await projectDetails(id);
+      setDataIsLoading(false);
+      setShowSuccessModal(true);
     }
-
-    // if (query.get("dao_id") && query.get("type")) {
-    //   console.log(dao_id, collectionType);
-    //   // id = await createNewProject(dao_id);
-    //   // await updateExistingProject(id);
-    //   // await projectDetails(id);
-    // }
-    // else {
-    //   const dao_id = await daoCreate();
-    //   id = await createNewProject(dao_id);
-    //   await updateExistingProject(id);
-    //   await projectDetails(id);
-    // }
   }
   async function updateBlock(id) {
     setDataIsLoading(true);
     await updateExistingProject(id);
-    await projectDetails(id);
+    // await projectDetails(id);
     setDataIsLoading(false);
     setShowSuccessModal(true);
   }
@@ -258,8 +297,12 @@ export default function CollectionCreate() {
       if (
         projectName !== "" &&
         projectCategory !== "" &&
-        alreadyTakenProjectName === false
+        alreadyTakenProjectName === false &&
+        daoSymbol !== "" &&
+        alreadyTakenDaoSymbol === false &&
+        isRoyaltyPercentageValid
       ) {
+        console.log("dfg");
         let id = "";
         if (!projectCreated) {
           await createBlock(id);
@@ -300,8 +343,8 @@ export default function CollectionCreate() {
       name: projectName,
       overview: overview,
       cover: coverPhoto.length > 0 ? coverPhoto[0] : null,
-      primaryRoyalties: primaryRoyalties,
-      secondaryRoyalties: secondaryRoyalties,
+      // primaryRoyalties: primaryRoyalties,
+      // secondaryRoyalties: secondaryRoyalties,
       webLinks: JSON.stringify(webLinks),
       category_id: projectCategory,
       blockchainCategory: blockchainCategory,
@@ -311,15 +354,41 @@ export default function CollectionCreate() {
       collectionSymbol: daoSymbol,
       id: id,
     };
-    console.log(updatePayload);
     await updateCollection(updatePayload);
   }
   async function projectDetails(id) {
     let payload = {
       id: id ? id : projectId,
     };
+    setDataIsLoading(true);
     await getCollectionDetailsById(payload).then((e) => {
-      console.log(e);
+      if (e.code === 0) {
+        const response = e.collection;
+        console.log(response);
+        const logo = response.assets.find((x) => x.asset_purpose === "logo");
+        setLogoPhotoUrl(logo ? logo : "");
+        setProjectName(response.name);
+        setDaoSymbol(response.collection_symbol);
+        setOverview(response.description);
+        const cover = response.assets.find((x) => x.asset_purpose === "cover");
+        setCoverPhotoUrl(cover ? cover : "");
+        try {
+          setWebLinks(JSON.parse(response.links));
+        } catch (e) {}
+        setProjectCategory(response.category_id);
+        setIsTokenTransferable(response.token_transferable);
+        setIsMetaDataFreezed(response.freeze_metadata);
+        setRoyaltyPercentage(response.royalty_percent);
+        setCollectionType(response.type);
+        setDataIsLoading(false);
+        setProjectInfo(response);
+        setProjectStatus(response.status);
+        setProjectCreated(true);
+        setProjectId(response.id);
+      } else {
+        setDataIsLoading(false);
+        showErrorModal(true);
+      }
 
       // setProjectInfo(e.project);
       // setProjectStatus(response.project_status);
@@ -346,13 +415,22 @@ export default function CollectionCreate() {
         setemptyProjectName(true);
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
-
+      if (daoSymbol === "") {
+        setEmptyDaoSymbol(true);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      if (collectionType === "") {
+        setEmptyCollectionType(true);
+      }
       if (projectCategory === "") {
         setEmptyProjectCategory(true);
       } else if (
         projectName !== "" &&
         projectCategory !== "" &&
-        alreadyTakenProjectName === false
+        alreadyTakenProjectName === false &&
+        daoSymbol !== "" &&
+        alreadyTakenDaoSymbol === false &&
+        isRoyaltyPercentageValid
       ) {
         const payload = {
           logo: logoPhoto.length > 0 ? logoPhoto[0] : null,
@@ -361,6 +439,7 @@ export default function CollectionCreate() {
           cover: coverPhoto.length > 0 ? coverPhoto[0] : null,
           // primaryRoyalties: primaryRoyalties,
           // secondaryRoyalties: secondaryRoyalties,
+          collectionType: collectionType,
           webLinks: JSON.stringify(webLinks),
           category_id: projectCategory,
           blockchainCategory: blockchainCategory,
@@ -368,7 +447,7 @@ export default function CollectionCreate() {
           isTokenTransferable: isTokenTransferable,
           royaltyPercentage: royaltyPercentage,
         };
-        // console.log(payload);
+        console.log(payload);
         setcurrentStep([1, 2]);
       }
     }
@@ -383,13 +462,13 @@ export default function CollectionCreate() {
     await mockCreateProject().then((res) => {
       daoId = res.project.id;
       setDao_id(daoId);
-      const newUrl =
-        window.location.protocol +
-        "//" +
-        window.location.host +
-        window.location.pathname +
-        `?dao_id=${daoId}`;
-      window.history.pushState({ path: newUrl }, "", newUrl);
+      // const newUrl =
+      //   window.location.protocol +
+      //   "//" +
+      //   window.location.host +
+      //   window.location.pathname +
+      //   `?dao_id=${daoId}`;
+      // window.history.pushState({ path: newUrl }, "", newUrl);
     });
     return daoId;
   }
@@ -406,6 +485,13 @@ export default function CollectionCreate() {
     }
     if (query.get("type")) {
       setCollectionType(query.get("type"));
+      setShowCollectionType(false);
+    }
+  }, []);
+  useEffect(() => {
+    if (query.get("id")) {
+      projectDetails(query.get("id"));
+      setShowCollectionType(false);
     }
   }, []);
 
@@ -434,6 +520,11 @@ export default function CollectionCreate() {
                 coverPhotoUrl={coverPhotoUrl}
                 onCoverPhotoSelect={onCoverPhotoSelect}
                 onCoverPhotoRemove={onCoverPhotoRemove}
+                // collection Type
+                showCollectionType={showCollectionType}
+                collectionType={collectionType}
+                emptyCollectionType={emptyCollectionType}
+                onCollectionTypeSelect={onCollectionTypeSelect}
                 // name
                 nameLabel="Collection Name"
                 projectName={projectName}
@@ -448,6 +539,7 @@ export default function CollectionCreate() {
                 emptyDaoSymbol={emptyDaoSymbol}
                 onDaoSymbolChange={onDaoSymbolChange}
                 daoSymbolDisable={daoSymbolDisable}
+                alreadyTakenDaoSymbol={alreadyTakenDaoSymbol}
                 // Dao Wallet
                 showDaoWallet={false}
                 // overview
@@ -490,6 +582,7 @@ export default function CollectionCreate() {
                 royaltyPercentageDisable={royaltyPercentageDisable}
                 royaltyPercentage={royaltyPercentage}
                 onRoyaltyPercentageChange={onRoyaltyPercentageChange}
+                isRoyaltyPercentageValid={isRoyaltyPercentageValid}
               />
             </div>
           )}
@@ -571,17 +664,15 @@ export default function CollectionCreate() {
         <SuccessModal
           handleClose={() => setShowSuccessModal(false)}
           show={showSuccessModal}
-          redirection={`/project-details/${dao_id}`}
+          redirection={`/collection-details/${projectId}`}
         />
       )}
       {showErrorModal && (
         <ErrorModal
           handleClose={() => setShowErrorModal(false)}
           show={showErrorModal}
-          title="DAO and Collection Type are not found in the URL"
-          message="Please do not change anything in the URL"
           buttomText="Try Again"
-          redirection={`/`}
+          redirection={`/create`}
         />
       )}
     </>
