@@ -30,6 +30,8 @@ export default function MembershipNFT() {
   const dispatch = useDispatch();
   const userinfo = useSelector((state) => state.user.userinfo);
   const [isDataLoading, setDataIsLoading] = useState(false);
+  const [isListUpdate, setIsListUpdate] = useState(false);
+
   const nftList = [
     {
       tierName: "",
@@ -204,10 +206,13 @@ export default function MembershipNFT() {
     setPropertyList(tempProperty);
   }
   function removeProperty(index) {
+    setIsListUpdate(true);
     let tempProperty = [...propertyList];
     tempProperty = tempProperty.filter((prop) => prop !== tempProperty[index]);
     setPropertyList(tempProperty);
-    // console.log(tempProperty);
+    setTimeout(() => {
+      setIsListUpdate(false);
+    }, 50);
   }
   function onSensitiveContentChange(index) {
     let oldNfts = [...nfts];
@@ -221,11 +226,15 @@ export default function MembershipNFT() {
     setShowPropertyModal(true);
   }
   function onSavePropertiesChange() {
+    setIsListUpdate(true);
     let oldNfts = [...nfts];
     oldNfts[indexOfNfts].properties = propertyList;
     setNfts(oldNfts);
     setShowPropertyModal(false);
     setPropertyList([]);
+    setTimeout(() => {
+      setIsListUpdate(false);
+    }, 50);
   }
   function useQuery() {
     const { search } = useLocation();
@@ -553,6 +562,18 @@ export default function MembershipNFT() {
       setDao_id(query.get("collection_id"));
     }
   }, []);
+
+  function removePropertyOfTier(nft, index) {
+    setIsListUpdate(true);
+    let tempProperty = [...nft.properties];
+    tempProperty = tempProperty.filter((prop) => prop !== tempProperty[index]);
+    let oldNfts = [...nfts];
+    oldNfts[indexOfNfts].properties = tempProperty;
+    setNfts(oldNfts);
+    setTimeout(() => {
+      setIsListUpdate(false);
+    }, 50);
+  }
 
   return (
     <>
@@ -892,26 +913,45 @@ export default function MembershipNFT() {
                         </div>
                       )}
                     </div>
-                    <div className="mt-2 flex flex-wrap">
-                      {nft.properties &&
-                        nft.properties.map((property, index) => (
-                          <div key={index} className="m-2">
-                            {property.key.length > 0 && property.value.length && (
-                              <div
-                                key={`properties-${index}`}
-                                className="place-content-center"
-                              >
-                                <div className="min-16 w-auto border rounded text-center  p-2">
-                                  <p className="text-primary-color-1 font-semibold text-ellipsis">
-                                    {property.key}
-                                  </p>
-                                  <p className="text-sm text-ellipsis">
-                                    {property.value}
-                                  </p>
+                    <div className="grid grid-cols-1 mt-2">
+                      {isListUpdate && (
+                        <div className="text-center mt-3">
+                          <i className="fa-solid fa-loader fa-spin text-primary-900"></i>
+                        </div>
+                      )}
+                      {!isListUpdate &&
+                        nft.properties &&
+                        nft.properties.map((property, i) => (
+                          <>
+                            {property.key && property.value && (
+                              <div key={i}>
+                                <div className="flex items-center mt-3">
+                                  <input
+                                    name={`preview-type-${i}`}
+                                    type={"text"}
+                                    className="w-32 bg-gray-200 disabled:cursor-not-allowed"
+                                    defaultValue={property.key}
+                                    disabled={true}
+                                  />
+
+                                  <input
+                                    name={`preview-name-${i}`}
+                                    type={"text"}
+                                    className="ml-4 w-32 bg-gray-200 disabled:cursor-not-allowed"
+                                    defaultValue={property.value}
+                                    disabled={true}
+                                  />
+
+                                  <i
+                                    className="cursor-pointer fa-solid fa-trash text-danger-1/[0.7] ml-3"
+                                    onClick={() => {
+                                      removePropertyOfTier(nft, i);
+                                    }}
+                                  ></i>
                                 </div>
                               </div>
                             )}
-                          </div>
+                          </>
                         ))}
                     </div>
                   </div>
@@ -1011,7 +1051,13 @@ export default function MembershipNFT() {
                 properties
               </p>
               <p className="text-color-ass-9 text-sm">Add Properties</p>
-              {propertyList &&
+              {isListUpdate && (
+                <div className="text-center mt-3">
+                  <i className="fa-solid fa-loader fa-spin text-primary-900"></i>
+                </div>
+              )}
+              {!isListUpdate &&
+                propertyList &&
                 propertyList.map((property, index) => (
                   <div key={index}>
                     <div className="flex items-center mt-3">

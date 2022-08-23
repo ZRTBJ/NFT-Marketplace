@@ -45,6 +45,7 @@ export default function ProductNFT(props) {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [projectId, setProjectId] = useState("");
   const [collectionId, setCollectionId] = useState("");
+  const [isListUpdate, setIsListUpdate] = useState(false);
 
   const {
     register,
@@ -91,9 +92,13 @@ export default function ProductNFT(props) {
     setPropertyList(tempProperty);
   }
   function removeProperty(index) {
+    setIsListUpdate(true);
     const tempProperty = [...propertyList];
-    tempProperty.splice(index - 1, 1);
+    tempProperty.splice(index, 1);
     setPropertyList(tempProperty);
+    setTimeout(() => {
+      setIsListUpdate(false);
+    }, 50);
   }
 
   function handleOnChangePropertyName(event, index) {
@@ -582,7 +587,13 @@ export default function ProductNFT(props) {
                     </div>
                   </div>
                   <div className="grid grid-cols-1 mt-2">
-                    {propertyList &&
+                    {isListUpdate && (
+                      <div className="text-center mt-3">
+                        <i className="fa-solid fa-loader fa-spin text-primary-900"></i>
+                      </div>
+                    )}
+                    {!isListUpdate &&
+                      propertyList &&
                       propertyList.map((property, index) => (
                         <div key={`view-properties-${index}`}>
                           <div className="flex items-center mt-3">
@@ -602,7 +613,7 @@ export default function ProductNFT(props) {
                               defaultValue={property.value}
                             />
                             <i
-                              className={`fa-solid fa-trash cursor-pointer ml-3 text-primary-900 ${
+                              className={`fa-solid fa-trash cursor-pointer ml-3 text-danger-1/[0.7] ${
                                 showConfirmation ? "hidden" : ""
                               }`}
                               onClick={() => removeProperty(index)}
@@ -700,7 +711,13 @@ export default function ProductNFT(props) {
               properties
             </p>
             <p className="text-color-ass-9 text-sm">Add Properties</p>
-            {propertyList &&
+            {isListUpdate && (
+              <div className="text-center mt-3">
+                <i className="fa-solid fa-loader fa-spin text-primary-900"></i>
+              </div>
+            )}
+            {!isListUpdate &&
+              propertyList &&
               propertyList.map((property, index) => (
                 <div key={`properties-${index}`}>
                   <div className="flex items-center mt-3">
@@ -720,7 +737,7 @@ export default function ProductNFT(props) {
                       onChange={(e) => handleOnChangePropertyName(e, index)}
                     />
                     <i
-                      className="fa-solid fa-trash cursor-pointer ml-3 text-primary-900"
+                      className="fa-solid fa-trash cursor-pointer ml-3 text-danger-1/[0.7]"
                       onClick={() => removeProperty(index)}
                     ></i>
                   </div>
@@ -741,7 +758,13 @@ export default function ProductNFT(props) {
               <button
                 type="button"
                 className="btn text-white-shade-900 bg-primary-900 btn-sm"
-                onClick={() => setShowPropertyModal(false)}
+                onClick={() => {
+                  setIsListUpdate(true);
+                  setShowPropertyModal(false);
+                  setTimeout(() => {
+                    setIsListUpdate(false);
+                  }, 50);
+                }}
               >
                 SAVE
               </button>

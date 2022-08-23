@@ -152,6 +152,29 @@ const Profile = () => {
     },
   };
 
+  const daosettings = {
+    320: {
+      slidesPerView: 2,
+      spaceBetween: 100,
+    },
+    640: {
+      slidesPerView: 2,
+      spaceBetween: 100,
+    },
+    768: {
+      slidesPerView: 3,
+      spaceBetween: 100,
+    },
+    1024: {
+      slidesPerView: 4,
+      spaceBetween: 100,
+    },
+    1536: {
+      slidesPerView: 5,
+      spaceBetween: 100,
+    },
+  };
+
   // function start
   async function userInfo() {
     await getUserInfo(id)
@@ -482,46 +505,18 @@ const Profile = () => {
 
             {projectList.length > 0 ? (
               <Swiper
-                breakpoints={{
-                  320: {
-                    slidesPerView: 2,
-                    spaceBetween: 15,
-                  },
-                  640: {
-                    slidesPerView: 2,
-                    spaceBetween: 15,
-                  },
-                  768: {
-                    slidesPerView: 3,
-                    spaceBetween: 15,
-                  },
-                  1024: {
-                    slidesPerView: 4,
-                    spaceBetween: 15,
-                  },
-                  1536: {
-                    slidesPerView: 5,
-                    spaceBetween: 15,
-                  },
-                }}
-                className="swipe-card"
+                breakpoints={daosettings}
                 navigation={false}
                 modules={[Navigation]}
+                className={styles.createSwiper}
               >
-                <Swiper
-                  breakpoints={settings}
-                  navigation={true}
-                  modules={[Navigation]}
-                  className={styles.createSwiper}
-                >
-                  <div>
-                    {projectList.map((item) => (
-                      <SwiperSlide key={item.id} className={styles.daoCard}>
-                        <DAOCard item={item} key={item.id} />
-                      </SwiperSlide>
-                    ))}
-                  </div>
-                </Swiper>
+                <div>
+                  {projectList.map((item) => (
+                    <SwiperSlide key={item.id} className={styles.daoCard}>
+                      <DAOCard item={item} key={item.id} />
+                    </SwiperSlide>
+                  ))}
+                </div>
               </Swiper>
             ) : (
               <div className="text-center mt-6">
