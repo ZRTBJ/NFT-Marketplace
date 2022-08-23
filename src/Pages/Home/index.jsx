@@ -1,22 +1,26 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   getPublicProjectList,
   getProjectCategory,
-} from "services/project/projectService";
-import HomeNavigateCard from "components/Home/HomeNavigateCard";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
-import SwiperCore, { Autoplay } from "swiper";
-import CommonCard from "components/CommonCard";
-import { Navigation } from "swiper";
-import thumbIcon from "assets/images/profile/card.svg";
-import avatar from "assets/images/dummy-img.svg";
-import DAOCard from "components/DAOCard";
-import { getCollections } from "services/collection/collectionService";
-import { Link } from "react-router-dom";
+} from 'services/project/projectService';
+import HomeNavigateCard from 'components/Home/HomeNavigateCard';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import SwiperCore, { Autoplay } from 'swiper';
+import CommonCard from 'components/CommonCard';
+import { Navigation } from 'swiper';
+import thumbIcon from 'assets/images/profile/card.svg';
+import avatar from 'assets/images/dummy-img.svg';
+import DAOCard from 'components/DAOCard';
+import { getCollections } from 'services/collection/collectionService';
+import { Link } from 'react-router-dom';
+import InviteModal from 'components/modalDialog/InviteModal';
+import { getIdbyCode } from 'services/nft/nftService';
+import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 function Home() {
   SwiperCore.use([Autoplay]);
@@ -26,20 +30,39 @@ function Home() {
   const [projectList, setProjectList] = useState([]);
   const [popularProjectList, setPopularProjectList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [sortType, setSortType] = useState("newer");
+  const [sortType, setSortType] = useState('newer');
   const [collectionList, setCollectionList] = useState([]);
+  const [inviteData, setInviteData] = useState();
+  const [isInviteLoading, setIsInvteLoading] = useState(false);
+  const [ShowInviteModal, setShowInviteModal] = useState(false);
+  const { invite } = useParams();
+  const userinfo = useSelector((state) => state.user.userinfo);
 
   const payload = {
-    order_by: "newer",
+    order_by: 'newer',
     page: 1,
     limit: 10,
-    keyword: "",
+    keyword: '',
   };
   const popularPayload = {
-    order_by: "view",
+    order_by: 'view',
     page: 1,
     limit: 10,
   };
+
+  useEffect(() => {
+    if (invite) {
+      getIdbyCode(invite)
+        .then((resp) => {
+          if (resp.code === 0) {
+            setShowInviteModal(true);
+          }
+          setInviteData(resp);
+        })
+        .catch((err) => console.log(err));
+    }
+  }, []);
+
   async function getProjectList(payload, type) {
     const categoriesRes = await getProjectCategory();
     const projectRes = await getPublicProjectList(payload);
@@ -75,7 +98,7 @@ function Home() {
   function handleSortType(type) {
     setSortType(type);
     payload.order_by = type;
-    getProjectList(payload, "new");
+    getProjectList(payload, 'new');
   }
 
   function searchProject(event) {
@@ -92,7 +115,7 @@ function Home() {
 
   async function getCollectionList() {
     setIsLoading(true);
-    await getCollections("", "", 1, 20)
+    await getCollections('', '', 1, 20)
       .then((e) => {
         if (e.code === 0 && e.data !== null) {
           setCollectionList(e.data);
@@ -110,32 +133,39 @@ function Home() {
   };
 
   useEffect(() => {
-    const navItem = document.getElementById("nav-home");
-    if (navItem) navItem.classList.add("active-menu");
+    const navItem = document.getElementById('nav-home');
+    if (navItem) navItem.classList.add('active-menu');
   }, []);
   useEffect(
     () => () => {
-      const navItem = document.getElementById("nav-home");
-      if (navItem) navItem.classList.remove("active-menu");
+      const navItem = document.getElementById('nav-home');
+      if (navItem) navItem.classList.remove('active-menu');
     },
     []
   );
-
   return (
-    <div className="text-txtblack dark:text-white">
-      <section className="text-center my-4">
+    <div className='text-txtblack dark:text-white'>
+      <InviteModal
+        show={ShowInviteModal}
+        handleClose={() => setShowInviteModal(false)}
+        collectionName={inviteData?.collection_name}
+        isAuthenticated={userinfo?.id}
+        nftId={inviteData?.lnft_id}
+        collectionId={inviteData?.collection_id}
+      />
+      <section className='text-center my-4'>
         <HomeNavigateCard />
       </section>
 
       {/* Start New UI MVP-1.1 */}
 
-      <h2 className="mb-5">DAO List</h2>
+      <h2 className='mb-5'>DAO List</h2>
 
-      <section className="flex mb-6">
-        <form className="mr-4 flex-1">
-          <div className="relative">
-            <div className="flex absolute inset-y-0 left-0 items-center pl-4 pointer-events-none">
-              <i className="fa-regular fa-magnifying-glass text-primary-900 text-lg"></i>
+      <section className='flex mb-6'>
+        <form className='mr-4 flex-1'>
+          <div className='relative'>
+            <div className='flex absolute inset-y-0 left-0 items-center pl-4 pointer-events-none'>
+              <i className='fa-regular fa-magnifying-glass text-primary-900 text-lg'></i>
             </div>
             <input
               type="text"
@@ -153,44 +183,44 @@ function Home() {
           </div>
         </form>
 
-        <div className="dropdown relative">
+        <div className='dropdown relative'>
           <button
-            className="bg-white dropdown-toggle p-4 text-textSubtle font-black font-satoshi-bold rounded-lg shadow-main flex items-center justify-between w-44 h-[72px]"
-            type="button"
-            id="dropdownMenuButton1"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
+            className='bg-white dropdown-toggle p-4 text-textSubtle font-black font-satoshi-bold rounded-lg shadow-main flex items-center justify-between w-44 h-[72px]'
+            type='button'
+            id='dropdownMenuButton1'
+            data-bs-toggle='dropdown'
+            aria-expanded='false'
           >
             Sort Of
-            <i className="fa-solid fa-angle-down"></i>
+            <i className='fa-solid fa-angle-down'></i>
           </button>
 
           <ul
-            className="dropdown-menu w-full absolute hidden bg-white text-base z-50 py-2 list-none rounded-lg shadow-main  mt-1 "
-            aria-labelledby="dropdownMenuButton1"
+            className='dropdown-menu w-full absolute hidden bg-white text-base z-50 py-2 list-none rounded-lg shadow-main  mt-1 '
+            aria-labelledby='dropdownMenuButton1'
           >
-            <li onClick={() => handleSortType("newer")}>
+            <li onClick={() => handleSortType('newer')}>
               <a
                 className={`dropdown-item py-2 px-4 block whitespace-nowrap ${
-                  sortType === "newer" ? "text-primary-900" : "text-txtblack"
+                  sortType === 'newer' ? 'text-primary-900' : 'text-txtblack'
                 } hover:bg-slate-50 transition duration-150 ease-in-out`}
               >
                 Newer
               </a>
             </li>
-            <li onClick={() => handleSortType("older")}>
+            <li onClick={() => handleSortType('older')}>
               <a
                 className={`dropdown-item py-2 px-4 block whitespace-nowrap ${
-                  sortType === "older" ? "text-primary-900" : "text-txtblack"
+                  sortType === 'older' ? 'text-primary-900' : 'text-txtblack'
                 } hover:bg-slate-50 transition duration-150 ease-in-out`}
               >
                 older
               </a>
             </li>
-            <li onClick={() => handleSortType("view")}>
+            <li onClick={() => handleSortType('view')}>
               <a
                 className={`dropdown-item py-2 px-4 block whitespace-nowrap ${
-                  sortType === "view" ? "text-primary-900" : "text-txtblack"
+                  sortType === 'view' ? 'text-primary-900' : 'text-txtblack'
                 } hover:bg-slate-50 transition duration-150 ease-in-out`}
               >
                 view
@@ -247,45 +277,45 @@ function Home() {
       </section> */}
       {/* End pagination */}
 
-      <h2 className="mb-5">Best Collection</h2>
-      <section className="grid md:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
+      <h2 className='mb-5'>Best Collection</h2>
+      <section className='grid md:grid-cols-3 xl:grid-cols-4 gap-4 mb-6'>
         {/* Card */}
         {collectionList &&
           collectionList.length > 0 &&
           collectionList.map((collection, index) => (
             <div
-              className="min-h-[390px] rounded-x"
+              className='min-h-[390px] rounded-x'
               key={`best-collection-${index}`}
             >
               <Link
                 to={
-                  collection.type === "right_attach"
+                  collection.type === 'right_attach'
                     ? `/royality-management/${collection.id}`
                     : `/collection-details/${collection.id}`
                 }
               >
                 <img
-                  className="rounded-xl h-[276px] object-cover w-full"
+                  className='rounded-xl h-[276px] object-cover w-full'
                   src={
                     collection && collection.assets && collection.assets[0]
                       ? collection.assets[0].path
                       : thumbIcon
                   }
-                  alt=""
+                  alt=''
                 />
               </Link>
 
-              <div className="p-5">
-                <h2 className="pb-2 text-txtblack truncate">
+              <div className='p-5'>
+                <h2 className='pb-2 text-txtblack truncate'>
                   {collection.name}
                 </h2>
-                <p className="mb-3 text-textSubtle text-[13px]">
+                <p className='mb-3 text-textSubtle text-[13px]'>
                   {collection.description && collection.description.length > 70
-                    ? collection.description.substring(0, 67) + "..."
+                    ? collection.description.substring(0, 67) + '...'
                     : collection.description}
                 </p>
 
-                <div className="flex items-center">
+                <div className='flex items-center'>
                   {collection.members &&
                     collection.members.length > 0 &&
                     truncateArray(collection.members).slicedItems.map(
@@ -293,13 +323,13 @@ function Home() {
                         <img
                           src={member.avatar}
                           alt={member.id}
-                          className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
+                          className='rounded-full w-9 h-9 -ml-2 border-2 border-white'
                         />
                       )
                     )}
                   {collection.members && collection.members.length > 3 && (
-                    <div className="flex items-center mt-[6px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]">
-                      <p className="text-[12px] text-[#9A5AFF]">
+                    <div className='flex items-center mt-[6px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]'>
+                      <p className='text-[12px] text-[#9A5AFF]'>
                         +{truncateArray(collection.members).restSize}
                       </p>
                     </div>

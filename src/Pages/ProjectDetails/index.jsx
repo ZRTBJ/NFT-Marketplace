@@ -268,6 +268,7 @@ export default function ProjectDetails(props) {
         setIsLoadingBalance(false);
       });
   }
+  console.log(rightAttachCollectionList);
 
   return (
     <>
@@ -619,10 +620,9 @@ export default function ProjectDetails(props) {
                               <button
                                 type="button"
                                 onClick={() => {
-                                  const el =
-                                    document.getElementById(
-                                      "membership-option"
-                                    );
+                                  const el = document.getElementById(
+                                    `membership-option-${index}`
+                                  );
                                   el.classList.toggle("hidden");
                                 }}
                               >
@@ -633,7 +633,7 @@ export default function ProjectDetails(props) {
                               {/* Dropdown menu  */}
                               {project?.is_owner && (
                                 <div
-                                  id="membership-option"
+                                  id={`membership-option-${index}`}
                                   className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden"
                                 >
                                   <ul className="text-sm">
@@ -643,19 +643,19 @@ export default function ProjectDetails(props) {
                                       </a>
                                     </li>
                                     <li className="border-b border-divide">
-                                      <a
-                                        href="#"
+                                      <Link
+                                        to={`/collection-create/?id=${collection?.id}`}
                                         className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
                                       >
                                         Edit Collections
-                                      </a>
+                                      </Link>
                                     </li>
                                     <li className="border-b border-divide">
                                       <a
                                         href="#"
                                         className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
                                       >
-                                        Embed Collection
+                                        Connect right-attach NFT
                                       </a>
                                     </li>
                                   </ul>
@@ -760,10 +760,9 @@ export default function ProjectDetails(props) {
                               <button
                                 type="button"
                                 onClick={() => {
-                                  const el =
-                                    document.getElementById(
-                                      "collection-option"
-                                    );
+                                  const el = document.getElementById(
+                                    `collection-option-${index}`
+                                  );
                                   el.classList.toggle("hidden");
                                 }}
                               >
@@ -774,7 +773,7 @@ export default function ProjectDetails(props) {
                               {/* Dropdown menu  */}
                               {project?.is_owner && (
                                 <div
-                                  id="collection-option"
+                                  id={`collection-option-${index}`}
                                   className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden"
                                 >
                                   <ul className="text-sm">
@@ -791,19 +790,19 @@ export default function ProjectDetails(props) {
                                       </a>
                                     </li>
                                     <li className="border-b border-divide">
-                                      <a
-                                        href="#"
+                                      <Link
+                                        to={`/collection-create/?id=${collection?.id}`}
                                         className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
                                       >
                                         Edit Collections
-                                      </a>
+                                      </Link>
                                     </li>
                                     <li className="border-b border-divide">
                                       <a
                                         href="#"
                                         className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
                                       >
-                                        Embed Collection
+                                        Connect right-attach NFT
                                       </a>
                                     </li>
                                   </ul>
@@ -939,10 +938,9 @@ export default function ProjectDetails(props) {
                                     <button
                                       type="button"
                                       onClick={() => {
-                                        const el =
-                                          document.getElementById(
-                                            "rightattach-option"
-                                          );
+                                        const el = document.getElementById(
+                                          `rightattach-option-${index}`
+                                        );
                                         el.classList.toggle("hidden");
                                       }}
                                     >
@@ -953,25 +951,17 @@ export default function ProjectDetails(props) {
                                     {/* Dropdown menu  */}
                                     {project?.is_owner && (
                                       <div
-                                        id="rightattach-option"
+                                        id={`rightattach-option-${index}`}
                                         className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden"
                                       >
                                         <ul className="text-sm">
                                           <li className="border-b border-divide">
-                                            <a
-                                              href="#"
+                                            <Link
+                                              to={`/collection-create/?id=${collection?.id}`}
                                               className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
                                             >
                                               Edit Collections
-                                            </a>
-                                          </li>
-                                          <li className="border-b border-divide">
-                                            <a
-                                              href="#"
-                                              className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
-                                            >
-                                              Embed Collection
-                                            </a>
+                                            </Link>
                                           </li>
                                         </ul>
                                       </div>
