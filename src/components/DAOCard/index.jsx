@@ -1,5 +1,5 @@
 import thumbIcon from "assets/images/profile/card.svg";
-import avatar from "assets/images/dummy-img.svg";
+import defaultImage from "assets/images/defaultImage.svg";
 import { useHistory } from "react-router-dom";
 
 const DAOCard = ({ item }) => {
@@ -46,10 +46,10 @@ const DAOCard = ({ item }) => {
         src={
           item.assets?.find((pic) => pic.name === "img1")
             ? item.assets?.find((pic) => pic.name === "img1").path
-            : avatar
+            : defaultImage
         }
         alt={item.name}
-        className="rounded-full w-24 h-24 absolute top-20 left-1/2 z-10 -ml-12 border-4 border-white"
+        className="rounded-full w-24 h-24 absolute top-20 left-1/2 z-10 -ml-12 "
       />
 
       <h3

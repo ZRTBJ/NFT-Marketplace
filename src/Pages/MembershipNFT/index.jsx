@@ -981,7 +981,7 @@ export default function MembershipNFT() {
                       )}
                     </>
                   </div>
-                  <div className="mb-6">
+                  {/* <div className="mb-6">
                     <div className="flex flex-wrap items-center">
                       <Tooltip></Tooltip>
                       <div className="txtblack text-[14px] mb-[6px]">
@@ -999,7 +999,7 @@ export default function MembershipNFT() {
                         Polygon
                       </option>
                     </select>
-                  </div>
+                  </div> */}
                 </div>
               ))}
             </div>

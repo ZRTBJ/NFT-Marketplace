@@ -24,11 +24,11 @@ import { useSelector } from "react-redux";
 
 function Home() {
   SwiperCore.use([Autoplay]);
-  const [categories, setCategories] = useState([]);
+  // const [categories, setCategories] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState([]);
   const [searchList, setSearchList] = useState([]);
   const [projectList, setProjectList] = useState([]);
-  const [popularProjectList, setPopularProjectList] = useState([]);
+  // const [popularProjectList, setPopularProjectList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [sortType, setSortType] = useState("newer");
   const [collectionList, setCollectionList] = useState([]);
@@ -44,11 +44,6 @@ function Home() {
     limit: 10,
     keyword: "",
   };
-  const popularPayload = {
-    order_by: "view",
-    page: 1,
-    limit: 10,
-  };
 
   useEffect(() => {
     if (invite) {
@@ -63,7 +58,9 @@ function Home() {
     }
   }, []);
 
-  async function getProjectList(payload, type) {
+  async function getProjectList(payload, orderBy, isSearch = false) {
+    payload.order_by = orderBy;
+
     const categoriesRes = await getProjectCategory();
     const projectRes = await getPublicProjectList(payload);
 
@@ -75,30 +72,25 @@ function Home() {
         return project;
       });
       // types
-      if (type === "new") {
+
+      if (isSearch) {
+        setSearchList(projects);
+      } else {
         setProjectList(projects);
       }
-      if (type === "popular") {
-        setPopularProjectList(projects);
-      }
-      // if (type === "search") {
-      //   setSearchList(projects);
-      // }
     }
     setIsLoading(false);
   }
   useEffect(() => {
     (async () => {
-      await getProjectList(payload, "new");
-      await getProjectList(popularPayload, "popular");
+      setIsLoading(true);
+      await getProjectList(payload, sortType);
       await getCollectionList();
     })();
-  }, []);
+  }, [sortType]);
 
   function handleSortType(type) {
     setSortType(type);
-    payload.order_by = type;
-    getProjectList(payload, "new");
   }
 
   function searchProject(event) {
@@ -109,8 +101,11 @@ function Home() {
     if (text && text.length > 2) {
       // todo: use debounce
       payload.keyword = text;
-      getProjectList(payload, "new");
+      getProjectList(payload, sortType, true);
     }
+  }
+  function clearSearch() {
+    setSearchKeyword("");
   }
 
   async function getCollectionList() {
@@ -143,8 +138,10 @@ function Home() {
     },
     []
   );
+  const isSearching = searchKeyword.length > 2;
+
   return (
-    <div className="text-txtblack dark:text-white">
+    <div className="text-txtblack">
       <InviteModal
         show={ShowInviteModal}
         handleClose={() => setShowInviteModal(false)}
@@ -160,9 +157,8 @@ function Home() {
       {/* Start New UI MVP-1.1 */}
 
       <h2 className="mb-5">DAO List</h2>
-
       <section className="flex mb-6">
-        <form className="mr-4 flex-1">
+        <div className="mr-4 flex-1">
           <div className="relative">
             <div className="flex absolute inset-y-0 left-0 items-center pl-4 pointer-events-none">
               <i className="fa-regular fa-magnifying-glass text-primary-900 text-lg"></i>
@@ -170,8 +166,11 @@ function Home() {
             <input
               type="text"
               id="default-search"
-              className="text-lg shadow-main w-full rounded-lg  pl-12 placeholder-color-ass-4 py-4 pr-4 h-[72px] text-[#000]"
-              placeholder="Search DAO by name"
+              style={{
+                paddingLeft: 40, // todo: use tailwind
+              }}
+              className="text-lg shadow-main w-full rounded-lg placeholder-color-ass-4 h-[72px] text-[#000]"
+              placeholder="Search DAO by name..."
               onChange={searchProject}
               value={searchKeyword}
               onKeyPress={(event) => {
@@ -181,7 +180,7 @@ function Home() {
               }}
             />
           </div>
-        </form>
+        </div>
 
         <div className="dropdown relative">
           <button
@@ -229,14 +228,36 @@ function Home() {
           </ul>
         </div>
       </section>
-
-      <section className="grid md:grid-cols-2 xl:grid-cols-3 xl:gap-1">
-        {projectList.map((item, index) => (
-          <div key={item.id}>
-            <DAOCard item={item} key={item.id} />
-          </div>
-        ))}
+      <section>
+        {isSearching ? (
+          <h4>
+            {`Showing result for "${searchKeyword}"`}{" "}
+            <p
+              className="text-primary-900 font-light cursor-pointer"
+              onClick={clearSearch}
+            >
+              clear
+            </p>
+          </h4>
+        ) : null}
+        <div className="p-5 text-center min-h-[100px] text-primary-700">
+          <h2>{isSearching && searchList.length === 0 && "Nothing found"}</h2>
+        </div>
+        <section className="grid md:grid-cols-2 xl:grid-cols-3 xl:gap-1">
+          {isSearching
+            ? searchList.map((item, index) => (
+                <div key={item.id}>
+                  <DAOCard item={item} key={item.id} />
+                </div>
+              ))
+            : projectList.map((item, index) => (
+                <div key={item.id}>
+                  <DAOCard item={item} key={item.id} />
+                </div>
+              ))}
+        </section>
       </section>
+
       {/* ----- End Card Section ---- */}
 
       {/* <section className="mb-5">
@@ -321,7 +342,7 @@ function Home() {
                     truncateArray(collection.members).slicedItems.map(
                       (member) => (
                         <img
-                          src={member.avatar ? member.avatar : avatar}
+                          src={member.avatar}
                           alt={member.id}
                           className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
                         />

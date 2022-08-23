@@ -202,7 +202,7 @@ export default function ProjectCreate() {
   // category end
 
   // Blockchain start
-  const [blockchainCategory, setBlockchaainCategory] = useState("polygon");
+  const [blockchainCategory, setBlockchaainCategory] = useState("ethereum");
   // Blockchain end
   let query = useQuery();
   const [outlineKey, setoutlineKey] = useState(0);
@@ -463,6 +463,7 @@ export default function ProjectCreate() {
                 // Royalties
                 showRoyalties={false}
                 // webLinks
+                showWebLinks={true}
                 webLinks={webLinks}
                 onSocialLinkChange={onSocialLinkChange}
                 // category
@@ -501,6 +502,7 @@ export default function ProjectCreate() {
               showRoyalties={false}
               // webLinks
               webLinks={webLinks}
+              showWebLinks={true}
               // category
               projectCategoryName={projectCategoryName}
               blockchainCategory={blockchainCategory}

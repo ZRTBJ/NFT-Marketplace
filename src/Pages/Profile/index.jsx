@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "assets/css/profile.css";
-import DefaultProfilePicture from "assets/images/profile/defaultProfile.svg";
+import DefaultProfilePicture from "assets/images/defaultProfile.svg";
 import DefaultProjectLogo from "assets/images/profile/defaultProjectLogo.svg";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Autoplay } from "swiper";
@@ -18,7 +18,7 @@ import { getUserInfo, getRoyalties } from "services/User/userService";
 import { Link, useParams } from "react-router-dom";
 import SuccessModal from "components/modalDialog/SuccessModal";
 import { getUserCollections } from "services/collection/collectionService";
-import thumbIcon from "assets/images/profile/card.svg";
+import thumbIcon from "assets/images/collectionCover.svg";
 
 const Profile = () => {
   SwiperCore.use([Autoplay]);
@@ -251,6 +251,14 @@ const Profile = () => {
     let slicedItems = members.slice(0, 3);
     return { slicedItems, restSize: members.length - slicedItems.length };
   };
+  function copyToClipboard(text) {
+    navigator.clipboard.writeText(text);
+    const copyEl = document.getElementById("copied-message");
+    copyEl.classList.toggle("hidden");
+    setTimeout(() => {
+      copyEl.classList.toggle("hidden");
+    }, 2000);
+  }
 
   useEffect(() => {
     userInfo();
@@ -296,10 +304,13 @@ const Profile = () => {
                       {user?.eoa?.slice(0, 20)}..{" "}
                       <i
                         onClick={() => {
-                          navigator.clipboard.writeText(user.eoa);
+                          copyToClipboard(user.eoa);
                         }}
                         className="fa-solid  fa-copy cursor-pointer pl-[6px]"
                       ></i>
+                      <span id="copied-message" className="hidden ml-2">
+                        Copied !
+                      </span>
                     </p>
                     <p className="flex items-center mb-[3px]">
                       <i className="fa-solid fa-map-pin mr-[7px] text-danger-1 text-[12px]"></i>
