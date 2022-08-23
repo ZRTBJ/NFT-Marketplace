@@ -15,7 +15,7 @@ import { getNotificationData } from "Slice/notificationSlice";
 import NotificatioMenu from "./NotificationMenu";
 import { getUserNotifications } from "services/notification/notificationService";
 import UserDropDownMenu from "./UserDropDownMenu";
-import userImg from "assets/images/user-profile.png";
+import userImg from "assets/images/defaultProfile.svg";
 
 const Header = () => {
   const history = useHistory();

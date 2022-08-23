@@ -70,6 +70,7 @@ export default function Outline({
   // webLinks
   webLinks,
   onSocialLinkChange,
+  showWebLinks,
 
   // category
   projectCategory,
@@ -404,30 +405,32 @@ export default function Outline({
       )}
 
       {/* web Links*/}
-      <div className="mb-3">
-        <div className="txtblack text-[14px] mb-[6px]">Add Social Link</div>
-        <div className="">
-          {webLinks.map((link, index) => (
-            <div key={index} className="inline-flex items-center w-full mb-4">
-              <i
-                className={` ${
-                  link.title.startsWith("customLinks")
-                    ? `fa-solid fa-${link.icon}`
-                    : `fa-brands fa-${link.icon}`
-                }  text-[24px] text-primary-900  mr-2`}
-              ></i>
-              <input
-                className={`block w-full border border-divider h-[48px] text-[14px] text-textSubtle rounded  pl-3  outline-none`}
-                placeholder="https://"
-                value={link.value}
-                onChange={(event) =>
-                  onSocialLinkChange(event.target.value, index)
-                }
-              />
-            </div>
-          ))}
+      {showWebLinks && (
+        <div className="mb-3">
+          <div className="txtblack text-[14px] mb-[6px]">Add Social Link</div>
+          <div className="">
+            {webLinks.map((link, index) => (
+              <div key={index} className="inline-flex items-center w-full mb-4">
+                <i
+                  className={` ${
+                    link.title.startsWith("customLinks")
+                      ? `fa-solid fa-${link.icon}`
+                      : `fa-brands fa-${link.icon}`
+                  }  text-[24px] text-primary-900  mr-2`}
+                ></i>
+                <input
+                  className={`block w-full border border-divider h-[48px] text-[14px] text-textSubtle rounded  pl-3  outline-none`}
+                  placeholder="https://"
+                  value={link.value}
+                  onChange={(event) =>
+                    onSocialLinkChange(event.target.value, index)
+                  }
+                />
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* category */}
       <div className="mb-6">
@@ -453,27 +456,29 @@ export default function Outline({
       </div>
 
       {/* blockchain */}
-      <div className="mb-6">
-        <div className="flex flex-wrap items-center">
-          <Tooltip></Tooltip>
-          <div className="txtblack text-[14px] mb-[6px]">Blockchain</div>
-        </div>
-        <select
-          value={blockchainCategory}
-          onChange={onBlockchainCategoryChange}
-          disabled
-          className="h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3"
-        >
-          <option value={blockchainCategory} defaultValue>
-            Polygon
-          </option>
-          {/* {blockchainCategoryList.map((e) => (
+      {blockchainCategory && (
+        <div className="mb-6">
+          <div className="flex flex-wrap items-center">
+            <Tooltip></Tooltip>
+            <div className="txtblack text-[14px] mb-[6px]">Blockchain</div>
+          </div>
+          <select
+            value={blockchainCategory}
+            onChange={onBlockchainCategoryChange}
+            disabled
+            className="h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3"
+          >
+            <option value={blockchainCategory} defaultValue>
+              Ethereum
+            </option>
+            {/* {blockchainCategoryList.map((e) => (
             <option key={e.id} value={e.id}>
               {e.name}
             </option>
           ))} */}
-        </select>
-      </div>
+          </select>
+        </div>
+      )}
       {showTokenTransferable && (
         <div className="mb-6">
           <div className="flex flex-wrap items-center">
@@ -481,20 +486,28 @@ export default function Outline({
               Transferable Token
             </p>
 
-            <label
-              htmlFor="token-transferable"
-              className="inline-flex relative items-center cursor-pointer ml-auto"
-            >
-              <input
-                type="checkbox"
-                value={isTokenTransferable}
-                id="token-transferable"
-                checked={isTokenTransferable}
-                className="sr-only peer outline-none"
-                onChange={(e) => onTokenTransferableChange(isTokenTransferable)}
-              />
-              <div className="w-11 outline-none h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-900"></div>
-            </label>
+            {tokenTransferableDisabled ? (
+              <p className="ml-auto text-textSubtle text-[14px]">
+                {isTokenTransferable.toString().toUpperCase()}
+              </p>
+            ) : (
+              <label
+                htmlFor="token-transferable"
+                className="inline-flex relative items-center cursor-pointer ml-auto"
+              >
+                <input
+                  type="checkbox"
+                  value={isTokenTransferable}
+                  id="token-transferable"
+                  checked={isTokenTransferable}
+                  className="sr-only peer outline-none"
+                  onChange={(e) =>
+                    onTokenTransferableChange(isTokenTransferable)
+                  }
+                />
+                <div className="w-11 outline-none h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-900"></div>
+              </label>
+            )}
           </div>
         </div>
       )}
@@ -502,20 +515,26 @@ export default function Outline({
       {showFreezeMetadata && (
         <div className="mb-6 flex flex-wrap items-center">
           <p className="text-txtSubtle text-[14px]">Metadata update</p>
-          <label
-            htmlFor="checked-toggle"
-            className="inline-flex relative items-center cursor-pointer ml-auto"
-          >
-            <input
-              type="checkbox"
-              value={isMetadataFreezed}
-              id="checked-toggle"
-              checked={isMetadataFreezed}
-              className="sr-only peer outline-none"
-              onChange={(e) => onMetadataFreezeChange(isMetadataFreezed)}
-            />
-            <div className="w-11 outline-none h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-900"></div>
-          </label>
+          {freezeMetadataDisabled ? (
+            <p className="ml-auto text-textSubtle text-[14px]">
+              {isMetadataFreezed.toString().toUpperCase()}
+            </p>
+          ) : (
+            <label
+              htmlFor="checked-toggle"
+              className="inline-flex relative items-center cursor-pointer ml-auto"
+            >
+              <input
+                type="checkbox"
+                value={isMetadataFreezed}
+                id="checked-toggle"
+                checked={isMetadataFreezed}
+                className="sr-only peer outline-none"
+                onChange={(e) => onMetadataFreezeChange(isMetadataFreezed)}
+              />
+              <div className="w-11 outline-none h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-900"></div>
+            </label>
+          )}
         </div>
       )}
 
@@ -546,7 +565,9 @@ export default function Outline({
                 )}
               </>
             )}
-            {royaltyPercentageDisable && <h3>{royaltyPercentage}</h3>}
+            {royaltyPercentageDisable && (
+              <h3 className="text-textSubtle">{royaltyPercentage} %</h3>
+            )}
           </div>
         </div>
       )}

@@ -231,7 +231,6 @@ function Home() {
       </section>
 
       <section className="grid md:grid-cols-2 xl:grid-cols-3 xl:gap-1">
-
         {projectList.map((item, index) => (
           <div key={item.id}>
             <DAOCard item={item} key={item.id} />
