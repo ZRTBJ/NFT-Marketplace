@@ -39,6 +39,7 @@ export default function Outline({
 
   // webLinks
   webLinks,
+  showWebLinks,
 
   // category
   projectCategoryName,
@@ -169,27 +170,29 @@ export default function Outline({
       )}
 
       {/* web Links*/}
-      <div className="mb-3">
-        <div className="txtblack text-[14px] mb-[6px]">Social Link</div>
-        <div className="">
-          {webLinks.map((link, index) => (
-            <div key={index} className="inline-flex items-center w-full my-2">
-              <i
-                className={` ${
-                  link.title.startsWith("customLinks")
-                    ? `fa-solid fa-${link.icon}`
-                    : `fa-brands fa-${link.icon}`
-                }  text-[24px] text-primary-900  mr-2`}
-              ></i>
-              <p
-                className={`block w-full   text-[14px] text-textSubtle rounded  pl-3  outline-none`}
-              >
-                {link.value === "" ? "https://" : link.value}
-              </p>
-            </div>
-          ))}
+      {showWebLinks && (
+        <div className="mb-3">
+          <div className="txtblack text-[14px] mb-[6px]">Social Link</div>
+          <div className="">
+            {webLinks.map((link, index) => (
+              <div key={index} className="inline-flex items-center w-full my-2">
+                <i
+                  className={` ${
+                    link.title.startsWith("customLinks")
+                      ? `fa-solid fa-${link.icon}`
+                      : `fa-brands fa-${link.icon}`
+                  }  text-[24px] text-primary-900  mr-2`}
+                ></i>
+                <p
+                  className={`block w-full   text-[14px] text-textSubtle rounded  pl-3  outline-none`}
+                >
+                  {link.value === "" ? "https://" : link.value}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* category */}
       <div className="mb-6">

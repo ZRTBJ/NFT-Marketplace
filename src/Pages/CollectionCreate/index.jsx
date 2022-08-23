@@ -64,6 +64,7 @@ export default function CollectionCreate() {
   // collection type End
 
   // cover start
+  const [showCover, setShowCover] = useState(true);
   const [coverPhoto, setCoverPhoto] = useState([]);
   const [coverPhotoUrl, setCoverPhotoUrl] = useState("");
   const onCoverPhotoSelect = useCallback((acceptedFiles) => {
@@ -178,6 +179,7 @@ export default function CollectionCreate() {
     { title: "linkFacebook", icon: "facebook", value: "" },
     { title: "customLinks1", icon: "link", value: "" },
   ];
+  const [showWebLinks, setShowWebLinks] = useState(true);
   const [webLinks, setWebLinks] = useState(links);
   function onSocialLinkChange(url, index) {
     let oldLinks = [...webLinks];
@@ -214,6 +216,7 @@ export default function CollectionCreate() {
   // Freeze MetaData end
   // Token Transferable start
   const [isTokenTransferable, setIsTokenTransferable] = useState(false);
+  const [showTokenTransferable, setShowTokenTransferable] = useState(true);
   const [tokenTransferableDisabled, setTokenTransferableDisabled] =
     useState(false);
   function onTokenTransferableChange(data) {
@@ -222,6 +225,7 @@ export default function CollectionCreate() {
   // Token Transferable End
 
   // Royalty Percentage start
+  const [showRoyalties, setShowRoyalties] = useState(true);
   const [royaltyPercentageDisable, setRoyaltyPercentageDisable] =
     useState(false);
   const [royaltyPercentage, setRoyaltyPercentage] = useState(0);
@@ -364,7 +368,6 @@ export default function CollectionCreate() {
     await getCollectionDetailsById(payload).then((e) => {
       if (e.code === 0) {
         const response = e.collection;
-        console.log(response);
         const logo = response.assets.find((x) => x.asset_purpose === "logo");
         setLogoPhotoUrl(logo ? logo : "");
         setProjectName(response.name);
@@ -385,6 +388,20 @@ export default function CollectionCreate() {
         setProjectStatus(response.status);
         setProjectCreated(true);
         setProjectId(response.id);
+        if (response.type === "right_attach") {
+          setShowTokenTransferable(false);
+          setShowRoyalties(false);
+          setShowCover(false);
+          setShowWebLinks(false);
+        }
+
+        if (response.status === "published") {
+          setProjectNameDisabled(true);
+          setDaoSymbolDisable(true);
+          setFreezeMetadataDisabled(true);
+          setTokenTransferableDisabled(true);
+          setRoyaltyPercentageDisable(true);
+        }
       } else {
         setDataIsLoading(false);
         showErrorModal(true);
@@ -549,7 +566,7 @@ export default function CollectionCreate() {
                 //photos
                 showPhotos={false}
                 // cover
-                showCover={true}
+                showCover={showCover}
                 logoPhotoUrl={logoPhotoUrl}
                 onLogoPhotoSelect={onLogoPhotoSelect}
                 onLogoPhotoRemove={onLogoPhotoRemove}
@@ -561,6 +578,7 @@ export default function CollectionCreate() {
                 onPrimaryRoyaltiesChange={onPrimaryRoyaltiesChange}
                 onSecondaryRoyaltiesChange={onSecondaryRoyaltiesChange}
                 // webLinks
+                showWebLinks={showWebLinks}
                 webLinks={webLinks}
                 onSocialLinkChange={onSocialLinkChange}
                 // category
@@ -574,12 +592,12 @@ export default function CollectionCreate() {
                 onMetadataFreezeChange={onMetadataFreezeChange}
                 freezeMetadataDisabled={freezeMetadataDisabled}
                 // Token Transferable
-                showTokenTransferable={true}
+                showTokenTransferable={showTokenTransferable}
                 isTokenTransferable={isTokenTransferable}
                 onTokenTransferableChange={onTokenTransferableChange}
                 tokenTransferableDisabled={tokenTransferableDisabled}
                 // Royalty Percentage
-                showRoyaltyPercentage={true}
+                showRoyaltyPercentage={showRoyalties}
                 royaltyPercentageDisable={royaltyPercentageDisable}
                 royaltyPercentage={royaltyPercentage}
                 onRoyaltyPercentageChange={onRoyaltyPercentageChange}
@@ -608,9 +626,10 @@ export default function CollectionCreate() {
               showPhotos={false}
               // webLinks
               webLinks={webLinks}
+              showWebLinks={showWebLinks}
               // Cover
 
-              showCover={true}
+              showCover={showCover}
               coverPhotoUrl={coverPhotoUrl}
               // Royalties
               showRoyalties={false}
@@ -620,9 +639,9 @@ export default function CollectionCreate() {
               projectCategoryName={projectCategoryName}
               showFreezeMetadata={true}
               isMetaDaFreezed={isMetaDaFreezed}
-              showTokenTransferable={true}
+              showTokenTransferable={showTokenTransferable}
               isTokenTransferable={isTokenTransferable}
-              showRoyaltyPercentage={true}
+              showRoyaltyPercentage={showRoyalties}
               royaltyPercentage={royaltyPercentage}
             />
           )}

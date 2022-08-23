@@ -463,6 +463,7 @@ export default function ProjectCreate() {
                 // Royalties
                 showRoyalties={false}
                 // webLinks
+                showWebLinks={true}
                 webLinks={webLinks}
                 onSocialLinkChange={onSocialLinkChange}
                 // category
@@ -501,6 +502,7 @@ export default function ProjectCreate() {
               showRoyalties={false}
               // webLinks
               webLinks={webLinks}
+              showWebLinks={true}
               // category
               projectCategoryName={projectCategoryName}
               blockchainCategory={blockchainCategory}
