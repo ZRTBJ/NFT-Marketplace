@@ -57,6 +57,7 @@ const RoyalityManagement = () => {
   const [tnxData, setTnxData] = useState({});
   const [showConnectErrorModal, setShowConnectErrorModal] = useState(false);
   const [connectErrorMessage, setConnectErrorMessage] = useState(null);
+  const [connectedCollections, setConnectedCollections] = useState([]);
 
   const { collectionId } = useParams();
   let origin = window.location.origin;
@@ -158,7 +159,7 @@ const RoyalityManagement = () => {
         } else if (resp.code === 5001) {
           setShowConnectErrorModal(true);
           setConnectErrorMessage(
-            'It seems this collection is already connected to other '
+            'It seems this collection is already connected'
           );
         }
       })
@@ -173,6 +174,8 @@ const RoyalityManagement = () => {
       .then((resp) => {
         if (resp.code === 0) {
           setData(resp);
+          let conCollections = resp.connected_collections.map((con) => con.id);
+          setConnectedCollections(conCollections);
           getAllCollections(resp?.project_id);
         }
       })
@@ -382,6 +385,7 @@ const RoyalityManagement = () => {
               defaultValue='Select Collection'
               handleChange={handleChange}
               options={Collections}
+              connectedCollections={connectedCollections}
             />
             <div className='ml-4'>
               <button

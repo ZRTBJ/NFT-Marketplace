@@ -7,6 +7,7 @@ const DropdownCreabo = ({
   options,
   defaultValue,
   id,
+  connectedCollections,
 }) => {
   return (
     <div className={styles.dropdownCreabo}>
@@ -23,7 +24,7 @@ const DropdownCreabo = ({
         {label && <option value={''}>{defaultValue}</option>}
         {options.map((e) => (
           <option key={e.id} value={e.id}>
-            {e.name}
+            {e.name} {connectedCollections?.includes(e.id) ? '✅ ' : ''}
           </option>
         ))}
       </select>
