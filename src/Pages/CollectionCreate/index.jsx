@@ -508,10 +508,11 @@ export default function CollectionCreate() {
           {currentStep.length === 1 && (
             <div>
               <h1 className="text-[28px] font-black mb-[6px]">
-                Create New Collection
+                {projectCreated ? " Create New" : "Update"} Collection
               </h1>
               <p className="text-[14px] text-textSubtle mb-[24px]">
-                Fill the require form to create collection
+                Fill the require form to {projectCreated ? "create " : "Update"}{" "}
+                collection
               </p>
               <Outline
                 key={outlineKey}
