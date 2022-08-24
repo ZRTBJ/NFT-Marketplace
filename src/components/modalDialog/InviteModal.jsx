@@ -35,7 +35,7 @@ const InviteModal = ({
     if (
       mintDataStatus &&
       mintDataStatus.data &&
-      mintData.data.fn_status === 'success'
+      mintDataStatus.data.fn_status === 'success'
     ) {
       const data = JSON.parse(mintDataStatus.data);
       setMintData(data);
