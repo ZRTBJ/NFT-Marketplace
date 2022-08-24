@@ -32,7 +32,7 @@ const SuccessModal = ({
         <div className="flex justify-center">
           <button
             type="button"
-            className="contained-button font-black w-[140px] !text-[16px] h-[44px]"
+            className="rounded-[4px] py-2 mt-2 mb-4 px-4 bg-primary-50 text-primary-900 w-[125px] text-[14px] font-black"
             onClick={(e) => {
               if (redirection) {
                 history.push(redirection);

@@ -506,10 +506,7 @@ const ProfileSettingsForm = () => {
               >
                 Skip
               </button> */}
-              <button
-                type="submit"
-                className="btn text-white-shade-900 bg-primary-900 btn-sm"
-              >
+              <button type="submit" className="btn contained-button btn-sm">
                 Save
               </button>
             </div>

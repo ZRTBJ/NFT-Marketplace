@@ -446,9 +446,7 @@ export default function ProductNFT(props) {
                             <p className="text-xs mt-2 text-color-ass-8">
                               Add Assets from
                             </p>
-                            <p className="text-xs text-primary-color-1">
-                              Computer
-                            </p>
+                            <p className="text-xs text-primary-900">Computer</p>
                           </>
                         )}
                       </div>
@@ -661,7 +659,7 @@ export default function ProductNFT(props) {
                 {showConfirmation === false && (
                   <button
                     type="submit"
-                    className="!w-full px-6 py-2 bg-primary-900 rounded font-black text-white-shade-900"
+                    className="!w-full px-6 py-2 contained-button rounded font-black text-white-shade-900"
                   >
                     Next
                     <i className="ml-4 fa-solid fa-arrow-right"></i>
@@ -670,7 +668,7 @@ export default function ProductNFT(props) {
                 {showConfirmation && (
                   <button
                     type="submit"
-                    className="!w-full px-6 py-2 bg-primary-900 rounded font-black text-white-shade-900"
+                    className="!w-full px-6 py-2 contained-button rounded font-black text-white-shade-900"
                   >
                     Submit
                   </button>

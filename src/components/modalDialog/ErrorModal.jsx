@@ -15,7 +15,7 @@ const ErrorModal = ({
   const bodyMsg = message ? message : "Please try again.";
   return (
     <Modal
-      height={460}
+      height={480}
       width={800}
       show={show}
       handleClose={() => handleClose(false)}
@@ -26,12 +26,12 @@ const ErrorModal = ({
           {titleMsg}
         </div>
         <div className="my-4 font-bold txtblack dark:text-white">{bodyMsg}</div>
-        <div className="flex justify-center">
+        <div className="flex justify-center mb-4">
           {redirection ? (
             <Link to={redirection}>
               <button
                 type="button"
-                className="contained-button font-black w-[140px] !text-[16px] h-[44px]"
+                className="btn bg-primary-50 text-primary-900 btn-sm"
                 onClick={(e) => {
                   handleClose(false);
                 }}
@@ -42,7 +42,7 @@ const ErrorModal = ({
           ) : (
             <button
               type="button"
-              className="contained-button font-black w-[140px] !text-[16px] h-[44px]"
+              className="btn bg-primary-50 text-primary-900 btn-sm"
               onClick={(e) => {
                 handleClose(false);
               }}
