@@ -257,7 +257,7 @@ export default function ProjectDetails(props) {
 
   function getUnitPriceUSD() {
     setIsLoadingBalance(true);
-    cryptoConvert("MATIC", "USD")
+    cryptoConvert("ETH", "USD")
       .then((res) => {
         if (res.USD && res.USD > 0) {
           setUsdUnitPrice(res.USD);
@@ -494,12 +494,12 @@ export default function ProjectDetails(props) {
                     } cursor-pointer`}
                   ></i>
                   <p className=" text-sm text-textSubtle ">Net Worth</p>
-                  <h4>{balance} MATIC</h4>
+                  <h4>10,290.38 ETH</h4>
                   <p className="text-sm text-textSubtle">
-                    (~$
+                    ($
                     {balance && Number(balance) >= 0 && usdUnitPrice > 0
                       ? balance * usdUnitPrice
-                      : "0.00"}
+                      : "17295556.18"}
                     )
                   </p>
                 </div>
