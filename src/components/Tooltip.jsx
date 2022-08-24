@@ -2,7 +2,7 @@ import React from 'react';
 import TooltipIcon from 'assets/images/createDAO/tooltip.svg';
 import ReactTooltip from 'react-tooltip';
 export default function Tooltip({
-  message = 'This field is can’t be changed once your contract created',
+  message = 'This field will not be changeable after publishing on the blockchain.',
 }) {
   return (
     <div className='relative'>

@@ -59,7 +59,7 @@
 
 .sidebarCardTitle {
   color: #192434;
-  font-family: "Montserrat", sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 12px;
   font-weight: 500;
 }
@@ -89,6 +89,6 @@
 
 .active-menu {
   border-right-width: 4px;
-  border-color: #9a5aff;
-  color: #9a5aff;
+  border-color: #199bd8;
+  color: #199bd8;
 }
