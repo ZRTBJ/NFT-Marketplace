@@ -226,7 +226,6 @@ export default function ProductNFT(props) {
       request.append("name", watch("name"));
       request.append("asset_uid", assetId);
       request.append("supply", watch("supply"));
-      request.append("blockchain", "polygon");
       request.append("description", watch("description"));
       request.append("external_link", watch("externalLink"));
       request.append("sensitive_content", watch("sensitiveContent"));
@@ -657,23 +656,6 @@ export default function ProductNFT(props) {
                       </p>
                     )}
                   </>
-                </div>
-                <div className="mb-6">
-                  <div className="flex flex-wrap items-center">
-                    <Tooltip></Tooltip>
-                    <div className="txtblack text-[14px] mb-[6px]">
-                      Blockchain
-                    </div>
-                  </div>
-                  <select
-                    defaultValue={"polygon"}
-                    disabled
-                    className="h-[44px] border border-divider text-textSubtle bg-gray-200 pl-3"
-                  >
-                    <option value={"polygon"} defaultValue>
-                      Polygon
-                    </option>
-                  </select>
                 </div>
 
                 {showConfirmation === false && (
