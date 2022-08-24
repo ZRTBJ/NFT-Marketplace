@@ -422,18 +422,21 @@ const CollectionDetail = () => {
                         {nft?.name}
                       </h2>
                       <div className="relative">
-                        <button
-                          type="button"
-                          className="w-[20px]"
-                          onClick={(e) => handleShowOptions(e, nft.id)}
-                        >
-                          <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
-                        </button>
+                        {Collection.type === "membership" && (
+                          <button
+                            type="button"
+                            className="w-[20px]"
+                            onClick={(e) => handleShowOptions(e, nft.id)}
+                          >
+                            <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
+                          </button>
+                        )}
+                        
                         {/* Dropdown menu  */}
                         {ShowOptions === nft.id && (
                           <div className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 mb-6 block">
                             <ul className="text-sm">
-                              <li className="border-b border-divide">
+                              {/*Temporarily disable <li className="border-b border-divide">
                                 <div
                                   onClick={(e) => handleEditNFT(e, nft.id)}
                                   className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
@@ -448,7 +451,7 @@ const CollectionDetail = () => {
                                 >
                                   Update Metadata
                                 </div>
-                              </li>
+                              </li> */}
                               {Collection.type === "membership" && (
                                 <li className="border-b border-divide">
                                   <div
@@ -466,10 +469,6 @@ const CollectionDetail = () => {
                         )}
                       </div>
                     </div>
-                    <p className="mb-3 text-black text-[13px] flex justify-between">
-                      <span>0 ETH</span>
-                      <span>Logo</span>
-                    </p>
                   </div>
                 </div>
               );
