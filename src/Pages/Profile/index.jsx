@@ -18,7 +18,7 @@ import { getUserInfo, getRoyalties } from "services/User/userService";
 import { Link, useParams } from "react-router-dom";
 import SuccessModal from "components/modalDialog/SuccessModal";
 import { getUserCollections } from "services/collection/collectionService";
-import thumbIcon from "assets/images/collectionCover.svg";
+import thumbIcon from "assets/images/cover-default.svg";
 
 const Profile = () => {
   SwiperCore.use([Autoplay]);

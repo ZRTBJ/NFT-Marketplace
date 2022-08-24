@@ -331,7 +331,13 @@ const RoyalityManagement = () => {
         className={`${styles.memberSection} bg-white rounded-[12px] p-6 flex`}
       >
         <img
-          src={ColImage}
+          src={
+            CollectionDetail &&
+              CollectionDetail.assets &&
+              CollectionDetail.assets[0]
+              ? CollectionDetail.assets[0].path
+              : ColImage
+            }
           className="w-[160px] h-[160px] rounded-[12px]"
           alt="Collection"
         />

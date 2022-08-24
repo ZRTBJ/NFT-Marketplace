@@ -604,8 +604,8 @@ export default function ProjectDetails(props) {
                             src={
                               collection &&
                               collection.assets &&
-                              collection.assets[1]
-                                ? collection.assets[1].path
+                              collection.assets[0]
+                                ? collection.assets[0].path
                                 : thumbIcon
                             }
                             alt=""
@@ -744,8 +744,8 @@ export default function ProjectDetails(props) {
                             src={
                               collection &&
                               collection.assets &&
-                              collection.assets[1]
-                                ? collection.assets[1].path
+                              collection.assets[0]
+                                ? collection.assets[0].path
                                 : thumbIcon
                             }
                             alt=""
@@ -922,8 +922,8 @@ export default function ProjectDetails(props) {
                                   src={
                                     collection &&
                                     collection.assets &&
-                                    collection.assets[1]
-                                      ? collection.assets[1].path
+                                    collection.assets[0]
+                                      ? collection.assets[0].path
                                       : thumbIcon
                                   }
                                   alt=""
