@@ -1,19 +1,19 @@
-import { useAuthState, useAuthDispatch, logout } from "Context";
-import { useHistory } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import { ReactComponent as ProfileLogo } from "../../assets/images/profileSettings/ico_personal.svg";
-import { ReactComponent as ProjectLogo } from "../../assets/images/header/ico_project.svg";
-import { ReactComponent as SettingLogo } from "../../assets/images/header/ico_setting.svg";
-import { ReactComponent as LogoutLogo } from "../../assets/images/header/ico_logout.svg";
-import ico_torus from "../../assets/images/header/ico_torus.svg";
-import ico_metamask from "../../assets/images/header/ico_metamask.svg";
-import metamaskIcon from "assets/images/modal/metamask.png";
-import torusIcon from "assets/images/modal/torus.png";
-import Config from "../../config";
-import Web3 from "web3";
-import { useEffect, useState } from "react";
-import { useDetectClickOutside } from "react-detect-click-outside";
+import { useAuthState, useAuthDispatch, logout } from 'Context';
+import { useHistory } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { ReactComponent as ProfileLogo } from '../../assets/images/profileSettings/ico_personal.svg';
+import { ReactComponent as ProjectLogo } from '../../assets/images/header/ico_project.svg';
+import { ReactComponent as SettingLogo } from '../../assets/images/header/ico_setting.svg';
+import { ReactComponent as LogoutLogo } from '../../assets/images/header/ico_logout.svg';
+import ico_torus from '../../assets/images/header/ico_torus.svg';
+import ico_metamask from '../../assets/images/header/ico_metamask.svg';
+import metamaskIcon from 'assets/images/modal/metamask.png';
+import torusIcon from 'assets/images/modal/torus.png';
+import Config from '../../config';
+import Web3 from 'web3';
+import { useEffect, useState } from 'react';
+import { useDetectClickOutside } from 'react-detect-click-outside';
 
 const WalletDropDownMenu = ({ handleWalletDropDownClose }) => {
   let history = useHistory();
@@ -23,17 +23,17 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose }) => {
   const [showWallet, setShowWallet] = useState(false);
   const context = useAuthState();
   const [selectedWallet, setSelectedWallet] = useState(
-    context ? context.walletAddress : ""
+    context ? context.walletAddress : ''
   );
-  const [wallet, setWallet] = useState(context ? context.wallet : "");
+  const [wallet, setWallet] = useState(context ? context.wallet : '');
   const [balance, setBalance] = useState(0);
   const userLoadingStatus = useSelector((state) => state.user.status);
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
   const ref = useDetectClickOutside({ onTriggered: handleWalletDropDownClose });
 
   function showHideUserPopup() {
-    const userDropDown = document.getElementById("userDropDown");
-    userDropDown.classList.toggle("hidden");
+    const userDropDown = document.getElementById('userDropDown');
+    userDropDown.classList.toggle('hidden');
   }
 
   function showHideWallet() {
@@ -43,12 +43,12 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose }) => {
   function handleLogout() {
     logout(dispatch);
     // showHideUserPopup();
-    history.push("/");
+    history.push('/');
     window.location.reload();
   }
 
   useEffect(() => {
-    setWallet(context ? context.wallet : "");
+    setWallet(context ? context.wallet : '');
     try {
       setIsLoadingBalance(true);
       const web3 = new Web3(new Web3.providers.HttpProvider(Config.RPC_URL));
@@ -85,33 +85,33 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose }) => {
 
       <div
         ref={ref}
-        className="w-screen md:w-52 h-screen md:h-auto md:border border-slate-300  bg-light dark:bg-dark-background rounded-xl absolute top-11 right-[-44px] md:right-0 z-20"
+        className='w-screen md:w-52 h-screen md:h-auto md:border border-slate-300  bg-[#fff] dark:bg-dark-background rounded-xl absolute top-11 right-[-44px] md:right-0 z-20'
       >
-        <div className="pl-10 pr-3 py-3 border-b border-slate-300">
-          <h3 className="txtblack dark:text-white text-sm  mb-6 ">Wallet</h3>
-          <p className="txtblack dark:text-white flex content-center mb-2">
+        <div className='pl-10 pr-3 py-3 border-b border-slate-300'>
+          <h3 className='txtblack dark:text-white text-sm  mb-6 '>Wallet</h3>
+          <p className='txtblack dark:text-white flex content-center mb-2'>
             <img
               src={
-                wallet === "metamask"
+                wallet === 'metamask'
                   ? metamaskIcon
-                  : wallet === "torus"
+                  : wallet === 'torus'
                   ? torusIcon
-                  : ""
+                  : ''
               }
-              alt="mask"
+              alt='mask'
               width={21}
               height={21}
-              className="mr-2"
+              className='mr-2'
             />
             <span>Total Balance </span>
           </p>
-          <h4 className="txtblack dark:text-white text-xl  mb-6 tracking-wide">
+          <h4 className='txtblack dark:text-white text-xl  mb-6 tracking-wide'>
             {isLoadingBalance && (
-              <i className="fa fa-spinner fa-pulse fa-fw"></i>
+              <i className='fa fa-spinner fa-pulse fa-fw'></i>
             )}
             <span>{balance ? balance.toFixed(4) : 0} MATIC</span>
           </h4>
-          <a className="btn-fund" href="#">
+          <a className='btn-fund' href='#'>
             <span>Add Funds</span>
           </a>
         </div>
@@ -126,13 +126,13 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose }) => {
             <span className="ml-2">Switch Wallet</span>
           </div>
         </div> */}
-        <div className="pl-10 pr-3 py-3">
+        <div className='pl-10 pr-3 py-3'>
           <div
             onClick={handleLogout}
-            className="items-center txtblack dark:text-white flex content-center font-base text-sm cursor-pointer"
+            className='items-center txtblack dark:text-white flex content-center font-base text-sm cursor-pointer'
           >
-            <i className="fa-solid fa-right-from-bracket"></i>
-            <span className="ml-2">Log Out</span>
+            <i className='fa-solid fa-right-from-bracket'></i>
+            <span className='ml-2'>Log Out</span>
           </div>
         </div>
       </div>

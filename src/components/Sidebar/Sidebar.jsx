@@ -1,26 +1,26 @@
-import "assets/css/Sidebar.css";
-import { useAuthState } from "Context";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { NavLink } from "react-router-dom";
-import { getUserInfo } from "services/User/userService";
-import { setUserInfo, setSideBar } from "Slice/userSlice";
-import WalletConnectModal from "components/modalDialog/WalletConnectModal";
-import { useHistory } from "react-router-dom";
-import ReactTooltip from "react-tooltip";
-import CreateRightAttachedNFT from "components/modalDialog/CreateRightAttachNFT";
+import 'assets/css/Sidebar.css';
+import { useAuthState } from 'Context';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { NavLink } from 'react-router-dom';
+import { getUserInfo } from 'services/User/userService';
+import { setUserInfo, setSideBar } from 'Slice/userSlice';
+import WalletConnectModal from 'components/modalDialog/WalletConnectModal';
+import { useHistory } from 'react-router-dom';
+import ReactTooltip from 'react-tooltip';
+import CreateRightAttachedNFT from 'components/modalDialog/CreateRightAttachNFT';
 
-const openStyle = { width: "271px" };
-const closeStyle = { width: "0px" };
+const openStyle = { width: '271px' };
+const closeStyle = { width: '0px' };
 const linksList = [
-  { id: 0, title: "What’s CREABO", to: "/" },
-  { id: 1, title: "Contact", to: "/" },
+  { id: 0, title: 'What’s CREABO', to: '/' },
+  { id: 1, title: 'Contact', to: '/' },
 ];
 const Sidebar = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const context = useAuthState();
-  const [userId, setUserId] = useState(context ? context.user : "");
+  const [userId, setUserId] = useState(context ? context.user : '');
   const userinfo = useSelector((state) => state.user.userinfo);
   const [isExpend, setIsExpend] = useState(false);
   const [ShowCreateRANFT, setShowCreateRANFT] = useState(false);
@@ -35,13 +35,13 @@ const Sidebar = () => {
     const response = await getUserInfo(userID);
     let userinfoResponse;
     try {
-      userinfoResponse = response["user"];
+      userinfoResponse = response['user'];
     } catch {}
     dispatch(setUserInfo(userinfoResponse));
   }
 
   const [showModal, setShowModal] = useState(false);
-  const [navigateToPage, setNavigateToPage] = useState("");
+  const [navigateToPage, setNavigateToPage] = useState('');
 
   function hideModal(e) {
     setShowModal(false);
@@ -60,41 +60,41 @@ const Sidebar = () => {
   }
 
   return (
-    <div style={openStyle} className="sidenav bg-light1 dark:dark-background">
-      <div className="sidebarLinksContainer flex flex-col">
-        <div className="pl-6 pr-10 flex-0 flex flex-col">
+    <div style={openStyle} className='sidenav bg-light1 dark:dark-background'>
+      <div className='sidebarLinksContainer flex flex-col'>
+        <div className='pl-6 pr-10 flex-0 flex flex-col'>
           <NavLink
-            to={"/"}
-            id="nav-home"
-            activeClassName="active-menu2 "
-            className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
+            to={'/'}
+            id='nav-home'
+            activeClassName='active-menu2 '
+            className='flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-[#199BD8] last:mt-auto text-textSubtle cursor-pointer hover:border-[#199BD8] hover:border-r-4'
           >
-            <i className="fa-solid fa-home"></i>
-            <span className="ml-2">Home</span>
+            <i className='fa-solid fa-home'></i>
+            <span className='ml-2'>Home</span>
           </NavLink>
           <NavLink
             onClick={accessCheck}
             to={`/profile/${userId}`}
-            activeClassName="active-menu"
-            className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
+            activeClassName='active-menu'
+            className='flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-[#199BD8] last:mt-auto text-textSubtle cursor-pointer hover:border-[#199BD8] hover:border-r-4'
           >
-            <i className="fa-solid fa-gauge"></i>
-            <span className="ml-2">Dashboard</span>
+            <i className='fa-solid fa-gauge'></i>
+            <span className='ml-2'>Dashboard</span>
           </NavLink>
           <NavLink
             onClick={accessCheck}
             to={`/create`}
-            activeClassName="active-menu"
-            className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
+            activeClassName='active-menu'
+            className='flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-[#199BD8] last:mt-auto text-textSubtle cursor-pointer hover:border-[#199BD8] hover:border-r-4'
           >
-            <i className="fa-solid fa-circle-plus"></i>
-            <span className="ml-2">Create Project</span>
+            <i className='fa-solid fa-circle-plus'></i>
+            <span className='ml-2'>Create Project</span>
           </NavLink>
           {/* <NavLink
             onClick={accessCheck}
             to={`/project-create`}
             activeClassName="active-menu"
-            className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
+            className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-[#199BD8] last:mt-auto text-textSubtle cursor-pointer hover:border-[#199BD8] hover:border-r-4"
           >
             <span>Create DAO</span>
           </NavLink> */}
@@ -102,7 +102,7 @@ const Sidebar = () => {
           {/* <div
             onClick={() => setIsExpend(!isExpend)}
             activeClassName="active-menu2"
-            className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer"
+            className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-[#199BD8] last:mt-auto text-textSubtle cursor-pointer"
           >
             <div className="w-32">Create NFT</div>
             <div className="w-24 text-right">
@@ -117,7 +117,7 @@ const Sidebar = () => {
                 onClick={accessCheck}
                 to={`/membershipNFT`}
                 activeClassName="active-menu"
-                className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-sm ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
+                className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-sm ease-in-out duration-300 hover:text-[#199BD8] last:mt-auto text-textSubtle cursor-pointer hover:border-border-[#199BD8] hover:border-r-4"
               >
                 <span>Create Membership</span>
               </NavLink>
@@ -125,7 +125,7 @@ const Sidebar = () => {
                 onClick={accessCheck}
                 to={`/product-nft`}
                 activeClassName="active-menu"
-                className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-sm ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
+                className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-sm ease-in-out duration-300 hover:text-[#199BD8] last:mt-auto text-textSubtle cursor-pointer hover:border-border-[#199BD8] hover:border-r-4"
               >
                 <span>Create Product</span>
               </NavLink>
@@ -138,7 +138,7 @@ const Sidebar = () => {
                   }
                 }}
                 activeClassName="active-menu"
-                className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-sm ease-in-out duration-300 hover:text-primary-900 last:mt-auto text-textSubtle cursor-pointer hover:border-primary-900 hover:border-r-4"
+                className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold text-sm ease-in-out duration-300 hover:text-[#199BD8] last:mt-auto text-textSubtle cursor-pointer hover:border-border-[#199BD8] hover:border-r-4"
               >
                 <span>Create Right Attached</span>
               </div>
@@ -146,7 +146,7 @@ const Sidebar = () => {
           )} */}
         </div>
         {/* Gas price */}
-        {/* <div className="pl-6 pr-10 flex-0 flex flex-col text-primary-900 mt-96">
+        {/* <div className="pl-6 pr-10 flex-0 flex flex-col text-[#199BD8] mt-96">
           <div className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold cursor-pointer">
             <i className="fa-solid fa-gas-pump fa-xl"></i>
             <span className="ml-4">8 USD</span>
