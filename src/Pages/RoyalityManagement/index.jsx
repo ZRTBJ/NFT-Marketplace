@@ -23,7 +23,11 @@ import ConfirmationModal from 'components/modalDialog/ConfirmationModal';
 import SuccessModal from 'components/modalDialog/SuccessModal';
 import DeployingCollectiontModal from 'components/modalDialog/DeployingCollectionModal';
 import ErrorModal from 'components/modalDialog/ErrorModal';
-import { FacebookShareButton } from 'react-share';
+import {
+  FacebookShareButton,
+  TwitterShareButton,
+  RedditShareButton,
+} from 'react-share';
 
 const TABLE_HEADERS = [
   { id: 0, label: 'Wallet Address' },
@@ -546,15 +550,25 @@ const RoyalityManagement = () => {
                       <img src={FB} alt='facebook' />
                     </div>
                   </FacebookShareButton>
-                  <div className='rounded-[4px] bg-opacity-[0.1] bg-[#9A5AFF] h-[44px] w-[44px] flex items-center justify-center mr-2'>
-                    <img src={twitter} alt='twitter' />
-                  </div>
-                  <div className='rounded-[4px] bg-opacity-[0.1] bg-[#9A5AFF] h-[44px] w-[44px] flex items-center justify-center mr-2'>
-                    <img src={reddit} alt='reddit' />
-                  </div>
-                  <div className='rounded-[4px] bg-opacity-[0.1] bg-[#9A5AFF] h-[44px] w-[44px] flex items-center justify-center mr-2'>
+                  <TwitterShareButton
+                    title='Right Attach NFT'
+                    url={`${origin}/${data?.lnft?.invitation_code}`}
+                  >
+                    <div className='cursor-pointer rounded-[4px] bg-opacity-[0.1] bg-[#9A5AFF] h-[44px] w-[44px] flex items-center justify-center mr-2'>
+                      <img src={twitter} alt='twitter' />
+                    </div>
+                  </TwitterShareButton>
+                  <RedditShareButton
+                    title='Right Attach NFT'
+                    url={`${origin}/${data?.lnft?.invitation_code}`}
+                  >
+                    <div className='cursor-pointer rounded-[4px] bg-opacity-[0.1] bg-[#9A5AFF] h-[44px] w-[44px] flex items-center justify-center mr-2'>
+                      <img src={reddit} alt='reddit' />
+                    </div>
+                  </RedditShareButton>
+                  {/* <div className='cursor-pointer rounded-[4px] bg-opacity-[0.1] bg-[#9A5AFF] h-[44px] w-[44px] flex items-center justify-center mr-2'>
                     <img src={instagram} alt='instagram' />
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </>

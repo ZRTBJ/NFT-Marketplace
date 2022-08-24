@@ -31,16 +31,18 @@ const InviteModal = ({
 
   useEffect(() => {
     const mintDataStatus = inviteData.find((x) => x.function_uuid === funcId);
-
-    if (
-      mintDataStatus &&
-      mintDataStatus.data &&
-      mintDataStatus.data.fn_status === 'success'
-    ) {
+    console.log(mintDataStatus);
+    if (mintDataStatus && mintDataStatus.data) {
       const data = JSON.parse(mintDataStatus.data);
-      setMintData(data);
-      setStep(2);
-      setErrorMsg('');
+      if (data?.fn_status === 'success') {
+        setMintData(data);
+        setStep(2);
+        setErrorMsg('');
+      } else {
+        let message = data?.fn_response_data?.ErrorReason;
+        let errorMessage = message && JSON.parse(message);
+        setErrorMsg(errorMessage?.reason);
+      }
     } else {
       let message = mintDataStatus?.data?.fn_response_data?.ErrorReason;
       let errorMessage = message && JSON.parse(message);
@@ -82,7 +84,7 @@ const InviteModal = ({
   const handleShowStepClose = () => {
     setShowSteps(false);
   };
-
+  console.log(mintData);
   return (
     <Modal show={show} handleClose={handleClose} width={580}>
       {showLogin && (
