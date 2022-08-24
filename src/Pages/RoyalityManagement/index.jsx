@@ -63,6 +63,8 @@ const RoyalityManagement = () => {
   const [showConnectErrorModal, setShowConnectErrorModal] = useState(false);
   const [connectErrorMessage, setConnectErrorMessage] = useState(null);
   const [connectedCollections, setConnectedCollections] = useState([]);
+  const [isSubmitted, setIsSumbitted] = useState(false);
+  const [isConfirmConnect, setIsConfirmConnect] = useState(false);
 
   const { collectionId } = useParams();
   let origin = window.location.origin;
@@ -156,6 +158,13 @@ const RoyalityManagement = () => {
   }
 
   const handleConnectCollection = () => {
+    setIsSumbitted(true);
+    if (selectedCollectionId) {
+      setIsConfirmConnect(true);
+    }
+  };
+
+  const submitConnection = () => {
     setIsConnectionLoading(true);
     connectCollection(data.lnft.id, selectedCollectionId)
       .then((resp) => {
@@ -165,11 +174,9 @@ const RoyalityManagement = () => {
           setTimeout(() => {
             setConnectedSuccessfully(false);
           }, [2500]);
-        } else if (resp.code === 5001) {
+        } else {
           setShowConnectErrorModal(true);
-          setConnectErrorMessage(
-            'It seems this collection is already connected'
-          );
+          setConnectErrorMessage(resp.message);
         }
       })
       .catch((err) => {
@@ -261,34 +268,55 @@ const RoyalityManagement = () => {
       setShowDeployModal(true);
     }
   }
+  const connectingCollection =
+    selectedCollectionId &&
+    Collections.find((col) => col.id === selectedCollectionId);
   return (
     <div
       className={`mt-3 ${
         IsLoading || IsConnectionLoading || IsAutoFillLoading ? 'loading' : ''
       }`}
     >
-      <NewPublishModal
-        show={showPublish}
-        handleClose={() => setShowPublish(false)}
-        publish={collectionPublish}
-      />
-      <ConfirmationModal
-        show={AutoAssign}
-        handleClose={setAutoAssign}
-        handleApply={handleAutoFill}
-      />
-      <SuccessModal
-        show={RoyaltyUpdatedSuccessfully}
-        handleClose={setRoyaltyUpdatedSuccessfully}
-        message='Royalty Percentage Updated Successfully'
-        btnText='Done'
-      />
-      <SuccessModal
-        show={ConnectedSuccessfully}
-        handleClose={setConnectedSuccessfully}
-        message='Collection Connected Successfully'
-        btnText='Done'
-      />
+      {showPublish && (
+        <NewPublishModal
+          show={showPublish}
+          handleClose={() => setShowPublish(false)}
+          publish={collectionPublish}
+        />
+      )}
+      {AutoAssign && (
+        <ConfirmationModal
+          show={AutoAssign}
+          handleClose={setAutoAssign}
+          handleApply={handleAutoFill}
+          message='This will apply royalty percentage to all the members equally. Are you
+          sure, you want to proceed?'
+        />
+      )}
+      {isConfirmConnect && (
+        <ConfirmationModal
+          show={isConfirmConnect}
+          handleClose={() => setIsConfirmConnect(false)}
+          handleApply={submitConnection}
+          message={`Do you want to connect to ${connectingCollection.name} collection?`}
+        />
+      )}
+      {RoyaltyUpdatedSuccessfully && (
+        <SuccessModal
+          show={RoyaltyUpdatedSuccessfully}
+          handleClose={setRoyaltyUpdatedSuccessfully}
+          message='Royalty Percentage Updated Successfully'
+          btnText='Done'
+        />
+      )}
+      {ConnectedSuccessfully && (
+        <SuccessModal
+          show={ConnectedSuccessfully}
+          handleClose={setConnectedSuccessfully}
+          message='Collection Connected Successfully'
+          btnText='Done'
+        />
+      )}
       {showErrorModal && (
         <ErrorModal
           title={'Collection Publish failed !'}
@@ -307,6 +335,7 @@ const RoyalityManagement = () => {
           handleClose={() => {
             setShowConnectErrorModal(false);
             setConnectErrorMessage(null);
+            setIsConfirmConnect(false);
           }}
           show={showConnectErrorModal}
         />
@@ -394,15 +423,17 @@ const RoyalityManagement = () => {
       {CollectionDetail.is_owner && IsNFTAvailable ? (
         <div className='w-[680px] mt-4'>
           <div className='flex items-end'>
-            <DropdownCreabo
-              label='Connect Collection'
-              value={selectedCollectionId}
-              id='select-collection'
-              defaultValue='Select Collection'
-              handleChange={handleChange}
-              options={Collections}
-              connectedCollections={connectedCollections}
-            />
+            <div>
+              <DropdownCreabo
+                label='Connect Collection'
+                value={selectedCollectionId}
+                id='select-collection'
+                defaultValue='Select Collection'
+                handleChange={handleChange}
+                options={Collections}
+                connectedCollections={connectedCollections}
+              />
+            </div>
             <div className='ml-4'>
               <button
                 onClick={handleConnectCollection}
@@ -412,6 +443,11 @@ const RoyalityManagement = () => {
               </button>
             </div>
           </div>
+          {isSubmitted && !selectedCollectionId && (
+            <p className='text-red-500 text-[12px]'>
+              Please select a collection to connect
+            </p>
+          )}
           <Link to='/collection-create'>
             <button className='rounded-[4px] p-2 mt-4 bg-[#9A5AFF] bg-opacity-[0.1] text-[#9A5AFF] text-[12px] font-bold flex items-center w-[127px] justify-center'>
               <img src={CirclePlus} alt='Add' />{' '}
