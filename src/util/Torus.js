@@ -24,7 +24,7 @@ export async function torusWalletLogin() {
       .request({
         method: "personal_sign",
         params: [
-          "This is Creabo sign message.",
+          "You're signing to the decir.io",
           torus.ethereum.selectedAddress,
         ],
       })

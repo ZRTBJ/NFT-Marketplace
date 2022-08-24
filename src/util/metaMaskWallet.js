@@ -111,7 +111,7 @@ export async function getPersonalSign() {
       signedResult = await window.ethereum.request({
         method: "personal_sign",
         params: [
-          "This is Creabo sign message.",
+          "You're signing to the decir.io",
           window.ethereum.selectedAddress,
         ],
       });
