@@ -9,7 +9,7 @@
 }
 
 .loading:before {
-  content: '';
+  content: "";
   position: fixed;
   left: 0;
   top: 0;
@@ -21,7 +21,7 @@
 }
 
 .loading:after {
-  content: '';
+  content: "";
   position: fixed;
   height: 10px;
   width: 10px;
@@ -42,13 +42,13 @@
 }
 
 .onlySpinner:before {
-  content: '';
+  content: "";
   z-index: 1;
   border-radius: 5px;
 }
 
 .onlySpinner:after {
-  content: '';
+  content: "";
   margin: auto;
   height: 10px;
   width: 10px;
@@ -147,7 +147,7 @@
  * Input
  * ==============================================
  */
-input[type='number'],
+input[type="number"],
 .debounceInput {
   padding-left: 15px;
   border: none;
@@ -164,8 +164,8 @@ input[type='number'],
   font-size: 14px;
   padding-right: 15px;
 }
-input[type='text'],
-input[type='email'],
+input[type="text"],
+input[type="email"],
 textarea {
   padding: 10px 15px;
   outline: none;
@@ -207,14 +207,14 @@ select {
 */
 
 .fa-times-thin:before {
-  content: '\00d7';
+  content: "\00d7";
 }
 .validationTag {
   color: #ff3c3c;
   margin-top: 6px;
 }
 .roboto {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 /**
@@ -264,6 +264,7 @@ select {
   padding: 8px 16px;
   font-size: 14px;
   font-weight: 900;
+  cursor: pointer;
 }
 
 .outlined-button {
