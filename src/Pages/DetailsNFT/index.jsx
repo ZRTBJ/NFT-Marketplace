@@ -38,6 +38,7 @@ export default function DetailsNFT() {
     nft?.lnft?.nft_type === 'membership' ? nft?.more_info : nft?.sale_info;
 
   let benefits = info?.benefits && JSON.parse(nft.more_info.benefits);
+  let availableSupply = nft?.lnft?.supply - nft?.lnft?.minted_amount;
   return (
     <>
       {comingSoon && (
@@ -91,8 +92,8 @@ export default function DetailsNFT() {
             </span>
             {info?.start_datetime ? (
               <span className='text-textSubtle'>
-                {format(new Date(), 'dd/MM/yy (HH:mm)')} -{' '}
-                {format(new Date(), 'dd/MM/yy (HH:mm)')}
+                {format(new Date(info.start_datetime), 'dd/MM/yy (HH:mm)')} -{' '}
+                {format(new Date(info.end_datetime), 'dd/MM/yy (HH:mm)')}
               </span>
             ) : null}
           </div>
@@ -103,7 +104,9 @@ export default function DetailsNFT() {
             <span className='font-satoshi-bold font-black text-lg text-txtblack mx-3'>
               :
             </span>
-            <span className='text-textSubtle'>{nft?.lnft?.supply}</span>
+            <span className='text-textSubtle'>
+              {availableSupply} / {nft?.lnft?.supply}
+            </span>
           </div>
           <h3 className='txtblack'>Description</h3>
           <p className='txtblack text-sm mb-4'>{nft?.lnft?.description}</p>
@@ -135,22 +138,25 @@ export default function DetailsNFT() {
               <p className='text-textSubtle text-sm'>Add 5% this trait</p>
             </div> */}
           </div>
-
-          <h3 className='txtblack mb-4'>Benefit</h3>
-          {benefits && benefits.length ? (
-            benefits.map((benefit, index) => (
-              <div
-                className='mb-3 p-4 rounded-xl border border-primary-900 bg-primary-900 bg-opacity-20 flex items-center'
-                key={index}
-              >
-                <div className='rounded-full bg-primary-900 bg-opacity-90 w-[30px] h-[30px] font-satoshi-bold text-sm mr-4 flex items-center justify-center'>
-                  {index + 1}
-                </div>
-                <p className='text-sm'>{benefit.title}</p>
-              </div>
-            ))
-          ) : (
-            <p>No benefits to show</p>
+          {nft?.lnft?.nft_type === 'membership' && (
+            <div>
+              <h3 className='txtblack mb-4'>Benefit</h3>
+              {benefits && benefits.length ? (
+                benefits.map((benefit, index) => (
+                  <div
+                    className='mb-3 p-4 rounded-xl border border-primary-900 bg-primary-900 bg-opacity-20 flex items-center'
+                    key={index}
+                  >
+                    <div className='rounded-full bg-primary-900 bg-opacity-90 w-[30px] h-[30px] font-satoshi-bold text-sm mr-4 flex items-center justify-center'>
+                      {index + 1}
+                    </div>
+                    <p className='text-sm'>{benefit.title}</p>
+                  </div>
+                ))
+              ) : (
+                <p>No benefits to show</p>
+              )}
+            </div>
           )}
         </div>
       </section>
