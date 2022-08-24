@@ -413,7 +413,7 @@ export default function ProjectCreate() {
   return (
     <>
       {isDataLoading && <div className="loading"></div>}
-      <div className="txtblack dark:text-white max-w-[600px] mx-auto md:mt-[40px]">
+      <div className="txtblack max-w-[600px] mx-auto md:mt-[40px]">
         <div className="create-project-container">
           {currentStep.length === 1 && (
             <div>
