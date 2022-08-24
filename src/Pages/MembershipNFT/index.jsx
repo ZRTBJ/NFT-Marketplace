@@ -148,11 +148,21 @@ export default function MembershipNFT() {
     const nftFile = oldNfts[index].assets;
     try {
       const file = event.currentTarget.files[0];
-      const usedSize = userinfo["storage_usage"];
-      let totalSize = 0;
-      if (usedSize && file) {
-        totalSize = (usedSize + file.size) / 1024 / 1024;
-        if (totalSize > 1024) {
+      // const usedSize = 4000;
+      // let totalSize = 0;
+      if (file) {
+        // console.log(file.size / 1024);
+        //   nftFile.file = file;
+        //   nftFile.path = URL.createObjectURL(file);
+        //   nftFile.isFileError = false;
+        // }
+        // totalSize = (usedSize + file.size) / 1024 / 1024;
+        // if (totalSize > 102) {
+        //   nftFile.limitExceeded = true;
+        //   event.currentTarget.value = "";
+        //
+        const size = file.size / 1024;
+        if (size > 100000) {
           nftFile.limitExceeded = true;
           event.currentTarget.value = "";
         } else {
@@ -497,6 +507,7 @@ export default function MembershipNFT() {
     }, 30000);
   }
   function validate() {
+    console.log(fileUploadNotification);
     const projectDeployStatus = fileUploadNotification.find((x) =>
       localStorage.getItem(`${x.function_uuid}`)
     );
@@ -745,10 +756,7 @@ export default function MembershipNFT() {
                     )}
                     {nft.assets.limitExceeded && (
                       <p className="validationTag">
-                        {`You can add your assets up to 1GB. you have a remaining of ${(
-                          1024 -
-                          userinfo["storage_usage"] / 1024 / 1024
-                        ).toFixed(2)} MB storage`}
+                        {`You can upload your assets up to 100 MB`}
                       </p>
                     )}
                   </div>
@@ -922,7 +930,7 @@ export default function MembershipNFT() {
                       {!isListUpdate &&
                         nft.properties &&
                         nft.properties.map((property, i) => (
-                          <>
+                          <div key={i}>
                             {property.key && property.value && (
                               <div key={i}>
                                 <div className="flex items-center mt-3">
@@ -951,7 +959,7 @@ export default function MembershipNFT() {
                                 </div>
                               </div>
                             )}
-                          </>
+                          </div>
                         ))}
                     </div>
                   </div>
