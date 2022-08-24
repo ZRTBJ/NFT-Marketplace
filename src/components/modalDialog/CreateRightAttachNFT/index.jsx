@@ -326,14 +326,14 @@ a Right Attached NFT!'
         {StepReview ? (
           <button
             onClick={handleCreateProjectOrCol}
-            className='bg-[#9A5AFF] text-[#fff] text-[14px] font-black w-full mt-6 rounded-[4px] py-2'
+            className={`customNewButton cutomtext-[#fff] text-[14px] font-black w-full mt-6 rounded-[4px] py-2`}
           >
             Submit
           </button>
         ) : (
           <button
             onClick={handleNext}
-            className='bg-[#9A5AFF] text-[#fff] text-[14px] font-black w-full mt-6 rounded-[4px] py-2'
+            className={`customNewButton text-[#fff] text-[14px] font-black w-full mt-6 rounded-[4px] py-2`}
           >
             Next
           </button>
