@@ -27,9 +27,9 @@ const NotificatioMenu = ({
   return (
     <div
       ref={ref}
-      className='w-screen md:w-1/4 h-screen md:h-auto md:border border-slate-300  bg-[#fff] dark:bg-dark-background rounded-xl absolute top-16 right-[-44px] md:right-20 z-20 px-4 pb-2'
+      className='w-screen md:w-1/4 h-screen md:h-auto md:border border-slate-300  bg-[#fff] rounded-xl absolute top-16 right-[-44px] md:right-20 z-20 px-4 pb-2'
     >
-      <div className='mt-4 txtblack dark:text-white'>
+      <div className='mt-4 txtblack'>
         <h3>Notifiction</h3>
         <small>Recent Activity</small>
       </div>
@@ -41,7 +41,7 @@ const NotificatioMenu = ({
               onClick={() => markAsRead(notification)}
               onTouchStart={() => markAsRead(notification)}
             >
-              <div className='w-3/4 txtblack dark:text-white text-sm cursor-pointer'>
+              <div className='w-3/4 txtblack text-sm cursor-pointer'>
                 <p className='ml-2'>{notification?.data?.project_name}</p>
                 <p>
                   <small className='ml-2'>{notification?.data?.message}</small>
