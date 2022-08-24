@@ -6,6 +6,14 @@ import rarible from 'assets/images/icons/rarible.svg';
 import { Link, useParams } from 'react-router-dom';
 import { format } from 'date-fns';
 import SuccessModal from 'components/modalDialog/SuccessModal';
+import {
+  FacebookShareButton,
+  TwitterShareButton,
+  RedditShareButton,
+} from 'react-share';
+import FB from 'assets/images/facebook.svg';
+import twitter from 'assets/images/twitter.svg';
+import reddit from 'assets/images/reddit.svg';
 
 export default function DetailsNFT() {
   const [isLoading, setIsLoading] = useState(true);
@@ -34,6 +42,15 @@ export default function DetailsNFT() {
       });
   }
 
+  const copyToClipboardShare = (text) => {
+    navigator.clipboard.writeText(text);
+    const copyEl = document.getElementById('copied-share-message');
+    copyEl.classList.toggle('hidden');
+    setTimeout(() => {
+      copyEl.classList.toggle('hidden');
+    }, 2000);
+  };
+
   let info =
     nft?.lnft?.nft_type === 'membership' ? nft?.more_info : nft?.sale_info;
 
@@ -53,18 +70,90 @@ export default function DetailsNFT() {
       )}
 
       <section className='flex flex-col lg:flex-row py-5'>
-        <div className='bg-white rounded-xl boxShadow flex-1 flex flex-col items-center justify-start self-start p-4 mr-4 mb-5 md:mb-0'>
-          <img
-            src={nft?.lnft?.asset?.path ? nft?.lnft?.asset?.path : manImg}
-            className='rounded-3xl h-[356px] w-[356px] object-cover max-w-full'
-            alt='nft'
-          />
-          <div className='rounded bg-success-1 bg-opacity-20 font-satoshi-bold text-success-1 font-black p-4 mt-4'>
-            {info?.price} MATIC
+        <div className='flex-1'>
+          <div className='bg-white rounded-xl shadow-main flex flex-col items-center justify-start self-start p-4 mr-4 mb-5 md:mb-0'>
+            <img
+              src={nft?.lnft?.asset?.path ? nft?.lnft?.asset?.path : manImg}
+              className='rounded-3xl h-[356px] w-[356px] object-cover max-w-full'
+              alt='nft'
+            />
+            <div className='rounded bg-success-1 bg-opacity-20 font-satoshi-bold text-success-1 font-black p-4 mt-4'>
+              {info?.price} MATIC
+            </div>
           </div>
+          {nft?.lnft?.invitation_code && (
+            <div className='bg-white rounded-xl shadow-main mt-3 flex flex-col items-center justify-start self-start p-4 mr-4 mb-5 md:mb-0'>
+              <div className='mt-2'>
+                <p className='text-[14px] text-center text-[#5F6479] mb-1'>
+                  Share with link
+                </p>
+                <div className='relative w-fit'>
+                  <p
+                    className='text-[16px] block py-[10px] pl-[15px] pr-[40px]  text-primary-900 bg-primary-50 w-full rounded-[12px]'
+                    id='iframe'
+                  >
+                    Link:{' '}
+                    <span className='font-black'>
+                      {origin}/{nft?.lnft?.invitation_code}
+                    </span>
+                  </p>
+                  <div className='text-primary-900 absolute top-2 right-2'>
+                    <i
+                      className='fa fa-copy text-lg cursor-pointer'
+                      onClick={() =>
+                        copyToClipboardShare(
+                          `${origin}/${nft?.lnft?.invitation_code}`
+                        )
+                      }
+                    ></i>
+                  </div>
+                  <p
+                    id='copied-share-message'
+                    className='hidden text-green-500 text-[14px] text-center'
+                  >
+                    Copied Successfully!
+                  </p>
+                </div>
+              </div>
+              <div>
+                <p className='text-[14px] text-[#5F6479] text-center mt-[46px] mb-1'>
+                  Share on Social Media
+                </p>
+                <div className='flex items-center'>
+                  <FacebookShareButton
+                    url={`${origin}/${nft?.lnft?.invitation_code}`}
+                    quote={'NFT'}
+                  >
+                    <div className='cursor-pointer rounded-[4px] bg-primary-50 h-[44px] w-[44px] flex items-center justify-center mr-2'>
+                      <img src={FB} alt='facebook' />
+                    </div>
+                  </FacebookShareButton>
+                  <TwitterShareButton
+                    title='NFT'
+                    url={`${origin}/${nft?.lnft?.invitation_code}`}
+                  >
+                    <div className='cursor-pointer rounded-[4px] bg-primary-50 h-[44px] w-[44px] flex items-center justify-center mr-2'>
+                      <img src={twitter} alt='twitter' />
+                    </div>
+                  </TwitterShareButton>
+                  <RedditShareButton
+                    title='NFT'
+                    url={`${origin}/${nft?.lnft?.invitation_code}`}
+                  >
+                    <div className='cursor-pointer rounded-[4px] bg-primary-50 h-[44px] w-[44px] flex items-center justify-center'>
+                      <img src={reddit} alt='reddit' />
+                    </div>
+                  </RedditShareButton>
+                  {/* <div className='cursor-pointer rounded-[4px] bg-opacity-[0.1] bg-[#9A5AFF] h-[44px] w-[44px] flex items-center justify-center mr-2'>
+                    <img src={instagram} alt='instagram' />
+                  </div> */}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
-        <div className='bg-white rounded-xl boxShadow p-4 flex-1'>
+        <div className='bg-white rounded-xl shadow-main p-4 flex-1'>
           <h1 className='txtblack pb-4'>{nft?.lnft?.name}</h1>
           <p className='txtblack text-sm pb-4'>Find it On</p>
           <div className='mb-4'>

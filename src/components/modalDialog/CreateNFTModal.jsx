@@ -23,7 +23,7 @@ const CreateNFTModal = ({ handleClose, show }) => {
           Create new NFT
         </h3>
         <div className='cursor-pointer flex bg-[#F9FCFF] border-[1px] border-[#C7CEE5] rounded-[12px] p-6 mb-6'>
-          <div className='mr-6 h-[74px] w-[74px] bg-[#FFA800] bg-opacity-[0.5] flex items-center justify-center rounded-[8px]'>
+          <div className='mr-6 h-[74px] w-[74px] bg-secondary-50 flex items-center justify-center rounded-[8px]'>
             <img src={Users} alt='Users' />
           </div>
           <div onClick={() => history.push('/membershipNFT')}>
@@ -37,7 +37,7 @@ const CreateNFTModal = ({ handleClose, show }) => {
           </div>
         </div>
         <div className='cursor-pointer flex bg-[#F9FCFF] border-[1px] border-[#C7CEE5] rounded-[12px] p-6 mb-6'>
-          <div className='mr-6 h-[74px] w-[74px] bg-[#9A5AFF] bg-opacity-[0.5] flex items-center justify-center rounded-[8px]'>
+          <div className='mr-6 h-[74px] w-[74px] bg-primary-50 flex items-center justify-center rounded-[8px]'>
             <img src={Product} alt='Product' />
           </div>
           <div onClick={() => history.push('/product-nft')}>
@@ -53,7 +53,7 @@ const CreateNFTModal = ({ handleClose, show }) => {
           className='cursor-pointer flex bg-[#F9FCFF] border-[1px] border-[#C7CEE5] rounded-[12px] p-6 mb-6'
           onClick={() => setShowCreateRANFT(true)}
         >
-          <div className='mr-6 h-[74px] w-[74px] bg-[#32E865] bg-opacity-[0.5] flex items-center justify-center rounded-[8px]'>
+          <div className='mr-6 h-[74px] w-[74px] bg-success-500 bg-opacity-[0.5] flex items-center justify-center rounded-[8px]'>
             <img src={HandShake} alt='HandShake' />
           </div>
           <div>

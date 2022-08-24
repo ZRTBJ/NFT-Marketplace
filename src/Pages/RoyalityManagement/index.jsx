@@ -3,9 +3,9 @@ import DropdownCreabo from 'components/DropdownCreabo';
 import CirclePlus from 'assets/images/icons/plus-circle.svg';
 import MemberListTable from 'components/RoyalityManagement/MemberListTable/MemberListTable';
 import styles from './style.module.css';
-import FB from 'assets/images/icons/fb.svg';
-import twitter from 'assets/images/icons/twitter.svg';
-import reddit from 'assets/images/icons/reddit.svg';
+import FB from 'assets/images/facebook.svg';
+import twitter from 'assets/images/twitter.svg';
+import reddit from 'assets/images/reddit.svg';
 import instagram from 'assets/images/icons/instagram.svg';
 import NFTSample from 'assets/images/createDAO/nft-sample.svg';
 import NewPublishModal from 'components/modalDialog/NewPublishModal';
@@ -65,6 +65,8 @@ const RoyalityManagement = () => {
   const [connectedCollections, setConnectedCollections] = useState([]);
   const [isSubmitted, setIsSumbitted] = useState(false);
   const [isConfirmConnect, setIsConfirmConnect] = useState(false);
+  const [showRoyalityErrorModal, setShowRoyalityErrorModal] = useState(false);
+  const [showRoyalityErrorMessage, setShowRoyalityErrorMessage] = useState('');
 
   const { collectionId } = useParams();
   let origin = window.location.origin;
@@ -108,7 +110,7 @@ const RoyalityManagement = () => {
       members: data.members.map((mem) => {
         return {
           ...mem,
-          royalty_percent: value,
+          royalty_percent: parseInt(value),
         };
       }),
     };
@@ -218,9 +220,13 @@ const RoyalityManagement = () => {
             setRoyaltyUpdatedSuccessfully(true);
             setAutoAssign(false);
             setIsEdit(null);
+            setShowRoyalityErrorModal(false);
+            setShowRoyalityErrorMessage('');
           } else {
             setIsAutoFillLoading(false);
             setRoyaltyUpdatedSuccessfully(false);
+            setShowRoyalityErrorModal(true);
+            setShowRoyalityErrorMessage(resp.message);
           }
         })
         .catch((err) => {
@@ -340,6 +346,18 @@ const RoyalityManagement = () => {
           show={showConnectErrorModal}
         />
       )}
+      {showRoyalityErrorModal && (
+        <ErrorModal
+          title={'Failed to apply royalty percentage!'}
+          message={`${showRoyalityErrorMessage}`}
+          handleClose={() => {
+            setShowRoyalityErrorModal(false);
+            setShowRoyalityErrorMessage(null);
+            setAutoAssign(false);
+          }}
+          show={showRoyalityErrorModal}
+        />
+      )}
       {showDeployModal && (
         <DeployingCollectiontModal
           show={showDeployModal}
@@ -403,8 +421,8 @@ const RoyalityManagement = () => {
         {CollectionDetail.is_owner && (
           <div className='ml-auto'>
             <Link to={`/collection-create/?id=${collectionId}`}>
-              <button className='rounded-[4px] p-2 bg-[#9A5AFF] bg-opacity-[0.1] text-[#9A5AFF] text-[12px] font-black w-[127px] '>
-                Edit Collection
+              <button className='font-black outlined-button'>
+                <span>Edit Collection</span>
               </button>
             </Link>
           </div>
@@ -437,9 +455,9 @@ const RoyalityManagement = () => {
             <div className='ml-4'>
               <button
                 onClick={handleConnectCollection}
-                className='rounded-[4px] p-2 py-3 bg-[#9A5AFF] bg-opacity-[0.1] text-[#9A5AFF] text-[12px] font-black w-[127px] '
+                className='font-black outlined-button'
               >
-                Connect
+                <span>Connect</span>
               </button>
             </div>
           </div>
@@ -449,9 +467,9 @@ const RoyalityManagement = () => {
             </p>
           )}
           <Link to='/collection-create'>
-            <button className='rounded-[4px] p-2 mt-4 bg-[#9A5AFF] bg-opacity-[0.1] text-[#9A5AFF] text-[12px] font-bold flex items-center w-[127px] justify-center'>
+            <button className='w-fit rounded-[4px] p-2 mt-4 bg-primary-50 text-[12px] font-bold flex items-center w-[127px] justify-center'>
               <img src={CirclePlus} alt='Add' />{' '}
-              <span className='ml-[6px]'>Add Collection</span>
+              <span className='ml-[6px] gradient-text'>Add Collection</span>
             </button>
           </Link>
         </div>
@@ -510,7 +528,7 @@ const RoyalityManagement = () => {
         CollectionDetail.status !== 'published' ? (
           <div className='w-full'>
             <button
-              className='block ml-auto rounded-[4px] bg-[#9A5AFF] text-white text-[12px] font-bold px-4 py-2'
+              className='block ml-auto contained-button'
               onClick={() => setShowPublish(true)}
             >
               Publish
@@ -519,7 +537,9 @@ const RoyalityManagement = () => {
         ) : null}
       </div>
       <div className='flex mb-8'>
-        <div className='bg-white mt-6 p-6 w-2/4 mr-2 rounded-[12px]'>
+        <div
+          className={`bg-white mt-6 p-6 w-2/4 mr-2 rounded-[12px] ${styles.memberSection}`}
+        >
           <h3 className='text-[18px] font-black'>Invite Contributor</h3>
           {data?.lnft?.invitation_code ? (
             <>
@@ -547,7 +567,7 @@ const RoyalityManagement = () => {
                 </p>
                 <div className='relative w-fit'>
                   <p
-                    className='text-[16px] block py-[10px] pl-[15px] pr-[40px] bg-opacity-[0.1] bg-[#9A5AFF] text-[#9A5AFF] w-full rounded-[12px]'
+                    className='text-[16px] block py-[10px] pl-[15px] pr-[40px]  text-primary-900 bg-primary-50 w-full rounded-[12px]'
                     id='iframe'
                   >
                     Link:{' '}
@@ -555,7 +575,7 @@ const RoyalityManagement = () => {
                       {origin}/{data?.lnft?.invitation_code}
                     </span>
                   </p>
-                  <div className='text-[#9A5AFF] absolute top-2 right-2'>
+                  <div className='text-primary-900 absolute top-2 right-2'>
                     <i
                       className='fa fa-copy text-lg cursor-pointer'
                       onClick={() =>
@@ -582,7 +602,7 @@ const RoyalityManagement = () => {
                     url={`${origin}/${data?.lnft?.invitation_code}`}
                     quote={'Right Attach NFT'}
                   >
-                    <div className='cursor-pointer rounded-[4px] bg-opacity-[0.1] bg-[#9A5AFF] h-[44px] w-[44px] flex items-center justify-center mr-2'>
+                    <div className='cursor-pointer rounded-[4px] bg-primary-50 h-[44px] w-[44px] flex items-center justify-center mr-2'>
                       <img src={FB} alt='facebook' />
                     </div>
                   </FacebookShareButton>
@@ -590,7 +610,7 @@ const RoyalityManagement = () => {
                     title='Right Attach NFT'
                     url={`${origin}/${data?.lnft?.invitation_code}`}
                   >
-                    <div className='cursor-pointer rounded-[4px] bg-opacity-[0.1] bg-[#9A5AFF] h-[44px] w-[44px] flex items-center justify-center mr-2'>
+                    <div className='cursor-pointer rounded-[4px] bg-primary-50 h-[44px] w-[44px] flex items-center justify-center mr-2'>
                       <img src={twitter} alt='twitter' />
                     </div>
                   </TwitterShareButton>
@@ -598,7 +618,7 @@ const RoyalityManagement = () => {
                     title='Right Attach NFT'
                     url={`${origin}/${data?.lnft?.invitation_code}`}
                   >
-                    <div className='cursor-pointer rounded-[4px] bg-opacity-[0.1] bg-[#9A5AFF] h-[44px] w-[44px] flex items-center justify-center mr-2'>
+                    <div className='cursor-pointer rounded-[4px] bg-primary-50 h-[44px] w-[44px] flex items-center justify-center mr-2'>
                       <img src={reddit} alt='reddit' />
                     </div>
                   </RedditShareButton>
@@ -615,7 +635,9 @@ const RoyalityManagement = () => {
           )}
         </div>
         {data?.lnft?.asset?.path ? (
-          <div className='bg-white mt-6 p-6 w-2/4 ml-2 rounded-[12px] flex items-center justify-center flex-col'>
+          <div
+            className={`bg-white mt-6 p-6 w-2/4 ml-2 rounded-[12px] flex items-center justify-center flex-col ${styles.memberSection}`}
+          >
             <h3 className='text-[18px] font-black'>Right Attached NFT</h3>
             <img
               src={data?.lnft?.asset?.path}
