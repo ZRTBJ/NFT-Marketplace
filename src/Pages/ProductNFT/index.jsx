@@ -767,9 +767,9 @@ export default function ProductNFT(props) {
         )}
         {showSuccessModal && (
           <SuccessModal
-            message={"You successfully created product NFT"}
-            subMessage={"Do you also want to mint the NFT?"}
-            buttonText={"Mint NFT"}
+            message={"Your NFT has been saved successfully"}
+            subMessage={"go to the collection page and see your collection."}
+            buttonText={"Ok"}
             redirection={`/collection-details/${collectionId}`}
             handleClose={() => {
               setShowSuccessModal(false);
