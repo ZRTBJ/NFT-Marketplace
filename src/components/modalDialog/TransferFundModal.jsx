@@ -152,7 +152,7 @@ const TransferFundModal = ({ handleClose, show, successClose }) => {
 
                 <button
                   type="submit"
-                  className="!w-full px-6 py-2 bg-primary-900 rounded font-black text-white-shade-900"
+                  className="!w-full px-6 py-2 contained-button rounded font-black text-white-shade-900"
                 >
                   Transfer Fund
                 </button>

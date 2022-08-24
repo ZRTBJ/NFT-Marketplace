@@ -77,7 +77,7 @@ const DAOCard = ({ item }) => {
             />
           ))}
         {item.members && item.members.length > 3 && (
-          <div className="flex items-center mt-[6px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]">
+          <div className="flex items-center mt-[6px] justify-center rounded-md ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]">
             <p className="text-[12px] text-[#9A5AFF]">
               +{truncateArray(item.members).restSize}
             </p>

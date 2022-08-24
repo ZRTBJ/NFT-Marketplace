@@ -428,7 +428,7 @@ export default function ProjectDetails(props) {
                   )}
 
                 {project?.is_owner && (
-                  <div className="cursor-pointer w-8 h-10 mb-4  text-white flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-secondary-800">
+                  <div className="cursor-pointer w-8 h-10 mb-4  text-white flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                     <Link to={`/project-create?id=${project?.id}`}>
                       <i className="fa-solid fa-pen-to-square text-primary-900"></i>
                     </Link>
@@ -477,7 +477,7 @@ export default function ProjectDetails(props) {
                 {project?.is_owner && (
                   <a
                     onClick={() => setShowTransferFundModal(true)}
-                    className="outlined-button ml-4 font-satoshi-bold"
+                    className="outlined-button ml-4 font-satoshi-bold cursor-pointer"
                   >
                     <span className="gradient-text">Transfer Funds</span>
                   </a>
