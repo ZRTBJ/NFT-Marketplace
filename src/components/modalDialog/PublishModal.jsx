@@ -26,7 +26,7 @@ const PublishModal = ({ handleClose, show, publishProject }) => {
           </div>
           <div className="flex justify-center mt-[30px]">
             <button
-              className="btn text-white-shade-900 bg-primary-900 btn-sm"
+              className="btn contained-button btn-sm"
               onClick={publishProject}
             >
               Publish Now
