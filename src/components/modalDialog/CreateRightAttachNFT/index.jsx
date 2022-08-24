@@ -64,6 +64,7 @@ const CreateRightAttachedNFT = ({ handleClose, show }) => {
   const [Success, setSuccess] = useState(false);
   const [IsLoading, setIsLoading] = useState(false);
   const [RANFTId, setRANFTId] = useState('');
+  const [IsSubmitted, setIsSubmitted] = useState(false);
   const projectDeploy = useSelector((state) =>
     state?.notifications?.notificationData
       ? state?.notifications?.notificationData
@@ -73,7 +74,7 @@ const CreateRightAttachedNFT = ({ handleClose, show }) => {
   const { id } = useParams();
   const dispatch = useDispatch();
 
-  useEffect(() => {
+  const handleCreateProjectOrCol = () => {
     if (!id && !ProjectID) {
       handleCreateProject();
     }
@@ -81,7 +82,7 @@ const CreateRightAttachedNFT = ({ handleClose, show }) => {
     if (id) {
       handleCreateCollection(id);
     }
-  }, [id]);
+  };
 
   useEffect(() => {
     const projectDeployStatus = projectDeploy.find(
@@ -149,6 +150,7 @@ const CreateRightAttachedNFT = ({ handleClose, show }) => {
     createCollection(data)
       .then((resp) => {
         setCollectionID(resp.collection.id);
+        generateKey();
       })
       .catch((err) => console.log(err));
   };
@@ -201,7 +203,10 @@ const CreateRightAttachedNFT = ({ handleClose, show }) => {
   };
 
   const handleNext = () => {
-    if (Asset) setStepReview(true);
+    setIsSubmitted(true);
+    if (Asset && Supply > 0) {
+      setStepReview(true);
+    }
   };
 
   const handleTemplate = (image) => {
@@ -262,7 +267,10 @@ a Right Attached NFT!'
           handleImage={handleImage}
           preview={AssetPreview}
         />
-        {!StepReview && (
+        {IsSubmitted && !Asset ? (
+          <p className='text-red-500 text-[12px] -mt-5'>Asset is required</p>
+        ) : null}
+        {/* {!StepReview && (
           <>
             <p className='text-[16px] font-bold'>Use Template</p>
             <div className='flex items-center overflow-x-auto mt-4'>
@@ -286,7 +294,7 @@ a Right Attached NFT!'
               </Swiper>
             </div>
           </>
-        )}
+        )} */}
         <div>
           <label
             htmlFor={'ra-nft-supply'}
@@ -301,14 +309,23 @@ a Right Attached NFT!'
               id={'ra-nft-supply'}
               type='number'
               value={Supply}
-              onChange={(e) => setSupply(e.target.value)}
+              onChange={(e) => {
+                if (e.target.value >= 0) {
+                  setSupply(e.target.value);
+                }
+              }}
               class='w-full bg-secondary rounded-[6px] text-[12px] px-[10px] py-[14px] text-text-base'
             />
           )}
+          {IsSubmitted && Supply < 1 ? (
+            <p className='text-red-500 text-[12px]'>
+              Supply should be greater than 0
+            </p>
+          ) : null}
         </div>
         {StepReview ? (
           <button
-            onClick={generateKey}
+            onClick={handleCreateProjectOrCol}
             className='bg-[#9A5AFF] text-[#fff] text-[14px] font-black w-full mt-6 rounded-[4px] py-2'
           >
             Submit

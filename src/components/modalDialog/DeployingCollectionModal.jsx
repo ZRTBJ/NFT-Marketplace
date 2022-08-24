@@ -205,14 +205,14 @@ const DeployingCollectiontModal = ({
             {deployStatus.step === 2 && (
               <div className='text-center'>ProjectToken Deployment</div>
             )} */}
-            <div className='flex justify-center mt-[30px]'>
+            {/* <div className='flex justify-center mt-[30px]'>
               <button
                 className='btn text-white-shade-900 bg-primary-900 btn-sm'
                 onClick={() => handleClose(false)}
               >
                 Cancel Publishing
               </button>
-            </div>
+            </div> */}
           </div>
         )}
         {step === 2 && (
