@@ -67,10 +67,10 @@ const CollectionDetail = () => {
                 (img) => img["asset_purpose"] === "cover"
               )
             );
-            if (Collection.urls && Collection.urls.length > 0) {
+            if (resp?.collection?.urls && resp?.collection?.urls.length > 0) {
               const webLinks = [];
               try {
-                const urls = JSON.parse(Collection.links);
+                const urls = JSON.parse(resp?.collection?.links);
                 for (let url of urls) {
                   webLinks.push({
                     title: Object.values(url)[0],
@@ -422,7 +422,7 @@ const CollectionDetail = () => {
                         {nft?.name}
                       </h2>
                       <div className="relative">
-                        {Collection.type === "membership" && (
+                        {Collection?.type === "membership" && (
                           <button
                             type="button"
                             className="w-[20px]"
@@ -431,7 +431,7 @@ const CollectionDetail = () => {
                             <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
                           </button>
                         )}
-                        
+
                         {/* Dropdown menu  */}
                         {ShowOptions === nft.id && (
                           <div className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 mb-6 block">
