@@ -559,8 +559,8 @@ export default function MintNFT(props) {
             <div className="bg-primary-900 ml-3 bg-opacity-10 rounded-md p-3 px-5 relative w-56">
               <i className="fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3"></i>
               <p className=" text-sm text-textSubtle ">Net Worth</p>
-              <h4>1.400.000 MATIC</h4>
-              <p className="text-sm text-textSubtle">($1,400.00)</p>
+              <h4>--- MATIC</h4>
+              <p className="text-sm text-textSubtle">($---)</p>
             </div>
 
             <div className="mt-3">
