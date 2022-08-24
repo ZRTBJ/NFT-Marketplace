@@ -617,7 +617,7 @@ export default function ProjectDetails(props) {
                               {collection.name}
                             </h2>
                             <div className="relative">
-                              <button
+                              {/*Hide dropdown menu <button
                                 type="button"
                                 onClick={() => {
                                   const el = document.getElementById(
@@ -629,7 +629,7 @@ export default function ProjectDetails(props) {
                                 {project?.is_owner && (
                                   <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
                                 )}
-                              </button>
+                              </button> */}
                               {/* Dropdown menu  */}
                               {project?.is_owner && (
                                 <div
@@ -757,7 +757,7 @@ export default function ProjectDetails(props) {
                               {collection.name}
                             </h2>
                             <div className="relative">
-                              <button
+                              {/* Hide dropdown menu <button
                                 type="button"
                                 onClick={() => {
                                   const el = document.getElementById(
@@ -769,7 +769,7 @@ export default function ProjectDetails(props) {
                                 {project?.is_owner && (
                                   <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
                                 )}
-                              </button>
+                              </button> */}
                               {/* Dropdown menu  */}
                               {project?.is_owner && (
                                 <div
@@ -935,7 +935,7 @@ export default function ProjectDetails(props) {
                                     {collection.name}
                                   </h2>
                                   <div className="relative">
-                                    <button
+                                    {/*Hide dropdown menu <button
                                       type="button"
                                       onClick={() => {
                                         const el = document.getElementById(
@@ -947,7 +947,7 @@ export default function ProjectDetails(props) {
                                       {project?.is_owner && (
                                         <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
                                       )}
-                                    </button>
+                                    </button> */}
                                     {/* Dropdown menu  */}
                                     {project?.is_owner && (
                                       <div
