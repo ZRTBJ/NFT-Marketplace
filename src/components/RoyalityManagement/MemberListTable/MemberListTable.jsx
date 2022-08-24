@@ -88,7 +88,7 @@ const MemberListTable = ({
                       : ' text-success-1 bg-[#32E865]'
                   }`}
                 >
-                  {r.is_owner ? 'Owenr' : 'Contributor'}
+                  {r.is_owner ? 'Owner' : 'Contributor'}
                 </p>
               </td>
               {/* <td className='py-4 px-5'>
