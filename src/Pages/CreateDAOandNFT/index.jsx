@@ -82,9 +82,9 @@ const CreateDAOandNFT = () => {
         </p>
         <div className='flex mt-6'>
           <Link to='/project-create'>
-            <div className='cursor-pointer w-[276px] h-[276px] mr-6 flex flex-col items-center justify-center bg-[#FDF7FF] rounded-[12px] border-[#D66EFB] border-[1px]'>
+            <div className='gradient-border cursor-pointer w-[276px] h-[276px] mr-6 flex flex-col items-center justify-center rounded-[12px]'>
               <img src={CirclePlus} alt='add' />
-              <p className='text-[#D66EFB] text-[18px] font-black mt-3'>
+              <p className='text-[#D66EFB] gradient-text font-black mt-3'>
                 Create new
               </p>
             </div>
@@ -113,11 +113,11 @@ const CreateDAOandNFT = () => {
         </p>
         <div className='flex mt-6'>
           <div
-            className='cursor-pointer min-w-[276px] h-[276px] mr-6 flex flex-col items-center justify-center bg-[#FDF7FF] rounded-[12px] border-[#D66EFB] border-[1px]'
+            className='gradient-border cursor-pointer min-w-[276px] h-[276px] mr-6 flex flex-col items-center justify-center rounded-[12px]'
             onClick={() => setShowCreateNFT(true)}
           >
             <img src={CirclePlus} alt='add' />
-            <p className='text-[#D66EFB] text-[18px] font-black mt-3'>
+            <p className='text-[18px] gradient-text font-black mt-3'>
               Create new
             </p>
           </div>
