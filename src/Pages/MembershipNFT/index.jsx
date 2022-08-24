@@ -12,6 +12,7 @@ import {
   generateUploadkey,
   getDefinedProperties,
   createMembershipNft,
+  getassetDetails,
 } from "services/nft/nftService";
 
 import axios from "axios";
@@ -57,32 +58,8 @@ export default function MembershipNFT() {
       supply: "",
       isOpen: true,
       blockchainCategory: "polygon",
+      indexId: 1,
     },
-    // {
-    //   tierName: "erere",
-    //   assets: {
-    //     file: null,
-    //     path: null,
-    //     isFileError: false,
-    //     limitExceeded: false,
-    //   },
-    //   nftName: "ererer",
-    //   externalLink: "",
-    //   description: "",
-    //   benefits: [{ title: "" }],
-    //   properties: [
-    //     {
-    //       key: "",
-    //       value: "",
-    //       value_type: "string",
-    //       display_type: "properties",
-    //     },
-    //   ],
-    //   sensitiveContent: false,
-    //   supply: "1232132",
-    //   isOpen: true,
-    //   blockchainCategory: "polygon",
-    // },
   ];
   const [nfts, setNfts] = useState(nftList);
   const audioRef = useRef();
@@ -97,7 +74,7 @@ export default function MembershipNFT() {
   const [projectCreated, setProjectCreated] = useState(false);
   const [projectId, setProjectId] = useState("");
   const [projectInfo, setProjectInfo] = useState({});
-  const [jobId, setJobId] = useState("");
+  const jobIds = [];
   const [calledIds, setCalledIds] = useState([]);
 
   const [showDataUploadingModal, setShowDataUploadingModal] = useState(false);
@@ -135,6 +112,7 @@ export default function MembershipNFT() {
       supply: "",
       isOpen: true,
       blockchainCategory: "polygon",
+      indexId: oldNfts.length + 1,
     });
     setNfts(oldNfts);
   }
@@ -334,9 +312,21 @@ export default function MembershipNFT() {
     //   }
     // }
 
-    createMembershipNft(request)
+    await createMembershipNft(request)
       .then((res) => {
         localStorage.removeItem(`${jobId}`);
+        const index = jobIds.indexOf(jobId);
+        if (index > -1) {
+          jobIds.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        console.log("remove", jobIds.length);
+        if (jobIds.length === 0) {
+          // clearTimeout(recheckStatus);
+        }
+        // remove
+        //  jobIds.re = jobIds.filter((id) => id !== jobId);
+        // console.log("removed jobsid", calledJobId);
+        // setJobIds(calledJobId);
         const upload_number = localStorage.getItem("upload_number");
         const update_upload_number = parseInt(upload_number) - 1;
         localStorage.setItem("upload_number", update_upload_number);
@@ -378,8 +368,9 @@ export default function MembershipNFT() {
           job_id: response["job_id"],
           properties: nft.properties,
         };
-
         localStorage.setItem(`${response["job_id"]}`, JSON.stringify(data));
+        jobIds.push(response["job_id"]);
+        console.log("add", jobIds);
         const notificationData = {
           projectId: daoId,
           etherscan: "",
@@ -420,6 +411,7 @@ export default function MembershipNFT() {
           await uploadAFile(key, dao_id, iterator);
         }
       }
+      // recheckStatus();
     } else {
       const daoId = await daoCreate();
       const collection_id = await collectionCreate(daoId);
@@ -430,6 +422,8 @@ export default function MembershipNFT() {
           await uploadAFile(key, daoId, iterator);
         }
       }
+      // recheckStatus();
+      // recheckStatus();
 
       const process_status = localStorage.getItem("upload_number");
       // console.log(process_status);
@@ -476,75 +470,63 @@ export default function MembershipNFT() {
       if (validateNfts.length === nfts.length) {
         window.scroll({ top: 0, behavior: "smooth" });
         setIsPreview(true);
+      } else {
+        const invalidNfts = nfts.filter(
+          (element) =>
+            element.tierName === "" ||
+            element.assets.file === null ||
+            element.assets.isFileError === true ||
+            element.assets.limitExceeded === true ||
+            element.nftName === "" ||
+            element.supply === ""
+        );
+        invalidNfts.forEach((element) => {
+          document.getElementById(`nft-${element.indexId}`).scrollIntoView({
+            behavior: "smooth",
+          });
+          console.log(element.indexId);
+        });
+
+        console.log(invalidNfts);
       }
     }
   }
-  function recheckStatus(fuuid) {
-    setTimeout(() => {
-      getFunctionStatus(fuuid)
-        .then((res) => {
-          if (res.code === 0) {
-            if (
-              res["fn_name"] === "createNFTBatch" &&
-              res["fn_status"] === "success"
-            ) {
-              if (res["fn_response_data"]["transactionStatus"] === "mined") {
+
+  function validate() {
+    for (const localkey in localStorage) {
+      const projectDeployStatus = fileUploadNotification.find(
+        (x) => x.function_uuid === localkey
+      );
+      // console.log(projectDeployStatus);
+      if (projectDeployStatus) {
+        if (projectDeployStatus.data !== "") {
+          const data = JSON.parse(projectDeployStatus.data);
+          if (data.Data["assetId"] && data.Data["assetId"].length > 0) {
+            if (!calledIds.includes(data.Data["assetId"])) {
+              saveNFTDetails(
+                data.Data["assetId"],
+                projectDeployStatus.function_uuid
+              );
+              let nftId = [...calledIds, data.Data["assetId"]];
+              setCalledIds(nftId);
+            }
+          }
+        } else {
+          getassetDetails(projectDeployStatus.function_uuid).then((res) => {
+            if (res.code === 0) {
+              if (res["asset"] && res["asset"]["id"]) {
+                const asstdata = {
+                  Data: { assetId: res["asset"]["id"] },
+                };
                 const deployData = {
-                  function_uuid: fuuid,
-                  data: JSON.stringify(res),
+                  function_uuid: projectDeployStatus.function_uuid,
+                  data: JSON.stringify(asstdata),
                 };
                 dispatch(getNotificationData(deployData));
               }
-            } else if (
-              res["fn_name"] === "createNFTBatch" &&
-              res["fn_status"] === "processing"
-            ) {
-              recheckStatus(fuuid);
-            }
-          }
-        })
-        .catch((error) => {});
-    }, 30000);
-  }
-  function validate() {
-    console.log(fileUploadNotification);
-    const projectDeployStatus = fileUploadNotification.find((x) =>
-      localStorage.getItem(`${x.function_uuid}`)
-    );
-    console.log(projectDeployStatus);
-    if (projectDeployStatus && projectDeployStatus.data) {
-      try {
-        const data = JSON.parse(projectDeployStatus.data);
-        if (
-          data.Data["assetId"] &&
-          data.Data["assetId"].length > 0 &&
-          data.Data["path"] &&
-          data.Data["path"].length > 0
-        ) {
-          if (!calledIds.includes(data.Data["assetId"])) {
-            saveNFTDetails(
-              data.Data["assetId"],
-              projectDeployStatus.function_uuid
-            );
-            let nftId = [...calledIds, data.Data["assetId"]];
-            setCalledIds(nftId);
-          }
-        } else {
-          getAsset(projectDeployStatus.function_uuid).then((res) => {
-            // console.log(res);
-            if (res.code === 0) {
-              const notificationData = {
-                projectId: dao_id,
-                etherscan: "",
-                function_uuid: projectDeployStatus.function_uuid,
-                data: res.asset,
-              };
-              dispatch(getNotificationData(notificationData));
             }
           });
         }
-      } catch (error) {
-        console.log(error);
       }
     }
   }
@@ -606,6 +588,7 @@ export default function MembershipNFT() {
               {nfts.map((nft, index) => (
                 <div
                   key={index}
+                  id={`nft-${index + 1}`}
                   className="mb-6 rounded-[12px]  border border-divider  p-4"
                 >
                   {nfts.length > 1 && !isPreview && (
@@ -1022,7 +1005,7 @@ export default function MembershipNFT() {
                   </button>
                   <button
                     onClick={nextHandle}
-                    className="h-[43px] px-6 py-2 bg-primary-900 rounded font-black text-white-shade-900   md:ml-auto"
+                    className="w-[140px] !text-[16px] h-[44px] contained-button   md:ml-auto"
                   >
                     Submit
                   </button>
@@ -1037,7 +1020,7 @@ export default function MembershipNFT() {
                   </button>
                   <button
                     onClick={nextHandle}
-                    className="h-[43px] px-6 py-2 bg-primary-900 rounded font-black text-white-shade-900   md:ml-auto"
+                    className="w-[140px] !text-[16px] h-[44px] contained-button   md:ml-auto"
                   >
                     Next
                   </button>
@@ -1108,7 +1091,7 @@ export default function MembershipNFT() {
               <div className="mt-5">
                 <button
                   type="button"
-                  className="h-[43px] px-6 py-2 bg-primary-900 rounded font-black text-white-shade-900"
+                  className="w-[140px] !text-[16px] h-[44px] contained-button"
                   onClick={onSavePropertiesChange}
                 >
                   SAVE

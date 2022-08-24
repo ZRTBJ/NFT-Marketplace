@@ -327,7 +327,7 @@ const Profile = () => {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-wrap mt-3  ml-auto md:mt-0">
+              <div className="flex flex-wrap mt-3 relative ml-auto md:mt-0">
                 {sncList &&
                   sncList.map((snc, index) => (
                     <div key={`snc-${index}`}>
@@ -344,7 +344,7 @@ const Profile = () => {
                                 rel="noreferrer"
                               >
                                 <i
-                                  className="fa fa-link text-[20px] text-primary-900 mt-1"
+                                  className="fa fa-link text-[20px] gradient-text mt-1"
                                   aria-hidden="true"
                                 ></i>
                               </a>
@@ -355,7 +355,7 @@ const Profile = () => {
                                 className={`fa-brands fa-${
                                   socialLinks.find((x) => x.title === snc.title)
                                     .icon
-                                } text-[20px] text-primary-900 mt-1`}
+                                } text-[20px] gradient-text text-white-shade-900 mt-1`}
                               ></i>
                             </a>
                           )}
@@ -363,10 +363,16 @@ const Profile = () => {
                       )}
                     </div>
                   ))}
+                <Link to="/profile-settings">
+                  <button className="rounded social-icon-button text-primary-900 px-4 py-1 top-[80px] right-[16px] absolute right-0">
+                    Edit <i className="fa-solid  fa-pen-to-square ml-2"></i>
+                  </button>
+                </Link>
               </div>
             </div>
+
             <div
-              className="px-4 text-white-shade-900   h-[152px] bg-primary-900 rounded rounded-[8px]"
+              className="px-4 text-white-shade-900 w-[342px]  h-[152px] gradient-background rounded rounded-[8px]"
               style={{ boxShadow: "12px 12px 24px #D5BAFF" }}
             >
               <h3 className="ml-[24px] mt-[24px] text-[18px] font-black ">
@@ -401,7 +407,7 @@ const Profile = () => {
                   <>
                     <button
                       onClick={claimAllRoyalty}
-                      className="mb-4 text-primary-900 font-bold bg-primary-900/[0.1] py-1 px-3 rounded mr-4"
+                      className="mb-4 contained-button font-bold py-1 px-3 rounded mr-4"
                     >
                       Claim All Royalties
                     </button>

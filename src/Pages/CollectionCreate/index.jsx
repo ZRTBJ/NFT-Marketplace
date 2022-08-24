@@ -648,34 +648,32 @@ export default function CollectionCreate() {
         </div>
         <div className="mb-6">
           <div className="flex">
-            {projectStatus !== "publishing" && (
-              <>
-                {currentStep.length > 1 && (
-                  <button
-                    className="bg-primary-900/[0.10] text-primary-900 px-3 font-black"
-                    onClick={() => handelClickBack()}
-                  >
-                    <i className="fa-regular fa-angle-left"></i> Back
-                  </button>
-                )}
-                {currentStep.length === 1 && (
-                  <button
-                    className="btn text-white-shade-900 bg-primary-900 btn-sm"
-                    onClick={() => handelClickNext()}
-                  >
-                    Next <i className="fa-regular fa-angle-right ml-1"></i>
-                  </button>
-                )}
-                {currentStep.length > 1 && projectStatus !== "published" && (
-                  <button
-                    onClick={() => saveDraft("public")}
-                    className={`btn text-white-shade-900 bg-primary-900 btn-sm ml-auto`}
-                  >
-                    Submit
-                  </button>
-                )}
-              </>
-            )}
+            <>
+              {currentStep.length > 1 && (
+                <button
+                  className="bg-primary-900/[0.10] text-primary-900 px-3 font-black w-[140px] !text-[16px] h-[44px]"
+                  onClick={() => handelClickBack()}
+                >
+                  <i className="fa-regular fa-angle-left"></i> Back
+                </button>
+              )}
+              {currentStep.length === 1 && (
+                <button
+                  className=" w-[140px] !text-[16px] h-[44px] contained-button "
+                  onClick={() => handelClickNext()}
+                >
+                  Next <i className="fa-regular fa-angle-right ml-1"></i>
+                </button>
+              )}
+              {currentStep.length > 1 && (
+                <button
+                  onClick={() => saveDraft("public")}
+                  className={`w-[140px] !text-[16px] h-[44px] contained-button  ml-auto`}
+                >
+                  Submit
+                </button>
+              )}
+            </>
           </div>
         </div>
       </div>
