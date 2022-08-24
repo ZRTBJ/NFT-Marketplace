@@ -982,7 +982,9 @@ export default function ProjectDetails(props) {
                                       collection.members
                                     ).slicedItems.map((member) => (
                                       <img
-                                        src={member.avatar}
+                                        src={
+                                          member.avatar ? member.avatar : avatar
+                                        }
                                         alt={member.id}
                                         className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
                                       />
