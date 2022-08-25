@@ -7,6 +7,7 @@ import Template4 from 'assets/images/templates/ra-nft-4.png';
 import Template5 from 'assets/images/templates/ra-nft-5.png';
 import { Swiper, SwiperSlide } from 'swiper/react';
 // import { Navigation } from 'swiper';
+import ErrorModal from '../ErrorModal';
 import styles from './style.module.css';
 import { useState, useEffect } from 'react';
 import {
@@ -21,6 +22,7 @@ import { getNotificationData } from 'Slice/notificationSlice';
 import { createProject } from 'services/project/projectService';
 import { createCollection } from 'services/collection/collectionService';
 import SuccessModal from '../SuccessModal';
+import PublishingRANFT from '../PublishingRANFT';
 
 const TEMPLATES = [
   { id: 0, image: Template1 },
@@ -61,10 +63,13 @@ const CreateRightAttachedNFT = ({ handleClose, show }) => {
   const [JobId, setJobId] = useState('');
   const [ProjectID, setProjectID] = useState('');
   const [CollectionID, setCollectionID] = useState('');
-  const [Success, setSuccess] = useState(false);
+  // const [Success, setSuccess] = useState(false);
   const [IsLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const [RANFTId, setRANFTId] = useState('');
   const [IsSubmitted, setIsSubmitted] = useState(false);
+  const [showSteps, setShowSteps] = useState(false);
+  const [step, setStep] = useState(1);
   const projectDeploy = useSelector((state) =>
     state?.notifications?.notificationData
       ? state?.notifications?.notificationData
@@ -97,6 +102,8 @@ const CreateRightAttachedNFT = ({ handleClose, show }) => {
         data.Data['path'].length > 0
       ) {
         postRightAttachNFT(data.Data['assetId']);
+      } else {
+        setErrorMsg('Right Attach NFT creation failed!');
       }
     }
   }, [projectDeploy]);
@@ -110,7 +117,9 @@ const CreateRightAttachedNFT = ({ handleClose, show }) => {
     saveRightAttachedNFT(formData)
       .then((resp) => {
         if (resp?.code === 0) {
-          setSuccess(true);
+          // setSuccess(true);
+          setStep(2);
+          setErrorMsg('');
           setStepReview(false);
           setAssetPreview('');
           setAsset();
@@ -118,7 +127,8 @@ const CreateRightAttachedNFT = ({ handleClose, show }) => {
           setIsLoading(false);
           setRANFTId(resp?.lnft?.id);
         } else {
-          setSuccess(false);
+          setErrorMsg(resp.message);
+          // setSuccess(false);
           setIsLoading(false);
         }
       })
@@ -134,6 +144,7 @@ const CreateRightAttachedNFT = ({ handleClose, show }) => {
   };
 
   const handleCreateProject = () => {
+    setShowSteps(true);
     createProject()
       .then((resp) => {
         let projectId = resp?.project?.id;
@@ -142,10 +153,15 @@ const CreateRightAttachedNFT = ({ handleClose, show }) => {
           handleCreateCollection(projectId);
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setErrorMsg(err.message);
+        setShowSteps(false);
+      });
   };
 
   const handleCreateCollection = (projectID) => {
+    setShowSteps(true);
     let data = { dao_id: projectID, collection_type: 'right_attach' };
     createCollection(data)
       .then((resp) => {
@@ -247,17 +263,39 @@ const CreateRightAttachedNFT = ({ handleClose, show }) => {
     xhr.send();
   };
 
+  const handleShowStepClose = () => {
+    setShowSteps(false);
+  };
+
   return (
     <Modal width={650} show={show} handleClose={() => handleClose(false)}>
-      <div className={`${IsLoading ? 'loading' : ''}`}>
-        <SuccessModal
+      <div>
+        {/* <SuccessModal
           show={Success}
           message='You successfully Create
 a Right Attached NFT!'
           subMessage='Do you want to create New NFT? if yes let’s go!'
           buttonText='Done'
           redirection={`/royality-management/${CollectionID}`}
-        />
+        /> */}
+        {errorMsg && (
+          <ErrorModal
+            title={'Right Attach NFT minting failed !'}
+            message={`${errorMsg}`}
+            handleClose={() => {
+              setErrorMsg('');
+            }}
+            show={errorMsg}
+          />
+        )}
+        {showSteps && (
+          <PublishingRANFT
+            handleShowStepClose={handleShowStepClose}
+            show={showSteps}
+            step={step}
+            collectionId={CollectionID}
+          />
+        )}
         <h3 className='text-[28px] font-black mb-5'>
           Upload Right attached NFT
         </h3>
