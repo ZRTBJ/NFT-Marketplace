@@ -85,11 +85,11 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose }) => {
 
       <div
         ref={ref}
-        className='w-screen md:w-52 h-screen md:h-auto md:border border-slate-300  bg-[#fff] dark:bg-dark-background rounded-xl absolute top-11 right-[-44px] md:right-0 z-20'
+        className='w-screen md:w-52 h-screen md:h-auto md:border border-slate-300  bg-[#fff] rounded-xl absolute top-11 right-[-44px] md:right-0 z-20'
       >
         <div className='pl-10 pr-3 py-3 border-b border-slate-300'>
-          <h3 className='txtblack dark:text-white text-sm  mb-6 '>Wallet</h3>
-          <p className='txtblack dark:text-white flex content-center mb-2'>
+          <h3 className='txtblack text-sm  mb-6 '>Wallet</h3>
+          <p className='txtblack flex content-center mb-2'>
             <img
               src={
                 wallet === 'metamask'
@@ -105,7 +105,7 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose }) => {
             />
             <span>Total Balance </span>
           </p>
-          <h4 className='txtblack dark:text-white text-xl  mb-6 tracking-wide'>
+          <h4 className='txtblack text-xl  mb-6 tracking-wide'>
             {isLoadingBalance && (
               <i className='fa fa-spinner fa-pulse fa-fw'></i>
             )}
@@ -120,7 +120,7 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose }) => {
         {/* <div className="pl-10 pr-3 py-3 border-b border-slate-300">
           <div
             onClick={handleLogout}
-            className="items-center txtblack dark:text-white flex content-center font-base text-sm cursor-pointer"
+            className="items-center txtblack flex content-center font-base text-sm cursor-pointer"
           >
             <i className="fa-solid fa-arrow-right-arrow-left"></i>
             <span className="ml-2">Switch Wallet</span>
@@ -129,7 +129,7 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose }) => {
         <div className='pl-10 pr-3 py-3'>
           <div
             onClick={handleLogout}
-            className='items-center txtblack dark:text-white flex content-center font-base text-sm cursor-pointer'
+            className='items-center txtblack flex content-center font-base text-sm cursor-pointer'
           >
             <i className='fa-solid fa-right-from-bracket'></i>
             <span className='ml-2'>Log Out</span>

@@ -20,12 +20,13 @@ const ErrorModal = ({
       show={show}
       handleClose={() => handleClose(false)}
     >
+
       <div className="text-center">
         <img className="block mx-auto" src={IconError} alt="" />
-        <div className="my-4 text-xl font-bold txtblack dark:text-white">
+        <div className="my-4 text-xl font-bold txtblack">
           {titleMsg}
         </div>
-        <div className="my-4 font-bold txtblack dark:text-white">{bodyMsg}</div>
+        <div className="my-4 font-bold txtblack">{bodyMsg}</div>
         <div className="flex justify-center mb-4">
           {redirection ? (
             <Link to={redirection}>

@@ -1,28 +1,28 @@
-import React from "react";
-import { useState, useCallback, useEffect } from "react";
-import "assets/css/CreateProject/mainView.css";
+import React from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import 'assets/css/CreateProject/mainView.css';
 import {
   checkUniqueCollectionName,
   checkUniqueCollectionSymbol,
-} from "services/collection/collectionService";
-import Outline from "components/DraftProjectUpdate/Outline";
-import Confirmation from "components/DraftProjectUpdate/Confirmation";
-import { mockCreateProject } from "services/project/projectService";
+} from 'services/collection/collectionService';
+import Outline from 'components/DraftProjectUpdate/Outline';
+import Confirmation from 'components/DraftProjectUpdate/Confirmation';
+import { mockCreateProject } from 'services/project/projectService';
 import {
   createCollection,
   updateCollection,
   getCollectionDetailsById,
   deleteAssetsOfCollection,
-} from "services/collection/collectionService";
-import ErrorModal from "components/modalDialog/ErrorModal";
-import SuccessModal from "components/modalDialog/SuccessModal";
-import { getProjectCategory } from "services/project/projectService";
-import { useLocation } from "react-router-dom";
+} from 'services/collection/collectionService';
+import ErrorModal from 'components/modalDialog/ErrorModal';
+import SuccessModal from 'components/modalDialog/SuccessModal';
+import { getProjectCategory } from 'services/project/projectService';
+import { useLocation } from 'react-router-dom';
 
 export default function CollectionCreate() {
   // logo start
   const [logoPhoto, setLogoPhoto] = useState([]);
-  const [logoPhotoUrl, setLogoPhotoUrl] = useState("");
+  const [logoPhotoUrl, setLogoPhotoUrl] = useState('');
   const onLogoPhotoSelect = useCallback((acceptedFiles) => {
     if (acceptedFiles.length === 1) {
       setLogoPhoto(acceptedFiles);
@@ -43,18 +43,18 @@ export default function CollectionCreate() {
       setDataIsLoading(true);
       await deleteAssetsOfCollection(payload).then((e) => {
         setLogoPhoto([]);
-        setLogoPhotoUrl("");
+        setLogoPhotoUrl('');
         setDataIsLoading(false);
       });
     } else {
       setLogoPhoto([]);
-      setLogoPhotoUrl("");
+      setLogoPhotoUrl('');
     }
   }
   // Logo End
 
   // collection Type start
-  const [collectionType, setCollectionType] = useState("");
+  const [collectionType, setCollectionType] = useState('');
   const [showCollectionType, setShowCollectionType] = useState(true);
   const [emptyCollectionType, setEmptyCollectionType] = useState(false);
   function onCollectionTypeSelect(e) {
@@ -66,7 +66,7 @@ export default function CollectionCreate() {
   // cover start
   const [showCover, setShowCover] = useState(true);
   const [coverPhoto, setCoverPhoto] = useState([]);
-  const [coverPhotoUrl, setCoverPhotoUrl] = useState("");
+  const [coverPhotoUrl, setCoverPhotoUrl] = useState('');
   const onCoverPhotoSelect = useCallback((acceptedFiles) => {
     if (acceptedFiles.length === 1) {
       setCoverPhoto(acceptedFiles);
@@ -87,18 +87,18 @@ export default function CollectionCreate() {
       setDataIsLoading(true);
       await deleteAssetsOfCollection(payload).then((e) => {
         setCoverPhoto([]);
-        setCoverPhotoUrl("");
+        setCoverPhotoUrl('');
         setDataIsLoading(false);
       });
     } else {
       setCoverPhoto([]);
-      setCoverPhotoUrl("");
+      setCoverPhotoUrl('');
     }
   }
   // cover End
 
   // Project Name start
-  const [projectName, setProjectName] = useState("");
+  const [projectName, setProjectName] = useState('');
   const [emptyProjectName, setemptyProjectName] = useState(false);
   const [alreadyTakenProjectName, setAlreadyTakenProjectName] = useState(false);
   const [projectNameDisabled, setProjectNameDisabled] = useState(false);
@@ -126,7 +126,7 @@ export default function CollectionCreate() {
 
   // Dao symbol start
   // dao symbol is collection symbol
-  const [daoSymbol, setDaoSymbol] = useState("");
+  const [daoSymbol, setDaoSymbol] = useState('');
   const [emptyDaoSymbol, setEmptyDaoSymbol] = useState(false);
   const [daoSymbolDisable, setDaoSymbolDisable] = useState(false);
   const [alreadyTakenDaoSymbol, setAlreadyTakenDaoSymbol] = useState(false);
@@ -153,7 +153,7 @@ export default function CollectionCreate() {
   // Dao symbol End
 
   // overview start
-  const [overview, setOverview] = useState("");
+  const [overview, setOverview] = useState('');
   function onOverviewChange(e) {
     setOverview(e.target.value);
   }
@@ -173,11 +173,11 @@ export default function CollectionCreate() {
 
   // webLinks start
   const links = [
-    { title: "linkInsta", icon: "instagram", value: "" },
-    { title: "linkReddit", icon: "reddit", value: "" },
-    { title: "linkTwitter", icon: "twitter", value: "" },
-    { title: "linkFacebook", icon: "facebook", value: "" },
-    { title: "customLinks1", icon: "link", value: "" },
+    { title: 'linkInsta', icon: 'instagram', value: '' },
+    { title: 'linkReddit', icon: 'reddit', value: '' },
+    { title: 'linkTwitter', icon: 'twitter', value: '' },
+    { title: 'linkFacebook', icon: 'facebook', value: '' },
+    { title: 'customLinks1', icon: 'link', value: '' },
   ];
   const [showWebLinks, setShowWebLinks] = useState(true);
   const [webLinks, setWebLinks] = useState(links);
@@ -189,9 +189,9 @@ export default function CollectionCreate() {
   // webLinks end
 
   // category start
-  const [projectCategory, setProjectCategory] = useState("");
+  const [projectCategory, setProjectCategory] = useState('');
   const [emptyProjeCtCategory, setEmptyProjectCategory] = useState(false);
-  const [projectCategoryName, setProjectCategoryName] = useState("");
+  const [projectCategoryName, setProjectCategoryName] = useState('');
   function onProjectCategoryChange(event) {
     setProjectCategory(event.target.value);
     setEmptyProjectCategory(false);
@@ -199,12 +199,12 @@ export default function CollectionCreate() {
       (x) => x.id === parseInt(event.target.value)
     );
 
-    setProjectCategoryName(categoryName ? categoryName.name : "");
+    setProjectCategoryName(categoryName ? categoryName.name : '');
   }
   // category end
 
   // Blockchain start
-  const [blockchainCategory, setBlockchaainCategory] = useState("polygon");
+  const [blockchainCategory, setBlockchaainCategory] = useState('polygon');
   // Blockchain end
 
   // Freeze MetaData start
@@ -234,7 +234,7 @@ export default function CollectionCreate() {
 
   function onRoyaltyPercentageChange(royalties) {
     setRoyaltyPercentage(royalties);
-    if (royalties === "") {
+    if (royalties === '') {
       setIsRoyaltyPercentageValid(false);
     } else {
       if (!isNaN(royalties)) {
@@ -257,8 +257,8 @@ export default function CollectionCreate() {
 
   const [currentStep, setcurrentStep] = useState([1]);
   const [projectCreated, setProjectCreated] = useState(false);
-  const [projectId, setProjectId] = useState("");
-  const [projectStatus, setProjectStatus] = useState("");
+  const [projectId, setProjectId] = useState('');
+  const [projectStatus, setProjectStatus] = useState('');
   const [isDataLoading, setDataIsLoading] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -299,18 +299,18 @@ export default function CollectionCreate() {
     // outline
     if (currentStep.length === 2) {
       if (
-        projectName !== "" &&
-        projectCategory !== "" &&
+        projectName !== '' &&
+        projectCategory !== '' &&
         alreadyTakenProjectName === false &&
-        daoSymbol !== "" &&
+        daoSymbol !== '' &&
         alreadyTakenDaoSymbol === false &&
         isRoyaltyPercentageValid
       ) {
-        console.log("dfg");
-        let id = "";
+        console.log('dfg');
+        let id = '';
         if (!projectCreated) {
           await createBlock(id);
-        } else if (projectCreated && projectId !== "") {
+        } else if (projectCreated && projectId !== '') {
           await updateBlock(projectId);
         }
       }
@@ -323,7 +323,7 @@ export default function CollectionCreate() {
       collection_type: collectionType,
     };
 
-    let projectId = "";
+    let projectId = '';
     await createCollection(createPayload)
       .then((res) => {
         if (res.code === 0) {
@@ -368,13 +368,13 @@ export default function CollectionCreate() {
     await getCollectionDetailsById(payload).then((e) => {
       if (e.code === 0) {
         const response = e.collection;
-        const logo = response.assets.find((x) => x.asset_purpose === "logo");
-        setLogoPhotoUrl(logo ? logo : "");
+        const logo = response.assets.find((x) => x.asset_purpose === 'logo');
+        setLogoPhotoUrl(logo ? logo : '');
         setProjectName(response.name);
         setDaoSymbol(response.collection_symbol);
         setOverview(response.description);
-        const cover = response.assets.find((x) => x.asset_purpose === "cover");
-        setCoverPhotoUrl(cover ? cover : "");
+        const cover = response.assets.find((x) => x.asset_purpose === 'cover');
+        setCoverPhotoUrl(cover ? cover : '');
         try {
           setWebLinks(JSON.parse(response.links));
         } catch (e) {}
@@ -388,14 +388,14 @@ export default function CollectionCreate() {
         setProjectStatus(response.status);
         setProjectCreated(true);
         setProjectId(response.id);
-        if (response.type === "right_attach") {
+        if (response.type === 'right_attach') {
           setShowTokenTransferable(false);
           setShowRoyalties(false);
           setShowCover(false);
           setShowWebLinks(false);
         }
 
-        if (response.status === "published") {
+        if (response.status === 'published') {
           setProjectNameDisabled(true);
           setDaoSymbolDisable(true);
           setFreezeMetadataDisabled(true);
@@ -428,24 +428,24 @@ export default function CollectionCreate() {
   function handelClickNext() {
     // outline
     if (currentStep.length === 1) {
-      if (projectName === "") {
+      if (projectName === '') {
         setemptyProjectName(true);
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-      if (daoSymbol === "") {
+      if (daoSymbol === '') {
         setEmptyDaoSymbol(true);
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-      if (collectionType === "") {
+      if (collectionType === '') {
         setEmptyCollectionType(true);
       }
-      if (projectCategory === "") {
+      if (projectCategory === '') {
         setEmptyProjectCategory(true);
       } else if (
-        projectName !== "" &&
-        projectCategory !== "" &&
+        projectName !== '' &&
+        projectCategory !== '' &&
         alreadyTakenProjectName === false &&
-        daoSymbol !== "" &&
+        daoSymbol !== '' &&
         alreadyTakenDaoSymbol === false &&
         isRoyaltyPercentageValid
       ) {
@@ -475,7 +475,7 @@ export default function CollectionCreate() {
   }
 
   async function daoCreate() {
-    let daoId = "";
+    let daoId = '';
     await mockCreateProject().then((res) => {
       daoId = res.project.id;
       setDao_id(daoId);
@@ -497,17 +497,17 @@ export default function CollectionCreate() {
   }, [collectionType]);
 
   useEffect(() => {
-    if (query.get("dao_id")) {
-      setDao_id(query.get("dao_id"));
+    if (query.get('dao_id')) {
+      setDao_id(query.get('dao_id'));
     }
-    if (query.get("type")) {
-      setCollectionType(query.get("type"));
+    if (query.get('type')) {
+      setCollectionType(query.get('type'));
       setShowCollectionType(false);
     }
   }, []);
   useEffect(() => {
-    if (query.get("id")) {
-      projectDetails(query.get("id"));
+    if (query.get('id')) {
+      projectDetails(query.get('id'));
       setShowCollectionType(false);
     }
   }, []);
@@ -519,22 +519,22 @@ export default function CollectionCreate() {
   }, []);
   return (
     <>
-      {isDataLoading && <div className="loading"></div>}
-      <div className="txtblack dark:text-white max-w-[600px] mx-auto md:mt-[40px]">
-        <div className="create-project-container">
+      {isDataLoading && <div className='loading'></div>}
+      <div className='txtblack max-w-[600px] mx-auto md:mt-[40px]'>
+        <div className='create-project-container'>
           {currentStep.length === 1 && (
             <div>
-              <h1 className="text-[28px] font-black mb-[6px]">
-                {projectCreated ? "Update" : "Create New"} Collection
+              <h1 className='txtblack text-[28px] font-black mb-[6px]'>
+                {projectCreated ? 'Update' : 'Create New'} Collection
               </h1>
-              <p className="text-[14px] text-textSubtle mb-[24px]">
-                Fill the require form to{" "}
-                {!projectCreated ? "create " : "Update"} collection
+              <p className='txtblack text-[14px] text-textSubtle mb-[24px]'>
+                Fill the require form to{' '}
+                {!projectCreated ? 'create ' : 'Update'} collection
               </p>
               <Outline
                 key={outlineKey}
                 // logo
-                logoLabel="Collection Logo"
+                logoLabel='Collection Logo'
                 coverPhotoUrl={coverPhotoUrl}
                 onCoverPhotoSelect={onCoverPhotoSelect}
                 onCoverPhotoRemove={onCoverPhotoRemove}
@@ -544,14 +544,14 @@ export default function CollectionCreate() {
                 emptyCollectionType={emptyCollectionType}
                 onCollectionTypeSelect={onCollectionTypeSelect}
                 // name
-                nameLabel="Collection Name"
+                nameLabel='Collection Name'
                 projectName={projectName}
                 emptyProjectName={emptyProjectName}
                 alreadyTakenProjectName={alreadyTakenProjectName}
                 projectNameDisabled={projectNameDisabled}
                 onProjectNameChange={onProjectNameChange}
                 // Dao symbol
-                symbolTitle="Collection Symbol"
+                symbolTitle='Collection Symbol'
                 showDaoSymbol={true}
                 daoSymbol={daoSymbol}
                 emptyDaoSymbol={emptyDaoSymbol}
@@ -609,13 +609,13 @@ export default function CollectionCreate() {
             <Confirmation
               key={outlineKey}
               // logo
-              logoLabel="Collection Logo"
+              logoLabel='Collection Logo'
               logoPhotoUrl={logoPhotoUrl}
               // name
-              nameLabel="Collection Name"
+              nameLabel='Collection Name'
               projectName={projectName}
               // Dao symbol
-              symbolTitle="Collection Symbol"
+              symbolTitle='Collection Symbol'
               showDaoSymbol={true}
               daoSymbol={daoSymbol}
               // Dao Wallet
@@ -692,7 +692,7 @@ export default function CollectionCreate() {
         <ErrorModal
           handleClose={() => setShowErrorModal(false)}
           show={showErrorModal}
-          buttomText="Try Again"
+          buttomText='Try Again'
           redirection={`/create`}
         />
       )}
