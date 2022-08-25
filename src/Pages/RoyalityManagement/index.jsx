@@ -642,7 +642,7 @@ const RoyalityManagement = () => {
             <img
               src={data?.lnft?.asset?.path}
               alt='NFT'
-              className='mt-5 h-[189px] w-[189px]'
+              className='mt-5 h-[189px] w-[189px] object-cover'
             />
           </div>
         ) : null}
