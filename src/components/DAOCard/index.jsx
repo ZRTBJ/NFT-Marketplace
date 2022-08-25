@@ -36,18 +36,18 @@ const DAOCard = ({ item }) => {
     >
       <img
         src={
-          item.assets?.find((pic) => pic.name === "cover")
-            ? item.assets?.find((pic) => pic.name === "cover").path
-            : thumbIcon
+          item.assets?.find((pic) => pic.name === "img1")
+            ? item.assets?.find((pic) => pic.name === "img1").path
+            : defaultImage
         }
         alt={item.name}
         className="rounded-t-xl h-36 object-cover w-full"
       />
       <img
         src={
-          item.assets?.find((pic) => pic.name === "img1")
-            ? item.assets?.find((pic) => pic.name === "img1").path
-            : defaultImage
+          item.assets?.find((pic) => pic.name === "cover")
+            ? item.assets?.find((pic) => pic.name === "cover").path
+            : thumbIcon
         }
         alt={item.name}
         className="rounded-full w-24 h-24 absolute top-20 left-1/2 z-10 -ml-12 "
