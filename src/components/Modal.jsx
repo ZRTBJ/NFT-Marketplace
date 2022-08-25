@@ -33,7 +33,7 @@ const Modal = ({
         onClick={(e) => modalBodyClicked(e)}
         style={styleObj}
         className={
-          ' modal-main bg-white rounded-3xl relative txtblack dark:text-white p-11'
+          ' modal-main bg-white rounded-3xl relative txtblack p-11'
         }
       >
         {showCloseIcon && (

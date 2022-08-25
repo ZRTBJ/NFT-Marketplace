@@ -453,7 +453,7 @@ const Header = () => {
                 id="default-search-2"
                 name="projectSearch1"
                 autoComplete="off"
-                className="dark:bg-color-ass-5 text-lg w-full w-100 text-white rounded-xl !pl-8 h-10 placeholder-color-ass-4"
+                className="text-lg w-full w-100 text-white rounded-xl !pl-8 h-10 placeholder-color-ass-4"
                 placeholder="Search your project by name"
                 onChange={handleOnTextChange}
                 onFocus={handleOnSearchFocus}
