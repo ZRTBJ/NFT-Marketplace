@@ -84,7 +84,7 @@ const InviteModal = ({
   const handleShowStepClose = () => {
     setShowSteps(false);
   };
-  console.log(mintData);
+
   return (
     <Modal show={show} handleClose={handleClose} width={580}>
       {showLogin && (
