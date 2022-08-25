@@ -1,24 +1,24 @@
-import { useState, useEffect } from "react";
-import "assets/css/profile.css";
-import DefaultProfilePicture from "assets/images/defaultProfile.svg";
-import DefaultProjectLogo from "assets/images/profile/defaultProjectLogo.svg";
-import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore, { Autoplay } from "swiper";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
-import DAOCard from "components/DAOCard";
-import NFTCard from "components/NFTCard";
-import styles from "Pages/CreateDAOandNFT/style.module.css";
-import { Navigation } from "swiper";
-import ProfileImage from "assets/images/createDAO/user.svg";
-import NFTSample from "assets/images/createDAO/nft-sample.svg";
-import { getUserProjectListById } from "services/project/projectService";
-import { getUserInfo, getRoyalties } from "services/User/userService";
-import { Link, useParams } from "react-router-dom";
-import SuccessModal from "components/modalDialog/SuccessModal";
-import { getUserCollections } from "services/collection/collectionService";
-import thumbIcon from "assets/images/cover-default.svg";
+import { useState, useEffect } from 'react';
+import 'assets/css/profile.css';
+import DefaultProfilePicture from 'assets/images/defaultProfile.svg';
+import DefaultProjectLogo from 'assets/images/profile/defaultProjectLogo.svg';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import SwiperCore, { Autoplay } from 'swiper';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import DAOCard from 'components/DAOCard';
+import NFTCard from 'components/NFTCard';
+import styles from 'Pages/CreateDAOandNFT/style.module.css';
+import { Navigation } from 'swiper';
+import ProfileImage from 'assets/images/createDAO/user.svg';
+import NFTSample from 'assets/images/createDAO/nft-sample.svg';
+import { getUserProjectListById } from 'services/project/projectService';
+import { getUserInfo, getRoyalties } from 'services/User/userService';
+import { Link, useParams } from 'react-router-dom';
+import SuccessModal from 'components/modalDialog/SuccessModal';
+import { getUserCollections } from 'services/collection/collectionService';
+import thumbIcon from 'assets/images/cover-default.svg';
 
 const Profile = () => {
   SwiperCore.use([Autoplay]);
@@ -28,11 +28,11 @@ const Profile = () => {
   const [royaltyEarned, setRoyaltyEarned] = useState({});
   const [sncList, setsncList] = useState([]);
   const socialLinks = [
-    { title: "linkInsta", icon: "instagram", value: "" },
-    { title: "linkReddit", icon: "reddit", value: "" },
-    { title: "linkTwitter", icon: "twitter", value: "" },
-    { title: "linkFacebook", icon: "facebook", value: "" },
-    { title: "webLink1", icon: "link", value: "" },
+    { title: 'linkInsta', icon: 'instagram', value: '' },
+    { title: 'linkReddit', icon: 'reddit', value: '' },
+    { title: 'linkTwitter', icon: 'twitter', value: '' },
+    { title: 'linkFacebook', icon: 'facebook', value: '' },
+    { title: 'webLink1', icon: 'link', value: '' },
   ];
 
   const [projectList, setProjectList] = useState([]);
@@ -46,11 +46,11 @@ const Profile = () => {
   const [collectionListLimit, setCollectionListLimit] = useState(10);
   // collection end
   // Royalties start
-  const [royaltiesListSortBy, setRoyaltiesListSortBy] = useState("default");
+  const [royaltiesListSortBy, setRoyaltiesListSortBy] = useState('default');
   const royaltiesSortByList = [
-    { id: 1, name: "Revenue" },
-    { id: 2, name: "Name" },
-    { id: 3, name: "Percentage" },
+    { id: 1, name: 'Revenue' },
+    { id: 2, name: 'Name' },
+    { id: 3, name: 'Percentage' },
   ];
   const [royaltiesList, setRoyaltiesList] = useState([]);
 
@@ -70,9 +70,9 @@ const Profile = () => {
   const COLLECTION_ITEMS = [
     {
       id: 0,
-      name: "NFT Collection #1",
+      name: 'NFT Collection #1',
       image: NFTSample,
-      description: "There are many variations of passages of Lorem",
+      description: 'There are many variations of passages of Lorem',
       nfts: [
         { id: 0, profileImage: ProfileImage },
         { id: 1, profileImage: ProfileImage },
@@ -81,9 +81,9 @@ const Profile = () => {
     },
     {
       id: 1,
-      name: "NFT Collection #2",
+      name: 'NFT Collection #2',
       image: NFTSample,
-      description: "There are many variations of passages of Lorem",
+      description: 'There are many variations of passages of Lorem',
       nfts: [
         { id: 0, profileImage: ProfileImage },
         { id: 1, profileImage: ProfileImage },
@@ -93,9 +93,9 @@ const Profile = () => {
     },
     {
       id: 2,
-      name: "NFT Collection #3",
+      name: 'NFT Collection #3',
       image: NFTSample,
-      description: "There are many variations of passages of Lorem",
+      description: 'There are many variations of passages of Lorem',
       nfts: [
         { id: 0, profileImage: ProfileImage },
         { id: 1, profileImage: ProfileImage },
@@ -107,9 +107,9 @@ const Profile = () => {
     },
     {
       id: 3,
-      name: "NFT Collection #3",
+      name: 'NFT Collection #3',
       image: NFTSample,
-      description: "There are many variations of passages of Lorem",
+      description: 'There are many variations of passages of Lorem',
       nfts: [
         { id: 0, profileImage: ProfileImage },
         { id: 1, profileImage: ProfileImage },
@@ -118,9 +118,9 @@ const Profile = () => {
     },
     {
       id: 4,
-      name: "NFT Collection #3",
+      name: 'NFT Collection #3',
       image: NFTSample,
-      description: "There are many variations of passages of Lorem",
+      description: 'There are many variations of passages of Lorem',
       nfts: [
         { id: 0, profileImage: ProfileImage },
         { id: 1, profileImage: ProfileImage },
@@ -182,14 +182,14 @@ const Profile = () => {
         setUser(response.user);
         setRoyaltyEarned(response.royalty_earned);
         setWalletAddress(response.user.eao);
-        if (response.user["web"]) {
+        if (response.user['web']) {
           try {
-            const webs = JSON.parse(response.user["web"]);
+            const webs = JSON.parse(response.user['web']);
             const weblist = [...webs].map((e) => ({
               title: Object.keys(e)[0],
               url: Object.values(e)[0],
             }));
-            const sociallinks = JSON.parse(response.user["social"]);
+            const sociallinks = JSON.parse(response.user['social']);
             const sncs = [...sociallinks].map((e) => ({
               title: Object.keys(e)[0],
               url: Object.values(e)[0],
@@ -253,10 +253,10 @@ const Profile = () => {
   };
   function copyToClipboard(text) {
     navigator.clipboard.writeText(text);
-    const copyEl = document.getElementById("copied-message");
-    copyEl.classList.toggle("hidden");
+    const copyEl = document.getElementById('copied-message');
+    copyEl.classList.toggle('hidden');
     setTimeout(() => {
-      copyEl.classList.toggle("hidden");
+      copyEl.classList.toggle('hidden');
     }, 2000);
   }
 
@@ -281,76 +281,76 @@ const Profile = () => {
 
   return (
     <>
-      {isLoading && <div className="loading"></div>}
+      {isLoading && <div className='loading'></div>}
       {!isLoading && (
-        <main className="container mx-auto">
+        <main className='container mx-auto'>
           {/* profile information section */}
-          <div className="flex flex-wrap mt-[16px] justify-between">
-            <div className="md:mr-4 flex flex-wrap  bg-white-shade-900 flex-1 rounded rounded-[8px] p-[13px] md:p-[20px]">
+          <div className='flex flex-wrap mt-[16px] justify-between'>
+            <div className='md:mr-4 flex flex-wrap  bg-white-shade-900 flex-1 rounded rounded-[8px] p-[13px] md:p-[20px] shadow-main'>
               <div>
-                <div className="flex">
+                <div className='flex'>
                   <img
                     src={
-                      user.avatar === "" ? DefaultProfilePicture : user.avatar
+                      user.avatar === '' ? DefaultProfilePicture : user.avatar
                     }
-                    className="rounded-lg self-start  w-[102px] object-cover h-[102px]"
-                    alt={"profile"}
+                    className='rounded-lg self-start  w-[102px] object-cover h-[102px]'
+                    alt={'profile'}
                   />
-                  <div className="flex-1 min-w-0  pl-[20px]">
-                    <h3 className="text-ellipsis text-txtblack mb-[4px] overflow-hidden whitespace-nowrap font-black text-[18px]">
+                  <div className='flex-1 min-w-0  pl-[20px]'>
+                    <h3 className='text-ellipsis text-txtblack mb-[4px] overflow-hidden whitespace-nowrap font-black text-[18px]'>
                       {user.display_name}
                     </h3>
-                    <p className="text-[13px] text-textSubtle ">
-                      {user?.eoa?.slice(0, 20)}..{" "}
+                    <p className='text-[13px] text-textSubtle '>
+                      {user?.eoa?.slice(0, 20)}..{' '}
                       <i
                         onClick={() => {
                           copyToClipboard(user.eoa);
                         }}
-                        className="fa-solid  fa-copy cursor-pointer pl-[6px]"
+                        className='fa-solid  fa-copy cursor-pointer pl-[6px]'
                       ></i>
-                      <span id="copied-message" className="hidden ml-2">
+                      <span id='copied-message' className='hidden ml-2'>
                         Copied !
                       </span>
                     </p>
-                    <p className="flex items-center mb-[3px]">
-                      <i className="fa-solid fa-map-pin mr-[7px] text-danger-1 text-[12px]"></i>
-                      <span className="text-[13px] text-txtblack">
+                    <p className='flex items-center mb-[3px]'>
+                      <i className='fa-solid fa-map-pin mr-[7px] text-danger-1 text-[12px]'></i>
+                      <span className='text-[13px] text-txtblack'>
                         {user.area}
                       </span>
                     </p>
-                    <p className="flex items-center">
-                      <i className="fa-solid fa-briefcase mr-[7px] text-danger-1 text-[12px]"></i>
-                      <span className="text-[13px] text-txtblack">
+                    <p className='flex items-center'>
+                      <i className='fa-solid fa-briefcase mr-[7px] text-danger-1 text-[12px]'></i>
+                      <span className='text-[13px] text-txtblack'>
                         {user.job}
                       </span>
                     </p>
                   </div>
                 </div>
               </div>
-              <div className="flex flex-wrap mt-3 relative ml-auto md:mt-0">
+              <div className='flex flex-wrap mt-3 relative ml-auto md:mt-0'>
                 {sncList &&
                   sncList.map((snc, index) => (
                     <div key={`snc-${index}`}>
-                      {snc.url !== "" && (
+                      {snc.url !== '' && (
                         <div
                           key={`snc-${index}`}
-                          className="cursor-pointer mr-4 w-[44px] h-[44px] mb-4 bg-primary-900/[.09] flex justify-center  items-center rounded-md "
+                          className='cursor-pointer mr-4 w-[44px] h-[44px] mb-4 bg-primary-900/[.09] flex justify-center  items-center rounded-md '
                         >
-                          {snc.title.toLowerCase().match("weblink") ? (
-                            <div className="">
+                          {snc.title.toLowerCase().match('weblink') ? (
+                            <div className=''>
                               <a
                                 href={snc.url}
-                                target="_blank"
-                                rel="noreferrer"
+                                target='_blank'
+                                rel='noreferrer'
                               >
                                 <i
-                                  className="fa fa-link text-[20px] gradient-text mt-1"
-                                  aria-hidden="true"
+                                  className='fa fa-link text-[20px] gradient-text mt-1'
+                                  aria-hidden='true'
                                 ></i>
                               </a>
                             </div>
                           ) : (
-                            <a href={snc.url} target="_blank" rel="noreferrer">
+                            <a href={snc.url} target='_blank' rel='noreferrer'>
                               <i
                                 className={`fa-brands fa-${
                                   socialLinks.find((x) => x.title === snc.title)
@@ -363,29 +363,30 @@ const Profile = () => {
                       )}
                     </div>
                   ))}
-                <Link to="/profile-settings">
-                  <button className="rounded social-icon-button text-primary-900 px-4 py-1 top-[80px] right-[16px] absolute right-0">
-                    Edit <i className="fa-solid  fa-pen-to-square ml-2"></i>
+                <Link to='/profile-settings'>
+                  <button className='rounded social-icon-button text-primary-900 px-4 py-1 bottom-[4px] right-[16px] absolute flex items-center'>
+                    <span>Edit</span>{' '}
+                    <i className='fa-solid  fa-pen-to-square ml-2'></i>
                   </button>
                 </Link>
               </div>
             </div>
 
             <div
-              className="px-4 text-white-shade-900 w-[342px]  h-[152px] gradient-background rounded rounded-[8px]"
-              style={{ boxShadow: "12px 12px 24px #D5BAFF" }}
+              className='px-4 text-white-shade-900 w-[374px] s h-[152px] gradient-background rounded rounded-[8px]'
+              style={{ boxShadow: '5px 5px 24px rgba(172, 203, 232, 0.28)' }}
             >
-              <h3 className="ml-[24px] mt-[24px] text-[18px] font-black ">
+              <h3 className='ml-[24px] mt-[24px] text-[18px] font-black '>
                 Total Earned Amount
               </h3>
-              <h1 className="font-black text-[28px] ml-[24px] mt-[8px]">
+              <h1 className='font-black text-[28px] ml-[24px] mt-[8px]'>
                 ${royaltyEarned.total_earn}
               </h1>
-              <div className="ml-[24px] mt-[8px] flex flex-wrap align-center">
-                <div className="bg-success-1 h-[26px] w-[26px]  rounded-full">
-                  <i className="fa-solid fa-up text-[#FFFF] ml-1.5  mt-[3px] text-[20px]"></i>
+              <div className='ml-[24px] mt-[8px] flex flex-wrap align-center'>
+                <div className='bg-success-1 h-[26px] w-[26px]  rounded-full'>
+                  <i className='fa-solid fa-up text-[#FFFF] ml-1.5  mt-[3px] text-[20px]'></i>
                 </div>
-                <p className="text-[14px] ml-2">
+                <p className='text-[14px] ml-2'>
                   {/* Increased 50% since last month */}
                   Last month earned ${royaltyEarned.last_month_earn}
                 </p>
@@ -393,13 +394,13 @@ const Profile = () => {
             </div>
           </div>
           {/* Royalties Table */}
-          <div className="mt-[41px] mb-[36px] pt-[30px] pl-[24px] pr-[24px] pb-[35px] bg-white-shade-900 rounded-[8px]">
-            <div className="flex flex-wrap item-center mb-[24px]">
-              <h2 className="text-[24px] mb-3">Royalties</h2>
-              <div className="flex  flex-wrap items-center md:ml-auto">
-                <p className="mr-4 mb-3">
-                  <span className="text-txtblack mr-2">Total Royalties:</span>
-                  <span className="text-txtblack font-black">
+          <div className='mt-[41px] mb-[36px] pt-[30px] pl-[24px] pr-[24px] pb-[35px] bg-white-shade-900 rounded-[8px]'>
+            <div className='flex flex-wrap item-center mb-[24px]'>
+              <h2 className='text-[24px] mb-3'>Royalties</h2>
+              <div className='flex  flex-wrap items-center md:ml-auto'>
+                <p className='mr-4 mb-3'>
+                  <span className='text-txtblack mr-2'>Total Royalties:</span>
+                  <span className='text-txtblack font-black'>
                     {royaltiesList.length > 0 ? totalRoyality : `0`}
                   </span>
                 </p>
@@ -407,16 +408,16 @@ const Profile = () => {
                   <>
                     <button
                       onClick={claimAllRoyalty}
-                      className="mb-4 contained-button font-bold py-1 px-3 rounded mr-4"
+                      className='mb-4 contained-button font-bold py-1 px-3 rounded mr-4'
                     >
                       Claim All Royalties
                     </button>
                     <select
-                      className="w-[120PX] h-[32px] mb-4 bg-white-shade-900 pl-2 outline-none text-textSubtle border border-[#C7CEE5]"
+                      className='w-[120PX] h-[32px] mb-4 bg-white-shade-900 pl-2 outline-none text-textSubtle border border-[#C7CEE5]'
                       value={royaltiesListSortBy}
                       onChange={onRoyaltiesListSort}
                     >
-                      <option disabled value={"default"} defaultValue>
+                      <option disabled value={'default'} defaultValue>
                         Sort By
                       </option>
                       {royaltiesSortByList.map((e) => (
@@ -430,26 +431,26 @@ const Profile = () => {
               </div>
             </div>
             {royaltiesList.length > 0 ? (
-              <div className="overflow-x-auto relative mb-[54px]">
-                <table className="w-full text-left">
+              <div className='overflow-x-auto relative mb-[54px]'>
+                <table className='w-full text-left'>
                   <thead>
-                    <tr className="text-textSubtle text-[12px] ">
-                      <th scope="col" className="px-5">
+                    <tr className='text-textSubtle text-[12px] '>
+                      <th scope='col' className='px-5'>
                         Icon
                       </th>
-                      <th scope="col" className="px-5">
+                      <th scope='col' className='px-5'>
                         Project Name
                       </th>
-                      <th scope="col" className="px-5">
+                      <th scope='col' className='px-5'>
                         Percentage
                       </th>
-                      <th scope="col" className="px-5">
+                      <th scope='col' className='px-5'>
                         Role
                       </th>
-                      <th scope="col" className="px-5">
+                      <th scope='col' className='px-5'>
                         Earnable Amount
                       </th>
-                      <th scope="col" className="px-5">
+                      <th scope='col' className='px-5'>
                         Action
                       </th>
                     </tr>
@@ -459,32 +460,32 @@ const Profile = () => {
                       <tr
                         key={r.index}
                         className={`${
-                          index < royaltiesList.length - 1 ? "border-b" : ""
+                          index < royaltiesList.length - 1 ? 'border-b' : ''
                         } text-left text-txtblack text-[14px]`}
                       >
-                        <td className="py-4 px-5">
+                        <td className='py-4 px-5'>
                           <img
                             src={DefaultProjectLogo}
-                            className="h-[34px] w-[34px] object-cover rounded-full"
-                            alt={r.project_name + "logo"}
+                            className='h-[34px] w-[34px] object-cover rounded-full'
+                            alt={r.project_name + 'logo'}
                           />
                         </td>
-                        <td className="py-4 px-5 font-black ">
+                        <td className='py-4 px-5 font-black '>
                           {r.project_name}
                         </td>
-                        <td className="py-4 px-5">{r.royalty_percent}</td>
+                        <td className='py-4 px-5'>{r.royalty_percent}</td>
                         <td
                           className={`py-4 px-5  ${
-                            r.is_owner ? "text-info-1" : " text-success-1"
+                            r.is_owner ? 'text-info-1' : ' text-success-1'
                           }`}
                         >
-                          {r.is_owner ? "Owner" : "Member"}
+                          {r.is_owner ? 'Owner' : 'Member'}
                         </td>
-                        <td className="py-4 px-5">${r.earnable_amount}</td>
-                        <td className="py-4 px-5">
+                        <td className='py-4 px-5'>${r.earnable_amount}</td>
+                        <td className='py-4 px-5'>
                           <button
                             onClick={claimAllRoyalty}
-                            className="bg-secondary-900/[.20] h-[32px] w-[57px] rounded text-secondary-900"
+                            className='bg-secondary-900/[.20] h-[32px] w-[57px] rounded text-secondary-900'
                           >
                             Claim
                           </button>
@@ -495,8 +496,8 @@ const Profile = () => {
                 </table>
               </div>
             ) : (
-              <div className="text-center ">
-                <h2 className="text-textSubtle mb-6">
+              <div className='text-center '>
+                <h2 className='text-textSubtle mb-6'>
                   You don't have any Royalty yet
                 </h2>
               </div>
@@ -517,8 +518,8 @@ const Profile = () => {
             </div> */}
           </div>
 
-          <div className="mb-[50px]">
-            <h1 className="text-[28px] mb-[36px] font-black">Your DAO</h1>
+          <div className='mb-[50px]'>
+            <h1 className='text-[28px] mb-[36px] font-black'>Your DAO</h1>
 
             {projectList.length > 0 ? (
               <Swiper
@@ -536,14 +537,14 @@ const Profile = () => {
                 </div>
               </Swiper>
             ) : (
-              <div className="text-center mt-6">
-                <h2 className="text-textSubtle">You don't have any DAO yet</h2>
+              <div className='text-center mt-6'>
+                <h2 className='text-textSubtle'>You don't have any DAO yet</h2>
               </div>
             )}
           </div>
 
-          <div className="mb-[50px]">
-            <h1 className="text-[28px] mb-[36px] font-black">Collection</h1>
+          <div className='mb-[50px]'>
+            <h1 className='text-[28px] mb-[36px] font-black'>Collection</h1>
             {collectionList.length > 0 ? (
               <Swiper
                 breakpoints={settings}
@@ -555,18 +556,18 @@ const Profile = () => {
                   {collectionList.map((collection, index) => (
                     <SwiperSlide key={index.id} className={styles.nftCard}>
                       <div
-                        className="min-h-[390px] rounded-x"
+                        className='min-h-[390px] rounded-x'
                         key={`best-collection-${index}`}
                       >
                         <Link
                           to={
-                            collection.type === "right_attach"
+                            collection.type === 'right_attach'
                               ? `/royality-management/${collection.id}`
                               : `/collection-details/${collection.id}`
                           }
                         >
                           <img
-                            className="rounded-xl h-[276px] object-cover w-full"
+                            className='rounded-xl h-[276px] object-cover w-full'
                             src={
                               collection &&
                               collection.assets &&
@@ -574,22 +575,22 @@ const Profile = () => {
                                 ? collection.assets[0].path
                                 : thumbIcon
                             }
-                            alt=""
+                            alt=''
                           />
                         </Link>
 
-                        <div className="p-5">
-                          <h2 className="pb-2 text-txtblack truncate">
+                        <div className='p-5'>
+                          <h2 className='pb-2 text-txtblack truncate'>
                             {collection.name}
                           </h2>
-                          <p className="mb-3 text-textSubtle text-[13px]">
+                          <p className='mb-3 text-textSubtle text-[13px]'>
                             {collection.description &&
                             collection.description.length > 70
-                              ? collection.description.substring(0, 67) + "..."
+                              ? collection.description.substring(0, 67) + '...'
                               : collection.description}
                           </p>
 
-                          <div className="flex items-center">
+                          <div className='flex items-center'>
                             {collection.members &&
                               collection.members.length > 0 &&
                               truncateArray(collection.members).slicedItems.map(
@@ -597,14 +598,14 @@ const Profile = () => {
                                   <img
                                     src={member.avatar}
                                     alt={member.id}
-                                    className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
+                                    className='rounded-full w-9 h-9 -ml-2 border-2 border-white'
                                   />
                                 )
                               )}
                             {collection.members &&
                               collection.members.length > 3 && (
-                                <div className="flex items-center mt-[6px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]">
-                                  <p className="text-[12px] text-[#9A5AFF]">
+                                <div className='flex items-center mt-[6px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]'>
+                                  <p className='text-[12px] text-[#9A5AFF]'>
                                     +
                                     {truncateArray(collection.members).restSize}
                                   </p>
@@ -618,7 +619,7 @@ const Profile = () => {
                 </div>
               </Swiper>
             ) : (
-              <div className="text-center mt-6 text-textSubtle">
+              <div className='text-center mt-6 text-textSubtle'>
                 <h2>You don't have any Collection yet</h2>
               </div>
             )}
@@ -628,9 +629,9 @@ const Profile = () => {
       {showSuccessModal && (
         <SuccessModal
           show={showSuccessModal}
-          message="This feature is not support yet, please wait"
-          subMessage="Coming Soon"
-          buttonText="OK"
+          message='This feature is not support yet, please wait'
+          subMessage='Coming Soon'
+          buttonText='OK'
           redirection={`/profile/${id}`}
           showCloseIcon={true}
           handleClose={() => setShowSuccessModal(false)}
