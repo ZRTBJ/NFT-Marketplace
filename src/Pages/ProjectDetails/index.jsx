@@ -257,7 +257,7 @@ export default function ProjectDetails(props) {
 
   function getUnitPriceUSD() {
     setIsLoadingBalance(true);
-    cryptoConvert("MATIC", "USD")
+    cryptoConvert("ETH", "USD")
       .then((res) => {
         if (res.USD && res.USD > 0) {
           setUsdUnitPrice(res.USD);
@@ -349,7 +349,7 @@ export default function ProjectDetails(props) {
                 {links.find((link) => link.title === "linkFacebook") &&
                   links.find((link) => link.title === "linkFacebook").value
                     ?.length > 0 && (
-                    <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5">
+                    <div className="social-icon-button cursor-pointer w-9 h-9 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                       <a
                         href={`${
                           links.find((link) => link.title === "linkFacebook")
@@ -358,7 +358,7 @@ export default function ProjectDetails(props) {
                         target="_blank"
                         rel="noreferrer"
                       >
-                        <i className="fa-brands fa-facebook text-primary-900"></i>
+                        <i className="fa-brands fa-facebook gradient-text"></i>
                       </a>
                     </div>
                   )}
@@ -366,7 +366,7 @@ export default function ProjectDetails(props) {
                 {links.find((link) => link.title === "linkInsta") &&
                   links.find((link) => link.title === "linkInsta").value
                     ?.length > 0 && (
-                    <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5">
+                    <div className="social-icon-button cursor-pointer w-9 h-9 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                       <a
                         href={`${
                           links.find((link) => link.title === "linkInsta").value
@@ -374,14 +374,14 @@ export default function ProjectDetails(props) {
                         target="_blank"
                         rel="noreferrer"
                       >
-                        <i className="fa-brands fa-instagram text-primary-900"></i>
+                        <i className="fa-brands fa-instagram gradient-text"></i>
                       </a>
                     </div>
                   )}
                 {links.find((link) => link.title === "linkTwitter") &&
                   links.find((link) => link.title === "linkTwitter").value
                     ?.length > 0 && (
-                    <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5">
+                    <div className="social-icon-button cursor-pointer w-9 h-9 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                       <a
                         href={`${
                           links.find((link) => link.title === "linkTwitter")
@@ -390,14 +390,14 @@ export default function ProjectDetails(props) {
                         target="_blank"
                         rel="noreferrer"
                       >
-                        <i className="fa-brands fa-twitter text-primary-900"></i>
+                        <i className="fa-brands fa-twitter gradient-text"></i>
                       </a>
                     </div>
                   )}
                 {links.find((link) => link.title === "linkGithub") &&
                   links.find((link) => link.title === "linkGithub").value
                     ?.length > 0 && (
-                    <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5">
+                    <div className="social-icon-button cursor-pointer w-9 h-9 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                       <a
                         href={`${
                           links.find((link) => link.title === "linkGithub")
@@ -406,14 +406,14 @@ export default function ProjectDetails(props) {
                         target="_blank"
                         rel="noreferrer"
                       >
-                        <i className="fa-brands fa-github text-primary-900"></i>
+                        <i className="fa-brands fa-github gradient-text"></i>
                       </a>
                     </div>
                   )}
                 {links.find((link) => link.title === "customLinks1") &&
                   links.find((link) => link.title === "customLinks1").value
                     ?.length > 0 && (
-                    <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 bg-opacity-20 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-opacity-5">
+                    <div className="social-icon-button cursor-pointer w-9 h-9 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                       <a
                         href={`${
                           links.find((link) => link.title === "customLinks1")
@@ -422,22 +422,22 @@ export default function ProjectDetails(props) {
                         target="_blank"
                         rel="noreferrer"
                       >
-                        <i className="fa-solid fa-globe text-primary-900"></i>
+                        <i className="fa-solid fa-globe gradient-text"></i>
                       </a>
                     </div>
                   )}
 
                 {project?.is_owner && (
-                  <div className="cursor-pointer w-8 h-8 mb-4 bg-primary-900 text-white flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 hover:bg-secondary-800">
+                  <div className="cursor-pointer w-8 h-10 mb-4  text-white flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                     <Link to={`/project-create?id=${project?.id}`}>
-                      <i className="fa-solid fa-pen-to-square"></i>
+                      <i className="fa-solid fa-pen-to-square text-primary-900"></i>
                     </Link>
                   </div>
                 )}
                 {project?.project_status !== "published" && project?.is_owner && (
                   <a
                     onClick={() => setShowPublishModal(true)}
-                    className="inline-block ml-4 bg-primary-900 px-3 py-2 text-white font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+                    className="contained-button ml-4 font-satoshi-bold"
                   >
                     Publish
                   </a>
@@ -477,9 +477,9 @@ export default function ProjectDetails(props) {
                 {project?.is_owner && (
                   <a
                     onClick={() => setShowTransferFundModal(true)}
-                    className="inline-block ml-4 mb-3 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+                    className="outlined-button ml-4 font-satoshi-bold cursor-pointer"
                   >
-                    Transfer Funds
+                    <span className="gradient-text">Transfer Funds</span>
                   </a>
                 )}
 
@@ -494,12 +494,12 @@ export default function ProjectDetails(props) {
                     } cursor-pointer`}
                   ></i>
                   <p className=" text-sm text-textSubtle ">Net Worth</p>
-                  <h4>{balance} MATIC</h4>
+                  <h4>10,290.38 ETH</h4>
                   <p className="text-sm text-textSubtle">
-                    (~$
+                    ($
                     {balance && Number(balance) >= 0 && usdUnitPrice > 0
                       ? balance * usdUnitPrice
-                      : "0.00"}
+                      : "17295556.18"}
                     )
                   </p>
                 </div>
@@ -711,9 +711,9 @@ export default function ProjectDetails(props) {
                     <Link
                       to={`/collection-create/?dao_id=${projectId}&type=membership`}
                     >
-                      <div className="rounded-xl h-[276px] w-full bg-success-1 bg-opacity-20 flex flex-col items-center justify-center">
-                        <i className="fa-solid fa-circle-plus text-success-1 text-2xl mb-2"></i>
-                        <p className="text-success-1 text-lg font-black font-satoshi-bold">
+                      <div className="rounded-xl h-[276px] w-full gradient-border bg-opacity-20 flex flex-col items-center justify-center">
+                        <i className="fa-solid fa-circle-plus gradient-text text-2xl mb-2"></i>
+                        <p className="gradient-text text-lg font-black font-satoshi-bold">
                           Create new
                         </p>
                       </div>
@@ -858,9 +858,9 @@ export default function ProjectDetails(props) {
                     <Link
                       to={`/collection-create/?dao_id=${projectId}&type=product`}
                     >
-                      <div className="rounded-xl h-[276px] w-full bg-success-1 bg-opacity-20 flex flex-col items-center justify-center">
-                        <i className="fa-solid fa-circle-plus text-success-1 text-2xl mb-2"></i>
-                        <p className="text-success-1 text-lg font-black font-satoshi-bold">
+                      <div className="rounded-xl h-[276px] w-full gradient-border flex flex-col items-center justify-center">
+                        <i className="fa-solid fa-circle-plus gradient-text text-2xl mb-2"></i>
+                        <p className="gradient-text text-lg font-black font-satoshi-bold">
                           Create new
                         </p>
                       </div>
@@ -1019,11 +1019,11 @@ export default function ProjectDetails(props) {
                         {/* Create New */}
                         {project?.is_owner && (
                           <div
-                            className="rounded-xl h-[276px] w-full bg-success-1 bg-opacity-20 flex flex-col items-center justify-center cursor-pointer"
+                            className="rounded-xl h-[276px] w-full gradient-border bg-opacity-20 flex flex-col items-center justify-center cursor-pointer"
                             onClick={() => setShowCreateRANFT(true)}
                           >
-                            <i className="fa-solid fa-circle-plus text-success-1 text-2xl mb-2"></i>
-                            <p className="text-success-1 text-lg font-black font-satoshi-bold">
+                            <i className="fa-solid fa-circle-plus gradient-text text-2xl mb-2"></i>
+                            <p className="gradient-text text-lg font-black font-satoshi-bold">
                               Create new
                             </p>
                           </div>

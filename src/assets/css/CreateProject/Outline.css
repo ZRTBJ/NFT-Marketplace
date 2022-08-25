@@ -45,8 +45,15 @@
 }
 .upload-photo {
   display: none;
-  background: linear-gradient(0deg, rgba(236, 97, 91, 0.8), rgba(236, 97, 91, 0.8));
+  background: linear-gradient(
+      180deg,
+      rgba(250, 0, 255, 0.2) -36.05%,
+      rgba(255, 45, 234, 0) 129.07%,
+      rgba(255, 45, 234, 0) 129.07%
+    ),
+    linear-gradient(111.76deg, #59cdff 22.23%, #c071ff 100%);
 }
-.upload-file:hover  .upload-photo {
-  display:flex;
- }
+.upload-file:hover .upload-photo {
+  display: flex;
+  opacity: 0.8;
+}
