@@ -1,10 +1,10 @@
-@import url("assets/fonts/WEB/css/satoshi.css");
+@import url('assets/fonts/WEB/css/satoshi.css');
 
 /* @tailwind base;
 @tailwind components; */
 @tailwind utilities;
-@import "./assets/css/layer-base/typography.css";
-@import "./assets/css/layer-components/component.css";
+@import './assets/css/layer-base/typography.css';
+@import './assets/css/layer-components/component.css';
 
 body {
   margin: 0 !important;
@@ -44,7 +44,7 @@ body {
 }
 
 .accordion-button:not(.collapsed)::after {
-  background-image: url("data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 16 16%27 fill=%27%23212529%27%3e%3cpath fill-rule=%27evenodd%27 d=%27M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z%27/%3e%3c/svg%3e");
+  background-image: url('data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 16 16%27 fill=%27%23212529%27%3e%3cpath fill-rule=%27evenodd%27 d=%27M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z%27/%3e%3c/svg%3e');
   transform: rotate(-180deg);
 }
 
@@ -75,7 +75,7 @@ body {
   top: 3rem;
   width: 1px;
   margin-top: 0.5rem;
-  content: "";
+  content: '';
   background-color: white;
 }
 
@@ -142,11 +142,16 @@ body {
 
 /* Hide number field spinners */
 
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-input[type="number"] {
+input[type='number'] {
   -moz-appearance: textfield;
+}
+
+p {
+  word-break: break-all;
+  white-space: normal;
 }
