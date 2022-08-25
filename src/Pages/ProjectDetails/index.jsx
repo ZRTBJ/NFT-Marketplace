@@ -1054,6 +1054,7 @@ export default function ProjectDetails(props) {
                 setErrorMsg(msg);
                 setShowDeployModal(false);
                 setShowErrorModal(true);
+                projectDetails(projectId);
               }}
               tnxData={tnxData}
               projectId={projectId}
