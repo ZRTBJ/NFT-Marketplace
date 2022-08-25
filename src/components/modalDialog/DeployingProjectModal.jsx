@@ -172,7 +172,8 @@ const DeployingProjectModal = ({
     publishProject(projectId)
       .then((res) => {
         setIsLoading(false);
-        if (res && res.code && res.code === 0) {
+   
+        if (res && res?.code === 0) {
           const deployData = {
             projectId: projectId,
             etherscan: etherscan ? etherscan : tnxHash,
