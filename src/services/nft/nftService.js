@@ -1,51 +1,51 @@
-import { client } from '../httpClient';
+import { client } from "../httpClient";
 export async function getNftListByProjectId(payload) {
   return await client(
-    'GET',
+    "GET",
     `/nft?project_uuid=${payload.projectId}&page=${payload.page}&limit=${payload.perPage}`
   );
 }
 export async function getNftListByUserId(payload) {
   return await client(
-    'GET',
+    "GET",
     `/nft?user_uid=${payload.userId}&page=${payload.page}&limit=${payload.perPage}`
   );
 }
 export async function saveNFT(payload) {
-  return await client('POST', `/nft`, payload, 'formdata');
+  return await client("POST", `/nft`, payload, "formdata");
 }
 export async function createMembershipNft(payload) {
-  return await client('POST', `/membership-nft`, payload, 'formdata');
+  return await client("POST", `/membership-nft`, payload, "formdata");
 }
 
 export async function generateUploadkey(payload) {
-  return await client('POST', `/upload/genKey`, payload, 'formdata');
+  return await client("POST", `/upload/genKey`, payload, "formdata");
 }
 
 export async function getDefinedProperties() {
-  return await client('GET', `/meta/category`);
+  return await client("GET", `/meta/category`);
 }
 
 export async function getNftDetails(type, id) {
   let typeValue =
-    type === 'membership'
-      ? '/membership-nft/'
-      : type === 'product'
-      ? '/product-nft/'
-      : '/nft/';
-  return await client('GET', `${typeValue}${id}`);
+    type === "membership"
+      ? "/membership-nft/"
+      : type === "product"
+      ? "/product-nft/"
+      : "/nft/";
+  return await client("GET", `${typeValue}${id}`);
 }
 
 export async function saveRightAttachedNFT(payload) {
-  return await client('POST', `/ranft`, payload, 'formdata');
+  return await client("POST", `/ranft`, payload, "formdata");
 }
 
 export async function getRightAttachedNFT(id) {
-  return await client('GET', `/ranft/${id}`);
+  return await client("GET", `/ranft/${id}`);
 }
 
 export async function saveProductNFT(payload) {
-  return await client('POST', `/product-nft`, payload, 'formdata');
+  return await client("POST", `/product-nft`, payload, "formdata");
 }
 
 export async function setSalesPage(
@@ -56,27 +56,27 @@ export async function setSalesPage(
 ) {
   console.log(collectionId);
   return await client(
-    'PUT',
+    "PUT",
     `/${collectionType}-nft/${
-      collectionType === 'product' ? collectionId : nftId
+      collectionType === "product" ? collectionId : nftId
     }/sale`,
     payload,
-    'formdata'
+    "formdata"
   );
 }
 
 export async function getassetDetails(id) {
-  return await client('GET', `/asset?job_id=${id}`);
+  return await client("GET", `/asset?job_id=${id}`);
 }
 
 export async function updateRoyalty(id, payload) {
-  return await client('PUT', `/ranft/${id}/royalty`, payload, 'formdata');
+  return await client("PUT", `/ranft/${id}/royalty`, payload, "formdata");
 }
 
 export async function getIdbyCode(id) {
-  return await client('GET', `/ranft/invitation?invitation_code=${id}`);
+  return await client("GET", `/ranft/invitation?invitation_code=${id}`);
 }
 
 export async function mintRANFT(id) {
-  return await client('POST', `/ranft/${id}/mint`);
+  return await client("POST", `/ranft/${id}/mint`);
 }

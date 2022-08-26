@@ -37,15 +37,15 @@ const CreatePoll = (props) => {
     request.append(
       "expiry_date",
       data["year"] +
-      "-" +
-      data["month"] +
-      "-" +
-      data["day"] +
-      "T" +
-      data["hour"] +
-      ":" +
-      data["minute"] +
-      ":00+00:00"
+        "-" +
+        data["month"] +
+        "-" +
+        data["day"] +
+        "T" +
+        data["hour"] +
+        ":" +
+        data["minute"] +
+        ":00+00:00"
     );
     request.append("poll_type", "YES/NO");
     request.append("amount", data["amount"]);
@@ -153,9 +153,11 @@ const CreatePoll = (props) => {
               Title (<span className="text-red-500">*</span>)
             </label>
             <input
-              className={`block w-full border ${errors.title ? "border-red-500" : "border-zinc-300"
-                } rounded py-3 px-4 mb-3 leading-tight ${errors.title ? "focus:border focus:border-red-500" : ""
-                }`}
+              className={`block w-full border ${
+                errors.title ? "border-red-500" : "border-zinc-300"
+              } rounded py-3 px-4 mb-3 leading-tight ${
+                errors.title ? "focus:border focus:border-red-500" : ""
+              }`}
               id="title"
               name="title"
               type="text"
@@ -292,9 +294,11 @@ const CreatePoll = (props) => {
               <span className="text-red-500">*</span>)
             </label>
             <input
-              className={`block w-full border ${errors.amount ? "border-red-500" : "border-zinc-300"
-                } rounded py-3 px-4 mb-3 leading-tight ${errors.amount ? "focus:border focus:border-red-500" : ""
-                }`}
+              className={`block w-full border ${
+                errors.amount ? "border-red-500" : "border-zinc-300"
+              } rounded py-3 px-4 mb-3 leading-tight ${
+                errors.amount ? "focus:border focus:border-red-500" : ""
+              }`}
               id="amount"
               name="amount"
               type="text"
@@ -334,9 +338,11 @@ const CreatePoll = (props) => {
               Withdrawal destination (<span className="text-red-500">*</span>)
             </label>
             <input
-              className={`block w-full border ${errors.withdraw ? "border-red-500" : "border-zinc-300"
-                } rounded py-3 px-4 mb-3 leading-tight ${errors.withdraw ? "focus:border focus:border-red-500" : ""
-                }`}
+              className={`block w-full border ${
+                errors.withdraw ? "border-red-500" : "border-zinc-300"
+              } rounded py-3 px-4 mb-3 leading-tight ${
+                errors.withdraw ? "focus:border focus:border-red-500" : ""
+              }`}
               id="withdraw"
               name="withdraw"
               type="text"

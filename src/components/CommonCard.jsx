@@ -30,7 +30,7 @@ const CommonCard = ({ project }) => {
       className="border rounded-3xl border-primary-50 cursor-pointer relative"
     >
       {(!project.isNft && project.project_status === "draft") ||
-        project.status === "draft" ? (
+      project.status === "draft" ? (
         <div className="absolute left-0 z-10 right-0 flex  items-center justify-center mx-auto max-w-full w-[169px] font-bold top-[50%] h-[35px]  text-color-gold bg-color-brown rounded-lg">
           <img src={edit_icon} className="mr-2" alt="edit" />
           <span>Continue Editing</span>
@@ -39,11 +39,12 @@ const CommonCard = ({ project }) => {
         <></>
       )}
       <div
-        className={`rounded-xl  md:rounded-3xl p-2  ${(!project.isNft && project.project_status === "draft") ||
-            project.status === "draft"
+        className={`rounded-xl  md:rounded-3xl p-2  ${
+          (!project.isNft && project.project_status === "draft") ||
+          project.status === "draft"
             ? "bg-[#9499AE] opacity-[0.5]"
             : ""
-          }`}
+        }`}
       >
         {!project.isNft ? (
           <img
@@ -52,7 +53,7 @@ const CommonCard = ({ project }) => {
               project && project.assets && project.assets.length > 0
                 ? project.assets.find((x) => x.asset_purpose === "cover")?.path
                   ? project.assets.find((x) => x.asset_purpose === "cover")
-                    ?.path
+                      ?.path
                   : thumbIcon
                 : thumbIcon
             }
@@ -70,7 +71,9 @@ const CommonCard = ({ project }) => {
             {project.name}
           </h3>
           {!project.isNft && project.showOverview && (
-            <div className="mt-4 txtblack dark:text-white  font-bold">{project.overview}</div>
+            <div className="mt-4 txtblack dark:text-white  font-bold">
+              {project.overview}
+            </div>
           )}
 
           {!project.isNft && project.showMembersTag && (

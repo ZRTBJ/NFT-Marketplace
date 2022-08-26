@@ -1,28 +1,28 @@
-import Modal from '../../Modal';
-import FileUploader from 'components/FileUploader';
-import Template1 from 'assets/images/templates/ra-nft-1.png';
-import Template2 from 'assets/images/templates/ra-nft-2.png';
-import Template3 from 'assets/images/templates/ra-nft-3.png';
-import Template4 from 'assets/images/templates/ra-nft-4.png';
-import Template5 from 'assets/images/templates/ra-nft-5.png';
-import { Swiper, SwiperSlide } from 'swiper/react';
+import Modal from "../../Modal";
+import FileUploader from "components/FileUploader";
+import Template1 from "assets/images/templates/ra-nft-1.png";
+import Template2 from "assets/images/templates/ra-nft-2.png";
+import Template3 from "assets/images/templates/ra-nft-3.png";
+import Template4 from "assets/images/templates/ra-nft-4.png";
+import Template5 from "assets/images/templates/ra-nft-5.png";
+import { Swiper, SwiperSlide } from "swiper/react";
 // import { Navigation } from 'swiper';
-import ErrorModal from '../ErrorModal';
-import styles from './style.module.css';
-import { useState, useEffect } from 'react';
+import ErrorModal from "../ErrorModal";
+import styles from "./style.module.css";
+import { useState, useEffect } from "react";
 import {
   generateUploadkey,
   saveRightAttachedNFT,
-} from 'services/nft/nftService';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
-import Config from 'config';
-import { useDispatch, useSelector } from 'react-redux';
-import { getNotificationData } from 'Slice/notificationSlice';
-import { createProject } from 'services/project/projectService';
-import { createCollection } from 'services/collection/collectionService';
-import SuccessModal from '../SuccessModal';
-import PublishingRANFT from '../PublishingRANFT';
+} from "services/nft/nftService";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+import Config from "config";
+import { useDispatch, useSelector } from "react-redux";
+import { getNotificationData } from "Slice/notificationSlice";
+import { createProject } from "services/project/projectService";
+import { createCollection } from "services/collection/collectionService";
+import SuccessModal from "../SuccessModal";
+import PublishingRANFT from "../PublishingRANFT";
 
 const TEMPLATES = [
   { id: 0, image: Template1 },
@@ -58,15 +58,15 @@ const settings = {
 const CreateRightAttachedNFT = ({ handleClose, show }) => {
   const [Supply, setSupply] = useState(1);
   const [Asset, setAsset] = useState();
-  const [AssetPreview, setAssetPreview] = useState('');
+  const [AssetPreview, setAssetPreview] = useState("");
   const [StepReview, setStepReview] = useState(false);
-  const [JobId, setJobId] = useState('');
-  const [ProjectID, setProjectID] = useState('');
-  const [CollectionID, setCollectionID] = useState('');
+  const [JobId, setJobId] = useState("");
+  const [ProjectID, setProjectID] = useState("");
+  const [CollectionID, setCollectionID] = useState("");
   // const [Success, setSuccess] = useState(false);
   const [IsLoading, setIsLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
-  const [RANFTId, setRANFTId] = useState('');
+  const [errorMsg, setErrorMsg] = useState("");
+  const [RANFTId, setRANFTId] = useState("");
   const [IsSubmitted, setIsSubmitted] = useState(false);
   const [showSteps, setShowSteps] = useState(false);
   const [step, setStep] = useState(1);
@@ -96,32 +96,32 @@ const CreateRightAttachedNFT = ({ handleClose, show }) => {
     if (projectDeployStatus && projectDeployStatus.data) {
       const data = JSON.parse(projectDeployStatus.data);
       if (
-        data.Data['assetId'] &&
-        data.Data['assetId'].length > 0 &&
-        data.Data['path'] &&
-        data.Data['path'].length > 0
+        data.Data["assetId"] &&
+        data.Data["assetId"].length > 0 &&
+        data.Data["path"] &&
+        data.Data["path"].length > 0
       ) {
-        postRightAttachNFT(data.Data['assetId']);
+        postRightAttachNFT(data.Data["assetId"]);
       } else {
-        setErrorMsg('Right Attach NFT creation failed!');
+        setErrorMsg("Right Attach NFT creation failed!");
       }
     }
   }, [projectDeploy]);
 
   const postRightAttachNFT = (assetId) => {
     let formData = new FormData();
-    formData.append('collection_uid', CollectionID);
-    formData.append('supply', Supply);
-    formData.append('blockchain', 'polygon');
-    formData.append('asset_uid', assetId);
+    formData.append("collection_uid", CollectionID);
+    formData.append("supply", Supply);
+    formData.append("blockchain", "polygon");
+    formData.append("asset_uid", assetId);
     saveRightAttachedNFT(formData)
       .then((resp) => {
         if (resp?.code === 0) {
           // setSuccess(true);
           setStep(2);
-          setErrorMsg('');
+          setErrorMsg("");
           setStepReview(false);
-          setAssetPreview('');
+          setAssetPreview("");
           setAsset();
           setSupply(1);
           setIsLoading(false);
@@ -162,7 +162,7 @@ const CreateRightAttachedNFT = ({ handleClose, show }) => {
 
   const handleCreateCollection = (projectID) => {
     setShowSteps(true);
-    let data = { dao_id: projectID, collection_type: 'right_attach' };
+    let data = { dao_id: projectID, collection_type: "right_attach" };
     createCollection(data)
       .then((resp) => {
         setCollectionID(resp.collection.id);
@@ -174,7 +174,7 @@ const CreateRightAttachedNFT = ({ handleClose, show }) => {
   const generateKey = () => {
     setIsLoading(true);
     const request = new FormData();
-    request.append('project_uid', id ? id : ProjectID);
+    request.append("project_uid", id ? id : ProjectID);
     generateUploadkey(request)
       .then((resp) => handleUploadNFT(resp.key))
       .catch((err) => {
@@ -186,26 +186,26 @@ const CreateRightAttachedNFT = ({ handleClose, show }) => {
   const handleUploadNFT = (key) => {
     let headers;
     headers = {
-      'Content-Type': 'multipart/form-data',
-      'Access-Control-Allow-Origin': '*',
+      "Content-Type": "multipart/form-data",
+      "Access-Control-Allow-Origin": "*",
       key: key,
     };
     const request = new FormData();
-    request.append('file', Asset);
+    request.append("file", Asset);
     axios({
-      method: 'POST',
+      method: "POST",
       url: Config.FILE_SERVER_URL,
       data: request,
       headers: headers,
     })
       .then((response) => {
         if (response.code === 200) {
-          setJobId(response['job_id']);
+          setJobId(response["job_id"]);
           const notificationData = {
             projectId: id,
-            etherscan: '',
-            function_uuid: response['job_id'],
-            data: '',
+            etherscan: "",
+            function_uuid: response["job_id"],
+            data: "",
           };
           dispatch(getNotificationData(notificationData));
         } else {
@@ -238,7 +238,7 @@ const CreateRightAttachedNFT = ({ handleClose, show }) => {
   };
 
   const dataURLToFile = (dataurl, filename) => {
-    var arr = dataurl.split(','),
+    var arr = dataurl.split(","),
       mime = arr[0].match(/:(.*?);/)[1],
       bstr = atob(arr[1]),
       n = bstr.length,
@@ -258,8 +258,8 @@ const CreateRightAttachedNFT = ({ handleClose, show }) => {
       };
       reader.readAsDataURL(xhr.response);
     };
-    xhr.open('GET', url);
-    xhr.responseType = 'blob';
+    xhr.open("GET", url);
+    xhr.responseType = "blob";
     xhr.send();
   };
 
@@ -280,10 +280,10 @@ a Right Attached NFT!'
         /> */}
         {errorMsg && (
           <ErrorModal
-            title={'Right Attach NFT minting failed !'}
+            title={"Right Attach NFT minting failed !"}
             message={`${errorMsg}`}
             handleClose={() => {
-              setErrorMsg('');
+              setErrorMsg("");
             }}
             show={errorMsg}
           />
@@ -296,17 +296,17 @@ a Right Attached NFT!'
             collectionId={CollectionID}
           />
         )}
-        <h3 className='text-[28px] font-black mb-5'>
+        <h3 className="text-[28px] font-black mb-5">
           Upload Right attached NFT
         </h3>
         <FileUploader
-          name='nft-asset'
-          label={StepReview ? 'Images' : 'Upload Assets'}
+          name="nft-asset"
+          label={StepReview ? "Images" : "Upload Assets"}
           handleImage={handleImage}
           preview={AssetPreview}
         />
         {IsSubmitted && !Asset ? (
-          <p className='text-red-500 text-[12px] -mt-5'>Asset is required</p>
+          <p className="text-red-500 text-[12px] -mt-5">Asset is required</p>
         ) : null}
         {/* {!StepReview && (
           <>
@@ -335,28 +335,28 @@ a Right Attached NFT!'
         )} */}
         <div>
           <label
-            htmlFor={'ra-nft-supply'}
-            class='text-[14px] text-[#303548] font-bold outline-none mb-2'
+            htmlFor={"ra-nft-supply"}
+            class="text-[14px] text-[#303548] font-bold outline-none mb-2"
           >
             Supply
           </label>
           {StepReview ? (
-            <p className='text-[12px] text-[#303548]'>{Supply}</p>
+            <p className="text-[12px] text-[#303548]">{Supply}</p>
           ) : (
             <input
-              id={'ra-nft-supply'}
-              type='number'
+              id={"ra-nft-supply"}
+              type="number"
               value={Supply}
               onChange={(e) => {
                 if (e.target.value >= 0) {
                   setSupply(e.target.value);
                 }
               }}
-              class='w-full bg-secondary rounded-[6px] text-[12px] px-[10px] py-[14px] text-text-base'
+              class="w-full bg-secondary rounded-[6px] text-[12px] px-[10px] py-[14px] text-text-base"
             />
           )}
           {IsSubmitted && Supply < 1 ? (
-            <p className='text-red-500 text-[12px]'>
+            <p className="text-red-500 text-[12px]">
               Supply should be greater than 0
             </p>
           ) : null}

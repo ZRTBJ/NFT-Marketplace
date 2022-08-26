@@ -172,7 +172,7 @@ const DeployingProjectModal = ({
     publishProject(projectId)
       .then((res) => {
         setIsLoading(false);
-   
+
         if (res && res?.code === 0) {
           const deployData = {
             projectId: projectId,

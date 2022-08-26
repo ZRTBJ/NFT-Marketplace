@@ -1,6 +1,6 @@
-import Modal from 'components/Modal';
-import deploySuccessSvg from 'assets/images/modal/deploySuccessSvg.svg';
-import { useHistory } from 'react-router-dom';
+import Modal from "components/Modal";
+import deploySuccessSvg from "assets/images/modal/deploySuccessSvg.svg";
+import { useHistory } from "react-router-dom";
 
 const PublishingRANFT = ({
   show,
@@ -23,10 +23,10 @@ const PublishingRANFT = ({
     >
       <div>
         {step === 1 && (
-          <div className='mx-16'>
+          <div className="mx-16">
             <h1>Please wait we’re publishing</h1>
-            <div className='overflow-hidden rounded-full h-4 w-full mt-12 mb-8 relative animated fadeIn'>
-              <div className='animated-process-bar'></div>
+            <div className="overflow-hidden rounded-full h-4 w-full mt-12 mb-8 relative animated fadeIn">
+              <div className="animated-process-bar"></div>
             </div>
             {/* {deployStatus.step === 1 && (
               <div className='text-center'>Erc20 Deployment</div>
@@ -47,16 +47,16 @@ const PublishingRANFT = ({
         {step === 2 && (
           <>
             <img
-              className='h-[200px] w-[300px] mx-auto'
+              className="h-[200px] w-[300px] mx-auto"
               src={deploySuccessSvg}
-              alt=''
+              alt=""
             />
-            <div className='mx-16'>
+            <div className="mx-16">
               <h1>You successfully Create a Right Attached NFT!</h1>
               <p>Do you want to create New NFT? if yes let’s go!</p>
-              <div className='flex justify-center mt-[30px]'>
+              <div className="flex justify-center mt-[30px]">
                 <button
-                  className='ml-4 bg-primary-900/[0.20] text-primary-900 px-3 font-semibold rounded w-[110px] h-[38px]'
+                  className="ml-4 bg-primary-900/[0.20] text-primary-900 px-3 font-semibold rounded w-[110px] h-[38px]"
                   onClick={handleNavigation}
                 >
                   Done

@@ -43,7 +43,7 @@
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",
-    "fmt": "prettier write '*/**/*.{js,jsx}'"
+    "fmt": "prettier --write '*/**/*.{js,jsx}'"
   },
   "eslintConfig": {
     "extends": [

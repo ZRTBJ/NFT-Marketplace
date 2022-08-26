@@ -1,46 +1,46 @@
-import { useState, useEffect } from 'react';
-import DropdownCreabo from 'components/DropdownCreabo';
-import CirclePlus from 'assets/images/icons/plus-circle.svg';
-import MemberListTable from 'components/RoyalityManagement/MemberListTable/MemberListTable';
-import styles from './style.module.css';
-import FB from 'assets/images/facebook.svg';
-import twitter from 'assets/images/twitter.svg';
-import reddit from 'assets/images/reddit.svg';
-import instagram from 'assets/images/icons/instagram.svg';
-import NFTSample from 'assets/images/createDAO/nft-sample.svg';
-import NewPublishModal from 'components/modalDialog/NewPublishModal';
-import { useParams } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import DropdownCreabo from "components/DropdownCreabo";
+import CirclePlus from "assets/images/icons/plus-circle.svg";
+import MemberListTable from "components/RoyalityManagement/MemberListTable/MemberListTable";
+import styles from "./style.module.css";
+import FB from "assets/images/facebook.svg";
+import twitter from "assets/images/twitter.svg";
+import reddit from "assets/images/reddit.svg";
+import instagram from "assets/images/icons/instagram.svg";
+import NFTSample from "assets/images/createDAO/nft-sample.svg";
+import NewPublishModal from "components/modalDialog/NewPublishModal";
+import { useParams } from "react-router-dom";
 import {
   getCollectionNFTs,
   getCollections,
   getCollectionDetailsById,
   connectCollection,
-} from 'services/collection/collectionService';
-import { getRightAttachedNFT, updateRoyalty } from 'services/nft/nftService';
-import ColImage from 'assets/images/collection-wrapper.svg';
-import { Link } from 'react-router-dom';
-import ConfirmationModal from 'components/modalDialog/ConfirmationModal';
-import SuccessModal from 'components/modalDialog/SuccessModal';
-import DeployingCollectiontModal from 'components/modalDialog/DeployingCollectionModal';
-import ErrorModal from 'components/modalDialog/ErrorModal';
+} from "services/collection/collectionService";
+import { getRightAttachedNFT, updateRoyalty } from "services/nft/nftService";
+import ColImage from "assets/images/collection-wrapper.svg";
+import { Link } from "react-router-dom";
+import ConfirmationModal from "components/modalDialog/ConfirmationModal";
+import SuccessModal from "components/modalDialog/SuccessModal";
+import DeployingCollectiontModal from "components/modalDialog/DeployingCollectionModal";
+import ErrorModal from "components/modalDialog/ErrorModal";
 import {
   FacebookShareButton,
   TwitterShareButton,
   RedditShareButton,
-} from 'react-share';
+} from "react-share";
 
 const TABLE_HEADERS = [
-  { id: 0, label: 'Wallet Address' },
-  { id: 1, label: 'Name' },
-  { id: 2, label: 'Email' },
-  { id: 3, label: 'Percentage' },
-  { id: 4, label: 'Token ID' },
-  { id: 5, label: 'Role' },
+  { id: 0, label: "Wallet Address" },
+  { id: 1, label: "Name" },
+  { id: 2, label: "Email" },
+  { id: 3, label: "Percentage" },
+  { id: 4, label: "Token ID" },
+  { id: 5, label: "Role" },
   // { id: 6, label: 'Action' },
 ];
 
 const RoyalityManagement = () => {
-  const [selectedCollectionId, setSelectedCollectionId] = useState('');
+  const [selectedCollectionId, setSelectedCollectionId] = useState("");
   const [showPublish, setShowPublish] = useState(false);
   const [data, setData] = useState();
   const [IsLoading, setIsLoading] = useState(false);
@@ -66,7 +66,7 @@ const RoyalityManagement = () => {
   const [isSubmitted, setIsSumbitted] = useState(false);
   const [isConfirmConnect, setIsConfirmConnect] = useState(false);
   const [showRoyalityErrorModal, setShowRoyalityErrorModal] = useState(false);
-  const [showRoyalityErrorMessage, setShowRoyalityErrorMessage] = useState('');
+  const [showRoyalityErrorMessage, setShowRoyalityErrorMessage] = useState("");
 
   const { collectionId } = useParams();
   let origin = window.location.origin;
@@ -122,10 +122,10 @@ const RoyalityManagement = () => {
   };
 
   const getAllCollections = (id) => {
-    getCollections('project', id)
+    getCollections("project", id)
       .then((resp) => {
         if (resp.code === 0) {
-          let items = resp?.data.filter((col) => col.type !== 'right_attach');
+          let items = resp?.data.filter((col) => col.type !== "right_attach");
           setCollections(items);
         }
       })
@@ -143,19 +143,19 @@ const RoyalityManagement = () => {
 
   const copyToClipboardShare = (text) => {
     navigator.clipboard.writeText(text);
-    const copyEl = document.getElementById('copied-share-message');
-    copyEl.classList.toggle('hidden');
+    const copyEl = document.getElementById("copied-share-message");
+    copyEl.classList.toggle("hidden");
     setTimeout(() => {
-      copyEl.classList.toggle('hidden');
+      copyEl.classList.toggle("hidden");
     }, 2000);
   };
 
   function copyToClipboard(text) {
     navigator.clipboard.writeText(text);
-    const copyEl = document.getElementById('copied-message');
-    copyEl.classList.toggle('hidden');
+    const copyEl = document.getElementById("copied-message");
+    copyEl.classList.toggle("hidden");
     setTimeout(() => {
-      copyEl.classList.toggle('hidden');
+      copyEl.classList.toggle("hidden");
     }, 2000);
   }
 
@@ -210,7 +210,7 @@ const RoyalityManagement = () => {
       };
     });
     let formData = new FormData();
-    formData.append('royalties', JSON.stringify(members));
+    formData.append("royalties", JSON.stringify(members));
     if (!ShowPercentError) {
       setIsAutoFillLoading(true);
       updateRoyalty(data?.lnft?.id, formData)
@@ -221,7 +221,7 @@ const RoyalityManagement = () => {
             setAutoAssign(false);
             setIsEdit(null);
             setShowRoyalityErrorModal(false);
-            setShowRoyalityErrorMessage('');
+            setShowRoyalityErrorMessage("");
           } else {
             setIsAutoFillLoading(false);
             setRoyaltyUpdatedSuccessfully(false);
@@ -267,7 +267,7 @@ const RoyalityManagement = () => {
 
   async function collectionPublish() {
     setShowPublish(false);
-    if (CollectionDetail.status === 'publishing') {
+    if (CollectionDetail.status === "publishing") {
       setPublishStep(1);
       setShowDeployModal(true);
     } else {
@@ -280,7 +280,7 @@ const RoyalityManagement = () => {
   return (
     <div
       className={`mt-3 ${
-        IsLoading || IsConnectionLoading || IsAutoFillLoading ? 'loading' : ''
+        IsLoading || IsConnectionLoading || IsAutoFillLoading ? "loading" : ""
       }`}
     >
       {showPublish && (
@@ -295,8 +295,8 @@ const RoyalityManagement = () => {
           show={AutoAssign}
           handleClose={setAutoAssign}
           handleApply={handleAutoFill}
-          message='This will apply royalty percentage to all the members equally. Are you
-          sure, you want to proceed?'
+          message="This will apply royalty percentage to all the members equally. Are you
+          sure, you want to proceed?"
         />
       )}
       {isConfirmConnect && (
@@ -311,21 +311,21 @@ const RoyalityManagement = () => {
         <SuccessModal
           show={RoyaltyUpdatedSuccessfully}
           handleClose={setRoyaltyUpdatedSuccessfully}
-          message='Royalty Percentage Updated Successfully'
-          btnText='Done'
+          message="Royalty Percentage Updated Successfully"
+          btnText="Done"
         />
       )}
       {ConnectedSuccessfully && (
         <SuccessModal
           show={ConnectedSuccessfully}
           handleClose={setConnectedSuccessfully}
-          message='Collection Connected Successfully'
-          btnText='Done'
+          message="Collection Connected Successfully"
+          btnText="Done"
         />
       )}
       {showErrorModal && (
         <ErrorModal
-          title={'Collection Publish failed !'}
+          title={"Collection Publish failed !"}
           message={`${errorMsg}`}
           handleClose={() => {
             setShowErrorModal(false);
@@ -336,7 +336,7 @@ const RoyalityManagement = () => {
       )}
       {showConnectErrorModal && (
         <ErrorModal
-          title={'Failed to connect the Collection!'}
+          title={"Failed to connect the Collection!"}
           message={`${connectErrorMessage}`}
           handleClose={() => {
             setShowConnectErrorModal(false);
@@ -348,7 +348,7 @@ const RoyalityManagement = () => {
       )}
       {showRoyalityErrorModal && (
         <ErrorModal
-          title={'Failed to apply royalty percentage!'}
+          title={"Failed to apply royalty percentage!"}
           message={`${showRoyalityErrorMessage}`}
           handleClose={() => {
             setShowRoyalityErrorModal(false);
@@ -389,39 +389,39 @@ const RoyalityManagement = () => {
               ? CollectionDetail.assets[0].path
               : ColImage
           }
-          className='w-[160px] h-[160px] rounded-[12px]'
-          alt='Collection'
+          className="w-[160px] h-[160px] rounded-[12px]"
+          alt="Collection"
         />
-        <div className='ml-6 w-[600px]'>
-          <h3 className='text-[26px] font-bold'>{CollectionDetail.name}</h3>
-          <p className='text-textLight text-sm'>
+        <div className="ml-6 w-[600px]">
+          <h3 className="text-[26px] font-bold">{CollectionDetail.name}</h3>
+          <p className="text-textLight text-sm">
             {CollectionDetail?.contract_address
               ? CollectionDetail?.contract_address
-              : 'Smart Contract not released'}
+              : "Smart Contract not released"}
             <i
               className={`fa-solid fa-copy ml-2 ${
                 CollectionDetail?.contract_address
-                  ? 'cursor-pointer'
-                  : 'cursor-not-allowed'
+                  ? "cursor-pointer"
+                  : "cursor-not-allowed"
               }`}
               disabled={!CollectionDetail.contract_address}
               onClick={() =>
                 copyToClipboard(CollectionDetail?.contract_address)
               }
             ></i>
-            <span id='copied-message' className='hidden ml-2'>
+            <span id="copied-message" className="hidden ml-2">
               Copied !
             </span>
           </p>
-          <h4 className='text-[18px] font-bold mt-4'>About the Collection</h4>
-          <p className='text-[14px] text-[#5F6479]'>
+          <h4 className="text-[18px] font-bold mt-4">About the Collection</h4>
+          <p className="text-[14px] text-[#5F6479]">
             {CollectionDetail?.description}
           </p>
         </div>
         {CollectionDetail.is_owner && (
-          <div className='ml-auto'>
+          <div className="ml-auto">
             <Link to={`/collection-create/?id=${collectionId}`}>
-              <button className='font-black outlined-button'>
+              <button className="font-black outlined-button">
                 <span>Edit Collection</span>
               </button>
             </Link>
@@ -439,37 +439,37 @@ const RoyalityManagement = () => {
         </button>
       </div> */}
       {CollectionDetail.is_owner && IsNFTAvailable ? (
-        <div className='w-[680px] mt-4'>
-          <div className='flex items-end'>
+        <div className="w-[680px] mt-4">
+          <div className="flex items-end">
             <div>
               <DropdownCreabo
-                label='Connect Collection'
+                label="Connect Collection"
                 value={selectedCollectionId}
-                id='select-collection'
-                defaultValue='Select Collection'
+                id="select-collection"
+                defaultValue="Select Collection"
                 handleChange={handleChange}
                 options={Collections}
                 connectedCollections={connectedCollections}
               />
             </div>
-            <div className='ml-4'>
+            <div className="ml-4">
               <button
                 onClick={handleConnectCollection}
-                className='font-black outlined-button'
+                className="font-black outlined-button"
               >
                 <span>Connect</span>
               </button>
             </div>
           </div>
           {isSubmitted && !selectedCollectionId && (
-            <p className='text-red-500 text-[12px]'>
+            <p className="text-red-500 text-[12px]">
               Please select a collection to connect
             </p>
           )}
-          <Link to='/collection-create'>
-            <button className='w-fit rounded-[4px] p-2 mt-4 bg-primary-50 text-[12px] font-bold flex items-center w-[127px] justify-center'>
-              <img src={CirclePlus} alt='Add' />{' '}
-              <span className='ml-[6px] gradient-text'>Add Collection</span>
+          <Link to="/collection-create">
+            <button className="w-fit rounded-[4px] p-2 mt-4 bg-primary-50 text-[12px] font-bold flex items-center w-[127px] justify-center">
+              <img src={CirclePlus} alt="Add" />{" "}
+              <span className="ml-[6px] gradient-text">Add Collection</span>
             </button>
           </Link>
         </div>
@@ -477,37 +477,37 @@ const RoyalityManagement = () => {
       <div
         className={`bg-white mt-6 rounded-[12px] p-6 ${styles.memberSection}`}
       >
-        <div className='flex justify-between pb-7 border-b-[1px] mb-6 border-[#E3DEEA]'>
-          <h3 className='text-[18px] font-black'>Member List</h3>
+        <div className="flex justify-between pb-7 border-b-[1px] mb-6 border-[#E3DEEA]">
+          <h3 className="text-[18px] font-black">Member List</h3>
           {ShowPercentError ? (
-            <p className='text-red-400 text-[14px] mt-1'>
+            <p className="text-red-400 text-[14px] mt-1">
               Total percent of members should equal to or lesser than 100%
             </p>
           ) : null}
           {CollectionDetail?.is_owner && data?.members?.length ? (
-            <div class='flex items-center justify-center'>
-              <div class='form-check form-switch flex items-center'>
-                <p class='text-[#303548] text-[12px] mr-5'>
+            <div class="flex items-center justify-center">
+              <div class="form-check form-switch flex items-center">
+                <p class="text-[#303548] text-[12px] mr-5">
                   Autofill Percentage
                 </p>
                 <input
-                  class='form-check-input appearance-none w-9 rounded-full h-5 align-top bg-white bg-no-repeat bg-contain bg-gray-300 focus:outline-none cursor-pointer shadow-sm'
-                  type='checkbox'
+                  class="form-check-input appearance-none w-9 rounded-full h-5 align-top bg-white bg-no-repeat bg-contain bg-gray-300 focus:outline-none cursor-pointer shadow-sm"
+                  type="checkbox"
                   checked={AutoAssign}
-                  role='switch'
+                  role="switch"
                   onChange={handleAutoAssign}
                 />
               </div>
             </div>
           ) : null}
         </div>
-        {CollectionDetail?.status !== 'published' ? (
-          <p className='text-center mt-4'>
+        {CollectionDetail?.status !== "published" ? (
+          <p className="text-center mt-4">
             There is no collaborator yet. Please publish your collection and you
             can start inviting members.
           </p>
         ) : null}
-        {CollectionDetail?.status === 'published' && data?.members?.length ? (
+        {CollectionDetail?.status === "published" && data?.members?.length ? (
           <MemberListTable
             list={data?.members}
             headers={TABLE_HEADERS}
@@ -519,16 +519,16 @@ const RoyalityManagement = () => {
             isOwner={CollectionDetail?.is_owner}
           />
         ) : null}
-        {CollectionDetail?.status === 'published' && !data?.members?.length ? (
-          <p className='text-center mt-4'>
+        {CollectionDetail?.status === "published" && !data?.members?.length ? (
+          <p className="text-center mt-4">
             There is no collaborator yet. Please start inviting members.
           </p>
         ) : null}
         {CollectionDetail.is_owner &&
-        CollectionDetail.status !== 'published' ? (
-          <div className='w-full'>
+        CollectionDetail.status !== "published" ? (
+          <div className="w-full">
             <button
-              className='block ml-auto contained-button'
+              className="block ml-auto contained-button"
               onClick={() => setShowPublish(true)}
             >
               Publish
@@ -536,14 +536,14 @@ const RoyalityManagement = () => {
           </div>
         ) : null}
       </div>
-      <div className='flex mb-8'>
+      <div className="flex mb-8">
         <div
           className={`bg-white mt-6 p-6 w-2/4 mr-2 rounded-[12px] ${styles.memberSection}`}
         >
-          <h3 className='text-[18px] font-black'>Invite Contributor</h3>
+          <h3 className="text-[18px] font-black">Invite Contributor</h3>
           {data?.lnft?.invitation_code ? (
             <>
-              <p className='text-[12px] text-[#5F6479] mb-6'>
+              <p className="text-[12px] text-[#5F6479] mb-6">
                 Invite anothe contributor to get the royalties by copy this link
                 and ask the to claim the Right Attached NFT
               </p>
@@ -561,23 +561,23 @@ const RoyalityManagement = () => {
               Invite
             </button>
           </div> */}
-              <div className='mt-2'>
-                <p className='text-[12px] text-[#5F6479] mb-1'>
+              <div className="mt-2">
+                <p className="text-[12px] text-[#5F6479] mb-1">
                   Invite with link
                 </p>
-                <div className='relative w-fit'>
+                <div className="relative w-fit">
                   <p
-                    className='text-[16px] block py-[10px] pl-[15px] pr-[40px]  text-primary-900 bg-primary-50 w-full rounded-[12px]'
-                    id='iframe'
+                    className="text-[16px] block py-[10px] pl-[15px] pr-[40px]  text-primary-900 bg-primary-50 w-full rounded-[12px]"
+                    id="iframe"
                   >
-                    Link:{' '}
-                    <span className='font-black'>
+                    Link:{" "}
+                    <span className="font-black">
                       {origin}/{data?.lnft?.invitation_code}
                     </span>
                   </p>
-                  <div className='text-primary-900 absolute top-2 right-2'>
+                  <div className="text-primary-900 absolute top-2 right-2">
                     <i
-                      className='fa fa-copy text-lg cursor-pointer'
+                      className="fa fa-copy text-lg cursor-pointer"
                       onClick={() =>
                         copyToClipboardShare(
                           `${origin}/${data?.lnft?.invitation_code}`
@@ -586,40 +586,40 @@ const RoyalityManagement = () => {
                     ></i>
                   </div>
                   <p
-                    id='copied-share-message'
-                    className='hidden text-green-500 text-[14px] text-center'
+                    id="copied-share-message"
+                    className="hidden text-green-500 text-[14px] text-center"
                   >
                     Copied Successfully!
                   </p>
                 </div>
               </div>
               <div>
-                <p className='text-[12px] text-[#5F6479] mt-[46px] mb-1'>
+                <p className="text-[12px] text-[#5F6479] mt-[46px] mb-1">
                   Invite with
                 </p>
-                <div className='flex items-center'>
+                <div className="flex items-center">
                   <FacebookShareButton
                     url={`${origin}/${data?.lnft?.invitation_code}`}
-                    quote={'Right Attach NFT'}
+                    quote={"Right Attach NFT"}
                   >
-                    <div className='cursor-pointer rounded-[4px] bg-primary-50 h-[44px] w-[44px] flex items-center justify-center mr-2'>
-                      <img src={FB} alt='facebook' />
+                    <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[44px] w-[44px] flex items-center justify-center mr-2">
+                      <img src={FB} alt="facebook" />
                     </div>
                   </FacebookShareButton>
                   <TwitterShareButton
-                    title='Right Attach NFT'
+                    title="Right Attach NFT"
                     url={`${origin}/${data?.lnft?.invitation_code}`}
                   >
-                    <div className='cursor-pointer rounded-[4px] bg-primary-50 h-[44px] w-[44px] flex items-center justify-center mr-2'>
-                      <img src={twitter} alt='twitter' />
+                    <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[44px] w-[44px] flex items-center justify-center mr-2">
+                      <img src={twitter} alt="twitter" />
                     </div>
                   </TwitterShareButton>
                   <RedditShareButton
-                    title='Right Attach NFT'
+                    title="Right Attach NFT"
                     url={`${origin}/${data?.lnft?.invitation_code}`}
                   >
-                    <div className='cursor-pointer rounded-[4px] bg-primary-50 h-[44px] w-[44px] flex items-center justify-center mr-2'>
-                      <img src={reddit} alt='reddit' />
+                    <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[44px] w-[44px] flex items-center justify-center mr-2">
+                      <img src={reddit} alt="reddit" />
                     </div>
                   </RedditShareButton>
                   {/* <div className='cursor-pointer rounded-[4px] bg-opacity-[0.1] bg-[#9A5AFF] h-[44px] w-[44px] flex items-center justify-center mr-2'>
@@ -629,7 +629,7 @@ const RoyalityManagement = () => {
               </div>
             </>
           ) : (
-            <p className='text-center text-[#5F6479] mb-6'>
+            <p className="text-center text-[#5F6479] mb-6">
               Please publish your collection to view invitation link
             </p>
           )}
@@ -638,11 +638,11 @@ const RoyalityManagement = () => {
           <div
             className={`bg-white mt-6 p-6 w-2/4 ml-2 rounded-[12px] flex items-center justify-center flex-col ${styles.memberSection}`}
           >
-            <h3 className='text-[18px] font-black'>Right Attached NFT</h3>
+            <h3 className="text-[18px] font-black">Right Attached NFT</h3>
             <img
               src={data?.lnft?.asset?.path}
-              alt='NFT'
-              className='mt-5 h-[189px] w-[189px] object-cover'
+              alt="NFT"
+              className="mt-5 h-[189px] w-[189px] object-cover"
             />
           </div>
         ) : null}
