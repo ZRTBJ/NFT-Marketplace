@@ -213,6 +213,7 @@ export default function ProjectCreate() {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [projectCategoryList, setProjectCategoryList] = useState([]);
+  const [notOwner,setNotOwner] = useState(false);
 
   function handelClickBack() {
     let currentIndex = currentStep.pop();
@@ -340,6 +341,10 @@ export default function ProjectCreate() {
           setProjectNameDisabled(true);
           setDaoWalletDisable(true);
         }
+        if (!response.is_owner) {
+          setNotOwner(true);
+          
+        }
         setDataIsLoading(false);
       }
     });
@@ -414,6 +419,7 @@ export default function ProjectCreate() {
     <>
       {isDataLoading && <div className="loading"></div>}
       <div className="txtblack max-w-[600px] mx-auto md:mt-[40px]">
+     {  notOwner ? (<h3 className="text-center mt-6">You are not owner of this DAO <br />You can not edit this DAO</h3>) :(<>
         <div className="create-project-container">
           {currentStep.length === 1 && (
             <div>
@@ -539,7 +545,7 @@ export default function ProjectCreate() {
               )}
             </>
           </div>
-        </div>
+        </div></>)}
       </div>
       {showSuccessModal && (
         <SuccessModal
