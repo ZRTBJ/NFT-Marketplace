@@ -149,6 +149,7 @@ function Home() {
         isAuthenticated={userinfo?.id}
         nftId={inviteData?.lnft_id}
         collectionId={inviteData?.collection_id}
+        assetImage={inviteData?.lnft_asset}
       />
       <section className="text-center my-4">
         <HomeNavigateCard />
