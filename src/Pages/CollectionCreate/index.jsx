@@ -265,6 +265,7 @@ export default function CollectionCreate() {
   const [projectInfo, setProjectInfo] = useState({});
   const [projectCategoryList, setProjectCategoryList] = useState([]);
   const [dao_id, setDao_id] = useState(null);
+  const [notOwner,setNotOwner] = useState(false);
 
   function handelClickBack() {
     let currentIndex = currentStep.pop();
@@ -402,6 +403,10 @@ export default function CollectionCreate() {
           setTokenTransferableDisabled(true);
           setRoyaltyPercentageDisable(true);
         }
+        if (!response.is_owner) {
+          setNotOwner(true);
+          
+        }
       } else {
         setDataIsLoading(false);
         showErrorModal(true);
@@ -521,6 +526,7 @@ export default function CollectionCreate() {
     <>
       {isDataLoading && <div className="loading"></div>}
       <div className="txtblack max-w-[600px] mx-auto md:mt-[40px]">
+       {notOwner ? (<h3 className="text-center mt-6">You are not owner of this Collection <br />You can not edit this Collection</h3>) :(<>
         <div className="create-project-container">
           {currentStep.length === 1 && (
             <div>
@@ -675,7 +681,7 @@ export default function CollectionCreate() {
               )}
             </>
           </div>
-        </div>
+        </div></>)}
       </div>
       {showSuccessModal && (
         <SuccessModal
