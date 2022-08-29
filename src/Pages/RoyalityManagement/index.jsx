@@ -389,7 +389,7 @@ const RoyalityManagement = () => {
               ? CollectionDetail.assets[0].path
               : ColImage
           }
-          className="w-[160px] h-[160px] rounded-[12px]"
+          className="w-[160px] h-[160px] rounded-[12px] object-cover"
           alt="Collection"
         />
         <div className="ml-6 w-[600px]">
