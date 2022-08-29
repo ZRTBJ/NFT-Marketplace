@@ -15,6 +15,7 @@ const InviteModal = ({
   isAuthenticated,
   nftId,
   collectionId,
+  assetImage,
 }) => {
   const [showLogin, setShowLogin] = useState(false);
   const [mintData, setMintData] = useState();
@@ -121,9 +122,9 @@ const InviteModal = ({
       </p>
 
       <img
-        src={InviteImage}
+        src={assetImage ? assetImage : InviteImage}
         alt="Invite box"
-        className="mt-6 w-[443px] h-[443px] rounded-[12px] mx-auto"
+        className="mt-6 w-[443px] h-[443px] rounded-[12px] mx-auto object-cover"
       />
 
       <p className="text-[18px] text-center my-6">
