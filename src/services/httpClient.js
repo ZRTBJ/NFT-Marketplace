@@ -71,7 +71,10 @@ async function tokenExpired() {
 
 axios.interceptors.response.use(
   (response) => {
-    if (response["data"]["code"] === 4031) {
+    if (
+      response["data"]["code"] === 4031 ||
+      response["data"]["code"] === 4032
+    ) {
       tokenExpired();
     }
     return response.data;
