@@ -80,3 +80,8 @@ export async function getIdbyCode(id) {
 export async function mintRANFT(id) {
   return await client("POST", `/ranft/${id}/mint`);
 }
+export async function mintProductOrMembershipNft(payload) {
+  const url =
+    payload.type === "membership" ? "/membership-nft" : "/product-nft";
+  return await client("POST", `${url}/${payload.id}/mint`);
+}
