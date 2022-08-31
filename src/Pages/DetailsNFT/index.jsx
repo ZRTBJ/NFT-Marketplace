@@ -25,6 +25,7 @@ import { getNotificationData } from "Slice/notificationSlice";
 import ErrorModal from "components/modalDialog/ErrorModal";
 
 export default function DetailsNFT() {
+  const userinfo = useSelector((state) => state.user.userinfo);
   const [isLoading, setIsLoading] = useState(true);
   const [nft, setNft] = useState({});
   const [comingSoon, setComingSoon] = useState(false);
@@ -35,6 +36,7 @@ export default function DetailsNFT() {
   const [funcId, setFuncId] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [mintData, setMintData] = useState();
+  const [hash, setHash] = useState("");
   const inviteData = useSelector((state) =>
     state?.notifications?.notificationData
       ? state?.notifications?.notificationData
@@ -93,7 +95,6 @@ export default function DetailsNFT() {
         } else {
           setErrorMsg(resp.message);
           setTransactionWaitingModal(false);
-          setErrorMsg("Something went wrong,Please try again");
         }
       })
       .catch((err) => {
@@ -102,10 +103,12 @@ export default function DetailsNFT() {
   }
   useEffect(() => {
     const mintDataStatus = inviteData.find((x) => x.function_uuid === funcId);
-    console.log(mintDataStatus);
     if (mintDataStatus && mintDataStatus.data) {
       const data = JSON.parse(mintDataStatus.data);
+      console.log(data);
       if (data?.fn_status === "success") {
+        nftDetails();
+        setHash(data?.fn_response_data?.transactionHash);
         setTransactionWaitingModal(false);
         setNftSuccessModal(true);
         setMintData(data);
@@ -119,8 +122,10 @@ export default function DetailsNFT() {
     } else {
       let message = mintDataStatus?.data?.fn_response_data?.ErrorReason;
       let errorMessage = message && JSON.parse(message);
-      setTransactionWaitingModal(false);
-      setErrorMsg(errorMessage?.reason);
+      if (errorMessage) {
+        setTransactionWaitingModal(false);
+        setErrorMsg(errorMessage?.reason);
+      }
     }
   }, [inviteData]);
 
@@ -146,7 +151,7 @@ export default function DetailsNFT() {
           show={showTransactionModal}
           handleClose={() => setTransactionModal(false)}
           nftName={nft?.lnft?.name}
-          address={"sjdklsjlksd4654054f654fds5df0sd4f6d54f56d"}
+          address={userinfo?.eoa}
           collectionName={"Collection1"}
           blockChain={"Ethereum"}
           price={nft?.more_info?.price}
@@ -166,9 +171,9 @@ export default function DetailsNFT() {
           nftName={nft?.lnft?.name}
           assetUrl={nft?.lnft?.asset?.path ? nft?.lnft?.asset?.path : manImg}
           address={"sjdklsjlksd4654054f654fds5df0sd4f6d54f56d"}
-          transactionHash={"sjdklsjlksd4654054f654fds5df0sd4f6d54f56d"}
+          transactionHash={hash}
           collectionName={"Collection1"}
-          shareUrl={`${origin}/${nft?.lnft?.invitation_code}`}
+          shareUrl={`${nft?.lnft?.invitation_code}`}
           handleNext={handleProceedPayment}
         />
       )}
@@ -362,15 +367,19 @@ export default function DetailsNFT() {
                 )}
               </div>
             )}
-            {nft.lnft.is_owner && (
-              <div className="text-center mt-[62px] mb-5">
-                <button
-                  className=" w-[140px] !text-[16px] h-[44px] contained-button "
-                  onClick={() => setTransactionModal(true)}
-                >
-                  Mint NFT
-                </button>
-              </div>
+            {!nft.lnft.is_owner && (
+              <>
+                {nft?.lnft.minted_amount < nft?.lnft.supply && (
+                  <div className="text-center mt-[62px] mb-5">
+                    <button
+                      className=" w-[140px] !text-[16px] h-[44px] contained-button "
+                      onClick={() => setTransactionModal(true)}
+                    >
+                      Mint NFT
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </section>
