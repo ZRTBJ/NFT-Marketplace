@@ -38,6 +38,7 @@ const CollectionDetail = () => {
   const [tnxData, setTnxData] = useState({});
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [Logo, setLogo] = useState({});
 
   useEffect(() => {
     if (collectionId) {
@@ -50,7 +51,6 @@ const CollectionDetail = () => {
     getCollectionNFTs(collectionId)
       .then((resp) => {
         if (resp.code === 0) {
-          console.log(resp);
           setNFTs(resp.lnfts);
         }
       })
@@ -73,7 +73,13 @@ const CollectionDetail = () => {
                 (img) => img["asset_purpose"] === "cover"
               )
             );
-            if (resp?.collection?.urls && resp?.collection.urls?.length > 0) {
+            setLogo(
+              resp.collection.assets.find(
+                (img) => img["asset_purpose"] === "logo"
+              )
+            );
+
+            if (resp?.collection?.links && resp?.collection.links?.length > 0) {
               const webLinks = [];
               try {
                 const urls = JSON.parse(resp?.collection.links);
@@ -198,11 +204,7 @@ const CollectionDetail = () => {
           <div className="md:w-2/3">
             <div className="flex">
               <img
-                src={
-                  Collection && Collection.assets && Collection.assets[1]
-                    ? Collection.assets[1].path
-                    : manImg
-                }
+                src={Logo?.path ? Logo?.path : manImg}
                 className="rounded-full self-start w-14 h-14 md:w-[98px] object-cover md:h-[98px] bg-color-ass-6"
                 alt="User profile"
               />
