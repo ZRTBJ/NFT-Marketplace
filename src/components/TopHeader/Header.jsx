@@ -17,6 +17,8 @@ import { getUserNotifications } from "services/notification/notificationService"
 import UserDropDownMenu from "./UserDropDownMenu";
 import userImg from "assets/images/defaultProfile.svg";
 import Logo from "assets/images/header/logo.svg";
+import AccountChangedModal from "components/modalDialog/AccountChangedModal";
+import NetworkChangedModal from "components/modalDialog/NetworkChangedModal";
 
 const Header = () => {
   const history = useHistory();
@@ -43,11 +45,27 @@ const Header = () => {
   const [selectedWallet, setSelectedWallet] = useState(
     context ? context.walletAddress : ""
   );
+  const [showAccountChanged, setShowAccountChanged] = useState(false);
+  const [showNetworkChanged, setShowNetworkChanged] = useState(false);
+  const [networkId, setNetworkId] = useState();
   const projectDeploy = useSelector((state) =>
     state?.notifications?.notificationData
       ? state?.notifications?.notificationData
       : []
   );
+
+  useEffect(() => {
+    window.ethereum.on("networkChanged", function (networkId) {
+      setNetworkId(networkId);
+      setShowNetworkChanged(true);
+    });
+  }, []);
+
+  useEffect(() => {
+    window.ethereum.on("accountsChanged", function (accounts) {
+      setShowAccountChanged(true);
+    });
+  }, []);
 
   useEffect(() => {
     if (userId && userId.length > 0) {
@@ -229,6 +247,15 @@ const Header = () => {
 
   return (
     <header className="bg-light1">
+      <AccountChangedModal
+        show={showAccountChanged}
+        handleClose={() => setShowAccountChanged(false)}
+      />
+      <NetworkChangedModal
+        show={showNetworkChanged}
+        handleClose={() => setShowNetworkChanged(false)}
+        networkId={networkId}
+      />
       <nav className="pl-5 pr-7 lg:pl-10 lg:pr-12">
         <div className="flex justify-between items-center min-h-[71px]">
           <div className="flex items-center flex-1">
