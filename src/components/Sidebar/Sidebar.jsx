@@ -60,7 +60,7 @@ const Sidebar = () => {
   }
 
   return (
-    <div style={openStyle} className="sidenav bg-light1 dark:dark-background">
+    <aside className="bg-light1 h-screen sticky top-0 sidenav">
       <div className="sidebarLinksContainer flex flex-col">
         <div className="pl-6 pr-10 flex-0 flex flex-col">
           <NavLink
@@ -171,7 +171,7 @@ const Sidebar = () => {
           handleClose={() => setShowCreateRANFT(false)}
         />
       )}
-    </div>
+    </aside>
   );
 };
 export default Sidebar;

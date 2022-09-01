@@ -1,6 +1,7 @@
 .sidenav {
-  height: 100%;
-  overflow-x: hidden;
+  background: #ffffff;
+  z-index: 2;
+  width: 240px;
 }
 
 .sidebarContainer {
@@ -22,8 +23,8 @@
   box-shadow: 0px 0px 6px #00000024;
   border: 1px solid #e2e2e3;
   border-radius: 8px;
-  width: 116px;
-  height: 116px;
+  /* width: 116px; */
+  /* height: 116px; */
   text-align: center;
 }
 
@@ -59,7 +60,7 @@
 
 .sidebarCardTitle {
   color: #192434;
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 12px;
   font-weight: 500;
 }
