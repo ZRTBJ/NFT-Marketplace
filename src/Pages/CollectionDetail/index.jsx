@@ -19,6 +19,7 @@ import Instagram from "assets/images/instagram.svg";
 import Twitter from "assets/images/twitter.svg";
 import Github from "assets/images/github.svg";
 import ExternalLink from "assets/images/link.svg";
+import TransferNFT from "components/modalDialog/TransferNFT";
 
 const CollectionDetail = () => {
   const history = useHistory();
@@ -39,6 +40,7 @@ const CollectionDetail = () => {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
   const [Logo, setLogo] = useState({});
+  const [showTransferNFT, setShowTransferNFT] = useState(false);
 
   useEffect(() => {
     if (collectionId) {
@@ -186,6 +188,12 @@ const CollectionDetail = () => {
           tnxData={tnxData}
           collectionId={collectionId}
           publishStep={publishStep}
+        />
+      )}
+      {showTransferNFT && (
+        <TransferNFT
+          show={showTransferNFT}
+          handleClose={() => setShowTransferNFT(false)}
         />
       )}
       <section className="mt-6">
@@ -462,13 +470,21 @@ const CollectionDetail = () => {
                                   Update Metadata
                                 </div>
                               </li> */}
+                              <li className="border-b border-divide">
+                                <div
+                                  onClick={() => setShowTransferNFT(true)}
+                                  className="block p-4 hover:bg-gray-100 cursor-pointer"
+                                >
+                                  Transfer NFT
+                                </div>
+                              </li>{" "}
                               {Collection?.type === "membership" && (
                                 <li className="border-b border-divide">
                                   <div
                                     onClick={(e) =>
                                       salesPageModal(e, "membership", nft.id)
                                     }
-                                    className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
+                                    className="block p-4 hover:bg-gray-100 cursor-pointer"
                                   >
                                     Sales Settings
                                   </div>
