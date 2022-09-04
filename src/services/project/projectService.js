@@ -159,6 +159,10 @@ export async function publishFundTransfer(projectId, payload) {
   );
 }
 
+export async function fundTransfer(payload) {
+  return await client("POST", `/fund-transfer`, payload, "json", "web3");
+}
+
 export async function publishProject(projectId) {
   return await client("POST", `/project/${projectId}/publish`, "formdata");
 }
@@ -208,4 +212,11 @@ export async function tokenBreakdown(projectId, payload) {
 
 export async function getBalance(pid) {
   return await client("GET", `/project/${pid}/balance`);
+}
+export async function transferFundApi(payload) {
+  return await client(
+    "PUT",
+    `/project/${payload.projectId}/withdrawFund`,
+    payload
+  );
 }

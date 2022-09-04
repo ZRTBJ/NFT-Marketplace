@@ -265,7 +265,7 @@ export default function CollectionCreate() {
   const [projectInfo, setProjectInfo] = useState({});
   const [projectCategoryList, setProjectCategoryList] = useState([]);
   const [dao_id, setDao_id] = useState(null);
-  const [notOwner,setNotOwner] = useState(false);
+  const [notOwner, setNotOwner] = useState(false);
 
   function handelClickBack() {
     let currentIndex = currentStep.pop();
@@ -390,8 +390,11 @@ export default function CollectionCreate() {
         setProjectCreated(true);
         setProjectId(response.id);
         if (response.type === "right_attach") {
-          setShowTokenTransferable(false);
+          setTokenTransferableDisabled(true);
+          setIsMetaDataFreezed(true);
+          setFreezeMetadataDisabled(true);
           setShowRoyalties(false);
+
           setShowCover(false);
           setShowWebLinks(false);
         }
@@ -405,7 +408,6 @@ export default function CollectionCreate() {
         }
         if (!response.is_owner) {
           setNotOwner(true);
-          
         }
       } else {
         setDataIsLoading(false);
@@ -499,6 +501,10 @@ export default function CollectionCreate() {
   }, [dao_id]);
   useEffect(() => {
     setCollectionType(collectionType);
+    if (collectionType === "membership" || collectionType === "product") {
+      setTokenTransferableDisabled(true);
+      setIsTokenTransferable(true);
+    }
   }, [collectionType]);
 
   useEffect(() => {
@@ -522,166 +528,181 @@ export default function CollectionCreate() {
       setProjectCategoryList(e.categories);
     });
   }, []);
+
   return (
     <>
       {isDataLoading && <div className="loading"></div>}
       <div className="txtblack max-w-[600px] mx-auto md:mt-[40px]">
-       {notOwner ? (<h3 className="text-center mt-6">You are not owner of this Collection <br />You can not edit this Collection</h3>) :(<>
-        <div className="create-project-container">
-          {currentStep.length === 1 && (
-            <div>
-              <h1 className="txtblack text-[28px] font-black mb-[6px]">
-                {projectCreated ? "Update" : "Create New"} Collection
-              </h1>
-              <p className="txtblack text-[14px] text-textSubtle mb-[24px]">
-                Fill the require form to{" "}
-                {!projectCreated ? "create " : "Update"} collection
-              </p>
-              <Outline
-                key={outlineKey}
-                // logo
-                logoLabel="Collection Logo"
-                coverPhotoUrl={coverPhotoUrl}
-                onCoverPhotoSelect={onCoverPhotoSelect}
-                onCoverPhotoRemove={onCoverPhotoRemove}
-                // collection Type
-                showCollectionType={showCollectionType}
-                collectionType={collectionType}
-                emptyCollectionType={emptyCollectionType}
-                onCollectionTypeSelect={onCollectionTypeSelect}
-                // name
-                nameLabel="Collection Name"
-                projectName={projectName}
-                emptyProjectName={emptyProjectName}
-                alreadyTakenProjectName={alreadyTakenProjectName}
-                projectNameDisabled={projectNameDisabled}
-                onProjectNameChange={onProjectNameChange}
-                // Dao symbol
-                symbolTitle="Collection Symbol"
-                showDaoSymbol={true}
-                daoSymbol={daoSymbol}
-                emptyDaoSymbol={emptyDaoSymbol}
-                onDaoSymbolChange={onDaoSymbolChange}
-                daoSymbolDisable={daoSymbolDisable}
-                alreadyTakenDaoSymbol={alreadyTakenDaoSymbol}
-                // Dao Wallet
-                showDaoWallet={false}
-                // overview
-                overview={overview}
-                onOverviewChange={onOverviewChange}
-                //photos
-                showPhotos={false}
-                // cover
-                showCover={showCover}
-                logoPhotoUrl={logoPhotoUrl}
-                onLogoPhotoSelect={onLogoPhotoSelect}
-                onLogoPhotoRemove={onLogoPhotoRemove}
-                // Royalties
-                showRoyalties={false}
-                royaltiesDiisTokenTransferablesable={royaltiesDisable}
-                primaryRoyalties={primaryRoyalties}
-                secondaryRoyalties={secondaryRoyalties}
-                onPrimaryRoyaltiesChange={onPrimaryRoyaltiesChange}
-                onSecondaryRoyaltiesChange={onSecondaryRoyaltiesChange}
-                // webLinks
-                showWebLinks={showWebLinks}
-                webLinks={webLinks}
-                onSocialLinkChange={onSocialLinkChange}
-                // category
-                projectCategory={projectCategory}
-                emptyProjeCtCategory={emptyProjeCtCategory}
-                onProjectCategoryChange={onProjectCategoryChange}
-                // blockchainCategory={blockchainCategory}
-                // Freeze metadata
-                showFreezeMetadata={true}
-                isMetadataFreezed={isMetaDaFreezed}
-                onMetadataFreezeChange={onMetadataFreezeChange}
-                freezeMetadataDisabled={freezeMetadataDisabled}
-                // Token Transferable
-                showTokenTransferable={showTokenTransferable}
-                isTokenTransferable={isTokenTransferable}
-                onTokenTransferableChange={onTokenTransferableChange}
-                tokenTransferableDisabled={tokenTransferableDisabled}
-                // Royalty Percentage
-                showRoyaltyPercentage={showRoyalties}
-                royaltyPercentageDisable={royaltyPercentageDisable}
-                royaltyPercentage={royaltyPercentage}
-                onRoyaltyPercentageChange={onRoyaltyPercentageChange}
-                isRoyaltyPercentageValid={isRoyaltyPercentageValid}
-              />
-            </div>
-          )}
-          {currentStep.length === 2 && (
-            <Confirmation
-              key={outlineKey}
-              // logo
-              logoLabel="Collection Logo"
-              logoPhotoUrl={logoPhotoUrl}
-              // name
-              nameLabel="Collection Name"
-              projectName={projectName}
-              // Dao symbol
-              symbolTitle="Collection Symbol"
-              showDaoSymbol={true}
-              daoSymbol={daoSymbol}
-              // Dao Wallet
-              showDaoWallet={false}
-              // overview
-              overview={overview}
-              //photos
-              showPhotos={false}
-              // webLinks
-              webLinks={webLinks}
-              showWebLinks={showWebLinks}
-              // Cover
-
-              showCover={showCover}
-              coverPhotoUrl={coverPhotoUrl}
-              // Royalties
-              showRoyalties={false}
-              primaryRoyalties={primaryRoyalties}
-              secondaryRoyalties={secondaryRoyalties}
-              // category
-              projectCategoryName={projectCategoryName}
-              showFreezeMetadata={true}
-              isMetaDaFreezed={isMetaDaFreezed}
-              showTokenTransferable={showTokenTransferable}
-              isTokenTransferable={isTokenTransferable}
-              showRoyaltyPercentage={showRoyalties}
-              royaltyPercentage={royaltyPercentage}
-            />
-          )}
-        </div>
-        <div className="mb-6">
-          <div className="flex">
-            <>
-              {currentStep.length > 1 && (
-                <button
-                  className="bg-primary-900/[0.10] text-primary-900 px-3 font-black w-[140px] !text-[16px] h-[44px]"
-                  onClick={() => handelClickBack()}
-                >
-                  <i className="fa-regular fa-angle-left"></i> Back
-                </button>
-              )}
+        {notOwner ? (
+          <h3 className="text-center mt-6">
+            You are not owner of this Collection <br />
+            You can not edit this Collection
+          </h3>
+        ) : (
+          <>
+            <div className="create-project-container">
               {currentStep.length === 1 && (
-                <button
-                  className=" w-[140px] !text-[16px] h-[44px] contained-button "
-                  onClick={() => handelClickNext()}
-                >
-                  Next <i className="fa-regular fa-angle-right ml-1"></i>
-                </button>
+                <div>
+                  <h1 className="txtblack text-[28px] font-black mb-[6px]">
+                    {projectCreated ? "Update" : "Create New"} Collection
+                  </h1>
+                  <p className="txtblack text-[14px] text-textSubtle mb-[24px]">
+                    Fill the require form to{" "}
+                    {!projectCreated ? "create " : "Update"} collection
+                  </p>
+                  <Outline
+                    key={outlineKey}
+                    // logo
+                    logoLabel="Collection Logo"
+                    coverPhotoUrl={coverPhotoUrl}
+                    onCoverPhotoSelect={onCoverPhotoSelect}
+                    onCoverPhotoRemove={onCoverPhotoRemove}
+                    // collection Type
+                    showCollectionType={showCollectionType}
+                    collectionType={collectionType}
+                    emptyCollectionType={emptyCollectionType}
+                    onCollectionTypeSelect={onCollectionTypeSelect}
+                    // name
+                    nameLabel="Collection Name"
+                    projectName={projectName}
+                    emptyProjectName={emptyProjectName}
+                    alreadyTakenProjectName={alreadyTakenProjectName}
+                    projectNameDisabled={projectNameDisabled}
+                    onProjectNameChange={onProjectNameChange}
+                    // Dao symbol
+                    symbolTitle="Collection Symbol"
+                    showDaoSymbol={true}
+                    daoSymbol={daoSymbol}
+                    emptyDaoSymbol={emptyDaoSymbol}
+                    onDaoSymbolChange={onDaoSymbolChange}
+                    daoSymbolDisable={daoSymbolDisable}
+                    alreadyTakenDaoSymbol={alreadyTakenDaoSymbol}
+                    // Dao Wallet
+                    showDaoWallet={false}
+                    // overview
+                    overview={overview}
+                    onOverviewChange={onOverviewChange}
+                    //photos
+                    showPhotos={false}
+                    // cover
+                    showCover={showCover}
+                    logoPhotoUrl={logoPhotoUrl}
+                    onLogoPhotoSelect={onLogoPhotoSelect}
+                    onLogoPhotoRemove={onLogoPhotoRemove}
+                    // Royalties
+                    showRoyalties={false}
+                    royaltiesDiisTokenTransferablesable={royaltiesDisable}
+                    primaryRoyalties={primaryRoyalties}
+                    secondaryRoyalties={secondaryRoyalties}
+                    onPrimaryRoyaltiesChange={onPrimaryRoyaltiesChange}
+                    onSecondaryRoyaltiesChange={onSecondaryRoyaltiesChange}
+                    // webLinks
+                    showWebLinks={showWebLinks}
+                    webLinks={webLinks}
+                    onSocialLinkChange={onSocialLinkChange}
+                    // category
+                    showProjectCategory={
+                      collectionType === "right_attach" ? false : true
+                    }
+                    projectCategory={projectCategory}
+                    emptyProjeCtCategory={emptyProjeCtCategory}
+                    onProjectCategoryChange={onProjectCategoryChange}
+                    // blockchainCategory={blockchainCategory}
+                    // Freeze metadata
+                    showFreezeMetadata={true}
+                    isMetadataFreezed={isMetaDaFreezed}
+                    onMetadataFreezeChange={onMetadataFreezeChange}
+                    freezeMetadataDisabled={freezeMetadataDisabled}
+                    // Token Transferable
+                    showTokenTransferable={showTokenTransferable}
+                    isTokenTransferable={isTokenTransferable}
+                    onTokenTransferableChange={onTokenTransferableChange}
+                    tokenTransferableDisabled={tokenTransferableDisabled}
+                    // Royalty Percentage
+                    showRoyaltyPercentage={showRoyalties}
+                    royaltyPercentageDisable={royaltyPercentageDisable}
+                    royaltyPercentage={royaltyPercentage}
+                    onRoyaltyPercentageChange={onRoyaltyPercentageChange}
+                    isRoyaltyPercentageValid={isRoyaltyPercentageValid}
+                  />
+                </div>
               )}
-              {currentStep.length > 1 && (
-                <button
-                  onClick={() => saveDraft("public")}
-                  className={`w-[140px] !text-[16px] h-[44px] contained-button  ml-auto`}
-                >
-                  Submit
-                </button>
+              {currentStep.length === 2 && (
+                <Confirmation
+                  key={outlineKey}
+                  // logo
+                  logoLabel="Collection Logo"
+                  logoPhotoUrl={logoPhotoUrl}
+                  // name
+                  nameLabel="Collection Name"
+                  projectName={projectName}
+                  // Dao symbol
+                  symbolTitle="Collection Symbol"
+                  showDaoSymbol={true}
+                  daoSymbol={daoSymbol}
+                  // Dao Wallet
+                  showDaoWallet={false}
+                  // overview
+                  overview={overview}
+                  //photos
+                  showPhotos={false}
+                  // webLinks
+                  webLinks={webLinks}
+                  showWebLinks={showWebLinks}
+                  // Cover
+
+                  showCover={showCover}
+                  coverPhotoUrl={coverPhotoUrl}
+                  // Royalties
+                  showRoyalties={false}
+                  primaryRoyalties={primaryRoyalties}
+                  secondaryRoyalties={secondaryRoyalties}
+                  // category
+                  showProjectCategory={
+                    collectionType === "right_attach" ? false : true
+                  }
+                  projectCategoryName={projectCategoryName}
+                  showFreezeMetadata={true}
+                  isMetaDaFreezed={isMetaDaFreezed}
+                  showTokenTransferable={showTokenTransferable}
+                  isTokenTransferable={isTokenTransferable}
+                  showRoyaltyPercentage={showRoyalties}
+                  royaltyPercentage={royaltyPercentage}
+                />
               )}
-            </>
-          </div>
-        </div></>)}
+            </div>
+            <div className="mb-6">
+              <div className="flex">
+                <>
+                  {currentStep.length > 1 && (
+                    <button
+                      className="bg-primary-900/[0.10] text-primary-900 px-3 font-black w-[140px] !text-[16px] h-[44px]"
+                      onClick={() => handelClickBack()}
+                    >
+                      <i className="fa-regular fa-angle-left"></i> Back
+                    </button>
+                  )}
+                  {currentStep.length === 1 && (
+                    <button
+                      className=" w-[140px] !text-[16px] h-[44px] contained-button "
+                      onClick={() => handelClickNext()}
+                    >
+                      Next <i className="fa-regular fa-angle-right ml-1"></i>
+                    </button>
+                  )}
+                  {currentStep.length > 1 && (
+                    <button
+                      onClick={() => saveDraft("public")}
+                      className={`w-[140px] !text-[16px] h-[44px] contained-button  ml-auto`}
+                    >
+                      Submit
+                    </button>
+                  )}
+                </>
+              </div>
+            </div>
+          </>
+        )}
       </div>
       {showSuccessModal && (
         <SuccessModal

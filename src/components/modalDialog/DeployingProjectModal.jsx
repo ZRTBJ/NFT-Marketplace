@@ -282,7 +282,7 @@ const DeployingProjectModal = ({
               <div className="animated-process-bar"></div>
             </div>
             {deployStatus.step === 1 && (
-              <div className="text-center">Erc20 Deployment</div>
+              <div className="text-center">Deployment</div>
             )}
             {deployStatus.step === 2 && (
               <div className="text-center">ProjectToken Deployment</div>

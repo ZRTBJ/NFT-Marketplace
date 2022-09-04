@@ -73,6 +73,7 @@ export default function Outline({
   showWebLinks,
 
   // category
+  showProjectCategory,
   projectCategory,
   emptyProjeCtCategory,
   onProjectCategoryChange,
@@ -435,27 +436,29 @@ export default function Outline({
       )}
 
       {/* category */}
-      <div className="mb-6">
-        <div className="txtblack text-[14px] mb-[6px] ">Category</div>
-        <select
-          value={projectCategory}
-          onChange={onProjectCategoryChange}
-          name="category"
-          className="h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3"
-        >
-          <option value={"default"} defaultValue>
-            Choose an option
-          </option>
-          {projectCategoryList.map((e) => (
-            <option key={e.id} value={e.id}>
-              {e.name}
+      {showProjectCategory && (
+        <div className="mb-6">
+          <div className="txtblack text-[14px] mb-[6px] ">Category</div>
+          <select
+            value={projectCategory}
+            onChange={onProjectCategoryChange}
+            name="category"
+            className="h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3"
+          >
+            <option value={"default"} defaultValue>
+              Choose an option
             </option>
-          ))}
-        </select>
-        {emptyProjeCtCategory && (
-          <div className="validationTag">Project category is required</div>
-        )}
-      </div>
+            {projectCategoryList.map((e) => (
+              <option key={e.id} value={e.id}>
+                {e.name}
+              </option>
+            ))}
+          </select>
+          {emptyProjeCtCategory && (
+            <div className="validationTag">Project category is required</div>
+          )}
+        </div>
+      )}
 
       {/* blockchain */}
       {blockchainCategory && (
@@ -489,9 +492,23 @@ export default function Outline({
             </p>
 
             {tokenTransferableDisabled ? (
-              <p className="ml-auto text-textSubtle text-[14px]">
-                {isTokenTransferable.toString().toUpperCase()}
-              </p>
+              <label
+                htmlFor="token-transferable"
+                className="inline-flex relative items-center cursor-pointer ml-auto"
+              >
+                <input
+                  disabled
+                  type="checkbox"
+                  value={isTokenTransferable}
+                  id="token-transferable"
+                  checked={isTokenTransferable}
+                  className="sr-only peer outline-none"
+                  onChange={(e) =>
+                    onTokenTransferableChange(isTokenTransferable)
+                  }
+                />
+                <div className="w-11 outline-none h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-900"></div>
+              </label>
             ) : (
               <label
                 htmlFor="token-transferable"
@@ -518,9 +535,21 @@ export default function Outline({
         <div className="mb-6 flex flex-wrap items-center">
           <p className="text-txtSubtle text-[14px]">Metadata update</p>
           {freezeMetadataDisabled ? (
-            <p className="ml-auto text-textSubtle text-[14px]">
-              {isMetadataFreezed.toString().toUpperCase()}
-            </p>
+            <label
+              htmlFor="checked-toggle"
+              className="inline-flex relative items-center cursor-pointer ml-auto"
+            >
+              <input
+                disabled
+                type="checkbox"
+                value={isMetadataFreezed}
+                id="checked-toggle"
+                checked={isMetadataFreezed}
+                className="sr-only peer outline-none"
+                onChange={(e) => onMetadataFreezeChange(isMetadataFreezed)}
+              />
+              <div className="w-11 outline-none h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-900"></div>
+            </label>
           ) : (
             <label
               htmlFor="checked-toggle"
