@@ -442,6 +442,9 @@ const Profile = () => {
                         Project Name
                       </th>
                       <th scope="col" className="px-5">
+                        Collection Name
+                      </th>
+                      <th scope="col" className="px-5">
                         Percentage
                       </th>
                       <th scope="col" className="px-5">
@@ -472,6 +475,9 @@ const Profile = () => {
                         </td>
                         <td className="py-4 px-5 font-black ">
                           {r.project_name}
+                        </td>
+                        <td className="py-4 px-5 font-black ">
+                          {r.collection_name}
                         </td>
                         <td className="py-4 px-5">{r.royalty_percent}</td>
                         <td

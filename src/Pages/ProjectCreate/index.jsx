@@ -213,7 +213,7 @@ export default function ProjectCreate() {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [projectCategoryList, setProjectCategoryList] = useState([]);
-  const [notOwner,setNotOwner] = useState(false);
+  const [notOwner, setNotOwner] = useState(false);
 
   function handelClickBack() {
     let currentIndex = currentStep.pop();
@@ -343,7 +343,6 @@ export default function ProjectCreate() {
         }
         if (!response.is_owner) {
           setNotOwner(true);
-          
         }
         setDataIsLoading(false);
       }
@@ -419,133 +418,143 @@ export default function ProjectCreate() {
     <>
       {isDataLoading && <div className="loading"></div>}
       <div className="txtblack max-w-[600px] mx-auto md:mt-[40px]">
-     {  notOwner ? (<h3 className="text-center mt-6">You are not owner of this DAO <br />You can not edit this DAO</h3>) :(<>
-        <div className="create-project-container">
-          {currentStep.length === 1 && (
-            <div>
-              <h1 className="text-[28px] font-black mb-[6px]">
-                {!projectCreated ? "Create New" : "Update"} DAO
-              </h1>
-              <p className="text-[14px] text-textSubtle mb-[24px]">
-                Fill the require form to {!projectCreated ? "create" : "update"}{" "}
-                dao
-              </p>
-              <Outline
-                key={outlineKey}
-                // logo
-                logoLabel="DAO Logo"
-                logoPhotoUrl={logoPhotoUrl}
-                onLogoPhotoSelect={onLogoPhotoSelect}
-                onLogoPhotoRemove={onLogoPhotoRemove}
-                // name
-                nameLabel="DAO Name"
-                projectName={projectName}
-                emptyProjectName={emptyProjectName}
-                alreadyTakenProjectName={alreadyTakenProjectName}
-                projectNameDisabled={projectNameDisabled}
-                onProjectNameChange={onProjectNameChange}
-                // Dao symbol
-                showDaoSymbol={false}
-                daoSymbol={daoSymbol}
-                emptyDaoSymbol={emptyDaoSymbol}
-                onDaoSymbolChange={onDaoSymbolChange}
-                daoSymbolDisable={daoSymbolDisable}
-                // Dao Wallet
-                showDaoWallet={true}
-                daoWallet={daoWallet}
-                emptyDaoWallet={emptyDaoWallet}
-                daoWalletDisable={daoWalletDisable}
-                onDaoWalletChange={onDaoWalletChange}
-                // overview
-                overview={overview}
-                onOverviewChange={onOverviewChange}
-                //photos
-                showPhotos={true}
-                photosUrl={photosUrl}
-                onPhotosSelect={onPhotosSelect}
-                onPhotosRemove={onPhotosRemove}
-                // cover
-                showCover={false}
-                // Royalties
-                showRoyalties={false}
-                // webLinks
-                showWebLinks={true}
-                webLinks={webLinks}
-                onSocialLinkChange={onSocialLinkChange}
-                // category
-                projectCategory={projectCategory}
-                emptyProjeCtCategory={emptyProjeCtCategory}
-                onProjectCategoryChange={onProjectCategoryChange}
-                blockchainCategory={blockchainCategory}
-                // Freeze metadata
-                showFreezeMetadata={false}
-              />
-            </div>
-          )}
-          {currentStep.length === 2 && (
-            <Confirmation
-              key={outlineKey}
-              // logo
-              logoLabel="DAO Logo"
-              logoPhotoUrl={logoPhotoUrl}
-              // name
-              nameLabel="DAO Name"
-              projectName={projectName}
-              // Dao symbol
-              showDaoSymbol={false}
-              daoSymbol={daoSymbol}
-              // Dao Wallet
-              showDaoWallet={true}
-              daoWallet={daoWallet}
-              // overview
-              overview={overview}
-              //photos
-              showPhotos={true}
-              photosUrl={photosUrl}
-              // cover
-              showCover={false}
-              // royalties
-              showRoyalties={false}
-              // webLinks
-              webLinks={webLinks}
-              showWebLinks={true}
-              // category
-              projectCategoryName={projectCategoryName}
-              blockchainCategory={blockchainCategory}
-              showFreezeMetadata={false}
-            />
-          )}
-        </div>
-        <div className="mb-6">
-          <div className="flex">
-            <>
-              {currentStep.length > 1 && (
-                <button
-                  className="bg-primary-900/[0.10] text-primary-900 px-3 font-black w-[140px] !text-[16px] h-[44px]"
-                  onClick={() => handelClickBack()}
-                >
-                  <i className="fa-regular fa-angle-left"></i> Back
-                </button>
-              )}
+        {notOwner ? (
+          <h3 className="text-center mt-6">
+            You are not owner of this DAO <br />
+            You can not edit this DAO
+          </h3>
+        ) : (
+          <>
+            <div className="create-project-container">
               {currentStep.length === 1 && (
-                <button
-                  className=" w-[140px] !text-[16px] h-[44px] contained-button "
-                  onClick={() => handelClickNext()}
-                >
-                  Next <i className="fa-regular fa-angle-right ml-1"></i>
-                </button>
+                <div>
+                  <h1 className="text-[28px] font-black mb-[6px]">
+                    {!projectCreated ? "Create New" : "Update"} DAO
+                  </h1>
+                  <p className="text-[14px] text-textSubtle mb-[24px]">
+                    Fill the require form to{" "}
+                    {!projectCreated ? "create" : "update"} dao
+                  </p>
+                  <Outline
+                    key={outlineKey}
+                    // logo
+                    logoLabel="DAO Logo"
+                    logoPhotoUrl={logoPhotoUrl}
+                    onLogoPhotoSelect={onLogoPhotoSelect}
+                    onLogoPhotoRemove={onLogoPhotoRemove}
+                    // name
+                    nameLabel="DAO Name"
+                    projectName={projectName}
+                    emptyProjectName={emptyProjectName}
+                    alreadyTakenProjectName={alreadyTakenProjectName}
+                    projectNameDisabled={projectNameDisabled}
+                    onProjectNameChange={onProjectNameChange}
+                    // Dao symbol
+                    showDaoSymbol={false}
+                    daoSymbol={daoSymbol}
+                    emptyDaoSymbol={emptyDaoSymbol}
+                    onDaoSymbolChange={onDaoSymbolChange}
+                    daoSymbolDisable={daoSymbolDisable}
+                    // Dao Wallet
+                    showDaoWallet={true}
+                    daoWallet={daoWallet}
+                    emptyDaoWallet={emptyDaoWallet}
+                    daoWalletDisable={daoWalletDisable}
+                    onDaoWalletChange={onDaoWalletChange}
+                    // overview
+                    overview={overview}
+                    onOverviewChange={onOverviewChange}
+                    //photos
+                    showPhotos={true}
+                    photosUrl={photosUrl}
+                    onPhotosSelect={onPhotosSelect}
+                    onPhotosRemove={onPhotosRemove}
+                    // cover
+                    showCover={false}
+                    // Royalties
+                    showRoyalties={false}
+                    // webLinks
+                    showWebLinks={true}
+                    webLinks={webLinks}
+                    onSocialLinkChange={onSocialLinkChange}
+                    // category
+                    showProjectCategory={true}
+                    projectCategory={projectCategory}
+                    emptyProjeCtCategory={emptyProjeCtCategory}
+                    onProjectCategoryChange={onProjectCategoryChange}
+                    blockchainCategory={blockchainCategory}
+                    // Freeze metadata
+                    showFreezeMetadata={false}
+                  />
+                </div>
               )}
-              {currentStep.length > 1 && (
-                <button
-                  onClick={() => saveDraft("public")}
-                  className={`w-[140px] !text-[16px] h-[44px] contained-button  ml-auto`}
-                >
-                  Submit
-                </button>
+              {currentStep.length === 2 && (
+                <Confirmation
+                  key={outlineKey}
+                  // logo
+                  logoLabel="DAO Logo"
+                  logoPhotoUrl={logoPhotoUrl}
+                  // name
+                  nameLabel="DAO Name"
+                  projectName={projectName}
+                  // Dao symbol
+                  showDaoSymbol={false}
+                  daoSymbol={daoSymbol}
+                  // Dao Wallet
+                  showDaoWallet={true}
+                  daoWallet={daoWallet}
+                  // overview
+                  overview={overview}
+                  //photos
+                  showPhotos={true}
+                  photosUrl={photosUrl}
+                  // cover
+                  showCover={false}
+                  // royalties
+                  showRoyalties={false}
+                  // webLinks
+                  webLinks={webLinks}
+                  showWebLinks={true}
+                  // category
+                  showProjectCategory={true}
+                  projectCategoryName={projectCategoryName}
+                  blockchainCategory={blockchainCategory}
+                  showFreezeMetadata={false}
+                />
               )}
-            </>
-          </div>
-        </div></>)}
+            </div>
+            <div className="mb-6">
+              <div className="flex">
+                <>
+                  {currentStep.length > 1 && (
+                    <button
+                      className="bg-primary-900/[0.10] text-primary-900 px-3 font-black w-[140px] !text-[16px] h-[44px]"
+                      onClick={() => handelClickBack()}
+                    >
+                      <i className="fa-regular fa-angle-left"></i> Back
+                    </button>
+                  )}
+                  {currentStep.length === 1 && (
+                    <button
+                      className=" w-[140px] !text-[16px] h-[44px] contained-button "
+                      onClick={() => handelClickNext()}
+                    >
+                      Next <i className="fa-regular fa-angle-right ml-1"></i>
+                    </button>
+                  )}
+                  {currentStep.length > 1 && (
+                    <button
+                      onClick={() => saveDraft("public")}
+                      className={`w-[140px] !text-[16px] h-[44px] contained-button  ml-auto`}
+                    >
+                      Submit
+                    </button>
+                  )}
+                </>
+              </div>
+            </div>
+          </>
+        )}
       </div>
       {showSuccessModal && (
         <SuccessModal

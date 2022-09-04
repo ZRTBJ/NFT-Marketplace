@@ -46,6 +46,7 @@ export default function Outline({
 
   // Blockchain
   blockchainCategory,
+  showProjectCategory,
 
   showFreezeMetadata,
   isMetaDaFreezed,
@@ -74,7 +75,6 @@ export default function Outline({
           )}
         </div>
       </div>
-
       {/* name */}
       <div className="mb-6">
         <div className="flex flex-wrap items-center">
@@ -83,7 +83,6 @@ export default function Outline({
         </div>
         <p className="text-textSubtle">{projectName}</p>
       </div>
-
       {/* Dao Symbol */}
       {showDaoSymbol && (
         <div className="mb-6" id="daoSymbol">
@@ -94,7 +93,6 @@ export default function Outline({
           <p className="text-textSubtle">{daoSymbol}</p>
         </div>
       )}
-
       {/* Dao Wallet */}
       {showDaoWallet && (
         <div className="mb-6">
@@ -105,7 +103,6 @@ export default function Outline({
           <p className="text-textSubtle">{daoWallet}</p>
         </div>
       )}
-
       {/* overview */}
       <div className="mb-6">
         <div className="txtblack text-[14px]">Description</div>
@@ -128,7 +125,6 @@ export default function Outline({
           )}
         </div>
       )}
-
       {showRoyalties && (
         <div className="mb-6">
           <div className="mb-6">
@@ -139,7 +135,6 @@ export default function Outline({
           <p className="text-textSubtle">{secondaryRoyalties}</p>
         </div>
       )}
-
       {/* photo */}
       {showPhotos && (
         <div>
@@ -168,7 +163,6 @@ export default function Outline({
           </div>
         </div>
       )}
-
       {/* web Links*/}
       {showWebLinks && (
         <div className="mb-3">
@@ -193,13 +187,13 @@ export default function Outline({
           </div>
         </div>
       )}
-
       {/* category */}
-      <div className="mb-6">
-        <div className="txtblack text-[14px] mb-[6px] ">Category</div>
-        <p className="text-textSubtle">{projectCategoryName}</p>
-      </div>
-
+      {showProjectCategory && (
+        <div className="mb-6">
+          <div className="txtblack text-[14px] mb-[6px] ">Category</div>
+          <p className="text-textSubtle">{projectCategoryName}</p>
+        </div>
+      )}
       {/* blockchain */}
       {blockchainCategory && (
         <div className="mb-6">
@@ -210,7 +204,6 @@ export default function Outline({
           <p className="text-textSubtle">{blockchainCategory}</p>
         </div>
       )}
-
       {showFreezeMetadata && (
         <div className="mb-6">
           <div className="flex flex-wrap items-center">

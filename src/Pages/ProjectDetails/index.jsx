@@ -4,6 +4,7 @@ import {
   projectLike,
   projectBookmark,
   getBalance,
+  transferFundApi,
 } from "services/project/projectService";
 import { getNftListByProjectId } from "services/nft/nftService";
 import manImg from "assets/images/projectDetails/man-img.svg";
@@ -14,7 +15,7 @@ import thumbIcon from "assets/images/profile/card.svg";
 import avatar from "assets/images/dummy-img.svg";
 import { Link } from "react-router-dom";
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import PublishModal from "components/modalDialog/PublishModal";
 import ErrorModal from "components/modalDialog/ErrorModal";
 import SuccessModal from "components/modalDialog/SuccessModal";
@@ -24,8 +25,9 @@ import CreateRightAttachedNFT from "components/modalDialog/CreateRightAttachNFT"
 import SalesPageModal from "components/modalDialog/SalesPageModal";
 import TransferFundModal from "components/modalDialog/TransferFundModal";
 import { cryptoConvert } from "services/chainlinkService";
-
+import { getNotificationData } from "Slice/notificationSlice";
 export default function ProjectDetails(props) {
+  const dispatch = useDispatch();
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
   const [project, setProject] = useState({});
@@ -60,7 +62,14 @@ export default function ProjectDetails(props) {
   const [balance, setBalance] = useState("---");
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
   const [usdUnitPrice, setUsdUnitPrice] = useState(0);
-
+  const [showFundTransferSuccess, setShowFundTransferSuccess] = useState(false);
+  const [showFundTransferError, setShowFundTransferError] = useState(false);
+  const [fnId, setFnId] = useState("");
+  const fileUploadNotification = useSelector((state) =>
+    state?.notifications?.notificationData
+      ? state?.notifications?.notificationData
+      : []
+  );
   async function fetchData() {
     if (hasMore) {
       setHasMore(false);
@@ -268,7 +277,63 @@ export default function ProjectDetails(props) {
         setIsLoadingBalance(false);
       });
   }
-  console.log(rightAttachCollectionList);
+  async function onSubmitData(payload) {
+    payload.projectId = projectId;
+
+    setShowTransferFundModal(false);
+    // setShowFundTransferSuccess(false);
+    // setShowFundTransferError(true);
+    setIsLoading(true);
+    try {
+      await transferFundApi(payload)
+        .then((e) => {
+          console.log(e);
+          if (e.code === 0) {
+            setFnId(e.function_uuid);
+            const notificationData = {
+              projectId: projectId,
+              etherscan: "",
+              function_uuid: e.function_uuid,
+              data: "",
+            };
+            dispatch(getNotificationData(notificationData));
+          } else {
+            setShowFundTransferError(true);
+            setIsLoading(false);
+          }
+        })
+        .catch(() => {
+          setShowFundTransferError(true);
+          setIsLoading(false);
+        });
+    } catch (error) {
+      setShowFundTransferError(true);
+      setIsLoading(false);
+    }
+  }
+  useEffect(() => {
+    // file upload web socket
+    const projectDeployStatus = fileUploadNotification.find(
+      (x) => x.function_uuid === fnId
+    );
+    if (projectDeployStatus && projectDeployStatus.data) {
+      setIsLoading(false);
+      setShowFundTransferSuccess(true);
+
+      // const data = JSON.parse(projectDeployStatus.data);
+      // if (data.Data["assetId"] && data.Data["assetId"].length > 0) {
+      //   if (!savingNFT && !isNFTSaved) {
+      //     setSavingNFT(true);
+      //     saveNFTDetails(data.Data["assetId"]);
+      //   }
+      // } else {
+      //   setSavingNFT(false);
+      // }
+    } else {
+      // setIsLoading(false);
+      // setShowFundTransferError(true);
+    }
+  }, [fileUploadNotification]);
 
   return (
     <>
@@ -1097,6 +1162,7 @@ export default function ProjectDetails(props) {
               }}
             />
           )}
+
           {showSalesSuccessModal && (
             <SuccessModal
               message={"Sale information updated successfully"}
@@ -1113,10 +1179,32 @@ export default function ProjectDetails(props) {
             <TransferFundModal
               show={showTransferFundModal}
               handleClose={() => setShowTransferFundModal(false)}
+              onSubmitData={onSubmitData}
               successClose={() => {
                 setShowTransferFundModal(false);
                 setShowSuccessModal(true);
               }}
+            />
+          )}
+          {showFundTransferSuccess && (
+            <SuccessModal
+              message={"Fund transferred successfully"}
+              buttonText={"Close"}
+              handleClose={() => {
+                setShowFundTransferSuccess(false);
+              }}
+              show={showFundTransferSuccess}
+            />
+          )}
+          {showFundTransferError && (
+            <ErrorModal
+              title={"Fund can not be transfer at this moment"}
+              message={"Please try again later"}
+              buttonText={"Close"}
+              handleClose={() => {
+                setShowFundTransferError(false);
+              }}
+              show={showFundTransferError}
             />
           )}
         </>
