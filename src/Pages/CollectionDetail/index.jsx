@@ -20,6 +20,9 @@ import Twitter from "assets/images/twitter.svg";
 import Github from "assets/images/github.svg";
 import ExternalLink from "assets/images/link.svg";
 import TransferNFT from "components/modalDialog/TransferNFT";
+import { getProjectDetailsById } from "services/project/projectService";
+import Eth from "assets/images/network/eth.svg";
+import Polygon from "assets/images/network/polygon.svg";
 
 const CollectionDetail = () => {
   const history = useHistory();
@@ -41,6 +44,7 @@ const CollectionDetail = () => {
   const [errorMsg, setErrorMsg] = useState(null);
   const [Logo, setLogo] = useState({});
   const [showTransferNFT, setShowTransferNFT] = useState(false);
+  const [projectNetwork, setProjectNetwork] = useState("");
 
   useEffect(() => {
     if (collectionId) {
@@ -66,6 +70,9 @@ const CollectionDetail = () => {
     getCollectionDetailsById(payload)
       .then((resp) => {
         if (resp.code === 0) {
+          getProjectDetailsById({ id: resp?.collection?.project_uid }).then(
+            (resp) => setProjectNetwork(resp?.project?.blockchain)
+          );
           console.log(resp);
           setCollection(resp.collection);
           setCollectionType(resp.collection.type);
@@ -494,6 +501,14 @@ const CollectionDetail = () => {
                           </div>
                         )}
                       </div>
+                    </div>
+                    <div className="flex w-[276px]">
+                      <p className="text-[13px]">0.01 ETH</p>
+                      <img
+                        className="ml-auto"
+                        src={projectNetwork === "ethereum" ? Eth : Polygon}
+                        alt={projectNetwork}
+                      />
                     </div>
                   </div>
                 </div>
