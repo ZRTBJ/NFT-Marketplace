@@ -114,6 +114,7 @@ const SalesPageModal = ({
                       name="price"
                       className={`debounceInput mt-1`}
                       defaultValue={""}
+                      step="0.01"
                       {...register("price", {
                         required: "Price is required.",
                       })}
@@ -141,6 +142,7 @@ const SalesPageModal = ({
                         months={2}
                         ranges={dateRange}
                         direction="horizontal"
+                        
                       />
                     </div>
                     {/* <select
