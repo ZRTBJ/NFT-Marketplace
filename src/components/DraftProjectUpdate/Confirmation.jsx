@@ -107,7 +107,21 @@ export default function Outline({
       <div className="mb-6">
         <div className="txtblack text-[14px]">Description</div>
         <p className="text-textSubtle">
-          {overview === "" ? "No description" : overview}
+          {overview === "" ? (
+            "No description"
+          ) : (
+            <textarea
+              value={overview}
+              disabled={true}
+              className="mb-6 !border-none bg-transparent "
+              name="description"
+              id="description"
+              cols="30"
+              rows="8"
+              placeholder=""
+              maxLength={1000}
+            ></textarea>
+          )}
         </p>
       </div>
       {/* Cover */}
