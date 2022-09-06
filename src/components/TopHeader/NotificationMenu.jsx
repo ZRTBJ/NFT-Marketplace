@@ -27,13 +27,13 @@ const NotificatioMenu = ({
   return (
     <div
       ref={ref}
-      className="w-screen md:w-1/4 h-screen md:h-auto md:border border-slate-300  bg-[#fff] rounded-xl absolute top-16 right-[-44px] md:right-20 z-20 px-4 pb-2"
+      className="w-screen md:w-1/4 h-screen md:h-auto md:border border-slate-300  bg-[#fff] rounded-xl absolute top-16 right-[-44px] md:right-20 z-20 pb-2"
     >
-      <div className="mt-4 txtblack">
+      <div className="mt-4 txtblack px-4">
         <h3>Notifiction</h3>
         <small>Recent Activity</small>
       </div>
-      <div className="grid grid-cols-1 divide-y divide-slate-300 ">
+      <div className="grid grid-cols-1 divide-y divide-slate-300 px-4 h-[450px] overflow-y-auto">
         {notificationList.map((notification, index) => (
           <div className="py-3 px-2" key={`user-notification-${index}`}>
             <div

@@ -157,6 +157,8 @@ const CollectionDetail = () => {
     }
   };
 
+  console.log(Collection, Links);
+
   return (
     <div>
       {ShowPublishModal && (
@@ -436,7 +438,7 @@ const CollectionDetail = () => {
                 >
                   <Link to={`/nft-details/${nft?.nft_type}/${nft.id}`}>
                     <img
-                      className="rounded-xl h-[276px] w-[276px]"
+                      className="rounded-xl h-[276px] w-[276px] object-contain"
                       src={nft?.asset?.path}
                       alt=""
                     />
