@@ -655,34 +655,34 @@ export default function ProjectDetails(props) {
                   role="tabpanel"
                   aria-labelledby="membership-nft-tab"
                 >
-                  {/* Card */}
-                  {membershipCollectionList &&
-                    membershipCollectionList.length > 0 &&
-                    membershipCollectionList.map((collection, index) => (
-                      <div
-                        className="min-h-[390px] rounded-x"
-                        key={`nft-collection-membership-${index}`}
-                      >
-                        <Link to={`/collection-details/${collection?.id}`}>
-                          <img
-                            className="rounded-xl h-[276px] object-cover w-full"
-                            src={
-                              collection &&
-                              collection.assets &&
-                              collection.assets[0]
-                                ? collection.assets[0].path
-                                : thumbIcon
-                            }
-                            alt=""
-                          />
-                        </Link>
-                        <div className="py-5">
-                          <div className="flex">
-                            <h2 className="pb-2 text-txtblack truncate flex-1 mr-3 m-w-0">
-                              {collection.name}
-                            </h2>
-                            <div className="relative">
-                              {/*Hide dropdown menu <button
+                  <>
+                    {/* Card */}
+
+                    {membershipCollectionList &&
+                      membershipCollectionList.length > 0 &&
+                      membershipCollectionList.map((collection, index) => {
+                        let image = collection?.assets?.find(
+                          (asset) => asset.asset_purpose === "logo"
+                        );
+                        return (
+                          <div
+                            className="min-h-[390px] rounded-x"
+                            key={`nft-collection-membership-${index}`}
+                          >
+                            <Link to={`/collection-details/${collection?.id}`}>
+                              <img
+                                className="rounded-xl h-[276px] object-cover w-full"
+                                src={image?.path ? image.path : thumbIcon}
+                                alt=""
+                              />
+                            </Link>
+                            <div className="py-5">
+                              <div className="flex">
+                                <h2 className="pb-2 text-txtblack truncate flex-1 mr-3 m-w-0">
+                                  {collection.name}
+                                </h2>
+                                <div className="relative">
+                                  {/*Hide dropdown menu <button
                                 type="button"
                                 onClick={() => {
                                   const el = document.getElementById(
@@ -695,68 +695,72 @@ export default function ProjectDetails(props) {
                                   <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
                                 )}
                               </button> */}
-                              {/* Dropdown menu  */}
-                              {project?.is_owner && (
-                                <div
-                                  id={`membership-option-${index}`}
-                                  className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden"
-                                >
-                                  <ul className="text-sm">
-                                    <li className="border-b border-divide vursor-pointer">
-                                      <a className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600">
-                                        Sales Page
-                                      </a>
-                                    </li>
-                                    <li className="border-b border-divide">
-                                      <Link
-                                        to={`/collection-create/?id=${collection?.id}`}
-                                        className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
-                                      >
-                                        Edit Collections
-                                      </Link>
-                                    </li>
-                                    <li className="border-b border-divide">
-                                      <a
-                                        href="#"
-                                        className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
-                                      >
-                                        Connect right-attach NFT
-                                      </a>
-                                    </li>
-                                  </ul>
+                                  {/* Dropdown menu  */}
+                                  {project?.is_owner && (
+                                    <div
+                                      id={`membership-option-${index}`}
+                                      className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden"
+                                    >
+                                      <ul className="text-sm">
+                                        <li className="border-b border-divide vursor-pointer">
+                                          <a className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600">
+                                            Sales Page
+                                          </a>
+                                        </li>
+                                        <li className="border-b border-divide">
+                                          <Link
+                                            to={`/collection-create/?id=${collection?.id}`}
+                                            className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                          >
+                                            Edit Collections
+                                          </Link>
+                                        </li>
+                                        <li className="border-b border-divide">
+                                          <a
+                                            href="#"
+                                            className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                          >
+                                            Connect right-attach NFT
+                                          </a>
+                                        </li>
+                                      </ul>
+                                    </div>
+                                  )}
                                 </div>
-                              )}
-                            </div>
-                          </div>
-                          <p className="mb-3 text-textSubtle text-[13px]">
-                            {collection.description &&
-                            collection.description.length > 70
-                              ? collection.description.substring(0, 67) + "..."
-                              : collection.description}
-                          </p>
-                          <div className="flex items-center">
-                            {collection.members &&
-                              collection.members.length > 0 &&
-                              truncateArray(collection.members).slicedItems.map(
-                                (member) => (
-                                  <img
-                                    src={member.avatar}
-                                    alt={member.id}
-                                    className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
-                                  />
-                                )
-                              )}
-                            {collection.members &&
-                              collection.members.length > 3 && (
-                                <div className="flex items-center mt-[6px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]">
-                                  <p className="text-[12px] text-[#9A5AFF]">
-                                    +
-                                    {truncateArray(collection.members).restSize}
-                                  </p>
-                                </div>
-                              )}
-                          </div>
-                          {/* <div className="my-4">
+                              </div>
+                              <p className="mb-3 text-textSubtle text-[13px]">
+                                {collection.description &&
+                                collection.description.length > 70
+                                  ? collection.description.substring(0, 67) +
+                                    "..."
+                                  : collection.description}
+                              </p>
+                              <div className="flex items-center">
+                                {collection.members &&
+                                  collection.members.length > 0 &&
+                                  truncateArray(
+                                    collection.members
+                                  ).slicedItems.map((member) => (
+                                    <img
+                                      src={member.avatar}
+                                      alt={member.id}
+                                      className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
+                                    />
+                                  ))}
+                                {collection.members &&
+                                  collection.members.length > 3 && (
+                                    <div className="flex items-center mt-[6px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]">
+                                      <p className="text-[12px] text-[#9A5AFF]">
+                                        +
+                                        {
+                                          truncateArray(collection.members)
+                                            .restSize
+                                        }
+                                      </p>
+                                    </div>
+                                  )}
+                              </div>
+                              {/* <div className="my-4">
                             <a className="inline-block mr-3 bg-primary-900 p-3 text-white  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer hover:bg-opacity-60 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
                               Review
                             </a>
@@ -767,23 +771,27 @@ export default function ProjectDetails(props) {
                                 </a>
                               )}
                           </div> */}
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </>
+                  <>
+                    {" "}
+                    {/* Create New */}
+                    {project?.is_owner && (
+                      <Link
+                        to={`/collection-create/?dao_id=${projectId}&type=membership`}
+                      >
+                        <div className="rounded-xl h-[276px] w-full gradient-border bg-opacity-20 flex flex-col items-center justify-center">
+                          <i className="fa-solid fa-circle-plus gradient-text text-2xl mb-2"></i>
+                          <p className="gradient-text text-lg font-black font-satoshi-bold">
+                            Create new
+                          </p>
                         </div>
-                      </div>
-                    ))}
-
-                  {/* Create New */}
-                  {project?.is_owner && (
-                    <Link
-                      to={`/collection-create/?dao_id=${projectId}&type=membership`}
-                    >
-                      <div className="rounded-xl h-[276px] w-full gradient-border bg-opacity-20 flex flex-col items-center justify-center">
-                        <i className="fa-solid fa-circle-plus gradient-text text-2xl mb-2"></i>
-                        <p className="gradient-text text-lg font-black font-satoshi-bold">
-                          Create new
-                        </p>
-                      </div>
-                    </Link>
-                  )}
+                      </Link>
+                    )}
+                  </>
                 </section>
               )}
 
@@ -798,31 +806,29 @@ export default function ProjectDetails(props) {
                   {/* Card */}
                   {productCollectionList &&
                     productCollectionList.length > 0 &&
-                    productCollectionList.map((collection, index) => (
-                      <div
-                        className="min-h-[390px] rounded-x"
-                        key={`nft-collection-membership-${index}`}
-                      >
-                        <Link to={`/collection-details/${collection?.id}`}>
-                          <img
-                            className="rounded-xl h-[276px] object-cover w-full"
-                            src={
-                              collection &&
-                              collection.assets &&
-                              collection.assets[0]
-                                ? collection.assets[0].path
-                                : thumbIcon
-                            }
-                            alt=""
-                          />
-                        </Link>
-                        <div className="py-5">
-                          <div className="flex">
-                            <h2 className="pb-2 text-txtblack truncate flex-1 mr-3 m-w-0">
-                              {collection.name}
-                            </h2>
-                            <div className="relative">
-                              {/* Hide dropdown menu <button
+                    productCollectionList.map((collection, index) => {
+                      let image = collection?.assets?.find(
+                        (asset) => asset.asset_purpose === "logo"
+                      );
+                      return (
+                        <div
+                          className="min-h-[390px] rounded-x"
+                          key={`nft-collection-membership-${index}`}
+                        >
+                          <Link to={`/collection-details/${collection?.id}`}>
+                            <img
+                              className="rounded-xl h-[276px] object-cover w-full"
+                              src={image?.path ? image.path : thumbIcon}
+                              alt=""
+                            />
+                          </Link>
+                          <div className="py-5">
+                            <div className="flex">
+                              <h2 className="pb-2 text-txtblack truncate flex-1 mr-3 m-w-0">
+                                {collection.name}
+                              </h2>
+                              <div className="relative">
+                                {/* Hide dropdown menu <button
                                 type="button"
                                 onClick={() => {
                                   const el = document.getElementById(
@@ -835,75 +841,79 @@ export default function ProjectDetails(props) {
                                   <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
                                 )}
                               </button> */}
-                              {/* Dropdown menu  */}
-                              {project?.is_owner && (
-                                <div
-                                  id={`collection-option-${index}`}
-                                  className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden"
-                                >
-                                  <ul className="text-sm">
-                                    <li className="border-b border-divide cursor-pointer">
-                                      <a
-                                        onClick={() => {
-                                          setShowSalesPageModal(true);
-                                          setCollectionId(collection?.id);
-                                          setCollectionType("product");
-                                        }}
-                                        className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
-                                      >
-                                        Sales Page
-                                      </a>
-                                    </li>
-                                    <li className="border-b border-divide">
-                                      <Link
-                                        to={`/collection-create/?id=${collection?.id}`}
-                                        className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
-                                      >
-                                        Edit Collections
-                                      </Link>
-                                    </li>
-                                    <li className="border-b border-divide">
-                                      <a
-                                        href="#"
-                                        className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
-                                      >
-                                        Connect right-attach NFT
-                                      </a>
-                                    </li>
-                                  </ul>
-                                </div>
-                              )}
+                                {/* Dropdown menu  */}
+                                {project?.is_owner && (
+                                  <div
+                                    id={`collection-option-${index}`}
+                                    className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden"
+                                  >
+                                    <ul className="text-sm">
+                                      <li className="border-b border-divide cursor-pointer">
+                                        <a
+                                          onClick={() => {
+                                            setShowSalesPageModal(true);
+                                            setCollectionId(collection?.id);
+                                            setCollectionType("product");
+                                          }}
+                                          className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                        >
+                                          Sales Page
+                                        </a>
+                                      </li>
+                                      <li className="border-b border-divide">
+                                        <Link
+                                          to={`/collection-create/?id=${collection?.id}`}
+                                          className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                        >
+                                          Edit Collections
+                                        </Link>
+                                      </li>
+                                      <li className="border-b border-divide">
+                                        <a
+                                          href="#"
+                                          className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                        >
+                                          Connect right-attach NFT
+                                        </a>
+                                      </li>
+                                    </ul>
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                          <p className="mb-3 text-textSubtle text-[13px]">
-                            {collection.description &&
-                            collection.description.length > 70
-                              ? collection.description.substring(0, 67) + "..."
-                              : collection.description}
-                          </p>
-                          <div className="flex items-center">
-                            {collection.members &&
-                              collection.members.length > 0 &&
-                              truncateArray(collection.members).slicedItems.map(
-                                (member) => (
+                            <p className="mb-3 text-textSubtle text-[13px]">
+                              {collection.description &&
+                              collection.description.length > 70
+                                ? collection.description.substring(0, 67) +
+                                  "..."
+                                : collection.description}
+                            </p>
+                            <div className="flex items-center">
+                              {collection.members &&
+                                collection.members.length > 0 &&
+                                truncateArray(
+                                  collection.members
+                                ).slicedItems.map((member) => (
                                   <img
                                     src={member.avatar}
                                     alt={member.id}
                                     className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
                                   />
-                                )
-                              )}
-                            {collection.members &&
-                              collection.members.length > 3 && (
-                                <div className="flex items-center mt-[6px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]">
-                                  <p className="text-[12px] text-[#9A5AFF]">
-                                    +
-                                    {truncateArray(collection.members).restSize}
-                                  </p>
-                                </div>
-                              )}
-                          </div>
-                          {/* <div className="my-4">
+                                ))}
+                              {collection.members &&
+                                collection.members.length > 3 && (
+                                  <div className="flex items-center mt-[6px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]">
+                                    <p className="text-[12px] text-[#9A5AFF]">
+                                      +
+                                      {
+                                        truncateArray(collection.members)
+                                          .restSize
+                                      }
+                                    </p>
+                                  </div>
+                                )}
+                            </div>
+                            {/* <div className="my-4">
                             <a className="inline-block mr-3 bg-primary-900 p-3 text-white  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer hover:bg-opacity-60 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
                               Review
                             </a>
@@ -914,9 +924,10 @@ export default function ProjectDetails(props) {
                                 </a>
                               )}
                           </div> */}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
 
                   {/* Create New */}
                   {project?.is_owner && (
