@@ -8,6 +8,9 @@ const PublishingRANFT = ({
   step,
   collectionId,
   handleShowStepClose,
+  fileSize,
+  sizeUploaded,
+  uploadedPercent,
 }) => {
   const history = useHistory();
   const handleNavigation = () => {
@@ -24,8 +27,13 @@ const PublishingRANFT = ({
       <div>
         {step === 1 && (
           <div className="mx-16">
-            <h1>Please wait we’re publishing</h1>
-            <div className="overflow-hidden rounded-full h-4 w-full mt-12 mb-8 relative animated fadeIn">
+            <h1>Please wait we’re publishing. It may take a while.</h1>
+            {fileSize ? (
+              <h3 className="text-center mt-6">
+                {sizeUploaded}kb of {fileSize}kb | {uploadedPercent}%
+              </h3>
+            ) : null}
+            <div className="overflow-hidden rounded-full h-4 w-full mt-8 mb-8 relative animated fadeIn">
               <div className="animated-process-bar"></div>
             </div>
             {/* {deployStatus.step === 1 && (

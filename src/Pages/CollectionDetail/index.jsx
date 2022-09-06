@@ -18,6 +18,7 @@ import Facebook from "assets/images/facebook.svg";
 import Instagram from "assets/images/instagram.svg";
 import Twitter from "assets/images/twitter.svg";
 import Github from "assets/images/github.svg";
+import Reddit from "assets/images/reddit.svg";
 import ExternalLink from "assets/images/link.svg";
 import TransferNFT from "components/modalDialog/TransferNFT";
 import { getProjectDetailsById } from "services/project/projectService";
@@ -87,20 +88,19 @@ const CollectionDetail = () => {
                 (img) => img["asset_purpose"] === "logo"
               )
             );
-
-            if (resp?.collection?.links && resp?.collection.links?.length > 0) {
-              const webLinks = [];
-              try {
-                const urls = JSON.parse(resp?.collection.links);
-                for (let url of urls) {
-                  webLinks.push({
-                    title: Object.values(url)[0],
-                    value: Object.values(url)[2],
-                  });
-                }
-              } catch {}
-              setLinks(webLinks);
-            }
+          }
+          if (resp?.collection?.links) {
+            const webLinks = [];
+            try {
+              const urls = JSON.parse(resp?.collection.links);
+              for (let url of urls) {
+                webLinks.push({
+                  title: Object.values(url)[0],
+                  value: Object.values(url)[2],
+                });
+              }
+            } catch {}
+            setLinks(webLinks);
           }
         }
       })
@@ -317,6 +317,21 @@ const CollectionDetail = () => {
                   </a>
                 </div>
               )}
+            {Links.find((link) => link.title === "linkReddit") &&
+              Links.find((link) => link.title === "linkReddit").value?.length >
+                0 && (
+                <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 ">
+                  <a
+                    href={`${
+                      Links.find((link) => link.title === "linkReddit").value
+                    }`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <img src={Reddit} alt="Reddit" />
+                  </a>
+                </div>
+              )}
 
             {Links.find((link) => link.title === "customLinks1") &&
               Links.find((link) => link.title === "customLinks1").value
@@ -436,7 +451,7 @@ const CollectionDetail = () => {
                 >
                   <Link to={`/nft-details/${nft?.nft_type}/${nft.id}`}>
                     <img
-                      className="rounded-xl h-[276px] w-[276px]"
+                      className="rounded-xl h-[276px] w-[276px] object-contain"
                       src={nft?.asset?.path}
                       alt=""
                     />

@@ -75,6 +75,9 @@ const CreateRightAttachedNFT = ({ handleClose, show }) => {
       ? state?.notifications?.notificationData
       : []
   );
+  const [fileSize, setFileSize] = useState(0);
+  const [uploadingSize, setUploading] = useState(0);
+  const [uploadedPercent, setUploadedPercent] = useState();
 
   const { id } = useParams();
   const dispatch = useDispatch();
@@ -197,6 +200,13 @@ const CreateRightAttachedNFT = ({ handleClose, show }) => {
       url: Config.FILE_SERVER_URL,
       data: request,
       headers: headers,
+      onUploadProgress: function (progressEvent) {
+        const { loaded, total } = progressEvent;
+        setFileSize(Math.ceil(total / 1024));
+        setUploading(Math.ceil(loaded / 1024));
+        let percent = Math.floor((loaded * 100) / total);
+        setUploadedPercent(percent);
+      },
     })
       .then((response) => {
         if (response.code === 200) {
@@ -294,6 +304,9 @@ a Right Attached NFT!'
             show={showSteps}
             step={step}
             collectionId={CollectionID}
+            fileSize={fileSize}
+            sizeUploaded={uploadingSize}
+            uploadedPercent={uploadedPercent}
           />
         )}
         <h3 className="text-[28px] font-black mb-5">
