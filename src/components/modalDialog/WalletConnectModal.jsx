@@ -188,6 +188,43 @@ const WalletConnectModal = ({
             Connect with one of our available wallet providers or create a new
             one.
           </p>
+          <div className="mt-[26px] w-full max-w-[355px]  block mx-auto ">
+            <div className="flex items-baseline">
+              <input
+                type="checkbox"
+                id="termsAndCondition"
+                name="termsAndCondition"
+                checked={isTermsAndConditionsChecked}
+                onChange={(e) => handelTermsChecked(e.target.checked)}
+              />
+              <div>
+                <div className="text-left ml-[8px] font-medium text-sm">
+                  I read and accept{" "}
+                  <a
+                    href="https://www.decir.io/terms"
+                    target="_blank"
+                    className="text-primary-900"
+                  >
+                    Terms Of services
+                  </a>{" "}
+                  and <br />
+                  <a
+                    href="https://www.decir.io/conditions"
+                    target="_blank"
+                    className="text-primary-900"
+                  >
+                    {" "}
+                    Privacy Policy
+                  </a>
+                </div>
+                {showMessage && (
+                  <div className="validationTag">
+                    Please accept terms and conditions
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
           <div className="mt-[26px]">
             <div
               className="w-full max-w-[355px] cursor-pointer  h-[52px] border rounded border-primary-900 rounded-lg block mx-auto px-[14px]"
@@ -235,43 +272,6 @@ const WalletConnectModal = ({
                     </div>
                   )}
                 </div>
-              </div>
-            </div>
-          </div>
-          <div className="mt-[26px] w-full max-w-[355px]  block mx-auto ">
-            <div className="flex items-baseline">
-              <input
-                type="checkbox"
-                id="termsAndCondition"
-                name="termsAndCondition"
-                checked={isTermsAndConditionsChecked}
-                onChange={(e) => handelTermsChecked(e.target.checked)}
-              />
-              <div>
-                <div className="text-left ml-[8px] font-medium text-sm">
-                  I read and accept{" "}
-                  <a
-                    href="https://www.decir.io/terms"
-                    target="_blank"
-                    className="text-primary-900"
-                  >
-                    Terms Of services
-                  </a>{" "}
-                  and <br />
-                  <a
-                    href="https://www.decir.io/conditions"
-                    target="_blank"
-                    className="text-primary-900"
-                  >
-                    {" "}
-                    Privacy Policy
-                  </a>
-                </div>
-                {showMessage && (
-                  <div className="validationTag">
-                    Please accept terms and conditions
-                  </div>
-                )}
               </div>
             </div>
           </div>
