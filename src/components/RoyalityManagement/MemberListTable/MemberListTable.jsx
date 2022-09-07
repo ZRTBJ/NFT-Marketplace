@@ -79,7 +79,7 @@ const MemberListTable = ({
                   </>
                 )}
               </td>
-              <td className={`py-4 px-5`}>{r.eoa ? r.eoa : "-"}</td>
+              <td className={`py-4 px-5`}>{r.token_id ? r.token_id : "-"}</td>
               <td className={`py-4 px-5`}>
                 <p
                   className={`text-[13px] bg-opacity-[0.2] py-1 px-2 w-fit rounded-[4px] font-bold ${

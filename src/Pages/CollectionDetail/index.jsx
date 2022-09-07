@@ -444,6 +444,7 @@ const CollectionDetail = () => {
         <div className="flex flex-wrap mt-4 mb-[60px]">
           {NFTs &&
             NFTs.map((nft) => {
+              console.log(nft);
               return (
                 <div
                   key={nft?.id}
@@ -518,7 +519,10 @@ const CollectionDetail = () => {
                       </div>
                     </div>
                     <div className="flex w-[276px]">
-                      <p className="text-[13px]">0.01 ETH</p>
+                      <p className="text-[13px]">
+                        {nft?.price}{" "}
+                        {projectNetwork === "ethereum" ? "ETH" : "MATIC"}
+                      </p>
                       <img
                         className="ml-auto"
                         src={projectNetwork === "ethereum" ? Eth : Polygon}

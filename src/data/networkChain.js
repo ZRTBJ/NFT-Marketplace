@@ -1,5 +1,5 @@
 export const NETWORK_CHAIN = {
-  1: "Ethereum Mainnet",
-  137: "Polygon Mainnet",
-  4: "Rinkeby Testnet",
+  1: { networkName: "Ethereum Mainnet", crypto: "ETH" },
+  137: { networkName: "Polygon Mainnet", crypto: "MATIC" },
+  4: { networkName: "Rinkeby Testnet", crypto: "RinkebyETH" },
 };
