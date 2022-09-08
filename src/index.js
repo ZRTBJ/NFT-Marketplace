@@ -3,6 +3,8 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import "./assets/css/Header.css";
 import "./assets/css/common.css";
+import "rsuite/dist/rsuite.min.css";
+
 // import "font-awesome/css/font-awesome.min.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";

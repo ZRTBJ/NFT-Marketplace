@@ -16,3 +16,6 @@ export async function getUserBookmarkedProjectList(payload) {
     `/user/${payload.userID}/project/bookmark?page=${payload.page}&limit=${payload.limit}`
   );
 }
+export async function claimRoyalty(payload) {
+  return await client("POST", `/user/royalty/claim`, payload, "formdata");
+}
