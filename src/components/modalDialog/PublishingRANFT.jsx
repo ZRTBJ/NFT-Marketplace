@@ -28,9 +28,15 @@ const PublishingRANFT = ({
         {step === 1 && (
           <div className="mx-16">
             <h1>Please wait we’re publishing. It may take a while.</h1>
-            {fileSize ? (
+            {fileSize && uploadedPercent !== 100 ? (
               <h3 className="text-center mt-6">
                 {sizeUploaded}kb of {fileSize}kb | {uploadedPercent}%
+              </h3>
+            ) : null}
+            {uploadedPercent === 100 ? (
+              <h3 className="text-center mt-6">
+                File uploaded successfully. We are creating the Right Attached
+                NFT now
               </h3>
             ) : null}
             <div className="overflow-hidden rounded-full h-4 w-full mt-8 mb-8 relative animated fadeIn">

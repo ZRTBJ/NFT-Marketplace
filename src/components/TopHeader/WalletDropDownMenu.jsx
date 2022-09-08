@@ -14,8 +14,9 @@ import Config from "../../config";
 import Web3 from "web3";
 import { useEffect, useState } from "react";
 import { useDetectClickOutside } from "react-detect-click-outside";
+import { NETWORK_CHAIN } from "data/networkChain";
 
-const WalletDropDownMenu = ({ handleWalletDropDownClose }) => {
+const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
   let history = useHistory();
   const dispatch = useAuthDispatch();
   const loadingStatus = useSelector((state) => state.user.status);
@@ -51,7 +52,8 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose }) => {
     setWallet(context ? context.wallet : "");
     try {
       setIsLoadingBalance(true);
-      const web3 = new Web3(new Web3.providers.HttpProvider(Config.RPC_URL));
+      // const web3 = new Web3(new Web3.providers.HttpProvider(Config.RPC_URL));
+      const web3 = new Web3(window?.ethereum);
       if (selectedWallet && selectedWallet.length > 5) {
         web3.eth.getBalance(selectedWallet).then((res) => {
           setBalance(res / 10 ** 18);
@@ -109,7 +111,10 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose }) => {
             {isLoadingBalance && (
               <i className="fa fa-spinner fa-pulse fa-fw"></i>
             )}
-            <span>{balance ? balance.toFixed(4) : 0} MATIC</span>
+            <span>
+              {balance ? balance.toFixed(4) : 0}{" "}
+              {NETWORK_CHAIN[networkId] ? NETWORK_CHAIN[networkId].crypto : ""}
+            </span>
           </h4>
           <a className="btn-fund" href="#">
             <span>Add Funds</span>

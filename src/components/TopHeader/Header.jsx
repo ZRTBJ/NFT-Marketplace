@@ -55,14 +55,15 @@ const Header = () => {
   );
 
   useEffect(() => {
-    window.ethereum.on("networkChanged", function (networkId) {
+    if (!networkId) setNetworkId(window.ethereum.networkVersion);
+    window?.ethereum?.on("networkChanged", function (networkId) {
       setNetworkId(networkId);
       setShowNetworkChanged(true);
     });
   }, []);
 
   useEffect(() => {
-    window.ethereum.on("accountsChanged", function (accounts) {
+    window?.ethereum?.on("accountsChanged", function (accounts) {
       setShowAccountChanged(true);
     });
   }, []);
@@ -400,6 +401,7 @@ const Header = () => {
                       {userLoadingStatus === "idle" && showWalletpopup ? (
                         <WalletDropDownMenu
                           handleWalletDropDownClose={showHideUserPopupWallet}
+                          networkId={networkId}
                         />
                       ) : (
                         <></>
