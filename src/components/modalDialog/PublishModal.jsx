@@ -1,7 +1,7 @@
 import publishModalSvg from "assets/images/modal/publishModalSvg.svg";
 import Modal from "../Modal";
 
-const PublishModal = ({ handleClose, show, publishProject }) => {
+const PublishModal = ({ handleClose, show, publishProject, type }) => {
   return (
     <Modal
       height={580}
@@ -16,14 +16,16 @@ const PublishModal = ({ handleClose, show, publishProject }) => {
           alt=""
         />
         <div className="mx-16">
-          <h1>You can’t Change some Field once you this Publish Collection</h1>
+          <h1>You can’t Change some Field once you Publish this {type}</h1>
           <div className="text-[#9499AE] mt-[12px]">
             Do you want to publish anyway?
           </div>
-          <div className="message-info">
-            Once transaction has made, Collection and NFT data will not be
-            changeable except benefits fields.
-          </div>
+          {type !== "DAO" && (
+            <div className="message-info">
+              Once transaction has made, Collection and NFT data will not be
+              changeable except benefits fields.
+            </div>
+          )}
           <div className="flex justify-center mt-[30px]">
             <button
               className="btn contained-button btn-sm"

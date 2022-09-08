@@ -342,17 +342,25 @@ export default function DetailsNFT(props) {
             <h3 className="txtblack">Description</h3>
             <p className="txtblack text-sm mb-4">{nft?.lnft?.description}</p>
             <h3 className="txtblack mb-4">Attribute</h3>
-            <div className="flex flex-wrap">
+            <div className="flex flex-wrap mb-6">
               {nft?.lnft?.attributes?.length ? (
                 nft?.lnft?.attributes.map((item, index) => (
-                  <div
-                    key={index}
-                    className="w-[138px] h-28  mr-3 mb-3 rounded-xl border border-primary-900 bg-primary-900 bg-opacity-10 flex items-center justify-center flex-col"
-                  >
-                    <p className="text-textSubtle text-sm mb-1">{item.key}</p>
-                    <h5 className="text-primary-900 mb-1">{item.value}</h5>
-                    {/* <p className='text-textSubtle text-sm'>Add 5% this trait</p> */}
-                  </div>
+                  <>
+                    {item.key !== "" ? (
+                      <div
+                        key={index}
+                        className="w-[138px] h-28  mr-3 mb-3 rounded-xl border border-primary-900 bg-primary-900 bg-opacity-10 flex items-center justify-center flex-col"
+                      >
+                        <p className="text-textSubtle text-sm mb-1">
+                          {item.key}
+                        </p>
+                        <h5 className="text-primary-900 mb-1">{item.value}</h5>
+                        {/* <p className='text-textSubtle text-sm'>Add 5% this trait</p> */}
+                      </div>
+                    ) : (
+                      <p>No attributes to show</p>
+                    )}
+                  </>
                 ))
               ) : (
                 <p>No attributes to show</p>

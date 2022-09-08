@@ -164,6 +164,7 @@ const CollectionDetail = () => {
           show={ShowPublishModal}
           handleClose={() => setShowPublishModal(false)}
           publishProject={handlePublish}
+          type="Collection"
         />
       )}
       {showErrorModal && (
@@ -355,9 +356,13 @@ const CollectionDetail = () => {
           <div className="md:w-2/3">
             <h3>About</h3>
             <p className="text-textLight text-sm">
-              {Collection?.description
-                ? Collection.description
-                : "Please add description to show here"}
+              {Collection?.description ? (
+                <div className="whitespace-pre-line text-textLight text-sm">
+                  {Collection.description}
+                </div>
+              ) : (
+                "Please add description to show here"
+              )}
             </p>
             <div className="flex items-center mt-3">
               {Collection &&

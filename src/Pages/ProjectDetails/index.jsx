@@ -513,7 +513,16 @@ export default function ProjectDetails(props) {
             <div className="flex flex-col md:flex-row pt-5">
               <div className="md:w-2/3">
                 <h3>About</h3>
-                <p className="text-textLight text-sm">{project.overview}</p>
+                {project.overview ? (
+                  <div className="whitespace-pre-line text-textLight text-sm">
+                    {project.overview}
+                  </div>
+                ) : (
+                  <p className="text-textLight text-sm">
+                    Please add description to show here
+                  </p>
+                )}
+
                 <div className="flex items-center mt-3">
                   {project &&
                     project.members &&
@@ -1159,6 +1168,7 @@ export default function ProjectDetails(props) {
               handleClose={() => setShowPublishModal(false)}
               publishProject={intiProjectPublish}
               show={showPublishModal}
+              type="DAO"
             />
           )}
           {showSalesPageModal && (

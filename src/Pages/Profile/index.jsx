@@ -14,13 +14,20 @@ import { Navigation } from "swiper";
 import ProfileImage from "assets/images/createDAO/user.svg";
 import NFTSample from "assets/images/createDAO/nft-sample.svg";
 import { getUserProjectListById } from "services/project/projectService";
-import { getUserInfo, getRoyalties } from "services/User/userService";
+import {
+  getUserInfo,
+  getRoyalties,
+  claimRoyalty,
+} from "services/User/userService";
 import { Link, useParams } from "react-router-dom";
 import SuccessModal from "components/modalDialog/SuccessModal";
 import { getUserCollections } from "services/collection/collectionService";
 import thumbIcon from "assets/images/cover-default.svg";
-
+import ErrorModal from "components/modalDialog/ErrorModal";
+import { useDispatch, useSelector } from "react-redux";
+import { getNotificationData } from "Slice/notificationSlice";
 const Profile = () => {
+  const dispatch = useDispatch();
   SwiperCore.use([Autoplay]);
   // User general data start
   const { id } = useParams();
@@ -53,6 +60,9 @@ const Profile = () => {
     { id: 3, name: "Percentage" },
   ];
   const [royaltiesList, setRoyaltiesList] = useState([]);
+  const [royaltyId, setRoyaltyId] = useState("");
+
+  const [errorModal, setErrorModal] = useState(false);
 
   const [totalRoyality, setTotalRoyality] = useState(0);
   async function onRoyaltiesListSort(e) {
@@ -66,7 +76,11 @@ const Profile = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [walletAddress, setWalletAddress] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-
+  const fileUploadNotification = useSelector((state) =>
+    state?.notifications?.notificationData
+      ? state?.notifications?.notificationData
+      : []
+  );
   const COLLECTION_ITEMS = [
     {
       id: 0,
@@ -246,7 +260,6 @@ const Profile = () => {
       }
     });
   }
-
   const truncateArray = (members) => {
     let slicedItems = members.slice(0, 3);
     return { slicedItems, restSize: members.length - slicedItems.length };
@@ -259,11 +272,52 @@ const Profile = () => {
       copyEl.classList.toggle("hidden");
     }, 2000);
   }
-
+  async function claimRoyaltyById(id) {
+    setIsLoading(true);
+    const request = new FormData();
+    request.append("collection_uid", id);
+    await claimRoyalty(request)
+      .then((res) => {
+        if (res.code === 0) {
+          setRoyaltyId(res.id);
+          setIsLoading(false);
+          const notificationData = {
+            projectId: id,
+            etherscan: "",
+            function_uuid: id,
+            data: "",
+          };
+          dispatch(getNotificationData(notificationData));
+        } else {
+          setIsLoading(false);
+          setErrorModal(true);
+        }
+      })
+      .catch(() => {
+        setIsLoading(false);
+        setErrorModal(true);
+      });
+  }
+  // useEffect(() => {
+  //   // file upload web socket
+  //   const projectDeployStatus = fileUploadNotification.find(
+  //     (x) => x.function_uuid === jobId
+  //   );
+  //   if (projectDeployStatus && projectDeployStatus.data) {
+  //     const data = JSON.parse(projectDeployStatus.data);
+  //     if (data.Data["assetId"] && data.Data["assetId"].length > 0) {
+  //       if (!savingNFT && !isNFTSaved) {
+  //         setSavingNFT(true);
+  //         saveNFTDetails(data.Data["assetId"]);
+  //       }
+  //     } else {
+  //       setSavingNFT(false);
+  //     }
+  //   }
+  // }, [fileUploadNotification]);
   useEffect(() => {
     userInfo();
   }, []);
-
   useEffect(() => {
     setUser(user);
     setWalletAddress(user.eao);
@@ -406,12 +460,12 @@ const Profile = () => {
                 </p>
                 {royaltiesList.length > 0 && (
                   <>
-                    <button
+                    {/* <button
                       onClick={claimAllRoyalty}
                       className="mb-4 contained-button font-bold py-1 px-3 rounded mr-4"
                     >
                       Claim All Royalties
-                    </button>
+                    </button> */}
                     <select
                       className="w-[120PX] h-[32px] mb-4 bg-white-shade-900 pl-2 outline-none text-textSubtle border border-[#C7CEE5]"
                       value={royaltiesListSortBy}
@@ -490,7 +544,7 @@ const Profile = () => {
                         <td className="py-4 px-5">${r.earnable_amount}</td>
                         <td className="py-4 px-5">
                           <button
-                            onClick={claimAllRoyalty}
+                            onClick={() => claimRoyaltyById(r.id)}
                             className="bg-secondary-900/[.20] h-[32px] w-[57px] rounded text-secondary-900"
                           >
                             Claim
@@ -635,12 +689,20 @@ const Profile = () => {
       {showSuccessModal && (
         <SuccessModal
           show={showSuccessModal}
-          message="This feature is not support yet, please wait"
+          message="Successfully claimed Ro"
           subMessage="Coming Soon"
           buttonText="OK"
           redirection={`/profile/${id}`}
           showCloseIcon={true}
           handleClose={() => setShowSuccessModal(false)}
+        />
+      )}
+      {errorModal && (
+        <ErrorModal
+          title={"Royalty can not claim right now."}
+          message={`Please try again later`}
+          handleClose={() => setErrorModal(false)}
+          show={errorModal}
         />
       )}
     </>
