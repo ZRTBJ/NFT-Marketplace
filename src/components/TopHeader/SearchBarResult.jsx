@@ -7,7 +7,7 @@ const SearchBarResult = ({ isLoading, projectList, handleSearchClose }) => {
 
   return (
     <div
-      className="bg-light border border-slate-300 rounded-xl absolute w-full  max-w-[556px] z-20 mt-1"
+      className="bg-light border border-slate-300 rounded-xl absolute w-full  max-w-[556px] h-[450px] overflow-y-auto mt-1"
       ref={ref}
     >
       <div className="mx-8 my-4 txtblack ">

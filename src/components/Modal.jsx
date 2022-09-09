@@ -32,11 +32,13 @@ const Modal = ({
       <section
         onClick={(e) => modalBodyClicked(e)}
         style={styleObj}
-        className={" modal-main bg-white rounded-3xl relative txtblack p-11"}
+        className={
+          " modal-main bg-white rounded-3xl relative txtblack px-4 py-6"
+        }
       >
         {showCloseIcon && (
           <i
-            className="fa fa-xmark cursor-pointer text-xl absolute top-12 right-8 text-black"
+            className="fa fa-xmark cursor-pointer text-xl absolute top-10 right-8 text-black"
             onClick={handleClose}
           ></i>
         )}

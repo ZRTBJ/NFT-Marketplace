@@ -449,7 +449,6 @@ const CollectionDetail = () => {
         <div className="flex flex-wrap mt-4 mb-[60px]">
           {NFTs &&
             NFTs.map((nft) => {
-              console.log(nft);
               return (
                 <div
                   key={nft?.id}

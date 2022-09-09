@@ -18,6 +18,7 @@ import SuccessModal from "components/modalDialog/SuccessModal";
 import { useHistory } from "react-router-dom";
 import { createProject } from "services/project/projectService";
 import { createCollection } from "services/collection/collectionService";
+import PublishingProductNFT from "components/modalDialog/PublishingProductNFT";
 
 export default function ProductNFT(props) {
   const audioRef = useRef();
@@ -35,6 +36,8 @@ export default function ProductNFT(props) {
   const [isFileError, setFileError] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [jobId, setJobId] = useState("");
+  const [showSteps, setShowSteps] = useState(false);
+  const [step, setStep] = useState(1);
   const fileUploadNotification = useSelector((state) =>
     state?.notifications?.notificationData
       ? state?.notifications?.notificationData
@@ -46,7 +49,9 @@ export default function ProductNFT(props) {
   const [projectId, setProjectId] = useState("");
   const [collectionId, setCollectionId] = useState("");
   const [isListUpdate, setIsListUpdate] = useState(false);
-
+  const [fileSize, setFileSize] = useState(0);
+  const [uploadingSize, setUploading] = useState(0);
+  const [uploadedPercent, setUploadedPercent] = useState();
   const {
     register,
     handleSubmit,
@@ -149,7 +154,8 @@ export default function ProductNFT(props) {
     if (nftFile && nftFile.file) {
       if (showConfirmation) {
         setFileError(false);
-        setIsLoading(true);
+        // setIsLoading(true);
+        setShowSteps(true);
         if (!collectionId || collectionId === "") {
           createNewProject();
         } else {
@@ -195,6 +201,13 @@ export default function ProductNFT(props) {
       url: Config.FILE_SERVER_URL,
       data: formdata,
       headers: headers,
+      onUploadProgress: function (progressEvent) {
+        const { loaded, total } = progressEvent;
+        setFileSize(Math.ceil(total / 1024));
+        setUploading(Math.ceil(loaded / 1024));
+        let percent = Math.floor((loaded * 100) / total);
+        setUploadedPercent(percent);
+      },
     })
       .then((response) => {
         setJobId(response["job_id"]);
@@ -257,6 +270,7 @@ export default function ProductNFT(props) {
           setSavingNFT(false);
           if (res["code"] === 0) {
             setJobId("");
+            setStep(2);
             setIsNFTSaved(true);
             setIsLoading(false);
             setShowSuccessModal(true);
@@ -346,9 +360,13 @@ export default function ProductNFT(props) {
       });
   }
 
+  const handleShowStepClose = () => {
+    setShowSteps(false);
+  };
+
   return (
     <>
-      {isLoading && <div className="loading"></div>}
+      {/* {isLoading && <div className="loading"></div>} */}
       <>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="max-w-[600px] mx-auto md:mt-[40px]">
@@ -773,6 +791,17 @@ export default function ProductNFT(props) {
               setShowSuccessModal(false);
             }}
             show={showSuccessModal}
+          />
+        )}
+        {showSteps && (
+          <PublishingProductNFT
+            handleShowStepClose={handleShowStepClose}
+            show={showSteps}
+            step={step}
+            collectionId={collectionId}
+            fileSize={fileSize}
+            sizeUploaded={uploadingSize}
+            uploadedPercent={uploadedPercent}
           />
         )}
       </>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Switch } from "react-router-dom";
 import routes from "routes/routes.js";
 import { AuthProvider } from "./Context";
@@ -8,17 +8,43 @@ import FooterPage from "./Pages/Footer";
 import Sidebar from "components/Sidebar/Sidebar";
 
 function App() {
+  const [showSideBar, setShowSideBar] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
+  const handleToggleSideBar = () => {
+    setShowSideBar(!showSideBar);
+  };
+
   return (
     <div>
       <Router>
         <AuthProvider>
-          <Header />
+          <Header
+            handleSidebar={handleToggleSideBar}
+            setShowModal={setShowModal}
+            showModal={showModal}
+          />
           {/* Dynamic Body */}
           <main className="container min-h-[calc(100vh-71px)]">
             <div className="flex flex-row">
-              <div className="mr-4">
-                <Sidebar />
+              <div className="hidden md:block mr-4 ">
+                <Sidebar
+                  setShowModal={setShowModal}
+                  handleToggleSideBar={handleToggleSideBar}
+                />
               </div>
+
+              <div
+                className={`${
+                  showSideBar ? "translate-x-0" : "-translate-x-full"
+                } md:block mr-4 absolute z-[100] ease-in-out duration-300`}
+              >
+                <Sidebar
+                  setShowModal={setShowModal}
+                  handleToggleSideBar={handleToggleSideBar}
+                />
+              </div>
+
               <div className="min-w-[calc(100vw-350px)]">
                 <Switch>
                   {routes.map((route) => (
