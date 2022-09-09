@@ -300,7 +300,7 @@ function Home() {
       {/* End pagination */}
 
       <h2 className="mb-5">Best Collection</h2>
-      <section className="grid md:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
+      <section className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
         {/* Card */}
         {collectionList &&
           collectionList.length > 0 &&

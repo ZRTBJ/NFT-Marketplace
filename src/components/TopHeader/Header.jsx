@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import WalletDropDownMenu from "./WalletDropDownMenu";
 import { useHistory, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,18 +16,22 @@ import NotificatioMenu from "./NotificationMenu";
 import { getUserNotifications } from "services/notification/notificationService";
 import UserDropDownMenu from "./UserDropDownMenu";
 import userImg from "assets/images/defaultProfile.svg";
+import barImage from "assets/images/bars.svg";
+import bellImage from "assets/images/bell.svg";
+import walletImage from "assets/images/wallet.svg";
+import searchImage from "assets/images/search.svg";
 import Logo from "assets/images/header/logo.svg";
 import AccountChangedModal from "components/modalDialog/AccountChangedModal";
 import NetworkChangedModal from "components/modalDialog/NetworkChangedModal";
 
-const Header = () => {
+const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const history = useHistory();
   const dispatch = useDispatch();
   const context = useAuthState();
   const { pathname } = useLocation();
+  const inputRef = useRef(null);
 
   const [userId, setUserId] = useState(context ? context.user : "");
-  const [showModal, setShowModal] = useState(false);
   const userinfo = useSelector((state) => state.user.userinfo);
   const loggedIn = useSelector((state) => state.user.loggedIn);
   const [messageHistory, setMessageHistory] = useState([]);
@@ -48,6 +52,7 @@ const Header = () => {
   const [showAccountChanged, setShowAccountChanged] = useState(false);
   const [showNetworkChanged, setShowNetworkChanged] = useState(false);
   const [networkId, setNetworkId] = useState();
+  const [showSearchMobile, setShowSearchMobile] = useState(false);
   const projectDeploy = useSelector((state) =>
     state?.notifications?.notificationData
       ? state?.notifications?.notificationData
@@ -61,6 +66,12 @@ const Header = () => {
       setShowNetworkChanged(true);
     });
   }, []);
+
+  useEffect(() => {
+    if (showSearchMobile) {
+      inputRef?.current.focus();
+    }
+  }, [showSearchMobile]);
 
   useEffect(() => {
     window?.ethereum?.on("accountsChanged", function (accounts) {
@@ -246,6 +257,10 @@ const Header = () => {
     }
   }
 
+  const handleShowMobileSearch = () => {
+    setShowSearchMobile(!showSearchMobile);
+  };
+
   return (
     <header className="bg-light1">
       <AccountChangedModal
@@ -257,7 +272,28 @@ const Header = () => {
         handleClose={() => setShowNetworkChanged(false)}
         networkId={networkId}
       />
-      <nav className="pl-5 pr-7 lg:pl-10 lg:pr-12">
+      <div id="notificationDropdown" className="hidden">
+        {showNotificationPopup && (
+          <NotificatioMenu
+            handleNotifictionClose={handleNotifictionClose}
+            notificationList={notificationList}
+            isNotificationLoading={isNotificationLoading}
+          />
+        )}
+      </div>
+
+      {/* wallet popup */}
+      <div id="userDropDownWallet" className="hidden">
+        {userLoadingStatus === "idle" && showWalletpopup ? (
+          <WalletDropDownMenu
+            handleWalletDropDownClose={showHideUserPopupWallet}
+            networkId={networkId}
+          />
+        ) : (
+          <></>
+        )}
+      </div>
+      <nav className="pl-5 pr-7 hidden md:block lg:pl-10 lg:pr-12">
         <div className="flex justify-between items-center min-h-[71px]">
           <div className="flex items-center flex-1">
             <div
@@ -347,15 +383,6 @@ const Header = () => {
                       )}
                     </a>
                     {/* wallet popup */}
-                    <div id="notificationDropdown" className="hidden">
-                      {showNotificationPopup && (
-                        <NotificatioMenu
-                          handleNotifictionClose={handleNotifictionClose}
-                          notificationList={notificationList}
-                          isNotificationLoading={isNotificationLoading}
-                        />
-                      )}
-                    </div>
                   </li>
 
                   {/* <li>
@@ -393,18 +420,6 @@ const Header = () => {
                           </div>
                           <i className="fa-solid fa-angle-down"></i>
                         </div>
-                      )}
-                    </div>
-
-                    {/* wallet popup */}
-                    <div id="userDropDownWallet" className="hidden">
-                      {userLoadingStatus === "idle" && showWalletpopup ? (
-                        <WalletDropDownMenu
-                          handleWalletDropDownClose={showHideUserPopupWallet}
-                          networkId={networkId}
-                        />
-                      ) : (
-                        <></>
                       )}
                     </div>
                   </li>
@@ -499,7 +514,98 @@ const Header = () => {
           </div>
         )}
       </nav>
+      <nav className="block md:hidden">
+        <div className="h-[56px] p-4 flex items-center justify-between">
+          <img src={barImage} alt="Menu" onClick={handleSidebar} />
 
+          <div
+            onClick={() => history.push("/")}
+            className="w-[120px] mt-1 ml-5"
+          >
+            <img src={Logo} alt="DeCir" className="w-full" />
+          </div>
+
+          <div className="flex items-center justify-between z-[100]">
+            {showSearchMobile ? (
+              <i
+                className="fa fa-xmark cursor-pointer text-xl text-black mr-4"
+                onClick={handleShowMobileSearch}
+              ></i>
+            ) : (
+              <img
+                src={searchImage}
+                alt="Search"
+                className="mr-3"
+                onClick={handleShowMobileSearch}
+              />
+            )}
+            {userinfo.id ? (
+              <img
+                src={bellImage}
+                alt="Notifications"
+                className="mr-3"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowNotificationPopup(!showNotificationPopup);
+                  showHideNotification();
+                }}
+              />
+            ) : null}
+            <img
+              src={walletImage}
+              alt="Wallet"
+              onClick={
+                userinfo.id
+                  ? (e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      showHideUserPopupWallet();
+                    }
+                  : () => setShowModal(true)
+              }
+            />
+          </div>
+        </div>
+        <form
+          className={`${
+            showSearchMobile
+              ? "translate-y-0 opacity-1"
+              : "-translate-y-[6pc] opacity-0"
+          } ml-2 duration-500 ease-in-out mr-2`}
+        >
+          <label
+            htmlFor="default-search"
+            className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300"
+          >
+            Search
+          </label>
+          <div className="relative">
+            <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+              <i className="fa-regular fa-magnifying-glass text-[#199BD8]"></i>
+            </div>
+            <input
+              type="search"
+              id="default-search"
+              name="projectSearch2"
+              autoComplete="off"
+              className="text-lg w-full max-w-[556px] rounded-xl pl-10 h-10 placeholder-color-ass-4  focus:pl-10"
+              placeholder="Search your project by name"
+              onChange={handleOnTextChange}
+              onFocus={handleOnSearchFocus}
+              ref={inputRef}
+            />
+          </div>
+          {(isSearching || (projectList && projectList.length) > 0) &&
+            showSearchResult && (
+              <SearchBarResult
+                isLoading={isSearching}
+                projectList={projectList}
+                handleSearchClose={handleSearchClose}
+              />
+            )}
+        </form>
+      </nav>
       <WalletConnectModal showModal={showModal} closeModal={hideModal} />
     </header>
   );

@@ -183,7 +183,9 @@ const WalletConnectModal = ({
             isLoading ? "loading" : ""
           }`}
         >
-          <h1 className="mt-[10px]">Connect wallet</h1>
+          <h1 className="mt-[10px] text-[30px] md:text-[46px]">
+            Connect wallet
+          </h1>
           <p className="mt-3 text-white-shade-600 font-bold">
             Connect with one of our available wallet providers or create a new
             one.
@@ -207,7 +209,7 @@ const WalletConnectModal = ({
                   >
                     Terms Of services
                   </a>{" "}
-                  and <br />
+                  and
                   <a
                     href="https://www.decir.io/conditions"
                     target="_blank"

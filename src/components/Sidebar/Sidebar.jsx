@@ -16,7 +16,7 @@ const linksList = [
   { id: 0, title: "What’s CREABO", to: "/" },
   { id: 1, title: "Contact", to: "/" },
 ];
-const Sidebar = () => {
+const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const context = useAuthState();
@@ -40,7 +40,6 @@ const Sidebar = () => {
     dispatch(setUserInfo(userinfoResponse));
   }
 
-  const [showModal, setShowModal] = useState(false);
   const [navigateToPage, setNavigateToPage] = useState("");
 
   function hideModal(e) {
@@ -52,6 +51,7 @@ const Sidebar = () => {
   }
 
   function accessCheck(e) {
+    handleToggleSideBar();
     if (!userId || userId.length < 1) {
       e.preventDefault();
       e.stopPropagation();
@@ -67,6 +67,7 @@ const Sidebar = () => {
             <NavLink
               to={"/"}
               id="nav-home"
+              onClick={handleToggleSideBar}
               activeClassName="active-menu2 "
               className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-[#199BD8] last:mt-auto text-textSubtle cursor-pointer hover:border-[#199BD8] hover:border-r-4"
             >
@@ -162,11 +163,7 @@ const Sidebar = () => {
         </div> */}
         </div>
       </div>
-      <WalletConnectModal
-        showModal={showModal}
-        closeModal={hideModal}
-        navigateToPage={navigateToPage}
-      />
+
       {ShowCreateRANFT && (
         <CreateRightAttachedNFT
           show={ShowCreateRANFT}
