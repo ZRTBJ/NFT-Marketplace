@@ -141,6 +141,7 @@ const CollectionDetail = () => {
   function salesPageModal(e, type, id) {
     e.stopPropagation();
     e.preventDefault();
+    setShowOptions(null);
     if (type === "membership") {
       setNftId(id);
     }
@@ -499,7 +500,10 @@ const CollectionDetail = () => {
                               </li> */}
                               <li className="border-b border-divide">
                                 <div
-                                  onClick={() => setShowTransferNFT(true)}
+                                  onClick={() => {
+                                    setShowTransferNFT(true);
+                                    setShowOptions(false);
+                                  }}
                                   className="block p-4 hover:bg-gray-100 cursor-pointer"
                                 >
                                   Transfer NFT
