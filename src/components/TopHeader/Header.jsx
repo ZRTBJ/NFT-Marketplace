@@ -261,6 +261,13 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     setShowSearchMobile(!showSearchMobile);
   };
 
+  const handleAddressView = (address) => {
+    return `${address.substring(0, 6)}...${address.substring(
+      address.length - 4,
+      address.length
+    )}`;
+  };
+
   return (
     <header className="bg-light1">
       <AccountChangedModal
@@ -416,7 +423,10 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                           <i className="fa-solid fa-wallet gradient-text"></i>
 
                           <div className="mx-2 font-semibold text-base gradient-text">
-                            {selectedWallet.substring(0, 6)}...
+                            {/* {selectedWallet.substring(0, 6)}... */}
+                            {selectedWallet
+                              ? handleAddressView(selectedWallet)
+                              : null}
                           </div>
                           <i className="fa-solid fa-angle-down"></i>
                         </div>

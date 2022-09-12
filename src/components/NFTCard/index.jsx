@@ -33,7 +33,7 @@ const NFTCard = ({ item }) => {
           ? `/royality-management/${item.id}`
           : `/collection-details/${item.id}`
       }
-      className="rounded-[12px] relative flex flex-col cursor-pointer"
+      className="rounded-[12px] relative flex flex-col cursor-pointer hover:no-underline text-black hover:text-black"
     >
       <img
         src={item?.image ? item.image : NFTSample}
