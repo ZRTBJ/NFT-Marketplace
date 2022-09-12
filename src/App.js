@@ -37,7 +37,7 @@ function App() {
               <div
                 className={`${
                   showSideBar ? "translate-x-0" : "-translate-x-full"
-                } md:block mr-4 absolute z-[100] ease-in-out duration-300`}
+                } md:block mr-4 absolute  ease-in-out duration-300`}
               >
                 <Sidebar
                   setShowModal={setShowModal}
