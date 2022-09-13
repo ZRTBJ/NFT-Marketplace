@@ -213,7 +213,7 @@ export default function DetailsNFT(props) {
       {!isLoading && (
         <section className="flex flex-col lg:flex-row py-5">
           <div className="flex-1">
-            <div className="bg-white rounded-xl shadow-main flex flex-col items-center justify-start self-start p-4 mr-4 mb-5 md:mb-0">
+            <div className="bg-white rounded-xl shadow-main flex flex-col items-center justify-start self-start p-4 ml-4 md:ml-0 mr-4 mb-5 md:mb-0">
               <img
                 src={nft?.lnft?.asset?.path ? nft?.lnft?.asset?.path : manImg}
                 className="rounded-3xl h-[356px] w-[356px] object-cover max-w-full"
@@ -295,7 +295,7 @@ export default function DetailsNFT(props) {
             )}
           </div>
 
-          <div className="bg-white rounded-xl shadow-main p-4 flex-1">
+          <div className="bg-white rounded-xl shadow-main p-4 flex-1 mx-4 md:mx-0">
             <h1 className="txtblack pb-4">{nft?.lnft?.name}</h1>
             <p className="txtblack text-sm pb-4">Find it On</p>
             <div className="mb-4">
@@ -322,7 +322,7 @@ export default function DetailsNFT(props) {
                 :
               </span>
               {info?.start_datetime ? (
-                <span className="text-textSubtle">
+                <span className="text-textSubtle leading-8">
                   {format(new Date(info.start_datetime), "dd/MM/yy (HH:mm)")} -{" "}
                   {format(new Date(info.end_datetime), "dd/MM/yy (HH:mm)")}
                 </span>
@@ -335,7 +335,7 @@ export default function DetailsNFT(props) {
               <span className="font-satoshi-bold font-black text-lg text-txtblack mx-3">
                 :
               </span>
-              <span className="text-textSubtle">
+              <span className="text-textSubtle leading-8">
                 {availableSupply} / {nft?.lnft?.supply}
               </span>
             </div>
@@ -389,7 +389,7 @@ export default function DetailsNFT(props) {
                       <div className="rounded-full bg-primary-900 bg-opacity-90 w-[30px] h-[30px] font-satoshi-bold text-sm mr-4 flex items-center justify-center">
                         {index + 1}
                       </div>
-                      <p className="text-sm">{benefit.title}</p>
+                      <p className="text-sm w-[90%]">{benefit.title}</p>
                     </div>
                   ))
                 ) : (

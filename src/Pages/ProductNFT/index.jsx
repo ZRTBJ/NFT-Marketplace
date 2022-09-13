@@ -333,7 +333,7 @@ export default function ProductNFT(props) {
       .then((res) => {
         if (res.code === 0) {
           setProjectId(res.project.id);
-          createNewCollection(res.project.name, res.project.id);
+          createNewCollection(res.project.id);
         }
       })
       .catch((err) => {
@@ -341,9 +341,8 @@ export default function ProductNFT(props) {
       });
   }
 
-  function createNewCollection(projectName, dao_id) {
+  function createNewCollection(dao_id) {
     let createPayload = {
-      name: projectName,
       dao_id: dao_id,
       collection_type: "product",
     };
