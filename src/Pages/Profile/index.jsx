@@ -59,7 +59,24 @@ const Profile = () => {
     { id: 2, name: "Name" },
     { id: 3, name: "Percentage" },
   ];
-  const [royaltiesList, setRoyaltiesList] = useState([]);
+  const [royaltiesList, setRoyaltiesList] = useState([
+    {
+      id: 1,
+      project_name: "asdsadsdsa asdsadsdsd sdsadsdsad asdasdsdsds",
+      collection_name: "asdsd sdsdsd asdsadsd sdsadasds sads dsdsad ",
+      royalty_percent: 10,
+      is_owner: true,
+      earnable_amount: 100,
+    },
+    {
+      id: 2,
+      project_name: "asdsadsdsa ",
+      collection_name: "asdsd sdsdsd asdsadsd sdsadasds sads dsdsad ",
+      royalty_percent: 10,
+      is_owner: false,
+      earnable_amount: 100,
+    },
+  ]);
   const [royaltyId, setRoyaltyId] = useState("");
 
   const [errorModal, setErrorModal] = useState(false);
@@ -81,68 +98,6 @@ const Profile = () => {
       ? state?.notifications?.notificationData
       : []
   );
-  const COLLECTION_ITEMS = [
-    {
-      id: 0,
-      name: "NFT Collection #1",
-      image: NFTSample,
-      description: "There are many variations of passages of Lorem",
-      nfts: [
-        { id: 0, profileImage: ProfileImage },
-        { id: 1, profileImage: ProfileImage },
-        { id: 2, profileImage: ProfileImage },
-      ],
-    },
-    {
-      id: 1,
-      name: "NFT Collection #2",
-      image: NFTSample,
-      description: "There are many variations of passages of Lorem",
-      nfts: [
-        { id: 0, profileImage: ProfileImage },
-        { id: 1, profileImage: ProfileImage },
-        { id: 2, profileImage: ProfileImage },
-        { id: 3, profileImage: ProfileImage },
-      ],
-    },
-    {
-      id: 2,
-      name: "NFT Collection #3",
-      image: NFTSample,
-      description: "There are many variations of passages of Lorem",
-      nfts: [
-        { id: 0, profileImage: ProfileImage },
-        { id: 1, profileImage: ProfileImage },
-        { id: 2, profileImage: ProfileImage },
-        { id: 3, profileImage: ProfileImage },
-        { id: 4, profileImage: ProfileImage },
-        { id: 5, profileImage: ProfileImage },
-      ],
-    },
-    {
-      id: 3,
-      name: "NFT Collection #3",
-      image: NFTSample,
-      description: "There are many variations of passages of Lorem",
-      nfts: [
-        { id: 0, profileImage: ProfileImage },
-        { id: 1, profileImage: ProfileImage },
-        { id: 2, profileImage: ProfileImage },
-      ],
-    },
-    {
-      id: 4,
-      name: "NFT Collection #3",
-      image: NFTSample,
-      description: "There are many variations of passages of Lorem",
-      nfts: [
-        { id: 0, profileImage: ProfileImage },
-        { id: 1, profileImage: ProfileImage },
-        { id: 2, profileImage: ProfileImage },
-      ],
-    },
-  ];
-
   const settings = {
     320: {
       slidesPerView: 2,
@@ -234,7 +189,6 @@ const Profile = () => {
     };
     await getUserProjectListById(payload).then((e) => {
       if (e.data !== null) {
-        console.log(e.data);
         setProjectList(e.data);
       }
     });
@@ -337,231 +291,335 @@ const Profile = () => {
     <>
       {isLoading && <div className="loading"></div>}
       {!isLoading && (
-        <main className="container mx-auto">
+        <div className="container mx-auto">
           {/* profile information section */}
-          <div className="flex flex-wrap mt-[16px] justify-between">
-            <div className="md:mr-4 flex flex-wrap  bg-white-shade-900 flex-1 rounded rounded-[8px] p-[13px] md:p-[20px] shadow-main">
-              <div>
-                <div className="flex">
-                  <img
-                    src={
-                      user.avatar === "" ? DefaultProfilePicture : user.avatar
-                    }
-                    className="rounded-lg self-start  w-[102px] object-cover h-[102px]"
-                    alt={"profile"}
-                  />
-                  <div className="flex-1 min-w-0  pl-[20px]">
-                    <h3 className="text-ellipsis text-txtblack mb-[4px] overflow-hidden whitespace-nowrap font-black text-[18px]">
-                      {user.display_name}
-                    </h3>
-                    <p className="text-[13px] text-textSubtle ">
-                      {user?.eoa?.slice(0, 20)}..{" "}
-                      <i
-                        onClick={() => {
-                          copyToClipboard(user.eoa);
-                        }}
-                        className="fa-solid  fa-copy cursor-pointer pl-[6px]"
-                      ></i>
-                      <span id="copied-message" className="hidden ml-2">
-                        Copied !
-                      </span>
-                    </p>
-                    <p className="flex items-center mb-[3px]">
-                      <i className="fa-solid fa-map-pin mr-[7px] text-danger-1 text-[12px]"></i>
-                      <span className="text-[13px] text-txtblack">
-                        {user.area}
-                      </span>
-                    </p>
-                    <p className="flex items-center">
-                      <i className="fa-solid fa-briefcase mr-[7px] text-danger-1 text-[12px]"></i>
-                      <span className="text-[13px] text-txtblack">
-                        {user.job}
-                      </span>
-                    </p>
+          <div className="lg:flex items-center">
+            <div className="mt-[30px] md:flex-[70%] mx-3  bg-white-shade-900 rounded-lg p-[13px] md:p-[25px] shadow-lg md:flex">
+              <div className="flex">
+                <img
+                  src={user.avatar === "" ? DefaultProfilePicture : user.avatar}
+                  className="rounded-lg w-[102px] object-cover h-[102px]"
+                  alt={"profile"}
+                />
+                <div className="pl-[20px]">
+                  <div className="break-all text-txtblack mb-2 text-[14px] font-black md:text-[18px]">
+                    {user.display_name}
+                  </div>
+                  <div className="text-[13px] text-textSubtle mb-2">
+                    {user?.eoa?.slice(0, 20)}..{" "}
+                    <i
+                      onClick={() => {
+                        copyToClipboard(user.eoa);
+                      }}
+                      className="fa-solid  fa-copy cursor-pointer pl-[6px]"
+                    ></i>
+                    <span id="copied-message" className="hidden ml-2">
+                      Copied !
+                    </span>
+                  </div>
+                  <div className="flex items-center mb-2">
+                    <i className="fa-solid fa-map-pin mr-[7px] text-danger-1 text-[12px]"></i>
+                    <span className="text-[13px] text-txtblack">
+                      {user.area}
+                    </span>
+                  </div>
+                  <div className="flex items-center">
+                    <i className="fa-solid fa-briefcase mr-[7px] text-danger-1 text-[12px]"></i>
+                    <span className="text-[13px] text-txtblack">
+                      {user.job}
+                    </span>
                   </div>
                 </div>
               </div>
-              <div className="flex flex-wrap mt-3 relative ml-auto md:mt-0">
-                {sncList &&
-                  sncList.map((snc, index) => (
-                    <div key={`snc-${index}`}>
-                      {snc.url !== "" && (
-                        <div
-                          key={`snc-${index}`}
-                          className="cursor-pointer mr-4 w-[44px] h-[44px] mb-4 bg-primary-900/[.09] flex justify-center  items-center rounded-md "
-                        >
-                          {snc.title.toLowerCase().match("weblink") ? (
-                            <div className="">
+              <div className="mt-5  md:ml-auto">
+                <div className="flex flex-wrap">
+                  {sncList &&
+                    sncList.map((snc, index) => (
+                      <div key={`snc-${index}`}>
+                        {snc.url !== "" && (
+                          <div
+                            key={`snc-${index}`}
+                            className="cursor-pointer mr-2 w-[44px] h-[44px] mb-4 bg-primary-900/[.09] flex justify-center  items-center rounded-md "
+                          >
+                            {snc.title.toLowerCase().match("weblink") ? (
+                              <div className="">
+                                <a
+                                  href={snc.url}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                >
+                                  <i
+                                    className="fa fa-link text-[20px] gradient-text mt-1"
+                                    aria-hidden="true"
+                                  ></i>
+                                </a>
+                              </div>
+                            ) : (
                               <a
                                 href={snc.url}
                                 target="_blank"
                                 rel="noreferrer"
                               >
                                 <i
-                                  className="fa fa-link text-[20px] gradient-text mt-1"
-                                  aria-hidden="true"
+                                  className={`fa-brands fa-${
+                                    socialLinks.find(
+                                      (x) => x.title === snc.title
+                                    ).icon
+                                  } text-[20px] gradient-text text-white-shade-900 mt-1`}
                                 ></i>
                               </a>
-                            </div>
-                          ) : (
-                            <a href={snc.url} target="_blank" rel="noreferrer">
-                              <i
-                                className={`fa-brands fa-${
-                                  socialLinks.find((x) => x.title === snc.title)
-                                    .icon
-                                } text-[20px] gradient-text text-white-shade-900 mt-1`}
-                              ></i>
-                            </a>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                <Link to="/profile-settings">
-                  <button className="rounded social-icon-button text-primary-900 px-4 py-1 bottom-[4px] right-[16px] absolute flex items-center">
-                    <span>Edit</span>{" "}
-                    <i className="fa-solid  fa-pen-to-square ml-2"></i>
-                  </button>
-                </Link>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                </div>
+                <div className="ml-auto">
+                  <Link to="/profile-settings">
+                    <button className="rounded  social-icon-button text-primary-900 px-4 py-2">
+                      <span>Edit</span>{" "}
+                      <i className="fa-solid  fa-pen-to-square ml-2"></i>
+                    </button>
+                  </Link>
+                </div>
               </div>
             </div>
-
-            <div
-              className="px-4 text-white-shade-900 w-[374px] s h-[152px] gradient-background rounded rounded-[8px]"
-              style={{ boxShadow: "5px 5px 24px rgba(172, 203, 232, 0.28)" }}
-            >
-              <h3 className="ml-[24px] mt-[24px] text-[18px] font-black ">
+            <div className="md:flex-[30%]  mt-[30px] px-6 rounded-lg mx-3 p-[13px] md:p-[20px] text-white-shade-900 shadow-lg gradient-background rounded-lg">
+              <div className=" md:mt-[24px] text-[18px] font-black ">
                 Total Earned Amount
-              </h3>
-              <h1 className="font-black text-[28px] ml-[24px] mt-[8px]">
+              </div>
+              <div className="font-black text-[28px]  md:mt-[8px]">
                 ${royaltyEarned.total_earn}
-              </h1>
-              <div className="ml-[24px] mt-[8px] flex flex-wrap align-center">
+              </div>
+              <div className=" md:mt-[8px] flex flex-wrap align-center">
                 <div className="bg-success-1 h-[26px] w-[26px]  rounded-full">
                   <i className="fa-solid fa-up text-[#FFFF] ml-1.5  mt-[3px] text-[20px]"></i>
                 </div>
-                <p className="text-[14px] ml-2">
-                  {/* Increased 50% since last month */}
+                <div className="text-[14px] ml-2">
                   Last month earned ${royaltyEarned.last_month_earn}
-                </p>
+                </div>
               </div>
             </div>
           </div>
           {/* Royalties Table */}
-          <div className="mt-[41px] mb-[36px] pt-[30px] pl-[24px] pr-[24px] pb-[35px] bg-white-shade-900 rounded-[8px]">
-            <div className="flex flex-wrap item-center mb-[24px]">
-              <h2 className="text-[24px] mb-3">Royalties</h2>
-              <div className="flex  flex-wrap items-center md:ml-auto">
-                <p className="mr-4 mb-3">
-                  <span className="text-txtblack mr-2">Total Royalties:</span>
-                  <span className="text-txtblack font-black">
-                    {royaltiesList.length > 0 ? totalRoyality : `0`}
-                  </span>
-                </p>
-                {royaltiesList.length > 0 && (
-                  <>
-                    {/* <button
-                      onClick={claimAllRoyalty}
-                      className="mb-4 contained-button font-bold py-1 px-3 rounded mr-4"
-                    >
-                      Claim All Royalties
-                    </button> */}
-                    <select
-                      className="w-[120PX] h-[32px] mb-4 bg-white-shade-900 pl-2 outline-none text-textSubtle border border-[#C7CEE5]"
-                      value={royaltiesListSortBy}
-                      onChange={onRoyaltiesListSort}
-                    >
-                      <option disabled value={"default"} defaultValue>
-                        Sort By
-                      </option>
-                      {royaltiesSortByList.map((e) => (
-                        <option key={e.id} value={e.name}>
-                          {e.name}
-                        </option>
-                      ))}
-                    </select>
-                  </>
-                )}
+          <div className=" mt-[20px] mx-3 mb-[36px] pt-[30px] shadow-lg px-4  pb-[35px] bg-white-shade-900 rounded-xl">
+            <div className="flex  items-center mb-[24px]">
+              <div className="text-[24px] text-txtblack font-black ">
+                Royalties
               </div>
+              <div className="ml-auto  text-[18px]">
+                <span className="text-txtblack mr-2 hidden  md:inline-block">
+                  Total Royalties:
+                </span>
+                <span className="text-txtblack font-black">
+                  ${royaltiesList.length > 0 ? totalRoyality : `0`}
+                </span>
+              </div>
+              {royaltiesList.length > 0 && (
+                <>
+                  <button
+                    onClick={claimAllRoyalty}
+                    className="contained-button font-bold py-1 px-3 rounded ml-3"
+                  >
+                    Claim All Royalties
+                  </button>
+                  {/* <select
+                    className="hidden md:block w-[120PX] h-[32px] ml-3 bg-white-shade-900 pl-2 outline-none text-textSubtle border border-[#C7CEE5]"
+                    value={royaltiesListSortBy}
+                    onChange={onRoyaltiesListSort}
+                  >
+                    <option disabled value={"default"} defaultValue>
+                      Sort By
+                    </option>
+                    {royaltiesSortByList.map((e) => (
+                      <option key={e.id} value={e.name}>
+                        {e.name}
+                      </option>
+                    ))}
+                  </select> */}
+                </>
+              )}
             </div>
-            {royaltiesList.length > 0 ? (
-              <div className="overflow-x-auto relative mb-[54px]">
-                <table className="w-full text-left">
-                  <thead>
-                    <tr className="text-textSubtle text-[12px] ">
-                      <th scope="col" className="px-5">
-                        Icon
-                      </th>
-                      <th scope="col" className="px-5">
-                        Project Name
-                      </th>
-                      <th scope="col" className="px-5">
-                        Collection Name
-                      </th>
-                      <th scope="col" className="px-5">
-                        Percentage
-                      </th>
-                      <th scope="col" className="px-5">
-                        Role
-                      </th>
-                      <th scope="col" className="px-5">
-                        Earnable Amount
-                      </th>
-                      <th scope="col" className="px-5">
-                        Action
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {royaltiesList.map((r, index) => (
-                      <tr
-                        key={r.index}
-                        className={`${
-                          index < royaltiesList.length - 1 ? "border-b" : ""
-                        } text-left text-txtblack text-[14px]`}
-                      >
-                        <td className="py-4 px-5">
+            {/* table for desktop */}
+            <div className="hidden md:block">
+              {royaltiesList.length > 0 ? (
+                <div className="overflow-x-auto relative mt-[54px]">
+                  <table className="w-full text-left">
+                    <thead>
+                      <tr className="text-textSubtle text-[12px] ">
+                        <th scope="col" className="px-5">
+                          Icon
+                        </th>
+                        <th scope="col" className="px-5">
+                          Project Name
+                        </th>
+                        <th scope="col" className="px-5">
+                          Collection Name
+                        </th>
+                        <th scope="col" className="px-5">
+                          Percentage
+                        </th>
+                        <th scope="col" className="px-5">
+                          Role
+                        </th>
+                        <th scope="col" className="px-5">
+                          Earnable Amount
+                        </th>
+                        <th scope="col" className="px-5">
+                          Action
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {royaltiesList.map((r, index) => (
+                        <tr
+                          key={r.index}
+                          className={`${
+                            index < royaltiesList.length - 1 ? "border-b" : ""
+                          } text-left text-txtblack text-[14px]`}
+                        >
+                          <td className="py-4 px-5">
+                            <img
+                              src={DefaultProjectLogo}
+                              className="h-[34px] w-[34px] object-cover rounded-full"
+                              alt={r.project_name + "logo"}
+                            />
+                          </td>
+                          <td className="py-4 px-5 font-black ">
+                            {r.project_name}
+                          </td>
+                          <td className="py-4 px-5 font-black ">
+                            {r.collection_name}
+                          </td>
+                          <td className="py-4 px-5">{r.royalty_percent}</td>
+                          <td
+                            className={`py-4 px-5  ${
+                              r.is_owner ? "text-info-1" : " text-success-1"
+                            }`}
+                          >
+                            {r.is_owner ? "Owner" : "Member"}
+                          </td>
+                          <td className="py-4 px-5">${r.earnable_amount}</td>
+                          <td className="py-4 px-5">
+                            <button
+                              onClick={() => claimRoyaltyById(r.id)}
+                              className="bg-primary-900/[.20] h-[32px] w-[57px] rounded text-primary-900"
+                            >
+                              Claim
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="text-center ">
+                  <h2 className="text-textSubtle mb-6">
+                    You don't have any Royalty yet
+                  </h2>
+                </div>
+              )}
+            </div>
+            {/* table for mobile */}
+            <div className="md:hidden">
+              {royaltiesList.length > 0 ? (
+                <div>
+                  {royaltiesList.map((r, index) => (
+                    <div
+                      key={index}
+                      className={`my-8 py-7  ${
+                        index < royaltiesList.length - 1 ? "border-b" : ""
+                      }`}
+                    >
+                      <div className={`flex   items-center mb-8 `}>
+                        <div className={"flex  items-center"}>
                           <img
                             src={DefaultProjectLogo}
                             className="h-[34px] w-[34px] object-cover rounded-full"
                             alt={r.project_name + "logo"}
                           />
-                        </td>
-                        <td className="py-4 px-5 font-black ">
-                          {r.project_name}
-                        </td>
-                        <td className="py-4 px-5 font-black ">
-                          {r.collection_name}
-                        </td>
-                        <td className="py-4 px-5">{r.royalty_percent}</td>
-                        <td
-                          className={`py-4 px-5  ${
-                            r.is_owner ? "text-info-1" : " text-success-1"
-                          }`}
+                          <div className="mx-4 font-black ">
+                            {r.project_name}
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => claimRoyaltyById(r.id)}
+                          className="bg-primary-900/[.20] ml-auto px-3 py-1 rounded text-primary-900"
                         >
-                          {r.is_owner ? "Owner" : "Member"}
-                        </td>
-                        <td className="py-4 px-5">${r.earnable_amount}</td>
-                        <td className="py-4 px-5">
-                          <button
-                            onClick={() => claimRoyaltyById(r.id)}
-                            className="bg-secondary-900/[.20] h-[32px] w-[57px] rounded text-secondary-900"
+                          Claim
+                        </button>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <div>Percentage</div>
+                          <div className="text-center">{r.royalty_percent}</div>
+                        </div>
+                        <div>
+                          <div>Role</div>
+                          <div
+                            className={`text-centre ${
+                              r.is_owner ? "text-info-1" : " text-success-1"
+                            }`}
                           >
-                            Claim
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div className="text-center ">
-                <h2 className="text-textSubtle mb-6">
-                  You don't have any Royalty yet
-                </h2>
-              </div>
-            )}
+                            {r.is_owner ? "Owner" : "Member"}
+                          </div>
+                        </div>
+                        <div>
+                          <div>Earnable Amount</div>
+                          <div className="text-center">
+                            ${r.earnable_amount}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                // <div className="overflow-x-auto relative mb-[54px]">
+                //   <table className="w-full text-left">
+                //     <thead>
+                //       <tr className="text-textSubtle text-[12px] ">
+                //         <th scope="col" className="px-5">
+                //           Percentage
+                //         </th>
+                //         <th scope="col" className="px-5">
+                //           Role
+                //         </th>
+                //         <th scope="col" className="px-5">
+                //           Earnable Amount
+                //         </th>
+                //       </tr>
+                //     </thead>
+                //     <tbody>
+                //       {royaltiesList.map((r, index) => (
+                //         <tr
+                //           key={r.index}
+                //           className={`${
+                //             index < royaltiesList.length - 1 ? "border-b" : ""
+                //           } text-left text-txtblack text-[14px]`}
+                //         >
+                //           <td className="py-4 px-5">{r.royalty_percent}</td>
+                //           <td
+                //             className={`py-4 px-5  ${
+                //               r.is_owner ? "text-info-1" : " text-success-1"
+                //             }`}
+                //           >
+                //             {r.is_owner ? "Owner" : "Member"}
+                //           </td>
+                //           <td className="py-4 px-5">${r.earnable_amount}</td>
+                //         </tr>
+                //       ))}
+                //     </tbody>
+                //   </table>
+                // </div>
+                <div className="text-center ">
+                  <h2 className="text-textSubtle mb-6">
+                    You don't have any Royalty yet
+                  </h2>
+                </div>
+              )}
+            </div>
             {/* <div className="flex justify-center space-x-1 ">
               <button className="px-3 py-1   text-primary-900 bg-primary-900 bg-opacity-5 rounded hover:bg-opacity-7">
                 <i className="fa-solid fa-angle-left"></i>
@@ -579,7 +637,7 @@ const Profile = () => {
           </div>
 
           <div className="mb-[50px]">
-            <h1 className="text-[28px] mb-[36px] font-black">Your DAO</h1>
+            <h1 className="text-[28px] ml-4 mb-[36px] font-black">Your DAO</h1>
 
             {projectList.length > 0 ? (
               <Swiper
@@ -590,9 +648,11 @@ const Profile = () => {
               >
                 <div>
                   {projectList.map((item) => (
-                    <SwiperSlide key={item.id} className={styles.daoCard}>
-                      <DAOCard item={item} key={item.id} />
-                    </SwiperSlide>
+                    <div key={item.id}>
+                      <SwiperSlide key={item.id} className={styles.daoCard}>
+                        <DAOCard item={item} key={item.id} />
+                      </SwiperSlide>
+                    </div>
                   ))}
                 </div>
               </Swiper>
@@ -604,7 +664,9 @@ const Profile = () => {
           </div>
 
           <div className="mb-[50px]">
-            <h1 className="text-[28px] mb-[36px] font-black">Collection</h1>
+            <h1 className="text-[28px] ml-4 mb-[36px] font-black">
+              Collection
+            </h1>
             {collectionList.length > 0 ? (
               <Swiper
                 breakpoints={settings}
@@ -614,67 +676,77 @@ const Profile = () => {
               >
                 <div>
                   {collectionList.map((collection, index) => (
-                    <SwiperSlide key={index.id} className={styles.nftCard}>
-                      <div
-                        className="min-h-[390px] rounded-x"
-                        key={`best-collection-${index}`}
+                    <div key={collection.id}>
+                      <SwiperSlide
+                        key={collection.id}
+                        className={styles.nftCard}
                       >
-                        <Link
-                          to={
-                            collection.type === "right_attach"
-                              ? `/royality-management/${collection.id}`
-                              : `/collection-details/${collection.id}`
-                          }
+                        <div
+                          className="min-h-[390px] rounded-x"
+                          key={`best-collection-${index}`}
                         >
-                          <img
-                            className="rounded-xl h-[276px] object-cover w-full"
-                            src={
-                              collection &&
-                              collection.assets &&
-                              collection.assets[0]
-                                ? collection.assets[0].path
-                                : thumbIcon
+                          <Link
+                            to={
+                              collection.type === "right_attach"
+                                ? `/royality-management/${collection.id}`
+                                : `/collection-details/${collection.id}`
                             }
-                            alt=""
-                          />
-                        </Link>
+                          >
+                            <img
+                              className="rounded-xl h-[211px] md:h-[276px] object-cover w-full"
+                              src={
+                                collection &&
+                                collection.assets &&
+                                collection.assets[0]
+                                  ? collection.assets[0].path
+                                  : thumbIcon
+                              }
+                              alt=""
+                            />
+                          </Link>
 
-                        <div className="p-5">
-                          <h2 className="pb-2 text-txtblack truncate">
-                            {collection.name}
-                          </h2>
-                          <p className="mb-3 text-textSubtle text-[13px]">
-                            {collection.description &&
-                            collection.description.length > 70
-                              ? collection.description.substring(0, 67) + "..."
-                              : collection.description}
-                          </p>
+                          <div className="p-5">
+                            <div className="pb-2 text-[18px] font-black md:text-[24px] text-txtblack truncate">
+                              {collection.name}
+                            </div>
+                            <p className="mb-3 text-textSubtle text-[13px]">
+                              {collection.description &&
+                              collection.description.length > 70
+                                ? collection.description.substring(0, 67) +
+                                  "..."
+                                : collection.description}
+                            </p>
 
-                          <div className="flex items-center">
-                            {collection.members &&
-                              collection.members.length > 0 &&
-                              truncateArray(collection.members).slicedItems.map(
-                                (member) => (
+                            <div className="flex items-center">
+                              {collection.members &&
+                                collection.members.length > 0 &&
+                                truncateArray(
+                                  collection.members
+                                ).slicedItems.map((member) => (
                                   <img
+                                    key={member.id}
                                     src={member.avatar}
                                     alt={member.id}
                                     className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
                                   />
-                                )
-                              )}
-                            {collection.members &&
-                              collection.members.length > 3 && (
-                                <div className="flex items-center mt-[6px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]">
-                                  <p className="text-[12px] text-[#9A5AFF]">
-                                    +
-                                    {truncateArray(collection.members).restSize}
-                                  </p>
-                                </div>
-                              )}
+                                ))}
+                              {collection.members &&
+                                collection.members.length > 3 && (
+                                  <div className="flex items-center mt-[6px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]">
+                                    <p className="text-[12px] text-[#9A5AFF]">
+                                      +
+                                      {
+                                        truncateArray(collection.members)
+                                          .restSize
+                                      }
+                                    </p>
+                                  </div>
+                                )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </SwiperSlide>
+                      </SwiperSlide>
+                    </div>
                   ))}
                 </div>
               </Swiper>
@@ -684,7 +756,7 @@ const Profile = () => {
               </div>
             )}
           </div>
-        </main>
+        </div>
       )}
       {showSuccessModal && (
         <SuccessModal

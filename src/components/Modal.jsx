@@ -1,5 +1,4 @@
 import "../assets/css/Modal.css";
-import ModalCloseLogo from "assets/images/modal/ico_closemodal.png";
 const Modal = ({
   handleClose,
   show,
