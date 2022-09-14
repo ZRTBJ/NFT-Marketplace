@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import DropdownCreabo from "components/DropdownCreabo";
 import CirclePlus from "assets/images/icons/plus-circle.svg";
 import MemberListTable from "components/RoyalityManagement/MemberListTable/MemberListTable";
-import styles from "./style.module.css";
 import FB from "assets/images/facebook.svg";
 import twitter from "assets/images/twitter.svg";
 import reddit from "assets/images/reddit.svg";
+import edit from "assets/images/icons/edit.svg";
 import instagram from "assets/images/icons/instagram.svg";
 import NFTSample from "assets/images/createDAO/nft-sample.svg";
 import NewPublishModal from "components/modalDialog/NewPublishModal";
@@ -28,6 +28,7 @@ import {
   TwitterShareButton,
   RedditShareButton,
 } from "react-share";
+import MemeberListMobile from "components/RoyalityManagement/MemberListMobile/MemberListMobile";
 
 const TABLE_HEADERS = [
   { id: 0, label: "Wallet Address" },
@@ -279,7 +280,7 @@ const RoyalityManagement = () => {
     Collections.find((col) => col.id === selectedCollectionId);
   return (
     <div
-      className={`mt-3 ${
+      className={`mt-3 mx-4 md:mx-0 ${
         IsLoading || IsConnectionLoading || IsAutoFillLoading ? "loading" : ""
       }`}
     >
@@ -378,55 +379,67 @@ const RoyalityManagement = () => {
           publishStep={publishStep}
         />
       )}
-      <div
-        className={`${styles.memberSection} bg-white rounded-[12px] p-6 flex`}
-      >
-        <img
-          src={
-            CollectionDetail &&
-            CollectionDetail.assets &&
-            CollectionDetail.assets[0]
-              ? CollectionDetail.assets[0].path
-              : ColImage
-          }
-          className="w-[160px] h-[160px] rounded-[12px] object-cover"
-          alt="Collection"
-        />
-        <div className="ml-6 w-[600px]">
-          <h3 className="text-[26px] font-bold">{CollectionDetail.name}</h3>
-          <p className="text-textLight text-sm">
-            {CollectionDetail?.contract_address
-              ? CollectionDetail?.contract_address
-              : "Smart Contract not released"}
-            <i
-              className={`fa-solid fa-copy ml-2 ${
-                CollectionDetail?.contract_address
-                  ? "cursor-pointer"
-                  : "cursor-not-allowed"
-              }`}
-              disabled={!CollectionDetail.contract_address}
-              onClick={() =>
-                copyToClipboard(CollectionDetail?.contract_address)
-              }
-            ></i>
-            <span id="copied-message" className="hidden ml-2">
-              Copied !
-            </span>
-          </p>
-          <h4 className="text-[18px] font-bold mt-4">About the Collection</h4>
-          <p className="text-[14px] text-[#5F6479]">
+      <div className={`bg-white rounded-[12px] p-6 shadow-main relative`}>
+        <div className={`flex`}>
+          <img
+            src={
+              CollectionDetail &&
+              CollectionDetail.assets &&
+              CollectionDetail.assets[0]
+                ? CollectionDetail.assets[0].path
+                : ColImage
+            }
+            className="w-[54px] md:w-[160px] h-[54px] md:h-[160px] rounded-[12px] object-cover"
+            alt="Collection"
+          />
+          <div className="ml-6 w-[600px]">
+            <h3 className="text-[18px] md:text-[26px] font-bold leading-[34px]">
+              {CollectionDetail.name}
+            </h3>
+            <p className="text-[0.6rem] md:text-sm text-textLight ">
+              {CollectionDetail?.contract_address
+                ? CollectionDetail?.contract_address
+                : "Smart Contract not released"}
+              <i
+                className={`fa-solid fa-copy ml-2 ${
+                  CollectionDetail?.contract_address
+                    ? "cursor-pointer"
+                    : "cursor-not-allowed"
+                }`}
+                disabled={!CollectionDetail.contract_address}
+                onClick={() =>
+                  copyToClipboard(CollectionDetail?.contract_address)
+                }
+              ></i>
+              <span id="copied-message" className="hidden ml-2">
+                Copied !
+              </span>
+            </p>
+            <div className="hidden md:block">
+              <h4 className="text-[14px] md:text-[18px] font-bold mt-4">
+                About the Collection
+              </h4>
+              <p className="text-[12px] md:text-[14px] text-[#5F6479]">
+                {CollectionDetail?.description}
+              </p>
+            </div>
+          </div>
+          {CollectionDetail.is_owner && (
+            <div className="absolute right-5 top-5">
+              <Link to={`/collection-create/?id=${collectionId}`}>
+                <img src={edit} alt="Edit" className="w-[16px] h-[16px]" />
+              </Link>
+            </div>
+          )}
+        </div>
+        <div className="block md:hidden">
+          <h4 className="text-[14px] md:text-[18px] font-bold mt-4">
+            About the Collection
+          </h4>
+          <p className="text-[12px] md:text-[14px] text-[#5F6479]">
             {CollectionDetail?.description}
           </p>
         </div>
-        {CollectionDetail.is_owner && (
-          <div className="ml-auto">
-            <Link to={`/collection-create/?id=${collectionId}`}>
-              <button className="font-black outlined-button">
-                <span>Edit Collection</span>
-              </button>
-            </Link>
-          </div>
-        )}
       </div>
       {/* <h3 className='text-[28px] font-black'>Rights Attached NFT</h3>
       <p className='text-[14px] font-regular text-[#5F6479] mt-2'>
@@ -439,8 +452,8 @@ const RoyalityManagement = () => {
         </button>
       </div> */}
       {CollectionDetail.is_owner && IsNFTAvailable ? (
-        <div className="w-[680px] mt-4">
-          <div className="flex items-end">
+        <div className="w-full md:w-[680px] mt-4">
+          <div className="flex items-end w-full">
             <div>
               <DropdownCreabo
                 label="Connect Collection"
@@ -474,9 +487,7 @@ const RoyalityManagement = () => {
           </Link>
         </div>
       ) : null}
-      <div
-        className={`bg-white mt-6 rounded-[12px] p-6 ${styles.memberSection}`}
-      >
+      <div className={`bg-white mt-6 rounded-[12px] p-6 shadow-main`}>
         <div className="flex justify-between pb-7 border-b-[1px] mb-6 border-[#E3DEEA]">
           <h3 className="text-[18px] font-black">Member List</h3>
           {ShowPercentError ? (
@@ -485,13 +496,13 @@ const RoyalityManagement = () => {
             </p>
           ) : null}
           {CollectionDetail?.is_owner && data?.members?.length ? (
-            <div class="flex items-center justify-center">
-              <div class="form-check form-switch flex items-center">
-                <p class="text-[#303548] text-[12px] mr-5">
+            <div className="flex items-center justify-center">
+              <div className="form-check form-switch flex items-center">
+                <p className="text-[#303548] text-[12px] mr-5">
                   Autofill Percentage
                 </p>
                 <input
-                  class="form-check-input appearance-none w-9 rounded-full h-5 align-top bg-white bg-no-repeat bg-contain bg-gray-300 focus:outline-none cursor-pointer shadow-sm"
+                  className="form-check-input appearance-none w-9 rounded-full h-5 align-top bg-white bg-no-repeat bg-contain bg-gray-300 focus:outline-none cursor-pointer shadow-sm"
                   type="checkbox"
                   checked={AutoAssign}
                   role="switch"
@@ -508,16 +519,31 @@ const RoyalityManagement = () => {
           </p>
         ) : null}
         {CollectionDetail?.status === "published" && data?.members?.length ? (
-          <MemberListTable
-            list={data?.members}
-            headers={TABLE_HEADERS}
-            handlePublish={setShowPublish}
-            setIsEdit={setIsEdit}
-            isEdit={isEdit}
-            handleValueChange={handleValueChange}
-            handleAutoFill={handleAutoFill}
-            isOwner={CollectionDetail?.is_owner}
-          />
+          <>
+            <div className="hidden md:block">
+              <MemberListTable
+                list={data?.members}
+                headers={TABLE_HEADERS}
+                handlePublish={setShowPublish}
+                setIsEdit={setIsEdit}
+                isEdit={isEdit}
+                handleValueChange={handleValueChange}
+                handleAutoFill={handleAutoFill}
+                isOwner={CollectionDetail?.is_owner}
+              />
+            </div>
+            <div className="block md:hidden">
+              <MemeberListMobile
+                list={data?.members}
+                handlePublish={setShowPublish}
+                setIsEdit={setIsEdit}
+                isEdit={isEdit}
+                handleValueChange={handleValueChange}
+                handleAutoFill={handleAutoFill}
+                isOwner={CollectionDetail?.is_owner}
+              />
+            </div>
+          </>
         ) : null}
         {CollectionDetail?.status === "published" && !data?.members?.length ? (
           <p className="text-center mt-4">
@@ -536,9 +562,9 @@ const RoyalityManagement = () => {
           </div>
         ) : null}
       </div>
-      <div className="flex mb-8">
+      <div className="flex flex-col md:flex-row mb-8">
         <div
-          className={`bg-white mt-6 p-6 w-2/4 mr-2 rounded-[12px] ${styles.memberSection}`}
+          className={`bg-white mt-6 p-6 w-full md:w-2/4 mr-2 rounded-[12px] shadow-main`}
         >
           <h3 className="text-[18px] font-black">Invite Contributor</h3>
           {data?.lnft?.invitation_code ? (
@@ -636,7 +662,7 @@ const RoyalityManagement = () => {
         </div>
         {data?.lnft?.asset?.path ? (
           <div
-            className={`bg-white mt-6 p-6 w-2/4 ml-2 rounded-[12px] flex items-center justify-center flex-col ${styles.memberSection}`}
+            className={`bg-white mt-6 p-6 w-full md:w-2/4 ml-2 rounded-[12px] flex items-center justify-center flex-col shadow-main`}
           >
             <h3 className="text-[18px] font-black">Right Attached NFT</h3>
             <img
