@@ -26,7 +26,7 @@ function App() {
           />
           {/* Dynamic Body */}
           <main className="container min-h-[calc(100vh-71px)]">
-            <div className="flex flex-row">
+            <div className="md:flex md:flex-row">
               <div className="hidden md:block mr-4 ">
                 <Sidebar
                   setShowModal={setShowModal}
