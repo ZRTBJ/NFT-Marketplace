@@ -13,7 +13,6 @@ import SalesPageModal from "components/modalDialog/SalesPageModal";
 import SuccessModal from "components/modalDialog/SuccessModal";
 import DeployingCollectiontModal from "components/modalDialog/DeployingCollectionModal";
 import ErrorModal from "components/modalDialog/ErrorModal";
-import styles from "./style.module.css";
 import Facebook from "assets/images/facebook.svg";
 import Instagram from "assets/images/instagram.svg";
 import Twitter from "assets/images/twitter.svg";
@@ -159,7 +158,7 @@ const CollectionDetail = () => {
   };
 
   return (
-    <div>
+    <div className="mx-4 md:mx-0">
       {ShowPublishModal && (
         <PublishModal
           show={ShowPublishModal}
@@ -208,15 +207,13 @@ const CollectionDetail = () => {
       <section className="mt-6">
         <div className="row-span-2 col-span-2">
           <img
-            className="rounded-xl object-cover h-[260px] w-full"
+            className="rounded-xl object-cover h-[124px] md:h-[260px] w-full"
             src={CoverImages?.path ? CoverImages?.path : Cover}
             alt=""
           />
         </div>
       </section>
-      <section
-        className={`${styles.collectionDetailDesc} bg-[#fff] rounded-b-xl mt-4 p-6`}
-      >
+      <section className={`bg-[#fff] rounded-b-xl mt-4 p-6 shadow-main`}>
         <div className="flex flex-col md:flex-row">
           <div className="md:w-2/3">
             <div className="flex">
@@ -259,7 +256,7 @@ const CollectionDetail = () => {
             {Links.find((link) => link.title === "linkFacebook") &&
               Links.find((link) => link.title === "linkFacebook").value
                 ?.length > 0 && (
-                <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 ">
+                <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300">
                   <a
                     href={`${
                       Links.find((link) => link.title === "linkFacebook").value
@@ -391,8 +388,8 @@ const CollectionDetail = () => {
             </div>
           </div>
 
-          <div className="flex items-end justify-center flex-col mt-3 md:justify-end md:w-1/3  md:mt-0">
-            <div className="bg-[#E8F5FB] ml-3 rounded-md p-3 px-5 relative w-56">
+          <div className="flex items-start md:items-end flex-col mt-3 justify-center md:justify-end md:w-1/3  md:mt-0">
+            <div className="bg-[#E8F5FB] ml-0 md:ml-3 rounded-md p-3 px-5 relative w-56">
               <i className="fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3"></i>
               <p className=" text-sm text-textSubtle ">Net Worth</p>
               <h4>10,290.38 ETH</h4>
@@ -405,7 +402,7 @@ const CollectionDetail = () => {
               {Collection?.type === "product" && Collection?.is_owner && (
                 <div
                   onClick={(e) => salesPageModal(e, "product")}
-                  className="outlined-button  ml-4 font-satoshi-bold"
+                  className="outlined-button ml-0 md:ml-4 font-satoshi-bold"
                 >
                   <span>Sales Setting</span>
                 </div>
@@ -442,7 +439,7 @@ const CollectionDetail = () => {
                 }`
               )
             }
-            className="mint-button mt-3 font-satoshi-bold"
+            className="mint-button mt-3 text-center font-satoshi-bold w-full md:w-fit"
           >
             <span> Mint NFT</span>
           </div>
@@ -453,17 +450,17 @@ const CollectionDetail = () => {
               return (
                 <div
                   key={nft?.id}
-                  className="min-h-[390px] rounded-xl mr-4 mb-4 bg-white p-4"
+                  className="min-h-auto md:min-h-[390px] rounded-xl mr-2 md:mr-4 mb-4 bg-white p-4"
                 >
                   <Link to={`/nft-details/${nft?.nft_type}/${nft.id}`}>
                     <img
-                      className="rounded-xl h-[276px] w-[276px] object-contain"
+                      className="rounded-xl h-[176px] md:h-[276px] w-[150px] md:w-[276px] object-contain"
                       src={nft?.asset?.path}
                       alt=""
                     />
                   </Link>
-                  <div className="py-5">
-                    <div className="flex w-[276px]">
+                  <div className="py-2 md:py-5">
+                    <div className="flex w-[150px] md:w-[276px]">
                       <h2 className="mb-2 text-txtblack truncate flex-1 mr-3 m-w-0 text-[24px]">
                         {nft?.name}
                       </h2>
@@ -510,7 +507,7 @@ const CollectionDetail = () => {
                                 </div>
                               </li>{" "}
                               {Collection?.type === "membership" && (
-                                <li className="border-b border-divide">
+                                <li className="border-divide">
                                   <div
                                     onClick={(e) =>
                                       salesPageModal(e, "membership", nft.id)
@@ -526,7 +523,7 @@ const CollectionDetail = () => {
                         )}
                       </div>
                     </div>
-                    <div className="flex w-[276px]">
+                    <div className="flex  w-[150px] md:w-[276px]">
                       <p className="text-[13px]">
                         {nft?.price}{" "}
                         {projectNetwork === "ethereum" ? "ETH" : "MATIC"}
