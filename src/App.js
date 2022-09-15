@@ -45,7 +45,7 @@ function App() {
                 />
               </div>
 
-              <div className="w-full min-w-[calc(100vw-350px)]">
+              <div className="w-full min-w-[calc(100vw-300px)]">
                 <Switch>
                   {routes.map((route) => (
                     <AppRoute

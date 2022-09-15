@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import { getUserProjectListById } from "services/project/projectService";
 import { useEffect } from "react";
 import { getCollections } from "services/collection/collectionService";
+import Plus from "assets/images/icons/plus.svg";
 
 const CreateDAOandNFT = () => {
   const [ShowCreateNFT, setShowCreateNFT] = useState(false);
@@ -67,7 +68,7 @@ const CreateDAOandNFT = () => {
       })
       .catch((err) => console.log(err));
   }, []);
-  console.log(Collections);
+
   return (
     <div className={`bg-white mt-4 py-6 pl-6 ${IsLoading ? "loading" : ""}`}>
       <CreateNFTModal
@@ -76,19 +77,27 @@ const CreateDAOandNFT = () => {
       />
       <div className="border-[#C7CEE5] border-b-[1px] pb-3">
         <h3 className="text-[28px] font-black mb-2">Create new DAO</h3>
-        <p className="text-[14px] text-[#5F6479] font-normal w-[450px]">
+        <p className="text-[14px] text-[#5F6479] font-normal w-[350px] md:w-[450px]">
           Create new DAO for making your project is really managed and secure in
           web3 envoirment.
         </p>
+        {DAOs.length ? (
+          <div className="w-fit flex mint-button mt-3 text-center font-satoshi-bold w-full md:w-fit">
+            <img src={Plus} alt="add" />
+            <span className="ml-2 text-[17px]"> Create New</span>
+          </div>
+        ) : null}
         <div className="flex mt-6">
-          <Link to="/project-create">
-            <div className="gradient-border cursor-pointer w-[276px] h-[276px] mr-6 flex flex-col items-center justify-center rounded-[12px]">
-              <img src={CirclePlus} alt="add" />
-              <p className="text-[#D66EFB] gradient-text font-black mt-3">
-                Create new
-              </p>
-            </div>
-          </Link>
+          {!DAOs.length ? (
+            <Link to="/project-create">
+              <div className="gradient-border cursor-pointer w-[276px] h-[276px] mr-6 flex flex-col items-center justify-center rounded-[12px]">
+                <img src={CirclePlus} alt="add" />
+                <p className="text-[#D66EFB] gradient-text font-black mt-3">
+                  Create new
+                </p>
+              </div>
+            </Link>
+          ) : null}
           <Swiper
             breakpoints={settings}
             navigation={true}
@@ -107,20 +116,31 @@ const CreateDAOandNFT = () => {
       </div>
       <div className="mt-4">
         <h3 className="text-[28px] font-black mb-2">Create new NFT</h3>
-        <p className="text-[14px] text-[#5F6479] font-normal w-[450px]">
+        <p className="text-[14px] text-[#5F6479] font-normal w-[350px] md:w-[450px]">
           Sstart creating your NFT with many of choiche, you can create 3 type
           of NFT such like Membership,Pre-Product and Product.
         </p>
-        <div className="flex mt-6">
+        {Collections.length ? (
           <div
-            className="gradient-border cursor-pointer min-w-[276px] h-[276px] mr-6 flex flex-col items-center justify-center rounded-[12px]"
             onClick={() => setShowCreateNFT(true)}
+            className="w-fit mint-button mt-3 text-center flex font-satoshi-bold w-full md:w-fit"
           >
-            <img src={CirclePlus} alt="add" />
-            <p className="text-[18px] gradient-text font-black mt-3">
-              Create new
-            </p>
+            <img src={Plus} alt="create new" />
+            <span className="ml-2 text-[18px]"> Create New</span>
           </div>
+        ) : null}
+        <div className="flex mt-6">
+          {!Collections.length ? (
+            <div
+              className="gradient-border cursor-pointer min-w-[276px] h-[276px] mr-6 flex flex-col items-center justify-center rounded-[12px]"
+              onClick={() => setShowCreateNFT(true)}
+            >
+              <img src={CirclePlus} alt="add" />
+              <p className="text-[17px] gradient-text font-black mt-3">
+                Create new
+              </p>
+            </div>
+          ) : null}
           <Swiper
             breakpoints={settings}
             navigation={true}
