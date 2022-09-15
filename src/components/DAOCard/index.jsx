@@ -31,7 +31,7 @@ const DAOCard = ({ item }) => {
 
   return (
     <div
-      className="cursor-pointer  bg-white-shade-900 text-center w-[173px] md:w-[340px] md:h-[325px] rounded-[12px] mb-5 relative flex flex-col"
+      className="cursor-pointer  bg-white-shade-900 text-center w-[173px] md:w-[340px] h-[280px] md:h-[325px] rounded-[12px] mb-5 mx-2 relative flex flex-col shadow-main"
       onClick={() => gotToDetailPage(item.id)}
     >
       <img
@@ -41,7 +41,7 @@ const DAOCard = ({ item }) => {
             : defaultImage
         }
         alt={item.name}
-        className="rounded-t-xl h-36 object-cover w-full"
+        className="rounded-t-xl h-24 md:h-36 object-cover w-full"
       />
       <img
         src={
@@ -50,11 +50,11 @@ const DAOCard = ({ item }) => {
             : thumbIcon
         }
         alt={item.name}
-        className="rounded-full w-24 h-24 absolute top-20 left-1/2 z-10 -ml-12 "
+        className="rounded-full w-24 h-24 absolute top-10 md:top-20 left-1/2 z-10 -ml-12 "
       />
 
       <h3
-        className="mt-10  font-bold text-[16px] md:text-[24px] text-[#303548]"
+        className="mt-10 font-bold text-[15px] md:text-[24px] text-[#303548]"
         title={item.name}
       >
         {item.name
@@ -63,7 +63,7 @@ const DAOCard = ({ item }) => {
             : item.name
           : "No name"}
       </h3>
-      <p className="text-[13px] mt-3 text-[#7D849D]">
+      <p className="text-[13px] mt-0 md:mt-3 text-[#7D849D]">
         Value: {item.last_revenue} USD
       </p>
       <div className="flex mx-auto mt-3 mb-4 min-h-[40px]">

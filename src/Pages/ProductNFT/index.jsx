@@ -368,7 +368,7 @@ export default function ProductNFT(props) {
       {/* {isLoading && <div className="loading"></div>} */}
       <>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="max-w-[600px] mx-auto md:mt-[40px]">
+          <div className="max-w-[600px] mx-4 md:mx-auto md:mt-[40px]">
             <div className="mb-[24px]">
               <h1 className="text-[28px] font-black mb-[6px]">
                 Create Product NFT
@@ -378,7 +378,7 @@ export default function ProductNFT(props) {
               </p>
             </div>
             <div>
-              <div className="mb-6 rounded-[12px]  border border-divider  p-4">
+              <div className="bg-white mb-6 rounded-[12px]  border border-divider  p-4">
                 <div className="mb-6">
                   <label
                     className="block text-[16px] font-bold font-satoshi-bold"
