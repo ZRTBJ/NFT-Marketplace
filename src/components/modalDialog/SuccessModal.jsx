@@ -25,7 +25,7 @@ const SuccessModal = ({
     >
       <div className="text-center mt-2">
         <img className="block mx-auto" src={NewSuccess} alt="" />
-        <div className="mb-2 text-[28px] font-black txtblack w-[350px] mx-auto">
+        <div className="mb-2 text-[22px] md:text-[28px] font-black txtblack md:w-[350px] mx-auto">
           {bodyMsg}
         </div>
         <p className="text-[#7D849D] text-[16px] mb-2">{subMessage}</p>

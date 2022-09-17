@@ -25,41 +25,19 @@ const HomeNavigateCard = () => {
   }, []);
   return (
     <>
-      <article className=" rounded-xl bg-opacity-20 border gradient-border h-60 flex items-center justify-center p-4 flex-col">
+      <article className="mx-3 rounded-xl bg-opacity-20 border gradient-border md:h-60 flex items-center justify-center p-4 flex-col">
         <h1 className="gradient-text mb-3">Start Creating your Project</h1>
         <div className="mb-4 gradient-text text-center">
           <p>You can simply create DAO or NFT project</p>
           <p>by simply clicking button.</p>
         </div>
-        <a
+        <div
           onClick={() => navigate("create")}
-          className="inline-block contained-button px-4 py-3 text-white font-black text-sm  font-satoshi-bold rounded cursor-pointer"
+          className="inline-block cursor-pointer contained-button px-4 py-3 text-white font-black text-sm  font-satoshi-bold rounded cursor-pointer"
         >
           Create Project
-        </a>
-      </article>
-
-      {/* <article className="max-w-lg mx-auto">
-        <h1>Simply finf the project and start contributing</h1>
-        <p className="text-sm mt-4">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        </p>
-        <div className="flex justify-center mt-5">
-          <button
-            className="btn btn-primary btn-sm mr-5"
-            onClick={() => navigate("project-create")}
-          >
-            Create <span className="hidden md:inline">New</span> Project
-          </button>
-          <button
-            className="btn-outline-primary-gradient btn-sm"
-            onClick={() => navigate("undefined/mint-nft")}
-          >
-            <span>Mint NFT</span>
-          </button>
         </div>
-      </article> */}
+      </article>
 
       <WalletConnectModal
         showModal={showModal}

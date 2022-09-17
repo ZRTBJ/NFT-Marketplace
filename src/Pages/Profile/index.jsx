@@ -78,9 +78,7 @@ const Profile = () => {
     },
   ]);
   const [royaltyId, setRoyaltyId] = useState("");
-
   const [errorModal, setErrorModal] = useState(false);
-
   const [totalRoyality, setTotalRoyality] = useState(0);
   async function onRoyaltiesListSort(e) {
     setRoyaltiesListSortBy(e.target.value);
@@ -90,7 +88,7 @@ const Profile = () => {
   }
   // Royalties End
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [walletAddress, setWalletAddress] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const fileUploadNotification = useSelector((state) =>
@@ -187,11 +185,17 @@ const Profile = () => {
       page: projectListPageNumber,
       perPage: projectListLimit,
     };
-    await getUserProjectListById(payload).then((e) => {
-      if (e.data !== null) {
-        setProjectList(e.data);
-      }
-    });
+    await getUserProjectListById(payload)
+      .then((e) => {
+        if (e.data !== null) {
+          setProjectList(e.data);
+        } else {
+          setIsLoading(false);
+        }
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
   }
   async function calculateTotalRoyalties() {
     const sum = royaltiesList
@@ -208,11 +212,18 @@ const Profile = () => {
       page: 1,
       limit: 10,
     };
-    await getUserCollections(payload).then((e) => {
-      if (e.code === 0 && e.data !== null) {
-        setCollectionList(e.data);
-      }
-    });
+    await getUserCollections(payload)
+      .then((e) => {
+        if (e.code === 0 && e.data !== null) {
+          setCollectionList(e.data);
+          setIsLoading(false);
+        } else {
+          setIsLoading(false);
+        }
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
   }
   const truncateArray = (members) => {
     let slicedItems = members.slice(0, 3);
@@ -761,9 +772,9 @@ const Profile = () => {
       {showSuccessModal && (
         <SuccessModal
           show={showSuccessModal}
-          message="Successfully claimed Ro"
-          subMessage="Coming Soon"
-          buttonText="OK"
+          message="Successfully claimed royalty"
+          subMessage=""
+          buttonText="Close"
           redirection={`/profile/${id}`}
           showCloseIcon={true}
           handleClose={() => setShowSuccessModal(false)}

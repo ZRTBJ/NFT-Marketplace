@@ -78,7 +78,7 @@ const CreateDAOandNFT = () => {
         <h3 className="text-[28px] font-black mb-2">Create new DAO</h3>
         <p className="text-[14px] text-[#5F6479] font-normal w-[450px]">
           Create new DAO for making your project is really managed and secure in
-          web3 envoirment.
+          web3 environment.
         </p>
         <div className="flex mt-6">
           <Link to="/project-create">
@@ -108,8 +108,8 @@ const CreateDAOandNFT = () => {
       <div className="mt-4">
         <h3 className="text-[28px] font-black mb-2">Create new NFT</h3>
         <p className="text-[14px] text-[#5F6479] font-normal w-[450px]">
-          Sstart creating your NFT with many of choiche, you can create 3 type
-          of NFT such like Membership,Pre-Product and Product.
+          Start creating your NFT with many of choice, you can create 3 type of
+          NFT such like Membership,Pre-Product and Product.
         </p>
         <div className="flex mt-6">
           <div
