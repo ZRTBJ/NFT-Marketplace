@@ -17,6 +17,7 @@ import InviteModal from "components/modalDialog/InviteModal";
 import { getIdbyCode } from "services/nft/nftService";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import Sort from "assets/images/icons/sort.svg";
 
 function Home() {
   SwiperCore.use([Autoplay]);
@@ -39,6 +40,29 @@ function Home() {
     page: 1,
     limit: 10,
     keyword: "",
+  };
+
+  const settings = {
+    320: {
+      slidesPerView: 1,
+      spaceBetween: 15,
+    },
+    640: {
+      slidesPerView: 2,
+      spaceBetween: 15,
+    },
+    768: {
+      slidesPerView: 3,
+      spaceBetween: 15,
+    },
+    1024: {
+      slidesPerView: 4,
+      spaceBetween: 15,
+    },
+    1536: {
+      slidesPerView: 5,
+      spaceBetween: 15,
+    },
   };
 
   useEffect(() => {
@@ -137,7 +161,7 @@ function Home() {
   const isSearching = searchKeyword.length > 2;
 
   return (
-    <div className="text-txtblack">
+    <div className="text-txtblack mx-4 md:mx-0">
       <InviteModal
         show={ShowInviteModal}
         handleClose={() => setShowInviteModal(false)}
@@ -165,8 +189,9 @@ function Home() {
               id="default-search"
               style={{
                 paddingLeft: 40, // todo: use tailwind
+                border: "none",
               }}
-              className="text-lg shadow-main w-full rounded-lg placeholder-color-ass-4 h-[72px] text-[#000]"
+              className="text-lg shadow-main w-full rounded-lg placeholder-color-ass-4 h-[72px] text-[#000] pl-[40px]"
               placeholder="Search DAO by name..."
               onChange={searchProject}
               value={searchKeyword}
@@ -181,18 +206,19 @@ function Home() {
 
         <div className="dropdown relative">
           <button
-            className="bg-white dropdown-toggle p-4 text-textSubtle font-black font-satoshi-bold rounded-lg shadow-main flex items-center justify-between w-44 h-[72px]"
+            className="bg-white dropdown-toggle p-4 text-textSubtle font-black font-satoshi-bold rounded-lg shadow-main flex items-center justify-between w-15 md:w-44 h-[72px]"
             type="button"
             id="dropdownMenuButton1"
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
-            Sort Of
-            <i className="fa-solid fa-angle-down"></i>
+            <span className="hidden md:block"> Sort Of</span>
+            <i className="fa-solid fa-angle-down hidden md:block"></i>
+            <img src={Sort} alt="sort" className="block md:hidden" />
           </button>
 
           <ul
-            className="dropdown-menu w-full absolute hidden bg-white text-base z-50 py-2 list-none rounded-lg shadow-main  mt-1 "
+            className="dropdown-menu w-[150px] md:w-full absolute hidden bg-white text-base z-50 py-2 list-none rounded-lg shadow-main  mt-1 "
             aria-labelledby="dropdownMenuButton1"
           >
             <li onClick={() => handleSortType("newer")}>
@@ -237,10 +263,12 @@ function Home() {
             </p>
           </h4>
         ) : null}
-        <div className="p-5 text-center min-h-[100px] text-primary-700">
-          <h2>{isSearching && searchList.length === 0 && "Nothing found"}</h2>
-        </div>
-        <section className="grid md:grid-cols-2 xl:grid-cols-3 xl:gap-1">
+        {isSearching && searchList.length === 0 ? (
+          <div className="p-5 text-center min-h-[100px] text-primary-700">
+            <h2> Nothing found</h2>
+          </div>
+        ) : null}
+        <section className="flex flex-wrap items-center justify-center md:justify-start">
           {isSearching
             ? searchList.map((item, index) => (
                 <div key={item.id}>
@@ -296,66 +324,80 @@ function Home() {
       {/* End pagination */}
 
       <h2 className="mb-5">Best Collection</h2>
-      <section className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
+      <section className="mb-6">
         {/* Card */}
-        {collectionList &&
-          collectionList.length > 0 &&
-          collectionList.map((collection, index) => (
-            <div
-              className="min-h-[390px] rounded-x"
-              key={`best-collection-${index}`}
-            >
-              <Link
-                to={
-                  collection.type === "right_attach"
-                    ? `/royality-management/${collection.id}`
-                    : `/collection-details/${collection.id}`
-                }
-              >
-                <img
-                  className="rounded-xl h-[276px] object-cover w-full"
-                  src={
-                    collection && collection.assets && collection.assets[0]
-                      ? collection.assets[0].path
-                      : thumbIcon
-                  }
-                  alt=""
-                />
-              </Link>
+        <Swiper
+          breakpoints={settings}
+          navigation={true}
+          modules={[Navigation]}
+          className=""
+        >
+          <div>
+            {collectionList &&
+              collectionList.length > 0 &&
+              collectionList.map((collection, index) => (
+                <SwiperSlide key={index} className="">
+                  <div
+                    className="min-h-[390px] rounded-x"
+                    key={`best-collection-${index}`}
+                  >
+                    <Link
+                      to={
+                        collection.type === "right_attach"
+                          ? `/royality-management/${collection.id}`
+                          : `/collection-details/${collection.id}`
+                      }
+                    >
+                      <img
+                        className="rounded-xl h-[276px] object-cover w-full"
+                        src={
+                          collection &&
+                          collection.assets &&
+                          collection.assets[0]
+                            ? collection.assets[0].path
+                            : thumbIcon
+                        }
+                        alt=""
+                      />
+                    </Link>
 
-              <div className="p-5">
-                <h2 className="pb-2 text-txtblack truncate">
-                  {collection.name}
-                </h2>
-                <p className="mb-3 text-textSubtle text-[13px]">
-                  {collection.description && collection.description.length > 70
-                    ? collection.description.substring(0, 67) + "..."
-                    : collection.description}
-                </p>
-
-                <div className="flex items-center">
-                  {collection.members &&
-                    collection.members.length > 0 &&
-                    truncateArray(collection.members).slicedItems.map(
-                      (member) => (
-                        <img
-                          src={member.avatar}
-                          alt={member.id}
-                          className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
-                        />
-                      )
-                    )}
-                  {collection.members && collection.members.length > 3 && (
-                    <div className="flex items-center mt-[6px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]">
-                      <p className="text-[12px] text-[#9A5AFF]">
-                        +{truncateArray(collection.members).restSize}
+                    <div className="p-5">
+                      <h3 className="pb-2 text-txtblack truncate text-[18px] md:text-[24px]">
+                        {collection.name}
+                      </h3>
+                      <p className="mb-3 text-textSubtle text-[13px]">
+                        {collection.description &&
+                        collection.description.length > 70
+                          ? collection.description.substring(0, 67) + "..."
+                          : collection.description}
                       </p>
+
+                      <div className="flex items-center">
+                        {collection.members &&
+                          collection.members.length > 0 &&
+                          truncateArray(collection.members).slicedItems.map(
+                            (member) => (
+                              <img
+                                src={member.avatar}
+                                alt={member.id}
+                                className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
+                              />
+                            )
+                          )}
+                        {collection.members && collection.members.length > 3 && (
+                          <div className="flex items-center mt-[6px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]">
+                            <p className="text-[12px] text-[#9A5AFF]">
+                              +{truncateArray(collection.members).restSize}
+                            </p>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
+                  </div>
+                </SwiperSlide>
+              ))}
+          </div>
+        </Swiper>
       </section>
     </div>
   );

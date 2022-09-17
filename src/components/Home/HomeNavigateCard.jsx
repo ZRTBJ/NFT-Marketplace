@@ -25,7 +25,11 @@ const HomeNavigateCard = () => {
   }, []);
   return (
     <>
+<<<<<<< HEAD
       <article className="mx-3 rounded-xl bg-opacity-20 border gradient-border md:h-60 flex items-center justify-center p-4 flex-col">
+=======
+      <article className=" rounded-xl bg-opacity-20 border gradient-border flex items-center justify-center p-4 flex-col shadow-main">
+>>>>>>> 269ad0756a8a32da2b9999fca14e61ef6252423a
         <h1 className="gradient-text mb-3">Start Creating your Project</h1>
         <div className="mb-4 gradient-text text-center">
           <p>You can simply create DAO or NFT project</p>

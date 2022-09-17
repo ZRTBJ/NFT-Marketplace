@@ -40,9 +40,22 @@ const NFTCard = ({ item }) => {
         alt={item.name}
         className="w-[276px] h-[276px]"
       />
-      <div>
-        <h3 className="text-[24px] font-bold mt-4">{item.name}</h3>
-      </div>
+      <h3 className="text-[18px] md:text-[24px] font-bold">
+        {item.name
+          ? item?.name?.length > 20
+            ? item.name.substring(0, 17) + "..."
+            : item.name
+          : "No name"}
+      </h3>
+      {item.description ? (
+        <p>
+          {item.description
+            ? item?.description?.length > 40
+              ? item.description.substring(0, 35) + "..."
+              : item.description
+            : ""}
+        </p>
+      ) : null}
       <div className="flex mt-3 ml-3">
         {NFTs?.length
           ? truncateArray(NFTs).slicedItems.map((nft) => (

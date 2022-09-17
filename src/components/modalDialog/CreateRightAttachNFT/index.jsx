@@ -309,7 +309,7 @@ a Right Attached NFT!'
             uploadedPercent={uploadedPercent}
           />
         )}
-        <h3 className="text-[28px] font-black mb-5">
+        <h3 className="text-[20px] md:text-[28px] font-black mb-5">
           Upload Right attached NFT
         </h3>
         <FileUploader

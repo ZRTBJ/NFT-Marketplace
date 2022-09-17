@@ -11,7 +11,7 @@ const CreateNFTModal = ({ handleClose, show }) => {
   const history = useHistory();
   const [ShowCreateRANFT, setShowCreateRANFT] = useState(false);
   return (
-    <Modal show={show} handleClose={handleClose}>
+    <Modal show={show} handleClose={handleClose} width={680}>
       {ShowCreateRANFT && (
         <CreateRightAttachedNFT
           show={ShowCreateRANFT}
