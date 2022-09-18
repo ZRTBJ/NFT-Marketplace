@@ -9,6 +9,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import SwiperCore, { Autoplay } from "swiper";
+import { Swiper, SwiperSlide } from "swiper/react";
 import thumbIcon from "assets/images/profile/card.svg";
 import DAOCard from "components/DAOCard";
 import { getCollections } from "services/collection/collectionService";
@@ -18,7 +19,7 @@ import { getIdbyCode } from "services/nft/nftService";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Sort from "assets/images/icons/sort.svg";
-
+import { Navigation } from "swiper";
 function Home() {
   SwiperCore.use([Autoplay]);
   // const [categories, setCategories] = useState([]);

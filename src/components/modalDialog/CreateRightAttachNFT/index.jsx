@@ -319,7 +319,7 @@ a Right Attached NFT!'
           preview={AssetPreview}
         />
         {IsSubmitted && !Asset ? (
-          <p className="text-red-500 text-[12px] -mt-5">Asset is required</p>
+          <p className="text-red-500 text-[12px] ">Asset is required</p>
         ) : null}
         {/* {!StepReview && (
           <>
@@ -354,7 +354,7 @@ a Right Attached NFT!'
             Supply
           </label>
           {StepReview ? (
-            <p className="text-[12px] text-[#303548]">{Supply}</p>
+            <p className="text-[12px] mt-3 text-[#303548]">{Supply}</p>
           ) : (
             <input
               id={"ra-nft-supply"}
@@ -365,7 +365,7 @@ a Right Attached NFT!'
                   setSupply(e.target.value);
                 }
               }}
-              class="w-full bg-secondary rounded-[6px] text-[12px] px-[10px] py-[14px] text-text-base"
+              class="w-full mt-3 bg-secondary rounded-[6px] text-[12px] px-[10px] py-[14px] text-text-base"
             />
           )}
           {IsSubmitted && Supply < 1 ? (

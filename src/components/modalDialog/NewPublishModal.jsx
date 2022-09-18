@@ -11,9 +11,9 @@ const NewPublishModal = ({ handleClose, show, publish }) => {
     >
       <div className="flex items-center flex-col text-center">
         <img src={Publish} alt="Publish" />
-        <h3 className="text-[28px] font-black leading-9">
+        <div className="font-black text-[24px] md:text-[42px]">
           Once you publish you can’t add member or change the percentage!
-        </h3>
+        </div>
         <p className="text-[16px] text-[#7D849D]">
           Do you really want to publish?
         </p>

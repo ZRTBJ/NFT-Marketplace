@@ -18,14 +18,14 @@ const TransactionModal = ({
       handleClose={() => handleClose(false)}
       showCloseIcon={true}
     >
-      <div className=" mt-2">
-        <h2>Transaction</h2>
+      <div className="mt-2">
+        <div className="font-black text-[24px] md:text-[42px]">Transaction</div>
         <p className=" mt-3 text-textSubtle">
           You are about to purchase a{" "}
-          <span className="font-black">{nftName}</span> from{" "}
+          <span className="font-black">{nftName}</span> from
           <span className="font-black">{collectionName}</span>
         </p>
-        <div className="mt-6 mb-6 bg-primary-50 h-[83px] rounded-[12px] p-4 flex flex-wrap items-center">
+        <div className="mt-6 mb-6 bg-primary-50 md:h-[83px] rounded-[12px] p-4 flex flex-wrap items-center">
           <div className="flex items-center">
             <img src={polygon} alt="polygon" className="w-[46px] h-[46px]" />
             <div className="ml-3">
@@ -35,7 +35,7 @@ const TransactionModal = ({
               <p>{blockChain}</p>
             </div>
           </div>
-          <div className="font-bold  px-3 py-1 ml-auto rounded bg-success-900/[0.2] text-success-900">
+          <div className="font-bold mt-4 md:mt-0  px-3 py-1 ml-auto rounded bg-success-900/[0.2] text-success-900">
             Connected
           </div>
         </div>

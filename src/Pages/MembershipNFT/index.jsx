@@ -1034,10 +1034,11 @@ export default function MembershipNFT() {
             height={"auto"}
             width={"564"}
           >
-            <h2 className="mb-3">Add your Properties</h2>
-
-            <div className="w-10/12">
-              <p className="mb-4">
+            <div className="font-black text-[24px] md:text-[42px] mb-4">
+              Add your Properties
+            </div>
+            <div className="md:w-10/12">
+              <p className="mb-4 break-normal">
                 Add the properties, with value , you can add more than 5
                 properties
               </p>
@@ -1105,8 +1106,8 @@ export default function MembershipNFT() {
         <SuccessModal
           message="You successfully Create
                     a Membership NFT!"
-          subMessage="Do you want to create New NFT? if yes let’s go!"
-          buttonText="Done"
+          subMessage="Let's explore the NFT"
+          buttonText="View NFT"
           redirection={`/collection-details/${collection_id}`}
           handleClose={() => setShowSuccessModal(false)}
           show={showSuccessModal}
@@ -1119,10 +1120,14 @@ export default function MembershipNFT() {
           showCloseIcon={false}
           handleClose={() => setShowDataUploadingModal(false)}
         >
-          <div className="text-center my-6 mx-16">
-            <h1>Do not close the Tab</h1>
-            <h1>Your Assets is uploading</h1>
-            <div className="overflow-hidden rounded-full h-4 w-full mt-12 mb-8 relative animated fadeIn">
+          <div className="text-center md:my-6 md:mx-16">
+            <div className="font-black text-[24px] md:text-[42px]">
+              Do not close the Tab
+            </div>
+            <div className="font-black text-[24px] md:text-[42px]">
+              Your Assets is uploading
+            </div>
+            <div className="overflow-hidden rounded-full h-4 w-full mt-4 md:mt-12 mb-8 relative animated fadeIn">
               <div className="animated-process-bar"></div>
             </div>
           </div>

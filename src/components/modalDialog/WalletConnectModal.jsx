@@ -184,7 +184,7 @@ const WalletConnectModal = ({
           }`}
         >
           <h1 className="text-[30px] md:text-[46px]">Connect wallet</h1>
-          <p className="mt-3 text-white-shade-600 font-bold">
+          <p className="mt-3 text-white-shade-600 font-bold break-normal">
             Connect with one of our available wallet providers or create a new
             one.
           </p>

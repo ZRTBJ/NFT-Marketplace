@@ -18,7 +18,7 @@ const CreateNFTModal = ({ handleClose, show }) => {
           handleClose={() => setShowCreateRANFT(false)}
         />
       )}
-      <div className="min-w-[420px]">
+      <div className="md:px-10">
         <h3 className="text-[28px] text-black font-black mb-8">
           Create new NFT
         </h3>

@@ -5,7 +5,7 @@ const TransferNFT = ({ handleClose, show }) => {
     <Modal show={show} handleClose={handleClose} width={537}>
       <h3 className="text-[28px] text-black mb-6">Transfer NFT</h3>
       <label for="invite-address" className="text-[14px] text-black-shade-900">
-        Add reciever wallet
+        Add receiver wallet
       </label>
       <input
         id="reciever-address"
