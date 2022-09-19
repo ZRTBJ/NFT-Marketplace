@@ -1034,9 +1034,9 @@ export default function MembershipNFT() {
             height={"auto"}
             width={"564"}
           >
-            <div className="font-black text-[24px] md:text-[42px] mb-4">
+            <h1 className="font-black text-[24px] md:text-[42px] mb-4">
               Add your Properties
-            </div>
+            </h1>
             <div className="md:w-10/12">
               <p className="mb-4 break-normal">
                 Add the properties, with value , you can add more than 5
@@ -1121,12 +1121,8 @@ export default function MembershipNFT() {
           handleClose={() => setShowDataUploadingModal(false)}
         >
           <div className="text-center md:my-6 md:mx-16">
-            <div className="font-black text-[24px] md:text-[42px]">
-              Do not close the Tab
-            </div>
-            <div className="font-black text-[24px] md:text-[42px]">
-              Your Assets is uploading
-            </div>
+            <h1>Do not close the Tab</h1>
+            <h1>Your Assets is uploading</h1>
             <div className="overflow-hidden rounded-full h-4 w-full mt-4 md:mt-12 mb-8 relative animated fadeIn">
               <div className="animated-process-bar"></div>
             </div>
