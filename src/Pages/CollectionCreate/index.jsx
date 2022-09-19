@@ -532,7 +532,7 @@ export default function CollectionCreate() {
   return (
     <>
       {isDataLoading && <div className="loading"></div>}
-      <div className="txtblack max-w-[600px] mx-auto md:mt-[40px]">
+      <div className="txtblack max-w-[600px] pt-4 md:pt-0 mx-4 md:mx-auto md:mt-[40px]">
         {notOwner ? (
           <h3 className="text-center mt-6">
             You are not owner of this Collection <br />
@@ -671,7 +671,7 @@ export default function CollectionCreate() {
                 />
               )}
             </div>
-            <div className="mb-6">
+            <div className="py-4">
               <div className="flex">
                 <>
                   {currentStep.length > 1 && (
