@@ -417,7 +417,7 @@ export default function ProjectCreate() {
   return (
     <>
       {isDataLoading && <div className="loading"></div>}
-      <div className="txtblack max-w-[600px] mx-auto md:mt-[40px]">
+      <div className="txtblack max-w-[600px] mx-4 pt-4 md:pt-0 md:mx-auto md:mt-[40px]">
         {notOwner ? (
           <h3 className="text-center mt-6">
             You are not owner of this DAO <br />
@@ -523,7 +523,7 @@ export default function ProjectCreate() {
                 />
               )}
             </div>
-            <div className="mb-6">
+            <div className="py-4">
               <div className="flex">
                 <>
                   {currentStep.length > 1 && (

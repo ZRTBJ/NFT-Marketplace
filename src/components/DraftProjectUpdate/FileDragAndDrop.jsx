@@ -73,9 +73,7 @@ export default function FileDragAndDrop({
           ) : (
             <>
               <i className="fa-regular fa-image text-[25px] "></i>
-              <p className="text-[#646A80] text-[13px] font-bold ">
-                Add Image/Drag from
-              </p>
+              <p className="text-[#646A80]  font-bold ">Add Image/Drag from</p>
               <div className=" text-primary-900 text-[13px] font-bold">
                 Computer
               </div>
