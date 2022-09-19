@@ -24,9 +24,7 @@ const MintingNFT = ({
       <div>
         {step === 1 && (
           <div className="mx-4 md:mx-16 text-center">
-            <div className="text-[24px] font-black md:text-[42px] ">
-              Please wait we’re minting your NFT
-            </div>
+            <h1>Please wait we’re minting your NFT</h1>
             <div className="overflow-hidden rounded-full h-4 w-full mt-4 md:mt-12 mb-8 relative animated fadeIn">
               <div className="animated-process-bar"></div>
             </div>
@@ -54,9 +52,7 @@ const MintingNFT = ({
               alt=""
             />
             <div className="mx-4 text-center md:mx-16">
-              <div className="text-[24px] font-black md:text-[42px] ">
-                You have successfully Minted your NFT!
-              </div>
+              <h1>You have successfully Minted your NFT!</h1>
               <div className="flex justify-center mt-[30px]">
                 <button
                   className="ml-4 bg-primary-900/[0.20] text-primary-900 px-3 font-semibold rounded w-[110px] h-[38px]"
