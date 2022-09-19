@@ -183,10 +183,8 @@ const WalletConnectModal = ({
             isLoading ? "loading" : ""
           }`}
         >
-          <h1 className="mt-[10px] text-[30px] md:text-[46px]">
-            Connect wallet
-          </h1>
-          <p className="mt-3 text-white-shade-600 font-bold">
+          <h1 className="text-[30px] md:text-[46px]">Connect wallet</h1>
+          <p className="mt-3 text-white-shade-600 font-bold break-normal">
             Connect with one of our available wallet providers or create a new
             one.
           </p>
@@ -206,6 +204,7 @@ const WalletConnectModal = ({
                     href="https://www.decir.io/terms"
                     target="_blank"
                     className="text-primary-900"
+                    rel="noreferrer"
                   >
                     Terms Of services
                   </a>{" "}
@@ -214,6 +213,7 @@ const WalletConnectModal = ({
                     href="https://www.decir.io/conditions"
                     target="_blank"
                     className="text-primary-900"
+                    rel="noreferrer"
                   >
                     {" "}
                     Privacy Policy
@@ -242,15 +242,16 @@ const WalletConnectModal = ({
                   <div className="ml-[11px] font-satoshi-bold font-black">
                     {metamaskAccount ? (
                       <p>
-                        Login with Address: {metamaskAccount.substring(0, 5)}
-                        ...{" "}
+                        {/* Login with Address: {metamaskAccount.substring(0, 5)}
+                        ...{" "} */}
+                        MetaMask
                       </p>
                     ) : (
                       <span>MetaMask</span>
                     )}
                   </div>
                 </div>
-                <div className="ml-auto bg-primary-900 px-2 py-1 text-[10px] rounded-lg font-satoshi-bold font-black text-black">
+                <div className="ml-auto bg-primary-900 px-2 py-1 text-[10px] rounded-lg font-satoshi-bold font-black text-white">
                   Popular
                 </div>
               </div>
@@ -270,7 +271,8 @@ const WalletConnectModal = ({
                     <div className="torusButtonLabel">Torus</div>
                   ) : (
                     <div className="torusButtonLabel">
-                      Account : {torusAccountInfo.address.substring(0, 8)}
+                      Torus
+                      {/* Account : {torusAccountInfo.address.substring(0, 8)} */}
                     </div>
                   )}
                 </div>

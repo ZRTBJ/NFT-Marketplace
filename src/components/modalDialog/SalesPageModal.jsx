@@ -126,17 +126,19 @@ const SalesPageModal = ({
                     </>
                   </div>
                   <div className="mb-6 ">
-                    <div className="flex items-center mb-2">
+                    <div className=" mb-2">
                       <div className="txtblack text-[14px]">Sales Duration</div>
                     </div>
-                    <div className="field">
-                      <DateRangePicker
-                        placeholder="Select Date Range"
-                        value={date}
-                        onChange={setDate}
-                        format="yyyy-MM-dd HH:mm:ss"
-                      />
-                    </div>
+                    <DateRangePicker
+                      placeholder="Select Date Range"
+                      value={date}
+                      onChange={setDate}
+                      format="yyyy-MM-dd HH:mm:ss"
+                      preventOverflow={true}
+                      defaultOpen={false}
+                      placement="auto"
+                      showMeridian={true}
+                    />
                   </div>
                   <div className="mb-6 ">
                     <div className="flex items-center mb-2">

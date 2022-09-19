@@ -5,15 +5,12 @@ import {
   getProjectCategory,
 } from "services/project/projectService";
 import HomeNavigateCard from "components/Home/HomeNavigateCard";
-import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import SwiperCore, { Autoplay } from "swiper";
-import CommonCard from "components/CommonCard";
-import { Navigation } from "swiper";
+import { Swiper, SwiperSlide } from "swiper/react";
 import thumbIcon from "assets/images/profile/card.svg";
-import avatar from "assets/images/dummy-img.svg";
 import DAOCard from "components/DAOCard";
 import { getCollections } from "services/collection/collectionService";
 import { Link } from "react-router-dom";
@@ -22,7 +19,7 @@ import { getIdbyCode } from "services/nft/nftService";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Sort from "assets/images/icons/sort.svg";
-
+import { Navigation } from "swiper";
 function Home() {
   SwiperCore.use([Autoplay]);
   // const [categories, setCategories] = useState([]);
@@ -403,92 +400,6 @@ function Home() {
           </div>
         </Swiper>
       </section>
-      {/* ----- End Card Section ---- */}
-
-      {/* END New UI MVP-1.1 */}
-
-      {/* <div className="relative">
-        <h2 className="mb-5">Newest Project</h2>
-        {isLoading && <div className="onlySpinner mt-[150px]"></div>}
-        {!isLoading && (
-          <Swiper
-            breakpoints={{
-              320: {
-                slidesPerView: 2,
-                spaceBetween: 15,
-              },
-              640: {
-                slidesPerView: 2,
-                spaceBetween: 15,
-              },
-              768: {
-                slidesPerView: 3,
-                spaceBetween: 15,
-              },
-              1024: {
-                slidesPerView: 4,
-                spaceBetween: 15,
-              },
-              1536: {
-                slidesPerView: 5,
-                spaceBetween: 15,
-              },
-            }}
-            className="swipe-card"
-            navigation={true}
-            modules={[Navigation]}
-          >
-            <div>
-              {projectList.map((i, index) => (
-                <SwiperSlide key={index}>
-                  <CommonCard key={index} project={i} />
-                </SwiperSlide>
-              ))}
-            </div>
-          </Swiper>
-        )}
-      </div> */}
-
-      {/* {!isLoading && (
-        <section className="mt-16 pb-16 relative">
-          <h2 className="mb-5">Popular Project</h2>
-          <Swiper
-            breakpoints={{
-              320: {
-                slidesPerView: 2,
-                spaceBetween: 15,
-              },
-              640: {
-                slidesPerView: 2,
-                spaceBetween: 15,
-              },
-              768: {
-                slidesPerView: 3,
-                spaceBetween: 15,
-              },
-              1024: {
-                slidesPerView: 4,
-                spaceBetween: 15,
-              },
-              1536: {
-                slidesPerView: 5,
-                spaceBetween: 15,
-              },
-            }}
-            className="swipe-card"
-            navigation={true}
-            modules={[Navigation]}
-          >
-            <div>
-              {popularProjectList.map((i, index) => (
-                <SwiperSlide key={index}>
-                  <CommonCard key={index} project={i} />
-                </SwiperSlide>
-              ))}
-            </div>
-          </Swiper>
-        </section>
-      )} */}
     </div>
   );
 }

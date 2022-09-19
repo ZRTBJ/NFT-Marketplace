@@ -687,7 +687,7 @@ export default function ProjectDetails(props) {
                             </Link>
                             <div className="py-5">
                               <div className="flex">
-                                <h2 className="pb-2 text-txtblack truncate flex-1 mr-3 m-w-0">
+                                <h2 className="pb-2 text-txtblack break-all md:truncate flex-1 mr-3 m-w-0">
                                   {collection.name}
                                 </h2>
                                 <div className="relative">
@@ -833,7 +833,7 @@ export default function ProjectDetails(props) {
                           </Link>
                           <div className="py-5">
                             <div className="flex">
-                              <h2 className="pb-2 text-txtblack truncate flex-1 mr-3 m-w-0">
+                              <h2 className="pb-2 text-txtblack break-all md:truncate flex-1 mr-3 m-w-0">
                                 {collection.name}
                               </h2>
                               <div className="relative">
@@ -1016,7 +1016,7 @@ export default function ProjectDetails(props) {
                               </Link>
                               <div className="py-5">
                                 <div className="flex">
-                                  <h2 className="pb-2 text-txtblack truncate flex-1 mr-3 m-w-0">
+                                  <h2 className="pb-2 text-txtblack break-all md:truncate flex-1 mr-3 m-w-0">
                                     {collection.name}
                                   </h2>
                                   <div className="relative">

@@ -26,18 +26,20 @@ const PublishingRANFT = ({
     >
       <div>
         {step === 1 && (
-          <div className="mx-16">
-            <h1>Please wait we’re publishing. It may take a while.</h1>
+          <div className="mx-4 md:mx-16">
+            <div className="font-black md:leading-[62px] text-[24px] md:text-[42px]">
+              Please wait we’re publishing. It may take a while.
+            </div>
             {fileSize && uploadedPercent !== 100 ? (
-              <h3 className="text-center mt-6">
+              <div className="font-black text-[22px] md:text-[28px] md:leading-[42px] text-center mt-6">
                 {sizeUploaded}kb of {fileSize}kb | {uploadedPercent}%
-              </h3>
+              </div>
             ) : null}
             {uploadedPercent === 100 ? (
-              <h3 className="text-center mt-6">
+              <div className="font-black text-[22px] md:text-[28px] md:leading-[42px] text-center mt-6">
                 File uploaded successfully. We are creating the Right Attached
                 NFT now
-              </h3>
+              </div>
             ) : null}
             <div className="overflow-hidden rounded-full h-4 w-full mt-8 mb-8 relative animated fadeIn">
               <div className="animated-process-bar"></div>
@@ -61,16 +63,18 @@ const PublishingRANFT = ({
         {step === 2 && (
           <>
             <img
-              className="h-[200px] w-[300px] mx-auto"
+              className="h-[200px] md:w-[300px] mx-auto"
               src={deploySuccessSvg}
               alt=""
             />
-            <div className="mx-16">
-              <h1>You successfully Create a Right Attached NFT!</h1>
+            <div className="mx-4 text-center">
+              <div className="font-black text-[22px] md:text-[42px]">
+                You successfully Create a Right Attached NFT!
+              </div>
               <p>Do you want to create New NFT? if yes let’s go!</p>
               <div className="flex justify-center mt-[30px]">
                 <button
-                  className="ml-4 bg-primary-900/[0.20] text-primary-900 px-3 font-semibold rounded w-[110px] h-[38px]"
+                  className=" bg-primary-900/[0.20] text-primary-900 font-semibold rounded w-[110px] h-[38px]"
                   onClick={handleNavigation}
                 >
                   Done

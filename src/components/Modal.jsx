@@ -41,7 +41,7 @@ const Modal = ({
             onClick={handleClose}
           ></i>
         )}
-        <div className="">{children}</div>
+        <div className="mt-10">{children}</div>
       </section>
     </div>
   );

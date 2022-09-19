@@ -110,17 +110,7 @@ export default function Outline({
           {overview === "" ? (
             "No description"
           ) : (
-            <textarea
-              value={overview}
-              disabled={true}
-              className="mb-6 !border-none bg-transparent "
-              name="description"
-              id="description"
-              cols="30"
-              rows="8"
-              placeholder=""
-              maxLength={1000}
-            ></textarea>
+            <p className="mb-6 whitespace-pre-line">{overview}</p>
           )}
         </p>
       </div>
@@ -162,11 +152,11 @@ export default function Outline({
                   {photosUrl.map((image, index) => (
                     <div
                       key={`project-image-${index}`}
-                      className="relative upload-file w-[158px] h-[158px] mr-3  mb-2"
+                      className="relative upload-file w-full md:w-[158px] h-[158px] mr-3  mb-2"
                     >
                       <img
                         alt=""
-                        className="outlinePhoto block object-cover rounded-xl"
+                        className="w-full md:w-[158px] h-[158px] object-cover rounded-xl"
                         src={image.path}
                       />
                     </div>

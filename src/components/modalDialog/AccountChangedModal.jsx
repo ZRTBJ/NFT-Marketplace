@@ -13,15 +13,20 @@ const AccountChangedModal = ({ show, handleClose }) => {
     window.location.reload();
   }
   return (
-    <Modal show={show} handleClose={handleClose} showCloseIcon={false}>
+    <Modal
+      width={400}
+      show={show}
+      handleClose={handleClose}
+      showCloseIcon={false}
+    >
       <div className="text-center">
-        <h3>
+        <h1>
           Your Metamask account has got changed. So, please logout and connect
           again.
-        </h3>
+        </h1>
         <button
           onClick={handleLogout}
-          className="rounded-[4px] bg-primary-900 text-white py-1 px-3 mt-3"
+          className="rounded-[4px] bg-primary-900 text-white py-2 px-4 px-3 mt-6"
         >
           Logout
         </button>

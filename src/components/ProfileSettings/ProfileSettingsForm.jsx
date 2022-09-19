@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import FileDragAndDrop from "../DraftProjectUpdate/FileDragAndDrop";
-import data from "../../data/countries";
 import { updateUserInfo } from "../../services/User/userService";
 import { useAuthState } from "Context";
 import { useSelector } from "react-redux";
@@ -11,13 +10,10 @@ import { getUserInfo } from "../../services/User/userService";
 import deleteIcon from "assets/images/projectCreate/ico_delete01.svg";
 import SuccessModal from "../modalDialog/SuccessModal";
 import ErrorModal from "../modalDialog/ErrorModal";
-import { func } from "prop-types";
-import { useHistory } from "react-router-dom";
 
 const ProfileSettingsForm = () => {
   const dispatch = useDispatch();
   const context = useAuthState();
-  const history = useHistory();
   const [userId, setUserId] = useState(context ? context.user : "");
   const userinfo = useSelector((state) => state.user.userinfo);
   const [isLoading, setIsLoading] = useState(false);

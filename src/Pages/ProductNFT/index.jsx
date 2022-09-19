@@ -700,10 +700,9 @@ export default function ProductNFT(props) {
           height={"auto"}
           width={"564"}
         >
-          <h2 className="mb-3">Add your Properties</h2>
-
-          <div className="w-10/12">
-            <p className="mb-4">
+          <h1>Add your Properties</h1>
+          <div className="md:w-10/12">
+            <p className="mb-4 break-normal">
               Add the properties, with value , you can add more than 5
               properties
             </p>

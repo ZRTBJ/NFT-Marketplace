@@ -27,21 +27,23 @@ const NftSuccessModal = ({
       overflow="auto"
       height={750}
     >
-      <div className=" mt-2">
-        <h2>Congratulation!</h2>
+      <div>
+        <div className="font-black text-[24px] md:text-[42px]">
+          Congratulation!
+        </div>
         <p className="mb-4 mt-3 text-textSubtle">
-          You have successfully purchase the{" "}
+          You have successfully purchased the{" "}
           <span className="font-black">{nftName}</span> from{" "}
           <span className="font-black">{collectionName}</span>
         </p>
         <img
           src={assetUrl}
           alt="asset"
-          className=" h-[443px] w-[443px] rounded-[12px] object-cover"
+          className="h-[150px] mx-auto w-[320px] md:h-[443px]  md:w-[443px] rounded-[12px] object-cover"
         />
         <div className="text-center mt-4 mb-6">
           <p className="text-[18px] text-txtblack">
-            You successfully purchase{" "}
+            You successfully purchased{" "}
             <span className="font-black">{nftName}</span>
           </p>
         </div>
@@ -50,7 +52,7 @@ const NftSuccessModal = ({
             <p className="font-black text-[14px]">Status</p>
             <p className=" ml-auto text-[14px]">Mined</p>
           </div>
-          <div className="mt-4  flex flex-wrap items-center">
+          <div className="mt-4  md:flex flex-wrap items-center">
             <p className="font-black text-[14px]">Transaction Hash</p>
             <p className=" ml-auto text-[14px]">{transactionHash}</p>
           </div>

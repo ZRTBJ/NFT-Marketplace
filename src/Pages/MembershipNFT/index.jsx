@@ -573,7 +573,7 @@ export default function MembershipNFT() {
       {isDataLoading && <div className="loading"></div>}
       {!isDataLoading && (
         <>
-          <div className="max-w-[600px] mx-auto md:mt-[40px]">
+          <div className="max-w-[600px] md:mx-auto pt-6 md:pt-0 md:mt-[40px] mx-4  ">
             <div className="mb-[24px]">
               <h1 className="text-[28px] font-black mb-[6px]">
                 {isPreview ? "Review Membership NFT" : "Create Membership NFT"}
@@ -600,7 +600,7 @@ export default function MembershipNFT() {
                     </div>
                   )}
                   <div className="mb-6">
-                    <div className="txtblack text-[14px]">Tier Name</div>
+                    <p className="txtblack text-[14px]">Tier Name</p>
                     <>
                       <DebounceInput
                         minLength={1}
@@ -616,9 +616,7 @@ export default function MembershipNFT() {
                         placeholder="Tier name for the NFT"
                       />
                       {checkedValidation && nft.tierName === "" && (
-                        <div className="validationTag">
-                          Tier Name is required
-                        </div>
+                        <p className="validationTag">Tier Name is required</p>
                       )}
                     </>
                   </div>
@@ -765,7 +763,7 @@ export default function MembershipNFT() {
                     </>
                   </div> */}
                   <div className="mb-6">
-                    <div className="txtblack text-[14px]">External Links</div>
+                    <p className="txtblack text-[14px]">External Links</p>
                     <>
                       <DebounceInput
                         minLength={1}
@@ -787,7 +785,7 @@ export default function MembershipNFT() {
                     </>
                   </div>
                   <div className="mb-6">
-                    <div className="txtblack text-[14px]">Description</div>
+                    <p className="txtblack text-[14px]">Description</p>
                     <textarea
                       value={nft.description}
                       onChange={(e) =>
@@ -805,10 +803,10 @@ export default function MembershipNFT() {
                     ></textarea>
                   </div>
                   <div className="mb-6">
-                    <div className="txtblack text-[14px]">Benefit</div>
+                    <p className="txtblack text-[14px]">Benefit</p>
                     {nft.benefits.map((benefit, benefitIndex) => (
                       <div
-                        className="mb-6 flex items-center"
+                        className="md:mb-6 mb-3 flex items-center"
                         key={benefitIndex}
                       >
                         <DebounceInput
@@ -847,10 +845,10 @@ export default function MembershipNFT() {
                   </div>
 
                   <div className="mb-6">
-                    <div className="text-txtblack font-bold ">Properties</div>
-                    <div className="text-textSubtle text-[14px] mb-[16px]">
+                    <p className="text-txtblack font-bold ">Properties</p>
+                    <p className="text-textSubtle text-[14px] mb-[16px]">
                       Add the properties on your NFT.
-                    </div>
+                    </p>
                     <div className="flex py-3 border-b border-b-divider">
                       <i className="fa-regular fa-grip-lines"></i>
                       <div className="flex-1 px-3">
@@ -877,9 +875,9 @@ export default function MembershipNFT() {
                         </small>
                       </div>
                       {isPreview ? (
-                        <div className="text-[14px] text-textSubtle">
+                        <p className="text-[14px] text-textSubtle">
                           {nft.sensitiveContent.toString().toLocaleUpperCase()}
-                        </div>
+                        </p>
                       ) : (
                         <div className="flex flex-wrap items-center">
                           <label
@@ -933,12 +931,14 @@ export default function MembershipNFT() {
                                     disabled={true}
                                   />
 
-                                  <i
-                                    className="cursor-pointer fa-solid fa-trash text-danger-1/[0.7] ml-3"
-                                    onClick={() => {
-                                      removePropertyOfTier(nft, i);
-                                    }}
-                                  ></i>
+                                  {!isPreview && (
+                                    <i
+                                      className="cursor-pointer fa-solid fa-trash text-danger-1/[0.7] ml-3"
+                                      onClick={() => {
+                                        removePropertyOfTier(nft, i);
+                                      }}
+                                    ></i>
+                                  )}
                                 </div>
                               </div>
                             )}
@@ -950,7 +950,7 @@ export default function MembershipNFT() {
                   <div className="mb-6 ">
                     <div className="flex items-center mb-2">
                       <Tooltip></Tooltip>
-                      <div className="txtblack text-[14px]">Supply</div>
+                      <p className="txtblack text-[14px]">Supply</p>
                     </div>
                     <>
                       <DebounceInput
@@ -968,7 +968,7 @@ export default function MembershipNFT() {
                         placeholder="Supply for the NFT"
                       />
                       {checkedValidation && nft.supply === "" && (
-                        <div className="validationTag">Supply is required</div>
+                        <p className="validationTag">Supply is required</p>
                       )}
                     </>
                   </div>
@@ -994,7 +994,7 @@ export default function MembershipNFT() {
                 </div>
               ))}
             </div>
-            <div className="my-6 md:flex">
+            <div className="py-6 flex justify-center ">
               {isPreview ? (
                 <>
                   <button
@@ -1014,7 +1014,7 @@ export default function MembershipNFT() {
                 <>
                   <button
                     onClick={addMoreTier}
-                    className="h-[43px] mb-4 mr-4 px-6 py-2 bg-primary-900/[.20] font-black  rounded text-primary-900   "
+                    className="h-[43px] mb-4 mr-4 px-3  md:px-6 py-2 bg-primary-900/[.20] font-black  rounded text-primary-900   "
                   >
                     Add More Tier
                   </button>
@@ -1034,10 +1034,11 @@ export default function MembershipNFT() {
             height={"auto"}
             width={"564"}
           >
-            <h2 className="mb-3">Add your Properties</h2>
-
-            <div className="w-10/12">
-              <p className="mb-4">
+            <h1 className="font-black text-[24px] md:text-[42px] mb-4">
+              Add your Properties
+            </h1>
+            <div className="md:w-10/12">
+              <p className="mb-4 break-normal">
                 Add the properties, with value , you can add more than 5
                 properties
               </p>
@@ -1105,8 +1106,8 @@ export default function MembershipNFT() {
         <SuccessModal
           message="You successfully Create
                     a Membership NFT!"
-          subMessage="Do you want to create New NFT? if yes let’s go!"
-          buttonText="Done"
+          subMessage="Let's explore the NFT"
+          buttonText="View NFT"
           redirection={`/collection-details/${collection_id}`}
           handleClose={() => setShowSuccessModal(false)}
           show={showSuccessModal}
@@ -1119,10 +1120,10 @@ export default function MembershipNFT() {
           showCloseIcon={false}
           handleClose={() => setShowDataUploadingModal(false)}
         >
-          <div className="text-center my-6 mx-16">
+          <div className="text-center md:my-6 md:mx-16">
             <h1>Do not close the Tab</h1>
             <h1>Your Assets is uploading</h1>
-            <div className="overflow-hidden rounded-full h-4 w-full mt-12 mb-8 relative animated fadeIn">
+            <div className="overflow-hidden rounded-full h-4 w-full mt-4 md:mt-12 mb-8 relative animated fadeIn">
               <div className="animated-process-bar"></div>
             </div>
           </div>

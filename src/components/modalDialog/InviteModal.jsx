@@ -113,18 +113,18 @@ const InviteModal = ({
           collectionId={collectionId}
         />
       )}
-      <h3 className="text-[24px] font-bold">
+      <h3 className="text-[24px] font-bold ">
         You’ve been Invited to become contributor.
       </h3>
 
-      <p className="text-[#7D849D] text-[18px] mt-3">
+      <p className="text-[#7D849D] text-[18px] break-normal mt-3">
         You’ve been invited to become contributor at {collectionName}.
       </p>
 
       <img
         src={assetImage ? assetImage : InviteImage}
         alt="Invite box"
-        className="mt-6 w-[443px] h-[443px] rounded-[12px] mx-auto object-cover"
+        className="mt-6 w-[320] h-[150]  md:w-[443px] md:h-[443px] rounded-[12px] mx-auto object-cover"
       />
 
       <p className="text-[18px] text-center my-6">

@@ -11,12 +11,14 @@ const PublishModal = ({ handleClose, show, publishProject, type }) => {
     >
       <div className="text-center">
         <img
-          className="h-[200px] w-[300px] mx-auto"
+          className="h-[200px] md:w-[300px] mx-auto"
           src={publishModalSvg}
           alt=""
         />
-        <div className="mx-16">
-          <h1>You can’t Change some Field once you Publish this {type}</h1>
+        <div className="md:mx-16">
+          <div className="font-black text-[24px] md:text-[42px]">
+            You can’t Change some Field once you Publish this {type}
+          </div>
           <div className="text-[#9499AE] mt-[12px]">
             Do you want to publish anyway?
           </div>

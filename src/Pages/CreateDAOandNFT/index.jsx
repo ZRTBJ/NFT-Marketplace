@@ -77,15 +77,17 @@ const CreateDAOandNFT = () => {
       />
       <div className="border-[#C7CEE5] border-b-[1px] pb-3">
         <h3 className="text-[28px] font-black mb-2">Create new DAO</h3>
-        <p className="text-[14px] text-[#5F6479] font-normal w-[350px] md:w-[450px]">
+        <p className="text-[14px] text-[#5F6479] pr-6 md:pr-0 break-normal font-normal w-[350px] md:w-[450px]">
           Create new DAO for making your project is really managed and secure in
-          web3 envoirment.
+          web3 environment.
         </p>
         {DAOs.length ? (
-          <div className="w-fit flex mint-button mt-3 text-center font-satoshi-bold w-full md:w-fit">
-            <img src={Plus} alt="add" />
-            <span className="ml-2 text-[17px]"> Create New</span>
-          </div>
+          <Link to="/project-create">
+            <div className="w-fit flex mint-button mt-3 text-center font-satoshi-bold w-full md:w-fit">
+              <img src={Plus} alt="add" />
+              <span className="ml-2 text-[17px]"> Create New</span>
+            </div>
+          </Link>
         ) : null}
         <div className="flex mt-6">
           {!DAOs.length ? (
@@ -116,9 +118,9 @@ const CreateDAOandNFT = () => {
       </div>
       <div className="mt-4">
         <h3 className="text-[28px] font-black mb-2">Create new NFT</h3>
-        <p className="text-[14px] text-[#5F6479] font-normal w-[350px] md:w-[450px]">
-          Sstart creating your NFT with many of choiche, you can create 3 type
-          of NFT such like Membership,Pre-Product and Product.
+        <p className="text-[14px] text-[#5F6479] pr-6 md:pr-0 break-normal font-normal w-[350px] md:w-[450px]">
+          Start creating your NFT with many of choice, you can create 3 type of
+          NFT such like Membership,Pre-Product and Product.
         </p>
         {Collections.length ? (
           <div

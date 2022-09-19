@@ -192,11 +192,13 @@ const DeployingCollectiontModal = ({
       showCloseIcon={false}
       handleClose={() => handleClose(false)}
     >
-      <div className={`text-center my-6 ${isLoading ? "loading" : ""}`}>
+      <div className={`text-center md:my-6 ${isLoading ? "loading" : ""}`}>
         {step === 1 && (
-          <div className="mx-16">
-            <h1>Please wait we’re publishing your Collection</h1>
-            <div className="overflow-hidden rounded-full h-4 w-full mt-12 mb-8 relative animated fadeIn">
+          <div className="md:mx-16">
+            <div className="font-black text-[24px] md:text-[42px]">
+              Please wait we’re publishing your Collection
+            </div>
+            <div className="overflow-hidden rounded-full h-4 w-full mt-4  md:mt-12 mb-8 relative animated fadeIn">
               <div className="animated-process-bar"></div>
             </div>
             {/* {deployStatus.step === 1 && (
@@ -218,13 +220,15 @@ const DeployingCollectiontModal = ({
         {step === 2 && (
           <>
             <img
-              className="h-[200px] w-[300px] mx-auto"
+              className="h-[200px] md:w-[300px] mx-auto"
               src={deploySuccessSvg}
               alt=""
             />
-            <div className="mx-16">
-              <h1>You have successfully published your collection!</h1>
-              <div className="flex justify-center mt-[30px]">
+            <div className="md:mx-16">
+              <div className="font-black text-[24px] md:text-[42px]">
+                You have successfully published your collection!
+              </div>
+              <div className="flex justify-center mt-4 md:mt-[30px]">
                 <button
                   className="ml-4 bg-primary-900/[0.20] text-primary-900 px-3 font-semibold rounded w-[110px] h-[38px]"
                   onClick={() => handleClose(false)}

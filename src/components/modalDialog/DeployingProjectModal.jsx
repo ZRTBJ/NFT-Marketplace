@@ -274,18 +274,18 @@ const DeployingProjectModal = ({
       showCloseIcon={false}
       handleClose={() => handleClose(false)}
     >
-      <div className={`text-center my-6 ${isLoading ? "loading" : ""}`}>
+      <div className={`text-center md:my-6 ${isLoading ? "loading" : ""}`}>
         {step === 1 && (
-          <div className="mx-16">
+          <div className="md:mx-16">
             <h1>Please wait we’re publishing your DAO</h1>
             <div className="overflow-hidden rounded-full h-4 w-full mt-12 mb-8 relative animated fadeIn">
               <div className="animated-process-bar"></div>
             </div>
             {deployStatus.step === 1 && (
-              <div className="text-center">Deployment</div>
+              <p className="text-center">Deployment</p>
             )}
             {deployStatus.step === 2 && (
-              <div className="text-center">ProjectToken Deployment</div>
+              <p className="text-center">ProjectToken Deployment</p>
             )}
             <div className="flex justify-center mt-[30px]">
               <button
@@ -300,16 +300,16 @@ const DeployingProjectModal = ({
         {step === 2 && (
           <>
             <img
-              className="h-[200px] w-[300px] mx-auto"
+              className="h-[200px] md:w-[300px] mx-auto"
               src={deploySuccessSvg}
               alt=""
             />
-            <div className="mx-16">
+            <div className="md:mx-16">
               <h1>You finish publishing your DAO!</h1>
-              <div className="text-[#9499AE] mt-[12px]">
+              <p className="text-[#9499AE] mt-[12px]">
                 Now you can publish your collection!
-              </div>
-              <div className="flex justify-center mt-[30px]">
+              </p>
+              <div className="flex justify-center mt-4 md:mt-[30px]">
                 <button
                   className="btn contained-button btn-sm"
                   onClick={() => handleClose(false)}

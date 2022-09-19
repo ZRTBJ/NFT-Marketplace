@@ -294,26 +294,26 @@ export default function Outline({
           <div className="text-textSubtle text-[13px] mb-4">
             PNG, GIF, WEBP, MP4 or MP3. Max 100mb.
           </div>
-          <div className="md:flex flex-wrap mb-6">
-            <div className="w-[158px] mr-3 mb-2">
+          <div className="md:flex md:flex-wrap mb-6">
+            <div className="w-full md:w-[165px] mr-3 mb-2">
               <FileDragAndDrop
                 maxFiles={4}
                 height="158px"
-                width="158px"
+                width="100%"
                 onDrop={(e) => onPhotosSelect(e, photosUrl)}
                 sizePlaceholder="Total upto 16MB"
                 disabled={photosUrl.length > 3 ? true : false}
               />
             </div>
-            <div className="photoPreviewContainer flex flex-wrap">
+            <div className="photoPreviewContainer md:flex flex-wrap">
               {photosUrl.map((image, index) => (
                 <div
                   key={`project-image-${index}`}
-                  className="relative upload-file w-[158px] h-[158px] mr-3  mb-2"
+                  className="relative upload-file w-full md:w-[158px] h-[158px] mr-3  mb-2"
                 >
                   <img
                     alt=""
-                    className="outlinePhoto block object-cover rounded-xl"
+                    className="object-cover rounded-xl w-full md:w-[158px] h-[158px] "
                     src={image.path}
                   />
 
