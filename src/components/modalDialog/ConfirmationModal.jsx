@@ -2,7 +2,12 @@ import Modal from "../Modal";
 
 const ConfirmationModal = ({ show, handleClose, handleApply, message }) => {
   return (
-    <Modal show={show} handleClose={handleClose} showCloseIcon={false}>
+    <Modal
+      width={500}
+      show={show}
+      handleClose={handleClose}
+      showCloseIcon={false}
+    >
       <div>
         <p className="break-normal">{message}</p>
         <div className="flex items-center justify-end w-full mt-4">
