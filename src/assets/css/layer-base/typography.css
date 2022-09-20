@@ -5,11 +5,11 @@
   }
 
   h2 {
-    @apply font-satoshi-bold text-base md:text-[26px] font-bold;
+    @apply font-satoshi-bold text-base md:text-[26px] font-bold !important;
   }
 
   h3 {
-    @apply font-satoshi-bold text-sm md:text-lg font-black;
+    @apply font-satoshi-bold text-sm md:text-lg font-black !important;
   }
 
   h4 {
