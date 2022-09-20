@@ -23,6 +23,49 @@ import TransferNFT from "components/modalDialog/TransferNFT";
 import { getProjectDetailsById } from "services/project/projectService";
 import Eth from "assets/images/network/eth.svg";
 import Polygon from "assets/images/network/polygon.svg";
+import MemberListTable from "components/RoyalityManagement/MemberListTable/MemberListTable";
+import PlusIcon from "assets/images/icons/plus-circle.svg";
+import NFTSales from "components/RoyalityManagement/NFTSale/NFTSales";
+
+const TABLE_HEADERS = [
+  { id: 0, label: "Wallet Address" },
+  // { id: 2, label: "Email" },
+  { id: 1, label: "Percentage" },
+  { id: 2, label: "Name" },
+  // { id: 4, label: "Token ID" },
+  { id: 3, label: "Role" },
+  { id: 4, label: "Action" },
+];
+
+const SaleData = [
+  {
+    id: 0,
+    image: "",
+    name: "Membership 1",
+    price: 40,
+    qty: 4,
+    buyer: "Oxsfwrgrg",
+    data: "fdf",
+  },
+  {
+    id: 1,
+    image: "",
+    name: "Membership 1",
+    price: 40,
+    qty: 4,
+    buyer: "Oxsfwrgrg",
+    data: "fdf",
+  },
+];
+
+const members = [
+  {
+    id: 0,
+    eoa: "xd354fd67dfsd9f76dsf8",
+    display_name: "jan",
+    royalty_percent: 50,
+  },
+];
 
 const CollectionDetail = () => {
   const history = useHistory();
@@ -45,6 +88,9 @@ const CollectionDetail = () => {
   const [Logo, setLogo] = useState({});
   const [showTransferNFT, setShowTransferNFT] = useState(false);
   const [projectNetwork, setProjectNetwork] = useState("");
+  const [selectedTab, setSelectedTab] = useState(1);
+  const [isEdit, setIsEdit] = useState(null);
+  const [AutoAssign, setAutoAssign] = useState(false);
 
   useEffect(() => {
     if (collectionId) {
@@ -125,6 +171,22 @@ const CollectionDetail = () => {
     }
   };
 
+  const handleAutoAssign = (e) => {
+    // setAutoAssign(!AutoAssign);
+    // let memberCount = data.members.length;
+    // let value = 100 / memberCount;
+    // let values = {
+    //   ...data,
+    //   members: data.members.map((mem) => {
+    //     return {
+    //       ...mem,
+    //       royalty_percent: parseInt(value),
+    //     };
+    //   }),
+    // };
+    // setData(values);
+  };
+
   const handleEditNFT = (e, id) => {
     e.stopPropagation();
     e.preventDefault();
@@ -156,6 +218,10 @@ const CollectionDetail = () => {
       setShowDeployModal(true);
     }
   };
+
+  const handleAutoFill = () => {};
+
+  const handleValueChange = (e, id) => {};
 
   return (
     <div className="mx-4 md:mx-0">
@@ -444,42 +510,96 @@ const CollectionDetail = () => {
             <span> Mint NFT</span>
           </div>
         )}
-        <div className="flex flex-wrap mt-4 mb-[60px]">
-          {NFTs &&
-            NFTs.map((nft) => {
-              return (
-                <div
-                  key={nft?.id}
-                  className="min-h-auto md:min-h-[390px] rounded-xl mr-2 md:mr-4 mb-4 bg-white p-4"
+        <section>
+          <div className="mb-4">
+            <ul
+              className="flex flex-wrap -mb-px text-sm font-medium text-center"
+              id="myTab"
+              data-tabs-toggle="#myTabContent"
+              role="tablist"
+            >
+              <li
+                className="mr-2"
+                role="presentation"
+                onClick={() => setSelectedTab(1)}
+              >
+                <button
+                  className={`inline-block p-4 text-lg rounded-t-lg ${
+                    selectedTab === 1
+                      ? "border-b-2 border-primary-900 text-primary-900"
+                      : "border-transparent text-textSubtle"
+                  } hover:text-primary-600`}
+                  id="nft"
+                  data-tabs-target="#nft"
+                  type="button"
+                  role="tab"
+                  aria-controls="nft"
+                  aria-selected="true"
                 >
-                  <Link to={`/nft-details/${nft?.nft_type}/${nft.id}`}>
-                    <img
-                      className="rounded-xl h-[176px] md:h-[276px] w-[150px] md:w-[276px] object-contain"
-                      src={nft?.asset?.path}
-                      alt=""
-                    />
-                  </Link>
-                  <div className="py-2 md:py-5">
-                    <div className="flex w-[150px] md:w-[276px]">
-                      <h2 className="mb-2 text-txtblack truncate flex-1 mr-3 m-w-0 text-[24px]">
-                        {nft?.name}
-                      </h2>
-                      <div className="relative">
-                        {Collection?.type === "membership" && (
-                          <button
-                            type="button"
-                            className="w-[20px]"
-                            onClick={(e) => handleShowOptions(e, nft.id)}
-                          >
-                            <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
-                          </button>
-                        )}
+                  NFT
+                </button>
+              </li>
+              <li
+                className="mr-2"
+                role="presentation"
+                onClick={() => setSelectedTab(2)}
+              >
+                <button
+                  className={`inline-block p-4 text-lg rounded-t-lg ${
+                    selectedTab === 2
+                      ? "border-b-2 border-primary-900 text-primary-900"
+                      : "border-transparent text-textSubtle"
+                  } hover:text-primary-900`}
+                  id="dashboard"
+                  data-tabs-target="#dashboard"
+                  type="button"
+                  role="tab"
+                  aria-controls="dashboard"
+                  aria-selected="false"
+                >
+                  Dashboard
+                </button>
+              </li>
+            </ul>
+          </div>
+          <div id="myTabContent">
+            {selectedTab === 1 && (
+              <div className="flex flex-wrap mt-4 mb-[60px]">
+                {NFTs &&
+                  NFTs.map((nft) => {
+                    return (
+                      <div
+                        key={nft?.id}
+                        className="min-h-auto md:min-h-[390px] rounded-xl mr-2 md:mr-4 mb-4 bg-white p-4"
+                      >
+                        <Link to={`/nft-details/${nft?.nft_type}/${nft.id}`}>
+                          <img
+                            className="rounded-xl h-[176px] md:h-[276px] w-[150px] md:w-[276px] object-contain"
+                            src={nft?.asset?.path}
+                            alt=""
+                          />
+                        </Link>
+                        <div className="py-2 md:py-5">
+                          <div className="flex w-[150px] md:w-[276px]">
+                            <h2 className="mb-2 text-txtblack truncate flex-1 mr-3 m-w-0 text-[24px]">
+                              {nft?.name}
+                            </h2>
+                            <div className="relative">
+                              {Collection?.type === "membership" && (
+                                <button
+                                  type="button"
+                                  className="w-[20px]"
+                                  onClick={(e) => handleShowOptions(e, nft.id)}
+                                >
+                                  <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
+                                </button>
+                              )}
 
-                        {/* Dropdown menu  */}
-                        {ShowOptions === nft.id && (
-                          <div className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 mb-6 block">
-                            <ul className="text-sm">
-                              {/*Temporarily disable <li className="border-b border-divide">
+                              {/* Dropdown menu  */}
+                              {ShowOptions === nft.id && (
+                                <div className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 mb-6 block">
+                                  <ul className="text-sm">
+                                    {/*Temporarily disable <li className="border-b border-divide">
                                 <div
                                   onClick={(e) => handleEditNFT(e, nft.id)}
                                   className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
@@ -495,50 +615,118 @@ const CollectionDetail = () => {
                                   Update Metadata
                                 </div>
                               </li> */}
-                              <li className="border-b border-divide">
-                                <div
-                                  onClick={() => {
-                                    setShowTransferNFT(true);
-                                    setShowOptions(false);
-                                  }}
-                                  className="block p-4 hover:bg-gray-100 cursor-pointer"
-                                >
-                                  Transfer NFT
+                                    <li className="border-b border-divide">
+                                      <div
+                                        onClick={() => {
+                                          setShowTransferNFT(true);
+                                          setShowOptions(false);
+                                        }}
+                                        className="block p-4 hover:bg-gray-100 cursor-pointer"
+                                      >
+                                        Transfer NFT
+                                      </div>
+                                    </li>{" "}
+                                    {Collection?.type === "membership" && (
+                                      <li className="border-divide">
+                                        <div
+                                          onClick={(e) =>
+                                            salesPageModal(
+                                              e,
+                                              "membership",
+                                              nft.id
+                                            )
+                                          }
+                                          className="block p-4 hover:bg-gray-100 cursor-pointer"
+                                        >
+                                          Sales Settings
+                                        </div>
+                                      </li>
+                                    )}
+                                  </ul>
                                 </div>
-                              </li>{" "}
-                              {Collection?.type === "membership" && (
-                                <li className="border-divide">
-                                  <div
-                                    onClick={(e) =>
-                                      salesPageModal(e, "membership", nft.id)
-                                    }
-                                    className="block p-4 hover:bg-gray-100 cursor-pointer"
-                                  >
-                                    Sales Settings
-                                  </div>
-                                </li>
                               )}
-                            </ul>
+                            </div>
                           </div>
-                        )}
+                          <div className="flex  w-[150px] md:w-[276px]">
+                            <p className="text-[13px]">
+                              {nft?.price}{" "}
+                              {projectNetwork === "ethereum" ? "ETH" : "MATIC"}
+                            </p>
+                            <img
+                              className="ml-auto"
+                              src={
+                                projectNetwork === "ethereum" ? Eth : Polygon
+                              }
+                              alt={projectNetwork}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            )}
+            {selectedTab === 2 && (
+              <div className="mb-6">
+                <div className="bg-white rounded-[12px] p-5 shadow-main">
+                  <div className="flex items-start md:items-center justify-between pb-7 border-b-[1px] mb-6 border-[#E3DEEA]">
+                    <h3 className="text-[18px] font-black">Contributor</h3>
+                    {/* {ShowPercentError ? (
+                    <p className="text-red-400 text-[14px] mt-1">
+                      Total percent of members should equal to or lesser than
+                      100%
+                    </p>
+                  ) : null} */}
+                    {/* {CollectionDetail?.is_owner && data?.members?.length ? ( */}
+                    <div className="flex items-center justify-center flex-col md:flex-row">
+                      <div className="form-check form-switch flex items-center">
+                        <p className="text-[#303548] text-[12px] mr-3">
+                          Split Evenly
+                        </p>
+                        <input
+                          className="form-check-input appearance-none w-9 rounded-full h-5 align-top bg-white bg-no-repeat bg-contain bg-gray-300 focus:outline-none cursor-pointer shadow-sm"
+                          type="checkbox"
+                          checked={AutoAssign}
+                          role="switch"
+                          onChange={handleAutoAssign}
+                        />
+                      </div>
+                      <div className="mint-button mt-4 md:mt-0 ml-4 text-center font-satoshi-bold w-full text-[12px] md:w-fit flex">
+                        <img src={PlusIcon} alt="add" />
+                        <span className="ml-1">Import Contributor</span>
                       </div>
                     </div>
-                    <div className="flex  w-[150px] md:w-[276px]">
-                      <p className="text-[13px]">
-                        {nft?.price}{" "}
-                        {projectNetwork === "ethereum" ? "ETH" : "MATIC"}
-                      </p>
-                      <img
-                        className="ml-auto"
-                        src={projectNetwork === "ethereum" ? Eth : Polygon}
-                        alt={projectNetwork}
-                      />
-                    </div>
+                    {/* ) : null} */}
+                  </div>{" "}
+                  <MemberListTable
+                    list={members}
+                    headers={TABLE_HEADERS}
+                    // handlePublish={setShowPublish}
+                    setIsEdit={setIsEdit}
+                    isEdit={isEdit}
+                    handleValueChange={handleValueChange}
+                    handleAutoFill={handleAutoFill}
+                    isOwner={CollectionDetail?.is_owner}
+                  />
+                  {/* {CollectionDetail.is_owner &&
+                CollectionDetail.status !== "published" ? ( */}
+                  <div className="w-full">
+                    <button
+                      className="block ml-auto bg-primary-100 text-primary-900 p-3 font-black text-[14px]"
+                      // onClick={() => setShowPublish(true)}
+                    >
+                      Lock Percentage
+                    </button>
                   </div>
+                  {/* ) : null} */}
                 </div>
-              );
-            })}
-        </div>
+                <div className="bg-white rounded-[12px] p-5 mt-6 shadow-main">
+                  <NFTSales items={SaleData} />
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
       </section>
       {showSalesPageModal && (
         <SalesPageModal
