@@ -26,9 +26,17 @@ import SalesPageModal from "components/modalDialog/SalesPageModal";
 import TransferFundModal from "components/modalDialog/TransferFundModal";
 import { cryptoConvert } from "services/chainlinkService";
 import { getNotificationData } from "Slice/notificationSlice";
+import { Swiper, SwiperSlide } from "swiper/react";
+import SwiperCore, { Autoplay } from "swiper";
+import { Navigation } from "swiper";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
 export default function ProjectDetails(props) {
   const dispatch = useDispatch();
   const history = useHistory();
+  SwiperCore.use([Autoplay]);
+
   const [isLoading, setIsLoading] = useState(false);
   const [project, setProject] = useState({});
   const projectId = props.match.params.id;
@@ -222,6 +230,7 @@ export default function ProjectDetails(props) {
           const membershipcoll = e.data.filter(
             (col) => col.type === "membership"
           );
+
           if (membershipcoll) {
             setMembershipCollectionList(membershipcoll);
           }
@@ -345,8 +354,9 @@ export default function ProjectDetails(props) {
       )}
       {isLoading && <div className="loading"></div>}
       {!isLoading && (
-        <>
-          <section className="grid sm:grid-cols-5 gap-4 mt-6">
+        <div className="mx-4">
+          {/* dekstop gallery */}
+          <section className=" hidden md:grid md:grid-cols-5 gap-4 mt-6">
             <div className="row-span-2 col-span-2">
               <img
                 className="rounded-xl object-cover h-[260px] w-full"
@@ -369,11 +379,43 @@ export default function ProjectDetails(props) {
                 </>
               ))}
           </section>
+
+          {/* mobile gallery */}
+          <Swiper
+            navigation={false}
+            modules={[Navigation]}
+            className="md:hidden mt-4 mb-6"
+          >
+            <SwiperSlide className="!w-[212px] mx-2">
+              <img
+                className="rounded-xl object-cover h-[124px] w-full"
+                src={coverImages?.path ? coverImages.path : bigImg}
+                alt=""
+              />
+            </SwiperSlide>
+            {project?.assets?.length > 0 &&
+              project.assets.map((img, index) => (
+                <>
+                  {img["asset_purpose"] !== "cover" && (
+                    <div key={`dao-image-${index}`}>
+                      <SwiperSlide className="!w-[212px] mx-4">
+                        <img
+                          className="rounded-xl object-cover h-[124px] w-full"
+                          src={img ? img.path : manImg}
+                          alt=""
+                        />
+                      </SwiperSlide>
+                    </div>
+                  )}
+                </>
+              ))}
+          </Swiper>
+
           {/* end gallery */}
           {/* profile information section */}
-          <section className="bg-light3 rounded-b-xl mt-4 p-6">
-            <div className="flex flex-col md:flex-row">
-              <div className="md:w-2/3">
+          <div className="bg-white-shade-900 shadow-lg rounded-xl mt-4 py-6 px-4 md:p-6">
+            <div className="flex flex-col md:flex-row ">
+              <div className="md:w-2/3 ">
                 <div className="flex">
                   <img
                     src={coverImages?.path ? coverImages.path : bigImg}
@@ -384,7 +426,7 @@ export default function ProjectDetails(props) {
                     <h1 className="-mt-1 mb-1 md:mb-2 truncate">
                       {project.name}
                     </h1>
-                    <p className="text-textLight text-sm">
+                    <p className="text-textLight text-sm ">
                       {project?.contract_address
                         ? project.contract_address
                         : "Smart Contract not released"}
@@ -404,17 +446,22 @@ export default function ProjectDetails(props) {
                       </span>
                     </p>
                   </div>
+                  <div className="cursor-pointer w-8 h-10   text-white flex md:hidden justify-center items-start rounded-md ease-in-out duration-300 ">
+                    <Link to={`/project-create?id=${project?.id}`}>
+                      <i className="fa-solid fa-pen-to-square text-primary-900"></i>
+                    </Link>
+                  </div>
                 </div>
               </div>
 
               <div
-                className="flex flex-wrap mt-3 items-start md:justify-end md:w-1/3 md:mt-0"
+                className="flex flex-wrap mt-5 items-start md:justify-end md:w-1/3 md:mt-0"
                 role="group"
               >
                 {links.find((link) => link.title === "linkFacebook") &&
                   links.find((link) => link.title === "linkFacebook").value
                     ?.length > 0 && (
-                    <div className="social-icon-button cursor-pointer w-9 h-9 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
+                    <div className="social-icon-button cursor-pointer w-9 h-9 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 md:ml-4">
                       <a
                         href={`${
                           links.find((link) => link.title === "linkFacebook")
@@ -493,24 +540,24 @@ export default function ProjectDetails(props) {
                   )}
 
                 {project?.is_owner && (
-                  <div className="cursor-pointer w-8 h-10 mb-4  text-white flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
+                  <div className=" cursor-pointer w-8 h-10 mb-4  text-white hidden   md:flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                     <Link to={`/project-create?id=${project?.id}`}>
                       <i className="fa-solid fa-pen-to-square text-primary-900"></i>
                     </Link>
                   </div>
                 )}
                 {project?.project_status !== "published" && project?.is_owner && (
-                  <a
+                  <div
                     onClick={() => setShowPublishModal(true)}
-                    className="contained-button ml-4 font-satoshi-bold"
+                    className="cursor-pointer hidden md:flex contained-button mt-2 ml-auto md:mr-0 mr-4 md:ml-4 font-satoshi-bold"
                   >
                     Publish
-                  </a>
+                  </div>
                 )}
               </div>
             </div>
 
-            <div className="flex flex-col md:flex-row pt-5">
+            <div className="flex flex-col md:flex-row  md:pt-5">
               <div className="md:w-2/3">
                 <h3>About</h3>
                 {project.overview ? (
@@ -523,7 +570,7 @@ export default function ProjectDetails(props) {
                   </p>
                 )}
 
-                <div className="flex items-center mt-3">
+                <div className="flex items-center ml-2 md:ml-0 mt-3">
                   {project &&
                     project.members &&
                     project.members.length > 0 &&
@@ -547,17 +594,17 @@ export default function ProjectDetails(props) {
                 </div>
               </div>
 
-              <div className="flex items-center justify-center flex-wrap mt-3 md:justify-end md:w-1/3  md:mt-0">
+              <div className="md:flex md:items-center md:justify-center flex-wrap mt-3 md:justify-end md:w-1/3  md:mt-0">
                 {project?.is_owner && (
-                  <a
+                  <div
                     onClick={() => setShowTransferFundModal(true)}
-                    className="outlined-button ml-4 font-satoshi-bold cursor-pointer"
+                    className="hidden md:flex outlined-button ml-4 cursor-pointer font-satoshi-bold cursor-pointer"
                   >
                     <span className="gradient-text">Transfer Funds</span>
-                  </a>
+                  </div>
                 )}
 
-                <div className="bg-primary-900 ml-3 bg-opacity-10 rounded-md p-3 px-5 relative w-56">
+                <div className="bg-primary-900 md:mt-4 md:ml-3 bg-opacity-10 rounded-md p-3 px-5 relative md:w-56">
                   <i
                     onClick={() => {
                       getProjectBalance(projectId);
@@ -577,14 +624,34 @@ export default function ProjectDetails(props) {
                     )
                   </p>
                 </div>
+
+                <div className="md:hidden flex mt-4">
+                  {project?.is_owner && (
+                    <div
+                      onClick={() => setShowTransferFundModal(true)}
+                      className="outlined-button w-[120px] text-center !px-0  md:ml-4 cursor-pointer font-satoshi-bold cursor-pointer"
+                    >
+                      <span className="gradient-text">Transfer Funds</span>
+                    </div>
+                  )}
+                  {project?.project_status !== "published" &&
+                    project?.is_owner && (
+                      <div
+                        onClick={() => setShowPublishModal(true)}
+                        className=" cursor-pointer  w-[120px] contained-button text-center  ml-4  font-satoshi-bold"
+                      >
+                        Publish
+                      </div>
+                    )}
+                </div>
               </div>
             </div>
-          </section>
+          </div>
           {/* Tab Section */}
-          <section className="mb-10">
+          <section className="mb-10 mt-4">
             <div className="mb-4">
               <ul
-                className="flex flex-wrap -mb-px text-sm font-medium text-center"
+                className="flex flex-wrap  text-sm font-medium text-center"
                 id="myTab"
                 data-tabs-toggle="#myTabContent"
                 role="tablist"
@@ -595,7 +662,7 @@ export default function ProjectDetails(props) {
                   onClick={() => setSelectedTab(1)}
                 >
                   <button
-                    className={`inline-block p-4 text-lg rounded-t-lg ${
+                    className={`inline-block py-2 md:p-4 md:text-lg rounded-t-lg ${
                       selectedTab === 1
                         ? "border-b-2 border-primary-900 text-primary-900"
                         : "border-transparent text-textSubtle"
@@ -616,7 +683,7 @@ export default function ProjectDetails(props) {
                   onClick={() => setSelectedTab(2)}
                 >
                   <button
-                    className={`inline-block p-4 text-lg rounded-t-lg ${
+                    className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${
                       selectedTab === 2
                         ? "border-b-2 border-primary-900 text-primary-900"
                         : "border-transparent text-textSubtle"
@@ -632,12 +699,12 @@ export default function ProjectDetails(props) {
                   </button>
                 </li>
                 <li
-                  className="mr-2"
+                  className=""
                   role="presentation"
                   onClick={() => setSelectedTab(3)}
                 >
                   <button
-                    className={`inline-block p-4 text-lg rounded-t-lg ${
+                    className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${
                       selectedTab === 3
                         ? "border-b-2 border-primary-900 text-primary-900"
                         : "border-transparent text-textSubtle"
@@ -659,12 +726,27 @@ export default function ProjectDetails(props) {
               {/* TAB 1 */}
               {selectedTab === 1 && (
                 <section
-                  className="grid md:grid-cols-3 xl:grid-cols-4 gap-4 mb-6"
+                  className="flex flex-wrap  mb-6"
                   id="membership_nft"
                   role="tabpanel"
                   aria-labelledby="membership-nft-tab"
                 >
                   <>
+                    {project?.is_owner && (
+                      <div className="h-[156px] w-[140px] md:h-[276px]  md:w-[276px] mb-4 mx-2">
+                        <Link
+                          to={`/collection-create/?dao_id=${projectId}&type=membership`}
+                        >
+                          <div className="h-full rounded-xl gradient-border bg-opacity-20 flex flex-col items-center justify-center">
+                            <i className="fa-solid fa-circle-plus gradient-text text-2xl mb-2"></i>
+                            <p className="gradient-text text-lg font-black font-satoshi-bold">
+                              Create new
+                            </p>
+                          </div>
+                        </Link>
+                      </div>
+                    )}
+
                     {/* Card */}
 
                     {membershipCollectionList &&
@@ -675,12 +757,12 @@ export default function ProjectDetails(props) {
                         );
                         return (
                           <div
-                            className="min-h-[390px] rounded-x"
+                            className="md:min-h-[390px] mx-2 md:mr-4 w-[140px]  md:w-[276px]  rounded-x"
                             key={`nft-collection-membership-${index}`}
                           >
                             <Link to={`/collection-details/${collection?.id}`}>
                               <img
-                                className="rounded-xl h-[276px] object-cover w-full"
+                                className="rounded-xl h-[156px] w-[140px] md:h-[276px] md:w-[276px] object-cover "
                                 src={image?.path ? image.path : thumbIcon}
                                 alt=""
                               />
@@ -690,52 +772,6 @@ export default function ProjectDetails(props) {
                                 <h2 className="pb-2 text-txtblack break-all md:truncate flex-1 mr-3 m-w-0">
                                   {collection.name}
                                 </h2>
-                                <div className="relative">
-                                  {/*Hide dropdown menu <button
-                                type="button"
-                                onClick={() => {
-                                  const el = document.getElementById(
-                                    `membership-option-${index}`
-                                  );
-                                  el.classList.toggle("hidden");
-                                }}
-                              >
-                                {project?.is_owner && (
-                                  <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
-                                )}
-                              </button> */}
-                                  {/* Dropdown menu  */}
-                                  {project?.is_owner && (
-                                    <div
-                                      id={`membership-option-${index}`}
-                                      className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden"
-                                    >
-                                      <ul className="text-sm">
-                                        <li className="border-b border-divide vursor-pointer">
-                                          <a className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600">
-                                            Sales Page
-                                          </a>
-                                        </li>
-                                        <li className="border-b border-divide">
-                                          <Link
-                                            to={`/collection-create/?id=${collection?.id}`}
-                                            className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
-                                          >
-                                            Edit Collections
-                                          </Link>
-                                        </li>
-                                        <li className="border-b border-divide">
-                                          <a
-                                            href="#"
-                                            className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
-                                          >
-                                            Connect right-attach NFT
-                                          </a>
-                                        </li>
-                                      </ul>
-                                    </div>
-                                  )}
-                                </div>
                               </div>
                               <p className="mb-3 text-textSubtle text-[13px]">
                                 {collection.description &&
@@ -769,37 +805,10 @@ export default function ProjectDetails(props) {
                                     </div>
                                   )}
                               </div>
-                              {/* <div className="my-4">
-                            <a className="inline-block mr-3 bg-primary-900 p-3 text-white  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer hover:bg-opacity-60 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
-                              Review
-                            </a>
-                            {collection.status === 'draft' &&
-                              project?.is_owner && (
-                                <a className='inline-block bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>
-                                  Publish
-                                </a>
-                              )}
-                          </div> */}
                             </div>
                           </div>
                         );
                       })}
-                  </>
-                  <>
-                    {" "}
-                    {/* Create New */}
-                    {project?.is_owner && (
-                      <Link
-                        to={`/collection-create/?dao_id=${projectId}&type=membership`}
-                      >
-                        <div className="rounded-xl h-[276px] w-full gradient-border bg-opacity-20 flex flex-col items-center justify-center">
-                          <i className="fa-solid fa-circle-plus gradient-text text-2xl mb-2"></i>
-                          <p className="gradient-text text-lg font-black font-satoshi-bold">
-                            Create new
-                          </p>
-                        </div>
-                      </Link>
-                    )}
                   </>
                 </section>
               )}
@@ -807,11 +816,26 @@ export default function ProjectDetails(props) {
               {/* TAB 2 */}
               {selectedTab === 2 && (
                 <section
-                  className="grid md:grid-cols-3 xl:grid-cols-4 gap-4 mb-6"
+                  className="flex flex-wrap  mb-6"
                   id="product-nft"
                   role="tabpanel"
                   aria-labelledby="product-nft-tab"
                 >
+                  {/* Create New */}
+                  {project?.is_owner && (
+                    <div className="h-[156px] w-[140px] md:h-[276px]  md:w-[276px] mb-4 mx-2">
+                      <Link
+                        to={`/collection-create/?dao_id=${projectId}&type=product`}
+                      >
+                        <div className="h-full rounded-xl gradient-border bg-opacity-20 flex flex-col items-center justify-center">
+                          <i className="fa-solid fa-circle-plus gradient-text text-2xl mb-2"></i>
+                          <p className="gradient-text text-lg font-black font-satoshi-bold">
+                            Create new
+                          </p>
+                        </div>
+                      </Link>
+                    </div>
+                  )}
                   {/* Card */}
                   {productCollectionList &&
                     productCollectionList.length > 0 &&
@@ -821,12 +845,12 @@ export default function ProjectDetails(props) {
                       );
                       return (
                         <div
-                          className="min-h-[390px] rounded-x"
+                          className="md:min-h-[390px] mx-2 md:mr-4 w-[140px]  md:w-[276px]  rounded-x"
                           key={`nft-collection-membership-${index}`}
                         >
                           <Link to={`/collection-details/${collection?.id}`}>
                             <img
-                              className="rounded-xl h-[276px] object-cover w-full"
+                              className="rounded-xl h-[156px] w-[140px] md:h-[276px] md:w-[276px] object-cover "
                               src={image?.path ? image.path : thumbIcon}
                               alt=""
                             />
@@ -937,20 +961,6 @@ export default function ProjectDetails(props) {
                         </div>
                       );
                     })}
-
-                  {/* Create New */}
-                  {project?.is_owner && (
-                    <Link
-                      to={`/collection-create/?dao_id=${projectId}&type=product`}
-                    >
-                      <div className="rounded-xl h-[276px] w-full gradient-border flex flex-col items-center justify-center">
-                        <i className="fa-solid fa-circle-plus gradient-text text-2xl mb-2"></i>
-                        <p className="gradient-text text-lg font-black font-satoshi-bold">
-                          Create new
-                        </p>
-                      </div>
-                    </Link>
-                  )}
                 </section>
               )}
 
@@ -966,44 +976,55 @@ export default function ProjectDetails(props) {
                         role="tabpanel"
                         aria-labelledby="right-attached-tab"
                       >
-                        <article className=" rounded-xl bg-secondary-900 bg-opacity-20 border border-secondary-900 h-60 flex items-center justify-center p-4 flex-col">
-                          <h2 className="text-textBlack mb-3">
+                        <article className=" rounded-xl  gradient-border h-60 flex items-center justify-center p-4 flex-col">
+                          <h1 className="gradient-text  mb-3">
                             Enable Right Attached NFT
-                          </h2>
-                          <p className="mb-4">
+                          </h1>
+                          <p className="mb-4 gradient-text">
                             Create your Right attached NFT and share the royalty
                             fairly with your teams,
                           </p>
-                          <a
-                            className="inline-block bg-secondary-900 px-4 py-3 text-white font-black text-sm  font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+                          <div
+                            className="inline-block contained-button px-4 py-3  font-black text-sm  font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out cursor-pointer"
                             onClick={() => setShowCreateRANFT(true)}
                           >
                             Enable Now
-                          </a>
+                          </div>
                         </article>
                       </section>
                     )}
                   {rightAttachCollectionList &&
                     rightAttachCollectionList.length > 0 && (
                       <section
-                        className="grid md:grid-cols-3 xl:grid-cols-4 gap-4 mb-6"
+                        className="flex flex-wrap mb-6"
                         id="right-attached"
                         role="tabpanel"
                         aria-labelledby="right-attached-tab"
                       >
+                        {project?.is_owner && (
+                          <div
+                            className="h-[156px] w-[140px] md:h-[276px]  md:w-[276px] rounded-xl  gradient-border bg-opacity-20 flex flex-col items-center justify-center cursor-pointer"
+                            onClick={() => setShowCreateRANFT(true)}
+                          >
+                            <i className="fa-solid fa-circle-plus gradient-text text-2xl mb-2"></i>
+                            <p className="gradient-text text-lg font-black font-satoshi-bold">
+                              Create new
+                            </p>
+                          </div>
+                        )}
                         {/* Card */}
                         {rightAttachCollectionList &&
                           rightAttachCollectionList.length > 0 &&
                           rightAttachCollectionList.map((collection, index) => (
                             <div
-                              className="min-h-[390px] rounded-x"
+                              className="md:min-h-[390px] mx-2 md:mr-4 w-[140px]  md:w-[276px]  rounded-x"
                               key={`nft-collection-membership-${index}`}
                             >
                               <Link
                                 to={`/royality-management/${collection.id}`}
                               >
                                 <img
-                                  className="rounded-xl h-[276px] object-cover w-full"
+                                  className="rounded-xl h-[156px] w-[140px] md:h-[276px] md:w-[276px] object-cover "
                                   src={
                                     collection &&
                                     collection.assets &&
@@ -1102,17 +1123,6 @@ export default function ProjectDetails(props) {
                             </div>
                           ))}
                         {/* Create New */}
-                        {project?.is_owner && (
-                          <div
-                            className="rounded-xl h-[276px] w-full gradient-border bg-opacity-20 flex flex-col items-center justify-center cursor-pointer"
-                            onClick={() => setShowCreateRANFT(true)}
-                          >
-                            <i className="fa-solid fa-circle-plus gradient-text text-2xl mb-2"></i>
-                            <p className="gradient-text text-lg font-black font-satoshi-bold">
-                              Create new
-                            </p>
-                          </div>
-                        )}
                       </section>
                     )}
                 </>
@@ -1228,7 +1238,7 @@ export default function ProjectDetails(props) {
               show={showFundTransferError}
             />
           )}
-        </>
+        </div>
       )}
     </>
   );
