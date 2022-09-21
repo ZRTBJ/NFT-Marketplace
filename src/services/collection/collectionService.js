@@ -95,3 +95,12 @@ export async function connectCollection(ranknftid, collectionId) {
 export async function publishCollection(id) {
   return await client("PUT", `/collection/${id}/publish`, "formdata");
 }
+
+//Royality Splitters
+export async function getSplitterDetails(id) {
+  return await client("GET", `/royalty?splitter_id=${id}`);
+}
+
+export async function updateRoyaltySplitter(payload) {
+  return await client("PUT", `/royalty`, payload, "formdata");
+}

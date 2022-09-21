@@ -6,6 +6,7 @@ import Right from "assets/images/icons/chevron-right.svg";
 import { useState, useEffect } from "react";
 import { set } from "date-fns";
 import MemeberListMobile from "../MemberListMobile/MemberListMobile";
+import ConfirmationModal from "components/modalDialog/ConfirmationModal";
 
 const MemberListTable = ({
   headers,
@@ -15,37 +16,91 @@ const MemberListTable = ({
   handleValueChange,
   handleAutoFill,
   isOwner,
+  setRoyalityMembers,
+  showRoyalityErrorModal,
 }) => {
-  const [items, setItems] = useState([]);
-  const [newItems, setNewItems] = useState([]);
+  const [newItems, setNewItems] = useState(null);
   const [address, setAddress] = useState("");
   const [percentage, setPercentage] = useState();
+  const [toDelete, setToDelete] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [isAdded, setIsAdded] = useState(false);
 
   useEffect(() => {
-    setItems(list);
-  }, []);
+    if (newItems) {
+      if (address && percentage && !isEdit) {
+        handleAutoFill();
+        setNewItems([]);
+        setAddress("");
+        setPercentage("");
+        setIsAdded(false);
+      }
+    }
+  }, [list]);
+
+  useEffect(() => {
+    if (showRoyalityErrorModal) {
+      setNewItems(null);
+      let values = list.slice(0, list.length - 1);
+      setRoyalityMembers(values);
+      setAddress("");
+      setPercentage("");
+      setIsAdded(false);
+    }
+  }, [showRoyalityErrorModal]);
+
+  useEffect(() => {
+    let percent = list.reduce((acc, val) => acc + val.royalty_percent, 0);
+    let total = percent + parseInt(percentage ? percentage : 0);
+
+    if (total > 100) {
+      setShowError(true);
+    } else {
+      setShowError(false);
+    }
+  }, [percentage]);
 
   const addNewContributorField = () => {
     let value = { eoa: "", royalty_percent: 0, type: "new" };
-    setNewItems([...newItems, value]);
+    setNewItems(value);
   };
 
-  const addNewContributorData = (data) => {
-    let value = { eoa: address, royalty_percent: percentage, type: "new" };
-    setItems([...items, value]);
-    setNewItems([]);
-    setAddress("");
-    setPercentage("");
+  const addNewContributorData = () => {
+    setIsAdded(true);
+    if (address && percentage) {
+      let value = { user_eoa: address, royalty_percent: parseInt(percentage) };
+      setRoyalityMembers([...list, value]);
+    }
   };
 
   const removeContributorField = () => {
-    setNewItems([]);
+    setNewItems(null);
     setAddress("");
     setPercentage("");
+    setIsAdded(false);
+  };
+
+  const handleDeleteContributor = (id) => {
+    let values = list.filter((item) => item.user_eoa !== id);
+    setRoyalityMembers(values);
+    setToDelete(true);
+  };
+
+  const deleteContributor = () => {
+    handleAutoFill();
+    setToDelete(false);
   };
 
   return (
     <>
+      {toDelete && (
+        <ConfirmationModal
+          show={toDelete}
+          handleClose={setToDelete}
+          handleApply={deleteContributor}
+          message="Are you you want to delete this contributor?"
+        />
+      )}
       <div className="overflow-x-auto relative hidden md:block">
         <table className="w-full text-left">
           <thead>
@@ -62,23 +117,23 @@ const MemberListTable = ({
             </tr>
           </thead>
           <tbody>
-            {items.map((r, index) => (
+            {list.map((r, index) => (
               <tr
                 key={r.id}
                 className={`${
                   index < list.length - 1 ? "border-b" : ""
                 } text-left text-[13px]`}
               >
-                <td className="py-4 px-5">{r.eoa}</td>
+                <td className="py-4 px-5 w-fit">{r.user_eoa}</td>
                 {/* <td className="py-4 px-5">{r.email}</td> */}
                 <td className={`py-4 px-5 flex items-center`}>
-                  {isEdit === r.id && isOwner ? (
+                  {isEdit === r.user_eoa && isOwner ? (
                     <div className="w-[75px] mr-2">
                       <input
                         type="number"
                         value={r.royalty_percent}
                         style={{ padding: "5px 10px" }}
-                        onChange={(e) => handleValueChange(e, r.id)}
+                        onChange={(e) => handleValueChange(e, r.user_eoa)}
                       />
                     </div>
                   ) : (
@@ -88,7 +143,7 @@ const MemberListTable = ({
                   )}
                   {isOwner && (
                     <>
-                      {isEdit === r.id ? (
+                      {isEdit === r.user_eoa ? (
                         <div>
                           <i
                             class="fa-solid fa-check bg-green-400 rounded-[4px] text-white flex items-center justify-center h-[24px] w-[24px] text-[20px] cursor-pointer"
@@ -104,14 +159,13 @@ const MemberListTable = ({
                           src={Edit}
                           alt="edit"
                           className="cursor-pointer"
-                          onClick={() => setIsEdit(r.id)}
+                          onClick={() => setIsEdit(r.user_eoa)}
                         />
                       )}
                     </>
                   )}
                 </td>
-                <td className="py-4 px-5">{r.display_name}</td>
-                {/* <td className={`py-4 px-5`}>{r.token_id ? r.token_id : "-"}</td> */}
+                <td className="py-4 px-5">{r.user_name ? r.user_name : "-"}</td>
                 <td className={`py-4 px-5`}>
                   <p
                     className={`text-[13px] bg-opacity-[0.2] py-1 px-2 w-fit rounded-[4px] font-bold ${
@@ -124,9 +178,14 @@ const MemberListTable = ({
                   </p>
                 </td>
                 <td className="py-4 px-5">
-                  <div className="w-[32px] h-[32px] bg-[#FF3C3C] rounded-[4px] flex items-center justify-center cursor-pointer">
-                    <img src={Trash} alt="delete" />
-                  </div>
+                  {r.is_owner ? null : (
+                    <div
+                      className="w-[32px] h-[32px] bg-[#FF3C3C] rounded-[4px] flex items-center justify-center cursor-pointer"
+                      onClick={() => handleDeleteContributor(r.user_eoa)}
+                    >
+                      <img src={Trash} alt="delete" />
+                    </div>
+                  )}
                 </td>
               </tr>
             ))}
@@ -147,17 +206,17 @@ const MemberListTable = ({
       </div>
       <div className="block md:hidden">
         <MemeberListMobile
-          list={items}
+          list={list}
           // handlePublish={setShowPublish}
           setIsEdit={setIsEdit}
           isEdit={isEdit}
           handleValueChange={handleValueChange}
           handleAutoFill={handleAutoFill}
-          // isOwner={CollectionDetail?.is_owner}
+          isOwner={isOwner}
         />
       </div>
       <div className="mb-4">
-        {newItems.length ? (
+        {newItems ? (
           <div className="flex items-center ml-0 md:ml-4">
             <div class="w-[250px] mr-8">
               <input
@@ -183,6 +242,7 @@ const MemberListTable = ({
             <button
               className="outlined-button font-satoshi-bold"
               onClick={addNewContributorData}
+              disabled={showError}
             >
               <span>Add</span>
             </button>
@@ -192,13 +252,26 @@ const MemberListTable = ({
             ></i>
           </div>
         ) : null}
+        {(isAdded && !percentage) || (isAdded && !address) ? (
+          <p className="text-red-400 text-[14px] mt-1 ml-4">
+            Wallet Address or ENS and Percentage are required
+          </p>
+        ) : null}
+        {showError ? (
+          <p className="text-red-400 text-[14px] mt-1 ml-4">
+            {" "}
+            Total percent of contributors should equal to or lesser than 100%.
+          </p>
+        ) : null}
       </div>
-      <button
-        className="outlined-button font-satoshi-bold ml-0 md:ml-4"
-        onClick={addNewContributorField}
-      >
-        <span>Add More</span>
-      </button>
+      {!newItems ? (
+        <button
+          className="outlined-button font-satoshi-bold ml-0 md:ml-4"
+          onClick={addNewContributorField}
+        >
+          <span>Add More</span>
+        </button>
+      ) : null}
     </>
   );
 };

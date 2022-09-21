@@ -1,6 +1,7 @@
 import React from "react";
 import { useState, useCallback, useEffect } from "react";
 import "assets/css/CreateProject/mainView.css";
+import { useSelector } from "react-redux";
 import {
   checkUniqueCollectionName,
   checkUniqueCollectionSymbol,
@@ -13,6 +14,7 @@ import {
   updateCollection,
   getCollectionDetailsById,
   deleteAssetsOfCollection,
+  updateRoyaltySplitter,
 } from "services/collection/collectionService";
 import ErrorModal from "components/modalDialog/ErrorModal";
 import SuccessModal from "components/modalDialog/SuccessModal";
@@ -23,6 +25,7 @@ export default function CollectionCreate() {
   // logo start
   const [logoPhoto, setLogoPhoto] = useState([]);
   const [logoPhotoUrl, setLogoPhotoUrl] = useState("");
+  const userinfo = useSelector((state) => state.user.userinfo);
   const onLogoPhotoSelect = useCallback((acceptedFiles) => {
     if (acceptedFiles.length === 1) {
       setLogoPhoto(acceptedFiles);
@@ -307,7 +310,6 @@ export default function CollectionCreate() {
         alreadyTakenDaoSymbol === false &&
         isRoyaltyPercentageValid
       ) {
-        console.log("dfg");
         let id = "";
         if (!projectCreated) {
           await createBlock(id);
@@ -329,6 +331,11 @@ export default function CollectionCreate() {
       .then((res) => {
         if (res.code === 0) {
           projectId = res.collection.id;
+          let members = [{ wallet_address: userinfo?.eoa, royalty: 100 }];
+          let formData = new FormData();
+          formData.append("royalty_data", JSON.stringify(members));
+          formData.append("collection_uid", projectId);
+          updateRoyaltySplitter(formData);
           setProjectCreated(true);
           setProjectId(projectId);
         } else if (res.code === 5001) {

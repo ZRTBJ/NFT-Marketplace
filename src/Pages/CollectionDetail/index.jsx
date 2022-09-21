@@ -3,6 +3,8 @@ import { useHistory, useParams } from "react-router-dom";
 import {
   getCollectionNFTs,
   getCollectionDetailsById,
+  getSplitterDetails,
+  updateRoyaltySplitter,
 } from "services/collection/collectionService";
 import Cover from "assets/images/cover-default.svg";
 import manImg from "assets/images/image-default.svg";
@@ -26,6 +28,7 @@ import Polygon from "assets/images/network/polygon.svg";
 import MemberListTable from "components/RoyalityManagement/MemberListTable/MemberListTable";
 import PlusIcon from "assets/images/icons/plus-circle.svg";
 import NFTSales from "components/RoyalityManagement/NFTSale/NFTSales";
+import ConfirmationModal from "components/modalDialog/ConfirmationModal";
 
 const TABLE_HEADERS = [
   { id: 0, label: "Wallet Address" },
@@ -58,15 +61,6 @@ const SaleData = [
   },
 ];
 
-const members = [
-  {
-    id: 0,
-    eoa: "xd354fd67dfsd9f76dsf8",
-    display_name: "jan",
-    royalty_percent: 50,
-  },
-];
-
 const CollectionDetail = () => {
   const history = useHistory();
   const [Collection, setCollection] = useState();
@@ -91,6 +85,14 @@ const CollectionDetail = () => {
   const [selectedTab, setSelectedTab] = useState(1);
   const [isEdit, setIsEdit] = useState(null);
   const [AutoAssign, setAutoAssign] = useState(false);
+  const [royalitySplitterId, setRoyalitySpliterId] = useState("");
+  const [royalityMembers, setRoyalityMembers] = useState([]);
+  const [IsAutoFillLoading, setIsAutoFillLoading] = useState(false);
+  const [RoyaltyUpdatedSuccessfully, setRoyaltyUpdatedSuccessfully] =
+    useState(false);
+  const [ShowPercentError, setShowPercentError] = useState(false);
+  const [showRoyalityErrorModal, setShowRoyalityErrorModal] = useState(false);
+  const [showRoyalityErrorMessage, setShowRoyalityErrorMessage] = useState("");
 
   useEffect(() => {
     if (collectionId) {
@@ -119,7 +121,16 @@ const CollectionDetail = () => {
           getProjectDetailsById({ id: resp?.collection?.project_uid }).then(
             (resp) => setProjectNetwork(resp?.project?.blockchain)
           );
-          console.log(resp);
+          if (resp?.collection?.royalty_splitter?.id) {
+            setRoyalitySpliterId(resp.collection.royalty_splitter.id);
+            getSplitterDetails(resp.collection.royalty_splitter.id).then(
+              (data) => {
+                if (data.code === 0) {
+                  setRoyalityMembers(data?.members);
+                }
+              }
+            );
+          }
           setCollection(resp.collection);
           setCollectionType(resp.collection.type);
           if (resp?.collection?.assets && resp?.collection?.assets.length > 0) {
@@ -172,19 +183,16 @@ const CollectionDetail = () => {
   };
 
   const handleAutoAssign = (e) => {
-    // setAutoAssign(!AutoAssign);
-    // let memberCount = data.members.length;
-    // let value = 100 / memberCount;
-    // let values = {
-    //   ...data,
-    //   members: data.members.map((mem) => {
-    //     return {
-    //       ...mem,
-    //       royalty_percent: parseInt(value),
-    //     };
-    //   }),
-    // };
-    // setData(values);
+    setAutoAssign(!AutoAssign);
+    let memberCount = royalityMembers.length;
+    let value = 100 / memberCount;
+    let values = royalityMembers.map((mem) => {
+      return {
+        ...mem,
+        royalty_percent: parseInt(value),
+      };
+    });
+    setRoyalityMembers(values);
   };
 
   const handleEditNFT = (e, id) => {
@@ -219,9 +227,69 @@ const CollectionDetail = () => {
     }
   };
 
-  const handleAutoFill = () => {};
+  const handleAutoFill = () => {
+    let members = royalityMembers.map((mem) => {
+      return {
+        wallet_address: mem.user_eoa,
+        royalty: mem.royalty_percent,
+      };
+    });
+    let formData = new FormData();
+    formData.append("royalty_data", JSON.stringify(members));
+    royalitySplitterId
+      ? formData.append("splitter_uid", royalitySplitterId)
+      : formData.append("collection_uid", Collection.id);
+    if (!ShowPercentError) {
+      setIsAutoFillLoading(true);
+      updateRoyaltySplitter(formData)
+        .then((resp) => {
+          if (resp.code === 0) {
+            setIsAutoFillLoading(false);
+            setRoyaltyUpdatedSuccessfully(true);
+            setAutoAssign(false);
+            setIsEdit(null);
+            setShowRoyalityErrorModal(false);
+            setShowRoyalityErrorMessage("");
+          } else {
+            setIsAutoFillLoading(false);
+            setRoyaltyUpdatedSuccessfully(false);
+            setShowRoyalityErrorModal(true);
+            setAutoAssign(false);
+            setShowRoyalityErrorMessage(resp.message);
+          }
+        })
+        .catch((err) => {
+          setIsAutoFillLoading(false);
+          setRoyaltyUpdatedSuccessfully(false);
+          setAutoAssign(false);
+        });
+    }
+  };
 
-  const handleValueChange = (e, id) => {};
+  const handleValueChange = (e, id) => {
+    let values = royalityMembers.map((mem) => {
+      if (id === mem.user_eoa) {
+        return {
+          ...mem,
+          royalty_percent: parseInt(e.target.value),
+        };
+      }
+      return mem;
+    });
+
+    let percent = royalityMembers.reduce(
+      (acc, val) => acc + val.royalty_percent,
+      0
+    );
+
+    if (percent > 100) {
+      setShowPercentError(true);
+    } else {
+      setShowPercentError(false);
+    }
+
+    setRoyalityMembers(values);
+  };
 
   return (
     <div className="mx-4 md:mx-0">
@@ -231,6 +299,35 @@ const CollectionDetail = () => {
           handleClose={() => setShowPublishModal(false)}
           publishProject={handlePublish}
           type="Collection"
+        />
+      )}
+      {RoyaltyUpdatedSuccessfully && (
+        <SuccessModal
+          show={RoyaltyUpdatedSuccessfully}
+          handleClose={setRoyaltyUpdatedSuccessfully}
+          message="Royalty Percentage Updated Successfully"
+          btnText="Done"
+        />
+      )}
+      {showRoyalityErrorModal && (
+        <ErrorModal
+          title={"Failed to apply royalty percentage!"}
+          message={`${showRoyalityErrorMessage}`}
+          handleClose={() => {
+            setShowRoyalityErrorModal(false);
+            setShowRoyalityErrorMessage(null);
+            setAutoAssign(false);
+          }}
+          show={showRoyalityErrorModal}
+        />
+      )}
+      {AutoAssign && (
+        <ConfirmationModal
+          show={AutoAssign}
+          handleClose={setAutoAssign}
+          handleApply={handleAutoFill}
+          message="This will apply royalty percentage to all the members equally. Are you
+          sure, you want to proceed?"
         />
       )}
       {showErrorModal && (
@@ -565,7 +662,7 @@ const CollectionDetail = () => {
           <div id="myTabContent">
             {selectedTab === 1 && (
               <div className="flex flex-wrap mt-4 mb-[60px]">
-                {NFTs &&
+                {NFTs?.length ? (
                   NFTs.map((nft) => {
                     return (
                       <div
@@ -663,7 +760,15 @@ const CollectionDetail = () => {
                         </div>
                       </div>
                     );
-                  })}
+                  })
+                ) : (
+                  <div className="w-full">
+                    <p className="font-bold text-center">
+                      You don't have any NFT's. Start minting NFT's to display
+                      here
+                    </p>
+                  </div>
+                )}
               </div>
             )}
             {selectedTab === 2 && (
@@ -671,12 +776,12 @@ const CollectionDetail = () => {
                 <div className="bg-white rounded-[12px] p-5 shadow-main">
                   <div className="flex items-start md:items-center justify-between pb-7 border-b-[1px] mb-6 border-[#E3DEEA]">
                     <h3 className="text-[18px] font-black">Contributor</h3>
-                    {/* {ShowPercentError ? (
-                    <p className="text-red-400 text-[14px] mt-1">
-                      Total percent of members should equal to or lesser than
-                      100%
-                    </p>
-                  ) : null} */}
+                    {ShowPercentError ? (
+                      <p className="text-red-400 text-[14px] mt-1">
+                        Total percent of contributors should equal to or lesser
+                        than 100%
+                      </p>
+                    ) : null}
                     {/* {CollectionDetail?.is_owner && data?.members?.length ? ( */}
                     <div className="flex items-center justify-center flex-col md:flex-row">
                       <div className="form-check form-switch flex items-center">
@@ -699,14 +804,16 @@ const CollectionDetail = () => {
                     {/* ) : null} */}
                   </div>{" "}
                   <MemberListTable
-                    list={members}
+                    list={royalityMembers}
                     headers={TABLE_HEADERS}
                     // handlePublish={setShowPublish}
                     setIsEdit={setIsEdit}
+                    setRoyalityMembers={setRoyalityMembers}
+                    showRoyalityErrorModal={showRoyalityErrorModal}
                     isEdit={isEdit}
                     handleValueChange={handleValueChange}
                     handleAutoFill={handleAutoFill}
-                    isOwner={CollectionDetail?.is_owner}
+                    isOwner={Collection?.is_owner}
                   />
                   {/* {CollectionDetail.is_owner &&
                 CollectionDetail.status !== "published" ? ( */}
