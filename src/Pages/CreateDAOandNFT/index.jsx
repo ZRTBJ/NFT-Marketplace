@@ -44,7 +44,6 @@ const CreateDAOandNFT = () => {
 
   useEffect(() => {
     let userId = localStorage.getItem("user_id");
-    console.log(userId);
     let payload = {
       id: userId,
     };
@@ -82,8 +81,8 @@ const CreateDAOandNFT = () => {
           web3 environment.
         </p>
         {DAOs.length ? (
-          <Link to="/project-create">
-            <div className="w-fit flex mint-button mt-3 text-center font-satoshi-bold w-full md:w-fit">
+          <Link to="/project-create" className="w-fit block no-underline">
+            <div className="flex mint-button mt-3 text-center font-satoshi-bold w-full md:w-fit">
               <img src={Plus} alt="add" />
               <span className="ml-2 text-[17px]"> Create New</span>
             </div>
