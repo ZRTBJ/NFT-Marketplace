@@ -29,6 +29,7 @@ import MemberListTable from "components/RoyalityManagement/MemberListTable/Membe
 import PlusIcon from "assets/images/icons/plus-circle.svg";
 import NFTSales from "components/RoyalityManagement/NFTSale/NFTSales";
 import ConfirmationModal from "components/modalDialog/ConfirmationModal";
+import ImportWalletModal from "components/modalDialog/ImportWalletModal/ImportWalletModal";
 
 const TABLE_HEADERS = [
   { id: 0, label: "Wallet Address" },
@@ -93,6 +94,8 @@ const CollectionDetail = () => {
   const [ShowPercentError, setShowPercentError] = useState(false);
   const [showRoyalityErrorModal, setShowRoyalityErrorModal] = useState(false);
   const [showRoyalityErrorMessage, setShowRoyalityErrorMessage] = useState("");
+  const [showImportWallet, setShowImportWallet] = useState(false);
+  const [projectID, setProjectID] = useState("");
 
   useEffect(() => {
     if (collectionId) {
@@ -118,6 +121,7 @@ const CollectionDetail = () => {
     getCollectionDetailsById(payload)
       .then((resp) => {
         if (resp.code === 0) {
+          setProjectID(resp?.collection?.project_uid);
           getProjectDetailsById({ id: resp?.collection?.project_uid }).then(
             (resp) => setProjectNetwork(resp?.project?.blockchain)
           );
@@ -365,6 +369,15 @@ const CollectionDetail = () => {
         <TransferNFT
           show={showTransferNFT}
           handleClose={() => setShowTransferNFT(false)}
+        />
+      )}
+      {showImportWallet && (
+        <ImportWalletModal
+          show={showImportWallet}
+          handleClose={() => setShowImportWallet(false)}
+          projectId={projectID}
+          collectionName={Collection?.name}
+          collectionId={Collection?.id}
         />
       )}
       <section className="mt-6">
@@ -796,7 +809,10 @@ const CollectionDetail = () => {
                           onChange={handleAutoAssign}
                         />
                       </div>
-                      <div className="mint-button mt-4 md:mt-0 ml-4 text-center font-satoshi-bold w-full text-[12px] md:w-fit flex">
+                      <div
+                        className="mint-button mt-4 md:mt-0 ml-4 text-center font-satoshi-bold w-full text-[12px] md:w-fit flex"
+                        onClick={() => setShowImportWallet(true)}
+                      >
                         <img src={PlusIcon} alt="add" />
                         <span className="ml-1">Import Contributor</span>
                       </div>
