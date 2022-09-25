@@ -35,6 +35,8 @@ function Home() {
   const [ShowInviteModal, setShowInviteModal] = useState(false);
   const { invite } = useParams();
   const userinfo = useSelector((state) => state.user.userinfo);
+  const [pagination, SetPagination] = useState([1, 2]);
+  const [isActive, setIsactive] = useState(1);
 
   const payload = {
     order_by: "newer",
@@ -79,6 +81,10 @@ function Home() {
     }
   }, []);
 
+  const calculatePageCount = (pageSize, totalItems) => {
+    return totalItems < pageSize ? 1 : Math.ceil(totalItems / pageSize);
+  };
+
   async function getProjectList(payload, orderBy, isSearch = false) {
     payload.order_by = orderBy;
 
@@ -99,13 +105,31 @@ function Home() {
       } else {
         setProjectList(projects);
       }
+      if (projectRes.total && projectRes.total > 0) {
+        const page = calculatePageCount(10, projectRes.total);
+        const pageList = [];
+        for (let index = 1; index <= page; index++) {
+          pageList.push(index);
+        }
+        SetPagination(pageList);
+      }
+    } else {
+      SetPagination([]);
     }
     setIsLoading(false);
   }
   useEffect(() => {
     (async () => {
       setIsLoading(true);
-      await getProjectList(payload, sortType);
+      payload.page = isActive;
+      if (searchKeyword.length > 0) {
+        payload.keyword = searchKeyword;
+      }
+      await getProjectList(
+        payload,
+        sortType,
+        searchKeyword.length > 0 ? true : false
+      );
       await getCollectionList();
     })();
   }, [sortType]);
@@ -122,16 +146,20 @@ function Home() {
     if (text && text.length > 2) {
       // todo: use debounce
       payload.keyword = text;
+      setIsactive(1);
       getProjectList(payload, sortType, true);
     }
   }
-  function clearSearch() {
+  async function clearSearch() {
     setSearchKeyword("");
+    payload.page = 1;
+    setIsactive(1);
+    await getProjectList(payload, "newer");
   }
 
   async function getCollectionList() {
     setIsLoading(true);
-    await getCollections("", "", 1, 20)
+    await getCollections("", "", 1, 10)
       .then((e) => {
         if (e.code === 0 && e.data !== null) {
           setCollectionList(e.data);
@@ -161,246 +189,274 @@ function Home() {
   );
   const isSearching = searchKeyword.length > 2;
 
+  async function onClickPagination(page) {
+    setIsactive(page);
+  }
+
+  async function nextPage() {
+    if (isActive < pagination.length) {
+      setIsactive((pre) => pre + 1);
+    }
+  }
+  async function prevPage() {
+    if (isActive > 1) {
+      setIsactive((pre) => pre - 1);
+    }
+  }
+  useEffect(() => {
+    payload.page = isActive;
+    if (searchKeyword.length > 0) {
+      payload.keyword = searchKeyword;
+    }
+    setIsLoading(true);
+    getProjectList(payload, sortType, searchKeyword.length > 0 ? true : false);
+  }, [isActive]);
+
   return (
-    <div className="text-txtblack mx-4 md:mx-0">
-      <InviteModal
-        show={ShowInviteModal}
-        handleClose={() => setShowInviteModal(false)}
-        collectionName={inviteData?.collection_name}
-        isAuthenticated={userinfo?.id}
-        nftId={inviteData?.lnft_id}
-        collectionId={inviteData?.collection_id}
-        assetImage={inviteData?.lnft_asset}
-      />
-      <section className="text-center my-4">
-        <HomeNavigateCard />
-      </section>
-
-      {/* Start New UI MVP-1.1 */}
-
-      <h2 className="mb-5">DAO List</h2>
-      <section className="flex mb-6">
-        <div className="mr-4 flex-1">
-          <div className="relative">
-            <div className="flex absolute inset-y-0 left-0 items-center pl-4 pointer-events-none">
-              <i className="fa-regular fa-magnifying-glass text-primary-900 text-lg"></i>
-            </div>
-            <input
-              type="text"
-              id="default-search"
-              style={{
-                paddingLeft: 40, // todo: use tailwind
-                border: "none",
-              }}
-              className="text-lg shadow-main w-full rounded-lg placeholder-color-ass-4 h-[72px] text-[#000] pl-[40px]"
-              placeholder="Search DAO by name..."
-              onChange={searchProject}
-              value={searchKeyword}
-              onKeyPress={(event) => {
-                if (event.key === "Enter") {
-                  searchProject(event);
-                }
-              }}
-            />
-          </div>
-        </div>
-
-        <div className="dropdown relative">
-          <button
-            className="bg-white dropdown-toggle p-4 text-textSubtle font-black font-satoshi-bold rounded-lg shadow-main flex items-center justify-between w-15 md:w-44 h-[72px]"
-            type="button"
-            id="dropdownMenuButton1"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            <span className="hidden md:block"> Sort Of</span>
-            <i className="fa-solid fa-angle-down hidden md:block"></i>
-            <img src={Sort} alt="sort" className="block md:hidden" />
-          </button>
-
-          <ul
-            className="dropdown-menu w-[150px] md:w-full absolute hidden bg-white text-base z-50 py-2 list-none rounded-lg shadow-main  mt-1 "
-            aria-labelledby="dropdownMenuButton1"
-          >
-            <li onClick={() => handleSortType("newer")}>
-              <a
-                className={`dropdown-item py-2 px-4 block whitespace-nowrap ${
-                  sortType === "newer" ? "text-primary-900" : "text-txtblack"
-                } hover:bg-slate-50 transition duration-150 ease-in-out`}
-              >
-                Newer
-              </a>
-            </li>
-            <li onClick={() => handleSortType("older")}>
-              <a
-                className={`dropdown-item py-2 px-4 block whitespace-nowrap ${
-                  sortType === "older" ? "text-primary-900" : "text-txtblack"
-                } hover:bg-slate-50 transition duration-150 ease-in-out`}
-              >
-                older
-              </a>
-            </li>
-            <li onClick={() => handleSortType("view")}>
-              <a
-                className={`dropdown-item py-2 px-4 block whitespace-nowrap ${
-                  sortType === "view" ? "text-primary-900" : "text-txtblack"
-                } hover:bg-slate-50 transition duration-150 ease-in-out`}
-              >
-                view
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-      <section>
-        {isSearching ? (
-          <h4>
-            {`Showing result for "${searchKeyword}"`}{" "}
-            <p
-              className="text-primary-900 font-light cursor-pointer"
-              onClick={clearSearch}
-            >
-              clear
-            </p>
-          </h4>
-        ) : null}
-        {isSearching && searchList.length === 0 ? (
-          <div className="p-5 text-center min-h-[100px] text-primary-700">
-            <h2> Nothing found</h2>
-          </div>
-        ) : null}
-        <section className="flex flex-wrap items-center justify-center md:justify-start">
-          {isSearching
-            ? searchList.map((item, index) => (
-                <div key={item.id}>
-                  <DAOCard item={item} key={item.id} />
-                </div>
-              ))
-            : projectList.map((item, index) => (
-                <div key={item.id}>
-                  <DAOCard item={item} key={item.id} />
-                </div>
-              ))}
+    <>
+      {isLoading && <div className="loading"></div>}
+      <div className="text-txtblack mx-4 md:mx-0">
+        <InviteModal
+          show={ShowInviteModal}
+          handleClose={() => setShowInviteModal(false)}
+          collectionName={inviteData?.collection_name}
+          isAuthenticated={userinfo?.id}
+          nftId={inviteData?.lnft_id}
+          collectionId={inviteData?.collection_id}
+          assetImage={inviteData?.lnft_asset}
+        />
+        <section className="text-center my-4">
+          <HomeNavigateCard />
         </section>
-      </section>
 
-      {/* ----- End Card Section ---- */}
+        {/* Start New UI MVP-1.1 */}
 
-      {/* <section className="mb-5">
-        <div className="flex justify-center space-x-1">
-          <a className="px-3 py-1 text-sm  text-primary-900 bg-primary-900 bg-opacity-5 rounded hover:bg-opacity-7">
-            <i className="fa-solid fa-angle-left"></i>
-          </a>
+        <h2 className="mb-5">DAO List</h2>
+        <section className="flex mb-6">
+          <div className="mr-4 flex-1">
+            <div className="relative">
+              <div className="flex absolute inset-y-0 left-0 items-center pl-4 pointer-events-none">
+                <i className="fa-regular fa-magnifying-glass text-primary-900 text-lg"></i>
+              </div>
+              <input
+                type="text"
+                id="default-search"
+                style={{
+                  paddingLeft: 40, // todo: use tailwind
+                  border: "none",
+                }}
+                className="text-lg shadow-main w-full rounded-lg placeholder-color-ass-4 h-[72px] text-[#000] pl-[40px]"
+                placeholder="Search DAO by name..."
+                onChange={searchProject}
+                value={searchKeyword}
+                onKeyPress={(event) => {
+                  if (event.key === "Enter") {
+                    searchProject(event);
+                  }
+                }}
+              />
+            </div>
+          </div>
 
-          <a
-            href="#"
-            className="px-3 py-1 font-satoshi-bold text-sm text-primary-900 bg-primary-900 bg-opacity-5 rounded hover:bg-opacity-7"
-          >
-            1
-          </a>
-          <a
-            href="#"
-            className="px-3 py-1 font-satoshi-bold text-sm text-primary-900 bg-primary-900 bg-opacity-5 rounded hover:bg-opacity-7"
-          >
-            2
-          </a>
-          <a
-            href="#"
-            className="px-3 py-1 font-satoshi-bold text-sm text-primary-900 bg-primary-900 bg-opacity-5 rounded hover:bg-opacity-7"
-          >
-            3
-          </a>
-          <a
-            href="#"
-            className="px-3 py-1 font-satoshi-bold text-sm text-primary-900 bg-primary-900 bg-opacity-5 rounded hover:bg-opacity-7"
-          >
-            4
-          </a>
+          <div className="dropdown relative">
+            <button
+              className="bg-white dropdown-toggle p-4 text-textSubtle font-black font-satoshi-bold rounded-lg shadow-main flex items-center justify-between w-15 md:w-44 h-[72px]"
+              type="button"
+              id="dropdownMenuButton1"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <span className="hidden md:block"> Sort Of</span>
+              <i className="fa-solid fa-angle-down hidden md:block"></i>
+              <img src={Sort} alt="sort" className="block md:hidden" />
+            </button>
 
-          <a className="px-3 py-1 text-sm  text-primary-900 bg-primary-900 bg-opacity-5 rounded hover:bg-opacity-7">
-            <i className="fa-solid fa-angle-right"></i>
-          </a>
+            <ul
+              className="dropdown-menu w-[150px] md:w-full absolute hidden bg-white text-base z-50 py-2 list-none rounded-lg shadow-main  mt-1 "
+              aria-labelledby="dropdownMenuButton1"
+            >
+              <li onClick={() => handleSortType("newer")}>
+                <a
+                  className={`dropdown-item py-2 px-4 block whitespace-nowrap ${
+                    sortType === "newer" ? "text-primary-900" : "text-txtblack"
+                  } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                >
+                  Newer
+                </a>
+              </li>
+              <li onClick={() => handleSortType("older")}>
+                <a
+                  className={`dropdown-item py-2 px-4 block whitespace-nowrap ${
+                    sortType === "older" ? "text-primary-900" : "text-txtblack"
+                  } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                >
+                  older
+                </a>
+              </li>
+              <li onClick={() => handleSortType("view")}>
+                <a
+                  className={`dropdown-item py-2 px-4 block whitespace-nowrap ${
+                    sortType === "view" ? "text-primary-900" : "text-txtblack"
+                  } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                >
+                  view
+                </a>
+              </li>
+            </ul>
+          </div>
+        </section>
+        <section>
+          {isSearching ? (
+            <h4>
+              {`Showing result for "${searchKeyword}"`}{" "}
+              <p
+                className="text-primary-900 font-light cursor-pointer"
+                onClick={clearSearch}
+              >
+                clear
+              </p>
+            </h4>
+          ) : null}
+          {isSearching && searchList.length === 0 ? (
+            <div className="p-5 text-center min-h-[100px] text-primary-700">
+              <h2> Nothing found</h2>
+            </div>
+          ) : null}
+          <section className="flex flex-wrap items-center justify-center md:justify-start">
+            {isSearching
+              ? searchList.map((item, index) => (
+                  <div key={item.id}>
+                    <DAOCard item={item} key={item.id} />
+                  </div>
+                ))
+              : projectList.map((item, index) => (
+                  <div key={item.id}>
+                    <DAOCard item={item} key={item.id} />
+                  </div>
+                ))}
+          </section>
+        </section>
+
+        {/* ----- End Card Section ---- */}
+
+        {pagination.length > 0 && (
+          <section className="my-5">
+            <div className="flex justify-center space-x-1">
+              <button
+                onClick={prevPage}
+                className="px-3 py-1 text-sm  text-primary-900 bg-primary-900 bg-opacity-5 rounded hover:bg-opacity-7"
+              >
+                <i className="fa-solid fa-angle-left"></i>
+              </button>
+              {pagination.map((page) => (
+                <button
+                  key={page}
+                  className={`${
+                    isActive === page ? "text-primary-900 bg-primary-900" : ""
+                  }  px-3 py-1 font-satoshi-bold text-sm  bg-opacity-5 rounded hover:bg-opacity-7`}
+                  onClick={() => onClickPagination(page)}
+                >
+                  {page}
+                </button>
+              ))}
+
+              <button
+                onClick={nextPage}
+                className="px-3 py-1 text-sm  text-primary-900 bg-primary-900 bg-opacity-5 rounded hover:bg-opacity-7"
+              >
+                <i className="fa-solid fa-angle-right"></i>
+              </button>
+            </div>
+          </section>
+        )}
+        {/* End pagination */}
+
+        <div className="mb-5 flex flex-wrap">
+          <h2>Best Collection</h2>
+          <Link
+            to="/list?type=allCollection"
+            className="contained-button  py-1 px-3 rounded ml-auto"
+          >
+            View All
+          </Link>
         </div>
-      </section> */}
-      {/* End pagination */}
-
-      <h2 className="mb-5">Best Collection</h2>
-      <section className="mb-6">
-        {/* Card */}
-        <Swiper
-          breakpoints={settings}
-          navigation={true}
-          modules={[Navigation]}
-          className=""
-        >
-          <div>
-            {collectionList &&
-              collectionList.length > 0 &&
-              collectionList.map((collection, index) => (
-                <SwiperSlide key={index} className="">
-                  <div
-                    className="min-h-[390px] rounded-x"
-                    key={`best-collection-${index}`}
-                  >
-                    <Link
-                      to={
-                        collection.type === "right_attach"
-                          ? `/royality-management/${collection.id}`
-                          : `/collection-details/${collection.id}`
-                      }
+        <section className="mb-6">
+          {/* Card */}
+          <Swiper
+            breakpoints={settings}
+            navigation={true}
+            modules={[Navigation]}
+            className=""
+          >
+            <div>
+              {collectionList &&
+                collectionList.length > 0 &&
+                collectionList.map((collection, index) => (
+                  <SwiperSlide key={index} className="">
+                    <div
+                      className="min-h-[390px] rounded-x"
+                      key={`best-collection-${index}`}
                     >
-                      <img
-                        className="rounded-xl h-[276px] object-cover w-full"
-                        src={
-                          collection &&
-                          collection.assets &&
-                          collection.assets[0]
-                            ? collection.assets[0].path
-                            : thumbIcon
+                      <Link
+                        to={
+                          collection.type === "right_attach"
+                            ? `/royality-management/${collection.id}`
+                            : `/collection-details/${collection.id}`
                         }
-                        alt=""
-                      />
-                    </Link>
+                      >
+                        <img
+                          className="rounded-xl h-[276px] object-cover w-full"
+                          src={
+                            collection &&
+                            collection.assets &&
+                            collection.assets[0]
+                              ? collection.assets[0].path
+                              : thumbIcon
+                          }
+                          alt=""
+                        />
+                      </Link>
 
-                    <div className="p-5">
-                      <h3 className="pb-2 text-txtblack truncate text-[18px] md:text-[24px]">
-                        {collection.name}
-                      </h3>
-                      <p className="mb-3 text-textSubtle text-[13px]">
-                        {collection.description &&
-                        collection.description.length > 70
-                          ? collection.description.substring(0, 67) + "..."
-                          : collection.description}
-                      </p>
+                      <div className="p-5">
+                        <h3 className="pb-2 text-txtblack truncate text-[18px] md:text-[24px]">
+                          {collection.name}
+                        </h3>
+                        <p className="mb-3 text-textSubtle text-[13px]">
+                          {collection.description &&
+                          collection.description.length > 70
+                            ? collection.description.substring(0, 67) + "..."
+                            : collection.description}
+                        </p>
 
-                      <div className="flex items-center">
-                        {collection.members &&
-                          collection.members.length > 0 &&
-                          truncateArray(collection.members).slicedItems.map(
-                            (member) => (
-                              <img
-                                src={member.avatar}
-                                alt={member.id}
-                                className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
-                              />
-                            )
+                        <div className="flex items-center">
+                          {collection.members &&
+                            collection.members.length > 0 &&
+                            truncateArray(collection.members).slicedItems.map(
+                              (member) => (
+                                <img
+                                  src={member.avatar}
+                                  alt={member.id}
+                                  className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
+                                />
+                              )
+                            )}
+                          {collection.members && collection.members.length > 3 && (
+                            <div className="flex items-center mt-[6px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]">
+                              <p className="text-[12px] text-[#9A5AFF]">
+                                +{truncateArray(collection.members).restSize}
+                              </p>
+                            </div>
                           )}
-                        {collection.members && collection.members.length > 3 && (
-                          <div className="flex items-center mt-[6px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]">
-                            <p className="text-[12px] text-[#9A5AFF]">
-                              +{truncateArray(collection.members).restSize}
-                            </p>
-                          </div>
-                        )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </SwiperSlide>
-              ))}
-          </div>
-        </Swiper>
-      </section>
-    </div>
+                  </SwiperSlide>
+                ))}
+            </div>
+          </Swiper>
+        </section>
+      </div>
+    </>
   );
 }
 
