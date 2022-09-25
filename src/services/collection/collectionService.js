@@ -65,10 +65,10 @@ export async function getCollectionDetailsById(payload) {
   return await client("GET", `/collection/${payload.id}`);
 }
 
-export async function getCollections(listType, projectId, page, limit) {
+export async function getCollections(listType, projectId, page, limit,keyword='') {
   return await client(
     "GET",
-    `/collection?list_type=${listType}&project_id=${projectId}&page=${page}&limit=${limit}`
+    `/collection?list_type=${listType}&project_id=${projectId}&page=${page}&limit=${limit}&keyword=${keyword}`
   );
 }
 export async function getUserCollections(payload) {

@@ -22,7 +22,7 @@ import MembershipNFT from "Pages/MembershipNFT";
 import CollectionDetail from "Pages/CollectionDetail";
 import ProductNFT from "Pages/ProductNFT";
 import Home from "../Pages/Home";
-
+import List from "Pages/List"
 const routes = [
   {
     path: "/login",
@@ -134,6 +134,11 @@ const routes = [
     path: "/royality-management/:collectionId",
     component: RoyalityManagement,
     isPrivate: true,
+  },
+    {
+    path: "/list/",
+    component: List,
+    isPrivate: false,
   },
   {
     path: "/:invite",

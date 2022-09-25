@@ -1,40 +1,33 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import {
-  getPublicProjectList,
+  getUserProjectListById,
   getProjectCategory,
 } from "services/project/projectService";
-import HomeNavigateCard from "components/Home/HomeNavigateCard";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import SwiperCore, { Autoplay } from "swiper";
-import { Swiper, SwiperSlide } from "swiper/react";
-import thumbIcon from "assets/images/profile/card.svg";
 import DAOCard from "components/DAOCard";
-import { getCollections } from "services/collection/collectionService";
-import { Link } from "react-router-dom";
-import InviteModal from "components/modalDialog/InviteModal";
-import { getIdbyCode } from "services/nft/nftService";
-import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import CollectionCard from "components/CollectionCard";
+import NFTListCard from "components/NFTListCard";
 import Sort from "assets/images/icons/sort.svg";
-import { Navigation } from "swiper";
-function Home() {
+import { useLocation } from "react-router-dom";
+import { getCollections } from "services/collection/collectionService";
+function List() {
+  function useQuery() {
+    const { search } = useLocation();
+    return React.useMemo(() => new URLSearchParams(search), [search]);
+  }
+  let query = useQuery();
   SwiperCore.use([Autoplay]);
   // const [categories, setCategories] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState([]);
   const [searchList, setSearchList] = useState([]);
   const [projectList, setProjectList] = useState([]);
   // const [popularProjectList, setPopularProjectList] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [sortType, setSortType] = useState("newer");
-  const [collectionList, setCollectionList] = useState([]);
-  const [inviteData, setInviteData] = useState();
-  const [isInviteLoading, setIsInvteLoading] = useState(false);
-  const [ShowInviteModal, setShowInviteModal] = useState(false);
-  const { invite } = useParams();
-  const userinfo = useSelector((state) => state.user.userinfo);
   const [pagination, SetPagination] = useState([1, 2]);
   const [isActive, setIsactive] = useState(1);
 
@@ -44,43 +37,6 @@ function Home() {
     limit: 10,
     keyword: "",
   };
-
-  const settings = {
-    320: {
-      slidesPerView: 1,
-      spaceBetween: 15,
-    },
-    640: {
-      slidesPerView: 2,
-      spaceBetween: 15,
-    },
-    768: {
-      slidesPerView: 3,
-      spaceBetween: 15,
-    },
-    1024: {
-      slidesPerView: 4,
-      spaceBetween: 15,
-    },
-    1536: {
-      slidesPerView: 5,
-      spaceBetween: 15,
-    },
-  };
-
-  useEffect(() => {
-    if (invite) {
-      getIdbyCode(invite)
-        .then((resp) => {
-          if (resp.code === 0) {
-            setShowInviteModal(true);
-          }
-          setInviteData(resp);
-        })
-        .catch((err) => console.log(err));
-    }
-  }, []);
-
   const calculatePageCount = (pageSize, totalItems) => {
     return totalItems < pageSize ? 1 : Math.ceil(totalItems / pageSize);
   };
@@ -89,10 +45,32 @@ function Home() {
     payload.order_by = orderBy;
 
     const categoriesRes = await getProjectCategory();
-    const projectRes = await getPublicProjectList(payload);
+    let projectResponse = [];
+    if (query.get("type") === "collection") {
+      let listType = "";
+      if (query.get("user") === "true") {
+        listType = "user";
+      }
+      projectResponse = await getCollections(
+        listType,
+        "",
+        payload.page,
+        10,
+        payload.keyword
+      );
+    } else if (query.get("type") === "dao") {
+      let payloadData = {
+        id: query.get("user"),
+        page: payload.page,
+        perPage: 10,
+        keyword: payload.keyword,
+      };
+      projectResponse = await getUserProjectListById(payloadData);
+    }
+    // const projectRes = await getPublicProjectList(payload);
 
-    if (categoriesRes?.categories && projectRes?.data) {
-      const projects = projectRes.data.map((project) => {
+    if (categoriesRes?.categories && projectResponse?.data) {
+      const projects = projectResponse.data.map((project) => {
         project.category_name = categoriesRes.categories.find(
           (category) => category.id === project.category_id
         )?.name;
@@ -105,8 +83,8 @@ function Home() {
       } else {
         setProjectList(projects);
       }
-      if (projectRes.total && projectRes.total > 0) {
-        const page = calculatePageCount(10, projectRes.total);
+      if (projectResponse.total && projectResponse.total > 0) {
+        const page = calculatePageCount(10, projectResponse.total);
         const pageList = [];
         for (let index = 1; index <= page; index++) {
           pageList.push(index);
@@ -130,7 +108,7 @@ function Home() {
         sortType,
         searchKeyword.length > 0 ? true : false
       );
-      await getCollectionList();
+      // await getCollectionList();
     })();
   }, [sortType]);
 
@@ -157,24 +135,19 @@ function Home() {
     await getProjectList(payload, "newer");
   }
 
-  async function getCollectionList() {
-    setIsLoading(true);
-    await getCollections("", "", 1, 10)
-      .then((e) => {
-        if (e.code === 0 && e.data !== null) {
-          setCollectionList(e.data);
-        }
-        setIsLoading(false);
-      })
-      .catch(() => {
-        setIsLoading(false);
-      });
-  }
-
-  const truncateArray = (members) => {
-    let slicedItems = members.slice(0, 3);
-    return { slicedItems, restSize: members.length - slicedItems.length };
-  };
+  // async function getCollectionList() {
+  //   setIsLoading(true);
+  //   await getCollections("", "", 1, 10)
+  //     .then((e) => {
+  //       if (e.code === 0 && e.data !== null) {
+  //         setCollectionList(e.data);
+  //       }
+  //       setIsLoading(false);
+  //     })
+  //     .catch(() => {
+  //       setIsLoading(false);
+  //     });
+  // }
 
   useEffect(() => {
     const navItem = document.getElementById("nav-home");
@@ -216,22 +189,13 @@ function Home() {
     <>
       {isLoading && <div className="loading"></div>}
       <div className="text-txtblack mx-4 md:mx-0">
-        <InviteModal
-          show={ShowInviteModal}
-          handleClose={() => setShowInviteModal(false)}
-          collectionName={inviteData?.collection_name}
-          isAuthenticated={userinfo?.id}
-          nftId={inviteData?.lnft_id}
-          collectionId={inviteData?.collection_id}
-          assetImage={inviteData?.lnft_asset}
-        />
-        <section className="text-center my-4">
-          <HomeNavigateCard />
-        </section>
-
-        {/* Start New UI MVP-1.1 */}
-
-        <h2 className="mb-5">DAO List</h2>
+        <h1 className="my-6">
+          {query.get("type") === "collection"
+            ? "Collection List"
+            : query.get("type") === "dao"
+            ? "DAO List"
+            : "Minted NFTs List"}
+        </h1>
         <section className="flex mb-6">
           <div className="mr-4 flex-1">
             <div className="relative">
@@ -246,7 +210,7 @@ function Home() {
                   border: "none",
                 }}
                 className="text-lg shadow-main w-full rounded-lg placeholder-color-ass-4 h-[72px] text-[#000] pl-[40px]"
-                placeholder="Search DAO by name..."
+                placeholder="Search by name or title..."
                 onChange={searchProject}
                 value={searchKeyword}
                 onKeyPress={(event) => {
@@ -276,31 +240,31 @@ function Home() {
               aria-labelledby="dropdownMenuButton1"
             >
               <li onClick={() => handleSortType("newer")}>
-                <a
-                  className={`dropdown-item py-2 px-4 block whitespace-nowrap ${
+                <div
+                  className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${
                     sortType === "newer" ? "text-primary-900" : "text-txtblack"
                   } hover:bg-slate-50 transition duration-150 ease-in-out`}
                 >
                   Newer
-                </a>
+                </div>
               </li>
               <li onClick={() => handleSortType("older")}>
-                <a
-                  className={`dropdown-item py-2 px-4 block whitespace-nowrap ${
+                <div
+                  className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${
                     sortType === "older" ? "text-primary-900" : "text-txtblack"
                   } hover:bg-slate-50 transition duration-150 ease-in-out`}
                 >
                   older
-                </a>
+                </div>
               </li>
               <li onClick={() => handleSortType("view")}>
-                <a
-                  className={`dropdown-item py-2 px-4 block whitespace-nowrap ${
+                <div
+                  className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${
                     sortType === "view" ? "text-primary-900" : "text-txtblack"
                   } hover:bg-slate-50 transition duration-150 ease-in-out`}
                 >
                   view
-                </a>
+                </div>
               </li>
             </ul>
           </div>
@@ -322,19 +286,53 @@ function Home() {
               <h2> Nothing found</h2>
             </div>
           ) : null}
-          <section className="flex flex-wrap items-center justify-center md:justify-start">
-            {isSearching
-              ? searchList.map((item, index) => (
-                  <div key={item.id}>
-                    <DAOCard item={item} key={item.id} />
-                  </div>
-                ))
-              : projectList.map((item, index) => (
-                  <div key={item.id}>
-                    <DAOCard item={item} key={item.id} />
-                  </div>
-                ))}
-          </section>
+          {query.get("type") === "collection" && (
+            <section className="flex flex-wrap items-center space-x-4 justify-center md:justify-start">
+              {isSearching
+                ? searchList.map((item, index) => (
+                    <div key={item.id}>
+                      <CollectionCard key={index} collection={item} />
+                    </div>
+                  ))
+                : projectList.map((item, index) => (
+                    <div key={item.id}>
+                      <CollectionCard key={item.id} collection={item} />
+                    </div>
+                  ))}
+            </section>
+          )}
+
+          {query.get("type") === "dao" && (
+            <section className="flex flex-wrap items-center  justify-center md:justify-start">
+              {isSearching
+                ? searchList.map((item, index) => (
+                    <div key={item.id}>
+                      <DAOCard item={item} key={item.id} />
+                    </div>
+                  ))
+                : projectList.map((item, index) => (
+                    <div key={item.id}>
+                      <DAOCard item={item} key={item.id} />
+                    </div>
+                  ))}
+            </section>
+          )}
+
+          {query.get("type") === "nft" && (
+            <section className="flex flex-wrap items-center space-x-4 justify-center md:justify-start">
+              {isSearching
+                ? searchList.map((item, index) => (
+                    <div key={item.id}>
+                      <NFTListCard nft={item} projectWork="ethereum" />
+                    </div>
+                  ))
+                : projectList.map((item, index) => (
+                    <div key={item.id}>
+                      <NFTListCard nft={item} projectWork="ethereum" />
+                    </div>
+                  ))}
+            </section>
+          )}
         </section>
 
         {/* ----- End Card Section ---- */}
@@ -370,94 +368,9 @@ function Home() {
           </section>
         )}
         {/* End pagination */}
-
-        <div className="mb-5 flex flex-wrap">
-          <h2>Best Collection</h2>
-          <Link
-            to="/list/?type=collection"
-            className="contained-button  py-1 px-3 rounded ml-auto"
-          >
-            View All
-          </Link>
-        </div>
-        <section className="mb-6">
-          {/* Card */}
-          <Swiper
-            breakpoints={settings}
-            navigation={true}
-            modules={[Navigation]}
-            className=""
-          >
-            <div>
-              {collectionList &&
-                collectionList.length > 0 &&
-                collectionList.map((collection, index) => (
-                  <SwiperSlide key={index} className="">
-                    <div
-                      className="min-h-[390px] rounded-x"
-                      key={`best-collection-${index}`}
-                    >
-                      <Link
-                        to={
-                          collection.type === "right_attach"
-                            ? `/royality-management/${collection.id}`
-                            : `/collection-details/${collection.id}`
-                        }
-                      >
-                        <img
-                          className="rounded-xl h-[276px] object-cover w-full"
-                          src={
-                            collection &&
-                            collection.assets &&
-                            collection.assets[0]
-                              ? collection.assets[0].path
-                              : thumbIcon
-                          }
-                          alt=""
-                        />
-                      </Link>
-
-                      <div className="p-5">
-                        <h3 className="pb-2 text-txtblack truncate text-[18px] md:text-[24px]">
-                          {collection.name}
-                        </h3>
-                        <p className="mb-3 text-textSubtle text-[13px]">
-                          {collection.description &&
-                          collection.description.length > 70
-                            ? collection.description.substring(0, 67) + "..."
-                            : collection.description}
-                        </p>
-
-                        <div className="flex items-center">
-                          {collection.members &&
-                            collection.members.length > 0 &&
-                            truncateArray(collection.members).slicedItems.map(
-                              (member) => (
-                                <img
-                                  src={member.avatar}
-                                  alt={member.id}
-                                  className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
-                                />
-                              )
-                            )}
-                          {collection.members && collection.members.length > 3 && (
-                            <div className="flex items-center mt-[6px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]">
-                              <p className="text-[12px] text-[#9A5AFF]">
-                                +{truncateArray(collection.members).restSize}
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </SwiperSlide>
-                ))}
-            </div>
-          </Swiper>
-        </section>
       </div>
     </>
   );
 }
 
-export default Home;
+export default List;

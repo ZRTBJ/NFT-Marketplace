@@ -648,7 +648,15 @@ const Profile = () => {
           </div>
 
           <div className="mb-[50px]">
-            <h1 className="text-[28px] ml-4 mb-[36px] font-black">Your DAO</h1>
+            <div className="mb-5 flex flex-wrap">
+              <h1>Your DAO</h1>
+              <Link
+                to={`/list/?type=dao&user=${id}`}
+                className="contained-button  py-1 px-3 rounded ml-auto"
+              >
+                View All
+              </Link>
+            </div>
 
             {projectList.length > 0 ? (
               <Swiper
@@ -675,9 +683,15 @@ const Profile = () => {
           </div>
 
           <div className="mb-[50px]">
-            <h1 className="text-[28px] ml-4 mb-[36px] font-black">
-              Collection
-            </h1>
+            <div className="mb-5 flex flex-wrap">
+              <h1>Your Collection</h1>
+              <Link
+                to={`/list/?type=collection&user=true`}
+                className="contained-button  py-1 px-3 rounded ml-auto"
+              >
+                View All
+              </Link>
+            </div>
             {collectionList.length > 0 ? (
               <Swiper
                 breakpoints={settings}
