@@ -37,8 +37,7 @@ const PublishingProductNFT = ({
             ) : null}
             {uploadedPercent === 100 ? (
               <div className="font-black text-[22px] md:text-[28px] md:leading-[42px] text-center mt-6">
-                File uploaded successfully. We are creating the Right Attached
-                NFT now
+                File uploaded successfully. We are creating the Product NFT now
               </div>
             ) : null}
             <div className="overflow-hidden rounded-full h-4 w-full mt-8 mb-8 relative animated fadeIn">

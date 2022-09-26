@@ -32,6 +32,8 @@ import { Navigation } from "swiper";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+import { walletAddressTruncate } from "util/walletAddressTruncate";
+
 export default function ProjectDetails(props) {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -428,7 +430,7 @@ export default function ProjectDetails(props) {
                     </h1>
                     <p className="text-textLight text-sm ">
                       {project?.contract_address
-                        ? project.contract_address
+                        ? walletAddressTruncate(project.contract_address)
                         : "Smart Contract not released"}
                       <i
                         className={`fa-solid fa-copy ml-2 ${
@@ -698,7 +700,7 @@ export default function ProjectDetails(props) {
                     Product NFT
                   </button>
                 </li>
-                <li
+                {/* <li
                   className=""
                   role="presentation"
                   onClick={() => setSelectedTab(3)}
@@ -718,7 +720,7 @@ export default function ProjectDetails(props) {
                   >
                     Rights Attached NFT
                   </button>
-                </li>
+                </li> */}
               </ul>
             </div>
 
@@ -965,7 +967,7 @@ export default function ProjectDetails(props) {
               )}
 
               {/* TAB 3 */}
-              {selectedTab === 3 && (
+              {/* {selectedTab === 3 && (
                 <>
                   {(!rightAttachCollectionList ||
                     rightAttachCollectionList.length < 1) &&
@@ -1013,7 +1015,7 @@ export default function ProjectDetails(props) {
                           </div>
                         )}
                         {/* Card */}
-                        {rightAttachCollectionList &&
+              {/* {rightAttachCollectionList &&
                           rightAttachCollectionList.length > 0 &&
                           rightAttachCollectionList.map((collection, index) => (
                             <div
@@ -1039,9 +1041,9 @@ export default function ProjectDetails(props) {
                                 <div className="flex">
                                   <h2 className="pb-2 text-txtblack break-all md:truncate flex-1 mr-3 m-w-0">
                                     {collection.name}
-                                  </h2>
-                                  <div className="relative">
-                                    {/*Hide dropdown menu <button
+                                  </h2> */}
+              {/* <div className="relative"> */}
+              {/*Hide dropdown menu <button
                                       type="button"
                                       onClick={() => {
                                         const el = document.getElementById(
@@ -1054,8 +1056,8 @@ export default function ProjectDetails(props) {
                                         <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
                                       )}
                                     </button> */}
-                                    {/* Dropdown menu  */}
-                                    {project?.is_owner && (
+              {/* Dropdown menu  */}
+              {/* {project?.is_owner && (
                                       <div
                                         id={`rightattach-option-${index}`}
                                         className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden"
@@ -1107,8 +1109,8 @@ export default function ProjectDetails(props) {
                                         </p>
                                       </div>
                                     )}
-                                </div>
-                                {/* <div className="my-4">
+                                </div> */}
+              {/* <div className="my-4">
                                   <a className="inline-block mr-3 bg-primary-900 p-3 text-white  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer hover:bg-opacity-60 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
                                     Review
                                   </a>
@@ -1119,14 +1121,14 @@ export default function ProjectDetails(props) {
                                       </a>
                                     )}
                                 </div> */}
-                              </div>
-                            </div>
-                          ))}
-                        {/* Create New */}
-                      </section>
+              {/* </div>
+                            </div> */}
+              {/* ))} */}
+              {/* Create New */}
+              {/* </section>
                     )}
-                </>
-              )}
+                </> */}
+              {/* )} */}
             </div>
           </section>
           {/* NO DAO */}

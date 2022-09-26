@@ -651,7 +651,7 @@ export default function ProductNFT(props) {
                       }`}
                       defaultValue={""}
                       {...register("supply", {
-                        required: "Supply Link is required.",
+                        required: "Supply vaue is required.",
                         min: 1,
                       })}
                       type="number"
@@ -667,7 +667,7 @@ export default function ProductNFT(props) {
                     )}
                     {errors.supply && errors.supply.type === "min" && (
                       <p className="text-red-500 text-xs font-medium">
-                        Supply must be moe the 0.
+                        Supply must be more than 0.
                       </p>
                     )}
                   </>

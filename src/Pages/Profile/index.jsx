@@ -26,6 +26,8 @@ import thumbIcon from "assets/images/cover-default.svg";
 import ErrorModal from "components/modalDialog/ErrorModal";
 import { useDispatch, useSelector } from "react-redux";
 import { getNotificationData } from "Slice/notificationSlice";
+import { walletAddressTruncate } from "util/walletAddressTruncate";
+
 const Profile = () => {
   const dispatch = useDispatch();
   SwiperCore.use([Autoplay]);
@@ -317,7 +319,7 @@ const Profile = () => {
                     {user.display_name}
                   </div>
                   <div className="text-[13px] text-textSubtle mb-2">
-                    {user?.eoa?.slice(0, 20)}..{" "}
+                    {user?.eoa && walletAddressTruncate(user.eoa)}
                     <i
                       onClick={() => {
                         copyToClipboard(user.eoa);
