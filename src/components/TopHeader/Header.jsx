@@ -23,6 +23,7 @@ import searchImage from "assets/images/search.svg";
 import Logo from "assets/images/header/logo.svg";
 import AccountChangedModal from "components/modalDialog/AccountChangedModal";
 import NetworkChangedModal from "components/modalDialog/NetworkChangedModal";
+import { walletAddressTruncate } from "util/walletAddressTruncate";
 
 const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const history = useHistory();
@@ -261,13 +262,6 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     setShowSearchMobile(!showSearchMobile);
   };
 
-  const handleAddressView = (address) => {
-    return `${address.substring(0, 6)}...${address.substring(
-      address.length - 4,
-      address.length
-    )}`;
-  };
-
   return (
     <header className="bg-light1">
       <AccountChangedModal
@@ -425,7 +419,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                           <div className="mx-2 font-semibold text-base gradient-text">
                             {/* {selectedWallet.substring(0, 6)}... */}
                             {selectedWallet
-                              ? handleAddressView(selectedWallet)
+                              ? walletAddressTruncate(selectedWallet)
                               : null}
                           </div>
                           <i className="fa-solid fa-angle-down"></i>

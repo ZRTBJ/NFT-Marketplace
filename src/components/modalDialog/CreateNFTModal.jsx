@@ -49,7 +49,7 @@ const CreateNFTModal = ({ handleClose, show }) => {
             </p>
           </div>
         </div>
-        <div
+        {/* <div
           className="cursor-pointer flex bg-[#F9FCFF] border-[1px] border-[#C7CEE5] rounded-[12px] p-6 mb-6"
           onClick={() => setShowCreateRANFT(true)}
         >
@@ -65,7 +65,7 @@ const CreateNFTModal = ({ handleClose, show }) => {
               everyone get more clran Revenue!
             </p>
           </div>
-        </div>
+        </div> */}
         <div className="flex items-center justify-end">
           <Tooltip message="Click to create a new collection" />
           <Link to="/collection-create">

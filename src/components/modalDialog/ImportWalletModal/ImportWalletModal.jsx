@@ -1,6 +1,11 @@
 import Modal from "components/Modal";
-import { getCollections } from "services/collection/collectionService";
+import {
+  getCollections,
+  getSplitterDetails,
+  updateRoyaltySplitter,
+} from "services/collection/collectionService";
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import manImg from "assets/images/image-default.svg";
 import fileUpload from "assets/images/file-upload.svg";
 import Papa from "papaparse";
@@ -12,11 +17,20 @@ const ImportWalletModal = ({
   collectionName,
   projectId,
   collectionId,
+  royalitySplitterId,
+  setRoyaltyUpdatedSuccessfully,
+  setShowRoyalityErrorModal,
+  setShowRoyalityErrorMessage,
 }) => {
   const [selectedTab, setSelectedTab] = useState(1);
   const [collections, setCollections] = useState([]);
   const [contributors, setContributors] = useState();
   const [selectAll, setSelectAll] = useState(false);
+  const [showPercentError, setShowPercentError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showContributors, setShowContributors] = useState(false);
+  const [csvError, setCSVError] = useState("");
+  const userinfo = useSelector((state) => state.user.userinfo);
 
   useEffect(() => {
     getCollections("project", projectId)
@@ -29,18 +43,62 @@ const ImportWalletModal = ({
       .catch((err) => console.log(err));
   }, [projectId]);
 
+  useEffect(() => {
+    if (contributors?.length) {
+      let selectedValues = contributors?.filter((item) => item.selected);
+      console.log(selectedValues);
+      let percent = selectedValues.reduce((acc, val) => acc + val.royalty, 0);
+
+      if (percent > 100) {
+        setShowPercentError(true);
+      } else {
+        setShowPercentError(false);
+      }
+    }
+  }, [contributors]);
+
   const handleCSV = (e) => {
     let files = e.target.files[0];
     if (files) {
       Papa.parse(files, {
         complete: function (results) {
-          const data = results.data.filter((data, index) => index !== 0);
-          const result = data.map((item) => ({
-            wallet_address: item[0],
-            royalty: item[1],
-            selected: false,
-          }));
-          setContributors(result);
+          const headers = results.data.find((data, index) => index === 0);
+          if (
+            headers.length === 2 &&
+            headers[0] === "Wallet Address" &&
+            headers[1] === "Percentage"
+          ) {
+            const data = results.data.filter((data, index) => index !== 0);
+            let dataValues = data.map((col) => ({
+              id: col[0],
+              percent: col[1],
+            }));
+            if (dataValues.every((value) => value.id && value.percent)) {
+              const owner = {
+                wallet_address: userinfo?.eoa,
+                royalty: 100,
+                selected: true,
+                name: userinfo?.display_name,
+              };
+              const result = data.map((item) => ({
+                wallet_address: item[0],
+                royalty: parseInt(item[1]),
+                selected: false,
+              }));
+              setShowContributors(true);
+              let values = [owner, ...result];
+              setContributors(values);
+              setCSVError("");
+            } else {
+              setCSVError(
+                "Please make sure both Wallet Address and Percentage fields are filled properly"
+              );
+            }
+          } else {
+            setCSVError(
+              "CSV file should contain only two columns, Wallet Address and Percentage"
+            );
+          }
         },
       });
     }
@@ -51,7 +109,7 @@ const ImportWalletModal = ({
       if (item.wallet_address === address) {
         return {
           ...item,
-          selected: true,
+          selected: !item.selected,
         };
       }
       return item;
@@ -68,6 +126,82 @@ const ImportWalletModal = ({
       setContributors(items);
     }
     setSelectAll(!selectAll);
+  };
+
+  const handleCollectionContributor = (id) => {
+    if (id) {
+      getSplitterDetails(id, "collection_id").then((data) => {
+        if (data.code === 0) {
+          const result = data.members.map((item) => ({
+            wallet_address: item.user_eoa,
+            royalty: item.is_owner ? 100 : 0,
+            selected: item.is_owner ? true : false,
+            name: item.user_name,
+          }));
+          setShowContributors(true);
+          setContributors(result);
+        }
+      });
+    }
+  };
+
+  const handleValueChange = (e, id) => {
+    let values = contributors.map((mem) => {
+      if (id === mem.wallet_address) {
+        return {
+          ...mem,
+          royalty: parseInt(e.target.value),
+        };
+      }
+      return mem;
+    });
+
+    let percent = values.reduce((acc, val) => acc + val.royalty, 0);
+
+    if (percent > 100) {
+      setShowPercentError(true);
+    } else {
+      setShowPercentError(false);
+    }
+
+    setContributors(values);
+  };
+
+  const handleAddWallet = () => {
+    let splitters = contributors.filter((value) => value.selected);
+    let members = splitters.map((mem) => {
+      return {
+        wallet_address: mem.wallet_address,
+        royalty: mem.royalty,
+      };
+    });
+    let formData = new FormData();
+    formData.append("royalty_data", JSON.stringify(members));
+    royalitySplitterId
+      ? formData.append("splitter_uid", royalitySplitterId)
+      : formData.append("collection_uid", collectionId);
+    setIsLoading(true);
+    updateRoyaltySplitter(formData)
+      .then((resp) => {
+        if (resp.code === 0) {
+          setIsLoading(false);
+          setRoyaltyUpdatedSuccessfully(true);
+          setShowRoyalityErrorModal(false);
+          setShowRoyalityErrorMessage("");
+          handleClose();
+        } else {
+          setIsLoading(false);
+          setRoyaltyUpdatedSuccessfully(false);
+          setShowRoyalityErrorModal(true);
+          setShowRoyalityErrorMessage(resp.message);
+          handleClose();
+        }
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        setRoyaltyUpdatedSuccessfully(false);
+        handleClose();
+      });
   };
 
   return (
@@ -90,7 +224,11 @@ const ImportWalletModal = ({
           <li
             className="mr-2"
             role="presentation"
-            onClick={() => setSelectedTab(1)}
+            onClick={() => {
+              setSelectedTab(1);
+              setContributors();
+              setShowContributors(false);
+            }}
           >
             <button
               className={`inline-block font-bold p-4 text-[18px] rounded-t-lg ${
@@ -111,7 +249,11 @@ const ImportWalletModal = ({
           <li
             className="mr-2"
             role="presentation"
-            onClick={() => setSelectedTab(2)}
+            onClick={() => {
+              setSelectedTab(2);
+              setContributors();
+              setShowContributors(false);
+            }}
           >
             <button
               className={`inline-block p-4 font-bold text-[18px] rounded-t-lg ${
@@ -133,44 +275,59 @@ const ImportWalletModal = ({
         <div id="myTabContent">
           {selectedTab === 1 && (
             <div className="mt-8">
-              {collections.map((collection) => {
-                let image = collection?.assets?.find(
-                  (img) => img["asset_purpose"] === "logo"
-                );
-                return (
-                  <div className="flex items-center mb-6 cursor-pointer">
-                    <img
-                      src={image ? image.path : manImg}
-                      className="w-[56px] h-[56px] rounded-[6px]"
-                      alt="Collection"
-                    />
-                    <p className="text-[14px] font-bold ml-4 truncate w-[160px]">
-                      {collection.name}
-                    </p>
-                    <p className="text-[12px] ml-8">
-                      {collection?.members ? collection.members.length : 0}{" "}
-                      Contributors
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-          {selectedTab === 2 && (
-            <div className="mt-8">
-              <p className="text-[12px] mb-3">
-                Choose Collection to add member for {collectionName}{" "}
-                Contributors
-              </p>
-              {contributors?.length ? (
+              {showContributors ? (
                 <ContributorsList
                   contributors={contributors}
                   handleContributorSelect={handleContributorSelect}
                   selectAll={selectAll}
+                  handleAddWallet={handleAddWallet}
                   handleContributorSelectAll={handleContributorSelectAll}
+                  handleValueChange={handleValueChange}
+                  showPercentError={showPercentError}
+                  isLoading={isLoading}
+                />
+              ) : (
+                collections.map((collection) => {
+                  let image = collection?.assets?.find(
+                    (img) => img["asset_purpose"] === "logo"
+                  );
+                  return (
+                    <div
+                      className="flex items-center mb-6 cursor-pointer"
+                      onClick={() => handleCollectionContributor(collection.id)}
+                    >
+                      <img
+                        src={image ? image.path : manImg}
+                        className="w-[56px] h-[56px] rounded-[6px]"
+                        alt="Collection"
+                      />
+                      <p className="text-[14px] font-bold ml-4">
+                        {collection.name}
+                      </p>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          )}
+          {selectedTab === 2 && (
+            <div className="mt-8">
+              {showContributors ? (
+                <ContributorsList
+                  handleAddWallet={handleAddWallet}
+                  contributors={contributors}
+                  handleContributorSelect={handleContributorSelect}
+                  selectAll={selectAll}
+                  handleContributorSelectAll={handleContributorSelectAll}
+                  handleValueChange={handleValueChange}
+                  showPercentError={showPercentError}
+                  isLoading={isLoading}
                 />
               ) : (
                 <div>
+                  {csvError ? (
+                    <p className="text-red-400 text-[14px] mb-3">{csvError}</p>
+                  ) : null}
                   <input
                     id="csv-upload"
                     type="file"

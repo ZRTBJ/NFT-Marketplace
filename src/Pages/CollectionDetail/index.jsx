@@ -30,6 +30,7 @@ import PlusIcon from "assets/images/icons/plus-circle.svg";
 import NFTSales from "components/RoyalityManagement/NFTSale/NFTSales";
 import ConfirmationModal from "components/modalDialog/ConfirmationModal";
 import ImportWalletModal from "components/modalDialog/ImportWalletModal/ImportWalletModal";
+import { walletAddressTruncate } from "util/walletAddressTruncate";
 
 const TABLE_HEADERS = [
   { id: 0, label: "Wallet Address" },
@@ -114,6 +115,14 @@ const CollectionDetail = () => {
       .catch((err) => console.log(err));
   };
 
+  const getSplittedContributors = (id) => {
+    getSplitterDetails(id).then((data) => {
+      if (data.code === 0) {
+        setRoyalityMembers(data?.members);
+      }
+    });
+  };
+
   const getCollectionDetail = () => {
     let payload = {
       id: collectionId,
@@ -127,13 +136,7 @@ const CollectionDetail = () => {
           );
           if (resp?.collection?.royalty_splitter?.id) {
             setRoyalitySpliterId(resp.collection.royalty_splitter.id);
-            getSplitterDetails(resp.collection.royalty_splitter.id).then(
-              (data) => {
-                if (data.code === 0) {
-                  setRoyalityMembers(data?.members);
-                }
-              }
-            );
+            getSplittedContributors(resp.collection.royalty_splitter.id);
           }
           setCollection(resp.collection);
           setCollectionType(resp.collection.type);
@@ -374,10 +377,22 @@ const CollectionDetail = () => {
       {showImportWallet && (
         <ImportWalletModal
           show={showImportWallet}
-          handleClose={() => setShowImportWallet(false)}
+          handleClose={() => {
+            setShowImportWallet(false);
+            if (royalitySplitterId) getSplittedContributors();
+          }}
           projectId={projectID}
           collectionName={Collection?.name}
           collectionId={Collection?.id}
+          handleValueChange={handleValueChange}
+          handleAutoFill={handleAutoFill}
+          royalityMembers={royalityMembers}
+          setRoyalityMembers={setRoyalityMembers}
+          showPercentError={ShowPercentError}
+          royalitySplitterId={royalitySplitterId}
+          setRoyaltyUpdatedSuccessfully={setRoyaltyUpdatedSuccessfully}
+          setShowRoyalityErrorModal={setShowRoyalityErrorModal}
+          setShowRoyalityErrorMessage={setShowRoyalityErrorMessage}
         />
       )}
       <section className="mt-6">
@@ -404,7 +419,7 @@ const CollectionDetail = () => {
                 </h1>
                 <p className="text-textLight text-sm">
                   {Collection?.contract_address
-                    ? Collection.contract_address
+                    ? walletAddressTruncate(Collection.contract_address)
                     : "Smart Contract not released"}
                   <i
                     className={`fa-solid fa-copy ml-2 ${

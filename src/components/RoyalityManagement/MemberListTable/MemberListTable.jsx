@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { set } from "date-fns";
 import MemeberListMobile from "../MemberListMobile/MemberListMobile";
 import ConfirmationModal from "components/modalDialog/ConfirmationModal";
+import { walletAddressTruncate } from "util/walletAddressTruncate";
 
 const MemberListTable = ({
   headers,
@@ -124,7 +125,9 @@ const MemberListTable = ({
                   index < list.length - 1 ? "border-b" : ""
                 } text-left text-[13px]`}
               >
-                <td className="py-4 px-5 w-fit">{r.user_eoa}</td>
+                <td className="py-4 px-5 w-fit">
+                  {walletAddressTruncate(r.user_eoa)}
+                </td>
                 {/* <td className="py-4 px-5">{r.email}</td> */}
                 <td className={`py-4 px-5 flex items-center`}>
                   {isEdit === r.user_eoa && isOwner ? (
