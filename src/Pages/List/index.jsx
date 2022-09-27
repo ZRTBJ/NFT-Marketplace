@@ -14,6 +14,7 @@ import NFTListCard from "components/NFTListCard";
 import Sort from "assets/images/icons/sort.svg";
 import { useLocation } from "react-router-dom";
 import { getCollections } from "services/collection/collectionService";
+import ReactPaginate from "react-paginate";
 function List() {
   function useQuery() {
     const { search } = useLocation();
@@ -162,20 +163,10 @@ function List() {
   );
   const isSearching = searchKeyword.length > 2;
 
-  async function onClickPagination(page) {
-    setIsactive(page);
-  }
+  const handlePageClick = (event) => {
+    setIsactive(event.selected + 1);
+  };
 
-  async function nextPage() {
-    if (isActive < pagination.length) {
-      setIsactive((pre) => pre + 1);
-    }
-  }
-  async function prevPage() {
-    if (isActive > 1) {
-      setIsactive((pre) => pre - 1);
-    }
-  }
   useEffect(() => {
     payload.page = isActive;
     if (searchKeyword.length > 0) {
@@ -287,7 +278,7 @@ function List() {
             </div>
           ) : null}
           {query.get("type") === "collection" && (
-            <section className="flex flex-wrap items-center space-x-4 justify-center md:justify-start">
+            <section className="flex flex-wrap items-start  space-x-4 justify-center md:justify-start">
               {isSearching
                 ? searchList.map((item, index) => (
                     <div key={item.id}>
@@ -338,34 +329,19 @@ function List() {
         {/* ----- End Card Section ---- */}
 
         {pagination.length > 0 && (
-          <section className="my-5">
-            <div className="flex justify-center space-x-1">
-              <button
-                onClick={prevPage}
-                className="px-3 py-1 text-sm  text-primary-900 bg-primary-900 bg-opacity-5 rounded hover:bg-opacity-7"
-              >
-                <i className="fa-solid fa-angle-left"></i>
-              </button>
-              {pagination.map((page) => (
-                <button
-                  key={page}
-                  className={`${
-                    isActive === page ? "text-primary-900 bg-primary-900" : ""
-                  }  px-3 py-1 font-satoshi-bold text-sm  bg-opacity-5 rounded hover:bg-opacity-7`}
-                  onClick={() => onClickPagination(page)}
-                >
-                  {page}
-                </button>
-              ))}
-
-              <button
-                onClick={nextPage}
-                className="px-3 py-1 text-sm  text-primary-900 bg-primary-900 bg-opacity-5 rounded hover:bg-opacity-7"
-              >
-                <i className="fa-solid fa-angle-right"></i>
-              </button>
-            </div>
-          </section>
+          <ReactPaginate
+            className="flex flex-wrap md:space-x-10 space-x-3 justify-center items-center my-6"
+            pageClassName="px-3 py-1 font-satoshi-bold text-sm  bg-opacity-5 rounded hover:bg-opacity-7 !text-txtblack "
+            breakLabel="..."
+            nextLabel=">"
+            onPageChange={handlePageClick}
+            pageRangeDisplayed={3}
+            pageCount={pagination.length}
+            previousLabel="<"
+            renderOnZeroPageCount={null}
+            activeClassName="text-primary-900 bg-primary-900 !no-underline"
+            activeLinkClassName="!text-txtblack !no-underline"
+          />
         )}
         {/* End pagination */}
       </div>

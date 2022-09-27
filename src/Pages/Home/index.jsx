@@ -20,6 +20,7 @@ import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Sort from "assets/images/icons/sort.svg";
 import { Navigation } from "swiper";
+import ReactPaginate from "react-paginate";
 function Home() {
   SwiperCore.use([Autoplay]);
   // const [categories, setCategories] = useState([]);
@@ -35,7 +36,7 @@ function Home() {
   const [ShowInviteModal, setShowInviteModal] = useState(false);
   const { invite } = useParams();
   const userinfo = useSelector((state) => state.user.userinfo);
-  const [pagination, SetPagination] = useState([1, 2]);
+  const [pagination, SetPagination] = useState([]);
   const [isActive, setIsactive] = useState(1);
 
   const payload = {
@@ -189,20 +190,6 @@ function Home() {
   );
   const isSearching = searchKeyword.length > 2;
 
-  async function onClickPagination(page) {
-    setIsactive(page);
-  }
-
-  async function nextPage() {
-    if (isActive < pagination.length) {
-      setIsactive((pre) => pre + 1);
-    }
-  }
-  async function prevPage() {
-    if (isActive > 1) {
-      setIsactive((pre) => pre - 1);
-    }
-  }
   useEffect(() => {
     payload.page = isActive;
     if (searchKeyword.length > 0) {
@@ -211,6 +198,10 @@ function Home() {
     setIsLoading(true);
     getProjectList(payload, sortType, searchKeyword.length > 0 ? true : false);
   }, [isActive]);
+
+  const handlePageClick = (event) => {
+    setIsactive(event.selected + 1);
+  };
 
   return (
     <>
@@ -340,34 +331,21 @@ function Home() {
         {/* ----- End Card Section ---- */}
 
         {pagination.length > 0 && (
-          <section className="my-5">
-            <div className="flex justify-center space-x-1">
-              <button
-                onClick={prevPage}
-                className="px-3 py-1 text-sm  text-primary-900 bg-primary-900 bg-opacity-5 rounded hover:bg-opacity-7"
-              >
-                <i className="fa-solid fa-angle-left"></i>
-              </button>
-              {pagination.map((page) => (
-                <button
-                  key={page}
-                  className={`${
-                    isActive === page ? "text-primary-900 bg-primary-900" : ""
-                  }  px-3 py-1 font-satoshi-bold text-sm  bg-opacity-5 rounded hover:bg-opacity-7`}
-                  onClick={() => onClickPagination(page)}
-                >
-                  {page}
-                </button>
-              ))}
-
-              <button
-                onClick={nextPage}
-                className="px-3 py-1 text-sm  text-primary-900 bg-primary-900 bg-opacity-5 rounded hover:bg-opacity-7"
-              >
-                <i className="fa-solid fa-angle-right"></i>
-              </button>
-            </div>
-          </section>
+          <>
+            <ReactPaginate
+              className="flex flex-wrap md:space-x-10 space-x-3 justify-center items-center my-6"
+              pageClassName="px-3 py-1 font-satoshi-bold text-sm  bg-opacity-5 rounded hover:bg-opacity-7 !text-txtblack "
+              breakLabel="..."
+              nextLabel=">"
+              onPageChange={handlePageClick}
+              pageRangeDisplayed={3}
+              pageCount={pagination.length}
+              previousLabel="<"
+              renderOnZeroPageCount={null}
+              activeClassName="text-primary-900 bg-primary-900 !no-underline"
+              activeLinkClassName="!text-txtblack !no-underline"
+            />
+          </>
         )}
         {/* End pagination */}
 

@@ -648,7 +648,7 @@ const Profile = () => {
           </div>
 
           <div className="mb-[50px]">
-            <div className="mb-5 flex flex-wrap">
+            <div className="mb-5 flex px-4 flex-wrap">
               <h1>Your DAO</h1>
               <Link
                 to={`/list/?type=dao&user=${id}`}
@@ -683,7 +683,7 @@ const Profile = () => {
           </div>
 
           <div className="mb-[50px]">
-            <div className="mb-5 flex flex-wrap">
+            <div className="mb-5 flex px-4 flex-wrap">
               <h1>Your Collection</h1>
               <Link
                 to={`/list/?type=collection&user=true`}
