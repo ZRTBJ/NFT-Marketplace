@@ -97,8 +97,8 @@ export async function publishCollection(id) {
 }
 
 //Royality Splitters
-export async function getSplitterDetails(id) {
-  return await client("GET", `/royalty?splitter_id=${id}`);
+export async function getSplitterDetails(id, type = "splitter_id") {
+  return await client("GET", `/royalty?${type}=${id}`);
 }
 
 export async function updateRoyaltySplitter(payload) {
