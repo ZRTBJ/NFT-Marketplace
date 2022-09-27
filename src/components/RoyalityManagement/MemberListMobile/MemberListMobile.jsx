@@ -16,9 +16,11 @@ const MemeberListMobile = ({ list }) => {
                 {walletAddressTruncate(item.user_eoa)}
               </p>
             </div>
-            <div className="w-[32px] h-[32px] bg-[#FF3C3C] rounded-[4px] flex items-center justify-center cursor-pointer">
-              <img src={Trash} alt="delete" />
-            </div>
+            {item.is_owner ? null : (
+              <div className="w-[32px] h-[32px] bg-[#FF3C3C] rounded-[4px] flex items-center justify-center cursor-pointer">
+                <img src={Trash} alt="delete" />
+              </div>
+            )}
           </div>
           <div className="flex items-center">
             <div className="w-2/6">

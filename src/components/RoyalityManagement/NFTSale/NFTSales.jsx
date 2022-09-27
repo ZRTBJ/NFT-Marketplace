@@ -2,6 +2,7 @@ import styles from "./style.module.css";
 import Polygon from "assets/images/network/polygon.svg";
 import manImg from "assets/images/image-default.svg";
 import { useState } from "react";
+import NFTSalesMobile from "./NFTSalesMobile";
 
 const headers = [
   {
@@ -47,7 +48,7 @@ const NFTSales = ({ items }) => {
           ))}
         </div>
       </div>
-      <div className="overflow-x-auto relative hidden md:block">
+      <div className="relative hidden md:block">
         <table className="w-full text-left">
           <thead>
             <tr className="text-textSubtle text-[12px] ">
@@ -95,6 +96,9 @@ const NFTSales = ({ items }) => {
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="block md:hidden">
+        <NFTSalesMobile items={items} />
       </div>
     </div>
   );
