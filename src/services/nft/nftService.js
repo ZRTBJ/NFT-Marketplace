@@ -85,3 +85,9 @@ export async function mintProductOrMembershipNft(payload) {
     payload.type === "membership" ? "/membership-nft" : "/product-nft";
   return await client("POST", `${url}/${payload.id}/mint`);
 }
+export async function getMintedNftListByUserId(payload) {
+  return await client(
+    "GET",
+    `/user/${payload.userId}/nft?page=${payload.page}&limit=${payload.limit}`
+  );
+}

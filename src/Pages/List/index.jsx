@@ -15,6 +15,7 @@ import Sort from "assets/images/icons/sort.svg";
 import { useLocation } from "react-router-dom";
 import { getCollections } from "services/collection/collectionService";
 import ReactPaginate from "react-paginate";
+import { getMintedNftListByUserId } from "services/nft/nftService";
 function List() {
   function useQuery() {
     const { search } = useLocation();
@@ -67,16 +68,29 @@ function List() {
         keyword: payload.keyword,
       };
       projectResponse = await getUserProjectListById(payloadData);
+    } else if (query.get("type") === "nft") {
+      let payloadData = {
+        userId: query.get("user"),
+        page: payload.page,
+        limit: 10,
+      };
+      projectResponse = await getMintedNftListByUserId(payloadData);
     }
-    // const projectRes = await getPublicProjectList(payload);
 
     if (categoriesRes?.categories && projectResponse?.data) {
-      const projects = projectResponse.data.map((project) => {
-        project.category_name = categoriesRes.categories.find(
-          (category) => category.id === project.category_id
-        )?.name;
-        return project;
-      });
+      let projects = [];
+
+      if (query.get("type") !== "nft") {
+        projects = projectResponse.data.map((project) => {
+          project.category_name = categoriesRes.categories.find(
+            (category) => category.id === project.category_id
+          )?.name;
+          return project;
+        });
+      } else {
+        projects = projectResponse.data;
+      }
+
       // types
 
       if (isSearch) {
