@@ -10,6 +10,7 @@ import manImg from "assets/images/image-default.svg";
 import fileUpload from "assets/images/file-upload.svg";
 import Papa from "papaparse";
 import ContributorsList from "./ContributorsList";
+import csvFile from "assets/csv/contributor-import-template.csv";
 
 const ImportWalletModal = ({
   show,
@@ -46,7 +47,6 @@ const ImportWalletModal = ({
   useEffect(() => {
     if (contributors?.length) {
       let selectedValues = contributors?.filter((item) => item.selected);
-      console.log(selectedValues);
       let percent = selectedValues.reduce((acc, val) => acc + val.royalty, 0);
 
       if (percent > 100) {
@@ -134,7 +134,7 @@ const ImportWalletModal = ({
         if (data.code === 0) {
           const result = data.members.map((item) => ({
             wallet_address: item.user_eoa,
-            royalty: item.is_owner ? 100 : 0,
+            royalty: item.royalty_percent,
             selected: item.is_owner ? true : false,
             name: item.user_name,
           }));
@@ -328,6 +328,9 @@ const ImportWalletModal = ({
                   {csvError ? (
                     <p className="text-red-400 text-[14px] mb-3">{csvError}</p>
                   ) : null}
+                  <p className="text-[14px] mb-2">
+                    Get CSV template <a href={csvFile}>here</a>.
+                  </p>
                   <input
                     id="csv-upload"
                     type="file"

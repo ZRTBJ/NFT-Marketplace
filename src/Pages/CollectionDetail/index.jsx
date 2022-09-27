@@ -379,7 +379,9 @@ const CollectionDetail = () => {
           show={showImportWallet}
           handleClose={() => {
             setShowImportWallet(false);
-            if (royalitySplitterId) getSplittedContributors();
+            getSplittedContributors(
+              royalitySplitterId ? royalitySplitterId : Collection?.id
+            );
           }}
           projectId={projectID}
           collectionName={Collection?.name}
