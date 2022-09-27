@@ -27,6 +27,8 @@ import ErrorModal from "components/modalDialog/ErrorModal";
 import { useDispatch, useSelector } from "react-redux";
 import { getNotificationData } from "Slice/notificationSlice";
 import { walletAddressTruncate } from "util/walletAddressTruncate";
+import { getMintedNftListByUserId } from "services/nft/nftService";
+import NFTListCard from "components/NFTListCard";
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -143,6 +145,8 @@ const Profile = () => {
       spaceBetween: 100,
     },
   };
+
+  const [mintedNftList, setMintedNftList] = useState([]);
 
   // function start
   async function userInfo() {
@@ -265,6 +269,26 @@ const Profile = () => {
         setErrorModal(true);
       });
   }
+  async function getNftList() {
+    const payload = {
+      userId: id,
+      page: 1,
+      limit: 10,
+    };
+    await getMintedNftListByUserId(payload)
+      .then((e) => {
+        if (e.code === 0 && e.data !== null) {
+          setMintedNftList(e.data);
+          setIsLoading(false);
+        } else {
+          setIsLoading(false);
+        }
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
+  }
+
   // useEffect(() => {
   //   // file upload web socket
   //   const projectDeployStatus = fileUploadNotification.find(
@@ -298,6 +322,9 @@ const Profile = () => {
   }, []);
   useEffect(() => {
     getCollectionList();
+  }, []);
+  useEffect(() => {
+    getNftList();
   }, []);
 
   return (
@@ -780,6 +807,38 @@ const Profile = () => {
             ) : (
               <div className="text-center mt-6 text-textSubtle">
                 <h2>You don't have any Collection yet</h2>
+              </div>
+            )}
+          </div>
+
+          <div className="mb-[50px]">
+            <div className="mb-5 flex px-4 flex-wrap">
+              <h1>Minted NFTs List</h1>
+              <Link
+                to={`/list/?type=nft&user=${id}`}
+                className="contained-button  py-1 px-3 rounded ml-auto"
+              >
+                View All
+              </Link>
+            </div>
+            {mintedNftList.length > 0 ? (
+              <Swiper
+                breakpoints={settings}
+                navigation={false}
+                modules={[Navigation]}
+                className={styles.createSwiper}
+              >
+                <div>
+                  {mintedNftList.map((nft) => (
+                    <SwiperSlide className={styles.nftCard} key={nft.id}>
+                      <NFTListCard nft={nft} projectWork="ethereum" />
+                    </SwiperSlide>
+                  ))}
+                </div>
+              </Swiper>
+            ) : (
+              <div className="text-center mt-6 text-textSubtle">
+                <h2>You don't have any minted NFT yet</h2>
               </div>
             )}
           </div>
