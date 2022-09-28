@@ -65,7 +65,13 @@ export async function getCollectionDetailsById(payload) {
   return await client("GET", `/collection/${payload.id}`);
 }
 
-export async function getCollections(listType, projectId, page, limit,keyword='') {
+export async function getCollections(
+  listType,
+  projectId,
+  page,
+  limit,
+  keyword = ""
+) {
   return await client(
     "GET",
     `/collection?list_type=${listType}&project_id=${projectId}&page=${page}&limit=${limit}&keyword=${keyword}`
@@ -103,4 +109,8 @@ export async function getSplitterDetails(id, type = "splitter_id") {
 
 export async function updateRoyaltySplitter(payload) {
   return await client("PUT", `/royalty`, payload, "formdata");
+}
+
+export async function getCollectionSales(id) {
+  return await client("GET", `/collection/${id}/sales`);
 }

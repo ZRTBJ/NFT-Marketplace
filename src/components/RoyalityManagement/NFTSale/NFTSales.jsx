@@ -3,6 +3,7 @@ import Polygon from "assets/images/network/polygon.svg";
 import manImg from "assets/images/image-default.svg";
 import { useState } from "react";
 import NFTSalesMobile from "./NFTSalesMobile";
+import dayjs from "dayjs";
 
 const headers = [
   {
@@ -49,53 +50,61 @@ const NFTSales = ({ items }) => {
         </div>
       </div>
       <div className="relative hidden md:block">
-        <table className="w-full text-left">
-          <thead>
-            <tr className="text-textSubtle text-[12px] ">
-              {headers.map((item) => (
-                <th
-                  scope="col"
-                  className={`px-5 text-[14px] text-[#303548] ${styles.tableHeader}`}
-                  key={item.id}
-                >
-                  {item.label}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((r, index) => (
-              <tr
-                key={r.id}
-                className={`${
-                  index < items.length - 1 ? "border-b" : ""
-                } text-left text-[13px]`}
-              >
-                <td className="py-4 px-5">
-                  <div className="flex items-center">
-                    <img src={manImg} alt="nft" className="h-[33px] w-[33px]" />{" "}
-                    <span className="ml-2">{r.name}</span>
-                  </div>
-                </td>
-                <td className="py-4 px-5">
-                  <div className="flex items-center">
-                    <span> {r.price ? r.price : "-"}</span>
-                    <img src={Polygon} alt="network" className="ml-2" />
-                  </div>
-                </td>
-                <td className="py-4 px-5">{r.qty}</td>
-                <td className={`py-4 px-5`}>{r.buyer ? r.buyer : "-"}</td>
-                <td className="py-4 px-5">
-                  <span>cool</span>
-                </td>
-                {/* <td className="py-4 px-5 flex items-center">
-                <span> {r.price ? r.price : "-"}</span>
-                <img src={Polygon} alt="network" className="ml-2" />
-              </td> */}
+        {items.length ? (
+          <table className="w-full text-left">
+            <thead>
+              <tr className="text-textSubtle text-[12px] ">
+                {headers.map((item) => (
+                  <th
+                    scope="col"
+                    className={`px-5 text-[14px] text-[#303548] ${styles.tableHeader}`}
+                    key={item.id}
+                  >
+                    {item.label}
+                  </th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {items.map((r, index) => (
+                <tr
+                  key={r.id}
+                  className={`${
+                    index < items.length - 1 ? "border-b" : ""
+                  } text-left text-[13px]`}
+                >
+                  <td className="py-4 px-5">
+                    <div className="flex items-center">
+                      <img
+                        src={r?.nft_asset_path ? r.nft_asset_path : manImg}
+                        alt="nft"
+                        className="h-[33px] w-[33px]"
+                      />{" "}
+                      <span className="ml-2">{r.nft_name}</span>
+                    </div>
+                  </td>
+                  <td className="py-4 px-5">
+                    <div className="flex items-center">
+                      <span> {r.nft_price ? r.nft_price : "-"}</span>
+                      <img src={Polygon} alt="network" className="ml-2" />
+                    </div>
+                  </td>
+                  <td className="py-4 px-5">{r.nft_unit}</td>
+                  <td className={`py-4 px-5`}>
+                    {r.user_eoa ? r.user_eoa : "-"}
+                  </td>
+                  <td className="py-4 px-5">
+                    <span>
+                      {dayjs(r.purchase_time).format("DD/MM/YYYY - HH:mm")}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p className="text-center">You don't have any sales to display</p>
+        )}
       </div>
       <div className="block md:hidden">
         <NFTSalesMobile items={items} />
