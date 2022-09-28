@@ -5,6 +5,7 @@ import {
   getCollectionDetailsById,
   getSplitterDetails,
   updateRoyaltySplitter,
+  getCollectionSales,
 } from "services/collection/collectionService";
 import Cover from "assets/images/cover-default.svg";
 import manImg from "assets/images/image-default.svg";
@@ -42,27 +43,6 @@ const TABLE_HEADERS = [
   { id: 4, label: "Action" },
 ];
 
-const SaleData = [
-  {
-    id: 0,
-    image: "",
-    name: "Membership 1",
-    price: 40,
-    qty: 4,
-    buyer: "Oxsfwrgrg",
-    data: "fdf",
-  },
-  {
-    id: 1,
-    image: "",
-    name: "Membership 1",
-    price: 40,
-    qty: 4,
-    buyer: "Oxsfwrgrg",
-    data: "fdf",
-  },
-];
-
 const CollectionDetail = () => {
   const history = useHistory();
   const [Collection, setCollection] = useState();
@@ -97,13 +77,21 @@ const CollectionDetail = () => {
   const [showRoyalityErrorMessage, setShowRoyalityErrorMessage] = useState("");
   const [showImportWallet, setShowImportWallet] = useState(false);
   const [projectID, setProjectID] = useState("");
+  const [nftSales, setNFTSales] = useState([]);
 
   useEffect(() => {
     if (collectionId) {
       getCollectionDetail();
       getNFTs();
+      getCollectionSalesData();
     }
   }, []);
+
+  const getCollectionSalesData = () => {
+    getCollectionSales(collectionId).then((data) =>
+      setNFTSales(data?.sales ? data?.sales : [])
+    );
+  };
 
   const getNFTs = () => {
     getCollectionNFTs(collectionId)
@@ -861,7 +849,7 @@ const CollectionDetail = () => {
                   {/* ) : null} */}
                 </div>
                 <div className="bg-white rounded-[12px] p-5 mt-6 shadow-main">
-                  <NFTSales items={SaleData} />
+                  <NFTSales items={nftSales} />
                 </div>
               </div>
             )}

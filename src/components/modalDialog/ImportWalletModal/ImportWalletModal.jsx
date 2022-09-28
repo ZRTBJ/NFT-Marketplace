@@ -74,21 +74,34 @@ const ImportWalletModal = ({
               percent: col[1],
             }));
             if (dataValues.every((value) => value.id && value.percent)) {
-              const owner = {
-                wallet_address: userinfo?.eoa,
-                royalty: 100,
-                selected: true,
-                name: userinfo?.display_name,
-              };
-              const result = data.map((item) => ({
-                wallet_address: item[0],
-                royalty: parseInt(item[1]),
-                selected: false,
-              }));
-              setShowContributors(true);
-              let values = [owner, ...result];
-              setContributors(values);
-              setCSVError("");
+              let duplicateValues = dataValues.reduce((a, e) => {
+                a[e.id] = ++a[e.id] || 0;
+                return a;
+              }, {});
+              const hasDuplicate = dataValues.filter(
+                (e) => duplicateValues[e.id]
+              );
+              if (!hasDuplicate.length) {
+                const owner = {
+                  wallet_address: userinfo?.eoa,
+                  royalty: 100,
+                  selected: true,
+                  name: userinfo?.display_name,
+                };
+                const result = data.map((item) => ({
+                  wallet_address: item[0],
+                  royalty: parseInt(item[1]),
+                  selected: false,
+                }));
+                setShowContributors(true);
+                let values = [owner, ...result];
+                setContributors(values);
+                setCSVError("");
+              } else {
+                setCSVError(
+                  "Your CSV file has duplicate wallet addressess. Please check and remove it"
+                );
+              }
             } else {
               setCSVError(
                 "Please make sure both Wallet Address and Percentage fields are filled properly"
