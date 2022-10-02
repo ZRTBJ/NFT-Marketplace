@@ -19,6 +19,7 @@ import { useHistory } from "react-router-dom";
 import { createProject } from "services/project/projectService";
 import { createCollection } from "services/collection/collectionService";
 import PublishingProductNFT from "components/modalDialog/PublishingProductNFT";
+import { updateRoyaltySplitter } from "services/collection/collectionService";
 
 export default function ProductNFT(props) {
   const audioRef = useRef();
@@ -345,6 +346,11 @@ export default function ProductNFT(props) {
       .then((res) => {
         if (res.code === 0) {
           setCollectionId(res.collection.id);
+          let members = [{ wallet_address: userinfo?.eoa, royalty: 100 }];
+          let formData = new FormData();
+          formData.append("royalty_data", JSON.stringify(members));
+          formData.append("collection_uid", res.collection.id);
+          updateRoyaltySplitter(formData);
           genUploadKey();
         }
       })

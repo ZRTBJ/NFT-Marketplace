@@ -14,6 +14,7 @@ import {
   createMembershipNft,
   getassetDetails,
 } from "services/nft/nftService";
+import { updateRoyaltySplitter } from "services/collection/collectionService";
 
 import axios from "axios";
 import Config from "config";
@@ -244,6 +245,11 @@ export default function MembershipNFT() {
     };
     await mockCreateCollection(payload).then((res) => {
       collection_id = res.collection.id;
+      let members = [{ wallet_address: userinfo?.eoa, royalty: 100 }];
+      let formData = new FormData();
+      formData.append("royalty_data", JSON.stringify(members));
+      formData.append("collection_uid", res.collection.id);
+      updateRoyaltySplitter(formData);
       setCollection_id(collection_id);
       // const newUrl =
       //   window.location.protocol +

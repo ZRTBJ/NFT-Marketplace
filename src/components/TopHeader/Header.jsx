@@ -61,11 +61,13 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   );
 
   useEffect(() => {
-    if (!networkId) setNetworkId(window.ethereum.networkVersion);
-    window?.ethereum?.on("networkChanged", function (networkId) {
-      setNetworkId(networkId);
-      setShowNetworkChanged(true);
-    });
+    if (window?.ethereum) {
+      if (!networkId) setNetworkId(window.ethereum.networkVersion);
+      window?.ethereum?.on("networkChanged", function (networkId) {
+        setNetworkId(networkId);
+        setShowNetworkChanged(true);
+      });
+    }
   }, []);
 
   useEffect(() => {
