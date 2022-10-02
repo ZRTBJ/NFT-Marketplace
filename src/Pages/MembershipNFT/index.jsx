@@ -524,6 +524,16 @@ export default function MembershipNFT() {
                 };
                 dispatch(getNotificationData(deployData));
               }
+            } else if (res.code === 5001) {
+              setTimeout(function () {
+                const notificationData = {
+                  projectId: projectDeployStatus.projectId,
+                  etherscan: "",
+                  function_uuid: projectDeployStatus.function_uuid,
+                  data: "",
+                };
+                dispatch(getNotificationData(notificationData));
+              }, 30000);
             }
           });
         }
