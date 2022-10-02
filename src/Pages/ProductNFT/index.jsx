@@ -7,7 +7,7 @@ import Modal from "components/Modal";
 import { useForm } from "react-hook-form";
 import ErrorModal from "components/modalDialog/ErrorModal";
 import {
-  generateUploadkey,
+  generateUploadkeyGcp,
   getassetDetails,
   saveProductNFT,
 } from "services/nft/nftService";
@@ -121,6 +121,7 @@ export default function ProductNFT(props) {
   function nftFileChangeHandler(event) {
     try {
       const file = event.currentTarget.files[0];
+      // setnftFile({ file: file, path: URL.createObjectURL(file) });
       const usedSize = userinfo["storage_usage"];
       let totalSize = 0;
       if (usedSize && file) {
@@ -150,8 +151,9 @@ export default function ProductNFT(props) {
     }
   }
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     if (nftFile && nftFile.file) {
+      setShowConfirmation(true);
       if (showConfirmation) {
         setFileError(false);
         // setIsLoading(true);
@@ -159,23 +161,22 @@ export default function ProductNFT(props) {
         if (!collectionId || collectionId === "") {
           createNewProject();
         } else {
-          genUploadKey();
+          await genUploadKey();
         }
-      }
-      {
-        setShowConfirmation(true);
       }
     } else {
       setFileError(true);
     }
   };
 
-  function genUploadKey() {
+  async function genUploadKey() {
     const request = new FormData();
-    generateUploadkey(request)
+    request.append("file_name", nftFile.file.name);
+    request.append("mime_type", nftFile.file.type);
+    await generateUploadkeyGcp(request)
       .then((res) => {
-        if (res.key) {
-          uploadAFile(res.key);
+        if (res.code === 0 && res.signed_url && res.signed_url !== "") {
+          uploadAFile(res.signed_url, res.file_path);
         }
       })
       .catch((err) => {
@@ -183,23 +184,14 @@ export default function ProductNFT(props) {
       });
   }
 
-  function uploadAFile(uploadKey) {
-    let headers;
-
-    headers = {
-      "Content-Type": "multipart/form-data",
-      "Access-Control-Allow-Origin": "*",
-      key: uploadKey,
+  async function uploadAFile(uploadKey, filePath) {
+    const headers = {
+      "Content-Type": nftFile.file.type,
     };
-
-    let formdata = new FormData();
-
-    formdata.append("file", nftFile.file);
-
-    axios({
-      method: "POST",
-      url: Config.FILE_SERVER_URL,
-      data: formdata,
+    await axios({
+      method: "PUT",
+      url: uploadKey,
+      data: nftFile.file,
       headers: headers,
       onUploadProgress: function (progressEvent) {
         const { loaded, total } = progressEvent;
@@ -210,15 +202,17 @@ export default function ProductNFT(props) {
       },
     })
       .then((response) => {
-        setJobId(response["job_id"]);
-        const notificationData = {
-          projectId: projectId,
-          etherscan: "",
-          function_uuid: response["job_id"],
-          data: "",
-        };
-        dispatch(getNotificationData(notificationData));
-        recheckStatus(response["job_id"]);
+        saveNFTDetails(filePath);
+
+        // setJobId(response["job_id"]);
+        // const notificationData = {
+        //   projectId: projectId,
+        //   etherscan: "",
+        //   function_uuid: response["job_id"],
+        //   data: "",
+        // };
+        // dispatch(getNotificationData(notificationData));
+        // recheckStatus(response["job_id"]);
       })
       .catch((err) => {
         console.log(err);
@@ -237,7 +231,7 @@ export default function ProductNFT(props) {
       const request = new FormData();
       request.append("collection_uid", collectionId);
       request.append("name", watch("name"));
-      request.append("asset_uid", assetId);
+      request.append("asset_url", assetId);
       request.append("supply", watch("supply"));
       request.append("description", watch("description"));
       request.append("external_link", watch("externalLink"));
