@@ -22,6 +22,10 @@ export async function generateUploadkey(payload) {
   return await client("POST", `/upload/genKey`, payload, "formdata");
 }
 
+export async function generateUploadkeyGcp(payload) {
+  return await client("POST", `/upload/signKey`, payload, "formdata");
+}
+
 export async function getDefinedProperties() {
   return await client("GET", `/meta/category`);
 }
