@@ -388,7 +388,7 @@ export default function CollectionCreate() {
         } catch (e) {}
         setProjectCategory(response.category_id);
         setIsTokenTransferable(response.token_transferable);
-        setIsMetaDataFreezed(response.freeze_metadata);
+        setIsMetaDataFreezed(response.updatable);
         setRoyaltyPercentage(response.royalty_percent);
         setCollectionType(response.type);
         setDataIsLoading(false);
