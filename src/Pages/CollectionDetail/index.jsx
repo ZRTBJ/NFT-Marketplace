@@ -688,11 +688,30 @@ const CollectionDetail = () => {
                         className="min-h-auto md:min-h-[390px] rounded-xl mr-2 md:mr-4 mb-4 bg-white p-4"
                       >
                         <Link to={`/nft-details/${nft?.nft_type}/${nft.id}`}>
-                          <img
-                            className="rounded-xl h-[176px] md:h-[276px] w-[150px] md:w-[276px] object-contain"
-                            src={nft?.asset?.path}
-                            alt=""
-                          />
+                          {nft?.asset?.asset_type === "image" && (
+                            <img
+                              className="rounded-xl h-[176px] md:h-[276px] w-[150px] md:w-[276px] object-contain"
+                              src={nft?.asset?.path}
+                              alt=""
+                            />
+                          )}
+                          {nft?.asset?.asset_type === "movie" && (
+                            <video
+                              className="h-[176px] md:h-[276px] w-[150px] md:w-[276px]"
+                              controls
+                            >
+                              <source src={nft?.asset?.path} type="video/mp4" />
+                              Your browser does not support the video tag.
+                            </video>
+                          )}
+                          {nft?.asset?.asset_type === "audio" && (
+                            <audio
+                              src={nft?.asset?.path}
+                              controls
+                              autoPlay={false}
+                              className="h-[176px] md:h-[276px] w-[150px] md:w-[276px]"
+                            />
+                          )}
                         </Link>
                         <div className="py-2 md:py-5">
                           <div className="flex w-[150px] md:w-[276px]">
@@ -700,62 +719,81 @@ const CollectionDetail = () => {
                               {nft?.name}
                             </h2>
                             <div className="relative">
-                              {Collection?.type === "membership" && (
-                                <button
-                                  type="button"
-                                  className="w-[20px]"
-                                  onClick={(e) => handleShowOptions(e, nft.id)}
-                                >
-                                  <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
-                                </button>
-                              )}
+                              <button
+                                type="button"
+                                className="w-[20px]"
+                                onClick={(e) => handleShowOptions(e, nft.id)}
+                              >
+                                <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
+                              </button>
 
                               {/* Dropdown menu  */}
                               {ShowOptions === nft.id && (
                                 <div className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 mb-6 block">
-                                  <ul className="text-sm">
-                                    {/*Temporarily disable <li className="border-b border-divide">
-                                <div
-                                  onClick={(e) => handleEditNFT(e, nft.id)}
-                                  className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
-                                >
-                                  Edit NFT
-                                </div>
-                              </li>
-                              <li className="border-b border-divide">
-                                <div
-                                  onClick={(e) => handleUpdateMeta(e, nft.id)}
-                                  className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
-                                >
-                                  Update Metadata
-                                </div>
-                              </li> */}
-                                    <li className="border-b border-divide">
-                                      <div
-                                        onClick={() => {
-                                          setShowTransferNFT(true);
-                                          setShowOptions(false);
-                                        }}
-                                        className="block p-4 hover:bg-gray-100 cursor-pointer"
-                                      >
-                                        Transfer NFT
-                                      </div>
-                                    </li>{" "}
+                                  <ul className="text-sm mb-0">
+                                    {Collection.updatable && (
+                                      <>
+                                        {Collection.status === "draft" && (
+                                          <>
+                                            <li className="border-b border-divide">
+                                              <div
+                                                onClick={(e) =>
+                                                  handleEditNFT(e, nft.id)
+                                                }
+                                                className="py-3 pl-3 block hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
+                                              >
+                                                Edit NFT
+                                              </div>
+                                            </li>
+                                          </>
+                                        )}
+                                        {Collection.status === "published" && (
+                                          <>
+                                            {Collection.type === "product" && (
+                                              <li className="border-b border-divide">
+                                                <div
+                                                  onClick={(e) =>
+                                                    handleEditNFT(e, nft.id)
+                                                  }
+                                                  className="py-3 pl-3 block hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
+                                                >
+                                                  Edit NFT
+                                                </div>
+                                              </li>
+                                            )}
+                                          </>
+                                        )}
+                                      </>
+                                    )}
+
                                     {Collection?.type === "membership" && (
-                                      <li className="border-divide">
-                                        <div
-                                          onClick={(e) =>
-                                            salesPageModal(
-                                              e,
-                                              "membership",
-                                              nft.id
-                                            )
-                                          }
-                                          className="block p-4 hover:bg-gray-100 cursor-pointer"
-                                        >
-                                          Sales Settings
-                                        </div>
-                                      </li>
+                                      <>
+                                        <li className="border-b border-divide">
+                                          <div
+                                            onClick={() => {
+                                              setShowTransferNFT(true);
+                                              setShowOptions(false);
+                                            }}
+                                            className="block p-4 hover:bg-gray-100 cursor-pointer"
+                                          >
+                                            Transfer NFT
+                                          </div>
+                                        </li>
+                                        <li className="border-divide">
+                                          <div
+                                            onClick={(e) =>
+                                              salesPageModal(
+                                                e,
+                                                "membership",
+                                                nft.id
+                                              )
+                                            }
+                                            className="block p-4 hover:bg-gray-100 cursor-pointer"
+                                          >
+                                            Sales Settings
+                                          </div>
+                                        </li>
+                                      </>
                                     )}
                                   </ul>
                                 </div>

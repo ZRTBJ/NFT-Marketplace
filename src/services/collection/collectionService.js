@@ -54,7 +54,7 @@ export async function updateCollection(payload) {
     bodyFormData.append("logo", payload.logo);
   }
 
-  bodyFormData.append("freeze_metadata", payload.isMetaDaFreezed);
+  bodyFormData.append("updatable", payload.isMetaDaFreezed);
   bodyFormData.append("token_transferable", payload.isTokenTransferable);
   bodyFormData.append("royalty_percent", payload.royaltyPercentage);
 

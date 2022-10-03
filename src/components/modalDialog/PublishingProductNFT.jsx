@@ -28,7 +28,7 @@ const PublishingProductNFT = ({
         {step === 1 && (
           <div className="mx-4 md:mx-16">
             <div className="font-black text-[24px] md:text-[42px]">
-              Please wait we’re publishing. It may take a while.
+              Please wait we’re uploading. It may take a while.
             </div>
             {fileSize && uploadedPercent !== 100 ? (
               <div className="font-black text-[22px] md:text-[28px] md:leading-[42px] text-center mt-6">
