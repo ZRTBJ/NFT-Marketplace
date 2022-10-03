@@ -9,7 +9,9 @@ import ErrorModal from "components/modalDialog/ErrorModal";
 import {
   generateUploadkeyGcp,
   getassetDetails,
+  getNftDetails,
   saveProductNFT,
+  updateProductNFT,
 } from "services/nft/nftService";
 import Config from "config";
 import { getNotificationData } from "Slice/notificationSlice";
@@ -53,6 +55,11 @@ export default function ProductNFT(props) {
   const [fileSize, setFileSize] = useState(0);
   const [uploadingSize, setUploading] = useState(0);
   const [uploadedPercent, setUploadedPercent] = useState();
+  const [nft, setNft] = useState(null);
+  const [updateMode, setUpdateMode] = useState(false);
+  const [isNftLoading, setIsNftLoading] = useState(false);
+  const [asseteRemoveInUpdateMode, setAsseteRemoveInUpdateMode] =
+    useState(false);
   const {
     register,
     handleSubmit,
@@ -144,6 +151,9 @@ export default function ProductNFT(props) {
           event.currentTarget.value = "";
         } else {
           setnftFile({ file: file, path: URL.createObjectURL(file) });
+          if (updateMode) {
+            setAsseteRemoveInUpdateMode(true);
+          }
           setFileError(false);
         }
       }
@@ -159,10 +169,18 @@ export default function ProductNFT(props) {
         setFileError(false);
         // setIsLoading(true);
         setShowSteps(true);
-        if (!collectionId || collectionId === "") {
-          createNewProject();
-        } else {
-          await genUploadKey();
+        if (!updateMode) {
+          if (!collectionId || collectionId === "") {
+            createNewProject();
+          } else {
+            await genUploadKey();
+          }
+        } else if (updateMode) {
+          if (!asseteRemoveInUpdateMode) {
+            await updateNFT(nft.asset.path);
+          } else if (asseteRemoveInUpdateMode) {
+            await genUploadKey();
+          }
         }
       }
     } else {
@@ -203,7 +221,11 @@ export default function ProductNFT(props) {
       },
     })
       .then((response) => {
-        saveNFTDetails(filePath);
+        if (updateMode) {
+          updateNFT(filePath);
+        } else if (!updateMode) {
+          saveNFTDetails(filePath);
+        }
 
         // setJobId(response["job_id"]);
         // const notificationData = {
@@ -300,6 +322,85 @@ export default function ProductNFT(props) {
     }
   }
 
+  async function updateNFT(assetId) {
+    if (
+      assetId &&
+      assetId.length > 0 &&
+      collectionId &&
+      collectionId.length > 0
+    ) {
+      setIsLoading(true);
+      const request = new FormData();
+      request.append("name", watch("name"));
+      request.append("asset_url", assetId);
+      request.append("supply", watch("supply"));
+      request.append("description", watch("description"));
+      request.append("external_link", watch("externalLink"));
+      request.append("sensitive_content", watch("sensitiveContent"));
+      request.append("benefit_array", []);
+
+      const attributes = [];
+      // properties
+      for (let aprop of propertyList) {
+        if (
+          aprop.key &&
+          aprop.key.length > 0 &&
+          aprop.value &&
+          aprop.value.length > 0
+        ) {
+          const prop = {
+            key: aprop.key,
+            value: aprop.value,
+            value_type: aprop.value_type,
+            display_type: aprop.display_type,
+          };
+          attributes.push(prop);
+        }
+      }
+      console.log(attributes);
+      if (attributes && attributes.length > 0) {
+        request.append("attributes", JSON.stringify(attributes));
+      }
+      await updateProductNFT(nft.id, request)
+        .then((res) => {
+          setSavingNFT(false);
+          if (res["code"] === 0) {
+            setJobId("");
+            setStep(2);
+            setIsNFTSaved(true);
+            setIsLoading(false);
+            setShowSuccessModal(true);
+          } else {
+            setIsLoading(false);
+            setShowConfirmation(false);
+            setErrorTitle("Update Product NFT Failed");
+            setErrorMessage(
+              "Failed to update product NFT. Please try again later"
+            );
+            setShowSuccessModal(false);
+            setShowErrorModal(true);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+          setSavingNFT(false);
+          setIsNFTSaved(false);
+          setShowConfirmation(false);
+          setShowErrorModal(true);
+        });
+    } else {
+      setIsLoading(false);
+      setShowConfirmation(false);
+      setErrorTitle("update Product NFT Failed");
+      setErrorMessage(
+        "AssetID and/or CollectionID not found. Please try again later"
+      );
+      setShowSuccessModal(false);
+      setShowErrorModal(true);
+    }
+  }
+
   function recheckStatus(jobId) {
     setTimeout(() => {
       getassetDetails(jobId)
@@ -362,19 +463,57 @@ export default function ProductNFT(props) {
   const handleShowStepClose = () => {
     setShowSteps(false);
   };
+  async function nftDetails(type, id) {
+    setIsNftLoading(true);
+    await getNftDetails(type, id)
+      .then((resp) => {
+        if (resp.code === 0) {
+          const nft = resp.lnft;
+          setNft(nft);
+          setUpdateMode(true);
+          const assets = {
+            file: { type: nft.asset.asset_type },
+            path: nft.asset.path,
+          };
+          setnftFile(assets);
+          setValue("name", nft.name);
+          setValue("externalLink", nft.external_url);
+          setValue("description", nft.description);
+          setValue("sensitiveContent", nft.sensitive_content);
+          setValue("supply", nft.supply);
+          setPropertyList(nft.attributes);
+          setIsNftLoading(false);
+        } else {
+          setIsNftLoading(false);
+        }
+      })
+      .catch((e) => {
+        setIsNftLoading(false);
+      });
+  }
+  useEffect(() => {
+    try {
+      const query = new URLSearchParams(history.location.search);
+      const nftId = query.get("nftId");
+      if (nftId) {
+        nftDetails("product", nftId);
+      }
+    } catch {}
+  }, []);
 
   return (
     <>
-      {/* {isLoading && <div className="loading"></div>} */}
+      {isNftLoading && <div className="loading"></div>}
       <>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="max-w-[600px] mx-4 md:mx-auto md:mt-[40px]">
             <div className="mb-[24px]">
               <h1 className="text-[28px] font-black mb-[6px]">
-                Create Product NFT
+                {updateMode ? "Update " : "Create "}
+                Product NFT
               </h1>
               <p className="text-[14px] text-textSubtle ">
-                Please fill this require Data for Setup yout NFT
+                Please fill this require data for setup your NFT
               </p>
             </div>
             <div>
@@ -390,9 +529,11 @@ export default function ProductNFT(props) {
                     you can use format PNG, GIF, WEBP, MP4 or MP3. Max 100MB.
                   </p>
                   <div
-                    className={`flex justify-center items-center max-w-full ${
+                    className={`flex justify-center items-center max-w-full  ${
                       nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
-                      "video"
+                        "video" ||
+                      nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
+                        "movie"
                         ? ""
                         : "w-40 h-40"
                     }`}
@@ -401,14 +542,16 @@ export default function ProductNFT(props) {
                       htmlFor={`dropzone-file`}
                       className={`flex flex-col justify-center items-center w-full  ${
                         nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
-                        "video"
+                          "video" ||
+                        nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
+                          "movie"
                           ? ""
                           : "h-40"
                       } ${
                         nftFile.file ? "" : "bg-white-filled-form"
                       } rounded-xl  cursor-pointer`}
                     >
-                      <div className="flex flex-col justify-center items-center pt-5 pb-6">
+                      <div className="flex flex-col justify-center items-center pt-5 pb-6 relative">
                         {nftFile.file ? (
                           <>
                             {nftFile.file?.type
@@ -423,21 +566,41 @@ export default function ProductNFT(props) {
                             {nftFile.file?.type
                               ?.split("/")[0]
                               ?.toLowerCase() === "audio" && (
-                              <audio
-                                ref={audioRef}
-                                src={nftFile.path}
-                                controls
-                                autoPlay={false}
-                                className="ml-28"
-                              />
+                              <>
+                                <i
+                                  onClick={() => {
+                                    setAsseteRemoveInUpdateMode(true);
+                                    setnftFile({ file: null, path: "" });
+                                  }}
+                                  className="absolute top-0 text-[18px] cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark"
+                                ></i>
+                                <audio
+                                  ref={audioRef}
+                                  src={nftFile.path}
+                                  controls
+                                  autoPlay={false}
+                                  className="ml-[8rem]"
+                                />
+                              </>
                             )}
                             {nftFile.file?.type
                               ?.split("/")[0]
-                              ?.toLowerCase() === "video" && (
-                              <video width="650" height="400" controls>
-                                <source src={nftFile.path} type="video/mp4" />
-                              </video>
-                            )}
+                              ?.toLowerCase() === "video" ||
+                            nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
+                              "movie" ? (
+                              <>
+                                <i
+                                  onClick={() => {
+                                    setAsseteRemoveInUpdateMode(true);
+                                    setnftFile({ file: null, path: "" });
+                                  }}
+                                  class="absolute top-0 text-[18px] cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark"
+                                ></i>
+                                <video width="650" height="400" controls>
+                                  <source src={nftFile.path} type="video/mp4" />
+                                </video>
+                              </>
+                            ) : null}
                           </>
                         ) : (
                           <>
@@ -499,7 +662,7 @@ export default function ProductNFT(props) {
                       {...register("name", {
                         required: "Name is required.",
                       })}
-                      defaultValue={""}
+                      defaultValue={nft ? nft.name : ""}
                       placeholder="Name for the NFT"
                     />
                     <p className={`${showConfirmation ? "" : "hidden"}`}>
@@ -520,7 +683,7 @@ export default function ProductNFT(props) {
                     className={`debounceInput mt-1 ${
                       showConfirmation ? "hidden" : ""
                     }`}
-                    defaultValue={""}
+                    defaultValue={nft ? nft.external_url : ""}
                     {...register("externalLink")}
                     placeholder="https://"
                   />
@@ -543,7 +706,7 @@ export default function ProductNFT(props) {
                     className={`${showConfirmation ? "hidden" : ""}`}
                     placeholder="Add brief description about this NFT"
                     {...register("description")}
-                    defaultValue={""}
+                    defaultValue={nft ? nft.description : ""}
                   ></textarea>
                   <p className={`${showConfirmation ? "" : "hidden"}`}>
                     {watch("description")}
@@ -591,7 +754,7 @@ export default function ProductNFT(props) {
                           type="checkbox"
                           id={`sensitiveContent`}
                           name="sensitiveContent"
-                          defaultChecked={false}
+                          defaultChecked={nft ? nft.sensitive_content : false}
                           disabled={showConfirmation}
                           className="sr-only peer outline-none"
                           {...register("sensitiveContent")}
@@ -649,7 +812,7 @@ export default function ProductNFT(props) {
                       className={`debounceInput mt-1 ${
                         showConfirmation ? "hidden" : ""
                       }`}
-                      defaultValue={""}
+                      defaultValue={nft ? nft.supply : ""}
                       {...register("supply", {
                         required: "Supply vaue is required.",
                         min: 1,
@@ -800,6 +963,7 @@ export default function ProductNFT(props) {
             fileSize={fileSize}
             sizeUploaded={uploadingSize}
             uploadedPercent={uploadedPercent}
+            mode={updateMode ? "update" : "create"}
           />
         )}
       </>

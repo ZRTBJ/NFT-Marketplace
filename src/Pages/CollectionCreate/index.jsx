@@ -715,11 +715,7 @@ export default function CollectionCreate() {
         <SuccessModal
           handleClose={() => setShowSuccessModal(false)}
           show={showSuccessModal}
-          redirection={`${
-            collectionType === "right_attach"
-              ? `/royality-management/${projectId}`
-              : `/collection-details/${projectId}`
-          } `}
+          redirection={`/collection-details/${projectId}`}
         />
       )}
       {showErrorModal && (

@@ -11,6 +11,7 @@ const PublishingProductNFT = ({
   fileSize,
   sizeUploaded,
   uploadedPercent,
+  mode,
 }) => {
   const history = useHistory();
   const handleNavigation = () => {
@@ -37,7 +38,9 @@ const PublishingProductNFT = ({
             ) : null}
             {uploadedPercent === 100 ? (
               <div className="font-black text-[22px] md:text-[28px] md:leading-[42px] text-center mt-6">
-                File uploaded successfully. We are creating the Product NFT now
+                File uploaded successfully. We are{" "}
+                {mode === "create" ? "creating " : "updating "} the Product NFT
+                now
               </div>
             ) : null}
             <div className="overflow-hidden rounded-full h-4 w-full mt-8 mb-8 relative animated fadeIn">
@@ -68,7 +71,8 @@ const PublishingProductNFT = ({
             />
             <div className="mx-4 text-center">
               <div className="font-black text-[22px] md:text-[42px]">
-                You successfully Create a Product NFT!
+                You successfully {mode === "create" ? "Created a " : "Update "}{" "}
+                Product NFT!
               </div>
               {/* <p>Do you want to create New NFT? if yes let’s go!</p> */}
               <div className="flex justify-center mt-[30px]">

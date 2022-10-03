@@ -42,6 +42,7 @@ const TABLE_HEADERS = [
   { id: 3, label: "Role" },
   { id: 4, label: "Action" },
 ];
+const imageRegex = new RegExp("image");
 
 const CollectionDetail = () => {
   const history = useHistory();
@@ -194,6 +195,13 @@ const CollectionDetail = () => {
     e.stopPropagation();
     e.preventDefault();
     setShowOptions(null);
+    history.push(
+      `${
+        Collection?.type === "product"
+          ? `/product-nft?collectionId=${collectionId}&nftId=${id}`
+          : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}&nftId=${id}`
+      }`
+    );
   };
 
   const handleUpdateMeta = (e, id) => {
@@ -534,15 +542,15 @@ const CollectionDetail = () => {
         <div className="flex flex-col md:flex-row pt-5">
           <div className="md:w-2/3">
             <h3>About</h3>
-            <p className="text-textLight text-sm">
+            <div className="text-textLight text-sm">
               {Collection?.description ? (
-                <div className="whitespace-pre-line text-textLight text-sm">
+                <p className="whitespace-pre-line text-textLight text-sm">
                   {Collection.description}
-                </div>
+                </p>
               ) : (
                 "Please add description to show here"
               )}
-            </p>
+            </div>
             <div className="flex items-center mt-3">
               {Collection &&
                 Collection.members &&
@@ -688,14 +696,15 @@ const CollectionDetail = () => {
                         className="min-h-auto md:min-h-[390px] rounded-xl mr-2 md:mr-4 mb-4 bg-white p-4"
                       >
                         <Link to={`/nft-details/${nft?.nft_type}/${nft.id}`}>
-                          {nft?.asset?.asset_type === "image" && (
+                          {imageRegex.test(nft?.asset?.asset_type) && (
                             <img
                               className="rounded-xl h-[176px] md:h-[276px] w-[150px] md:w-[276px] object-contain"
                               src={nft?.asset?.path}
                               alt=""
                             />
                           )}
-                          {nft?.asset?.asset_type === "movie" && (
+                          {nft?.asset?.asset_type === "movie" ||
+                          nft?.asset?.asset_type === "video/mp4" ? (
                             <video
                               className="h-[176px] md:h-[276px] w-[150px] md:w-[276px]"
                               controls
@@ -703,15 +712,16 @@ const CollectionDetail = () => {
                               <source src={nft?.asset?.path} type="video/mp4" />
                               Your browser does not support the video tag.
                             </video>
-                          )}
-                          {nft?.asset?.asset_type === "audio" && (
+                          ) : null}
+                          {nft?.asset?.asset_type === "audio" ||
+                          nft?.asset?.asset_type === "audio/mpeg" ? (
                             <audio
                               src={nft?.asset?.path}
                               controls
                               autoPlay={false}
                               className="h-[176px] md:h-[276px] w-[150px] md:w-[276px]"
                             />
-                          )}
+                          ) : null}
                         </Link>
                         <div className="py-2 md:py-5">
                           <div className="flex w-[150px] md:w-[276px]">
@@ -729,13 +739,13 @@ const CollectionDetail = () => {
 
                               {/* Dropdown menu  */}
                               {ShowOptions === nft.id && (
-                                <div className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 mb-6 block">
+                                <div className="z-10 w-48 bg-white   rounded-md  absolute left-0 top-8 mb-6 block">
                                   <ul className="text-sm mb-0">
                                     {Collection.updatable && (
                                       <>
                                         {Collection.status === "draft" && (
                                           <>
-                                            <li className="border-b border-divide">
+                                            <li className="border">
                                               <div
                                                 onClick={(e) =>
                                                   handleEditNFT(e, nft.id)
@@ -768,7 +778,7 @@ const CollectionDetail = () => {
 
                                     {Collection?.type === "membership" && (
                                       <>
-                                        <li className="border-b border-divide">
+                                        <li className="border">
                                           <div
                                             onClick={() => {
                                               setShowTransferNFT(true);
@@ -779,7 +789,7 @@ const CollectionDetail = () => {
                                             Transfer NFT
                                           </div>
                                         </li>
-                                        <li className="border-divide">
+                                        <li className="border">
                                           <div
                                             onClick={(e) =>
                                               salesPageModal(

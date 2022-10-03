@@ -52,6 +52,13 @@ export async function saveProductNFT(payload) {
   return await client("POST", `/product-nft`, payload, "formdata");
 }
 
+export async function updateProductNFT(id, payload) {
+  return await client("PUT", `/product-nft/${id}`, payload, "formdata");
+}
+export async function updateMembershipNFT(id, payload) {
+  return await client("PUT", `/membership-nft/${id}`, payload, "formdata");
+}
+
 export async function setSalesPage(
   collectionType,
   collectionId,
