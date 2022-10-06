@@ -762,16 +762,20 @@ const CollectionDetail = () => {
                                         {Collection.status === "published" && (
                                           <>
                                             {Collection.type === "product" && (
-                                              <li className="border-b border-divide">
-                                                <div
-                                                  onClick={(e) =>
-                                                    handleEditNFT(e, nft.id)
-                                                  }
-                                                  className="py-3 pl-3 block hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
-                                                >
-                                                  Edit NFT
-                                                </div>
-                                              </li>
+                                              <>
+                                                {!nft.freeze_metadata && (
+                                                  <li className="border-b border-divide">
+                                                    <div
+                                                      onClick={(e) =>
+                                                        handleEditNFT(e, nft.id)
+                                                      }
+                                                      className="py-3 pl-3 block hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
+                                                    >
+                                                      Edit NFT
+                                                    </div>
+                                                  </li>
+                                                )}
+                                              </>
                                             )}
                                           </>
                                         )}

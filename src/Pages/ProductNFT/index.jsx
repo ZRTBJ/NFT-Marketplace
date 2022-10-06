@@ -78,7 +78,7 @@ export default function ProductNFT(props) {
       if (data.Data["assetId"] && data.Data["assetId"].length > 0) {
         if (!savingNFT && !isNFTSaved) {
           setSavingNFT(true);
-          saveNFTDetails(data.Data["assetId"]);
+          updateNFT(data.Data["assetId"]);
         }
       } else {
         setSavingNFT(false);
@@ -357,7 +357,7 @@ export default function ProductNFT(props) {
           attributes.push(prop);
         }
       }
-      console.log(attributes);
+
       if (attributes && attributes.length > 0) {
         request.append("attributes", JSON.stringify(attributes));
       }
@@ -365,8 +365,25 @@ export default function ProductNFT(props) {
         .then((res) => {
           setSavingNFT(false);
           if (res["code"] === 0) {
-            setJobId("");
-            setStep(2);
+            if (res["function_uuid"] === "") {
+              setJobId("");
+              setStep(2);
+              setIsNFTSaved(true);
+              setIsLoading(false);
+              setShowSuccessModal(true);
+            } else {
+              setJobId(res["function_uuid"]);
+              const notificationData = {
+                projectId: projectId,
+                etherscan: "",
+                function_uuid: res["function_uuid"],
+                data: "",
+              };
+              dispatch(getNotificationData(notificationData));
+              recheckStatus(res["function_uuid"]);
+            }
+          } else if (res["code"] === 4000) {
+            setShowSteps(false);
             setIsNFTSaved(true);
             setIsLoading(false);
             setShowSuccessModal(true);
