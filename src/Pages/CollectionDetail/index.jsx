@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   getCollectionNFTs,
   getCollectionDetailsById,
@@ -247,8 +248,9 @@ const CollectionDetail = () => {
       updateRoyaltySplitter(formData)
         .then((resp) => {
           if (resp.code === 0) {
+            toast.success('Royalty Percentage Updated Successfully');
+
             setIsAutoFillLoading(false);
-            setRoyaltyUpdatedSuccessfully(true);
             setAutoAssign(false);
             setIsEdit(null);
             setShowRoyalityErrorModal(false);

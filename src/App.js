@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Switch } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 import routes from "routes/routes.js";
 import { AuthProvider } from "./Context";
 import AppRoute from "components/AppRoute";
 import Header from "components/TopHeader/Header";
 import FooterPage from "./Pages/Footer";
 import Sidebar from "components/Sidebar/Sidebar";
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const [showSideBar, setShowSideBar] = useState(false);
@@ -62,6 +64,17 @@ function App() {
           {/* <FooterPage /> */}
         </AuthProvider>
       </Router>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 }
