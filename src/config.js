@@ -1,4 +1,4 @@
-const BASE_URL = process.env.REACT_APP_API_ENDPOINT;
+const BASE_URL = "http://web2api-dev.creabo.io/api/v1";
 const CHAIN_ID = process.env.REACT_APP_CHAIN_ID;
 const WEB_SOKET = process.env.REACT_APP_WEB_SOKET;
 const RPC_URL = process.env.REACT_APP_RPC_URL;

@@ -260,9 +260,9 @@ export default function Outline({
                 value={daoWallet}
                 placeholder="Add Address"
               />
-              {emptyDaoWallet && (
+              {/* {emptyDaoWallet && (
                 <div className="validationTag">Treasury Wallet is required</div>
-              )}
+              )} */}
             </>
           )}
           {daoWalletDisable && <h3 className="mt-3 ml-3">{daoWallet}</h3>}

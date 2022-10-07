@@ -21,7 +21,6 @@ import ErrorModal from "components/modalDialog/ErrorModal";
 import SuccessModal from "components/modalDialog/SuccessModal";
 import DeployingProjectModal from "components/modalDialog/DeployingProjectModal";
 import { getCollections } from "services/collection/collectionService";
-import CreateRightAttachedNFT from "components/modalDialog/CreateRightAttachNFT";
 import SalesPageModal from "components/modalDialog/SalesPageModal";
 import TransferFundModal from "components/modalDialog/TransferFundModal";
 import { cryptoConvert } from "services/chainlinkService";
@@ -80,6 +79,8 @@ export default function ProjectDetails(props) {
       ? state?.notifications?.notificationData
       : []
   );
+  const [setupData, setSetupData] = useState("");
+
   async function fetchData() {
     if (hasMore) {
       setHasMore(false);
@@ -98,6 +99,10 @@ export default function ProjectDetails(props) {
     getCollectionList();
     getUnitPriceUSD();
   }, []);
+
+  // useEffect(() => {
+  //   if (project.project_status === "publishing") handleSmartContract();
+  // }, [project.project_status]);
 
   async function projectDetails(pid) {
     setIsLoading(true);
@@ -346,14 +351,24 @@ export default function ProjectDetails(props) {
     }
   }, [fileUploadNotification]);
 
+  // const handleSmartContract = async () => {
+  //   try {
+  //     const response = await createDAO(dao, provider, project.name);
+  //     const hash = response;
+  //     console.log(hash);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+
   return (
     <>
-      {showCreateRANFT && (
+      {/* {showCreateRANFT && (
         <CreateRightAttachedNFT
           show={showCreateRANFT}
           handleClose={() => setShowCreateRANFT(false)}
         />
-      )}
+      )} */}
       {isLoading && <div className="loading"></div>}
       {!isLoading && (
         <div className="mx-4">
@@ -1155,6 +1170,7 @@ export default function ProjectDetails(props) {
               }}
               tnxData={tnxData}
               projectId={projectId}
+              projectName={project.name}
               publishStep={publishStep}
             />
           )}

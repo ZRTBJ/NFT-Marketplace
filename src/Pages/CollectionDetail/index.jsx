@@ -362,7 +362,10 @@ const CollectionDetail = () => {
             setShowErrorModal(true);
           }}
           tnxData={tnxData}
-          collectionId={collectionId}
+          collectionId={Collection?.id}
+          collectionName={Collection?.name}
+          collectionSymbol={Collection?.symbol}
+          collectionType={Collection?.type}
           publishStep={publishStep}
         />
       )}

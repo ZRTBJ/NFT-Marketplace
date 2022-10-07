@@ -21,6 +21,9 @@ import { useHistory } from "react-router-dom";
 import { useAuthState } from "Context";
 import { getNotificationData } from "Slice/notificationSlice";
 import deploySuccessSvg from "assets/images/modal/deploySuccessSvg.svg";
+import { createProvider } from "eth/provider";
+import { createInstance } from "eth/dao-factory";
+import { createCollection } from "eth/deploy-collection";
 
 const DeployingCollectiontModal = ({
   handleClose,
@@ -29,6 +32,9 @@ const DeployingCollectiontModal = ({
   buttomText,
   tnxData,
   collectionId,
+  collectionName,
+  collectionSymbol,
+  collectionType,
   publishStep,
 }) => {
   const dispatch = useDispatch();
@@ -47,6 +53,10 @@ const DeployingCollectiontModal = ({
       ? state?.notifications?.notificationData
       : []
   );
+  const [contractAdd, setContractAdd] = useState("");
+  const [txnData, setTxnData] = useState();
+  const provider = createProvider();
+  const collectionContract = createInstance(provider);
 
   useEffect(() => {
     const collectionDeployStatus = collectionDeploy.find(
@@ -133,13 +143,20 @@ const DeployingCollectiontModal = ({
   //     });
   // }
 
-  function publishThisCollection() {
+  function publishThisCollection(txnData) {
     setIsLoading(true);
-    publishCollection(collectionId)
+    let payload = new FormData();
+    if (txnData) {
+      payload.append("transaction_hash", txnData.transactionHash);
+      payload.append("contract_address", contractAdd);
+      payload.append("block_number", txnData.block_number);
+    }
+    publishCollection(collectionId, txnData ? payload : null)
       .then((res) => {
         setIsLoading(false);
         if (res.code === 0) {
           console.log(res);
+          handleSmartContract();
           const deployData = {
             function_uuid: res.function_uuid,
             data: "",
@@ -184,6 +201,28 @@ const DeployingCollectiontModal = ({
         setIsLoading(false);
       });
   }
+
+  const handleSmartContract = async () => {
+    console.log("calling smart contract");
+    try {
+      const response = await createCollection(
+        collectionContract,
+        provider,
+        collectionName,
+        collectionType,
+        collectionSymbol
+      );
+      const hash = response.txReceipt;
+      console.log(hash);
+      let data = {
+        transactionHash: hash.transactionHash,
+        block_number: hash.blockNumber,
+      };
+      publishThisCollection(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <Modal

@@ -16,7 +16,7 @@ const PublishModal = ({ handleClose, show, publishProject, type }) => {
           alt=""
         />
         <div className="md:mx-16">
-          <div className="font-black text-[24px] md:text-[42px]">
+          <div className="font-black text-[24px] md:text-[32px]">
             You can’t Change some Field once you Publish this {type}
           </div>
           <div className="text-[#9499AE] mt-[12px]">

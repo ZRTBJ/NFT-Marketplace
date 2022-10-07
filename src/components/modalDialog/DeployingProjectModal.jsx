@@ -1,43 +1,23 @@
-import ico_gas from "assets/images/projectEdit/ico_gas.svg";
-import ico_matic from "assets/images/projectEdit/ico_matic.svg";
-import IconSuccess from "assets/images/modal/success/success_modal_img.svg";
 import Modal from "../Modal";
-import { Step, Stepper } from "react-form-stepper";
 import { useEffect, useState } from "react";
-import { produceWithPatches } from "immer";
-import { SendTransactionMetaMask } from "util/metaMaskWallet";
-import {
-  contractDeploy,
-  getProjectDetailsById,
-  publishFundTransfer,
-  publishProject,
-} from "services/project/projectService";
-import { SendTransactionTorus } from "util/Torus";
-import { getWalletType } from "util/ApplicationStorage";
+import { publishProject } from "services/project/projectService";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
-import { useAuthState } from "Context";
 import { getNotificationData } from "Slice/notificationSlice";
 import deploySuccessSvg from "assets/images/modal/deploySuccessSvg.svg";
+import { createDAO } from "eth/deploy-dao";
+import { createProvider } from "eth/provider";
+import { createInstance } from "eth/dao-factory";
 
 const DeployingProjectModal = ({
   handleClose,
-  errorClose,
   show,
-  buttomText,
-  tnxData,
   projectId,
   publishStep,
+  errorClose,
 }) => {
   const dispatch = useDispatch();
-  const history = useHistory();
-  const btnText = buttomText ? buttomText : "View on Polygonscan";
-  const selectedWallet = getWalletType();
   const [step, setStep] = useState(publishStep ? publishStep : 0);
   const [isLoading, setIsLoading] = useState(false);
-  const [tnxHash, setTnxHash] = useState("");
-  const context = useAuthState();
-  const [userId, setUserId] = useState(context ? context.user : "");
   const projectDeploy = useSelector((state) =>
     state?.notifications?.notificationData
       ? state?.notifications?.notificationData
@@ -52,6 +32,10 @@ const DeployingProjectModal = ({
     message: "",
     step: 1,
   });
+  const provider = createProvider();
+  const dao = createInstance(provider);
+  const [contractAdd, setContractAdd] = useState("");
+  const [txnData, setTxnData] = useState();
 
   useEffect(() => {
     const projectDeployStatus = projectDeploy.find(
@@ -105,87 +89,65 @@ const DeployingProjectModal = ({
 
   useEffect(() => {
     if (publishStep >= 1) {
-      projectDetails();
+      publishThisProject();
     }
   }, []);
 
-  async function transferFund() {
-    let transactionHash = "";
-    setIsLoading(true);
-    if (selectedWallet === "metamask") {
-      transactionHash = await SendTransactionMetaMask(tnxData);
-    } else if (selectedWallet === "torus") {
-      transactionHash = await SendTransactionTorus(tnxData);
-    } else {
-      alert("Something went wrong. Please logout and login again...");
+  useEffect(() => {
+    if (contractAdd && txnData) {
+      publishThisProject(txnData);
     }
-    const jsonTnxData = JSON.stringify(tnxData);
-    if (transactionHash && transactionHash.length > 5) {
-      setTnxHash(transactionHash);
-      const request = new FormData();
-      request.append("status", "success");
-      request.append("hash", transactionHash);
-      request.append("data", jsonTnxData);
+  }, [contractAdd, txnData]);
 
-      publishFundTransfer(projectId, request)
-        .then((res) => {
-          setIsLoading(false);
-          if (res.code === 0) {
-            setStep(1);
-            publishThisProject(transactionHash);
-          } else {
-          }
-        })
-        .catch((err) => {
-          setIsLoading(false);
-        });
-    } else {
-      setIsLoading(false);
-    }
-  }
-
-  function projectContractDeploy(etherscan) {
+  function publishThisProject(transactionData) {
     setIsLoading(true);
-    contractDeploy(projectId)
+    let payload = new FormData();
+    if (transactionData) {
+      payload.append("transaction_hash", transactionData.transactionHash);
+      payload.append("contract_address", contractAdd);
+      payload.append("block_number", transactionData.block_number);
+    }
+
+    const filter = dao.filters.NewClone();
+
+    const listener = (args) => {
+      setContractAdd(args);
+    };
+
+    const subscribe = async () => {
+      const captured = await dao.queryFilter(filter);
+
+      dao.on(filter, listener);
+    };
+
+    subscribe();
+
+    publishProject(projectId, transactionData ? payload : null)
       .then((res) => {
         setIsLoading(false);
-        if (res.code === 0) {
-          console.log(res);
-          const deployData = {
-            projectId: projectId,
-            etherscan: etherscan ? etherscan : tnxHash,
-            function_uuid: res.function_uuid,
-            data: "",
-          };
-          dispatch(getNotificationData(deployData));
-          recheckStatus();
-        } else {
-        }
-      })
-      .catch((err) => {
-        setIsLoading(false);
-      });
-  }
-
-  function publishThisProject(etherscan) {
-    setIsLoading(true);
-    publishProject(projectId)
-      .then((res) => {
-        setIsLoading(false);
-
         if (res && res?.code === 0) {
-          const deployData = {
-            projectId: projectId,
-            etherscan: etherscan ? etherscan : tnxHash,
-            function_uuid: res.function_uuid,
-            data: "",
-          };
-          dispatch(getNotificationData(deployData));
-          recheckStatus();
+          if (transactionData) {
+            const deployData = {
+              projectId: projectId,
+              etherscan: transactionData,
+              function_uuid: res.function_uuid,
+              data: "",
+            };
+            const filter = dao.filters.NewClone();
+            dao.removeListener(filter);
+            dispatch(getNotificationData(deployData));
+            setContractAdd("");
+            setTxnData();
+          } else {
+            handleSmartContract(
+              res?.config?.name,
+              res?.config?.treasury_address
+            );
+          }
         } else {
-          try {
-            errorClose(res.message);
-          } catch {}
+          setContractAdd("");
+          setTxnData();
+          errorClose(res.message);
         }
       })
       .catch((err) => {
@@ -193,79 +155,19 @@ const DeployingProjectModal = ({
       });
   }
 
-  function recheckStatus() {
-    setTimeout(() => {
-      if (deployStatus && deployStatus.step === 0) {
-        projectDetails();
-      }
-    }, 45000);
-  }
-
-  function projectDetails() {
-    setIsLoading(true);
-    getProjectDetailsById({ id: projectId })
-      .then((res) => {
-        if (res.code === 0) {
-          const project = res.project;
-          if (project && project.deploys && project.deploys.length > 0) {
-            try {
-              let projectDstatus = {
-                projectId: "",
-                etherscan: "",
-                function_uuid: "",
-                fn_name: "",
-                fn_status: "",
-                message: "",
-                step: 1,
-              };
-              for (let deploy of project.deploys) {
-                if (deploy.type === "fund_transfer") {
-                  if (deploy.hash && deploy.hash.length > 2) {
-                    setTnxHash(deploy.hash);
-                  }
-                } else if (deploy.type === "publish") {
-                  projectDstatus = {
-                    projectId: project.id,
-                    etherscan: tnxHash,
-                    function_uuid: deploy.fn_uuid,
-                    fn_name: deploy.type,
-                    fn_status: deploy.status,
-                    message: deploy.message,
-                    step: deploy.step,
-                  };
-                  if (deploy.step === 2) {
-                    if (deploy.status === "success") {
-                      setStep(2);
-                    }
-                    break;
-                  }
-                }
-              }
-
-              setDeployStatus({
-                ...deployStatus,
-                projectId: projectDstatus.projectId,
-                fn_name: projectDstatus.fn_name,
-                fn_status: projectDstatus.fn_status,
-                step: projectDstatus.step,
-              });
-            } catch (ex) {
-              // debugger;
-            }
-          }
-          if (project && project["project_status"] === "draft") {
-            publishThisProject("noscan");
-          }
-          if (project && project["project_status"] === "publishing") {
-            recheckStatus();
-          }
-        }
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        setIsLoading(false);
-      });
-  }
+  const handleSmartContract = async (name, treasuryAddress) => {
+    try {
+      const response = await createDAO(dao, provider, name, treasuryAddress);
+      const hash = response.txReceipt;
+      let data = {
+        transactionHash: hash.transactionHash,
+        block_number: hash.blockNumber,
+      };
+      setTxnData(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <Modal
@@ -305,7 +207,7 @@ const DeployingProjectModal = ({
               alt=""
             />
             <div className="md:mx-16">
-              <h1>You finish publishing your DAO!</h1>
+              <h1>Your DAO published Successfully!</h1>
               <p className="text-[#9499AE] mt-[12px]">
                 Now you can publish your collection!
               </p>

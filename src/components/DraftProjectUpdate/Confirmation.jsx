@@ -215,7 +215,7 @@ export default function Outline({
             <div className="txtblack text-[14px] mb-[6px]">Freeze Metadata</div>
           </div>
           <p className="text-textSubtle">
-            {isMetaDaFreezed.toString().toUpperCase()}
+            {isMetaDaFreezed?.toString()?.toUpperCase()}
           </p>
         </div>
       )}

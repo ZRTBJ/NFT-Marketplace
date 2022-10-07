@@ -163,8 +163,16 @@ export async function fundTransfer(payload) {
   return await client("POST", `/fund-transfer`, payload, "json", "web3");
 }
 
-export async function publishProject(projectId) {
-  return await client("POST", `/project/${projectId}/publish`, "formdata");
+export async function publishProject(projectId, payload) {
+  console.log(payload);
+  let request = payload
+    ? client("POST", `/project/${projectId}/publish`, payload, "formdata")
+    : client("POST", `/project/${projectId}/publish`, "formdata");
+  return await request;
+}
+
+export async function addressGnosisSetup(addresses) {
+  return await client("POST", `/project/gnosisSetup`, addresses, "formdata");
 }
 
 export async function getProjectListBySearch(payload) {

@@ -243,7 +243,6 @@ export default function ProjectCreate() {
       if (
         projectName !== "" &&
         // daoSymbol !== "" &&
-        daoWallet !== "" &&
         projectCategory !== "" &&
         alreadyTakenProjectName === false
       ) {
@@ -359,16 +358,12 @@ export default function ProjectCreate() {
       //   setEmptyDaoSymbol(true);
       //   window.scrollTo({ top: 0, behavior: "smooth" });
       // }
-      if (daoWallet === "") {
-        setEmptyDaoWallet(true);
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
+
       if (projectCategory === "") {
         setEmptyProjectCategory(true);
       } else if (
         projectName !== "" &&
         // daoSymbol !== "" &&
-        daoWallet !== "" &&
         projectCategory !== "" &&
         alreadyTakenProjectName === false
       ) {
@@ -458,7 +453,6 @@ export default function ProjectCreate() {
                     // Dao Wallet
                     showDaoWallet={true}
                     daoWallet={daoWallet}
-                    emptyDaoWallet={emptyDaoWallet}
                     daoWalletDisable={daoWalletDisable}
                     onDaoWalletChange={onDaoWalletChange}
                     // overview

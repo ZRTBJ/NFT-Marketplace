@@ -452,10 +452,10 @@ const Profile = () => {
                   Total Royalties:
                 </span>
                 <span className="text-txtblack font-black">
-                  ${royaltiesList.length > 0 ? totalRoyality : `0`}
+                  ${royaltiesList?.length > 0 ? totalRoyality : `0`}
                 </span>
               </div>
-              {royaltiesList.length > 0 && (
+              {royaltiesList?.length > 0 && (
                 <>
                   <button
                     onClick={claimAllRoyalty}
@@ -482,7 +482,7 @@ const Profile = () => {
             </div>
             {/* table for desktop */}
             <div className="hidden md:block">
-              {royaltiesList.length > 0 ? (
+              {royaltiesList?.length > 0 ? (
                 <div className="overflow-x-auto relative mt-[54px]">
                   <table className="w-full text-left">
                     <thead>
@@ -563,7 +563,7 @@ const Profile = () => {
             </div>
             {/* table for mobile */}
             <div className="md:hidden">
-              {royaltiesList.length > 0 ? (
+              {royaltiesList?.length > 0 ? (
                 <div>
                   {royaltiesList.map((r, index) => (
                     <div

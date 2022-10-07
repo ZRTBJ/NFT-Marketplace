@@ -98,8 +98,8 @@ export async function connectCollection(ranknftid, collectionId) {
   );
 }
 
-export async function publishCollection(id) {
-  return await client("PUT", `/collection/${id}/publish`, "formdata");
+export async function publishCollection(id, payload) {
+  return await client("PUT", `/collection/${id}/publish`, payload, "formdata");
 }
 
 //Royality Splitters
