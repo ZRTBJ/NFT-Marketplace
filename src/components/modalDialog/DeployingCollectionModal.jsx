@@ -22,7 +22,7 @@ import { useAuthState } from "Context";
 import { getNotificationData } from "Slice/notificationSlice";
 import deploySuccessSvg from "assets/images/modal/deploySuccessSvg.svg";
 import { createProvider } from "eth/provider";
-import { createInstance } from "eth/dao-factory";
+import { createInstance } from "eth/collection-factory";
 import { createCollection } from "eth/deploy-collection";
 
 const DeployingCollectiontModal = ({

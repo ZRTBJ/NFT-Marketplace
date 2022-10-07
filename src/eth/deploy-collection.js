@@ -1,29 +1,17 @@
 import { ethers } from "ethers";
 import { createInstance } from "./forwarder";
 import { signMetaTxRequest } from "./signer";
-// import { createInstance } from "eth/registry";
-
-// async function sendTx(dao, name) {
-//   console.log(`Sending register tx to set name=${name}`);
-
-//   // add gnosis safe wallet creation logic here
-//   // const safeInfo = await createSafe(from);
-//   // console.log(`Safe will be created with ${safeInfo}`);
-
-//   return dao.cloneContract(name);
-// }
 
 const TOKEN_COUNTER_CONTRACT = "0x60761e680fafa77f5c2fe5533800255cddb36b47";
 const IPFS_BASE_URL = "https://gateway.pinata.cloud/ipfs/";
-const DEFAULT_ROYALTY_BIPS = "2.5";
+const DEFAULT_ROYALTY_BIPS = 250;
 const treasury = "0x6de0f93032a1c7775f90ff94cde91c604d976661";
 async function sendMetaTx(
   collection,
   provider,
   signer,
   collectionName,
-  symbol,
-  type
+  symbol
 ) {
   console.log(`Sending register meta-tx to set name=${collectionName}`);
   const url = process.env.REACT_APP_WEBHOOK_URL;
@@ -33,7 +21,7 @@ async function sendMetaTx(
   const from = await signer.getAddress();
 
   const args = {
-    type: type, // * this is for UI reference to mention what type of collection user is creating
+    // * this is for UI reference to mention what type of collection user is creating
     deployConfig: {
       name: collectionName,
       symbol: symbol,
@@ -46,17 +34,16 @@ async function sendMetaTx(
       metadataUpdatable: true,
       tokensTransferable: true,
       isRoyaltiesEnabled: true,
-      royaltiesBps: ethers.utils.parseEther(DEFAULT_ROYALTY_BIPS),
+      royaltiesBps: DEFAULT_ROYALTY_BIPS,
       primaryMintPrice: ethers.utils.parseEther("0.0001"),
       treasuryAddress: treasury,
     },
-    roles: [],
   };
 
+  // This is called from factory method
   const data = collection.interface.encodeFunctionData("cloneContract", [
     args.deployConfig,
     args.runConfig,
-    args.roles, // TODO This parameter will be remove in future.
   ]);
   const to = collection.address;
 
@@ -77,7 +64,6 @@ export async function createCollection(
   collection,
   provider,
   collectionName,
-  type,
   symbol
 ) {
   if (!collectionName) throw new Error(`Name cannot be empty`);
@@ -88,13 +74,8 @@ export async function createCollection(
   const userNetwork = await userProvider.getNetwork();
   if (userNetwork.chainId !== 5)
     throw new Error(`Please switch to Goerli for signing`);
-  console.log(collection, provider, collectionName);
-  const signer = userProvider.getSigner();
-  // const from = await signer.getAddress();
-  // const balance = await provider.getBalance(from);
 
-  // const canSendTx = balance.gt(1e15);
-  // if (canSendTx) return sendTx(dao.connect(signer), name, from);
+  const signer = userProvider.getSigner();
 
   let output;
   const result = await sendMetaTx(
@@ -102,8 +83,7 @@ export async function createCollection(
     provider,
     signer,
     collectionName,
-    symbol,
-    type
+    symbol
   );
 
   await result.json().then(async (response) => {
