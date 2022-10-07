@@ -35,10 +35,13 @@ async function sendMetaTx(
       tokensTransferable: true,
       isRoyaltiesEnabled: true,
       royaltiesBps: DEFAULT_ROYALTY_BIPS,
-      primaryMintPrice: ethers.utils.parseEther("0.0001"),
+      royaltyAddress: ethers.constants.AddressZero,
+      primaryMintPrice: ethers.utils.parseEther("0.2"),
       treasuryAddress: treasury,
     },
   };
+
+  console.log(JSON.stringify(args));
 
   // This is called from factory method
   const data = collection.interface.encodeFunctionData("cloneContract", [

@@ -93,6 +93,11 @@ const abi = [
             type: "uint256",
           },
           {
+            internalType: "address",
+            name: "royaltyAddress",
+            type: "address",
+          },
+          {
             internalType: "uint256",
             name: "primaryMintPrice",
             type: "uint256",
