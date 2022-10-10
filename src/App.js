@@ -7,7 +7,7 @@ import AppRoute from "components/AppRoute";
 import Header from "components/TopHeader/Header";
 import FooterPage from "./Pages/Footer";
 import Sidebar from "components/Sidebar/Sidebar";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const [showSideBar, setShowSideBar] = useState(false);

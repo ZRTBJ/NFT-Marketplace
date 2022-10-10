@@ -44,6 +44,7 @@ const DeployingCollectiontModal = ({
   const [isLoading, setIsLoading] = useState(false);
   const context = useAuthState();
   const [userId, setUserId] = useState(context ? context.user : "");
+  const [statusStep, setStatusStep] = useState(1);
   const [funcId, setFuncId] = useState("");
   const [step, setStep] = useState(publishStep ? publishStep : 1);
   const [publishedData, setPublishedData] = useState();
@@ -121,6 +122,7 @@ const DeployingCollectiontModal = ({
               function_uuid: res.function_uuid,
               data: "",
             };
+            setStatusStep(2);
             setFuncId(res.function_uuid);
             const filter = collectionContract.filters.NewCollection();
             collectionContract.removeListener(filter);
@@ -168,6 +170,7 @@ const DeployingCollectiontModal = ({
   }
 
   const handleSmartContract = async () => {
+    setStatusStep(1);
     try {
       const response = await createCollection(
         collectionContract,
@@ -203,6 +206,14 @@ const DeployingCollectiontModal = ({
             <div className="overflow-hidden rounded-full h-4 w-full mt-4  md:mt-12 mb-8 relative animated fadeIn">
               <div className="animated-process-bar"></div>
             </div>
+            {statusStep === 1 && (
+              <p className="text-center">Creating the contract</p>
+            )}
+            {statusStep === 2 && (
+              <p className="text-center">
+                Contract created. Now, we are publishing it.
+              </p>
+            )}
             {/* {deployStatus.step === 1 && (
               <div className='text-center'>Erc20 Deployment</div>
             )}

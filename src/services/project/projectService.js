@@ -59,9 +59,9 @@ export async function updateProject(payload) {
   // if (payload.daoSymbol) {
   //   bodyFormData.append("dao_symbol", payload.daoSymbol);
   // }
-  if (payload.daoWallet) {
-    bodyFormData.append("treasury_wallet", payload.daoWallet);
-  }
+
+  bodyFormData.append("treasury_wallet", payload.daoWallet);
+
   if (payload.overview) {
     bodyFormData.append("overview", payload.overview);
   }

@@ -163,13 +163,13 @@ const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
         </div> */}
         </div>
       </div>
-
+      {/* 
       {ShowCreateRANFT && (
         <CreateRightAttachedNFT
           show={ShowCreateRANFT}
           handleClose={() => setShowCreateRANFT(false)}
         />
-      )}
+      )} */}
     </>
   );
 };

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
 function EmbedNFTPreview(props) {
-  const [height, setHeight] = useState(450);
+  const [height, setHeight] = useState(350);
   const [width, setWidth] = useState(350);
   const [iframeContent, setIframeContent] = useState("");
   const [isTextCopied, setIsTextCopied] = useState(false);

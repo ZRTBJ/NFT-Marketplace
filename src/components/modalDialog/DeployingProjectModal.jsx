@@ -17,6 +17,7 @@ const DeployingProjectModal = ({
 }) => {
   const dispatch = useDispatch();
   const [step, setStep] = useState(publishStep ? publishStep : 0);
+  const [statusStep, setStatusStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const projectDeploy = useSelector((state) =>
     state?.notifications?.notificationData
@@ -127,6 +128,7 @@ const DeployingProjectModal = ({
         setIsLoading(false);
         if (res && res?.code === 0) {
           if (transactionData) {
+            setStatusStep(2);
             const deployData = {
               projectId: projectId,
               etherscan: transactionData,
@@ -156,6 +158,7 @@ const DeployingProjectModal = ({
   }
 
   const handleSmartContract = async (name, treasuryAddress) => {
+    setStatusStep(1);
     try {
       const response = await createDAO(dao, provider, name, treasuryAddress);
       const hash = response.txReceipt;
@@ -183,11 +186,13 @@ const DeployingProjectModal = ({
             <div className="overflow-hidden rounded-full h-4 w-full mt-12 mb-8 relative animated fadeIn">
               <div className="animated-process-bar"></div>
             </div>
-            {deployStatus.step === 1 && (
-              <p className="text-center">Deployment</p>
+            {statusStep === 1 && (
+              <p className="text-center">Creating the contract</p>
             )}
-            {deployStatus.step === 2 && (
-              <p className="text-center">ProjectToken Deployment</p>
+            {statusStep === 2 && (
+              <p className="text-center">
+                Contract created. Now, we are publishing it.
+              </p>
             )}
           </div>
         )}
