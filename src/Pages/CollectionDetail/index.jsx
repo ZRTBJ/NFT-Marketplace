@@ -248,7 +248,7 @@ const CollectionDetail = () => {
       updateRoyaltySplitter(formData)
         .then((resp) => {
           if (resp.code === 0) {
-            toast.success('Royalty Percentage Updated Successfully');
+            toast.success("Royalty Percentage Updated Successfully");
 
             setIsAutoFillLoading(false);
             setAutoAssign(false);

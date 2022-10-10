@@ -42,7 +42,6 @@ const DeployingCollectiontModal = ({
   const btnText = buttomText ? buttomText : "View on Polygonscan";
   const selectedWallet = getWalletType();
   const [isLoading, setIsLoading] = useState(false);
-  const [tnxHash, setTnxHash] = useState("");
   const context = useAuthState();
   const [userId, setUserId] = useState(context ? context.user : "");
   const [funcId, setFuncId] = useState("");
@@ -57,7 +56,7 @@ const DeployingCollectiontModal = ({
   const [txnData, setTxnData] = useState();
   const provider = createProvider();
   const collectionContract = createInstance(provider);
-
+  console.log(collectionDeploy);
   useEffect(() => {
     const collectionDeployStatus = collectionDeploy.find(
       (x) => x.function_uuid === funcId
@@ -80,89 +79,55 @@ const DeployingCollectiontModal = ({
   }, [collectionDeploy]);
 
   useEffect(() => {
+    if (contractAdd && txnData) {
+      publishThisCollection(txnData);
+    }
+  }, [contractAdd, txnData]);
+
+  useEffect(() => {
     if (step === 1) {
       publishThisCollection();
     }
   }, []);
 
-  // async function transferFund() {
-  //   let transactionHash = '';
-  //   setIsLoading(true);
-  //   if (selectedWallet === 'metamask') {
-  //     transactionHash = await SendTransactionMetaMask(tnxData);
-  //   } else if (selectedWallet === 'torus') {
-  //     transactionHash = await SendTransactionTorus(tnxData);
-  //   } else {
-  //     alert('Something went wrong. Please logout and login again...');
-  //   }
-  //   const jsonTnxData = JSON.stringify(tnxData);
-  //   if (transactionHash && transactionHash.length > 5) {
-  //     setTnxHash(transactionHash);
-  //     const request = new FormData();
-  //     request.append('status', 'success');
-  //     request.append('hash', transactionHash);
-  //     request.append('data', jsonTnxData);
-
-  //     publishFundTransfer(collectionId, request)
-  //       .then((res) => {
-  //         setIsLoading(false);
-  //         if (res.code === 0) {
-  //           setStep(1);
-  //           publishThisCollection(transactionHash);
-  //         } else {
-  //         }
-  //       })
-  //       .catch((err) => {
-  //         setIsLoading(false);
-  //       });
-  //   } else {
-  //     setIsLoading(false);
-  //   }
-  // }
-
-  // function projectContractDeploy(etherscan) {
-  //   setIsLoading(true);
-  //   contractDeploy(collectionId)
-  //     .then((res) => {
-  //       setIsLoading(false);
-  //       if (res.code === 0) {
-  //         console.log(res);
-  //         const deployData = {
-  //           collectionId: collectionId,
-  //           etherscan: etherscan ? etherscan : tnxHash,
-  //           function_uuid: res.function_uuid,
-  //           data: '',
-  //         };
-  //         dispatch(getNotificationData(deployData));
-  //         recheckStatus();
-  //       } else {
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       setIsLoading(false);
-  //     });
-  // }
-
-  function publishThisCollection(txnData) {
+  function publishThisCollection(data) {
     setIsLoading(true);
     let payload = new FormData();
-    if (txnData) {
-      payload.append("transaction_hash", txnData.transactionHash);
+    if (data) {
+      payload.append("transaction_hash", data.transactionHash);
       payload.append("contract_address", contractAdd);
-      payload.append("block_number", txnData.block_number);
+      payload.append("block_number", data.block_number);
     }
+    const filter = collectionContract.filters.NewCollection();
+
+    const listener = (args) => {
+      setContractAdd(args);
+    };
+
+    const subscribe = async () => {
+      const captured = await collectionContract.queryFilter(filter);
+
+      collectionContract.on(filter, listener);
+    };
+
+    subscribe();
+
     publishCollection(collectionId, txnData ? payload : null)
       .then((res) => {
         setIsLoading(false);
         if (res.code === 0) {
-          console.log(res);
-          handleSmartContract();
-          const deployData = {
-            function_uuid: res.function_uuid,
-            data: "",
-          };
-          setFuncId(res.function_uuid);
-          dispatch(getNotificationData(deployData));
+          if (txnData) {
+            const deployData = {
+              function_uuid: res.function_uuid,
+              data: "",
+            };
+            setFuncId(res.function_uuid);
+            const filter = collectionContract.filters.NewCollection();
+            collectionContract.removeListener(filter);
+            dispatch(getNotificationData(deployData));
+          } else {
+            handleSmartContract();
+          }
         } else {
           errorClose(res.message);
         }
@@ -203,7 +168,6 @@ const DeployingCollectiontModal = ({
   }
 
   const handleSmartContract = async () => {
-    console.log("calling smart contract");
     try {
       const response = await createCollection(
         collectionContract,
@@ -213,12 +177,11 @@ const DeployingCollectiontModal = ({
         collectionSymbol
       );
       const hash = response.txReceipt;
-      console.log(hash);
       let data = {
         transactionHash: hash.transactionHash,
         block_number: hash.blockNumber,
       };
-      publishThisCollection(data);
+      setTxnData(data);
     } catch (err) {
       console.log(err);
     }

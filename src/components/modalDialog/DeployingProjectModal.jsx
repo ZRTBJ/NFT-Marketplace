@@ -189,14 +189,6 @@ const DeployingProjectModal = ({
             {deployStatus.step === 2 && (
               <p className="text-center">ProjectToken Deployment</p>
             )}
-            <div className="flex justify-center mt-[30px]">
-              <button
-                className="btn bg-primary-50 text-primary-900 btn-sm"
-                onClick={() => handleClose(false)}
-              >
-                Cancel Publishing
-              </button>
-            </div>
           </div>
         )}
         {step === 2 && (
