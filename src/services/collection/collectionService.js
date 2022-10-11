@@ -114,3 +114,7 @@ export async function updateRoyaltySplitter(payload) {
 export async function getCollectionSales(id) {
   return await client("GET", `/collection/${id}/sales`);
 }
+
+export async function getNetWorth(id) {
+  return await client("GET", `/collection/${id}/balance`);
+}

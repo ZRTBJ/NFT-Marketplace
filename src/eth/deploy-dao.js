@@ -56,7 +56,7 @@ export async function createDAO(dao, provider, name, treasuryAddress) {
   const userNetwork = await userProvider.getNetwork();
   if (userNetwork.chainId !== 5)
     throw new Error(`Please switch to Goerli for signing`);
-  console.log(dao, provider, name);
+
   const signer = userProvider.getSigner();
   // const from = await signer.getAddress();
   // const balance = await provider.getBalance(from);
@@ -70,7 +70,6 @@ export async function createDAO(dao, provider, name, treasuryAddress) {
   await result.json().then(async (response) => {
     const tx = JSON.parse(response.result);
     const txReceipt = await provider.waitForTransaction(tx.txHash);
-    console.log(txReceipt);
     output = { txReceipt };
   });
 
@@ -82,6 +81,6 @@ export async function createDAO(dao, provider, name, treasuryAddress) {
   //   const treasuryAddress = await deployedDAO.functions.getTreasury();
   //   console.log(`treasury is deployed to ${treasuryAddress}`);
   // });
-
+  console.log(output);
   return output;
 }

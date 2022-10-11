@@ -228,3 +228,7 @@ export async function transferFundApi(payload) {
     payload
   );
 }
+
+export async function getNewWorth(id) {
+  return await client("GET", `/project/${id}/balance`);
+}

@@ -168,7 +168,7 @@ const DeployingProjectModal = ({
       };
       setTxnData(data);
     } catch (err) {
-      console.log(err);
+      errorClose(err.message);
     }
   };
 

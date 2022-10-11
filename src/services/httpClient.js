@@ -80,7 +80,7 @@ axios.interceptors.response.use(
     return response.data;
   },
   (error) => {
-    if (error.response.status === 403) {
+    if (error["data"]["code"] === 4031 || error["data"]["code"] === 4032) {
       tokenExpired();
     }
     return error.response.data;

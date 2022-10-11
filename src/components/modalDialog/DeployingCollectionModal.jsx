@@ -57,7 +57,7 @@ const DeployingCollectiontModal = ({
   const [txnData, setTxnData] = useState();
   const provider = createProvider();
   const collectionContract = createInstance(provider);
-  console.log(collectionDeploy);
+
   useEffect(() => {
     const collectionDeployStatus = collectionDeploy.find(
       (x) => x.function_uuid === funcId
@@ -128,7 +128,7 @@ const DeployingCollectiontModal = ({
             collectionContract.removeListener(filter);
             dispatch(getNotificationData(deployData));
           } else {
-            handleSmartContract();
+            handleSmartContract(res.config);
           }
         } else {
           errorClose(res.message);
@@ -169,15 +169,13 @@ const DeployingCollectiontModal = ({
       });
   }
 
-  const handleSmartContract = async () => {
+  const handleSmartContract = async (config) => {
     setStatusStep(1);
     try {
       const response = await createCollection(
         collectionContract,
         provider,
-        collectionName,
-        collectionType,
-        collectionSymbol
+        config
       );
       const hash = response.txReceipt;
       let data = {
@@ -186,7 +184,7 @@ const DeployingCollectiontModal = ({
       };
       setTxnData(data);
     } catch (err) {
-      console.log(err);
+      errorClose(err);
     }
   };
 

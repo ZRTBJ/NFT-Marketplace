@@ -7,6 +7,7 @@ import {
   getSplitterDetails,
   updateRoyaltySplitter,
   getCollectionSales,
+  getNetWorth,
 } from "services/collection/collectionService";
 import Cover from "assets/images/cover-default.svg";
 import manImg from "assets/images/image-default.svg";
@@ -80,12 +81,17 @@ const CollectionDetail = () => {
   const [showImportWallet, setShowImportWallet] = useState(false);
   const [projectID, setProjectID] = useState("");
   const [nftSales, setNFTSales] = useState([]);
-
+  const [balanceLoading, setBalanceLoading] = useState(false);
+  const [newWorth, setNetWorth] = useState({
+    balance: 0,
+    balanceUSD: 0,
+  });
   useEffect(() => {
     if (collectionId) {
       getCollectionDetail();
       getNFTs();
       getCollectionSalesData();
+      getCollectionNewWorth();
     }
   }, []);
 
@@ -93,6 +99,19 @@ const CollectionDetail = () => {
     getCollectionSales(collectionId).then((data) =>
       setNFTSales(data?.sales ? data?.sales : [])
     );
+  };
+
+  const getCollectionNewWorth = () => {
+    setBalanceLoading(true);
+    getNetWorth(collectionId).then((resp) => {
+      if (resp.code === 0) {
+        setBalanceLoading(false);
+        setNetWorth({ balance: resp.balance, balanceUSD: resp.balance_usd });
+      } else {
+        setBalanceLoading(false);
+        setNetWorth({ balance: 0, balanceUSD: 0 });
+      }
+    });
   };
 
   const getNFTs = () => {
@@ -584,10 +603,15 @@ const CollectionDetail = () => {
 
           <div className="flex items-start md:items-end flex-col mt-3 justify-center md:justify-end md:w-1/3  md:mt-0">
             <div className="bg-[#E8F5FB] ml-0 md:ml-3 rounded-md p-3 px-5 relative w-56">
-              <i className="fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3"></i>
+              <i
+                onClick={getCollectionNewWorth}
+                className={`cursor-pointer fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3 ${
+                  balanceLoading ? "fa-spin" : ""
+                }'}`}
+              ></i>
               <p className=" text-sm text-textSubtle ">Net Worth</p>
-              <h4>10,290.38 ETH</h4>
-              <p className="text-sm text-textSubtle">($17295556.18)</p>
+              <h4>{newWorth?.balance} ETH</h4>
+              <p className="text-sm text-textSubtle">${newWorth.balanceUSD}</p>
             </div>
             <div className="mt-6 flex items-center">
               {/* <a className='inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>

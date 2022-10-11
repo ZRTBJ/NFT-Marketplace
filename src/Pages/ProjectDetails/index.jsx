@@ -5,6 +5,7 @@ import {
   projectBookmark,
   getBalance,
   transferFundApi,
+  getNewWorth,
 } from "services/project/projectService";
 import { getNftListByProjectId } from "services/nft/nftService";
 import manImg from "assets/images/projectDetails/man-img.svg";
@@ -68,12 +69,15 @@ export default function ProjectDetails(props) {
   const [collectionId, setCollectionId] = useState("");
   const [collectionType, setCollectionType] = useState("");
   const [showTransferFundModal, setShowTransferFundModal] = useState(false);
-  const [balance, setBalance] = useState("---");
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
-  const [usdUnitPrice, setUsdUnitPrice] = useState(0);
   const [showFundTransferSuccess, setShowFundTransferSuccess] = useState(false);
   const [showFundTransferError, setShowFundTransferError] = useState(false);
   const [fnId, setFnId] = useState("");
+  const [balanceLoading, setBalanceLoading] = useState(false);
+  const [newWorth, setNetWorth] = useState({
+    balance: 0,
+    balanceUSD: 0,
+  });
   const fileUploadNotification = useSelector((state) =>
     state?.notifications?.notificationData
       ? state?.notifications?.notificationData
@@ -92,12 +96,25 @@ export default function ProjectDetails(props) {
   useEffect(() => {
     if (projectId && !isLoading) {
       projectDetails(projectId);
+      getProjectNetWorth();
     }
   }, [projectId]);
 
+  const getProjectNetWorth = () => {
+    setBalanceLoading(true);
+    getNewWorth(projectId).then((resp) => {
+      if (resp.code === 0) {
+        setBalanceLoading(false);
+        setNetWorth({ balance: resp.balance, balanceUSD: resp.balance_usd });
+      } else {
+        setBalanceLoading(false);
+        setNetWorth({ balance: 0, balanceUSD: 0 });
+      }
+    });
+  };
+
   useEffect(() => {
     getCollectionList();
-    getUnitPriceUSD();
   }, []);
 
   // useEffect(() => {
@@ -130,7 +147,6 @@ export default function ProjectDetails(props) {
           }
         }
         setIsLoading(false);
-        getProjectBalance(projectId);
       })
       .catch((error) => {
         setIsLoading(false);
@@ -264,35 +280,6 @@ export default function ProjectDetails(props) {
     return { slicedItems, restSize: members.length - slicedItems.length };
   };
 
-  function getProjectBalance(pid) {
-    setIsLoadingBalance(true);
-    getBalance(pid)
-      .then((res) => {
-        if (res.code === 0) {
-          if (res.balance && res.balance != "") {
-            setBalance(res.balance);
-          }
-        }
-        setIsLoadingBalance(false);
-      })
-      .catch((error) => {
-        setIsLoadingBalance(false);
-      });
-  }
-
-  function getUnitPriceUSD() {
-    setIsLoadingBalance(true);
-    cryptoConvert("ETH", "USD")
-      .then((res) => {
-        if (res.USD && res.USD > 0) {
-          setUsdUnitPrice(res.USD);
-        }
-        setIsLoadingBalance(false);
-      })
-      .catch((error) => {
-        setIsLoadingBalance(false);
-      });
-  }
   async function onSubmitData(payload) {
     payload.projectId = projectId;
 
@@ -623,22 +610,15 @@ export default function ProjectDetails(props) {
 
                 <div className="bg-primary-900 md:mt-4 md:ml-3 bg-opacity-10 rounded-md p-3 px-5 relative md:w-56">
                   <i
-                    onClick={() => {
-                      getProjectBalance(projectId);
-                      getUnitPriceUSD();
-                    }}
+                    onClick={getProjectNetWorth}
                     className={`fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3 ${
-                      isLoadingBalance ? "fa-spin" : ""
+                      balanceLoading ? "fa-spin" : ""
                     } cursor-pointer`}
                   ></i>
                   <p className=" text-sm text-textSubtle ">Net Worth</p>
-                  <h4>10,290.38 ETH</h4>
+                  <h4>{newWorth?.balance} ETH</h4>
                   <p className="text-sm text-textSubtle">
-                    ($
-                    {balance && Number(balance) >= 0 && usdUnitPrice > 0
-                      ? balance * usdUnitPrice
-                      : "17295556.18"}
-                    )
+                    ${newWorth.balanceUSD}
                   </p>
                 </div>
 

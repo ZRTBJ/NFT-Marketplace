@@ -94,7 +94,10 @@ export async function mintRANFT(id) {
 export async function mintProductOrMembershipNft(payload) {
   const url =
     payload.type === "membership" ? "/membership-nft" : "/product-nft";
-  return await client("POST", `${url}/${payload.id}/mint`);
+  return await client(
+    "POST",
+    `${url}/${payload.id}/mint?transaction_hash=${payload.transaction_hash}`
+  );
 }
 export async function getMintedNftListByUserId(payload) {
   return await client(

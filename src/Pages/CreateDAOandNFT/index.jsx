@@ -80,7 +80,7 @@ const CreateDAOandNFT = () => {
           Create new DAO for making your project is really managed and secure in
           web3 environment.
         </p>
-        {DAOs.length ? (
+        {DAOs?.length ? (
           <Link to="/project-create" className="w-fit block no-underline">
             <div className="flex mint-button mt-3 text-center font-satoshi-bold w-full md:w-fit">
               <img src={Plus} alt="add" />
@@ -89,7 +89,7 @@ const CreateDAOandNFT = () => {
           </Link>
         ) : null}
         <div className="flex mt-6">
-          {!DAOs.length ? (
+          {!DAOs?.length ? (
             <Link to="/project-create">
               <div className="gradient-border cursor-pointer w-[276px] h-[276px] mr-6 flex flex-col items-center justify-center rounded-[12px]">
                 <img src={CirclePlus} alt="add" />
@@ -106,7 +106,7 @@ const CreateDAOandNFT = () => {
             className={styles.createSwiper}
           >
             <div>
-              {DAOs.map((item) => (
+              {DAOs?.map((item) => (
                 <SwiperSlide key={item.id} className={styles.daoCard}>
                   <DAOCard item={item} key={item.id} />
                 </SwiperSlide>
@@ -121,7 +121,7 @@ const CreateDAOandNFT = () => {
           Start creating your NFT with many of choice, you can create 3 type of
           NFT such like Membership,Pre-Product and Product.
         </p>
-        {Collections.length ? (
+        {Collections?.length ? (
           <div
             onClick={() => setShowCreateNFT(true)}
             className="w-fit mint-button mt-3 text-center flex font-satoshi-bold w-full md:w-fit"
@@ -131,7 +131,7 @@ const CreateDAOandNFT = () => {
           </div>
         ) : null}
         <div className="flex mt-6">
-          {!Collections.length ? (
+          {!Collections?.length ? (
             <div
               className="gradient-border cursor-pointer min-w-[276px] h-[276px] mr-6 flex flex-col items-center justify-center rounded-[12px]"
               onClick={() => setShowCreateNFT(true)}
@@ -149,7 +149,7 @@ const CreateDAOandNFT = () => {
             className={styles.createSwiper}
           >
             <div>
-              {Collections.map((item) => (
+              {Collections?.map((item) => (
                 <SwiperSlide key={item.id} className={styles.nftCard}>
                   <NFTCard item={item} key={item.id} />
                 </SwiperSlide>

@@ -1,5 +1,6 @@
 import Modal from "../Modal";
 import polygon from "assets/images/transection.svg";
+import eth from "assets/images/eth.svg";
 const TransactionModal = ({
   handleClose,
   show,
@@ -22,15 +23,15 @@ const TransactionModal = ({
         <div className="font-black text-[24px] md:text-[42px]">Transaction</div>
         <p className=" mt-3 text-textSubtle">
           You are about to purchase a{" "}
-          <span className="font-black">{nftName}</span> from
+          <span className="font-black">{nftName}</span> from{" "}
           <span className="font-black">{collectionName}</span>
         </p>
         <div className="mt-6 mb-6 bg-primary-50 md:h-[83px] rounded-[12px] p-4 flex flex-wrap items-center">
           <div className="flex items-center">
-            <img src={polygon} alt="polygon" className="w-[46px] h-[46px]" />
+            <img src={eth} alt="Eth" className="w-[46px] h-[46px]" />
             <div className="ml-3">
               <p className="text-[18px] font-black">
-                {address.slice(0, 15)}...
+                {address?.slice(0, 15)}...
               </p>
               <p>{blockChain}</p>
             </div>
@@ -42,7 +43,7 @@ const TransactionModal = ({
         <div className="mb-6">
           <div className="flex flex-wrap items-center border-b-[1px] border-b-[#C7CEE6] pb-3">
             <p className="font-black text-[14px]">Price</p>
-            <p className=" ml-auto text-[14px]">{price} MATIC</p>
+            <p className=" ml-auto text-[14px]">{price} ETH</p>
           </div>
           {/* <div className="mt-4  flex flex-wrap items-center">
                 <p className="font-black text-[14px]">Gas Fee</p>
