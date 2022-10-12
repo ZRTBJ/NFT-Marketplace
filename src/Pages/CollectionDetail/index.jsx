@@ -34,6 +34,8 @@ import NFTSales from "components/RoyalityManagement/NFTSale/NFTSales";
 import ConfirmationModal from "components/modalDialog/ConfirmationModal";
 import ImportWalletModal from "components/modalDialog/ImportWalletModal/ImportWalletModal";
 import { walletAddressTruncate } from "util/walletAddressTruncate";
+import usePublishRoyaltySplitter from "hooks/usePublishRoyaltySplitter";
+import PublishRoyaltyModal from "components/StatusModal/PublishRoyaltyModal";
 
 const TABLE_HEADERS = [
   { id: 0, label: "Wallet Address" },
@@ -81,11 +83,45 @@ const CollectionDetail = () => {
   const [showImportWallet, setShowImportWallet] = useState(false);
   const [projectID, setProjectID] = useState("");
   const [nftSales, setNFTSales] = useState([]);
+
+  // Publish royalty splitter
+  const [showPublishRoyaltySpliterModal, setShowPublishRoyaltySpliterModal] = useState(false);
+  const [showPublishRoyaltySpliterConfirmModal, setShowPublishRoyaltySpliterConfirmModal] = useState();
+  const [showPublishRoyaltySpliterErrorModal, setShowPublishRoyaltySpliterErrorModal] = useState(false);
+
+  const hanldeUpdatePublishStatus = (status) => {
+    if (
+      status === 'success'
+      && Collection.royalty_splitter.status !== 'published'
+    ) {
+      setCollection({
+        ...Collection,
+        royalty_splitter: {
+          ...Collection.royalty_splitter,
+          status: 'published',
+        },
+      });
+    }
+  };
+
+  const {
+    isLoading: isPublishRoyaltySplitter,
+    status: publishRoyaltySplitterStatus,
+    canPublish: canPublishRoyaltySplitter,
+    publish: publishRoyaltySplitter,
+  } = usePublishRoyaltySplitter({
+    collection: Collection,
+    splitters: royalityMembers,
+    onUpdateStatus: hanldeUpdatePublishStatus,
+  });
+
+
   const [balanceLoading, setBalanceLoading] = useState(false);
   const [newWorth, setNetWorth] = useState({
     balance: 0,
     balanceUSD: 0,
   });
+
   useEffect(() => {
     if (collectionId) {
       getCollectionDetail();
@@ -313,6 +349,22 @@ const CollectionDetail = () => {
     }
 
     setRoyalityMembers(values);
+  };
+
+  const handlePublishRoyaltySplitterButtonClick = async () => {
+    setShowPublishRoyaltySpliterConfirmModal(true);
+  }
+
+  const handlePublishRoyaltySplitter = async () => {
+    try {
+      setShowPublishRoyaltySpliterConfirmModal(false);
+      setShowPublishRoyaltySpliterModal(true);
+      await publishRoyaltySplitter();
+    } catch (err) {
+      setShowPublishRoyaltySpliterModal(false);
+      setShowPublishRoyaltySpliterErrorModal(true);
+      console.error(err);
+    }
   };
 
   return (
@@ -922,9 +974,12 @@ const CollectionDetail = () => {
                   <div className="w-full">
                     <button
                       className="block ml-auto bg-primary-100 text-primary-900 p-3 font-black text-[14px]"
-                      // onClick={() => setShowPublish(true)}
+                      onClick={() => setShowPublishRoyaltySpliterConfirmModal(true)}
+                      disabled={!canPublishRoyaltySplitter || isPublishRoyaltySplitter}
                     >
-                      Lock Percentage
+                      {isPublishRoyaltySplitter
+                        ? publishRoyaltySplitterStatus === 1 ? 'Creating contract' : 'Publishing'
+                        : 'Lock Percentage'}
                     </button>
                   </div>
                   {/* ) : null} */}
@@ -963,6 +1018,23 @@ const CollectionDetail = () => {
           show={showSuccessModal}
         />
       )}
+      <PublishModal
+        show={showPublishRoyaltySpliterConfirmModal}
+        handleClose={() => setShowPublishRoyaltySpliterConfirmModal(false)}
+        publishProject={handlePublishRoyaltySplitter}
+        type="Royalty Splitter"
+      />
+      <PublishRoyaltyModal
+        isVisible={showPublishRoyaltySpliterModal}
+        isLoading={isPublishRoyaltySplitter}
+        status={publishRoyaltySplitterStatus}
+        onRequestClose={() => setShowPublishRoyaltySpliterModal(false)}
+      />
+      <ErrorModal
+        show={showPublishRoyaltySpliterErrorModal}
+        title="Failed to publish royalty percentage!"
+        handleClose={() => setShowPublishRoyaltySpliterErrorModal(false)}
+      />
     </div>
   );
 };
