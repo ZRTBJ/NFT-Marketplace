@@ -338,16 +338,6 @@ export default function ProjectDetails(props) {
     }
   }, [fileUploadNotification]);
 
-  // const handleSmartContract = async () => {
-  //   try {
-  //     const response = await createDAO(dao, provider, project.name);
-  //     const hash = response;
-  //     console.log(hash);
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
-
   return (
     <>
       {/* {showCreateRANFT && (
@@ -599,7 +589,7 @@ export default function ProjectDetails(props) {
               </div>
 
               <div className="md:flex md:items-center md:justify-center flex-wrap mt-3 md:justify-end md:w-1/3  md:mt-0">
-                {project?.is_owner && (
+                {project?.project_status === "published" && project?.is_owner && (
                   <div
                     onClick={() => setShowTransferFundModal(true)}
                     className="hidden md:flex outlined-button ml-4 cursor-pointer font-satoshi-bold cursor-pointer"
@@ -607,20 +597,21 @@ export default function ProjectDetails(props) {
                     <span className="gradient-text">Transfer Funds</span>
                   </div>
                 )}
-
-                <div className="bg-primary-900 md:mt-4 md:ml-3 bg-opacity-10 rounded-md p-3 px-5 relative md:w-56">
-                  <i
-                    onClick={getProjectNetWorth}
-                    className={`fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3 ${
-                      balanceLoading ? "fa-spin" : ""
-                    } cursor-pointer`}
-                  ></i>
-                  <p className=" text-sm text-textSubtle ">Net Worth</p>
-                  <h4>{newWorth?.balance} ETH</h4>
-                  <p className="text-sm text-textSubtle">
-                    ${newWorth.balanceUSD}
-                  </p>
-                </div>
+                {project?.project_status === "published" ? (
+                  <div className="bg-primary-900 md:mt-4 md:ml-3 bg-opacity-10 rounded-md p-3 px-5 relative md:w-56">
+                    <i
+                      onClick={getProjectNetWorth}
+                      className={`fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3 ${
+                        balanceLoading ? "fa-spin" : ""
+                      } cursor-pointer`}
+                    ></i>
+                    <p className=" text-sm text-textSubtle ">Net Worth</p>
+                    <h4>{newWorth?.balance} ETH</h4>
+                    <p className="text-sm text-textSubtle">
+                      ${newWorth.balanceUSD}
+                    </p>
+                  </div>
+                ) : null}
 
                 <div className="md:hidden flex mt-4">
                   {project?.is_owner && (

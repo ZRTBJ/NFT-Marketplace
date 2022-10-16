@@ -57,27 +57,28 @@ const DeployingCollectiontModal = ({
   const [txnData, setTxnData] = useState();
   const provider = createProvider();
   const collectionContract = createInstance(provider);
+  const collectionListener = collectionContract.filters.NewCollection();
 
-  useEffect(() => {
-    const collectionDeployStatus = collectionDeploy.find(
-      (x) => x.function_uuid === funcId
-    );
+  // useEffect(() => {
+  //   const collectionDeployStatus = collectionDeploy.find(
+  //     (x) => x.function_uuid === funcId
+  //   );
 
-    if (
-      collectionDeployStatus &&
-      collectionDeployStatus.function_uuid &&
-      collectionDeployStatus.data
-    ) {
-      const statusData = JSON.parse(collectionDeployStatus.data);
-      setPublishedData(statusData);
+  //   if (
+  //     collectionDeployStatus &&
+  //     collectionDeployStatus.function_uuid &&
+  //     collectionDeployStatus.data
+  //   ) {
+  //     const statusData = JSON.parse(collectionDeployStatus.data);
+  //     setPublishedData(statusData);
 
-      if (statusData["fn_status"] === "success") {
-        setStep(2);
-      } else {
-        recheckStatus();
-      }
-    }
-  }, [collectionDeploy]);
+  //     if (statusData["fn_status"] === "success") {
+  //       setStep(2);
+  //     } else {
+  //       recheckStatus();
+  //     }
+  //   }
+  // }, [collectionDeploy]);
 
   useEffect(() => {
     if (contractAdd && txnData) {
@@ -99,16 +100,15 @@ const DeployingCollectiontModal = ({
       payload.append("contract_address", contractAdd);
       payload.append("block_number", data.block_number);
     }
-    const filter = collectionContract.filters.NewCollection();
 
     const listener = (args) => {
       setContractAdd(args);
     };
 
     const subscribe = async () => {
-      const captured = await collectionContract.queryFilter(filter);
+      const captured = await collectionContract.queryFilter(collectionListener);
 
-      collectionContract.on(filter, listener);
+      collectionContract.on(collectionListener, listener);
     };
 
     subscribe();
@@ -124,9 +124,15 @@ const DeployingCollectiontModal = ({
             };
             setStatusStep(2);
             setFuncId(res.function_uuid);
-            const filter = collectionContract.filters.NewCollection();
-            collectionContract.removeListener(filter);
+            collectionContract.removeListener(collectionListener, listener);
             dispatch(getNotificationData(deployData));
+            if (res?.function?.status === "success") {
+              setStep(2);
+            } else if (res?.function?.status === "failed") {
+              setContractAdd("");
+              setTxnData();
+              errorClose(res?.function?.message);
+            }
           } else {
             handleSmartContract(res.config);
           }

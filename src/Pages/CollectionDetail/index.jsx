@@ -711,7 +711,7 @@ const CollectionDetail = () => {
             }
             className="mint-button mt-3 text-center font-satoshi-bold w-full md:w-fit"
           >
-            <span> Mint NFT</span>
+            <span> Create NFT</span>
           </div>
         )}
         <section>

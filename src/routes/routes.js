@@ -22,7 +22,7 @@ import MembershipNFT from "Pages/MembershipNFT";
 import CollectionDetail from "Pages/CollectionDetail";
 import ProductNFT from "Pages/ProductNFT";
 import Home from "../Pages/Home";
-import List from "Pages/List"
+import List from "Pages/List";
 const routes = [
   {
     path: "/login",
@@ -116,7 +116,7 @@ const routes = [
     isPrivate: false,
   },
   {
-    path: "/embed/:id",
+    path: "/embed-nft/:type/:id",
     component: EmbedNFT,
     isPrivate: false,
   },
@@ -135,7 +135,7 @@ const routes = [
     component: RoyalityManagement,
     isPrivate: true,
   },
-    {
+  {
     path: "/list/",
     component: List,
     isPrivate: false,

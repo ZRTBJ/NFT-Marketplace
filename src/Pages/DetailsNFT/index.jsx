@@ -27,6 +27,7 @@ import WalletConnectModal from "components/modalDialog/WalletConnectModal";
 import { createMintNFT } from "eth/deploy-mintnft";
 import { createProvider } from "eth/provider";
 import { createMintInstance } from "eth/mint-nft";
+import EmbedNFTModal from "components/modalDialog/EmbedNFTModal";
 
 export default function DetailsNFT(props) {
   const userinfo = useSelector((state) => state.user.userinfo);
@@ -41,60 +42,67 @@ export default function DetailsNFT(props) {
   const [errorMsg, setErrorMsg] = useState("");
   const [mintData, setMintData] = useState();
   const [hash, setHash] = useState("");
-  const inviteData = useSelector((state) =>
-    state?.notifications?.notificationData
-      ? state?.notifications?.notificationData
-      : []
-  );
+  const [showEmbedNFT, setShowEmbedNFT] = useState(false);
+
   const provider = createProvider();
-  const mintContract = createMintInstance(
-    "0x9aE8F22d6359E6C2F4Af3d8b7d09386BB440a11A",
-    provider
-  );
+
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const mintDataStatus = inviteData.find((x) => x.function_uuid === funcId);
-    if (mintDataStatus && mintDataStatus.data) {
-      const data = JSON.parse(mintDataStatus.data);
-      console.log(data);
-      if (data?.fn_status === "success") {
-        nftDetails();
-        setHash(data?.fn_response_data?.transactionHash);
-        setTransactionWaitingModal(false);
-        setNftSuccessModal(true);
-        setMintData(data);
-        setErrorMsg("");
-      } else {
-        setTransactionWaitingModal(false);
-        let message = data?.fn_response_data?.ErrorReason;
-        let errorMessage = message && JSON.parse(message);
-        setErrorMsg(errorMessage?.reason);
-      }
-    } else {
-      let message = mintDataStatus?.data?.fn_response_data?.ErrorReason;
-      let errorMessage = message && JSON.parse(message);
-      if (errorMessage) {
-        setTransactionWaitingModal(false);
-        setErrorMsg(errorMessage?.reason);
-      }
-    }
-  }, [inviteData]);
+  // useEffect(() => {
+  //   const mintDataStatus = inviteData.find((x) => x.function_uuid === funcId);
+  //   if (mintDataStatus && mintDataStatus.data) {
+  //     const data = JSON.parse(mintDataStatus.data);
+  //     console.log(data);
+  //     if (data?.fn_status === "success") {
+  //       nftDetails();
+  //       setHash(data?.fn_response_data?.transactionHash);
+  //       setTransactionWaitingModal(false);
+  //       setNftSuccessModal(true);
+  //       setMintData(data);
+  //       setErrorMsg("");
+  //     } else {
+  //       setTransactionWaitingModal(false);
+  //       let message = data?.fn_response_data?.ErrorReason;
+  //       let errorMessage = message && JSON.parse(message);
+  //       setErrorMsg(errorMessage?.reason);
+  //     }
+  //   } else {
+  //     let message = mintDataStatus?.data?.fn_response_data?.ErrorReason;
+  //     let errorMessage = message && JSON.parse(message);
+  //     if (errorMessage) {
+  //       setTransactionWaitingModal(false);
+  //       setErrorMsg(errorMessage?.reason);
+  //     }
+  //   }
+  // }, [inviteData]);
 
-  const handleContract = async () => {
-    setTransactionModal(false);
-    setTransactionWaitingModal(true);
+  const handleContract = async (config) => {
     try {
-      const response = await createMintNFT(mintContract, nft.metadata_url);
+      const mintContract = createMintInstance(config.contract, provider);
+      const response = await createMintNFT(
+        mintContract,
+        config.metadataUrl,
+        config.price,
+        provider
+      );
+
       if (response) {
-        handleProceedPayment(response);
+        let data = {
+          hash: response?.transactionHash,
+          blockNumber: response?.blockNumber,
+        };
+        handleProceedPayment(data);
       }
     } catch (err) {
       console.log(err);
-      setErrorMsg("Minting failed. Please try again later");
+      if (err.message) {
+        setErrorMsg(err.message);
+      } else {
+        setErrorMsg("Minting failed. Please try again later");
+      }
     }
   };
-  console.log(inviteData);
+
   const { type, id } = useParams();
   useEffect(() => {
     if (id) {
@@ -126,10 +134,16 @@ export default function DetailsNFT(props) {
     }, 2000);
   };
 
-  async function handleProceedPayment(hash) {
+  async function handleProceedPayment(response) {
+    setTransactionModal(false);
+    setTransactionWaitingModal(true);
     const payload = {
       id: nft?.lnft?.id,
-      transaction_hash: hash,
+      data: {
+        transaction_hash: response.hash,
+        token_id: "",
+        block_number: response.blockNumber,
+      },
       type: nft?.lnft?.nft_type,
     };
     await mintProductOrMembershipNft(payload)
@@ -139,9 +153,26 @@ export default function DetailsNFT(props) {
             function_uuid: resp.function_uuid,
             data: "",
           };
-          setFuncId(resp.function_uuid);
-          dispatch(getNotificationData(deployData));
-          setErrorMsg("");
+          if (response.hash) {
+            setFuncId(resp.function_uuid);
+            // dispatch(getNotificationData(deployData));
+            setErrorMsg("");
+            if (resp?.function?.status === "success") {
+              console.log("success");
+              nftDetails();
+              setHash(resp?.function?.transactionHash);
+              setTransactionWaitingModal(false);
+              setNftSuccessModal(true);
+              setMintData(resp);
+              setErrorMsg("");
+            } else if (resp?.function?.status === "failed") {
+              setTransactionWaitingModal(false);
+              let message = resp?.function?.message;
+              setErrorMsg(message);
+            }
+          } else {
+            handleContract(resp.config);
+          }
         } else {
           setErrorMsg(resp.message);
           setTransactionWaitingModal(false);
@@ -172,7 +203,7 @@ export default function DetailsNFT(props) {
 
   let benefits = info?.benefits && JSON.parse(nft.more_info.benefits);
   let availableSupply = nft?.lnft?.supply - nft?.lnft?.minted_amount;
-  console.log(nft);
+
   return (
     <>
       {comingSoon && (
@@ -194,7 +225,7 @@ export default function DetailsNFT(props) {
           collectionName={"Collection1"}
           blockChain={"Ethereum"}
           price={nft?.more_info?.price}
-          handleNext={handleContract}
+          handleNext={() => handleProceedPayment("")}
         />
       )}
       {showTransactionWaitingModal && (
@@ -213,7 +244,7 @@ export default function DetailsNFT(props) {
           transactionHash={hash}
           collectionName={"Collection1"}
           shareUrl={`${nft?.lnft?.invitation_code}`}
-          handleNext={handleProceedPayment}
+          // handleNext={handleProceedPayment}
         />
       )}
       {errorMsg && (
@@ -231,6 +262,14 @@ export default function DetailsNFT(props) {
         closeModal={(e) => hideModal(e)}
         noRedirection={true}
       />
+      {showEmbedNFT && (
+        <EmbedNFTModal
+          show={showEmbedNFT}
+          handleClose={setShowEmbedNFT}
+          nftId={nft?.lnft?.id}
+          type={type}
+        />
+      )}
 
       {isLoading && <div className="loading"></div>}
       {!isLoading && (
@@ -245,6 +284,14 @@ export default function DetailsNFT(props) {
               <div className="rounded bg-success-1 bg-opacity-20 font-satoshi-bold text-success-1 font-black p-4 mt-4">
                 {info?.price} MATIC
               </div>
+            </div>
+            <div className="flex w-100 items-center justify-center mt-4 ">
+              <button
+                onClick={() => setShowEmbedNFT(true)}
+                className="rounded-[4px] p-3 border-[1px] font-black font-[14px] text-primary-900 border-primary-900"
+              >
+                Embed NFT
+              </button>
             </div>
             {nft?.lnft?.invitation_code && (
               <div className="bg-white rounded-xl shadow-main mt-3 flex flex-col items-center justify-start self-start p-4 mr-4 mb-5 md:mb-0">

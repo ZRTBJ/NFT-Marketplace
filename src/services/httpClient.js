@@ -1,6 +1,6 @@
 import axios from "axios";
 import Config from "../config";
-import jwt from "jwt-decode";
+// import jwt from "jwt-decode";
 
 const ROOT_URL = Config.API_ENDPOINT;
 
@@ -35,32 +35,31 @@ export async function client(method, url, body, contentType) {
 async function refreshToken() {
   const refreshTkn = localStorage.getItem("refresh_token");
   let token = localStorage.getItem("currentUser");
-
   if (refreshTkn) {
-    const user = jwt(refreshTkn);
-    const tknExpDate = new Date(user.exp * 1000);
-    const today = new Date();
-    const diff = (tknExpDate - today) / (1000 * 60 * 60 * 24);
-    if (diff <= 6.96) {
-      const headers = {
-        "Content-Type": "multipart/form-data",
-        refresh_token: refreshTkn,
-      };
-      const bodyFormData = new FormData();
+    // const user = jwt(refreshTkn);
+    // const tknExpDate = new Date(user.exp * 1000);
+    // const today = new Date();
+    // const diff = (tknExpDate - today) / (1000 * 60 * 60 * 24);
+    // if (diff <= 6.96) {
+    const headers = {
+      "Content-Type": "multipart/form-data",
+      refresh_token: refreshTkn,
+    };
+    const bodyFormData = new FormData();
 
-      const response = await axios({
-        method: "POST",
-        url: `${ROOT_URL + "/auth/refresh"}`,
-        data: bodyFormData,
-        headers: headers,
-      });
+    const response = await axios({
+      method: "POST",
+      url: `${ROOT_URL + "/auth/refresh"}`,
+      data: bodyFormData,
+      headers: headers,
+    });
 
-      localStorage.setItem("currentUser", response.token);
-      localStorage.setItem("user_id", response.user_id);
-      localStorage.setItem("refresh_token", response["refresh_token"]);
+    localStorage.setItem("currentUser", response.token);
+    localStorage.setItem("user_id", response.user_id);
+    localStorage.setItem("refresh_token", response["refresh_token"]);
 
-      token = response.token;
-    }
+    token = response.token;
+    // }
   }
   return token;
 }
@@ -71,16 +70,13 @@ async function tokenExpired() {
 
 axios.interceptors.response.use(
   (response) => {
-    if (
-      response["data"]["code"] === 4031 ||
-      response["data"]["code"] === 4032
-    ) {
+    if (response?.data?.code === 4031 || response?.data?.code === 4032) {
       tokenExpired();
     }
     return response.data;
   },
   (error) => {
-    if (error["data"]["code"] === 4031 || error["data"]["code"] === 4032) {
+    if (error?.data?.code === 4031 || error?.data?.code === 4032) {
       tokenExpired();
     }
     return error.response.data;

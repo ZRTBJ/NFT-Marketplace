@@ -31,6 +31,7 @@ export async function getDefinedProperties() {
 }
 
 export async function getNftDetails(type, id) {
+  console.log(type, id);
   let typeValue =
     type === "membership"
       ? "/membership-nft/"
@@ -96,7 +97,9 @@ export async function mintProductOrMembershipNft(payload) {
     payload.type === "membership" ? "/membership-nft" : "/product-nft";
   return await client(
     "POST",
-    `${url}/${payload.id}/mint?transaction_hash=${payload.transaction_hash}`
+    `${url}/${payload.id}/mint`,
+    payload.data,
+    "formdata"
   );
 }
 export async function getMintedNftListByUserId(payload) {

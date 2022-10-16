@@ -24,9 +24,8 @@ async function sendMetaTx(collection, provider, signer, config) {
       isRoyaltiesEnabled: config?.runtimeConfig?.isRoyaltiesEnabled,
       royaltiesBps: config?.runtimeConfig?.royaltiesBps,
       royaltyAddress: config?.runtimeConfig?.royaltiesAddress,
-      primaryMintPrice: ethers.utils.parseEther(
-        config?.runtimeConfig?.primaryMintPrice.toString()
-      ),
+      //TODO: Need to pass the price dynamically
+      primaryMintPrice: ethers.utils.parseEther("0.00001"),
       treasuryAddress: config?.runtimeConfig?.treasuryAddress,
     },
   };

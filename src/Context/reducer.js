@@ -1,7 +1,7 @@
-let user = localStorage.getItem("user_id");
-let token = localStorage.getItem("currentUser");
-let wallet = localStorage.getItem("wallet");
-let walletAddress = localStorage.getItem("walletAddress");
+let user = localStorage && localStorage.getItem("user_id");
+let token = localStorage && localStorage.getItem("currentUser");
+let wallet = localStorage && localStorage.getItem("wallet");
+let walletAddress = localStorage && localStorage.getItem("walletAddress");
 
 export const initialState = {
   user: "" || user,

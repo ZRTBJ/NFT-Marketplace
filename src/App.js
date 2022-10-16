@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Switch, useParams } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import routes from "routes/routes.js";
 import { AuthProvider } from "./Context";
@@ -17,35 +17,44 @@ function App() {
     setShowSideBar(!showSideBar);
   };
 
+  let path = window?.location?.pathname;
+  let pathItems = path && path.split("/");
+  let isEmbedView = pathItems?.includes("embed-nft");
+
   return (
     <div>
       <Router>
         <AuthProvider>
-          <Header
-            handleSidebar={handleToggleSideBar}
-            setShowModal={setShowModal}
-            showModal={showModal}
-          />
+          {!isEmbedView && (
+            <Header
+              handleSidebar={handleToggleSideBar}
+              setShowModal={setShowModal}
+              showModal={showModal}
+            />
+          )}
           {/* Dynamic Body */}
           <main className="container min-h-[calc(100vh-71px)]">
             <div className="md:flex md:flex-row">
-              <div className="hidden md:block mr-4 ">
-                <Sidebar
-                  setShowModal={setShowModal}
-                  handleToggleSideBar={handleToggleSideBar}
-                />
-              </div>
-
-              <div
-                className={`${
-                  showSideBar ? "translate-x-0" : "-translate-x-full"
-                } block md:hidden mr-4 absolute z-[100] ease-in-out duration-300`}
-              >
-                <Sidebar
-                  setShowModal={setShowModal}
-                  handleToggleSideBar={handleToggleSideBar}
-                />
-              </div>
+              {!isEmbedView && (
+                <div className="hidden md:block mr-4 ">
+                  <Sidebar
+                    setShowModal={setShowModal}
+                    handleToggleSideBar={handleToggleSideBar}
+                  />
+                </div>
+              )}
+              {!isEmbedView && (
+                <div
+                  className={`${
+                    showSideBar ? "translate-x-0" : "-translate-x-full"
+                  } block md:hidden mr-4 absolute z-[100] ease-in-out duration-300`}
+                >
+                  <Sidebar
+                    setShowModal={setShowModal}
+                    handleToggleSideBar={handleToggleSideBar}
+                  />
+                </div>
+              )}
 
               <div className="w-full min-w-[calc(100vw-300px)]">
                 <Switch>

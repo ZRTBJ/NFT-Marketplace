@@ -37,56 +37,56 @@ const DeployingProjectModal = ({
   const dao = createInstance(provider);
   const [contractAdd, setContractAdd] = useState("");
   const [txnData, setTxnData] = useState();
+  console.log(projectDeploy);
+  // useEffect(() => {
+  //   const projectDeployStatus = projectDeploy.find(
+  //     (x) => x.projectId === projectId
+  //   );
+  //   if (
+  //     projectDeployStatus &&
+  //     projectDeployStatus.projectId &&
+  //     projectDeployStatus.data &&
+  //     projectDeployStatus.data.length > 5
+  //   ) {
+  //     const statusData = JSON.parse(projectDeployStatus.data);
+  //     const status = {
+  //       projectId: projectDeployStatus.projectId,
+  //       etherscan: projectDeployStatus.etherscan,
+  //       function_uuid: projectDeployStatus.function_uuid,
+  //       fn_name: statusData["fn_name"],
+  //       fn_status: statusData["fn_status"],
+  //       message: statusData?.fn_response_data?.message,
+  //       step: statusData?.fn_response_data?.step,
+  //     };
 
-  useEffect(() => {
-    const projectDeployStatus = projectDeploy.find(
-      (x) => x.projectId === projectId
-    );
-    if (
-      projectDeployStatus &&
-      projectDeployStatus.projectId &&
-      projectDeployStatus.data &&
-      projectDeployStatus.data.length > 5
-    ) {
-      const statusData = JSON.parse(projectDeployStatus.data);
-      const status = {
-        projectId: projectDeployStatus.projectId,
-        etherscan: projectDeployStatus.etherscan,
-        function_uuid: projectDeployStatus.function_uuid,
-        fn_name: statusData["fn_name"],
-        fn_status: statusData["fn_status"],
-        message: statusData?.fn_response_data?.message,
-        step: statusData?.fn_response_data?.step,
-      };
-
-      setDeployStatus(status);
-      if (statusData["fn_status"] === "success") {
-        setStep(2);
-      }
-    } else if (projectDeployStatus && projectDeployStatus.projectId) {
-      const status = {
-        projectId: projectDeployStatus.projectId,
-        etherscan: projectDeployStatus.etherscan,
-        function_uuid: projectDeployStatus.function_uuid,
-        fn_name: "",
-        fn_status: "pending",
-        message: "",
-        step: 1,
-      };
-      setDeployStatus(status);
-    } else {
-      const status = {
-        projectId: "",
-        etherscan: "",
-        function_uuid: "",
-        fn_name: "",
-        fn_status: "pending",
-        message: "",
-        step: 1,
-      };
-      setDeployStatus(status);
-    }
-  }, [projectDeploy]);
+  //     setDeployStatus(status);
+  //     if (statusData["fn_status"] === "success") {
+  //       setStep(2);
+  //     }
+  //   } else if (projectDeployStatus && projectDeployStatus.projectId) {
+  //     const status = {
+  //       projectId: projectDeployStatus.projectId,
+  //       etherscan: projectDeployStatus.etherscan,
+  //       function_uuid: projectDeployStatus.function_uuid,
+  //       fn_name: "",
+  //       fn_status: "pending",
+  //       message: "",
+  //       step: 1,
+  //     };
+  //     setDeployStatus(status);
+  //   } else {
+  //     const status = {
+  //       projectId: "",
+  //       etherscan: "",
+  //       function_uuid: "",
+  //       fn_name: "",
+  //       fn_status: "pending",
+  //       message: "",
+  //       step: 1,
+  //     };
+  //     setDeployStatus(status);
+  //   }
+  // }, [projectDeploy]);
 
   useEffect(() => {
     if (publishStep >= 1) {
@@ -135,6 +135,13 @@ const DeployingProjectModal = ({
               function_uuid: res.function_uuid,
               data: "",
             };
+            if (res?.function?.status === "success") {
+              setStep(2);
+            } else if (res?.function?.status === "failed") {
+              setContractAdd("");
+              setTxnData();
+              errorClose(res?.function?.message);
+            }
             const filter = dao.filters.NewClone();
             dao.removeListener(filter);
             dispatch(getNotificationData(deployData));

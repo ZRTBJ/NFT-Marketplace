@@ -340,6 +340,10 @@ select {
   background-color: #f9fcff;
 }
 
+.embed-nft-modal input {
+  padding-left: 60px;
+}
+
 @media (max-width: 767px) {
   .nft-wrapper {
     height: calc(100vh - 180px);
