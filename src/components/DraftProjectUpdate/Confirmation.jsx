@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 
 import { getProjectCategory } from "services/project/projectService";
 import Tooltip from "components/Tooltip";
+import { NETWORK_CHAIN } from "data/networkChain";
 
 export default function Outline({
   // logo
@@ -205,7 +206,9 @@ export default function Outline({
             {/* <Tooltip></Tooltip> */}
             <div className="txtblack text-[14px] mb-[6px]">Blockchain</div>
           </div>
-          <p className="text-textSubtle">{blockchainCategory}</p>
+          <p className="text-textSubtle">
+            {NETWORK_CHAIN[Number(blockchainCategory)].name}
+          </p>
         </div>
       )}
       {showFreezeMetadata && (

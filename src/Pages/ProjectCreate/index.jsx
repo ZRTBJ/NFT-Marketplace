@@ -202,7 +202,7 @@ export default function ProjectCreate() {
   // category end
 
   // Blockchain start
-  const [blockchainCategory, setBlockchaainCategory] = useState("ethereum");
+  const [blockchainCategory, setBlockchaainCategory] = useState("1");
   // Blockchain end
   let query = useQuery();
   const [outlineKey, setoutlineKey] = useState(0);
@@ -259,6 +259,7 @@ export default function ProjectCreate() {
     let createPayload = {
       name: projectName,
       category_id: projectCategory,
+      blockchain: blockchainCategory,
     };
 
     let projectId = "";

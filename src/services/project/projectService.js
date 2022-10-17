@@ -42,6 +42,7 @@ export async function createProject(payload) {
   if (payload) {
     bodyFormData.append("name", payload.name);
     bodyFormData.append("category_id", payload.category_id);
+    bodyFormData.append("blockchain", payload.blockchain);
   }
 
   return await client("POST", `/project`, payload ? bodyFormData : null);
