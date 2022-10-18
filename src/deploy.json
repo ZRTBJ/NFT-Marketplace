@@ -1,7 +1,9 @@
 {
   "MinimalForwarder": "0x5782544b27210363F7fFA9b15aea3459179c246c",
-  "CreatorDAOFactory": "0x827AE519c712cF078e723242Bd6e597aB644817f",
-  "CreateCollectionFacotory": "0xfc602BcC901d3dD80aA3D1D843b0Ef96F0B04444",
+  "CreatorDAOFactory": "0x46e30D782eeBB7689A7AD6fc69931Fb5B9690a8F",
+  "CreatorDAOMasterCopy": "0x109d48440dCB902a568Dddf7739510313A0fDe85",
+  "CreateCollectionFacotory": "0x9b21B7D5EE6Af8ccaFE95d3af7bEce46302cC996",
+  "CreateCollectionMasterCopy": "0x08fF4dF22B41e60b61A38Fdc7b3D745FaabCdcca",
   "RoyaltySplitterFactory": "0xA2242b5FE384a50C3600008ea7AC587348E81B6B",
   "RoyaltySplitterMasterCopy": "0x616603DF114736905F7d288857CC9d997f5031a1"
 }

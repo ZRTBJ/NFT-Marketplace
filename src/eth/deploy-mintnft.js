@@ -13,10 +13,8 @@ export async function createMintNFT(mintContract, url, price, provider) {
   const from = await signer.getAddress();
   const contract = mintContract.connect(signer);
   const result = await contract.mintToCaller(from, url, {
-    //TODO: Need to pass the price dynamically
-    value: ethers.utils.parseEther("0.00001"),
+    value: ethers.utils.parseEther(price.toString()),
   });
   const txReceipt = await provider.waitForTransaction(result.hash);
-  console.log(txReceipt);
   return txReceipt;
 }

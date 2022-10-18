@@ -5,12 +5,7 @@ const abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "_impl",
-        type: "address",
-      },
-      {
-        internalType: "contract MinimalForwarder",
+        internalType: "contract MinimalForwarderUpgradeable",
         name: "_minimalForwarder",
         type: "address",
       },
@@ -23,66 +18,88 @@ const abi = [
     inputs: [
       {
         indexed: false,
+        internalType: "uint8",
+        name: "version",
+        type: "uint8",
+      },
+    ],
+    name: "Initialized",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
         internalType: "address",
-        name: "_clone",
+        name: "newProxy",
         type: "address",
       },
     ],
-    name: "NewClone",
+    name: "ProxyCreated",
     type: "event",
   },
   {
     inputs: [
       {
-        internalType: "string",
-        name: "_name",
-        type: "string",
-      },
-      {
-        internalType: "address",
-        name: "_safeFactory",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_singleton",
-        type: "address",
-      },
-      {
-        internalType: "bytes",
-        name: "_setupData",
-        type: "bytes",
-      },
-      {
-        internalType: "uint256",
-        name: "_nonce",
-        type: "uint256",
-      },
-      {
-        internalType: "bool",
-        name: "_hasTreasury",
-        type: "bool",
-      },
-      {
-        internalType: "address",
-        name: "_treasuryAddress",
-        type: "address",
+        components: [
+          {
+            internalType: "address",
+            name: "masterCopy",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "forwarder",
+            type: "address",
+          },
+          {
+            internalType: "string",
+            name: "name",
+            type: "string",
+          },
+          {
+            internalType: "address",
+            name: "safeFactory",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "singleton",
+            type: "address",
+          },
+          {
+            internalType: "bytes",
+            name: "setupData",
+            type: "bytes",
+          },
+          {
+            internalType: "uint256",
+            name: "nonce",
+            type: "uint256",
+          },
+          {
+            internalType: "bool",
+            name: "hasTreasury",
+            type: "bool",
+          },
+          {
+            internalType: "address",
+            name: "safeProxy",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "creator",
+            type: "address",
+          },
+        ],
+        internalType: "struct Config.DAOConfig",
+        name: "_config",
+        type: "tuple",
       },
     ],
-    name: "cloneContract",
-    outputs: [
-      {
-        internalType: "address",
-        name: "instance",
-        type: "address",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "impl",
+    name: "createProxyContract",
     outputs: [
       {
         internalType: "address",
@@ -90,7 +107,7 @@ const abi = [
         type: "address",
       },
     ],
-    stateMutability: "view",
+    stateMutability: "nonpayable",
     type: "function",
   },
   {

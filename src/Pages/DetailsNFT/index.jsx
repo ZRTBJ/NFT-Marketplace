@@ -85,8 +85,8 @@ export default function DetailsNFT(props) {
         config.price,
         provider
       );
-
       if (response) {
+        setHash(response?.transactionHash);
         let data = {
           hash: response?.transactionHash,
           blockNumber: response?.blockNumber,
@@ -94,7 +94,7 @@ export default function DetailsNFT(props) {
         handleProceedPayment(data);
       }
     } catch (err) {
-      console.log(err);
+      setTransactionWaitingModal(false);
       if (err.message) {
         setErrorMsg(err.message);
       } else {
@@ -137,28 +137,23 @@ export default function DetailsNFT(props) {
   async function handleProceedPayment(response) {
     setTransactionModal(false);
     setTransactionWaitingModal(true);
+    let formData = new FormData();
+
+    formData.append("transaction_hash", response.hash);
+    formData.append("block_number", response.blockNumber);
     const payload = {
       id: nft?.lnft?.id,
-      data: {
-        transaction_hash: response.hash,
-        token_id: "",
-        block_number: response.blockNumber,
-      },
+      data: formData,
       type: nft?.lnft?.nft_type,
     };
     await mintProductOrMembershipNft(payload)
       .then((resp) => {
         if (resp.code === 0) {
-          const deployData = {
-            function_uuid: resp.function_uuid,
-            data: "",
-          };
+          console.log(resp);
           if (response.hash) {
             setFuncId(resp.function_uuid);
-            // dispatch(getNotificationData(deployData));
             setErrorMsg("");
             if (resp?.function?.status === "success") {
-              console.log("success");
               nftDetails();
               setHash(resp?.function?.transactionHash);
               setTransactionWaitingModal(false);
@@ -198,8 +193,9 @@ export default function DetailsNFT(props) {
     }
   }
 
-  let info =
-    nft?.lnft?.nft_type === "membership" ? nft?.more_info : nft?.sale_info;
+  console.log(nft);
+
+  let info = nft?.more_info;
 
   let benefits = info?.benefits && JSON.parse(nft.more_info.benefits);
   let availableSupply = nft?.lnft?.supply - nft?.lnft?.minted_amount;
@@ -224,7 +220,7 @@ export default function DetailsNFT(props) {
           address={userinfo?.eoa}
           collectionName={"Collection1"}
           blockChain={"Ethereum"}
-          price={nft?.more_info?.price}
+          price={info?.price}
           handleNext={() => handleProceedPayment("")}
         />
       )}
@@ -282,7 +278,8 @@ export default function DetailsNFT(props) {
                 alt="nft"
               />
               <div className="rounded bg-success-1 bg-opacity-20 font-satoshi-bold text-success-1 font-black p-4 mt-4">
-                {info?.price} MATIC
+                {info?.price}{" "}
+                <span className="uppercase">{info?.currency}</span>
               </div>
             </div>
             <div className="flex w-100 items-center justify-center mt-4 ">

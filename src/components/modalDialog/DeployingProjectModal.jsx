@@ -109,7 +109,7 @@ const DeployingProjectModal = ({
       payload.append("block_number", transactionData.block_number);
     }
 
-    const filter = dao.filters.NewClone();
+    const filter = dao?.filters?.ProxyCreated();
 
     const listener = (args) => {
       setContractAdd(args);
@@ -142,7 +142,7 @@ const DeployingProjectModal = ({
               setTxnData();
               errorClose(res?.function?.message);
             }
-            const filter = dao.filters.NewClone();
+            const filter = dao.filters.ProxyCreated();
             dao.removeListener(filter);
             dispatch(getNotificationData(deployData));
             setContractAdd("");
@@ -150,7 +150,8 @@ const DeployingProjectModal = ({
           } else {
             handleSmartContract(
               res?.config?.name,
-              res?.config?.treasury_address
+              res?.config?.treasury_address,
+              res?.config?.blockchain
             );
           }
         } else {
@@ -164,10 +165,16 @@ const DeployingProjectModal = ({
       });
   }
 
-  const handleSmartContract = async (name, treasuryAddress) => {
+  const handleSmartContract = async (name, treasuryAddress, chainId) => {
     setStatusStep(1);
     try {
-      const response = await createDAO(dao, provider, name, treasuryAddress);
+      const response = await createDAO(
+        dao,
+        provider,
+        name,
+        treasuryAddress,
+        chainId
+      );
       const hash = response.txReceipt;
       let data = {
         transactionHash: hash.transactionHash,

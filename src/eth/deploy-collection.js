@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import { createInstance } from "./forwarder";
 import { signMetaTxRequest } from "./signer";
+import address from "../deploy.json";
 
 async function sendMetaTx(collection, provider, signer, config) {
   const url = process.env.REACT_APP_WEBHOOK_URL;
@@ -15,7 +16,8 @@ async function sendMetaTx(collection, provider, signer, config) {
       symbol: config?.deploymentConfig?.symbol,
       owner: from,
       tokensBurnable: config?.deploymentConfig?.tokensBurnable,
-      tokenCounter: config?.deploymentConfig?.tokenCounter,
+      masterCopy: address.CreateCollectionMasterCopy,
+      forwarder: address.MinimalForwarder,
     },
     runConfig: {
       baseURI: config?.runtimeConfig?.baseURI,
@@ -24,13 +26,13 @@ async function sendMetaTx(collection, provider, signer, config) {
       isRoyaltiesEnabled: config?.runtimeConfig?.isRoyaltiesEnabled,
       royaltiesBps: config?.runtimeConfig?.royaltiesBps,
       royaltyAddress: config?.runtimeConfig?.royaltiesAddress,
-      //TODO: Need to pass the price dynamically
-      primaryMintPrice: ethers.utils.parseEther("0.00001"),
-      treasuryAddress: config?.runtimeConfig?.treasuryAddress,
+      creatorDAO: config?.runtimeConfig?.DAOContractAddress,
     },
   };
 
-  const data = collection.interface.encodeFunctionData("cloneContract", [
+  console.log(args);
+
+  const data = collection.interface.encodeFunctionData("createProxyContract", [
     args.deployConfig,
     args.runConfig,
   ]);

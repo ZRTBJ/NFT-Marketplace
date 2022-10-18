@@ -4,7 +4,6 @@ import Trash from "assets/images/icons/trash.svg";
 import Left from "assets/images/icons/chevron-left.svg";
 import Right from "assets/images/icons/chevron-right.svg";
 import { useState, useEffect } from "react";
-import { set } from "date-fns";
 import MemeberListMobile from "../MemberListMobile/MemberListMobile";
 import ConfirmationModal from "components/modalDialog/ConfirmationModal";
 import { walletAddressTruncate } from "util/walletAddressTruncate";

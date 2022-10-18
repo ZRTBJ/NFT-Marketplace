@@ -6,6 +6,9 @@ import { addDays } from "date-fns";
 import getUnixTime from "date-fns/getUnixTime";
 import { DateRangePicker } from "rsuite";
 import { setSalesPage } from "services/nft/nftService";
+import { setNFTPrice } from "eth/deploy-nftPrice";
+import { createProvider } from "eth/provider";
+import { createMintInstance } from "eth/mint-nft";
 const SalesPageModal = ({
   handleClose,
   show,
@@ -13,6 +16,7 @@ const SalesPageModal = ({
   successClose,
   collectionType,
   nftId,
+  address,
 }) => {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
@@ -26,16 +30,17 @@ const SalesPageModal = ({
     },
   ]);
   const [date, setDate] = useState([new Date(), addDays(new Date(), 7)]);
-
+  const provider = createProvider();
   const {
     register,
     handleSubmit,
     setValue,
     watch,
+    getValues,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const payload = {
       price: data["price"],
       startTime: getUnixTime(date[0]),
@@ -45,28 +50,49 @@ const SalesPageModal = ({
       collectionId: collectionId,
       nftId: nftId,
     };
-    const request = new FormData();
-    request.append("price", data["price"]);
-    request.append("start_time", payload.startTime);
-    request.append("end_time", payload.endTime);
-    request.append("reserve_EOA", data["eoa"]);
-
     setIsLoading(true);
-    setSalesPage(collectionType, collectionId, request, nftId)
-      .then((res) => {
-        if (res.code === 0) {
-          console.log(res);
-          successClose();
-        } else {
-          setErrorMessage(res.message);
-          setShowErrorModal(true);
-        }
+    try {
+      const priceContract = createMintInstance(address, provider);
+      const response = await setNFTPrice(
+        priceContract,
+        provider,
+        data["price"]
+      );
+      if (response?.txReceipt?.status === 1) {
+        const request = new FormData();
+        request.append("price", data["price"]);
+        request.append("start_time", payload.startTime);
+        request.append("end_time", payload.endTime);
+        request.append("reserve_EOA", "0xabcd");
+        request.append("currency", "eth");
+
+        setSalesPage(collectionType, collectionId, request, nftId)
+          .then((res) => {
+            if (res.code === 0) {
+              console.log(res);
+              successClose();
+            } else {
+              setErrorMessage(res.message);
+              setShowErrorModal(true);
+            }
+            setIsLoading(false);
+          })
+          .catch((err) => {
+            setIsLoading(false);
+            console.log(err);
+          });
+      }
+    } catch (err) {
+      if (err.message) {
+        setErrorMessage(err.message);
+        setShowErrorModal(true);
         setIsLoading(false);
-      })
-      .catch((err) => {
+      } else {
         setIsLoading(false);
-        console.log(err);
-      });
+        setShowErrorModal(true);
+        setErrorMessage("Setting price failed. Please try again later");
+      }
+    }
   };
   const modalBodyClicked = (e) => {
     e.stopPropagation();
@@ -111,7 +137,7 @@ const SalesPageModal = ({
                         name="price"
                         className={`debounceInput mt-1`}
                         defaultValue={""}
-                        step="0.01"
+                        step="0.000000001"
                         {...register("price", {
                           required: "Price is required.",
                         })}
@@ -150,6 +176,7 @@ const SalesPageModal = ({
                       <input
                         id="eoa"
                         name="eoa"
+                        disabled
                         className={`debounceInput mt-1`}
                         defaultValue={""}
                         {...register("eoa")}

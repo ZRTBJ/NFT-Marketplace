@@ -56,7 +56,7 @@ const DeployingCollectiontModal = ({
   const [txnData, setTxnData] = useState();
   const provider = createProvider();
   const collectionContract = createInstance(provider);
-  const collectionListener = collectionContract.filters.NewCollection();
+  const collectionListener = collectionContract.filters.ProxyCreated();
 
   // useEffect(() => {
   //   const collectionDeployStatus = collectionDeploy.find(

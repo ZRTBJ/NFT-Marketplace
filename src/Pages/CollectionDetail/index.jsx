@@ -85,18 +85,25 @@ const CollectionDetail = () => {
   const [nftSales, setNFTSales] = useState([]);
 
   // Publish royalty splitter
-  const [showPublishRoyaltySpliterModal, setShowPublishRoyaltySpliterModal] = useState(false);
-  const [showPublishRoyaltySpliterConfirmModal, setShowPublishRoyaltySpliterConfirmModal] = useState();
-  const [showPublishRoyaltySpliterErrorModal, setShowPublishRoyaltySpliterErrorModal] = useState(false);
+  const [showPublishRoyaltySpliterModal, setShowPublishRoyaltySpliterModal] =
+    useState(false);
+  const [
+    showPublishRoyaltySpliterConfirmModal,
+    setShowPublishRoyaltySpliterConfirmModal,
+  ] = useState();
+  const [
+    showPublishRoyaltySpliterErrorModal,
+    setShowPublishRoyaltySpliterErrorModal,
+  ] = useState(false);
 
   const hanldeUpdatePublishStatus = (status) => {
-    if (status === 'success') {
-      if (Collection.royalty_splitter.status !== 'published') {
+    if (status === "success") {
+      if (Collection.royalty_splitter.status !== "published") {
         setCollection({
           ...Collection,
           royalty_splitter: {
             ...Collection.royalty_splitter,
-            status: 'published',
+            status: "published",
           },
         });
       }
@@ -113,7 +120,6 @@ const CollectionDetail = () => {
     splitters: royalityMembers,
     onUpdateStatus: hanldeUpdatePublishStatus,
   });
-
 
   const [balanceLoading, setBalanceLoading] = useState(false);
   const [newWorth, setNetWorth] = useState({
@@ -352,7 +358,7 @@ const CollectionDetail = () => {
 
   const handlePublishRoyaltySplitterButtonClick = async () => {
     setShowPublishRoyaltySpliterConfirmModal(true);
-  }
+  };
 
   const handlePublishRoyaltySplitter = async () => {
     try {
@@ -365,7 +371,7 @@ const CollectionDetail = () => {
       console.error(err);
     }
   };
-
+  console.log(Collection);
   return (
     <div className="mx-4 md:mx-0">
       {ShowPublishModal && (
@@ -668,14 +674,16 @@ const CollectionDetail = () => {
               {/* <a className='inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>
                 Sales Setting
               </a> */}
-              {Collection?.type === "product" && Collection?.is_owner && (
-                <div
-                  onClick={(e) => salesPageModal(e, "product")}
-                  className="outlined-button ml-0 md:ml-4 font-satoshi-bold"
-                >
-                  <span>Sales Setting</span>
-                </div>
-              )}
+              {Collection?.type === "product" &&
+                Collection?.is_owner &&
+                Collection?.status === "published" && (
+                  <div
+                    onClick={(e) => salesPageModal(e, "product")}
+                    className="outlined-button ml-0 md:ml-4 font-satoshi-bold"
+                  >
+                    <span>Sales Setting</span>
+                  </div>
+                )}
               {Collection?.is_owner && (
                 <Link
                   to={`/collection-create/?id=${collectionId}`}
@@ -973,12 +981,18 @@ const CollectionDetail = () => {
                   <div className="w-full">
                     <button
                       className="block ml-auto bg-primary-100 text-primary-900 p-3 font-black text-[14px]"
-                      onClick={() => setShowPublishRoyaltySpliterConfirmModal(true)}
-                      disabled={!canPublishRoyaltySplitter || isPublishRoyaltySplitter}
+                      onClick={() =>
+                        setShowPublishRoyaltySpliterConfirmModal(true)
+                      }
+                      disabled={
+                        !canPublishRoyaltySplitter || isPublishRoyaltySplitter
+                      }
                     >
                       {isPublishRoyaltySplitter
-                        ? publishRoyaltySplitterStatus === 1 ? 'Creating contract' : 'Publishing'
-                        : 'Lock Percentage'}
+                        ? publishRoyaltySplitterStatus === 1
+                          ? "Creating contract"
+                          : "Publishing"
+                        : "Lock Percentage"}
                     </button>
                   </div>
                   {/* ) : null} */}
@@ -994,6 +1008,7 @@ const CollectionDetail = () => {
       {showSalesPageModal && (
         <SalesPageModal
           show={showSalesPageModal}
+          address={Collection?.contract_address}
           collectionId={collectionId}
           collectionType={`${collectionType}`}
           nftId={nftId}

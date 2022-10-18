@@ -2,6 +2,9 @@ import { ethers } from "ethers";
 import { createInstance } from "./forwarder";
 import { signMetaTxRequest } from "./signer";
 import { createDAOInstance } from "./dao-contract";
+import { addressGnosisSetup } from "services/project/projectService";
+import address from "../deploy.json";
+
 // import { createInstance } from "eth/registry";
 
 // async function sendTx(dao, name) {
@@ -14,24 +17,37 @@ import { createDAOInstance } from "./dao-contract";
 //   return dao.cloneContract(name);
 // }
 
-async function sendMetaTx(dao, provider, signer, name, treasuryAddress) {
+async function sendMetaTx(
+  dao,
+  provider,
+  signer,
+  name,
+  treasuryAddress,
+  chainId
+) {
   console.log(`Sending register meta-tx to set name=${name}`);
   const url = process.env.REACT_APP_WEBHOOK_URL;
   if (!url) throw new Error(`Missing relayer url`);
 
   const forwarder = createInstance(provider);
   const from = await signer.getAddress();
-  const setupData =
-    "0xb63e800d00000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000037326336386244616244393439383139463131390000000000000000000000000000000000000000000000000000000000000000";
-  const data = dao.interface.encodeFunctionData("cloneContract", [
+  let formData = new FormData();
+  formData.append("addresses", from);
+  formData.append("blockchain", chainId);
+  const setupData = await addressGnosisSetup(formData);
+  let args = {
+    masterCopy: address.CreatorDAOMasterCopy,
+    forwarder: address.MinimalForwarder,
     name,
-    process.env.REACT_APP_SAFE_PROXY_ADDRESS,
-    process.env.REACT_APP_SAFE_SINGLETON_ADDRESS,
-    setupData,
-    new Date().getTime(),
-    treasuryAddress ? true : false,
-    treasuryAddress ? treasuryAddress : from,
-  ]);
+    safeFactory: process.env.REACT_APP_SAFE_PROXY_ADDRESS,
+    singleton: process.env.REACT_APP_SAFE_SINGLETON_ADDRESS,
+    setupData: `0x${setupData.call_data}`,
+    nonce: new Date().getTime(),
+    hasTreasury: treasuryAddress ? true : false,
+    safeProxy: treasuryAddress ? treasuryAddress : ethers.constants.AddressZero,
+    creator: from,
+  };
+  const data = dao.interface.encodeFunctionData("createProxyContract", [args]);
   const to = dao.address;
 
   const request = await signMetaTxRequest(signer.provider, forwarder, {
@@ -47,7 +63,7 @@ async function sendMetaTx(dao, provider, signer, name, treasuryAddress) {
   });
 }
 
-export async function createDAO(dao, provider, name, treasuryAddress) {
+export async function createDAO(dao, provider, name, treasuryAddress, chainId) {
   if (!name) throw new Error(`Name cannot be empty`);
   if (!window.ethereum) throw new Error(`User wallet not found`);
 
@@ -58,14 +74,16 @@ export async function createDAO(dao, provider, name, treasuryAddress) {
     throw new Error(`Please switch to Goerli for signing`);
 
   const signer = userProvider.getSigner();
-  // const from = await signer.getAddress();
-  // const balance = await provider.getBalance(from);
-
-  // const canSendTx = balance.gt(1e15);
-  // if (canSendTx) return sendTx(dao.connect(signer), name, from);
 
   let output;
-  const result = await sendMetaTx(dao, provider, signer, name, treasuryAddress);
+  const result = await sendMetaTx(
+    dao,
+    provider,
+    signer,
+    name,
+    treasuryAddress,
+    chainId
+  );
 
   await result.json().then(async (response) => {
     const tx = JSON.parse(response.result);
@@ -73,14 +91,5 @@ export async function createDAO(dao, provider, name, treasuryAddress) {
     output = { txReceipt };
   });
 
-  // //TODO: REFACTOR
-  // dao.on("NewClone", async (address) => {
-  //   console.log(`Clone created at following address ${address}`);
-  //   const deployedDAO = createDAOInstance(provider, address);
-  //   localStorage.setItem("CurrentContractAddress", address);
-  //   const treasuryAddress = await deployedDAO.functions.getTreasury();
-  //   console.log(`treasury is deployed to ${treasuryAddress}`);
-  // });
-  console.log(output);
   return output;
 }

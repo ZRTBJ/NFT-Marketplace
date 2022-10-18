@@ -5,12 +5,7 @@ const abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "_impl",
-        type: "address",
-      },
-      {
-        internalType: "contract MinimalForwarder",
+        internalType: "contract MinimalForwarderUpgradeable",
         name: "_minimalForwarder",
         type: "address",
       },
@@ -23,31 +18,25 @@ const abi = [
     inputs: [
       {
         indexed: false,
-        internalType: "address",
-        name: "_clone",
-        type: "address",
+        internalType: "uint8",
+        name: "version",
+        type: "uint8",
       },
     ],
-    name: "NewCollection",
+    name: "Initialized",
     type: "event",
   },
   {
     anonymous: false,
     inputs: [
       {
-        indexed: true,
+        indexed: false,
         internalType: "address",
-        name: "previousOwner",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "newOwner",
+        name: "newProxy",
         type: "address",
       },
     ],
-    name: "OwnershipTransferred",
+    name: "ProxyCreated",
     type: "event",
   },
   {
@@ -76,12 +65,17 @@ const abi = [
           },
           {
             internalType: "address",
-            name: "tokenCounter",
+            name: "masterCopy",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "forwarder",
             type: "address",
           },
         ],
         internalType: "struct Config.Deployment",
-        name: "deploymentConfig",
+        name: "_deployConfig",
         type: "tuple",
       },
       {
@@ -117,35 +111,17 @@ const abi = [
             type: "address",
           },
           {
-            internalType: "uint256",
-            name: "primaryMintPrice",
-            type: "uint256",
-          },
-          {
             internalType: "address",
-            name: "treasuryAddress",
+            name: "creatorDAO",
             type: "address",
           },
         ],
         internalType: "struct Config.Runtime",
-        name: "runtimeConfig",
+        name: "_runConfig",
         type: "tuple",
       },
     ],
-    name: "cloneContract",
-    outputs: [
-      {
-        internalType: "address",
-        name: "clone",
-        type: "address",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "impl",
+    name: "createProxyContract",
     outputs: [
       {
         internalType: "address",
@@ -153,7 +129,7 @@ const abi = [
         type: "address",
       },
     ],
-    stateMutability: "view",
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -173,39 +149,6 @@ const abi = [
       },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "owner",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "renounceOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
-    ],
-    name: "transferOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
   },
 ];
