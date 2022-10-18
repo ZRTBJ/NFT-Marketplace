@@ -1,17 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ethers } from 'ethers';
-import { useDispatch, useSelector } from 'react-redux';
 import * as collectionService from "services/collection/collectionService";
 import * as RoyaltySplitter from 'eth/royalty-splitter';
 import useSendTransaction from "./useSendTransaction";
-import { selectNotificationByUuid } from 'store/selector';
-import {getNotificationData} from 'Slice/notificationSlice';
+import contractAddresses from "../deploy.json";
 
-/**
- * @param {object} payload - Hook payload
- * @param {object} payload.collection - Collection data
- * @param {object} payload.provider - ethers.js Web3Provider
- */
 export default function usePublishRoyaltySplitter(payload = {}) {
   const {
     collection,
@@ -19,15 +12,11 @@ export default function usePublishRoyaltySplitter(payload = {}) {
     onUpdateStatus = () => {},
   } = payload;
 
-  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState(1);
-  const [functionUuid, setFunctionUuid] = useState();
   const provider = useRef();
   const contract = useRef();
   const transaction = useRef();
-  // Global states
-  const notificationData = useSelector(selectNotificationByUuid(functionUuid));
   // Transaction result states
   const txReceipt = useRef();
   const royaltySplitterContractAddress = useRef();
@@ -42,16 +31,6 @@ export default function usePublishRoyaltySplitter(payload = {}) {
 
     init();
   }, []);
-
-  useEffect(() => {
-    if (notificationData == null || notificationData.data == null) {
-      return;
-    }
-
-    const eventData = JSON.parse(notificationData.data);
-    onUpdateStatus(eventData.fn_status);
-    setIsLoading(false);
-  }, [onUpdateStatus, notificationData]);
 
   const getProvider = async () => {
     if (!window.ethereum) {
@@ -95,6 +74,8 @@ export default function usePublishRoyaltySplitter(payload = {}) {
 
   const subscribeOnChainEvent = async () => {
     return new Promise((resolve, reject) => {
+      const timeout = setTimeout(reject, 30000);
+
       listener.current = async (args) => {
         try {
           // NOTE: this is a hack, don't ask me, ask our current "Application Lead"
@@ -103,13 +84,14 @@ export default function usePublishRoyaltySplitter(payload = {}) {
           }
 
           royaltySplitterContractAddress.current = args;
+          clearTimeout(timeout);
           resolve();
         } catch(err) {
           reject(err);
         }
       }
 
-      contract.current.on(contract.current.filters.SplitterCreated(), listener.current);
+      contract.current.on(contract.current.filters.ProxyCreated(), listener.current);
     });
   }
 
@@ -123,31 +105,27 @@ export default function usePublishRoyaltySplitter(payload = {}) {
   };
 
   const sendOnChainTransaction = async () => {
+    const creator = await provider.current.getSigner().getAddress()
     const functionPayload = [
       {
         receivers: splitters.map((spliter) => spliter.user_eoa),
         shares: splitters.map((splitter) => splitter.royalty_percent),
         collection: collection.contract_address,
+        masterCopy: contractAddresses.RoyaltySplitterMasterCopy,
+        creator,
+        forwarder: contractAddresses.MinimalForwarder,
       }
     ];
     return sendTransaction({
       contract: contract.current,
-      functionName: 'cloneContract',
+      functionName: 'createProxyContract',
       functionPayload,
     });
   };
 
   const cleanUp = () => {
-    contract.current.off('SplitterCreated', listener.current);
+    contract.current.off('ProxyCreated', listener.current);
   }
-
-  const subscribeWebsocket = (response) => {
-    setFunctionUuid(response.function_uuid);
-    dispatch(getNotificationData({
-      projectId: collection.project_uid,
-      function_uuid: response.function_uuid,
-    }));
-  };
 
   const publish = async () => {
     try {
@@ -162,8 +140,14 @@ export default function usePublishRoyaltySplitter(payload = {}) {
       txReceipt.current = await waitTransactionResult(transaction.current);
       await subscribeEventPromise;
       const publishResponse = await updateOffChainData();
+
+      if (publishResponse.function.status === 'failed') {
+        throw new Error('Transaction failed');
+      }
+
       setStatus(2);
-      subscribeWebsocket(publishResponse);
+      onUpdateStatus(publishResponse.function.status);
+      setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
       setStatus(1);

@@ -4,7 +4,6 @@ import IconSuccess from "assets/images/modal/success/success_modal_img.svg";
 import Modal from "../Modal";
 import { Step, Stepper } from "react-form-stepper";
 import { useEffect, useState } from "react";
-import { produceWithPatches } from "immer";
 import { SendTransactionMetaMask } from "util/metaMaskWallet";
 import {
   contractDeploy,

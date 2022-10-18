@@ -5,12 +5,7 @@ const abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "_impl",
-        type: "address",
-      },
-      {
-        internalType: "contract MinimalForwarder",
+        internalType: "contract MinimalForwarderUpgradeable",
         name: "_minimalForwarder",
         type: "address",
       },
@@ -23,12 +18,25 @@ const abi = [
     inputs: [
       {
         indexed: false,
+        internalType: "uint8",
+        name: "version",
+        type: "uint8",
+      },
+    ],
+    name: "Initialized",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
         internalType: "address",
-        name: "_clone",
+        name: "newProxy",
         type: "address",
       },
     ],
-    name: "SplitterCreated",
+    name: "ProxyCreated",
     type: "event",
   },
   {
@@ -46,8 +54,23 @@ const abi = [
             type: "uint256[]",
           },
           {
-            internalType: "address",
+            internalType: "address payable",
             name: "collection",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "masterCopy",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "creator",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "forwarder",
             type: "address",
           },
         ],
@@ -56,20 +79,7 @@ const abi = [
         type: "tuple",
       },
     ],
-    name: "cloneContract",
-    outputs: [
-      {
-        internalType: "address",
-        name: "instance",
-        type: "address",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "impl",
+    name: "createProxyContract",
     outputs: [
       {
         internalType: "address",
@@ -77,7 +87,7 @@ const abi = [
         type: "address",
       },
     ],
-    stateMutability: "view",
+    stateMutability: "nonpayable",
     type: "function",
   },
   {

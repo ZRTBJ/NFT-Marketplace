@@ -90,17 +90,16 @@ const CollectionDetail = () => {
   const [showPublishRoyaltySpliterErrorModal, setShowPublishRoyaltySpliterErrorModal] = useState(false);
 
   const hanldeUpdatePublishStatus = (status) => {
-    if (
-      status === 'success'
-      && Collection.royalty_splitter.status !== 'published'
-    ) {
-      setCollection({
-        ...Collection,
-        royalty_splitter: {
-          ...Collection.royalty_splitter,
-          status: 'published',
-        },
-      });
+    if (status === 'success') {
+      if (Collection.royalty_splitter.status !== 'published') {
+        setCollection({
+          ...Collection,
+          royalty_splitter: {
+            ...Collection.royalty_splitter,
+            status: 'published',
+          },
+        });
+      }
     }
   };
 
