@@ -3,12 +3,13 @@ import Edit from "assets/images/icons/edit.svg";
 import Trash from "assets/images/icons/trash.svg";
 import Left from "assets/images/icons/chevron-left.svg";
 import Right from "assets/images/icons/chevron-right.svg";
-import { useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import MemeberListMobile from "../MemberListMobile/MemberListMobile";
 import ConfirmationModal from "components/modalDialog/ConfirmationModal";
 import { walletAddressTruncate } from "util/walletAddressTruncate";
 
 const MemberListTable = ({
+  collection,
   headers,
   list,
   isEdit,
@@ -25,6 +26,11 @@ const MemberListTable = ({
   const [toDelete, setToDelete] = useState(false);
   const [showError, setShowError] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
+
+  const hasPublishedRoyaltySplitter = useMemo(
+    () => collection?.royalty_splitter?.status === 'published',
+    [collection],
+  );
 
   useEffect(() => {
     if (newItems) {
@@ -156,14 +162,14 @@ const MemberListTable = ({
                             onClick={() => setIsEdit(null)}
                           ></i>
                         </div>
-                      ) : (
+                      ) : !hasPublishedRoyaltySplitter ? (
                         <img
                           src={Edit}
                           alt="edit"
                           className="cursor-pointer"
                           onClick={() => setIsEdit(r.user_eoa)}
                         />
-                      )}
+                      ) : null}
                     </>
                   )}
                 </td>
@@ -266,7 +272,7 @@ const MemberListTable = ({
           </p>
         ) : null}
       </div>
-      {!newItems ? (
+      {!newItems && !hasPublishedRoyaltySplitter ? (
         <button
           className="outlined-button font-satoshi-bold ml-0 md:ml-4"
           onClick={addNewContributorField}

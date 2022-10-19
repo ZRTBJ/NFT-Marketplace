@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
@@ -95,6 +95,10 @@ const CollectionDetail = () => {
     showPublishRoyaltySpliterErrorModal,
     setShowPublishRoyaltySpliterErrorModal,
   ] = useState(false);
+  const hasPublishedRoyaltySplitter = useMemo(
+    () => Collection?.royalty_splitter?.status === 'published',
+    [Collection],
+  );
 
   const hanldeUpdatePublishStatus = (status) => {
     if (status === "success") {
@@ -111,7 +115,7 @@ const CollectionDetail = () => {
   };
 
   const {
-    isLoading: isPublishRoyaltySplitter,
+    isLoading: isPublishingRoyaltySplitter,
     status: publishRoyaltySplitterStatus,
     canPublish: canPublishRoyaltySplitter,
     publish: publishRoyaltySplitter,
@@ -942,29 +946,34 @@ const CollectionDetail = () => {
                     ) : null}
                     {/* {CollectionDetail?.is_owner && data?.members?.length ? ( */}
                     <div className="flex items-center justify-center flex-col md:flex-row">
-                      <div className="form-check form-switch flex items-center">
-                        <p className="text-[#303548] text-[12px] mr-3">
-                          Split Evenly
-                        </p>
-                        <input
-                          className="form-check-input appearance-none w-9 rounded-full h-5 align-top bg-white bg-no-repeat bg-contain bg-gray-300 focus:outline-none cursor-pointer shadow-sm"
-                          type="checkbox"
-                          checked={AutoAssign}
-                          role="switch"
-                          onChange={handleAutoAssign}
-                        />
-                      </div>
-                      <div
-                        className="mint-button mt-4 md:mt-0 ml-4 text-center font-satoshi-bold w-full text-[12px] md:w-fit flex"
-                        onClick={() => setShowImportWallet(true)}
-                      >
-                        <img src={PlusIcon} alt="add" />
-                        <span className="ml-1">Import Contributor</span>
-                      </div>
+                      {!hasPublishedRoyaltySplitter && (
+                        <>
+                          <div className="form-check form-switch flex items-center">
+                            <p className="text-[#303548] text-[12px] mr-3">
+                              Split Evenly
+                            </p>
+                            <input
+                              className="form-check-input appearance-none w-9 rounded-full h-5 align-top bg-white bg-no-repeat bg-contain bg-gray-300 focus:outline-none cursor-pointer shadow-sm"
+                              type="checkbox"
+                              checked={AutoAssign}
+                              role="switch"
+                              onChange={handleAutoAssign}
+                            />
+                          </div>
+                          <div
+                            className="mint-button mt-4 md:mt-0 ml-4 text-center font-satoshi-bold w-full text-[12px] md:w-fit flex"
+                            onClick={() => setShowImportWallet(true)}
+                          >
+                            <img src={PlusIcon} alt="add" />
+                            <span className="ml-1">Import Contributor</span>
+                          </div>
+                        </>
+                      )}
                     </div>
                     {/* ) : null} */}
                   </div>{" "}
                   <MemberListTable
+                    collection={Collection}
                     list={royalityMembers}
                     headers={TABLE_HEADERS}
                     // handlePublish={setShowPublish}
@@ -979,21 +988,23 @@ const CollectionDetail = () => {
                   {/* {CollectionDetail.is_owner &&
                 CollectionDetail.status !== "published" ? ( */}
                   <div className="w-full">
-                    <button
-                      className="block ml-auto bg-primary-100 text-primary-900 p-3 font-black text-[14px]"
-                      onClick={() =>
-                        setShowPublishRoyaltySpliterConfirmModal(true)
-                      }
-                      disabled={
-                        !canPublishRoyaltySplitter || isPublishRoyaltySplitter
-                      }
-                    >
-                      {isPublishRoyaltySplitter
-                        ? publishRoyaltySplitterStatus === 1
-                          ? "Creating contract"
-                          : "Publishing"
-                        : "Lock Percentage"}
-                    </button>
+                    {!hasPublishedRoyaltySplitter && (
+                      <button
+                        className="block ml-auto bg-primary-100 text-primary-900 p-3 font-black text-[14px]"
+                        onClick={() =>
+                            setShowPublishRoyaltySpliterConfirmModal(true)
+                        }
+                        disabled={
+                          !canPublishRoyaltySplitter || isPublishingRoyaltySplitter
+                        }
+                      >
+                        {isPublishingRoyaltySplitter
+                          ? publishRoyaltySplitterStatus === 1
+                            ? "Creating contract"
+                            : "Publishing"
+                            : "Lock Percentage"}
+                      </button>
+                    )}
                   </div>
                   {/* ) : null} */}
                 </div>
@@ -1040,7 +1051,7 @@ const CollectionDetail = () => {
       />
       <PublishRoyaltyModal
         isVisible={showPublishRoyaltySpliterModal}
-        isLoading={isPublishRoyaltySplitter}
+        isLoading={isPublishingRoyaltySplitter}
         status={publishRoyaltySplitterStatus}
         onRequestClose={() => setShowPublishRoyaltySpliterModal(false)}
       />
