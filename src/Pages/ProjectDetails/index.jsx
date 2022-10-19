@@ -33,6 +33,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { walletAddressTruncate } from "util/walletAddressTruncate";
+import LeavingSite from "components/modalDialog/LeavingSite";
 
 export default function ProjectDetails(props) {
   const dispatch = useDispatch();
@@ -1196,14 +1197,19 @@ export default function ProjectDetails(props) {
             />
           )}
           {showTransferFundModal && (
-            <TransferFundModal
+            // <TransferFundModal
+            //   show={showTransferFundModal}
+            //   handleClose={() => setShowTransferFundModal(false)}
+            //   onSubmitData={onSubmitData}
+            //   successClose={() => {
+            //     setShowTransferFundModal(false);
+            //     setShowSuccessModal(true);
+            //   }}
+            // />
+            <LeavingSite
+              treasuryAddress={project.treasury_wallet}
               show={showTransferFundModal}
               handleClose={() => setShowTransferFundModal(false)}
-              onSubmitData={onSubmitData}
-              successClose={() => {
-                setShowTransferFundModal(false);
-                setShowSuccessModal(true);
-              }}
             />
           )}
           {showFundTransferSuccess && (

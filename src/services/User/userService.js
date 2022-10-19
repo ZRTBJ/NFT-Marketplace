@@ -17,5 +17,10 @@ export async function getUserBookmarkedProjectList(payload) {
   );
 }
 export async function claimRoyalty(payload) {
-  return await client("POST", `/user/royalty/claim`, payload, "formdata");
+  let formData = new FormData();
+  formData.append("royalty_uid", payload.royalty_uid);
+  if (payload.transaction_hash) {
+    formData.append("transaction_hash", payload.transaction_hash);
+  }
+  return await client("POST", `/user/royalty/claim`, formData, "formdata");
 }

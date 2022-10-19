@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import "assets/css/profile.css";
 import DefaultProfilePicture from "assets/images/defaultProfile.svg";
@@ -29,8 +30,14 @@ import { getNotificationData } from "Slice/notificationSlice";
 import { walletAddressTruncate } from "util/walletAddressTruncate";
 import { getMintedNftListByUserId } from "services/nft/nftService";
 import NFTListCard from "components/NFTListCard";
-
+import { refreshNFT } from "services/nft/nftService";
+import { royaltyClaim } from "eth/royalty-claim";
+import { updateMetadata } from "eth/update-metadata";
+import { createProvider } from "eth/provider";
+import { createCollectionInstance } from "eth/collection-contract";
+import { toast } from "react-toastify";
 const Profile = () => {
+  const provider = createProvider();
   const dispatch = useDispatch();
   SwiperCore.use([Autoplay]);
   // User general data start
@@ -47,14 +54,9 @@ const Profile = () => {
   ];
 
   const [projectList, setProjectList] = useState([]);
-  const [projectListPageNumber, setProjectListPageNumber] = useState(1);
-  const [projectListLimit, setProjectListLimit] = useState(10);
-  const [projectListHasMoreData, setprojectListHasMoreData] = useState(false);
   // project List End
   // Collection start
   const [collectionList, setCollectionList] = useState([]);
-  const [collectionListPageNumber, setCollectionListPageNumber] = useState(1);
-  const [collectionListLimit, setCollectionListLimit] = useState(10);
   // collection end
   // Royalties start
   const [royaltiesListSortBy, setRoyaltiesListSortBy] = useState("default");
@@ -63,24 +65,7 @@ const Profile = () => {
     { id: 2, name: "Name" },
     { id: 3, name: "Percentage" },
   ];
-  const [royaltiesList, setRoyaltiesList] = useState([
-    {
-      id: 1,
-      project_name: "asdsadsdsa asdsadsdsd sdsadsdsad asdasdsdsds",
-      collection_name: "asdsd sdsdsd asdsadsd sdsadasds sads dsdsad ",
-      royalty_percent: 10,
-      is_owner: true,
-      earnable_amount: 100,
-    },
-    {
-      id: 2,
-      project_name: "asdsadsdsa ",
-      collection_name: "asdsd sdsdsd asdsadsd sdsadasds sads dsdsad ",
-      royalty_percent: 10,
-      is_owner: false,
-      earnable_amount: 100,
-    },
-  ]);
+  const [royaltiesList, setRoyaltiesList] = useState([]);
   const [royaltyId, setRoyaltyId] = useState("");
   const [errorModal, setErrorModal] = useState(false);
   const [totalRoyality, setTotalRoyality] = useState(0);
@@ -95,7 +80,7 @@ const Profile = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [walletAddress, setWalletAddress] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const fileUploadNotification = useSelector((state) =>
+  const notificationsList = useSelector((state) =>
     state?.notifications?.notificationData
       ? state?.notifications?.notificationData
       : []
@@ -147,7 +132,8 @@ const Profile = () => {
   };
 
   const [mintedNftList, setMintedNftList] = useState([]);
-
+  const [nftErrorModalMessage, setNftErrorModalMessage] = useState("");
+  const [nftErrorModal, setNftErrorModal] = useState(false);
   // function start
   async function userInfo() {
     await getUserInfo(id)
@@ -180,7 +166,9 @@ const Profile = () => {
 
   async function getUserRoyaltiesInfo() {
     await getRoyalties(id).then((res) => {
-      // console.log(res.royalties);
+      res.royalties.forEach((element) => {
+        element.isLoading = false;
+      });
       setRoyaltiesList(res.royalties);
     });
   }
@@ -188,8 +176,8 @@ const Profile = () => {
   async function getProjectList() {
     let payload = {
       id: id,
-      page: projectListPageNumber,
-      perPage: projectListLimit,
+      page: 1,
+      perPage: 10,
     };
     await getUserProjectListById(payload)
       .then((e) => {
@@ -243,31 +231,53 @@ const Profile = () => {
       copyEl.classList.toggle("hidden");
     }, 2000);
   }
-  async function claimRoyaltyById(id) {
-    setIsLoading(true);
-    const request = new FormData();
-    request.append("collection_uid", id);
-    await claimRoyalty(request)
+  async function claimRoyaltyWithtnx(data) {
+    const payload = {
+      royalty_uid: data.id,
+      transaction_hash: data.transaction_hash,
+    };
+    return await claimRoyalty(payload);
+  }
+  async function claimRoyaltyById(royalty) {
+    setRoyaltyData(royalty, "loadingTrue");
+    const payload = {
+      royalty_uid: royalty.royalty_id,
+    };
+    let config = {};
+    await claimRoyalty(payload)
       .then((res) => {
         if (res.code === 0) {
-          setRoyaltyId(res.id);
-          setIsLoading(false);
-          const notificationData = {
-            projectId: id,
-            etherscan: "",
-            function_uuid: id,
-            data: "",
-          };
-          dispatch(getNotificationData(notificationData));
+          config = res.config;
         } else {
           setIsLoading(false);
           setErrorModal(true);
+          setRoyaltyData(royalty, "loadingFalse");
         }
       })
       .catch(() => {
         setIsLoading(false);
         setErrorModal(true);
       });
+    const result = await royaltyClaim(provider, config);
+    if (result) {
+      console.log(result);
+
+      const data = {
+        id: royalty.royalty_id,
+        transaction_hash: result,
+      };
+      await claimRoyaltyWithtnx(data).then((res) => {
+        if (res.function.status === "success") {
+          setRoyaltyData(royalty, "loadingFalse");
+          setRoyaltyData(royalty, "claimButtonDisable");
+          toast.success(`Successfully claimed for  ${royalty.project_name}`);
+        }
+        if (res.function.status === "failed") {
+          setRoyaltyData(royalty, "loadingFalse");
+          toast.error(`Unexpected error, Please try again`);
+        }
+      });
+    }
   }
   async function getNftList() {
     const payload = {
@@ -278,6 +288,63 @@ const Profile = () => {
     await getMintedNftListByUserId(payload)
       .then((e) => {
         if (e.code === 0 && e.data !== null) {
+          // let array = [];
+          // const data1 = {
+          //   id: "ab63a90f-e035-4629-a3bd-ba9ec09b5ea1",
+          //   nft_type: "product",
+          //   name: "1",
+          //   asset: {
+          //     id: "",
+          //     asset_purpose: "",
+          //     name: "",
+          //     asset_type: "",
+          //     path: "https://storage.googleapis.com/apollo_creabo_dev/nft/49946cb4-d2c5-47ae-8ff6-52591dec3338.jpg",
+          //     hash: "",
+          //     thumbnail: "",
+          //   },
+          //   token_id: 63,
+          //   refresh_status: "processing",
+          // };
+          // const data2 = {
+          //   id: "ab63a90f-e035-4629-a3bd-ba9ec09b5ea2",
+          //   nft_type: "product",
+          //   name: "2",
+          //   asset: {
+          //     id: "",
+          //     asset_purpose: "",
+          //     name: "",
+          //     asset_type: "",
+          //     path: "https://storage.googleapis.com/apollo_creabo_dev/nft/49946cb4-d2c5-47ae-8ff6-52591dec3338.jpg",
+          //     hash: "",
+          //     thumbnail: "",
+          //   },
+          //   token_id: 63,
+          //   refresh_status: "processing",
+          // };
+          // const data3 = {
+          //   id: "ab63a90f-e035-4629-a3bd-ba9ec09b5ea3",
+          //   nft_type: "product",
+          //   name: "3",
+          //   asset: {
+          //     id: "",
+          //     asset_purpose: "",
+          //     name: "",
+          //     asset_type: "",
+          //     path: "https://storage.googleapis.com/apollo_creabo_dev/nft/49946cb4-d2c5-47ae-8ff6-52591dec3338.jpg",
+          //     hash: "",
+          //     thumbnail: "",
+          //   },
+          //   token_id: 63,
+          //   refresh_status: "processing",
+          // };
+
+          // array.push(data1);
+          // array.push(data2);
+          // array.push(data3);
+          e.data.forEach((element) => {
+            element.loading = false;
+          });
+
           setMintedNftList(e.data);
           setIsLoading(false);
         } else {
@@ -288,24 +355,136 @@ const Profile = () => {
         setIsLoading(false);
       });
   }
+  function setNftData(nft, type) {
+    let nftList = [...mintedNftList];
+    const nftIndex = nftList.findIndex((item) => item.id === nft.id);
+    const nftLocal = { ...nft };
+    if (type === "loadingTrue") {
+      nftLocal.loading = true;
+    } else if (type === "loadingFalse") {
+      nftLocal.loading = false;
+    } else if (type === "hideRefreshButton") {
+      nftLocal.refresh_status = "notRequired";
+    } else if (type === "showRefreshButton") {
+      nftLocal.refresh_status = "failed";
+    }
+    nftList[nftIndex] = nftLocal;
+    setMintedNftList(nftList);
+  }
+  function setRoyaltyData(royalty, type) {
+    let royaltyList = [...royaltiesList];
+    const royaltyIndex = royaltyList.findIndex(
+      (item) => item.id === royalty.id
+    );
+    const royaltyLocal = { ...royalty };
+    if (type === "loadingTrue") {
+      royaltyLocal.isLoading = true;
+    }
+    if (type === "claimButtonDisable") {
+      royaltyLocal.earnable_amount = 0;
+    }
+    royaltyList[royaltyIndex] = royaltyLocal;
+    setRoyaltiesList(royaltyList);
+  }
 
-  // useEffect(() => {
-  //   // file upload web socket
-  //   const projectDeployStatus = fileUploadNotification.find(
-  //     (x) => x.function_uuid === jobId
-  //   );
-  //   if (projectDeployStatus && projectDeployStatus.data) {
-  //     const data = JSON.parse(projectDeployStatus.data);
-  //     if (data.Data["assetId"] && data.Data["assetId"].length > 0) {
-  //       if (!savingNFT && !isNFTSaved) {
-  //         setSavingNFT(true);
-  //         saveNFTDetails(data.Data["assetId"]);
-  //       }
-  //     } else {
-  //       setSavingNFT(false);
-  //     }
-  //   }
-  // }, [fileUploadNotification]);
+  async function refreshNFTWithtnx(payload) {
+    return await refreshNFT(payload);
+  }
+
+  async function onRefreshNft(nft) {
+    // hide the refresh button start
+    setNftData(nft, "hideRefreshButton");
+    // hide the refresh end
+
+    // 1. set Loading true start
+    setNftData(nft, "loadingTrue");
+    // 1. set loading true end
+
+    // 2. call refresh api for getting config object
+    const payload = {
+      id: nft.id,
+      tokenId: nft.token_id,
+    };
+    await refreshNFT(payload)
+      .then((res) => {
+        if (res.code === 0) {
+          const collection = createCollectionInstance(
+            provider,
+            // res.config.collection_contract_address
+            "0xd39E27742e94b660f17289B4e946adCA388da47C"
+          );
+          updateMetadata(collection, provider, res.config)
+            .then((res) => {
+              const data = {
+                id: nft.id,
+                tokenId: nft.token_id,
+                tnxHash: res.txHash,
+              };
+              refreshNFTWithtnx(data)
+                .then((res) => {
+                  if (res.code === 0) {
+                    localStorage.setItem(
+                      res["function_uuid"],
+                      JSON.stringify(nft)
+                    );
+                    const notificationData = {
+                      projectId: nft.id,
+                      etherscan: "",
+                      function_uuid: res["function_uuid"],
+                      data: "",
+                    };
+
+                    dispatch(getNotificationData(notificationData));
+                  }
+                })
+                .catch((err) => {
+                  setNftErrorModalMessage(err);
+                  setNftErrorModal(true);
+                  setNftData(nft, "loadingFalse");
+                });
+            })
+            .catch((err) => {
+              setNftErrorModalMessage(err);
+              setNftErrorModal(true);
+              setNftData(nft, "loadingFalse");
+            });
+        } else {
+          setNftErrorModalMessage(res.message);
+          setNftErrorModal(true);
+          setNftData(nft, "loadingFalse");
+        }
+      })
+      .catch((error) => {});
+  }
+
+  useEffect(() => {
+    // need to check with real minted nft,code could be change
+    for (const localkey in localStorage) {
+      const projectDeployStatus = notificationsList.find(
+        (x) => x.function_uuid === localkey
+      );
+      if (projectDeployStatus) {
+        if (projectDeployStatus.data !== "") {
+          const data = JSON.parse(projectDeployStatus.data);
+          const nft = JSON.parse(localStorage.getItem(localkey));
+          if (data.fn_name === "updateMetadata") {
+            if (data.fn_status === "success") {
+              setNftData(nft, "loadingFalse");
+              setNftData(nft, "hideRefreshButton");
+              toast.success(`Refresh completed for NFT ${nft.name}`);
+            } else if (data.fn_status === "failed") {
+              setNftData(nft, "loadingFalse");
+              setNftData(nft, "showRefreshButton");
+              toast.error(`Refresh failed for NFT ${nft.name}`);
+            }
+            localStorage.removeItem("localkey");
+          }
+        }
+      }
+    }
+
+    console.log(notificationsList);
+  }, [notificationsList]);
   useEffect(() => {
     userInfo();
   }, []);
@@ -315,7 +494,6 @@ const Profile = () => {
   }, [user]);
   useEffect(() => {
     getUserRoyaltiesInfo();
-    calculateTotalRoyalties();
   }, []);
   useEffect(() => {
     getProjectList();
@@ -326,6 +504,10 @@ const Profile = () => {
   useEffect(() => {
     getNftList();
   }, []);
+
+  useEffect(() => {
+    calculateTotalRoyalties();
+  }, [royaltiesList]);
 
   return (
     <>
@@ -457,12 +639,12 @@ const Profile = () => {
               </div>
               {royaltiesList?.length > 0 && (
                 <>
-                  <button
+                  {/* <button
                     onClick={claimAllRoyalty}
                     className="contained-button font-bold py-1 px-3 rounded ml-3"
                   >
                     Claim All Royalties
-                  </button>
+                  </button> */}
                   {/* <select
                     className="hidden md:block w-[120PX] h-[32px] ml-3 bg-white-shade-900 pl-2 outline-none text-textSubtle border border-[#C7CEE5]"
                     value={royaltiesListSortBy}
@@ -541,12 +723,38 @@ const Profile = () => {
                           </td>
                           <td className="py-4 px-5">${r.earnable_amount}</td>
                           <td className="py-4 px-5">
-                            <button
-                              onClick={() => claimRoyaltyById(r.id)}
-                              className="bg-primary-900/[.20] h-[32px] w-[57px] rounded text-primary-900"
-                            >
-                              Claim
-                            </button>
+                            {r.isLoading ? (
+                              <div role="status" className="">
+                                <svg
+                                  aria-hidden="true"
+                                  className=" w-6 h-6 text-gray-200 animate-spin dark:text-gray-600 fill-secondary-900"
+                                  viewBox="0 0 100 101"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                                    fill="currentColor"
+                                  />
+                                  <path
+                                    d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                                    fill="currentFill"
+                                  />
+                                </svg>
+                                <span className="sr-only">Loading...</span>
+                              </div>
+                            ) : (
+                              <>
+                                {r.earnable_amount > 0 && (
+                                  <button
+                                    onClick={() => claimRoyaltyById(r)}
+                                    className="bg-primary-900/[.20] h-[32px] w-[57px] rounded text-primary-900"
+                                  >
+                                    Claim
+                                  </button>
+                                )}
+                              </>
+                            )}
                           </td>
                         </tr>
                       ))}
@@ -583,12 +791,40 @@ const Profile = () => {
                             {r.project_name}
                           </div>
                         </div>
-                        <button
-                          onClick={() => claimRoyaltyById(r.id)}
-                          className="bg-primary-900/[.20] ml-auto px-3 py-1 rounded text-primary-900"
-                        >
-                          Claim
-                        </button>
+                        <div className="ml-auto">
+                          {r.isLoading ? (
+                            <div role="status" className="mr-10">
+                              <svg
+                                aria-hidden="true"
+                                className=" w-6 h-6 text-gray-200 animate-spin dark:text-gray-600 fill-secondary-900"
+                                viewBox="0 0 100 101"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                                  fill="currentColor"
+                                />
+                                <path
+                                  d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                                  fill="currentFill"
+                                />
+                              </svg>
+                              <span className="sr-only">Loading...</span>
+                            </div>
+                          ) : (
+                            <>
+                              {r.earnable_amount > 0 && (
+                                <button
+                                  onClick={() => claimRoyaltyById(r)}
+                                  className="bg-primary-900/[.20] h-[32px] w-[57px] rounded text-primary-900"
+                                >
+                                  Claim
+                                </button>
+                              )}
+                            </>
+                          )}
+                        </div>
                       </div>
                       <div className="flex justify-between items-center">
                         <div>
@@ -616,43 +852,6 @@ const Profile = () => {
                   ))}
                 </div>
               ) : (
-                // <div className="overflow-x-auto relative mb-[54px]">
-                //   <table className="w-full text-left">
-                //     <thead>
-                //       <tr className="text-textSubtle text-[12px] ">
-                //         <th scope="col" className="px-5">
-                //           Percentage
-                //         </th>
-                //         <th scope="col" className="px-5">
-                //           Role
-                //         </th>
-                //         <th scope="col" className="px-5">
-                //           Earnable Amount
-                //         </th>
-                //       </tr>
-                //     </thead>
-                //     <tbody>
-                //       {royaltiesList.map((r, index) => (
-                //         <tr
-                //           key={r.index}
-                //           className={`${
-                //             index < royaltiesList.length - 1 ? "border-b" : ""
-                //           } text-left text-txtblack text-[14px]`}
-                //         >
-                //           <td className="py-4 px-5">{r.royalty_percent}</td>
-                //           <td
-                //             className={`py-4 px-5  ${
-                //               r.is_owner ? "text-info-1" : " text-success-1"
-                //             }`}
-                //           >
-                //             {r.is_owner ? "Owner" : "Member"}
-                //           </td>
-                //           <td className="py-4 px-5">${r.earnable_amount}</td>
-                //         </tr>
-                //       ))}
-                //     </tbody>
-                //   </table>
-                // </div>
                 <div className="text-center ">
                   <h2 className="text-textSubtle mb-6">
                     You don't have any Royalty yet
@@ -660,20 +859,6 @@ const Profile = () => {
                 </div>
               )}
             </div>
-            {/* <div className="flex justify-center space-x-1 ">
-              <button className="px-3 py-1   text-primary-900 bg-primary-900 bg-opacity-5 rounded hover:bg-opacity-7">
-                <i className="fa-solid fa-angle-left"></i>
-              </button>
-              <button className="px-3 py-1 font-satoshi-bold  text-primary-900">
-                1
-              </button>
-              <button className="px-3 py-1 font-satoshi-bold text-textSubtle">
-                2
-              </button>
-              <button className="px-3 py-1   text-primary-900 bg-primary-900 bg-opacity-5 rounded hover:bg-opacity-7">
-                <i className="fa-solid fa-angle-right"></i>
-              </button>
-            </div> */}
           </div>
 
           <div className="mb-[50px]">
@@ -831,7 +1016,12 @@ const Profile = () => {
                 <div>
                   {mintedNftList.map((nft) => (
                     <SwiperSlide className={styles.nftCard} key={nft.id}>
-                      <NFTListCard nft={nft} projectWork="ethereum" />
+                      <NFTListCard
+                        nft={nft}
+                        projectWork="ethereum"
+                        refresh={onRefreshNft}
+                        loading={nft.loading}
+                      />
                     </SwiperSlide>
                   ))}
                 </div>
@@ -861,6 +1051,17 @@ const Profile = () => {
           message={`Please try again later`}
           handleClose={() => setErrorModal(false)}
           show={errorModal}
+        />
+      )}
+      {nftErrorModal && (
+        <ErrorModal
+          message={nftErrorModalMessage}
+          buttonText={"Close"}
+          handleClose={() => {
+            setNftErrorModal(false);
+            setNftErrorModalMessage("");
+          }}
+          show={nftErrorModal}
         />
       )}
     </>

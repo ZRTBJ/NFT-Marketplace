@@ -821,15 +821,20 @@ const CollectionDetail = () => {
                               {nft?.name}
                             </h2>
                             <div className="relative">
-                              <button
-                                type="button"
-                                className="w-[20px]"
-                                onClick={(e) => handleShowOptions(e, nft.id)}
-                              >
-                                <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
-                              </button>
-
                               {/* Dropdown menu  */}
+                              {Collection?.is_owner && (
+                                <>
+                                  <button
+                                    type="button"
+                                    className="w-[20px]"
+                                    onClick={(e) =>
+                                      handleShowOptions(e, nft.id)
+                                    }
+                                  >
+                                    <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
+                                  </button>
+                                </>
+                              )}
                               {ShowOptions === nft.id && (
                                 <div className="z-10 w-48 bg-white   rounded-md  absolute left-0 top-8 mb-6 block">
                                   <ul className="text-sm mb-0">

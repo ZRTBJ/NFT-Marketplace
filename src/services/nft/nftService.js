@@ -108,3 +108,17 @@ export async function getMintedNftListByUserId(payload) {
     `/user/${payload.userId}/nft?page=${payload.page}&limit=${payload.limit}`
   );
 }
+
+export async function refreshNFT(payload) {
+  let formData = new FormData();
+  formData.append("tokenId", payload.tokenId);
+  if (payload.tnxHash) {
+    formData.append("transaction_hash", payload.tnxHash);
+  }
+  return await client(
+    "POST",
+    `/lnft/${payload.id}/refresh`,
+    formData,
+    "formdata"
+  );
+}
