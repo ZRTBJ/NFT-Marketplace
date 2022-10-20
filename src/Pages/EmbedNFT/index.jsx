@@ -24,7 +24,7 @@ function EmbedNFT(props) {
   const provider = createProvider();
   useEffect(() => {
     if (id) {
-      nftDetails(id);
+      nftDetails(type, id);
     }
   }, [id, type]);
 
@@ -93,7 +93,7 @@ function EmbedNFT(props) {
     formData.append("transaction_hash", response.hash);
     formData.append("block_number", response.blockNumber);
     const payload = {
-      id: nft?.id,
+      id: nft?.lnft?.id,
       data: formData,
       type: nft?.lnft?.nft_type,
     };
@@ -160,7 +160,7 @@ function EmbedNFT(props) {
             </p>
             {success && (
               <p className="text-success-900 text-sm text-center">
-                Successfully Mined!
+                Successfully Minted!
               </p>
             )}
             <button
