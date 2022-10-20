@@ -2,7 +2,14 @@ import Modal from "../Modal";
 import deploySuccessSvg from "assets/images/modal/deploySuccessSvg.svg";
 
 const StatusModal = (props) => {
-  const { isVisible, isLoading, status, onRequestClose } = props;
+  const {
+    isVisible,
+    isLoading,
+    loadingMessage,
+    successMessage,
+    status,
+    onRequestClose,
+  } = props;
 
   return (
     <Modal
@@ -16,7 +23,7 @@ const StatusModal = (props) => {
           ? (
             <div className="md:mx-16">
               <div className="font-black text-[24px] md:text-[42px]">
-                Please wait we’re publishing your Collection
+                {loadingMessage}
               </div>
               <div className="overflow-hidden rounded-full h-4 w-full mt-4  md:mt-12 mb-8 relative animated fadeIn">
                 <div className="animated-process-bar"></div>
@@ -33,7 +40,7 @@ const StatusModal = (props) => {
             />
             <div className="md:mx-16">
               <div className="font-black text-[24px] md:text-[42px]">
-                {status}
+                {successMessage}
               </div>
               <div className="flex justify-center mt-4 md:mt-[30px]">
                 <button

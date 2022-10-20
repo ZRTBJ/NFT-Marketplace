@@ -20,7 +20,12 @@ const PublishRoyaltyModal = (props) => {
   }, [status]);
 
   return (
-    <StatusModal {...otherProps} status={textStatus} />
+    <StatusModal
+      {...otherProps} 
+      loadingMessage="Please wait we’re publishing your royalty splitter"
+      successMessage="You have successfully published your royalty splitter!"
+      status={textStatus}
+    />
   );
 };
 

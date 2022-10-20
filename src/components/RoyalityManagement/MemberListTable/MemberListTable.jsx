@@ -186,7 +186,7 @@ const MemberListTable = ({
                   </p>
                 </td>
                 <td className="py-4 px-5">
-                  {r.is_owner ? null : (
+                  {r.is_owner || hasPublishedRoyaltySplitter? null : (
                     <div
                       className="w-[32px] h-[32px] bg-[#FF3C3C] rounded-[4px] flex items-center justify-center cursor-pointer"
                       onClick={() => handleDeleteContributor(r.user_eoa)}

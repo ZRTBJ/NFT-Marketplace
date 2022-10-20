@@ -74,16 +74,22 @@ export default function usePublishRoyaltySplitter(payload = {}) {
 
   const subscribeOnChainEvent = async () => {
     return new Promise((resolve, reject) => {
-      const timeout = setTimeout(reject, 30000);
+      const timeout = setTimeout(reject, 60000);
 
-      listener.current = async (args) => {
+      listener.current = async (...args) => {
         try {
           // NOTE: this is a hack, don't ask me, ask our current "Application Lead"
           if (transaction.current == null) {
             return;
           }
 
-          royaltySplitterContractAddress.current = args;
+          const eventTransaction = args[args.length - 1];
+
+          if (eventTransaction.transactionHash !== transaction.current.txHash) {
+            return;
+          }
+
+          royaltySplitterContractAddress.current = args[0];
           clearTimeout(timeout);
           resolve();
         } catch(err) {
