@@ -36,6 +36,7 @@ import ImportWalletModal from "components/modalDialog/ImportWalletModal/ImportWa
 import { walletAddressTruncate } from "util/walletAddressTruncate";
 import usePublishRoyaltySplitter from "hooks/usePublishRoyaltySplitter";
 import PublishRoyaltyModal from "components/StatusModal/PublishRoyaltyModal";
+import SalesSuccessModal from "components/modalDialog/SalesSuccessModal";
 
 const TABLE_HEADERS = [
   { id: 0, label: "Wallet Address" },
@@ -83,6 +84,7 @@ const CollectionDetail = () => {
   const [showImportWallet, setShowImportWallet] = useState(false);
   const [projectID, setProjectID] = useState("");
   const [nftSales, setNFTSales] = useState([]);
+  const [nftMemSupply, setNftMemSupply] = useState(0);
 
   // Publish royalty splitter
   const [showPublishRoyaltySpliterModal, setShowPublishRoyaltySpliterModal] =
@@ -96,8 +98,8 @@ const CollectionDetail = () => {
     setShowPublishRoyaltySpliterErrorModal,
   ] = useState(false);
   const hasPublishedRoyaltySplitter = useMemo(
-    () => Collection?.royalty_splitter?.status === 'published',
-    [Collection],
+    () => Collection?.royalty_splitter?.status === "published",
+    [Collection]
   );
 
   const hanldeUpdatePublishStatus = (status) => {
@@ -184,6 +186,7 @@ const CollectionDetail = () => {
     getCollectionDetailsById(payload)
       .then((resp) => {
         if (resp.code === 0) {
+          console.log(resp);
           setProjectID(resp?.collection?.project_uid);
           getProjectDetailsById({ id: resp?.collection?.project_uid }).then(
             (resp) => setProjectNetwork(resp?.project?.blockchain)
@@ -275,12 +278,13 @@ const CollectionDetail = () => {
     setShowOptions(null);
   };
 
-  function salesPageModal(e, type, id) {
+  function salesPageModal(e, type, id, supply) {
     e.stopPropagation();
     e.preventDefault();
     setShowOptions(null);
     if (type === "membership") {
       setNftId(id);
+      setNftMemSupply(supply);
     }
     setShowSalesPageModal(true);
   }
@@ -896,7 +900,8 @@ const CollectionDetail = () => {
                                               salesPageModal(
                                                 e,
                                                 "membership",
-                                                nft.id
+                                                nft.id,
+                                                nft.supply
                                               )
                                             }
                                             className="block p-4 hover:bg-gray-100 cursor-pointer"
@@ -911,18 +916,21 @@ const CollectionDetail = () => {
                               )}
                             </div>
                           </div>
+
                           <div className="flex  w-[150px] md:w-[276px]">
                             <p className="text-[13px]">
                               {nft?.price}{" "}
-                              {projectNetwork === "ethereum" ? "ETH" : "MATIC"}
+                              {nft.currency && nft.currency === "eth"
+                                ? "ETH"
+                                : "MATIC"}
                             </p>
-                            <img
-                              className="ml-auto"
-                              src={
-                                projectNetwork === "ethereum" ? Eth : Polygon
-                              }
-                              alt={projectNetwork}
-                            />
+                            {nft.currency ? (
+                              <img
+                                className="ml-auto"
+                                src={nft.currency === "eth" ? Eth : Polygon}
+                                alt={projectNetwork}
+                              />
+                            ) : null}
                           </div>
                         </div>
                       </div>
@@ -997,17 +1005,18 @@ const CollectionDetail = () => {
                       <button
                         className="block ml-auto bg-primary-100 text-primary-900 p-3 font-black text-[14px]"
                         onClick={() =>
-                            setShowPublishRoyaltySpliterConfirmModal(true)
+                          setShowPublishRoyaltySpliterConfirmModal(true)
                         }
                         disabled={
-                          !canPublishRoyaltySplitter || isPublishingRoyaltySplitter
+                          !canPublishRoyaltySplitter ||
+                          isPublishingRoyaltySplitter
                         }
                       >
                         {isPublishingRoyaltySplitter
                           ? publishRoyaltySplitterStatus === 1
                             ? "Creating contract"
                             : "Publishing"
-                            : "Lock Percentage"}
+                          : "Lock Percentage"}
                       </button>
                     )}
                   </div>
@@ -1028,24 +1037,22 @@ const CollectionDetail = () => {
           collectionId={collectionId}
           collectionType={`${collectionType}`}
           nftId={nftId}
+          collectionName={Collection?.name}
           handleClose={() => setShowSalesPageModal(false)}
           successClose={() => {
             setShowSalesPageModal(false);
             setShowSuccessModal(true);
           }}
+          supply={nftMemSupply}
         />
       )}
       {showSuccessModal && (
-        <SuccessModal
-          message={"Sale information updated successfully"}
-          subMessage={"You can mint NFT now"}
-          buttonText={"Close"}
+        <SalesSuccessModal
+          show={showSuccessModal}
           handleClose={() => {
             setShowSuccessModal(false);
             getCollectionDetail();
           }}
-          redirection={`/collection-details/${collectionId}`}
-          show={showSuccessModal}
         />
       )}
       <PublishModal

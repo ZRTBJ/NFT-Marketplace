@@ -27,6 +27,8 @@ import WalletConnectModal from "components/modalDialog/WalletConnectModal";
 import { createMintNFT } from "eth/deploy-mintnft";
 import { createProvider } from "eth/provider";
 import { createMintInstance } from "eth/mint-nft";
+import { createMembsrshipMintInstance } from "eth/mint-membershipNFT";
+import { createMembershipMintNFT } from "eth/deploy-membershipNFTMint";
 import EmbedNFTModal from "components/modalDialog/EmbedNFTModal";
 
 export default function DetailsNFT(props) {
@@ -75,16 +77,28 @@ export default function DetailsNFT(props) {
   //     }
   //   }
   // }, [inviteData]);
-
+  const { type, id } = useParams();
   const handleContract = async (config) => {
     try {
       const mintContract = createMintInstance(config.contract, provider);
-      const response = await createMintNFT(
-        mintContract,
-        config.metadataUrl,
-        config.price,
+      const membershipMintContract = createMembsrshipMintInstance(
+        config.contract,
         provider
       );
+      const response =
+        type === "membership"
+          ? await createMembershipMintNFT(
+              membershipMintContract,
+              config.metadataUrl,
+              id,
+              provider
+            )
+          : await createMintNFT(
+              mintContract,
+              config.metadataUrl,
+              config.price,
+              provider
+            );
       if (response) {
         setHash(response?.transactionHash);
         let data = {
@@ -103,7 +117,6 @@ export default function DetailsNFT(props) {
     }
   };
 
-  const { type, id } = useParams();
   useEffect(() => {
     if (id) {
       nftDetails();
@@ -193,8 +206,6 @@ export default function DetailsNFT(props) {
     }
   }
 
-  console.log(nft);
-
   let info = nft?.more_info;
 
   let benefits = info?.benefits && JSON.parse(nft.more_info.benefits);
@@ -282,14 +293,16 @@ export default function DetailsNFT(props) {
                 <span className="uppercase">{info?.currency}</span>
               </div>
             </div>
-            <div className="flex w-100 items-center justify-center mt-4 ">
-              <button
-                onClick={() => setShowEmbedNFT(true)}
-                className="rounded-[4px] p-3 border-[1px] font-black font-[14px] text-primary-900 border-primary-900"
-              >
-                Embed NFT
-              </button>
-            </div>
+            {nft?.lnft?.is_owner ? (
+              <div className="flex w-100 items-center justify-center mt-4 ">
+                <button
+                  onClick={() => setShowEmbedNFT(true)}
+                  className="rounded-[4px] p-3 border-[1px] font-black font-[14px] text-primary-900 border-primary-900"
+                >
+                  Embed NFT
+                </button>
+              </div>
+            ) : null}
             {nft?.lnft?.invitation_code && (
               <div className="bg-white rounded-xl shadow-main mt-3 flex flex-col items-center justify-start self-start p-4 mr-4 mb-5 md:mb-0">
                 <div className="mt-2">

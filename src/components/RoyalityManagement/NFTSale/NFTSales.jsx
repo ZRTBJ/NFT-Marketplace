@@ -1,5 +1,5 @@
 import styles from "./style.module.css";
-import Polygon from "assets/images/network/polygon.svg";
+import Polygon from "assets/images/network/eth.svg";
 import manImg from "assets/images/image-default.svg";
 import { useState } from "react";
 import NFTSalesMobile from "./NFTSalesMobile";

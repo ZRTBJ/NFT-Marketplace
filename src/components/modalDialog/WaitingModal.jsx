@@ -1,6 +1,15 @@
 import Modal from "../Modal";
-import waiting from "assets/images/modal/waiting.svg";
+import Lottie from "react-lottie";
+import lottieJson from "assets/lottieFiles/nft-minting-process";
 const WaitingModal = ({ handleClose, show }) => {
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: lottieJson,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
   return (
     <Modal
       width={532}
@@ -9,10 +18,10 @@ const WaitingModal = ({ handleClose, show }) => {
       showCloseIcon={false}
     >
       <div className="text-center mt-2">
-        <div className="font-black text-[24px] md:text-[42px]">
-          Your transaction is on progress
+        <div className="font-black text-[24px] md:text-[23px]">
+          Your transaction is in progress
         </div>
-        <img src={waiting} alt="waiting" className="w-[409px] h-[274px]" />
+        <Lottie options={defaultOptions} height={305} width={305} />
         <p className="mt-4 mb-6">it might take a time, please wait</p>
         <button
           className="w-full font-bold text-[16px] h-[44px] bg-primary-50 text-primary-900 "

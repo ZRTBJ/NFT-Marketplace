@@ -7,17 +7,18 @@ import {
   TwitterShareButton,
   RedditShareButton,
 } from "react-share";
-const NftSuccessModal = ({
-  handleClose,
-  show,
-  nftName,
-  collectionName,
-  assetUrl,
-  transactionHash,
-  address,
-  shareUrl,
-  handleNext,
-}) => {
+import Lottie from "react-lottie";
+import lottieJson from "assets/lottieFiles/nft-minting-process";
+
+const SalesSuccessModal = ({ handleClose, show, shareUrl }) => {
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: lottieJson,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
   return (
     <Modal
       width={532}
@@ -25,37 +26,16 @@ const NftSuccessModal = ({
       handleClose={() => handleClose(false)}
       showCloseIcon={true}
       overflow="auto"
-      height={750}
     >
       <div>
-        <div className="font-black text-[24px] md:text-[42px]">
-          Congratulation!
-        </div>
-        <p className="mb-4 mt-3 text-textSubtle">
-          You have successfully purchased the{" "}
-          <span className="font-black">{nftName}</span> from{" "}
-          <span className="font-black">{collectionName}</span>
-        </p>
-        <img
-          src={assetUrl}
-          alt="asset"
-          className="h-[150px] mx-auto w-[320px] md:h-[380px]  md:w-[380px] rounded-[12px] object-contain"
-        />
-        <div className="text-center mt-4 mb-6">
-          <p className="text-[18px] text-txtblack">
-            You successfully purchased{" "}
-            <span className="font-black">{nftName}</span>
+        <div className="text-center">
+          {" "}
+          <Lottie options={defaultOptions} height={305} width={305} />
+          <h1 className="text-[28px] mt-5">Your Sales Page are set!</h1>
+          <p className="text-[14px] text-[#5F6479] mt-5 w-[400px] mx-auto">
+            Your collections are set to sale. it’s already listed in the
+            platform that you choose!
           </p>
-        </div>
-        <div className="mb-6">
-          <div className="flex flex-wrap items-center border-b-[1px] border-b-[#C7CEE6] pb-3">
-            <p className="font-black text-[14px]">Status</p>
-            <p className=" ml-auto text-[14px]">Mined</p>
-          </div>
-          <div className="mt-4  md:flex flex-wrap items-center">
-            <p className="font-black text-[14px]">Transaction Hash</p>
-            <p className=" ml-auto text-[14px]">{transactionHash}</p>
-          </div>
         </div>
 
         {shareUrl && (
@@ -84,14 +64,14 @@ const NftSuccessModal = ({
           </div>
         )}
         <button
-          className="w-full font-bold mt-6 text-[16px] h-[44px] bg-primary-50 text-primary-900 "
+          className="w-full contained-button font-bold mt-6 text-[16px] h-[44px] bg-primary-50 text-primary-900 "
           onClick={handleClose}
         >
-          Finish
+          Back to DAO detail
         </button>
       </div>
     </Modal>
   );
 };
 
-export default NftSuccessModal;
+export default SalesSuccessModal;

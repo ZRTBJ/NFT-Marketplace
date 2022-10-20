@@ -115,11 +115,14 @@ export async function getCollectionSales(id) {
   return await client("GET", `/collection/${id}/sales`);
 }
 
-
 export async function publishRoyaltySplitter(id, payload) {
-  return await client('POST', `/royalty/${id}/publish`, payload);
+  return await client("POST", `/royalty/${id}/publish`, payload);
 }
 
 export async function getNetWorth(id) {
   return await client("GET", `/collection/${id}/balance`);
+}
+
+export async function getExchangeRate() {
+  return await client("GET", `/meta/exchange-rate`);
 }

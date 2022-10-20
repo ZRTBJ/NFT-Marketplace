@@ -66,12 +66,11 @@ export async function setSalesPage(
   payload,
   nftId
 ) {
-  console.log(collectionId);
   return await client(
     "PUT",
-    `/${collectionType}-nft/collection/${
-      collectionType === "product" ? collectionId : nftId
-    }/sale`,
+    `/${
+      collectionType === "product" ? "product-nft/collection" : "membership-nft"
+    }/${collectionType === "product" ? collectionId : nftId}/sale`,
     payload,
     "formdata"
   );

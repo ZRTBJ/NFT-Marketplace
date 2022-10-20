@@ -294,6 +294,7 @@ export default function ProductNFT(props) {
           } else {
             setIsLoading(false);
             setShowConfirmation(false);
+            setShowSteps(false);
             setErrorTitle("Create Product NFT Failed");
             setErrorMessage(
               "Failed to create product NFT. Please try again later"
@@ -303,15 +304,16 @@ export default function ProductNFT(props) {
           }
         })
         .catch((err) => {
-          console.log(err);
           setIsLoading(false);
           setSavingNFT(false);
           setIsNFTSaved(false);
+          setShowSteps(false);
           setShowConfirmation(false);
           setShowErrorModal(true);
         });
     } else {
       setIsLoading(false);
+      setShowSteps(false);
       setShowConfirmation(false);
       setErrorTitle("Create Product NFT Failed");
       setErrorMessage(
@@ -361,9 +363,11 @@ export default function ProductNFT(props) {
       if (attributes && attributes.length > 0) {
         request.append("attributes", JSON.stringify(attributes));
       }
+      console.log("reached here");
       await updateProductNFT(nft.id, request)
         .then((res) => {
           setSavingNFT(false);
+          console.log(res);
           if (res["code"] === 0) {
             if (res["function_uuid"] === "") {
               setJobId("");
@@ -389,6 +393,7 @@ export default function ProductNFT(props) {
             setShowSuccessModal(true);
           } else {
             setIsLoading(false);
+            setShowSteps(false);
             setShowConfirmation(false);
             setErrorTitle("Update Product NFT Failed");
             setErrorMessage(
@@ -401,6 +406,7 @@ export default function ProductNFT(props) {
         .catch((err) => {
           console.log(err);
           setIsLoading(false);
+          setShowSteps(false);
           setSavingNFT(false);
           setIsNFTSaved(false);
           setShowConfirmation(false);
@@ -409,6 +415,7 @@ export default function ProductNFT(props) {
     } else {
       setIsLoading(false);
       setShowConfirmation(false);
+      setShowSteps(false);
       setErrorTitle("update Product NFT Failed");
       setErrorMessage(
         "AssetID and/or CollectionID not found. Please try again later"

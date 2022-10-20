@@ -375,3 +375,22 @@ table > thead > tr > th {
     ),
     linear-gradient(111.76deg, #59cdff 22.23%, #c071ff 100%);
 }
+
+/**
+* ======================================================
+* Rsuite Dropdown
+*=======================================================
+*/
+.custom-dropdown button {
+  display: flex;
+  align-items: center;
+}
+
+.date-range-picker {
+  z-index: 999;
+  width: 100%;
+}
+
+.date-range-picker input {
+  height: 44px;
+}

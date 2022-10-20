@@ -23,6 +23,7 @@ import deploySuccessSvg from "assets/images/modal/deploySuccessSvg.svg";
 import { createProvider } from "eth/provider";
 import { createInstance } from "eth/collection-factory";
 import { createCollection } from "eth/deploy-collection";
+import address from "../../deploy.json";
 
 const DeployingCollectiontModal = ({
   handleClose,
@@ -52,32 +53,17 @@ const DeployingCollectiontModal = ({
       ? state?.notifications?.notificationData
       : []
   );
+
   const [contractAdd, setContractAdd] = useState("");
   const [txnData, setTxnData] = useState();
   const provider = createProvider();
-  const collectionContract = createInstance(provider);
+  const collectionContract = createInstance(
+    collectionType === "membership"
+      ? address.CreateMembershipCollectionFactory
+      : address.CreateCollectionFacotory,
+    provider
+  );
   const collectionListener = collectionContract.filters.ProxyCreated();
-
-  // useEffect(() => {
-  //   const collectionDeployStatus = collectionDeploy.find(
-  //     (x) => x.function_uuid === funcId
-  //   );
-
-  //   if (
-  //     collectionDeployStatus &&
-  //     collectionDeployStatus.function_uuid &&
-  //     collectionDeployStatus.data
-  //   ) {
-  //     const statusData = JSON.parse(collectionDeployStatus.data);
-  //     setPublishedData(statusData);
-
-  //     if (statusData["fn_status"] === "success") {
-  //       setStep(2);
-  //     } else {
-  //       recheckStatus();
-  //     }
-  //   }
-  // }, [collectionDeploy]);
 
   useEffect(() => {
     if (contractAdd && txnData) {
@@ -101,6 +87,7 @@ const DeployingCollectiontModal = ({
     }
 
     const listener = (args) => {
+      console.log(args);
       setContractAdd(args);
     };
 
@@ -111,20 +98,14 @@ const DeployingCollectiontModal = ({
     };
 
     subscribe();
-
     publishCollection(collectionId, txnData ? payload : null)
       .then((res) => {
         setIsLoading(false);
         if (res.code === 0) {
           if (txnData) {
-            const deployData = {
-              function_uuid: res.function_uuid,
-              data: "",
-            };
             setStatusStep(2);
             setFuncId(res.function_uuid);
             collectionContract.removeListener(collectionListener, listener);
-            dispatch(getNotificationData(deployData));
             if (res?.function?.status === "success") {
               setStep(2);
             } else if (res?.function?.status === "failed") {
@@ -180,7 +161,8 @@ const DeployingCollectiontModal = ({
       const response = await createCollection(
         collectionContract,
         provider,
-        config
+        config,
+        collectionType
       );
       const hash = response.txReceipt;
       let data = {
@@ -217,20 +199,6 @@ const DeployingCollectiontModal = ({
                 Contract created. Now, we are publishing it.
               </p>
             )}
-            {/* {deployStatus.step === 1 && (
-              <div className='text-center'>Erc20 Deployment</div>
-            )}
-            {deployStatus.step === 2 && (
-              <div className='text-center'>ProjectToken Deployment</div>
-            )} */}
-            {/* <div className='flex justify-center mt-[30px]'>
-              <button
-                className='btn text-white-shade-900 bg-primary-900 btn-sm'
-                onClick={() => handleClose(false)}
-              >
-                Cancel Publishing
-              </button>
-            </div> */}
           </div>
         )}
         {step === 2 && (

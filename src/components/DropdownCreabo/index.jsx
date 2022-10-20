@@ -7,7 +7,7 @@ const DropdownCreabo = ({
   options,
   defaultValue,
   id,
-  connectedCollections,
+  disabled,
 }) => {
   return (
     <div className={styles.dropdownCreabo}>
@@ -16,15 +16,16 @@ const DropdownCreabo = ({
       </label>
 
       <select
+        disabled={disabled}
         value={value}
         onChange={handleChange}
         id={id}
         className="mt-1 text-[#7D849D] px-2 text-[14px] font-regular rounded-[3px] border-[1px] border-[#C7CEE6]"
       >
         {label && <option value={""}>{defaultValue}</option>}
-        {options.map((e) => (
+        {options?.map((e) => (
           <option key={e.id} value={e.id}>
-            {e.name} {connectedCollections?.includes(e.id) ? "✅ " : ""}
+            {e.name}
           </option>
         ))}
       </select>

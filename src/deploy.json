@@ -4,6 +4,8 @@
   "CreatorDAOMasterCopy": "0x109d48440dCB902a568Dddf7739510313A0fDe85",
   "CreateCollectionFacotory": "0x8aEE8Fe4045814e117B75694499Da9df70f098E5",
   "CreateCollectionMasterCopy": "0x795fb1BE3b66d0d79Ce6606FbB901f01e9F8AD54",
+  "CreateMembershipCollectionFactory": "0x46796291137E18186c6Fb311518D41c684DBEA8C",
+  "CreateMembershipCollectionMasterCopy": "0x7C0625aeB9c93CEa52578E334886Ce996356B4a1",
   "RoyaltySplitterFactory": "0xA2242b5FE384a50C3600008ea7AC587348E81B6B",
   "RoyaltySplitterMasterCopy": "0x616603DF114736905F7d288857CC9d997f5031a1"
 }

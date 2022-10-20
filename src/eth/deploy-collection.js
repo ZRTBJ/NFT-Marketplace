@@ -3,7 +3,7 @@ import { createInstance } from "./forwarder";
 import { signMetaTxRequest } from "./signer";
 import address from "../deploy.json";
 
-async function sendMetaTx(collection, provider, signer, config) {
+async function sendMetaTx(collection, provider, signer, config, type) {
   const url = process.env.REACT_APP_WEBHOOK_URL;
   if (!url) throw new Error(`Missing relayer url`);
 
@@ -16,7 +16,10 @@ async function sendMetaTx(collection, provider, signer, config) {
       symbol: config?.deploymentConfig?.symbol,
       owner: from,
       tokensBurnable: config?.deploymentConfig?.tokensBurnable,
-      masterCopy: address.CreateCollectionMasterCopy,
+      masterCopy:
+        type === "membership"
+          ? address.CreateMembershipCollectionMasterCopy
+          : address.CreateCollectionMasterCopy,
       forwarder: address.MinimalForwarder,
     },
     runConfig: {
@@ -51,7 +54,7 @@ async function sendMetaTx(collection, provider, signer, config) {
   });
 }
 
-export async function createCollection(collection, provider, config) {
+export async function createCollection(collection, provider, config, type) {
   if (!window.ethereum) throw new Error(`User wallet not found`);
 
   await window.ethereum.enable();
@@ -63,7 +66,7 @@ export async function createCollection(collection, provider, config) {
   const signer = userProvider.getSigner();
 
   let output;
-  const result = await sendMetaTx(collection, provider, signer, config);
+  const result = await sendMetaTx(collection, provider, signer, config, type);
 
   await result.json().then(async (response) => {
     const tx = JSON.parse(response.result);

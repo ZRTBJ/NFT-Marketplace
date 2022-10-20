@@ -34,7 +34,7 @@ const EmbedNFTModal = ({ show, type, handleClose, nftId }) => {
         </p>
         <div className="w-4/4 mt-10 md:mt-0 flex item-center justify-center">
           <iframe
-            src={`http://localhost:3000/embed-nft/${type}/${nftId}`}
+            src={`${host}/embed-nft/${type}/${nftId}`}
             width={`${width}px`}
             height={`${height}px`}
             style={{ border: "none" }}

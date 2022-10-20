@@ -1,5 +1,4 @@
 import { ethers } from "ethers";
-import address from "../deploy.json";
 
 const abi = [
   {
@@ -153,6 +152,6 @@ const abi = [
   },
 ];
 
-export function createInstance(provider) {
-  return new ethers.Contract(address.CreateCollectionFacotory, abi, provider);
+export function createInstance(address, provider) {
+  return new ethers.Contract(address, abi, provider);
 }
