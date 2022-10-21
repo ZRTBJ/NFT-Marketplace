@@ -1,5 +1,5 @@
 import Modal from "../Modal";
-import { NETWORK_CHAIN } from "data/networkChain";
+import { NETWORKS } from "config/networks";
 import { useHistory } from "react-router-dom";
 import { logout, useAuthDispatch } from "Context";
 
@@ -23,12 +23,12 @@ const NetworkChangedModal = ({ show, handleClose, networkId }) => {
       <div className="text-center">
         <h3>
           Your network got changed to{" "}
-          {NETWORK_CHAIN[networkId]
-            ? NETWORK_CHAIN[networkId].networkName
+          {NETWORKS[networkId]
+            ? NETWORKS[networkId].networkName
             : "unsupported network. Please logout and connect to supported networks"}
           .
         </h3>
-        {NETWORK_CHAIN[networkId] ? (
+        {NETWORKS[networkId] ? (
           <button
             onClick={handleClose}
             className="rounded-[4px] bg-primary-900 text-white py-1 px-3 mt-3"

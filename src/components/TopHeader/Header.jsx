@@ -8,7 +8,7 @@ import { useAuthState } from "Context";
 import WalletConnectModal from "components/modalDialog/WalletConnectModal";
 import { Link } from "react-router-dom";
 import useWebSocket from "react-use-websocket";
-import config from "config";
+import config from "config/config";
 import { getProjectListBySearch } from "services/project/projectService";
 import SearchBarResult from "./SearchBarResult";
 import { getNotificationData } from "Slice/notificationSlice";
@@ -65,6 +65,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
       if (!networkId) setNetworkId(window.ethereum.networkVersion);
       window?.ethereum?.on("networkChanged", function (networkId) {
         setNetworkId(networkId);
+        localStorage.setItem("networkChain", networkId);
         setShowNetworkChanged(true);
       });
     }
@@ -96,7 +97,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   useEffect(() => {
     getNotificationList();
   }, [projectDeploy]);
-
+  console.log(process.env.REACT_APP_GOERLI_QUICKNODE_URL);
   function getNotificationList() {
     setIsNotificationLoading(true);
     getUserNotifications()

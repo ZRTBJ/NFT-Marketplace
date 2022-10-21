@@ -29,9 +29,6 @@ export async function setMemNFTPrice(collection, provider, tier) {
 
   await window.ethereum.enable();
   const userProvider = new ethers.providers.Web3Provider(window.ethereum);
-  const userNetwork = await userProvider.getNetwork();
-  if (userNetwork.chainId !== 5)
-    throw new Error(`Please switch to Goerli for signing`);
 
   const signer = userProvider.getSigner();
 

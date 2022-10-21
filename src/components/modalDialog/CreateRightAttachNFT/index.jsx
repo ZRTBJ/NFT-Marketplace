@@ -16,7 +16,7 @@ import {
 } from "services/nft/nftService";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import Config from "config";
+import Config from "config/config";
 import { useDispatch, useSelector } from "react-redux";
 import { getNotificationData } from "Slice/notificationSlice";
 import { createProject } from "services/project/projectService";

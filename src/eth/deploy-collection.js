@@ -2,6 +2,7 @@ import { ethers } from "ethers";
 import { createInstance } from "./forwarder";
 import { signMetaTxRequest } from "./signer";
 import address from "../deploy.json";
+import { NETWORKS } from "config/networks";
 
 async function sendMetaTx(collection, provider, signer, config, type) {
   const url = process.env.REACT_APP_WEBHOOK_URL;
@@ -9,7 +10,11 @@ async function sendMetaTx(collection, provider, signer, config, type) {
 
   const forwarder = createInstance(provider);
   const from = await signer.getAddress();
-
+  let chainId = localStorage.getItem("networkChain");
+  let minimalForwarder = NETWORKS[Number(chainId)]?.forwarder;
+  let masterCopyCollection = NETWORKS[Number(chainId)]?.masterCopyCollection;
+  let masterMembershipCollection =
+    NETWORKS[Number(chainId)]?.masterMembershipCollection;
   const args = {
     deployConfig: {
       name: config?.deploymentConfig?.name,
@@ -18,9 +23,9 @@ async function sendMetaTx(collection, provider, signer, config, type) {
       tokensBurnable: config?.deploymentConfig?.tokensBurnable,
       masterCopy:
         type === "membership"
-          ? address.CreateMembershipCollectionMasterCopy
-          : address.CreateCollectionMasterCopy,
-      forwarder: address.MinimalForwarder,
+          ? masterMembershipCollection
+          : masterCopyCollection,
+      forwarder: minimalForwarder,
     },
     runConfig: {
       baseURI: config?.runtimeConfig?.baseURI,
@@ -59,9 +64,6 @@ export async function createCollection(collection, provider, config, type) {
 
   await window.ethereum.enable();
   const userProvider = new ethers.providers.Web3Provider(window.ethereum);
-  const userNetwork = await userProvider.getNetwork();
-  if (userNetwork.chainId !== 5)
-    throw new Error(`Please switch to Goerli for signing`);
 
   const signer = userProvider.getSigner();
 

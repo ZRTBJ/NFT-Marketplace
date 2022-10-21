@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 
 import { getProjectCategory } from "services/project/projectService";
 import Tooltip from "components/Tooltip";
-import { NETWORK_CHAIN } from "data/networkChain";
+import { NETWORKS } from "config/networks";
 
 export default function Outline({
   // logo
@@ -207,7 +207,7 @@ export default function Outline({
             <div className="txtblack text-[14px] mb-[6px]">Blockchain</div>
           </div>
           <p className="text-textSubtle">
-            {NETWORK_CHAIN[Number(blockchainCategory)].name}
+            {NETWORKS[Number(blockchainCategory)].networkName}
           </p>
         </div>
       )}

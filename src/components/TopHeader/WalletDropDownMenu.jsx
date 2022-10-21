@@ -10,11 +10,11 @@ import ico_torus from "../../assets/images/header/ico_torus.svg";
 import ico_metamask from "../../assets/images/header/ico_metamask.svg";
 import metamaskIcon from "assets/images/modal/metamask.png";
 import torusIcon from "assets/images/modal/torus.png";
-import Config from "../../config";
+import Config from "../../config/config";
 import Web3 from "web3";
 import { useEffect, useState } from "react";
 import { useDetectClickOutside } from "react-detect-click-outside";
-import { NETWORK_CHAIN } from "data/networkChain";
+import { NETWORKS } from "config/networks";
 
 const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
   let history = useHistory();
@@ -113,7 +113,7 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
             )}
             <span>
               {balance ? balance.toFixed(4) : 0}{" "}
-              {NETWORK_CHAIN[networkId] ? NETWORK_CHAIN[networkId].crypto : ""}
+              {NETWORKS[networkId] ? NETWORKS[networkId].crypto : ""}
             </span>
           </h4>
           <a className="btn-fund" href="#">

@@ -24,6 +24,7 @@ import { createProvider } from "eth/provider";
 import { createInstance } from "eth/collection-factory";
 import { createCollection } from "eth/deploy-collection";
 import address from "../../deploy.json";
+import { NETWORKS } from "config/networks";
 
 const DeployingCollectiontModal = ({
   handleClose,
@@ -57,10 +58,15 @@ const DeployingCollectiontModal = ({
   const [contractAdd, setContractAdd] = useState("");
   const [txnData, setTxnData] = useState();
   const provider = createProvider();
+  let chainId = localStorage.getItem("networkChain");
+  let createFactoryCollection =
+    NETWORKS[Number(chainId)]?.createFactoryCollection;
+  let createMembershipFactoryCollection =
+    NETWORKS[Number(chainId)]?.createMembershipFactoryCollection;
   const collectionContract = createInstance(
     collectionType === "membership"
-      ? address.CreateMembershipCollectionFactory
-      : address.CreateCollectionFacotory,
+      ? createMembershipFactoryCollection
+      : createFactoryCollection,
     provider
   );
   const collectionListener = collectionContract.filters.ProxyCreated();

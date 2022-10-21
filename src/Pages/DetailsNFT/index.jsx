@@ -79,6 +79,7 @@ export default function DetailsNFT(props) {
   // }, [inviteData]);
   const { type, id } = useParams();
   const handleContract = async (config) => {
+    console.log(config);
     try {
       const mintContract = createMintInstance(config.contract, provider);
       const membershipMintContract = createMembsrshipMintInstance(
@@ -91,7 +92,8 @@ export default function DetailsNFT(props) {
               membershipMintContract,
               config.metadataUrl,
               id,
-              provider
+              provider,
+              config.price
             )
           : await createMintNFT(
               mintContract,

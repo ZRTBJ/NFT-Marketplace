@@ -762,6 +762,19 @@ const abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "_royaltyReceiver",
+        type: "address",
+      },
+    ],
+    name: "setRoyaltyAddress",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         components: [
           {
             internalType: "string",

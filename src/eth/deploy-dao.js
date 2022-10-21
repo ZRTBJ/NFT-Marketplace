@@ -4,6 +4,7 @@ import { signMetaTxRequest } from "./signer";
 import { createDAOInstance } from "./dao-contract";
 import { addressGnosisSetup } from "services/project/projectService";
 import address from "../deploy.json";
+import { NETWORKS } from "config/networks";
 
 // import { createInstance } from "eth/registry";
 
@@ -35,9 +36,11 @@ async function sendMetaTx(
   formData.append("addresses", from);
   formData.append("blockchain", chainId);
   const setupData = await addressGnosisSetup(formData);
+  let minimalForwarder = NETWORKS?.[Number(chainId)]?.forwarder;
+  let masterCopy = NETWORKS?.[Number(chainId)]?.masterCopyDAO;
   let args = {
-    masterCopy: address.CreatorDAOMasterCopy,
-    forwarder: address.MinimalForwarder,
+    masterCopy: masterCopy,
+    forwarder: minimalForwarder,
     name,
     safeFactory: process.env.REACT_APP_SAFE_PROXY_ADDRESS,
     singleton: process.env.REACT_APP_SAFE_SINGLETON_ADDRESS,
@@ -47,6 +50,7 @@ async function sendMetaTx(
     safeProxy: treasuryAddress ? treasuryAddress : ethers.constants.AddressZero,
     creator: from,
   };
+
   const data = dao.interface.encodeFunctionData("createProxyContract", [args]);
   const to = dao.address;
 
@@ -69,9 +73,6 @@ export async function createDAO(dao, provider, name, treasuryAddress, chainId) {
 
   await window.ethereum.enable();
   const userProvider = new ethers.providers.Web3Provider(window.ethereum);
-  const userNetwork = await userProvider.getNetwork();
-  if (userNetwork.chainId !== 5)
-    throw new Error(`Please switch to Goerli for signing`);
 
   const signer = userProvider.getSigner();
 

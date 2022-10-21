@@ -50,9 +50,6 @@ export async function updateMetadata(collection, provider, nftInfo) {
       await window.ethereum.enable();
       const userProvider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = userProvider.getSigner();
-      const userNetwork = await userProvider.getNetwork();
-      if (userNetwork.chainId !== 5)
-        reject(`Please switch to Goerli Network for signing`);
       const result = await sendMetaTx(collection, provider, signer, nftInfo);
       if (result) {
         await result.json().then(async (response) => {

@@ -1,5 +1,5 @@
 import axios from "axios";
-import Config from "../config";
+import Config from "../config/config";
 // import jwt from "jwt-decode";
 
 const ROOT_URL = Config.API_ENDPOINT;

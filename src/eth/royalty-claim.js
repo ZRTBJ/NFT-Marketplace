@@ -49,9 +49,6 @@ export async function royaltyClaim(provider, config) {
       await window.ethereum.enable();
       const userProvider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = userProvider.getSigner();
-      const userNetwork = await userProvider.getNetwork();
-      if (userNetwork.chainId !== 5)
-        reject(`Please switch to Goerli Network for signing`);
 
       const result = await sendMetaTx(provider, signer, config);
 

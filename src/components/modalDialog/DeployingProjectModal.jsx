@@ -37,7 +37,6 @@ const DeployingProjectModal = ({
   const dao = createInstance(provider);
   const [contractAdd, setContractAdd] = useState("");
   const [txnData, setTxnData] = useState();
-  console.log(projectDeploy);
   // useEffect(() => {
   //   const projectDeployStatus = projectDeploy.find(
   //     (x) => x.projectId === projectId

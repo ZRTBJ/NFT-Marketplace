@@ -13,6 +13,7 @@ import ErrorModal from "components/modalDialog/ErrorModal";
 import SuccessModal from "components/modalDialog/SuccessModal";
 import { getProjectCategory } from "services/project/projectService";
 import { useLocation } from "react-router-dom";
+import { NETWORKS } from "config/networks";
 
 export default function ProjectCreate() {
   // Logo start
@@ -48,7 +49,7 @@ export default function ProjectCreate() {
     }
   }
   // Logo End
-
+  let chainId = localStorage.getItem("networkChain");
   // Project Name start
   const [projectName, setProjectName] = useState("");
   const [emptyProjectName, setemptyProjectName] = useState(false);
@@ -202,7 +203,9 @@ export default function ProjectCreate() {
   // category end
 
   // Blockchain start
-  const [blockchainCategory, setBlockchaainCategory] = useState("1");
+  const [blockchainCategory, setBlockchaainCategory] = useState(
+    chainId.toString()
+  );
   // Blockchain end
   let query = useQuery();
   const [outlineKey, setoutlineKey] = useState(0);

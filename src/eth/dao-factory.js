@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import address from "../deploy.json";
+import { NETWORKS } from "config/networks";
 
 const abi = [
   {
@@ -132,5 +132,7 @@ const abi = [
 ];
 
 export function createInstance(provider) {
-  return new ethers.Contract(address.CreatorDAOFactory, abi, provider);
+  let chainId = localStorage.getItem("networkChain");
+  let createFactoryDAO = NETWORKS?.[Number(chainId)]?.createFactoryDAO;
+  return new ethers.Contract(createFactoryDAO, abi, provider);
 }

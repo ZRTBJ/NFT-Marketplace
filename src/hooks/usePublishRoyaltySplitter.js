@@ -1,16 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { ethers } from 'ethers';
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ethers } from "ethers";
 import * as collectionService from "services/collection/collectionService";
-import * as RoyaltySplitter from 'eth/royalty-splitter';
+import * as RoyaltySplitter from "eth/royalty-splitter";
 import useSendTransaction from "./useSendTransaction";
 import contractAddresses from "../deploy.json";
+import { NETWORKS } from "config/networks";
 
 export default function usePublishRoyaltySplitter(payload = {}) {
-  const {
-    collection,
-    splitters,
-    onUpdateStatus = () => {},
-  } = payload;
+  const { collection, splitters, onUpdateStatus = () => {} } = payload;
 
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState(1);
@@ -35,7 +32,7 @@ export default function usePublishRoyaltySplitter(payload = {}) {
   const getProvider = async () => {
     if (!window.ethereum) {
       throw new Error(`User wallet not found`);
-    };
+    }
 
     await window.ethereum.enable();
     const newProvider = new ethers.providers.Web3Provider(window.ethereum);
@@ -54,14 +51,14 @@ export default function usePublishRoyaltySplitter(payload = {}) {
     }
 
     return (
-      collection.status === 'published'
-      && collection.royalty_splitter.status !== 'published'
+      collection.status === "published" &&
+      collection.royalty_splitter.status !== "published"
     );
   }, [collection]);
 
   const canCallPublishApi = () => {
-    return collection.royalty_splitter.status === 'draft';
-  }
+    return collection.royalty_splitter.status === "draft";
+  };
 
   const callPublishApi = async () => {
     if (!canCallPublishApi()) {
@@ -92,46 +89,53 @@ export default function usePublishRoyaltySplitter(payload = {}) {
           royaltySplitterContractAddress.current = args[0];
           clearTimeout(timeout);
           resolve();
-        } catch(err) {
+        } catch (err) {
           reject(err);
         }
-      }
+      };
 
-      contract.current.on(contract.current.filters.ProxyCreated(), listener.current);
+      contract.current.on(
+        contract.current.filters.ProxyCreated(),
+        listener.current
+      );
     });
-  }
+  };
 
   const updateOffChainData = async () => {
     const royaltySplitterId = collection.royalty_splitter.id;
     const payload = new FormData();
-    payload.append('transaction_hash', txReceipt.current.transactionHash);
-    payload.append('contract_address', royaltySplitterContractAddress.current);
-    payload.append('block_number', txReceipt.current.blockNumber)
+    payload.append("transaction_hash", txReceipt.current.transactionHash);
+    payload.append("contract_address", royaltySplitterContractAddress.current);
+    payload.append("block_number", txReceipt.current.blockNumber);
     return collectionService.publishRoyaltySplitter(royaltySplitterId, payload);
   };
 
   const sendOnChainTransaction = async () => {
-    const creator = await provider.current.getSigner().getAddress()
+    const creator = await provider.current.getSigner().getAddress();
+    let chainId = localStorage.getItem("networkChain");
+    let minimalForwarder = NETWORKS?.[Number(chainId)]?.forwarder;
+    let masterRoyaltySplitter =
+      NETWORKS?.[Number(chainId)]?.masterRoyaltySplitter;
     const functionPayload = [
       {
         receivers: splitters.map((spliter) => spliter.user_eoa),
         shares: splitters.map((splitter) => splitter.royalty_percent),
         collection: collection.contract_address,
-        masterCopy: contractAddresses.RoyaltySplitterMasterCopy,
+        masterCopy: masterRoyaltySplitter,
         creator,
-        forwarder: contractAddresses.MinimalForwarder,
-      }
+        forwarder: minimalForwarder,
+      },
     ];
     return sendTransaction({
       contract: contract.current,
-      functionName: 'createProxyContract',
+      functionName: "createProxyContract",
       functionPayload,
     });
   };
 
   const cleanUp = () => {
-    contract.current.off('ProxyCreated', listener.current);
-  }
+    contract.current.off("ProxyCreated", listener.current);
+  };
 
   const publish = async () => {
     try {
@@ -147,8 +151,8 @@ export default function usePublishRoyaltySplitter(payload = {}) {
       await subscribeEventPromise;
       const publishResponse = await updateOffChainData();
 
-      if (publishResponse.function.status === 'failed') {
-        throw new Error('Transaction failed');
+      if (publishResponse.function.status === "failed") {
+        throw new Error("Transaction failed");
       }
 
       setStatus(2);

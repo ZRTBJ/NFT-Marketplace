@@ -5,6 +5,7 @@ import {
   getWalletAccount,
 } from "util/metaMaskWallet";
 import { useEthers, useEtherBalance } from "@usedapp/core";
+import { ethers } from "ethers";
 import { useSelector } from "react-redux";
 import Modal from "components/Modal";
 import torusIcon from "assets/images/modal/torus.png";
@@ -120,6 +121,9 @@ const WalletConnectModal = ({
       setIsLoading(true);
       let response = await loginUser(authDispatch, request);
       localStorage.setItem("walletAddress", address);
+      const userProvider = new ethers.providers.Web3Provider(window.ethereum);
+      const userNetwork = await userProvider.getNetwork();
+      localStorage.setItem("networkChain", userNetwork.chainId);
       setUserId(response["user_id"]);
       getUserDetails(response["user_id"], true);
 
@@ -142,6 +146,7 @@ const WalletConnectModal = ({
       window.ethereum.on("accountsChanged", handleAccountsChanged);
     }
   }, []);
+
   function handleAccountsChanged(accounts) {
     if (accounts.length === 0) {
       console.log("Please connect to MetaMask.");

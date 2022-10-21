@@ -1,17 +1,11 @@
 import { ethers } from "ethers";
-import axios from 'axios';
-import * as Forwarder from 'eth/forwarder';
+import axios from "axios";
+import * as Forwarder from "eth/forwarder";
 
 class RequestSigner {
   constructor(payload) {
-    const {
-      provider,
-      from,
-      to,
-      contract,
-      functionName,
-      functionPayload,
-    } = payload;
+    const { provider, from, to, contract, functionName, functionPayload } =
+      payload;
 
     this.signature = null;
 
@@ -19,7 +13,7 @@ class RequestSigner {
     this._provider = provider;
     this._signer = provider.getSigner();
     // Request data
-    this._from = from; 
+    this._from = from;
     this._to = to;
     // Functiond data
     this._contract = contract;
@@ -63,14 +57,16 @@ class RequestSigner {
   }
 
   async _getFunctionData() {
-    this._functionData =  this._contract.interface.encodeFunctionData(
+    this._functionData = this._contract.interface.encodeFunctionData(
       this._functionName,
-      this._functionPayload,
+      this._functionPayload
     );
   }
 
   async _createForwarderData() {
-    const chainId = await this._forwarder.provider.getNetwork().then((n) => n.chainId);
+    const chainId = await this._forwarder.provider
+      .getNetwork()
+      .then((n) => n.chainId);
     this._nonce = await this._forwarder.getNonce(this._from);
 
     return {
@@ -105,11 +101,8 @@ class RequestSigner {
     try {
       const signData = await this._createForwarderData();
       this.signature = await this._signer.provider.send(
-        'eth_signTypedData_v4',
-        [
-          this._from,
-          JSON.stringify(signData),
-        ],
+        "eth_signTypedData_v4",
+        [this._from, JSON.stringify(signData)]
       );
     } catch (err) {
       console.error(err);
@@ -121,27 +114,16 @@ export default function useSendTransaction() {
   const getProvider = async () => {
     if (!window.ethereum) {
       throw new Error(`User wallet not found`);
-    };
+    }
 
     await window.ethereum.enable();
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const userNetwork = await provider.getNetwork();
-
-    if (userNetwork.chainId !== 5) {
-      throw new Error(`Please switch to Goerli for signing`);
-    }
 
     return provider;
   };
 
   const signRequest = async (payload) => {
-    const {
-      from,
-      to,
-      contract,
-      functionName,
-      functionPayload,
-    } = payload;
+    const { from, to, contract, functionName, functionPayload } = payload;
 
     const provider = await getProvider();
     const requestSigner = new RequestSigner({
@@ -161,13 +143,10 @@ export default function useSendTransaction() {
   };
 
   const sendToRelayer = async ({ request, signature }) => {
-    const response = await axios.post(
-      process.env.REACT_APP_WEBHOOK_URL,
-      {
-        request,
-        signature,
-      },
-    );
+    const response = await axios.post(process.env.REACT_APP_WEBHOOK_URL, {
+      request,
+      signature,
+    });
     const transaction = JSON.parse(response.result);
     return transaction;
   };

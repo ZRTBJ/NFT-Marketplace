@@ -18,7 +18,7 @@ import {
 import { updateRoyaltySplitter } from "services/collection/collectionService";
 
 import axios from "axios";
-import Config from "config";
+import Config from "config/config";
 import { getNotificationData } from "Slice/notificationSlice";
 import { getFunctionStatus } from "services/websocketFunction/webSocketFunctionService";
 import { getAsset } from "services/notification/notificationService";

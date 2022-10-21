@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { DebounceInput } from "react-debounce-input";
 import { getProjectCategory } from "services/project/projectService";
 import Tooltip from "components/Tooltip";
+import { NETWORKS } from "config/networks";
 
 export default function Outline({
   // logo
@@ -474,7 +475,7 @@ export default function Outline({
             className="h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3"
           >
             <option value={blockchainCategory} defaultValue>
-              Ethereum
+              {NETWORKS?.[Number(blockchainCategory)].networkName}
             </option>
             {/* {blockchainCategoryList.map((e) => (
             <option key={e.id} value={e.id}>

@@ -13,7 +13,7 @@ import {
   saveProductNFT,
   updateProductNFT,
 } from "services/nft/nftService";
-import Config from "config";
+import Config from "config/config";
 import { getNotificationData } from "Slice/notificationSlice";
 import { getFunctionStatus } from "services/websocketFunction/webSocketFunctionService";
 import SuccessModal from "components/modalDialog/SuccessModal";

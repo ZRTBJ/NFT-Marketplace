@@ -22,7 +22,7 @@ import {
 import { useHistory } from "react-router-dom";
 import { getFunctionStatus } from "services/websocketFunction/webSocketFunctionService";
 import { getNotificationData } from "Slice/notificationSlice";
-import Config from "config";
+import Config from "config/config";
 
 export default function MintNFT(props) {
   const dispatch = useDispatch();
