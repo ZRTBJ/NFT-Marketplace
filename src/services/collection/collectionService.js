@@ -70,11 +70,12 @@ export async function getCollections(
   projectId,
   page,
   limit,
-  keyword = ""
+  keyword = "",
+  order_by = ""
 ) {
   return await client(
     "GET",
-    `/collection?list_type=${listType}&project_id=${projectId}&page=${page}&limit=${limit}&keyword=${keyword}`
+    `/collection?list_type=${listType}&project_id=${projectId}&page=${page}&limit=${limit}&keyword=${keyword}&order_by=${order_by}`
   );
 }
 export async function getUserCollections(payload) {

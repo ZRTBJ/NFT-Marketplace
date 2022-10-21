@@ -34,6 +34,7 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { walletAddressTruncate } from "util/walletAddressTruncate";
 import LeavingSite from "components/modalDialog/LeavingSite";
+import CollectionTab from "components/DaoDetailsTab/CollectionTab";
 
 export default function ProjectDetails(props) {
   const dispatch = useDispatch();
@@ -686,6 +687,27 @@ export default function ProjectDetails(props) {
                     Product NFT
                   </button>
                 </li>
+                <li
+                  className="mr-2"
+                  role="presentation"
+                  onClick={() => setSelectedTab(3)}
+                >
+                  <button
+                    className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${
+                      selectedTab === 3
+                        ? "border-b-2 border-primary-900 text-primary-900"
+                        : "border-transparent text-textSubtle"
+                    } hover:text-primary-900`}
+                    id="dashboard-tab"
+                    data-tabs-target="#dashboard"
+                    type="button"
+                    role="tab"
+                    aria-controls="dashboard"
+                    aria-selected="false"
+                  >
+                    Collections
+                  </button>
+                </li>
                 {/* <li
                   className=""
                   role="presentation"
@@ -951,6 +973,12 @@ export default function ProjectDetails(props) {
                     })}
                 </section>
               )}
+
+              {/* collection tab start */}
+              {selectedTab === 3 && (
+                <CollectionTab projectOwner={project?.is_owner}></CollectionTab>
+              )}
+              {/* collection tab end */}
 
               {/* TAB 3 */}
               {/* {selectedTab === 3 && (
