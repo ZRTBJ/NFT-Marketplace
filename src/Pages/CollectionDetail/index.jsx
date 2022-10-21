@@ -130,6 +130,7 @@ const CollectionDetail = () => {
   const [balanceLoading, setBalanceLoading] = useState(false);
   const [newWorth, setNetWorth] = useState({
     balance: 0,
+    currency: "",
     balanceUSD: 0,
   });
 
@@ -153,10 +154,10 @@ const CollectionDetail = () => {
     getNetWorth(collectionId).then((resp) => {
       if (resp.code === 0) {
         setBalanceLoading(false);
-        setNetWorth({ balance: resp.balance, balanceUSD: resp.balance_usd });
+        setNetWorth({ balance: resp.balance, currency: resp.currency,balanceUSD: resp.balance_usd });
       } else {
         setBalanceLoading(false);
-        setNetWorth({ balance: 0, balanceUSD: 0 });
+        setNetWorth({ balance: 0,currency: "", balanceUSD: 0 });
       }
     });
   };
@@ -650,7 +651,7 @@ const CollectionDetail = () => {
                       <img
                         key={`member-img-${index}`}
                         className="rounded-full w-9 h-9 -ml-1 border-2 border-white"
-                        src={img?.path ? img.path : avatar}
+                        src={img?.avatar ? img.avatar : avatar}
                         alt=""
                       />
                     )}
@@ -674,7 +675,7 @@ const CollectionDetail = () => {
                   }'}`}
               ></i>
               <p className=" text-sm text-textSubtle ">Net Worth</p>
-              <h4>{newWorth?.balance} ETH</h4>
+              <h4>{newWorth?.balance} {newWorth?.currency}</h4>
               <p className="text-sm text-textSubtle">$ {newWorth.balanceUSD?.toFixed(2)}</p>
             </div>
             <div className="mt-6 flex items-center">
