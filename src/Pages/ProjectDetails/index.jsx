@@ -602,14 +602,13 @@ export default function ProjectDetails(props) {
                   <div className="bg-primary-900 md:mt-4 md:ml-3 bg-opacity-10 rounded-md p-3 px-5 relative md:w-56">
                     <i
                       onClick={getProjectNetWorth}
-                      className={`fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3 ${
-                        balanceLoading ? "fa-spin" : ""
-                      } cursor-pointer`}
+                      className={`fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3 ${balanceLoading ? "fa-spin" : ""
+                        } cursor-pointer`}
                     ></i>
                     <p className=" text-sm text-textSubtle ">Net Worth</p>
-                    <h4>{newWorth?.balance} ETH</h4>
+                    <h4>{newWorth?.balance}</h4>
                     <p className="text-sm text-textSubtle">
-                      ${newWorth.balanceUSD}
+                      $ {newWorth.balanceUSD.toFixed(2)}
                     </p>
                   </div>
                 ) : null}

@@ -611,7 +611,7 @@ const Profile = () => {
                 Total Earned Amount
               </div>
               <div className="font-black text-[28px]  md:mt-[8px]">
-                ${royaltyEarned.total_earn}
+                $ {royaltyEarned.total_earn}
               </div>
               <div className=" md:mt-[8px] flex flex-wrap align-center">
                 <div className="bg-success-1 h-[26px] w-[26px]  rounded-full">
@@ -634,7 +634,7 @@ const Profile = () => {
                   Total Royalties:
                 </span>
                 <span className="text-txtblack font-black">
-                  ${royaltiesList?.length > 0 ? totalRoyality : `0`}
+                  ${royaltiesList?.length > 0 ? totalRoyality.toFixed(3) : `0`}
                 </span>
               </div>
               {royaltiesList?.length > 0 && (
@@ -713,15 +713,14 @@ const Profile = () => {
                           <td className="py-4 px-5 font-black ">
                             {r.collection_name}
                           </td>
-                          <td className="py-4 px-5">{r.royalty_percent}</td>
+                          <td className="py-4 px-5">{r.royalty_percent} %</td>
                           <td
-                            className={`py-4 px-5  ${
-                              r.is_owner ? "text-info-1" : " text-success-1"
-                            }`}
+                            className={`py-4 px-5  ${r.is_owner ? "text-info-1" : " text-success-1"
+                              }`}
                           >
                             {r.is_owner ? "Owner" : "Member"}
                           </td>
-                          <td className="py-4 px-5">${r.earnable_amount}</td>
+                          <td className="py-4 px-5">${r.earnable_amount.toFixed(3)}</td>
                           <td className="py-4 px-5">
                             {r.isLoading ? (
                               <div role="status" className="">
