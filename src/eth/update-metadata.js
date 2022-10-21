@@ -11,16 +11,16 @@ async function sendMetaTx(collection, provider, signer, nftInfo) {
   const forwarder = createInstance(provider);
   try {
     const from = await signer.getAddress();
-    const tokenID = 3;
-    const tokenURI = "string-tokenuri";
-    const isFrozen = true;
+    // const tokenID = 3;
+    // const tokenURI = "string-tokenuri";
+    // const isFrozen = true;
     const data = collection.interface.encodeFunctionData("updateTokenUri", [
-      tokenID,
-      tokenURI,
-      isFrozen,
-      // nftInfo.token_id,
-      // nftInfo.metadata_url,
-      // nftInfo.did_refreshed,
+      // tokenID,
+      // tokenURI,
+      // isFrozen,
+      nftInfo.token_id,
+      nftInfo.metadata_url,
+      nftInfo.did_refreshed,
     ]);
     const to = collection.address;
 
@@ -29,6 +29,7 @@ async function sendMetaTx(collection, provider, signer, nftInfo) {
       from,
       data,
     });
+    console.log(request);
 
     return fetch(url, {
       method: "POST",
@@ -42,6 +43,7 @@ export async function updateMetadata(collection, provider, nftInfo) {
   return new Promise(async (resolve, reject) => {
     try {
       let tnxHash = "";
+      let output;
       if (!window.ethereum) {
         reject("User wallet not found");
       }
@@ -57,7 +59,9 @@ export async function updateMetadata(collection, provider, nftInfo) {
           tnxHash = JSON.parse(response.result);
         });
         if (tnxHash !== "") {
-          resolve(tnxHash);
+          await provider.waitForTransaction(tnxHash.txHash);
+          output = tnxHash.txHash;
+          resolve(output);
         } else {
           reject("Could not found the Transaction Hash");
         }

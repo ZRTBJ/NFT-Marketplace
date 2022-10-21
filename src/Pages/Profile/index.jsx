@@ -244,10 +244,12 @@ const Profile = () => {
       royalty_uid: royalty.royalty_id,
     };
     let config = {};
+    let hasConfig = false;
     await claimRoyalty(payload)
       .then((res) => {
         if (res.code === 0) {
           config = res.config;
+          hasConfig = true;
         } else {
           setIsLoading(false);
           setErrorModal(true);
@@ -258,25 +260,25 @@ const Profile = () => {
         setIsLoading(false);
         setErrorModal(true);
       });
-    const result = await royaltyClaim(provider, config);
-    if (result) {
-      console.log(result);
-
-      const data = {
-        id: royalty.royalty_id,
-        transaction_hash: result,
-      };
-      await claimRoyaltyWithtnx(data).then((res) => {
-        if (res.function.status === "success") {
-          setRoyaltyData(royalty, "loadingFalse");
-          setRoyaltyData(royalty, "claimButtonDisable");
-          toast.success(`Successfully claimed for  ${royalty.project_name}`);
-        }
-        if (res.function.status === "failed") {
-          setRoyaltyData(royalty, "loadingFalse");
-          toast.error(`Unexpected error, Please try again`);
-        }
-      });
+    if (hasConfig) {
+      const result = await royaltyClaim(provider, config);
+      if (result) {
+        const data = {
+          id: royalty.royalty_id,
+          transaction_hash: result,
+        };
+        await claimRoyaltyWithtnx(data).then((res) => {
+          if (res.function.status === "success") {
+            setRoyaltyData(royalty, "loadingFalse");
+            setRoyaltyData(royalty, "claimButtonDisable");
+            toast.success(`Successfully claimed for  ${royalty.project_name}`);
+          }
+          if (res.function.status === "failed") {
+            setRoyaltyData(royalty, "loadingFalse");
+            toast.error(`Unexpected error, Please try again`);
+          }
+        });
+      }
     }
   }
   async function getNftList() {
@@ -405,56 +407,65 @@ const Profile = () => {
       id: nft.id,
       tokenId: nft.token_id,
     };
+    let config = {};
+    let hasConfigForNft = false;
+
     await refreshNFT(payload)
       .then((res) => {
         if (res.code === 0) {
-          const collection = createCollectionInstance(
-            provider,
-            // res.config.collection_contract_address
-            "0xd39E27742e94b660f17289B4e946adCA388da47C"
-          );
-          updateMetadata(collection, provider, res.config)
-            .then((res) => {
-              const data = {
-                id: nft.id,
-                tokenId: nft.token_id,
-                tnxHash: res.txHash,
-              };
-              refreshNFTWithtnx(data)
-                .then((res) => {
-                  if (res.code === 0) {
-                    localStorage.setItem(
-                      res["function_uuid"],
-                      JSON.stringify(nft)
-                    );
-                    const notificationData = {
-                      projectId: nft.id,
-                      etherscan: "",
-                      function_uuid: res["function_uuid"],
-                      data: "",
-                    };
-
-                    dispatch(getNotificationData(notificationData));
-                  }
-                })
-                .catch((err) => {
-                  setNftErrorModalMessage(err);
-                  setNftErrorModal(true);
-                  setNftData(nft, "loadingFalse");
-                });
-            })
-            .catch((err) => {
-              setNftErrorModalMessage(err);
-              setNftErrorModal(true);
-              setNftData(nft, "loadingFalse");
-            });
+          config = res.config;
+          hasConfigForNft = true;
         } else {
           setNftErrorModalMessage(res.message);
           setNftErrorModal(true);
           setNftData(nft, "loadingFalse");
+          setNftData(nft, "sowRefreshButton");
         }
       })
-      .catch((error) => {});
+      .catch((error) => {
+        setNftErrorModalMessage(
+          "Can not refresh right now,please Try Again later"
+        );
+        setNftErrorModal(true);
+        setNftData(nft, "loadingFalse");
+        setNftData(nft, "sowRefreshButton");
+      });
+    if (hasConfigForNft) {
+      const collection = createCollectionInstance(
+        provider,
+        config.collection_contract_address
+        // "0xd39E27742e94b660f17289B4e946adCA388da47C"
+      );
+      const result = await updateMetadata(collection, provider, config);
+      if (result) {
+        console.log(result);
+        const data = {
+          id: nft.id,
+          tokenId: nft.token_id,
+          tnxHash: result,
+        };
+        await refreshNFTWithtnx(data)
+          .then((res) => {
+            if (res.code === 0) {
+              if (res.function.status === "success") {
+                setNftData(nft, "loadingFalse");
+                setNftData(nft, "hideRefreshButton");
+                toast.success(`Successfully refreshed ${nft.name} NFT`);
+              }
+              if (res.function.status === "failed") {
+                setNftData(nft, "loadingFalse");
+                setNftData(nft, "sowRefreshButton");
+                toast.error(`Unexpected error, Please try again`);
+              }
+            }
+          })
+          .catch((err) => {
+            setNftErrorModalMessage(err);
+            setNftErrorModal(true);
+            setNftData(nft, "loadingFalse");
+          });
+      }
+    }
   }
 
   useEffect(() => {

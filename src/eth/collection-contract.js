@@ -4,7 +4,7 @@ const abi = [
   {
     inputs: [
       {
-        internalType: "address",
+        internalType: "contract MinimalForwarderUpgradeable",
         name: "_minimalForwarder",
         type: "address",
       },
@@ -92,6 +92,25 @@ const abi = [
     anonymous: false,
     inputs: [
       {
+        indexed: true,
+        internalType: "address",
+        name: "previousOwner",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
+    ],
+    name: "OwnershipTransferred",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: false,
         internalType: "string",
         name: "_value",
@@ -111,81 +130,6 @@ const abi = [
     anonymous: false,
     inputs: [],
     name: "PermanentURIGlobal",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
-      },
-      {
-        indexed: true,
-        internalType: "bytes32",
-        name: "previousAdminRole",
-        type: "bytes32",
-      },
-      {
-        indexed: true,
-        internalType: "bytes32",
-        name: "newAdminRole",
-        type: "bytes32",
-      },
-    ],
-    name: "RoleAdminChanged",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "sender",
-        type: "address",
-      },
-    ],
-    name: "RoleGranted",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "sender",
-        type: "address",
-      },
-    ],
-    name: "RoleRevoked",
     type: "event",
   },
   {
@@ -244,19 +188,6 @@ const abi = [
     ],
     name: "Transfer",
     type: "event",
-  },
-  {
-    inputs: [],
-    name: "DEFAULT_ADMIN_ROLE",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
   },
   {
     inputs: [
@@ -354,19 +285,6 @@ const abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "forwarder",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       {
         internalType: "uint256",
@@ -405,19 +323,13 @@ const abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
-      },
-    ],
-    name: "getRoleAdmin",
+    inputs: [],
+    name: "getSalesRevenue",
     outputs: [
       {
-        internalType: "bytes32",
+        internalType: "uint256",
         name: "",
-        type: "bytes32",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -426,125 +338,59 @@ const abi = [
   {
     inputs: [
       {
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
+        internalType: "string",
+        name: "_name",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_symbol",
+        type: "string",
       },
       {
         internalType: "address",
-        name: "account",
+        name: "_creator",
         type: "address",
       },
-    ],
-    name: "grantRole",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
-      },
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "hasRole",
-    outputs: [
       {
         internalType: "bool",
-        name: "",
+        name: "_tokensBurnable",
         type: "bool",
       },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
       {
-        components: [
-          {
-            internalType: "string",
-            name: "name",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "symbol",
-            type: "string",
-          },
-          {
-            internalType: "address",
-            name: "owner",
-            type: "address",
-          },
-          {
-            internalType: "bool",
-            name: "tokensBurnable",
-            type: "bool",
-          },
-          {
-            internalType: "address",
-            name: "tokenCounter",
-            type: "address",
-          },
-        ],
-        internalType: "struct Config.Deployment",
-        name: "deploymentConfig",
-        type: "tuple",
+        internalType: "string",
+        name: "_tokenBaseURI",
+        type: "string",
       },
       {
-        components: [
-          {
-            internalType: "string",
-            name: "baseURI",
-            type: "string",
-          },
-          {
-            internalType: "bool",
-            name: "metadataUpdatable",
-            type: "bool",
-          },
-          {
-            internalType: "bool",
-            name: "tokensTransferable",
-            type: "bool",
-          },
-          {
-            internalType: "bool",
-            name: "isRoyaltiesEnabled",
-            type: "bool",
-          },
-          {
-            internalType: "uint256",
-            name: "royaltiesBps",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "royaltyAddress",
-            type: "address",
-          },
-          {
-            internalType: "uint256",
-            name: "primaryMintPrice",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "treasuryAddress",
-            type: "address",
-          },
-        ],
-        internalType: "struct Config.Runtime",
-        name: "runtimeConfig",
-        type: "tuple",
+        internalType: "bool",
+        name: "_metadataUpdatable",
+        type: "bool",
+      },
+      {
+        internalType: "bool",
+        name: "_tokensTransferable",
+        type: "bool",
+      },
+      {
+        internalType: "bool",
+        name: "_isRoyaltyEnabled",
+        type: "bool",
+      },
+      {
+        internalType: "uint256",
+        name: "_royaltyBips",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "_royaltyReceiver",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_creatorDAO",
+        type: "address",
       },
     ],
     name: "initialize",
@@ -659,6 +505,19 @@ const abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "owner",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
@@ -678,37 +537,8 @@ const abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
-      },
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "renounceRole",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
-      },
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "revokeRole",
+    inputs: [],
+    name: "renounceOwnership",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -853,8 +683,21 @@ const abi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "_primaryMintPrice",
+        type: "uint256",
+      },
+    ],
+    name: "setPrimaryMintPrice",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
-        name: "_royaltySplitter",
+        name: "_royaltyReceiver",
         type: "address",
       },
     ],
@@ -1040,54 +883,12 @@ const abi = [
   {
     inputs: [
       {
-        components: [
-          {
-            internalType: "string",
-            name: "baseURI",
-            type: "string",
-          },
-          {
-            internalType: "bool",
-            name: "metadataUpdatable",
-            type: "bool",
-          },
-          {
-            internalType: "bool",
-            name: "tokensTransferable",
-            type: "bool",
-          },
-          {
-            internalType: "bool",
-            name: "isRoyaltiesEnabled",
-            type: "bool",
-          },
-          {
-            internalType: "uint256",
-            name: "royaltiesBps",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "royaltyAddress",
-            type: "address",
-          },
-          {
-            internalType: "uint256",
-            name: "primaryMintPrice",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "treasuryAddress",
-            type: "address",
-          },
-        ],
-        internalType: "struct Config.Runtime",
-        name: "newConfig",
-        type: "tuple",
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
       },
     ],
-    name: "update",
+    name: "transferOwnership",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
