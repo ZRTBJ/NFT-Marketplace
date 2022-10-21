@@ -675,7 +675,7 @@ const CollectionDetail = () => {
               ></i>
               <p className=" text-sm text-textSubtle ">Net Worth</p>
               <h4>{newWorth?.balance} ETH</h4>
-              <p className="text-sm text-textSubtle">$ {newWorth.balanceUSD.toFixed(2)}</p>
+              <p className="text-sm text-textSubtle">$ {newWorth.balanceUSD?.toFixed(2)}</p>
             </div>
             <div className="mt-6 flex items-center">
               {/* <a className='inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>
