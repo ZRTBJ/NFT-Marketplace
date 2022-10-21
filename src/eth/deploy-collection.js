@@ -1,13 +1,9 @@
 import { ethers } from "ethers";
 import { createInstance } from "./forwarder";
 import { signMetaTxRequest } from "./signer";
-import address from "../deploy.json";
 import { NETWORKS } from "config/networks";
 
 async function sendMetaTx(collection, provider, signer, config, type) {
-  const url = process.env.REACT_APP_WEBHOOK_URL;
-  if (!url) throw new Error(`Missing relayer url`);
-
   const forwarder = createInstance(provider);
   const from = await signer.getAddress();
   let chainId = localStorage.getItem("networkChain");
@@ -15,6 +11,7 @@ async function sendMetaTx(collection, provider, signer, config, type) {
   let masterCopyCollection = NETWORKS[Number(chainId)]?.masterCopyCollection;
   let masterMembershipCollection =
     NETWORKS[Number(chainId)]?.masterMembershipCollection;
+  let webhook = NETWORKS[Number(chainId)]?.webhook;
   const args = {
     deployConfig: {
       name: config?.deploymentConfig?.name,
@@ -38,8 +35,6 @@ async function sendMetaTx(collection, provider, signer, config, type) {
     },
   };
 
-  console.log(args);
-
   const data = collection.interface.encodeFunctionData("createProxyContract", [
     args.deployConfig,
     args.runConfig,
@@ -52,7 +47,7 @@ async function sendMetaTx(collection, provider, signer, config, type) {
     data,
   });
 
-  return fetch(url, {
+  return fetch(webhook, {
     method: "POST",
     body: JSON.stringify(request),
     headers: { "Content-Type": "application/json" },

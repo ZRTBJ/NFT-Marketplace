@@ -67,6 +67,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
         setNetworkId(networkId);
         localStorage.setItem("networkChain", networkId);
         setShowNetworkChanged(true);
+        window.location.reload();
       });
     }
   }, []);
@@ -97,7 +98,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   useEffect(() => {
     getNotificationList();
   }, [projectDeploy]);
-  console.log(process.env.REACT_APP_GOERLI_QUICKNODE_URL);
+
   function getNotificationList() {
     setIsNotificationLoading(true);
     getUserNotifications()

@@ -23,8 +23,10 @@ import { setMemNFTPrice } from "eth/deploy-membershipNFTPrice";
 import { ethers } from "ethers";
 
 const CURRENCY = [
-  { id: 0, value: "eth", label: "ETH", icon: Eth },
-  { id: 1, value: "matic", label: "MATIC", icon: Matic },
+  { id: 5, value: "eth", label: "ETH", icon: Eth },
+  { id: 80001, value: "matic", label: "MATIC", icon: Matic },
+  { id: 1, value: "eth", label: "ETH", icon: Eth },
+  { id: 137, value: "matic", label: "MATIC", icon: Matic },
 ];
 
 const Control = ({ children, ...props }) => {
@@ -56,6 +58,7 @@ const SalesPageModal = ({
   address,
   collectionName = "",
   supply,
+  projectNetwork,
 }) => {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
@@ -83,6 +86,11 @@ const SalesPageModal = ({
     getValues,
     formState: { errors },
   } = useForm();
+
+  useEffect(() => {
+    let detail = CURRENCY.find((value) => value.id === Number(projectNetwork));
+    setSelectedCurrency(detail);
+  }, [projectNetwork]);
 
   // useEffect(() => {
   //   if (collectionType === "membership") {

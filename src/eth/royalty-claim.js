@@ -1,12 +1,10 @@
 import { ethers } from "ethers";
-import address from "deploy.json";
 import { signMetaTxRequest } from "./signer";
 import { createInstance } from "./forwarder";
 import { RoyaltyInstance } from "./royalty-claim-contract";
+import { NETWORKS } from "config/networks";
 
 async function sendMetaTx(provider, signer, config) {
-  const url = process.env.REACT_APP_WEBHOOK_URL;
-  if (!url) throw new Error(`Missing relayer url`);
   try {
     const forwarder = createInstance(provider);
     const deployedAddress = config.royalty_contract_address;
@@ -30,7 +28,10 @@ async function sendMetaTx(provider, signer, config) {
       data,
     });
 
-    return fetch(url, {
+    let chainId = localStorage.getItem("networkChain");
+    let webhook = NETWORKS[Number(chainId)]?.webhook;
+
+    return fetch(webhook, {
       method: "POST",
       body: JSON.stringify(request),
       headers: { "Content-Type": "application/json" },

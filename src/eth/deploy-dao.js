@@ -27,8 +27,6 @@ async function sendMetaTx(
   chainId
 ) {
   console.log(`Sending register meta-tx to set name=${name}`);
-  const url = process.env.REACT_APP_WEBHOOK_URL;
-  if (!url) throw new Error(`Missing relayer url`);
 
   const forwarder = createInstance(provider);
   const from = await signer.getAddress();
@@ -38,6 +36,7 @@ async function sendMetaTx(
   const setupData = await addressGnosisSetup(formData);
   let minimalForwarder = NETWORKS?.[Number(chainId)]?.forwarder;
   let masterCopy = NETWORKS?.[Number(chainId)]?.masterCopyDAO;
+  let webhook = NETWORKS?.[Number(chainId)]?.webhook;
   let args = {
     masterCopy: masterCopy,
     forwarder: minimalForwarder,
@@ -60,7 +59,7 @@ async function sendMetaTx(
     data,
   });
 
-  return fetch(url, {
+  return fetch(webhook, {
     method: "POST",
     body: JSON.stringify(request),
     headers: { "Content-Type": "application/json" },

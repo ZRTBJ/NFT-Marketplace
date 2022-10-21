@@ -154,10 +154,14 @@ const CollectionDetail = () => {
     getNetWorth(collectionId).then((resp) => {
       if (resp.code === 0) {
         setBalanceLoading(false);
-        setNetWorth({ balance: resp.balance, currency: resp.currency,balanceUSD: resp.balance_usd });
+        setNetWorth({
+          balance: resp.balance,
+          currency: resp.currency,
+          balanceUSD: resp.balance_usd,
+        });
       } else {
         setBalanceLoading(false);
-        setNetWorth({ balance: 0,currency: "", balanceUSD: 0 });
+        setNetWorth({ balance: 0, currency: "", balanceUSD: 0 });
       }
     });
   };
@@ -671,12 +675,17 @@ const CollectionDetail = () => {
             <div className="bg-[#E8F5FB] ml-0 md:ml-3 rounded-md p-3 px-5 relative w-56">
               <i
                 onClick={getCollectionNewWorth}
-                className={`cursor-pointer fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3 ${balanceLoading ? "fa-spin" : ""
-                  }'}`}
+                className={`cursor-pointer fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3 ${
+                  balanceLoading ? "fa-spin" : ""
+                }'}`}
               ></i>
               <p className=" text-sm text-textSubtle ">Net Worth</p>
-              <h4>{newWorth?.balance} {newWorth?.currency}</h4>
-              <p className="text-sm text-textSubtle">$ {newWorth.balanceUSD?.toFixed(2)}</p>
+              <h4>
+                {newWorth?.balance} {newWorth?.currency}
+              </h4>
+              <p className="text-sm text-textSubtle">
+                $ {newWorth.balanceUSD?.toFixed(2)}
+              </p>
             </div>
             <div className="mt-6 flex items-center">
               {/* <a className='inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>
@@ -1044,6 +1053,7 @@ const CollectionDetail = () => {
             setShowSuccessModal(true);
           }}
           supply={nftMemSupply}
+          projectNetwork={projectNetwork}
         />
       )}
       {showSuccessModal && (

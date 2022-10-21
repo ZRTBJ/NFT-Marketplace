@@ -3,11 +3,9 @@
 import { ethers } from "ethers";
 import { createInstance } from "./forwarder";
 import { signMetaTxRequest } from "./signer";
+import { NETWORKS } from "config/networks";
 
 async function sendMetaTx(collection, provider, signer, nftInfo) {
-  const url = process.env.REACT_APP_WEBHOOK_URL;
-  if (!url) throw new Error(`Missing relayer url`);
-
   const forwarder = createInstance(provider);
   try {
     const from = await signer.getAddress();
@@ -31,7 +29,10 @@ async function sendMetaTx(collection, provider, signer, nftInfo) {
     });
     console.log(request);
 
-    return fetch(url, {
+    let chainId = localStorage.getItem("networkChain");
+    let webhook = NETWORKS[Number(chainId)]?.webhook;
+
+    return fetch(webhook, {
       method: "POST",
       body: JSON.stringify(request),
       headers: { "Content-Type": "application/json" },
