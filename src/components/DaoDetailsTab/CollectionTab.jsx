@@ -150,18 +150,7 @@ const CollectionTab = (props) => {
                             : "text-txtblack"
                         } hover:bg-slate-50 transition duration-150 ease-in-out`}
                       >
-                        older
-                      </div>
-                    </li>
-                    <li onClick={() => handleSortType("view")}>
-                      <div
-                        className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${
-                          payload.order_by === "view"
-                            ? "text-primary-900"
-                            : "text-txtblack"
-                        } hover:bg-slate-50 transition duration-150 ease-in-out`}
-                      >
-                        view
+                        Older
                       </div>
                     </li>
                   </ul>
@@ -194,17 +183,19 @@ const CollectionTab = (props) => {
                       src={
                         element?.assets?.length > 0
                           ? element.assets.find(
-                              (img) => img["asset_purpose"] === "cover"
+                              (img) => img["asset_purpose"] === "logo"
                             )
                             ? element.assets.find(
-                                (img) => img["asset_purpose"] === "cover"
+                                (img) => img["asset_purpose"] === "logo"
                               ).path
                             : defaultCover
                           : defaultCover
                       }
                       alt="collection cover"
                     />
-                    <h4 className="text-[16px]  flex-1">{element.name}</h4>
+                    <Link className="flex-1" to={`/collection-details/${element.id}`}>
+                      <h4 className="text-[16px]">{element.name}</h4>
+                    </Link>
                     <Link to={`/collection-details/${element.id}`}>
                       <img
                         src={viewSvg}
