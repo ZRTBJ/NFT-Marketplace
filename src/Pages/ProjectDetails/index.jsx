@@ -63,8 +63,6 @@ export default function ProjectDetails(props) {
   const [collectionId, setCollectionId] = useState("");
   const [collectionType, setCollectionType] = useState("");
   const [showTransferFundModal, setShowTransferFundModal] = useState(false);
-  const [showFundTransferSuccess, setShowFundTransferSuccess] = useState(false);
-  const [showFundTransferError, setShowFundTransferError] = useState(false);
   const [fnId, setFnId] = useState("");
   const [balanceLoading, setBalanceLoading] = useState(false);
   const [newWorth, setNetWorth] = useState({
@@ -264,20 +262,12 @@ export default function ProjectDetails(props) {
     );
     if (projectDeployStatus && projectDeployStatus.data) {
       setIsLoading(false);
-      setShowFundTransferSuccess(true);
-
     } else {
     }
   }, [fileUploadNotification]);
 
   return (
     <>
-      {/* {showCreateRANFT && (
-        <CreateRightAttachedNFT
-          show={showCreateRANFT}
-          handleClose={() => setShowCreateRANFT(false)}
-        />
-      )} */}
       {isLoading && <div className="loading"></div>}
       {!isLoading && (
         <div className="mx-4">
@@ -956,27 +946,6 @@ export default function ProjectDetails(props) {
               treasuryAddress={project.treasury_wallet}
               show={showTransferFundModal}
               handleClose={() => setShowTransferFundModal(false)}
-            />
-          )}
-          {showFundTransferSuccess && (
-            <SuccessModal
-              message={"Fund transferred successfully"}
-              buttonText={"Close"}
-              handleClose={() => {
-                setShowFundTransferSuccess(false);
-              }}
-              show={showFundTransferSuccess}
-            />
-          )}
-          {showFundTransferError && (
-            <ErrorModal
-              title={"Fund can not be transfer at this moment"}
-              message={"Please try again later"}
-              buttonText={"Close"}
-              handleClose={() => {
-                setShowFundTransferError(false);
-              }}
-              show={showFundTransferError}
             />
           )}
         </div>
