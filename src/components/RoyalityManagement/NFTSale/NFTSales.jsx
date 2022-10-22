@@ -89,7 +89,7 @@ const NFTSales = ({ items }) => {
                       <img src={Polygon} alt="network" className="ml-2" />
                     </div>
                   </td>
-                  <td className="py-4 px-5">{r.nft_unit}</td>
+                  <td className="py-4 px-5">1</td>
                   <td className={`py-4 px-5`}>
                     {r.user_eoa ? r.user_eoa : "-"}
                   </td>

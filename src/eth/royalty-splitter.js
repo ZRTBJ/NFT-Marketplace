@@ -8,11 +8,11 @@ const abi = [
       {
         internalType: "contract MinimalForwarderUpgradeable",
         name: "_minimalForwarder",
-        type: "address",
-      },
+        type: "address"
+      }
     ],
     stateMutability: "nonpayable",
-    type: "constructor",
+    type: "constructor"
   },
   {
     anonymous: false,
@@ -21,11 +21,11 @@ const abi = [
         indexed: false,
         internalType: "uint8",
         name: "version",
-        type: "uint8",
-      },
+        type: "uint8"
+      }
     ],
     name: "Initialized",
-    type: "event",
+    type: "event"
   },
   {
     anonymous: false,
@@ -34,11 +34,11 @@ const abi = [
         indexed: false,
         internalType: "address",
         name: "newProxy",
-        type: "address",
-      },
+        type: "address"
+      }
     ],
     name: "ProxyCreated",
-    type: "event",
+    type: "event"
   },
   {
     inputs: [
@@ -47,69 +47,69 @@ const abi = [
           {
             internalType: "address[]",
             name: "receivers",
-            type: "address[]",
+            type: "address[]"
           },
           {
             internalType: "uint256[]",
             name: "shares",
-            type: "uint256[]",
+            type: "uint256[]"
           },
           {
             internalType: "address payable",
             name: "collection",
-            type: "address",
+            type: "address"
           },
           {
             internalType: "address",
             name: "masterCopy",
-            type: "address",
+            type: "address"
           },
           {
             internalType: "address",
             name: "creator",
-            type: "address",
+            type: "address"
           },
           {
             internalType: "address",
             name: "forwarder",
-            type: "address",
-          },
+            type: "address"
+          }
         ],
         internalType: "struct Config.PaymentSplitter",
         name: "_config",
-        type: "tuple",
-      },
+        type: "tuple"
+      }
     ],
     name: "createProxyContract",
     outputs: [
       {
         internalType: "address",
         name: "",
-        type: "address",
-      },
+        type: "address"
+      }
     ],
     stateMutability: "nonpayable",
-    type: "function",
+    type: "function"
   },
   {
     inputs: [
       {
         internalType: "address",
         name: "forwarder",
-        type: "address",
-      },
+        type: "address"
+      }
     ],
     name: "isTrustedForwarder",
     outputs: [
       {
         internalType: "bool",
         name: "",
-        type: "bool",
-      },
+        type: "bool"
+      }
     ],
     stateMutability: "view",
-    type: "function",
-  },
+    type: "function"
+  }
 ];
 
 export function createInstance(provider) {
