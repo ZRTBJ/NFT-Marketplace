@@ -22,13 +22,7 @@ const WaitingModal = ({ handleClose, show }) => {
           Your transaction is in progress
         </div>
         <Lottie options={defaultOptions} height={305} width={305} />
-        <p className="mt-4 mb-6">it might take a time, please wait</p>
-        <button
-          className="w-full font-bold text-[16px] h-[44px] bg-primary-50 text-primary-900 "
-          onClick={handleClose}
-        >
-          Cancel
-        </button>
+        <p className="mt-4 mb-6">it might take a time, please wait and don't close the popup</p>
       </div>
     </Modal>
   );
