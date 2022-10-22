@@ -1,7 +1,7 @@
 // 0x7A18eD040cC4E4f2774658651beDaC0A96ba0cb3
 
 import { ethers } from "ethers";
-import { createInstance } from "./forwarder";
+import { createInstance } from "./../abis/forwarder";
 import { signMetaTxRequest } from "./signer";
 import { NETWORKS } from "config/networks";
 
@@ -9,13 +9,7 @@ async function sendMetaTx(collection, provider, signer, nftInfo) {
   const forwarder = createInstance(provider);
   try {
     const from = await signer.getAddress();
-    // const tokenID = 3;
-    // const tokenURI = "string-tokenuri";
-    // const isFrozen = true;
     const data = collection.interface.encodeFunctionData("updateTokenUri", [
-      // tokenID,
-      // tokenURI,
-      // isFrozen,
       nftInfo.token_id,
       nftInfo.metadata_url,
       nftInfo.did_refreshed,
@@ -37,7 +31,7 @@ async function sendMetaTx(collection, provider, signer, nftInfo) {
       body: JSON.stringify(request),
       headers: { "Content-Type": "application/json" },
     });
-  } catch (error) {}
+  } catch (error) { }
 }
 
 export async function updateMetadata(collection, provider, nftInfo) {

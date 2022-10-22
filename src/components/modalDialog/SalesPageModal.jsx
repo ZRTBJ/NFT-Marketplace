@@ -6,9 +6,9 @@ import { addDays } from "date-fns";
 import getUnixTime from "date-fns/getUnixTime";
 import { DateRangePicker } from "rsuite";
 import { setSalesPage } from "services/nft/nftService";
-import { setNFTPrice } from "eth/deploy-nftPrice";
-import { createProvider } from "eth/provider";
-import { createMintInstance } from "eth/mint-nft";
+import { setNFTPrice } from "eth/logics/deploy-nftPrice";
+import { createProvider } from "eth/logics/provider";
+import { createMintInstance } from "eth/abis/mint-nft";
 import DropdownCreabo from "components/DropdownCreabo";
 import Matic from "assets/images/polygon.svg";
 import Eth from "assets/images/eth.svg";
@@ -18,8 +18,8 @@ import {
   getExchangeRate,
   getCollectionNFTs,
 } from "services/collection/collectionService";
-import { createMembsrshipMintInstance } from "eth/mint-membershipNFT";
-import { setMemNFTPrice } from "eth/deploy-membershipNFTPrice";
+import { createMembsrshipMintInstance } from "eth/abis/mint-membershipNFT";
+import { setMemNFTPrice } from "eth/logics/deploy-membershipNFTPrice";
 import { ethers } from "ethers";
 
 const CURRENCY = [

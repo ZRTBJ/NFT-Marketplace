@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import axios from "axios";
-import * as Forwarder from "eth/forwarder";
+import * as Forwarder from "eth/abis/forwarder";
 import { NETWORKS } from "config/networks";
 
 class RequestSigner {

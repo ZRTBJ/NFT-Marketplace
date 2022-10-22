@@ -9,11 +9,8 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import DAOCard from "components/DAOCard";
-import NFTCard from "components/NFTCard";
 import styles from "Pages/CreateDAOandNFT/style.module.css";
 import { Navigation } from "swiper";
-import ProfileImage from "assets/images/createDAO/user.svg";
-import NFTSample from "assets/images/createDAO/nft-sample.svg";
 import { getUserProjectListById } from "services/project/projectService";
 import {
   getUserInfo,
@@ -26,19 +23,17 @@ import { getUserCollections } from "services/collection/collectionService";
 import thumbIcon from "assets/images/cover-default.svg";
 import ErrorModal from "components/modalDialog/ErrorModal";
 import { useDispatch, useSelector } from "react-redux";
-import { getNotificationData } from "Slice/notificationSlice";
 import { walletAddressTruncate } from "util/walletAddressTruncate";
 import { getMintedNftListByUserId } from "services/nft/nftService";
 import NFTListCard from "components/NFTListCard";
 import { refreshNFT } from "services/nft/nftService";
-import { royaltyClaim } from "eth/royalty-claim";
-import { updateMetadata } from "eth/update-metadata";
-import { createProvider } from "eth/provider";
-import { createCollectionInstance } from "eth/collection-contract";
+import { royaltyClaim } from "eth/logics/royalty-claim";
+import { updateMetadata } from "eth/logics/update-metadata";
+import { createProvider } from "eth/logics/provider";
+import { createMintInstance } from "eth/abis/mint-nft";
 import { toast } from "react-toastify";
 const Profile = () => {
   const provider = createProvider();
-  const dispatch = useDispatch();
   SwiperCore.use([Autoplay]);
   // User general data start
   const { id } = useParams();
@@ -59,12 +54,7 @@ const Profile = () => {
   const [collectionList, setCollectionList] = useState([]);
   // collection end
   // Royalties start
-  const [royaltiesListSortBy, setRoyaltiesListSortBy] = useState("default");
-  const royaltiesSortByList = [
-    { id: 1, name: "Revenue" },
-    { id: 2, name: "Name" },
-    { id: 3, name: "Percentage" },
-  ];
+  const [setRoyaltiesListSortBy] = useState("default");
   const [royaltiesList, setRoyaltiesList] = useState([]);
   const [royaltyId, setRoyaltyId] = useState("");
   const [errorModal, setErrorModal] = useState(false);
@@ -290,59 +280,6 @@ const Profile = () => {
     await getMintedNftListByUserId(payload)
       .then((e) => {
         if (e.code === 0 && e.data !== null) {
-          // let array = [];
-          // const data1 = {
-          //   id: "ab63a90f-e035-4629-a3bd-ba9ec09b5ea1",
-          //   nft_type: "product",
-          //   name: "1",
-          //   asset: {
-          //     id: "",
-          //     asset_purpose: "",
-          //     name: "",
-          //     asset_type: "",
-          //     path: "https://storage.googleapis.com/apollo_creabo_dev/nft/49946cb4-d2c5-47ae-8ff6-52591dec3338.jpg",
-          //     hash: "",
-          //     thumbnail: "",
-          //   },
-          //   token_id: 63,
-          //   refresh_status: "processing",
-          // };
-          // const data2 = {
-          //   id: "ab63a90f-e035-4629-a3bd-ba9ec09b5ea2",
-          //   nft_type: "product",
-          //   name: "2",
-          //   asset: {
-          //     id: "",
-          //     asset_purpose: "",
-          //     name: "",
-          //     asset_type: "",
-          //     path: "https://storage.googleapis.com/apollo_creabo_dev/nft/49946cb4-d2c5-47ae-8ff6-52591dec3338.jpg",
-          //     hash: "",
-          //     thumbnail: "",
-          //   },
-          //   token_id: 63,
-          //   refresh_status: "processing",
-          // };
-          // const data3 = {
-          //   id: "ab63a90f-e035-4629-a3bd-ba9ec09b5ea3",
-          //   nft_type: "product",
-          //   name: "3",
-          //   asset: {
-          //     id: "",
-          //     asset_purpose: "",
-          //     name: "",
-          //     asset_type: "",
-          //     path: "https://storage.googleapis.com/apollo_creabo_dev/nft/49946cb4-d2c5-47ae-8ff6-52591dec3338.jpg",
-          //     hash: "",
-          //     thumbnail: "",
-          //   },
-          //   token_id: 63,
-          //   refresh_status: "processing",
-          // };
-
-          // array.push(data1);
-          // array.push(data2);
-          // array.push(data3);
           e.data.forEach((element) => {
             element.loading = false;
           });
@@ -431,12 +368,10 @@ const Profile = () => {
         setNftData(nft, "sowRefreshButton");
       });
     if (hasConfigForNft) {
-      const collection = createCollectionInstance(
-        provider,
-        config.collection_contract_address
-        // "0xd39E27742e94b660f17289B4e946adCA388da47C"
-      );
-      const result = await updateMetadata(collection, provider, config);
+      const erc721CollectionContract = createMintInstance(
+        config.collection_contract_address,
+        provider);
+      const result = await updateMetadata(erc721CollectionContract, provider, config);
       if (result) {
         console.log(result);
         const data = {
@@ -594,11 +529,10 @@ const Profile = () => {
                                 rel="noreferrer"
                               >
                                 <i
-                                  className={`fa-brands fa-${
-                                    socialLinks.find(
-                                      (x) => x.title === snc.title
-                                    ).icon
-                                  } text-[20px] gradient-text text-white-shade-900 mt-1`}
+                                  className={`fa-brands fa-${socialLinks.find(
+                                    (x) => x.title === snc.title
+                                  ).icon
+                                    } text-[20px] gradient-text text-white-shade-900 mt-1`}
                                 ></i>
                               </a>
                             )}
@@ -707,9 +641,8 @@ const Profile = () => {
                       {royaltiesList.map((r, index) => (
                         <tr
                           key={r.index}
-                          className={`${
-                            index < royaltiesList.length - 1 ? "border-b" : ""
-                          } text-left text-txtblack text-[14px]`}
+                          className={`${index < royaltiesList.length - 1 ? "border-b" : ""
+                            } text-left text-txtblack text-[14px]`}
                         >
                           <td className="py-4 px-5">
                             <img
@@ -786,9 +719,8 @@ const Profile = () => {
                   {royaltiesList.map((r, index) => (
                     <div
                       key={index}
-                      className={`my-8 py-7  ${
-                        index < royaltiesList.length - 1 ? "border-b" : ""
-                      }`}
+                      className={`my-8 py-7  ${index < royaltiesList.length - 1 ? "border-b" : ""
+                        }`}
                     >
                       <div className={`flex   items-center mb-8 `}>
                         <div className={"flex  items-center"}>
@@ -844,9 +776,8 @@ const Profile = () => {
                         <div>
                           <div>Role</div>
                           <div
-                            className={`text-centre ${
-                              r.is_owner ? "text-info-1" : " text-success-1"
-                            }`}
+                            className={`text-centre ${r.is_owner ? "text-info-1" : " text-success-1"
+                              }`}
                           >
                             {r.is_owner ? "Owner" : "Member"}
                           </div>
@@ -945,8 +876,8 @@ const Profile = () => {
                               className="rounded-xl h-[211px] md:h-[276px] object-cover w-full"
                               src={
                                 collection &&
-                                collection.assets &&
-                                collection.assets[0]
+                                  collection.assets &&
+                                  collection.assets[0]
                                   ? collection.assets[0].path
                                   : thumbIcon
                               }
@@ -960,9 +891,9 @@ const Profile = () => {
                             </div>
                             <p className="mb-3 text-textSubtle text-[13px]">
                               {collection.description &&
-                              collection.description.length > 70
+                                collection.description.length > 70
                                 ? collection.description.substring(0, 67) +
-                                  "..."
+                                "..."
                                 : collection.description}
                             </p>
 

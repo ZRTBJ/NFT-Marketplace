@@ -1,13 +1,15 @@
 import { ethers } from "ethers";
-import { createInstance } from "./forwarder";
+import { createInstance } from "./../abis/forwarder";
 import { signMetaTxRequest } from "./signer";
 import { NETWORKS } from "config/networks";
 
-async function sendMetaTx(contract, provider, signer, tier) {
+async function sendMetaTx(contract, provider, signer, price) {
   const forwarder = createInstance(provider);
   const from = await signer.getAddress();
 
-  const data = contract.interface.encodeFunctionData("setTiers", [tier]);
+  const data = contract.interface.encodeFunctionData("setPrimaryMintPrice", [
+    ethers.utils.parseUnits(price.toString(), "ether"),
+  ]);
   const to = contract.address;
 
   const request = await signMetaTxRequest(signer.provider, forwarder, {
@@ -15,8 +17,10 @@ async function sendMetaTx(contract, provider, signer, tier) {
     from,
     data,
   });
+
   let chainId = localStorage.getItem("networkChain");
-  let webhook = NETWORKS?.[Number(chainId)]?.webhook;
+  let webhook = NETWORKS[Number(chainId)]?.webhook;
+
   return fetch(webhook, {
     method: "POST",
     body: JSON.stringify(request),
@@ -24,7 +28,7 @@ async function sendMetaTx(contract, provider, signer, tier) {
   });
 }
 
-export async function setMemNFTPrice(collection, provider, tier) {
+export async function setNFTPrice(collection, provider, price) {
   if (!window.ethereum) throw new Error(`User wallet not found`);
 
   await window.ethereum.enable();
@@ -33,7 +37,7 @@ export async function setMemNFTPrice(collection, provider, tier) {
   const signer = userProvider.getSigner();
 
   let output;
-  const result = await sendMetaTx(collection, provider, signer, tier);
+  const result = await sendMetaTx(collection, provider, signer, price);
 
   await result.json().then(async (response) => {
     const tx = JSON.parse(response.result);

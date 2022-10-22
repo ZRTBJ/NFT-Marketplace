@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { createInstance } from "./forwarder";
+import { createInstance } from "./../abis/forwarder";
 import { signMetaTxRequest } from "./signer";
 import { NETWORKS } from "config/networks";
 

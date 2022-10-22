@@ -3,8 +3,6 @@ import {
   getProjectDetailsById,
   projectLike,
   projectBookmark,
-  getBalance,
-  transferFundApi,
   getNewWorth,
 } from "services/project/projectService";
 import { getNftListByProjectId } from "services/nft/nftService";
@@ -23,8 +21,6 @@ import SuccessModal from "components/modalDialog/SuccessModal";
 import DeployingProjectModal from "components/modalDialog/DeployingProjectModal";
 import { getCollections } from "services/collection/collectionService";
 import SalesPageModal from "components/modalDialog/SalesPageModal";
-import TransferFundModal from "components/modalDialog/TransferFundModal";
-import { cryptoConvert } from "services/chainlinkService";
 import { getNotificationData } from "Slice/notificationSlice";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Autoplay } from "swiper";
@@ -61,19 +57,12 @@ export default function ProjectDetails(props) {
   const [selectedTab, setSelectedTab] = useState(1);
   const [membershipCollectionList, setMembershipCollectionList] = useState([]);
   const [productCollectionList, setProductCollectionList] = useState([]);
-  const [rightAttachCollectionList, setRightAttachCollectionList] = useState(
-    []
-  );
-  const [showCreateRANFT, setShowCreateRANFT] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
   const [showSalesPageModal, setShowSalesPageModal] = useState(false);
   const [showSalesSuccessModal, setShowSalesSuccessModal] = useState(false);
   const [collectionId, setCollectionId] = useState("");
   const [collectionType, setCollectionType] = useState("");
   const [showTransferFundModal, setShowTransferFundModal] = useState(false);
-  const [isLoadingBalance, setIsLoadingBalance] = useState(false);
-  const [showFundTransferSuccess, setShowFundTransferSuccess] = useState(false);
-  const [showFundTransferError, setShowFundTransferError] = useState(false);
   const [fnId, setFnId] = useState("");
   const [balanceLoading, setBalanceLoading] = useState(false);
   const [newWorth, setNetWorth] = useState({
@@ -119,10 +108,6 @@ export default function ProjectDetails(props) {
   useEffect(() => {
     getCollectionList();
   }, []);
-
-  // useEffect(() => {
-  //   if (project.project_status === "publishing") handleSmartContract();
-  // }, [project.project_status]);
 
   async function projectDetails(pid) {
     setIsLoading(true);
@@ -246,13 +231,6 @@ export default function ProjectDetails(props) {
     await getCollections("project", projectId, page, limit)
       .then((e) => {
         if (e.code === 0 && e.data !== null) {
-          // if (e.data.length === limit) {
-          //   let pageSize = page + 1;
-          //   setPage(pageSize);
-          //   setHasMore(true);
-          // }
-
-          // const cols = membershipCollectionList.concat(e.data);
           const membershipcoll = e.data.filter(
             (col) => col.type === "membership"
           );
@@ -263,12 +241,6 @@ export default function ProjectDetails(props) {
           const productcoll = e.data.filter((col) => col.type === "product");
           if (productcoll) {
             setProductCollectionList(productcoll);
-          }
-          const rightattachcoll = e.data.filter(
-            (col) => col.type === "right_attach"
-          );
-          if (rightattachcoll) {
-            setRightAttachCollectionList(rightattachcoll);
           }
         }
         setIsLoading(false);
@@ -283,40 +255,6 @@ export default function ProjectDetails(props) {
     return { slicedItems, restSize: members.length - slicedItems.length };
   };
 
-  async function onSubmitData(payload) {
-    payload.projectId = projectId;
-
-    setShowTransferFundModal(false);
-    // setShowFundTransferSuccess(false);
-    // setShowFundTransferError(true);
-    setIsLoading(true);
-    try {
-      await transferFundApi(payload)
-        .then((e) => {
-          console.log(e);
-          if (e.code === 0) {
-            setFnId(e.function_uuid);
-            const notificationData = {
-              projectId: projectId,
-              etherscan: "",
-              function_uuid: e.function_uuid,
-              data: "",
-            };
-            dispatch(getNotificationData(notificationData));
-          } else {
-            setShowFundTransferError(true);
-            setIsLoading(false);
-          }
-        })
-        .catch(() => {
-          setShowFundTransferError(true);
-          setIsLoading(false);
-        });
-    } catch (error) {
-      setShowFundTransferError(true);
-      setIsLoading(false);
-    }
-  }
   useEffect(() => {
     // file upload web socket
     const projectDeployStatus = fileUploadNotification.find(
@@ -324,31 +262,12 @@ export default function ProjectDetails(props) {
     );
     if (projectDeployStatus && projectDeployStatus.data) {
       setIsLoading(false);
-      setShowFundTransferSuccess(true);
-
-      // const data = JSON.parse(projectDeployStatus.data);
-      // if (data.Data["assetId"] && data.Data["assetId"].length > 0) {
-      //   if (!savingNFT && !isNFTSaved) {
-      //     setSavingNFT(true);
-      //     saveNFTDetails(data.Data["assetId"]);
-      //   }
-      // } else {
-      //   setSavingNFT(false);
-      // }
     } else {
-      // setIsLoading(false);
-      // setShowFundTransferError(true);
     }
   }, [fileUploadNotification]);
 
   return (
     <>
-      {/* {showCreateRANFT && (
-        <CreateRightAttachedNFT
-          show={showCreateRANFT}
-          handleClose={() => setShowCreateRANFT(false)}
-        />
-      )} */}
       {isLoading && <div className="loading"></div>}
       {!isLoading && (
         <div className="mx-4">
@@ -429,8 +348,8 @@ export default function ProjectDetails(props) {
                         : "Smart Contract not released"}
                       <i
                         className={`fa-solid fa-copy ml-2 ${project?.contract_address
-                            ? "cursor-pointer"
-                            : "cursor-not-allowed"
+                          ? "cursor-pointer"
+                          : "cursor-not-allowed"
                           }`}
                         disabled={!project?.contract_address}
                         onClick={() =>
@@ -460,7 +379,7 @@ export default function ProjectDetails(props) {
                     <div className="social-icon-button cursor-pointer w-9 h-9 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 md:ml-4">
                       <a
                         href={`${links.find((link) => link.title === "linkFacebook")
-                            .value
+                          .value
                           }`}
                         target="_blank"
                         rel="noreferrer"
@@ -490,7 +409,7 @@ export default function ProjectDetails(props) {
                     <div className="social-icon-button cursor-pointer w-9 h-9 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                       <a
                         href={`${links.find((link) => link.title === "linkTwitter")
-                            .value
+                          .value
                           }`}
                         target="_blank"
                         rel="noreferrer"
@@ -505,7 +424,7 @@ export default function ProjectDetails(props) {
                     <div className="social-icon-button cursor-pointer w-9 h-9 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                       <a
                         href={`${links.find((link) => link.title === "linkGithub")
-                            .value
+                          .value
                           }`}
                         target="_blank"
                         rel="noreferrer"
@@ -520,7 +439,7 @@ export default function ProjectDetails(props) {
                     <div className="social-icon-button cursor-pointer w-9 h-9 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                       <a
                         href={`${links.find((link) => link.title === "customLinks1")
-                            .value
+                          .value
                           }`}
                         target="_blank"
                         rel="noreferrer"
@@ -647,8 +566,8 @@ export default function ProjectDetails(props) {
                 >
                   <button
                     className={`inline-block py-2 md:p-4 md:text-lg rounded-t-lg ${selectedTab === 1
-                        ? "border-b-2 border-primary-900 text-primary-900"
-                        : "border-transparent text-textSubtle"
+                      ? "border-b-2 border-primary-900 text-primary-900"
+                      : "border-transparent text-textSubtle"
                       } hover:text-primary-600`}
                     id="membership_nft"
                     data-tabs-target="#membership_nft"
@@ -667,8 +586,8 @@ export default function ProjectDetails(props) {
                 >
                   <button
                     className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${selectedTab === 2
-                        ? "border-b-2 border-primary-900 text-primary-900"
-                        : "border-transparent text-textSubtle"
+                      ? "border-b-2 border-primary-900 text-primary-900"
+                      : "border-transparent text-textSubtle"
                       } hover:text-primary-900`}
                     id="dashboard-tab"
                     data-tabs-target="#dashboard"
@@ -687,8 +606,8 @@ export default function ProjectDetails(props) {
                 >
                   <button
                     className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${selectedTab === 3
-                        ? "border-b-2 border-primary-900 text-primary-900"
-                        : "border-transparent text-textSubtle"
+                      ? "border-b-2 border-primary-900 text-primary-900"
+                      : "border-transparent text-textSubtle"
                       } hover:text-primary-900`}
                     id="dashboard-tab"
                     data-tabs-target="#dashboard"
@@ -700,27 +619,6 @@ export default function ProjectDetails(props) {
                     Collections
                   </button>
                 </li>
-                {/* <li
-                  className=""
-                  role="presentation"
-                  onClick={() => setSelectedTab(3)}
-                >
-                  <button
-                    className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${
-                      selectedTab === 3
-                        ? "border-b-2 border-primary-900 text-primary-900"
-                        : "border-transparent text-textSubtle"
-                    }  hover:text-primary-900`}
-                    id="settings-tab"
-                    data-tabs-target="#settings"
-                    type="button"
-                    role="tab"
-                    aria-controls="settings"
-                    aria-selected="false"
-                  >
-                    Rights Attached NFT
-                  </button>
-                </li> */}
               </ul>
             </div>
 
@@ -972,180 +870,8 @@ export default function ProjectDetails(props) {
               )}
               {/* collection tab end */}
 
-              {/* TAB 3 */}
-              {/* {selectedTab === 3 && (
-                <>
-                  {(!rightAttachCollectionList ||
-                    rightAttachCollectionList.length < 1) &&
-                    project?.is_owner && (
-                      <section
-                        className="p-4"
-                        id="right-attached"
-                        role="tabpanel"
-                        aria-labelledby="right-attached-tab"
-                      >
-                        <article className=" rounded-xl  gradient-border h-60 flex items-center justify-center p-4 flex-col">
-                          <h1 className="gradient-text  mb-3">
-                            Enable Right Attached NFT
-                          </h1>
-                          <p className="mb-4 gradient-text">
-                            Create your Right attached NFT and share the royalty
-                            fairly with your teams,
-                          </p>
-                          <div
-                            className="inline-block contained-button px-4 py-3  font-black text-sm  font-satoshi-bold rounded cursor-pointer  hover:bg-secondary-800 focus:outline-none focus:ring-0 transition duration-150 ease-in-out cursor-pointer"
-                            onClick={() => setShowCreateRANFT(true)}
-                          >
-                            Enable Now
-                          </div>
-                        </article>
-                      </section>
-                    )}
-                  {rightAttachCollectionList &&
-                    rightAttachCollectionList.length > 0 && (
-                      <section
-                        className="flex flex-wrap mb-6"
-                        id="right-attached"
-                        role="tabpanel"
-                        aria-labelledby="right-attached-tab"
-                      >
-                        {project?.is_owner && (
-                          <div
-                            className="h-[156px] w-[140px] md:h-[276px]  md:w-[276px] rounded-xl  gradient-border bg-opacity-20 flex flex-col items-center justify-center cursor-pointer"
-                            onClick={() => setShowCreateRANFT(true)}
-                          >
-                            <i className="fa-solid fa-circle-plus gradient-text text-2xl mb-2"></i>
-                            <p className="gradient-text text-lg font-black font-satoshi-bold">
-                              Create new
-                            </p>
-                          </div>
-                        )}
-                        {/* Card */}
-              {/* {rightAttachCollectionList &&
-                          rightAttachCollectionList.length > 0 &&
-                          rightAttachCollectionList.map((collection, index) => (
-                            <div
-                              className="md:min-h-[390px] mx-2 md:mr-4 w-[140px]  md:w-[276px]  rounded-x"
-                              key={`nft-collection-membership-${index}`}
-                            >
-                              <Link
-                                to={`/royality-management/${collection.id}`}
-                              >
-                                <img
-                                  className="rounded-xl h-[156px] w-[140px] md:h-[276px] md:w-[276px] object-cover "
-                                  src={
-                                    collection &&
-                                    collection.assets &&
-                                    collection.assets[0]
-                                      ? collection.assets[0].path
-                                      : thumbIcon
-                                  }
-                                  alt=""
-                                />
-                              </Link>
-                              <div className="py-5">
-                                <div className="flex">
-                                  <h2 className="pb-2 text-txtblack break-all md:truncate flex-1 mr-3 m-w-0">
-                                    {collection.name}
-                                  </h2> */}
-              {/* <div className="relative"> */}
-              {/*Hide dropdown menu <button
-                                      type="button"
-                                      onClick={() => {
-                                        const el = document.getElementById(
-                                          `rightattach-option-${index}`
-                                        );
-                                        el.classList.toggle("hidden");
-                                      }}
-                                    >
-                                      {project?.is_owner && (
-                                        <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
-                                      )}
-                                    </button> */}
-              {/* Dropdown menu  */}
-              {/* {project?.is_owner && (
-                                      <div
-                                        id={`rightattach-option-${index}`}
-                                        className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden"
-                                      >
-                                        <ul className="text-sm">
-                                          <li className="border-b border-divide">
-                                            <Link
-                                              to={`/collection-create/?id=${collection?.id}`}
-                                              className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
-                                            >
-                                              Edit Collections
-                                            </Link>
-                                          </li>
-                                        </ul>
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                                <p className="mb-3 text-textSubtle text-[13px]">
-                                  {collection.description &&
-                                  collection.description.length > 70
-                                    ? collection.description.substring(0, 67) +
-                                      "..."
-                                    : collection.description}
-                                </p>
-                                <div className="flex items-center">
-                                  {collection.members &&
-                                    collection.members.length > 0 &&
-                                    truncateArray(
-                                      collection.members
-                                    ).slicedItems.map((member) => (
-                                      <img
-                                        src={
-                                          member.avatar ? member.avatar : avatar
-                                        }
-                                        alt={member.id}
-                                        className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
-                                      />
-                                    ))}
-                                  {collection.members &&
-                                    collection.members.length > 3 && (
-                                      <div className="flex items-center mt-[6px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]">
-                                        <p className="text-[12px] text-[#9A5AFF]">
-                                          +
-                                          {
-                                            truncateArray(collection.members)
-                                              .restSize
-                                          }
-                                        </p>
-                                      </div>
-                                    )}
-                                </div> */}
-              {/* <div className="my-4">
-                                  <a className="inline-block mr-3 bg-primary-900 p-3 text-white  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer hover:bg-opacity-60 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
-                                    Review
-                                  </a>
-                                  {collection.status === 'draft' &&
-                                    project?.is_owner && (
-                                      <a className='inline-block bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>
-                                        Publish
-                                      </a>
-                                    )}
-                                </div> */}
-              {/* </div>
-                            </div> */}
-              {/* ))} */}
-              {/* Create New */}
-              {/* </section>
-                    )}
-                </> */}
-              {/* )} */}
             </div>
           </section>
-          {/* NO DAO */}
-          {/* <article className="rounded-xl bg-danger-900 bg-opacity-40 border border-danger-900 h-60 flex items-center justify-center p-4 flex-col">
-            <h2 className="text-danger-900 mb-4">
-              You haven’t Created DAO yet.
-            </h2>
-            <a className="inline-block bg-danger-900 px-4 py-3 text-white font-black text-sm font-satoshi-bold rounded cursor-pointer hover:bg-opacity-80 focus:outline-none focus:ring-0 transition duration-150 ease-in-out">
-              Create Now
-            </a>
-          </article> */}
           {showDeployModal && (
             <DeployingProjectModal
               show={showDeployModal}
@@ -1216,40 +942,10 @@ export default function ProjectDetails(props) {
             />
           )}
           {showTransferFundModal && (
-            // <TransferFundModal
-            //   show={showTransferFundModal}
-            //   handleClose={() => setShowTransferFundModal(false)}
-            //   onSubmitData={onSubmitData}
-            //   successClose={() => {
-            //     setShowTransferFundModal(false);
-            //     setShowSuccessModal(true);
-            //   }}
-            // />
             <LeavingSite
               treasuryAddress={project.treasury_wallet}
               show={showTransferFundModal}
               handleClose={() => setShowTransferFundModal(false)}
-            />
-          )}
-          {showFundTransferSuccess && (
-            <SuccessModal
-              message={"Fund transferred successfully"}
-              buttonText={"Close"}
-              handleClose={() => {
-                setShowFundTransferSuccess(false);
-              }}
-              show={showFundTransferSuccess}
-            />
-          )}
-          {showFundTransferError && (
-            <ErrorModal
-              title={"Fund can not be transfer at this moment"}
-              message={"Please try again later"}
-              buttonText={"Close"}
-              handleClose={() => {
-                setShowFundTransferError(false);
-              }}
-              show={showFundTransferError}
             />
           )}
         </div>

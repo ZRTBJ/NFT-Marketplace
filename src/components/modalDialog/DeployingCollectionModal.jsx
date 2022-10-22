@@ -20,10 +20,9 @@ import { useHistory } from "react-router-dom";
 import { useAuthState } from "Context";
 import { getNotificationData } from "Slice/notificationSlice";
 import deploySuccessSvg from "assets/images/modal/deploySuccessSvg.svg";
-import { createProvider } from "eth/provider";
-import { createInstance } from "eth/collection-factory";
-import { createCollection } from "eth/deploy-collection";
-import address from "../../deploy.json";
+import { createProvider } from "eth/logics/provider";
+import { createInstance } from "eth/abis/collection-factory";
+import { createCollection } from "eth/logics/deploy-collection";
 import { NETWORKS } from "config/networks";
 
 const DeployingCollectiontModal = ({
