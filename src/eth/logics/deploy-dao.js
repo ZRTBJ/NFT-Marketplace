@@ -1,22 +1,8 @@
 import { ethers } from "ethers";
-import { createInstance } from "./forwarder";
+import { createInstance } from "./../abis/forwarder";
 import { signMetaTxRequest } from "./signer";
-import { createDAOInstance } from "./dao-contract";
 import { addressGnosisSetup } from "services/project/projectService";
-import address from "../deploy.json";
 import { NETWORKS } from "config/networks";
-
-// import { createInstance } from "eth/registry";
-
-// async function sendTx(dao, name) {
-//   console.log(`Sending register tx to set name=${name}`);
-
-//   // add gnosis safe wallet creation logic here
-//   // const safeInfo = await createSafe(from);
-//   // console.log(`Safe will be created with ${safeInfo}`);
-
-//   return dao.cloneContract(name);
-// }
 
 async function sendMetaTx(
   dao,

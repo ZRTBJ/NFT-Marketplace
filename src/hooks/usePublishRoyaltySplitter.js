@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ethers } from "ethers";
 import * as collectionService from "services/collection/collectionService";
-import * as RoyaltySplitter from "eth/royalty-splitter";
+import * as RoyaltySplitter from "eth/abis/royalty-splitter-factory";
 import useSendTransaction from "./useSendTransaction";
-import contractAddresses from "../deploy.json";
 import { NETWORKS } from "config/networks";
 
 export default function usePublishRoyaltySplitter(payload = {}) {
-  const { collection, splitters, onUpdateStatus = () => {} } = payload;
+  const { collection, splitters, onUpdateStatus = () => { } } = payload;
 
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState(1);

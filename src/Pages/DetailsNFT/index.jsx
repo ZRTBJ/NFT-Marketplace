@@ -24,11 +24,11 @@ import NftSuccessModal from "components/modalDialog/NftSuccessModal";
 import { getNotificationData } from "Slice/notificationSlice";
 import ErrorModal from "components/modalDialog/ErrorModal";
 import WalletConnectModal from "components/modalDialog/WalletConnectModal";
-import { createMintNFT } from "eth/deploy-mintnft";
-import { createProvider } from "eth/provider";
-import { createMintInstance } from "eth/mint-nft";
-import { createMembsrshipMintInstance } from "eth/mint-membershipNFT";
-import { createMembershipMintNFT } from "eth/deploy-membershipNFTMint";
+import { createMintNFT } from "eth/logics/deploy-mintnft";
+import { createProvider } from "eth/logics/provider";
+import { createMintInstance } from "eth/abis/mint-nft";
+import { createMembsrshipMintInstance } from "eth/abis/mint-membershipNFT";
+import { createMembershipMintNFT } from "eth/logics/deploy-membershipNFTMint";
 import EmbedNFTModal from "components/modalDialog/EmbedNFTModal";
 
 export default function DetailsNFT(props) {

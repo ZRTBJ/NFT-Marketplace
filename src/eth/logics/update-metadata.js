@@ -1,7 +1,7 @@
 // 0x7A18eD040cC4E4f2774658651beDaC0A96ba0cb3
 
 import { ethers } from "ethers";
-import { createInstance } from "./forwarder";
+import { createInstance } from "./../abis/forwarder";
 import { signMetaTxRequest } from "./signer";
 import { NETWORKS } from "config/networks";
 

@@ -1,5 +1,4 @@
 import { ethers } from "ethers";
-import address from "../deploy.json";
 import { NETWORKS } from "config/networks";
 
 const abi = [

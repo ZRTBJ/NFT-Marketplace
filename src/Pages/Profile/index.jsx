@@ -27,10 +27,10 @@ import { walletAddressTruncate } from "util/walletAddressTruncate";
 import { getMintedNftListByUserId } from "services/nft/nftService";
 import NFTListCard from "components/NFTListCard";
 import { refreshNFT } from "services/nft/nftService";
-import { royaltyClaim } from "eth/royalty-claim";
-import { updateMetadata } from "eth/update-metadata";
-import { createProvider } from "eth/provider";
-import { createMintInstance } from "eth/mint-nft";
+import { royaltyClaim } from "eth/logics/royalty-claim";
+import { updateMetadata } from "eth/logics/update-metadata";
+import { createProvider } from "eth/logics/provider";
+import { createMintInstance } from "eth/abis/mint-nft";
 import { toast } from "react-toastify";
 const Profile = () => {
   const provider = createProvider();

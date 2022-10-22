@@ -6,11 +6,11 @@ import {
   getNftDetails,
   mintProductOrMembershipNft,
 } from "services/nft/nftService";
-import { createMintNFT } from "eth/deploy-mintnft";
-import { createProvider } from "eth/provider";
-import { createMintInstance } from "eth/mint-nft";
-import { createMembsrshipMintInstance } from "eth/mint-membershipNFT";
-import { createMembershipMintNFT } from "eth/deploy-membershipNFTMint";
+import { createMintNFT } from "eth/logics/deploy-mintnft";
+import { createProvider } from "eth/logics/provider";
+import { createMintInstance } from "eth/abis/mint-nft";
+import { createMembsrshipMintInstance } from "eth/abis/mint-membershipNFT";
+import { createMembershipMintNFT } from "eth/logics/deploy-membershipNFTMint";
 
 function EmbedNFT(props) {
   const [isLoading, setIsLoading] = useState(true);

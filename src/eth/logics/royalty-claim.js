@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import { signMetaTxRequest } from "./signer";
-import { createInstance } from "./forwarder";
-import { RoyaltyInstance } from "./royalty-claim-contract";
+import { createInstance } from "./../abis/forwarder";
+import { RoyaltyInstance } from "./../abis/royalty-claim-contract";
 import { NETWORKS } from "config/networks";
 
 async function sendMetaTx(provider, signer, config) {
@@ -36,7 +36,7 @@ async function sendMetaTx(provider, signer, config) {
       body: JSON.stringify(request),
       headers: { "Content-Type": "application/json" },
     });
-  } catch (error) {}
+  } catch (error) { }
 }
 
 export async function royaltyClaim(provider, config) {
