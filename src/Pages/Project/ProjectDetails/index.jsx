@@ -15,12 +15,12 @@ import avatar from "assets/images/dummy-img.svg";
 import { Link } from "react-router-dom";
 
 import { useSelector, useDispatch } from "react-redux";
-import PublishModal from "components/modalDialog/PublishModal";
-import ErrorModal from "components/modalDialog/ErrorModal";
-import SuccessModal from "components/modalDialog/SuccessModal";
-import DeployingProjectModal from "components/modalDialog/DeployingProjectModal";
+import PublishModal from "components/Modals/PublishModal";
+import ErrorModal from "components/Modals/ErrorModal";
+import SuccessModal from "components/Modals/SuccessModal";
+import DeployingProjectModal from "components/Modals/DeployingProjectModal";
 import { getCollections } from "services/collection/collectionService";
-import SalesPageModal from "components/modalDialog/SalesPageModal";
+import SalesPageModal from "components/Modals/SalesPageModal";
 import { getNotificationData } from "Slice/notificationSlice";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Autoplay } from "swiper";
@@ -29,8 +29,8 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { walletAddressTruncate } from "util/walletAddressTruncate";
-import LeavingSite from "components/modalDialog/LeavingSite";
-import CollectionTab from "components/DaoDetailsTab/CollectionTab";
+import LeavingSite from "components/Modals/LeavingSite";
+import CollectionTab from "Pages/Project/ProjectDetails/CollectionTab/CollectionTab";
 
 export default function ProjectDetails(props) {
   const dispatch = useDispatch();

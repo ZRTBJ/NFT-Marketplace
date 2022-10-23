@@ -8,7 +8,7 @@ import opensea from "assets/images/icons/opensea.svg";
 import rarible from "assets/images/icons/rarible.svg";
 import { Link, useParams } from "react-router-dom";
 import { format } from "date-fns";
-import SuccessModal from "components/modalDialog/SuccessModal";
+import SuccessModal from "components/Modals/SuccessModal";
 import { useDispatch, useSelector } from "react-redux";
 import {
   FacebookShareButton,
@@ -18,18 +18,18 @@ import {
 import FB from "assets/images/facebook.svg";
 import twitter from "assets/images/twitter.svg";
 import reddit from "assets/images/reddit.svg";
-import TransactionModal from "components/modalDialog/TransactionModal";
-import WaitingModal from "components/modalDialog/WaitingModal";
-import NftSuccessModal from "components/modalDialog/NftSuccessModal";
+import TransactionModal from "components/Modals/TransactionModal";
+import WaitingModal from "components/Modals/WaitingModal";
+import NftSuccessModal from "components/Modals/NftSuccessModal";
 import { getNotificationData } from "Slice/notificationSlice";
-import ErrorModal from "components/modalDialog/ErrorModal";
-import WalletConnectModal from "components/modalDialog/WalletConnectModal";
+import ErrorModal from "components/Modals/ErrorModal";
+import WalletConnectModal from "components/Modals/WalletConnectModal";
 import { createMintNFT } from "eth/logics/deploy-mintnft";
 import { createProvider } from "eth/logics/provider";
 import { createMintInstance } from "eth/abis/mint-nft";
 import { createMembsrshipMintInstance } from "eth/abis/mint-membershipNFT";
 import { createMembershipMintNFT } from "eth/logics/deploy-membershipNFTMint";
-import EmbedNFTModal from "components/modalDialog/EmbedNFTModal";
+import EmbedNFTModal from "components/Modals/EmbedNFTModal";
 
 export default function DetailsNFT(props) {
   const userinfo = useSelector((state) => state.user.userinfo);
@@ -89,18 +89,18 @@ export default function DetailsNFT(props) {
       const response =
         type === "membership"
           ? await createMembershipMintNFT(
-              membershipMintContract,
-              config.metadataUrl,
-              id,
-              provider,
-              config.price
-            )
+            membershipMintContract,
+            config.metadataUrl,
+            id,
+            provider,
+            config.price
+          )
           : await createMintNFT(
-              mintContract,
-              config.metadataUrl,
-              config.price,
-              provider
-            );
+            mintContract,
+            config.metadataUrl,
+            config.price,
+            provider
+          );
       if (response) {
         setHash(response?.transactionHash);
         let data = {
@@ -253,7 +253,7 @@ export default function DetailsNFT(props) {
           transactionHash={hash}
           collectionName={"Collection1"}
           shareUrl={`${nft?.lnft?.invitation_code}`}
-          // handleNext={handleProceedPayment}
+        // handleNext={handleProceedPayment}
         />
       )}
       {errorMsg && (

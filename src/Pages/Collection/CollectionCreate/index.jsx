@@ -6,8 +6,8 @@ import {
   checkUniqueCollectionName,
   checkUniqueCollectionSymbol,
 } from "services/collection/collectionService";
-import Outline from "components/DraftProjectUpdate/Outline";
-import Confirmation from "components/DraftProjectUpdate/Confirmation";
+import Outline from "components/FormUtility/Outline";
+import Confirmation from "components/FormUtility/Confirmation";
 import { mockCreateProject } from "services/project/projectService";
 import {
   createCollection,
@@ -16,8 +16,8 @@ import {
   deleteAssetsOfCollection,
   updateRoyaltySplitter,
 } from "services/collection/collectionService";
-import ErrorModal from "components/modalDialog/ErrorModal";
-import SuccessModal from "components/modalDialog/SuccessModal";
+import ErrorModal from "components/Modals/ErrorModal";
+import SuccessModal from "components/Modals/SuccessModal";
 import { getProjectCategory } from "services/project/projectService";
 import { useLocation } from "react-router-dom";
 
@@ -385,7 +385,7 @@ export default function CollectionCreate() {
         setCoverPhotoUrl(cover ? cover : "");
         try {
           setWebLinks(JSON.parse(response.links));
-        } catch (e) {}
+        } catch (e) { }
         setProjectCategory(response.category_id);
         setIsTokenTransferable(response.token_transferable);
         setIsMetaDataFreezed(response.updatable);

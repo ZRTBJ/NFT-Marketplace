@@ -1,18 +1,17 @@
-import NotFound from "../Pages/Home/NotFound";
+import NotFound from "Pages/Home/NotFound";
 import Profile from "Pages/User/Profile";
 import ProfileSettings from "Pages/User/ProfileSettings";
 import ProjectCreate from "Pages/Project/ProjectCreate";
 import CollectionCreate from "Pages/Collection/CollectionCreate";
 import projectDetails from "Pages/Project/ProjectDetails";
-import MintNFT from "Pages/MintNNFT";
 import DetailsNFT from "Pages/NFT/DetailsNFT";
 import EmbedNFT from "Pages/NFT/Embed/EmbedNFT";
-import EmbedNFTPreview from "Pages/EmbedNFTPreview";
+import EmbedNFTPreview from "Pages/NFT/Embed/EmbedNFTPreview";
 import CreateDAOandNFT from "Pages/Project/CreateDAOandNFT";
 import MembershipNFT from "Pages/NFT/MembershipNFT";
-import CollectionDetail from "Pages/CollectionDetail";
+import CollectionDetail from "Pages/Collection/CollectionDetail";
 import ProductNFT from "Pages/NFT/ProductNFT";
-import Home from "../Pages/Home/Homepage";
+import Home from "Pages/Home/Homepage";
 import List from "Pages/List";
 const routes = [
   {
@@ -44,11 +43,6 @@ const routes = [
     path: "/collection-details/:collectionId",
     component: CollectionDetail,
     isPrivate: false,
-  },
-  {
-    path: "/:id/mint-nft", //Old feature which directly mint nft (not a lazy mintNFT)
-    component: MintNFT,
-    isPrivate: true,
   },
   {
     path: "/membershipNFT",

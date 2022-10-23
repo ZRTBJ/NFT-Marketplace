@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import WalletConnectModal from "components/modalDialog/WalletConnectModal";
+import WalletConnectModal from "components/Modals/WalletConnectModal";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import {
@@ -57,17 +57,17 @@ function EmbedNFT(props) {
       const response =
         type === "membership"
           ? await createMembershipMintNFT(
-              membershipMintContract,
-              config.metadataUrl,
-              id,
-              provider
-            )
+            membershipMintContract,
+            config.metadataUrl,
+            id,
+            provider
+          )
           : await createMintNFT(
-              mintContract,
-              config.metadataUrl,
-              config.price,
-              provider
-            );
+            mintContract,
+            config.metadataUrl,
+            config.price,
+            provider
+          );
       if (response) {
         let data = {
           hash: response?.transactionHash,
@@ -171,8 +171,8 @@ function EmbedNFT(props) {
               {isMinting
                 ? "Minting NFT..."
                 : userinfo.id
-                ? "Buy Now"
-                : "Connect Wallet"}
+                  ? "Buy Now"
+                  : "Connect Wallet"}
             </button>
           </div>
           <WalletConnectModal

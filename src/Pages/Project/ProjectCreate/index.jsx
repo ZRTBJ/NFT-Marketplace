@@ -1,16 +1,16 @@
 import React, { useState, useCallback, useEffect } from "react";
 import "assets/css/CreateProject/mainView.css";
 import { checkUniqueProjectName } from "services/project/projectService";
-import Outline from "components/DraftProjectUpdate/Outline";
-import Confirmation from "components/DraftProjectUpdate/Confirmation";
+import Outline from "components/FormUtility/Outline";
+import Confirmation from "components/FormUtility/Confirmation";
 import {
   createProject,
   updateProject,
   getProjectDetailsById,
   deleteAssetsOfProject,
 } from "services/project/projectService";
-import ErrorModal from "components/modalDialog/ErrorModal";
-import SuccessModal from "components/modalDialog/SuccessModal";
+import ErrorModal from "components/Modals/ErrorModal";
+import SuccessModal from "components/Modals/SuccessModal";
 import { getProjectCategory } from "services/project/projectService";
 import { useLocation } from "react-router-dom";
 import { NETWORKS } from "config/networks";

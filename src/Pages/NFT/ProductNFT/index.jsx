@@ -2,10 +2,10 @@ import React from "react";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import Tooltip from "components/Tooltip";
-import Modal from "components/Modal";
+import Tooltip from "components/Common/Tooltip";
+import Modal from "components/Common/Modal";
 import { useForm } from "react-hook-form";
-import ErrorModal from "components/modalDialog/ErrorModal";
+import ErrorModal from "components/Modals/ErrorModal";
 import {
   generateUploadkeyGcp,
   getassetDetails,
@@ -16,11 +16,11 @@ import {
 import Config from "config/config";
 import { getNotificationData } from "Slice/notificationSlice";
 import { getFunctionStatus } from "services/websocketFunction/webSocketFunctionService";
-import SuccessModal from "components/modalDialog/SuccessModal";
+import SuccessModal from "components/Modals/SuccessModal";
 import { useHistory } from "react-router-dom";
 import { createProject } from "services/project/projectService";
 import { createCollection } from "services/collection/collectionService";
-import PublishingProductNFT from "components/modalDialog/PublishingProductNFT";
+import PublishingProductNFT from "components/Modals/PublishingProductNFT";
 import { updateRoyaltySplitter } from "services/collection/collectionService";
 
 export default function ProductNFT(props) {
@@ -91,7 +91,7 @@ export default function ProductNFT(props) {
       const query = new URLSearchParams(history.location.search);
       const cid = query.get("collectionId");
       setCollectionId(cid ? cid : "");
-    } catch {}
+    } catch { }
   }, []);
 
   function addProperty() {
@@ -444,7 +444,7 @@ export default function ProductNFT(props) {
             recheckStatus(jobId);
           }
         })
-        .catch((error) => {});
+        .catch((error) => { });
     }, 30000);
   }
 
@@ -522,7 +522,7 @@ export default function ProductNFT(props) {
       if (nftId) {
         nftDetails("product", nftId);
       }
-    } catch {}
+    } catch { }
   }, []);
 
   return (
@@ -553,27 +553,24 @@ export default function ProductNFT(props) {
                     you can use format PNG, GIF, WEBP, MP4 or MP3. Max 100MB.
                   </p>
                   <div
-                    className={`flex justify-center items-center max-w-full  ${
+                    className={`flex justify-center items-center max-w-full  ${nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
+                      "video" ||
                       nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
-                        "video" ||
-                      nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
-                        "movie"
-                        ? ""
-                        : "w-40 h-40"
-                    }`}
+                      "movie"
+                      ? ""
+                      : "w-40 h-40"
+                      }`}
                   >
                     <label
                       htmlFor={`dropzone-file`}
-                      className={`flex flex-col justify-center items-center w-full  ${
+                      className={`flex flex-col justify-center items-center w-full  ${nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
+                        "video" ||
                         nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
-                          "video" ||
-                        nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
-                          "movie"
-                          ? ""
-                          : "h-40"
-                      } ${
-                        nftFile.file ? "" : "bg-white-filled-form"
-                      } rounded-xl  cursor-pointer`}
+                        "movie"
+                        ? ""
+                        : "h-40"
+                        } ${nftFile.file ? "" : "bg-white-filled-form"
+                        } rounded-xl  cursor-pointer`}
                     >
                       <div className="flex flex-col justify-center items-center pt-5 pb-6 relative">
                         {nftFile.file ? (
@@ -581,36 +578,36 @@ export default function ProductNFT(props) {
                             {nftFile.file?.type
                               ?.split("/")[0]
                               ?.toLowerCase() === "image" && (
-                              <img
-                                src={nftFile.path}
-                                alt="nft"
-                                className="rounded-xl  max-w-full w-40 h-40 object-cover"
-                              />
-                            )}
+                                <img
+                                  src={nftFile.path}
+                                  alt="nft"
+                                  className="rounded-xl  max-w-full w-40 h-40 object-cover"
+                                />
+                              )}
                             {nftFile.file?.type
                               ?.split("/")[0]
                               ?.toLowerCase() === "audio" && (
-                              <>
-                                <i
-                                  onClick={() => {
-                                    setAsseteRemoveInUpdateMode(true);
-                                    setnftFile({ file: null, path: "" });
-                                  }}
-                                  className="absolute top-0 text-[18px] cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark"
-                                ></i>
-                                <audio
-                                  ref={audioRef}
-                                  src={nftFile.path}
-                                  controls
-                                  autoPlay={false}
-                                  className="ml-[8rem]"
-                                />
-                              </>
-                            )}
+                                <>
+                                  <i
+                                    onClick={() => {
+                                      setAsseteRemoveInUpdateMode(true);
+                                      setnftFile({ file: null, path: "" });
+                                    }}
+                                    className="absolute top-0 text-[18px] cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark"
+                                  ></i>
+                                  <audio
+                                    ref={audioRef}
+                                    src={nftFile.path}
+                                    controls
+                                    autoPlay={false}
+                                    className="ml-[8rem]"
+                                  />
+                                </>
+                              )}
                             {nftFile.file?.type
                               ?.split("/")[0]
                               ?.toLowerCase() === "video" ||
-                            nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
+                              nftFile.file?.type?.split("/")[0]?.toLowerCase() ===
                               "movie" ? (
                               <>
                                 <i
@@ -680,9 +677,8 @@ export default function ProductNFT(props) {
                     <input
                       id="name"
                       name="name"
-                      className={`debounceInput mt-1 ${
-                        showConfirmation ? "hidden" : ""
-                      }`}
+                      className={`debounceInput mt-1 ${showConfirmation ? "hidden" : ""
+                        }`}
                       {...register("name", {
                         required: "Name is required.",
                       })}
@@ -704,9 +700,8 @@ export default function ProductNFT(props) {
                   <input
                     id="externalLink"
                     name="externalLink"
-                    className={`debounceInput mt-1 ${
-                      showConfirmation ? "hidden" : ""
-                    }`}
+                    className={`debounceInput mt-1 ${showConfirmation ? "hidden" : ""
+                      }`}
                     defaultValue={nft ? nft.external_url : ""}
                     {...register("externalLink")}
                     placeholder="https://"
@@ -755,9 +750,8 @@ export default function ProductNFT(props) {
                       </small>
                     </div>
                     <i
-                      className={`fa-regular fa-square-plus text-2xl text-primary-900 cursor-pointer ${
-                        showConfirmation ? "hidden" : ""
-                      }`}
+                      className={`fa-regular fa-square-plus text-2xl text-primary-900 cursor-pointer ${showConfirmation ? "hidden" : ""
+                        }`}
                       onClick={() => setShowPropertyModal(true)}
                     ></i>
                   </div>
@@ -814,9 +808,8 @@ export default function ProductNFT(props) {
                               defaultValue={property.value}
                             />
                             <i
-                              className={`fa-solid fa-trash cursor-pointer ml-3 text-danger-1/[0.7] ${
-                                showConfirmation ? "hidden" : ""
-                              }`}
+                              className={`fa-solid fa-trash cursor-pointer ml-3 text-danger-1/[0.7] ${showConfirmation ? "hidden" : ""
+                                }`}
                               onClick={() => removeProperty(index)}
                             ></i>
                           </div>
@@ -833,9 +826,8 @@ export default function ProductNFT(props) {
                     <input
                       id="supply"
                       name="supply"
-                      className={`debounceInput mt-1 ${
-                        showConfirmation ? "hidden" : ""
-                      }`}
+                      className={`debounceInput mt-1 ${showConfirmation ? "hidden" : ""
+                        }`}
                       defaultValue={nft ? nft.supply : ""}
                       {...register("supply", {
                         required: "Supply vaue is required.",

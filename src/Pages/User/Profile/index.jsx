@@ -8,7 +8,7 @@ import SwiperCore, { Autoplay } from "swiper";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import DAOCard from "components/DAOCard";
+import DAOCard from "components/Cards/DAOCard";
 import styles from "Pages/Project/CreateDAOandNFT/style.module.css";
 import { Navigation } from "swiper";
 import { getUserProjectListById } from "services/project/projectService";
@@ -18,14 +18,14 @@ import {
   claimRoyalty,
 } from "services/User/userService";
 import { Link, useParams } from "react-router-dom";
-import SuccessModal from "components/modalDialog/SuccessModal";
+import SuccessModal from "components/Modals/SuccessModal";
 import { getUserCollections } from "services/collection/collectionService";
 import thumbIcon from "assets/images/cover-default.svg";
-import ErrorModal from "components/modalDialog/ErrorModal";
+import ErrorModal from "components/Modals/ErrorModal";
 import { useDispatch, useSelector } from "react-redux";
 import { walletAddressTruncate } from "util/walletAddressTruncate";
 import { getMintedNftListByUserId } from "services/nft/nftService";
-import NFTListCard from "components/NFTListCard";
+import NFTListCard from "components/Cards/NFTListCard";
 import { refreshNFT } from "services/nft/nftService";
 import { royaltyClaim } from "eth/logics/royalty-claim";
 import { updateMetadata } from "eth/logics/update-metadata";

@@ -13,30 +13,30 @@ import Cover from "assets/images/cover-default.svg";
 import manImg from "assets/images/image-default.svg";
 import avatar from "assets/images/dummy-img.svg";
 import { Link } from "react-router-dom";
-import PublishModal from "components/modalDialog/PublishModal";
-import SalesPageModal from "components/modalDialog/SalesPageModal";
-import SuccessModal from "components/modalDialog/SuccessModal";
-import DeployingCollectiontModal from "components/modalDialog/DeployingCollectionModal";
-import ErrorModal from "components/modalDialog/ErrorModal";
+import PublishModal from "components/Modals/PublishModal";
+import SalesPageModal from "components/Modals/SalesPageModal";
+import SuccessModal from "components/Modals/SuccessModal";
+import DeployingCollectiontModal from "components/Modals/DeployingCollectionModal";
+import ErrorModal from "components/Modals/ErrorModal";
 import Facebook from "assets/images/facebook.svg";
 import Instagram from "assets/images/instagram.svg";
 import Twitter from "assets/images/twitter.svg";
 import Github from "assets/images/github.svg";
 import Reddit from "assets/images/reddit.svg";
 import ExternalLink from "assets/images/link.svg";
-import TransferNFT from "components/modalDialog/TransferNFT";
+import TransferNFT from "components/Modals/TransferNFT";
 import { getProjectDetailsById } from "services/project/projectService";
 import Eth from "assets/images/network/eth.svg";
 import Polygon from "assets/images/network/polygon.svg";
-import MemberListTable from "components/RoyalityManagement/MemberListTable/MemberListTable";
+import MemberListTable from "./MemberListTable";
 import PlusIcon from "assets/images/icons/plus-circle.svg";
-import NFTSales from "components/RoyalityManagement/NFTSale/NFTSales";
-import ConfirmationModal from "components/modalDialog/ConfirmationModal";
-import ImportWalletModal from "components/modalDialog/ImportWalletModal/ImportWalletModal";
+import NFTSales from "./NFTSale";
+import ConfirmationModal from "components/Modals/ConfirmationModal";
+import ImportWalletModal from "Pages/Collection/CollectionDetail/RoyaltySplitter/ImportWalletModal/ImportWalletModal";
 import { walletAddressTruncate } from "util/walletAddressTruncate";
 import usePublishRoyaltySplitter from "hooks/usePublishRoyaltySplitter";
-import PublishRoyaltyModal from "components/StatusModal/PublishRoyaltyModal";
-import SalesSuccessModal from "components/modalDialog/SalesSuccessModal";
+import PublishRoyaltyModal from "components/Modals/StatusModal/PublishRoyaltyModal";
+import SalesSuccessModal from "components/Modals/SalesSuccessModal";
 import defaultCover from "assets/images/image-default.svg";
 const TABLE_HEADERS = [
   { id: 0, label: "Wallet Address" },
@@ -228,7 +228,7 @@ const CollectionDetail = () => {
                   value: Object.values(url)[2],
                 });
               }
-            } catch {}
+            } catch { }
             setLinks(webLinks);
           }
         }
@@ -273,10 +273,9 @@ const CollectionDetail = () => {
     e.preventDefault();
     setShowOptions(null);
     history.push(
-      `${
-        Collection?.type === "product"
-          ? `/product-nft?collectionId=${collectionId}&nftId=${id}`
-          : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}&nftId=${id}`
+      `${Collection?.type === "product"
+        ? `/product-nft?collectionId=${collectionId}&nftId=${id}`
+        : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}&nftId=${id}`
       }`
     );
   };
@@ -518,11 +517,10 @@ const CollectionDetail = () => {
                     ? walletAddressTruncate(Collection.contract_address)
                     : "Smart Contract not released"}
                   <i
-                    className={`fa-solid fa-copy ml-2 ${
-                      Collection?.contract_address
-                        ? "cursor-pointer"
-                        : "cursor-not-allowed"
-                    }`}
+                    className={`fa-solid fa-copy ml-2 ${Collection?.contract_address
+                      ? "cursor-pointer"
+                      : "cursor-not-allowed"
+                      }`}
                     disabled={!Collection?.contract_address}
                     onClick={() =>
                       copyToClipboard(Collection?.contract_address)
@@ -543,11 +541,11 @@ const CollectionDetail = () => {
                       src={
                         daoInfo?.assets?.length > 0
                           ? daoInfo.assets.find(
-                              (img) => img["asset_purpose"] === "cover"
-                            )
+                            (img) => img["asset_purpose"] === "cover"
+                          )
                             ? daoInfo.assets.find(
-                                (img) => img["asset_purpose"] === "cover"
-                              ).path
+                              (img) => img["asset_purpose"] === "cover"
+                            ).path
                             : defaultCover
                           : defaultCover
                       }
@@ -569,9 +567,8 @@ const CollectionDetail = () => {
                 ?.length > 0 && (
                 <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300">
                   <a
-                    href={`${
-                      Links.find((link) => link.title === "linkFacebook").value
-                    }`}
+                    href={`${Links.find((link) => link.title === "linkFacebook").value
+                      }`}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -582,12 +579,11 @@ const CollectionDetail = () => {
 
             {Links.find((link) => link.title === "linkInsta") &&
               Links.find((link) => link.title === "linkInsta").value?.length >
-                0 && (
+              0 && (
                 <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                   <a
-                    href={`${
-                      Links.find((link) => link.title === "linkInsta").value
-                    }`}
+                    href={`${Links.find((link) => link.title === "linkInsta").value
+                      }`}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -598,12 +594,11 @@ const CollectionDetail = () => {
 
             {Links.find((link) => link.title === "linkTwitter") &&
               Links.find((link) => link.title === "linkTwitter").value?.length >
-                0 && (
+              0 && (
                 <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                   <a
-                    href={`${
-                      Links.find((link) => link.title === "linkTwitter").value
-                    }`}
+                    href={`${Links.find((link) => link.title === "linkTwitter").value
+                      }`}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -614,12 +609,11 @@ const CollectionDetail = () => {
 
             {Links.find((link) => link.title === "linkGitub") &&
               Links.find((link) => link.title === "linkGitub").value?.length >
-                0 && (
+              0 && (
                 <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 ">
                   <a
-                    href={`${
-                      Links.find((link) => link.title === "linkGitub").value
-                    }`}
+                    href={`${Links.find((link) => link.title === "linkGitub").value
+                      }`}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -629,12 +623,11 @@ const CollectionDetail = () => {
               )}
             {Links.find((link) => link.title === "linkReddit") &&
               Links.find((link) => link.title === "linkReddit").value?.length >
-                0 && (
+              0 && (
                 <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 ">
                   <a
-                    href={`${
-                      Links.find((link) => link.title === "linkReddit").value
-                    }`}
+                    href={`${Links.find((link) => link.title === "linkReddit").value
+                      }`}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -648,9 +641,8 @@ const CollectionDetail = () => {
                 ?.length > 0 && (
                 <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 ">
                   <a
-                    href={`${
-                      Links.find((link) => link.title === "customLinks1").value
-                    }`}
+                    href={`${Links.find((link) => link.title === "customLinks1").value
+                      }`}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -703,9 +695,8 @@ const CollectionDetail = () => {
             <div className="bg-[#E8F5FB] ml-0 md:ml-3 rounded-md p-3 px-5 relative w-56">
               <i
                 onClick={getCollectionNewWorth}
-                className={`cursor-pointer fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3 ${
-                  balanceLoading ? "fa-spin" : ""
-                }'}`}
+                className={`cursor-pointer fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3 ${balanceLoading ? "fa-spin" : ""
+                  }'}`}
               ></i>
               <p className=" text-sm text-textSubtle ">Net Worth</p>
               <h4>
@@ -754,10 +745,9 @@ const CollectionDetail = () => {
           <div
             onClick={() =>
               history.push(
-                `${
-                  Collection?.type === "product"
-                    ? `/product-nft?collectionId=${collectionId}`
-                    : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}`
+                `${Collection?.type === "product"
+                  ? `/product-nft?collectionId=${collectionId}`
+                  : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}`
                 }`
               )
             }
@@ -780,11 +770,10 @@ const CollectionDetail = () => {
                 onClick={() => setSelectedTab(1)}
               >
                 <button
-                  className={`inline-block p-4 text-lg rounded-t-lg ${
-                    selectedTab === 1
-                      ? "border-b-2 border-primary-900 text-primary-900"
-                      : "border-transparent text-textSubtle"
-                  } hover:text-primary-600`}
+                  className={`inline-block p-4 text-lg rounded-t-lg ${selectedTab === 1
+                    ? "border-b-2 border-primary-900 text-primary-900"
+                    : "border-transparent text-textSubtle"
+                    } hover:text-primary-600`}
                   id="nft"
                   data-tabs-target="#nft"
                   type="button"
@@ -801,11 +790,10 @@ const CollectionDetail = () => {
                 onClick={() => setSelectedTab(2)}
               >
                 <button
-                  className={`inline-block p-4 text-lg rounded-t-lg ${
-                    selectedTab === 2
-                      ? "border-b-2 border-primary-900 text-primary-900"
-                      : "border-transparent text-textSubtle"
-                  } hover:text-primary-900`}
+                  className={`inline-block p-4 text-lg rounded-t-lg ${selectedTab === 2
+                    ? "border-b-2 border-primary-900 text-primary-900"
+                    : "border-transparent text-textSubtle"
+                    } hover:text-primary-900`}
                   id="dashboard"
                   data-tabs-target="#dashboard"
                   type="button"
@@ -837,7 +825,7 @@ const CollectionDetail = () => {
                             />
                           )}
                           {nft?.asset?.asset_type === "movie" ||
-                          nft?.asset?.asset_type === "video/mp4" ? (
+                            nft?.asset?.asset_type === "video/mp4" ? (
                             <video
                               className="h-[176px] md:h-[276px] w-[150px] md:w-[276px]"
                               controls
@@ -847,7 +835,7 @@ const CollectionDetail = () => {
                             </video>
                           ) : null}
                           {nft?.asset?.asset_type === "audio" ||
-                          nft?.asset?.asset_type === "audio/mpeg" ? (
+                            nft?.asset?.asset_type === "audio/mpeg" ? (
                             <audio
                               src={nft?.asset?.path}
                               controls

@@ -5,7 +5,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setSideBar } from "Slice/userSlice";
 import { useAuthState } from "Context";
-import WalletConnectModal from "components/modalDialog/WalletConnectModal";
+import WalletConnectModal from "components/Modals/WalletConnectModal";
 import { Link } from "react-router-dom";
 import useWebSocket from "react-use-websocket";
 import config from "config/config";
@@ -21,8 +21,8 @@ import bellImage from "assets/images/bell.svg";
 import walletImage from "assets/images/wallet.svg";
 import searchImage from "assets/images/search.svg";
 import Logo from "assets/images/header/logo.svg";
-import AccountChangedModal from "components/modalDialog/AccountChangedModal";
-import NetworkChangedModal from "components/modalDialog/NetworkChangedModal";
+import AccountChangedModal from "components/Modals/AccountChangedModal";
+import NetworkChangedModal from "components/Modals/NetworkChangedModal";
 import { walletAddressTruncate } from "util/walletAddressTruncate";
 
 const Header = ({ handleSidebar, showModal, setShowModal }) => {
@@ -153,7 +153,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     if (loc.protocol === "https:") {
       host = "wss:";
     }
-  } catch {}
+  } catch { }
   const socketUrl = `${host}//${config.WEB_SOKET}/ws`;
 
   const {
@@ -217,7 +217,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
           }
         }, 2000);
       }
-    } catch (err) {}
+    } catch (err) { }
   }
 
   function searchProject(keyword) {
@@ -352,9 +352,8 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
             )}
 
             <ul
-              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${
-                userId ? "" : "sm:py-2"
-              }`}
+              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${userId ? "" : "sm:py-2"
+                }`}
             >
               {userinfo.id && (
                 <>
@@ -566,21 +565,20 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
               onClick={
                 userinfo.id
                   ? (e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      showHideUserPopupWallet();
-                    }
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showHideUserPopupWallet();
+                  }
                   : () => setShowModal(true)
               }
             />
           </div>
         </div>
         <form
-          className={`${
-            showSearchMobile
+          className={`${showSearchMobile
               ? "translate-y-0 opacity-1"
               : "-translate-y-[6pc] opacity-0"
-          } ml-2 duration-500 ease-in-out mr-2`}
+            } ml-2 duration-500 ease-in-out mr-2`}
         >
           <label
             htmlFor="default-search"
