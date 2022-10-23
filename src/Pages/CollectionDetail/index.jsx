@@ -37,7 +37,7 @@ import { walletAddressTruncate } from "util/walletAddressTruncate";
 import usePublishRoyaltySplitter from "hooks/usePublishRoyaltySplitter";
 import PublishRoyaltyModal from "components/StatusModal/PublishRoyaltyModal";
 import SalesSuccessModal from "components/modalDialog/SalesSuccessModal";
-
+import defaultCover from "assets/images/image-default.svg";
 const TABLE_HEADERS = [
   { id: 0, label: "Wallet Address" },
   // { id: 2, label: "Email" },
@@ -85,6 +85,7 @@ const CollectionDetail = () => {
   const [projectID, setProjectID] = useState("");
   const [nftSales, setNFTSales] = useState([]);
   const [nftMemSupply, setNftMemSupply] = useState(0);
+  const [daoInfo, setDaoInfo] = useState({});
 
   // Publish royalty splitter
   const [showPublishRoyaltySpliterModal, setShowPublishRoyaltySpliterModal] =
@@ -194,7 +195,10 @@ const CollectionDetail = () => {
           console.log(resp);
           setProjectID(resp?.collection?.project_uid);
           getProjectDetailsById({ id: resp?.collection?.project_uid }).then(
-            (resp) => setProjectNetwork(resp?.project?.blockchain)
+            (resp) => {
+              setProjectNetwork(resp?.project?.blockchain);
+              setDaoInfo(resp?.project);
+            }
           );
           if (resp?.collection?.royalty_splitter?.id) {
             setRoyalitySpliterId(resp.collection.royalty_splitter.id);
@@ -384,7 +388,7 @@ const CollectionDetail = () => {
       console.error(err);
     }
   };
-  console.log(Collection);
+
   return (
     <div className="mx-4 md:mx-0">
       {ShowPublishModal && (
@@ -527,6 +531,30 @@ const CollectionDetail = () => {
                   <span id="copied-message" className="hidden ml-2">
                     Copied !
                   </span>
+                </p>
+                <p className="my-2 text-textLight text-sm flex items-center">
+                  Connected With :
+                  <Link
+                    className="ml-2 font-bold flex items-center !no-underline"
+                    to={`/project-details/${daoInfo?.id}`}
+                  >
+                    <img
+                      className="h-[24px] w-[24px] rounded-full mr-1"
+                      src={
+                        daoInfo?.assets?.length > 0
+                          ? daoInfo.assets.find(
+                              (img) => img["asset_purpose"] === "cover"
+                            )
+                            ? daoInfo.assets.find(
+                                (img) => img["asset_purpose"] === "cover"
+                              ).path
+                            : defaultCover
+                          : defaultCover
+                      }
+                      alt="collection cover"
+                    />
+                    {daoInfo?.name}
+                  </Link>
                 </p>
               </div>
             </div>

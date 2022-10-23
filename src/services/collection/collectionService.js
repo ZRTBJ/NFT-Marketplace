@@ -102,6 +102,9 @@ export async function connectCollection(ranknftid, collectionId) {
 export async function publishCollection(id, payload) {
   return await client("PUT", `/collection/${id}/publish`, payload, "formdata");
 }
+export async function deleteUnpublishedCollection(id) {
+  return await client("DELETE", `/collection/${id}`);
+}
 
 //Royality Splitters
 export async function getSplitterDetails(id, type = "splitter_id") {
