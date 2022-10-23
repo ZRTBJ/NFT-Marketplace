@@ -55,7 +55,7 @@ export default function NFTListCard({ nft, projectNetwork, refresh }) {
               </div>
             ) : (
               <>
-                {nft.refresh_status === "required" && (
+                {(nft.refresh_status === "required" || nft.refresh_status === "processing") && (
                   <button
                     onClick={() => refreshNft(nft)}
                     className="contained-button mt-4 !px-2 rounded"

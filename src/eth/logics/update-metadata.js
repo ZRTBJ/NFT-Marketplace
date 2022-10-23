@@ -5,16 +5,16 @@ import { createInstance } from "./../abis/forwarder";
 import { signMetaTxRequest } from "./signer";
 import { NETWORKS } from "config/networks";
 
-async function sendMetaTx(collection, provider, signer, nftInfo) {
+async function sendMetaTx(contract, provider, signer, nftInfo) {
   const forwarder = createInstance(provider);
   try {
     const from = await signer.getAddress();
-    const data = collection.interface.encodeFunctionData("updateTokenUri", [
+    const data = contract.interface.encodeFunctionData("updateTokenUri", [
       nftInfo.token_id,
       nftInfo.metadata_url,
-      nftInfo.did_refreshed,
+      true,
     ]);
-    const to = collection.address;
+    const to = contract.address;
 
     const request = await signMetaTxRequest(signer.provider, forwarder, {
       to,

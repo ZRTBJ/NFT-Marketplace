@@ -1,6 +1,6 @@
 import Eth from "assets/images/eth.svg";
 import Matic from "assets/images/polygon.svg";
-import address from "../deploy.json";
+import address from "./deploy.json";
 
 const TESTNET = {
   5: {
