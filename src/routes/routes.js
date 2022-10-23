@@ -1,39 +1,20 @@
-import Login from "../Pages/Login";
-import Dashboard from "../Pages/Dashboard";
-import NotFound from "../Pages/NotFound";
-import Profile from "Pages/Profile";
-import ProfileSettings from "Pages/ProfileSettings";
-import ProfileProjectList from "Pages/ProfileProjectList";
-import ProjectCreate from "Pages/ProjectCreate";
-import CollectionCreate from "Pages/CollectionCreate";
-import DraftProjectUpdate from "Pages/DraftProjectUpdate";
-import ProjectPoll from "Pages/ProjectEditPoll";
-import ProjectEditOutline from "Pages/ProjectEditOutline";
-import ProjectEditTop from "Pages/ProjectEditTop";
-import projectDetails from "Pages/ProjectDetails";
-import AllProject from "Pages/AllProject";
+import NotFound from "../Pages/Home/NotFound";
+import Profile from "Pages/User/Profile";
+import ProfileSettings from "Pages/User/ProfileSettings";
+import ProjectCreate from "Pages/Project/ProjectCreate";
+import CollectionCreate from "Pages/Collection/CollectionCreate";
+import projectDetails from "Pages/Project/ProjectDetails";
 import MintNFT from "Pages/MintNNFT";
-import DetailsNFT from "Pages/DetailsNFT";
-import EmbedNFT from "Pages/EmbedNFT";
+import DetailsNFT from "Pages/NFT/DetailsNFT";
+import EmbedNFT from "Pages/NFT/Embed/EmbedNFT";
 import EmbedNFTPreview from "Pages/EmbedNFTPreview";
-import CreateDAOandNFT from "Pages/CreateDAOandNFT";
-import RoyalityManagement from "Pages/RoyalityManagement";
-import MembershipNFT from "Pages/MembershipNFT";
+import CreateDAOandNFT from "Pages/Project/CreateDAOandNFT";
+import MembershipNFT from "Pages/NFT/MembershipNFT";
 import CollectionDetail from "Pages/CollectionDetail";
-import ProductNFT from "Pages/ProductNFT";
-import Home from "../Pages/Home";
+import ProductNFT from "Pages/NFT/ProductNFT";
+import Home from "../Pages/Home/Homepage";
 import List from "Pages/List";
 const routes = [
-  {
-    path: "/login",
-    component: Login,
-    isPrivate: false,
-  },
-  {
-    path: "/dashboard",
-    component: Dashboard,
-    isPrivate: true,
-  },
   {
     path: "/profile/:id",
     component: Profile,
@@ -45,16 +26,6 @@ const routes = [
     isPrivate: false,
   },
   {
-    path: "/profile-project-list",
-    component: ProfileProjectList,
-    isPrivate: true,
-  },
-  {
-    path: "/project-update/:id",
-    component: DraftProjectUpdate,
-    isPrivate: true,
-  },
-  {
     path: "/project-create/",
     component: ProjectCreate,
     isPrivate: true,
@@ -62,22 +33,6 @@ const routes = [
   {
     path: "/collection-create/",
     component: CollectionCreate,
-    isPrivate: true,
-  },
-
-  {
-    path: "/project-edit/:id/poll",
-    component: ProjectPoll,
-    isPrivate: true,
-  },
-  {
-    path: "/project-edit/:id/outline",
-    component: ProjectEditOutline,
-    isPrivate: true,
-  },
-  {
-    path: "/project-edit/:id/project-top",
-    component: ProjectEditTop,
     isPrivate: true,
   },
   {
@@ -91,12 +46,7 @@ const routes = [
     isPrivate: false,
   },
   {
-    path: "/all-project",
-    component: AllProject,
-    isPrivate: false,
-  },
-  {
-    path: "/:id/mint-nft",
+    path: "/:id/mint-nft", //Old feature which directly mint nft (not a lazy mintNFT)
     component: MintNFT,
     isPrivate: true,
   },
@@ -128,11 +78,6 @@ const routes = [
   {
     path: "/create",
     component: CreateDAOandNFT,
-    isPrivate: true,
-  },
-  {
-    path: "/royality-management/:collectionId",
-    component: RoyalityManagement,
     isPrivate: true,
   },
   {

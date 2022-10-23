@@ -9,7 +9,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import DAOCard from "components/DAOCard";
-import styles from "Pages/CreateDAOandNFT/style.module.css";
+import styles from "Pages/Project/CreateDAOandNFT/style.module.css";
 import { Navigation } from "swiper";
 import { getUserProjectListById } from "services/project/projectService";
 import {

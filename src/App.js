@@ -5,7 +5,6 @@ import routes from "routes/routes.js";
 import { AuthProvider } from "./Context";
 import AppRoute from "components/AppRoute";
 import Header from "components/TopHeader/Header";
-import FooterPage from "./Pages/Footer";
 import Sidebar from "components/Sidebar/Sidebar";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -45,9 +44,8 @@ function App() {
               )}
               {!isEmbedView && (
                 <div
-                  className={`${
-                    showSideBar ? "translate-x-0" : "-translate-x-full"
-                  } block md:hidden mr-4 absolute z-[100] ease-in-out duration-300`}
+                  className={`${showSideBar ? "translate-x-0" : "-translate-x-full"
+                    } block md:hidden mr-4 absolute z-[100] ease-in-out duration-300`}
                 >
                   <Sidebar
                     setShowModal={setShowModal}
@@ -70,7 +68,6 @@ function App() {
               </div>
             </div>
           </main>
-          {/* <FooterPage /> */}
         </AuthProvider>
       </Router>
       <ToastContainer

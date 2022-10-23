@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import SelectTypeCard from "./SelectTypeCard";
 import "assets/css/CreateProject/SelectType.css";
 import userIcon from "assets/images/projectCreate/ico_owners.svg";
-import selectTypeTabData from "Pages/DraftProjectUpdate/projectCreateData";
 
 export default function SelectType(props) {
   const [active, setActive] = useState(selectTypeTabData[0]);
