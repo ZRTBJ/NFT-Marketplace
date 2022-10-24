@@ -8,9 +8,9 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import SwiperCore, { Autoplay } from "swiper";
-import DAOCard from "components/DAOCard";
-import CollectionCard from "components/CollectionCard";
-import NFTListCard from "components/NFTListCard";
+import DAOCard from "components/Cards/DAOCard";
+import CollectionCard from "components/Cards/CollectionCard";
+import NFTListCard from "components/Cards/NFTListCard";
 import Sort from "assets/images/icons/sort.svg";
 import { useLocation } from "react-router-dom";
 import { getCollections } from "services/collection/collectionService";
@@ -198,8 +198,8 @@ function List() {
           {query.get("type") === "collection"
             ? "Collection List"
             : query.get("type") === "dao"
-            ? "DAO List"
-            : "Minted NFTs List"}
+              ? "DAO List"
+              : "Minted NFTs List"}
         </h1>
         <section className="flex mb-6">
           <div className="mr-4 flex-1">
@@ -246,27 +246,24 @@ function List() {
             >
               <li onClick={() => handleSortType("newer")}>
                 <div
-                  className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${
-                    sortType === "newer" ? "text-primary-900" : "text-txtblack"
-                  } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                  className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${sortType === "newer" ? "text-primary-900" : "text-txtblack"
+                    } hover:bg-slate-50 transition duration-150 ease-in-out`}
                 >
                   Newer
                 </div>
               </li>
               <li onClick={() => handleSortType("older")}>
                 <div
-                  className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${
-                    sortType === "older" ? "text-primary-900" : "text-txtblack"
-                  } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                  className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${sortType === "older" ? "text-primary-900" : "text-txtblack"
+                    } hover:bg-slate-50 transition duration-150 ease-in-out`}
                 >
                   older
                 </div>
               </li>
               <li onClick={() => handleSortType("view")}>
                 <div
-                  className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${
-                    sortType === "view" ? "text-primary-900" : "text-txtblack"
-                  } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                  className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${sortType === "view" ? "text-primary-900" : "text-txtblack"
+                    } hover:bg-slate-50 transition duration-150 ease-in-out`}
                 >
                   view
                 </div>
@@ -295,15 +292,15 @@ function List() {
             <section className="flex flex-wrap items-start  space-x-4 justify-center md:justify-start">
               {isSearching
                 ? searchList.map((item, index) => (
-                    <div key={item.id}>
-                      <CollectionCard key={index} collection={item} />
-                    </div>
-                  ))
+                  <div key={item.id}>
+                    <CollectionCard key={index} collection={item} />
+                  </div>
+                ))
                 : projectList.map((item, index) => (
-                    <div key={item.id}>
-                      <CollectionCard key={item.id} collection={item} />
-                    </div>
-                  ))}
+                  <div key={item.id}>
+                    <CollectionCard key={item.id} collection={item} />
+                  </div>
+                ))}
             </section>
           )}
 
@@ -311,15 +308,15 @@ function List() {
             <section className="flex flex-wrap items-center  justify-center md:justify-start">
               {isSearching
                 ? searchList.map((item, index) => (
-                    <div key={item.id}>
-                      <DAOCard item={item} key={item.id} />
-                    </div>
-                  ))
+                  <div key={item.id}>
+                    <DAOCard item={item} key={item.id} />
+                  </div>
+                ))
                 : projectList.map((item, index) => (
-                    <div key={item.id}>
-                      <DAOCard item={item} key={item.id} />
-                    </div>
-                  ))}
+                  <div key={item.id}>
+                    <DAOCard item={item} key={item.id} />
+                  </div>
+                ))}
             </section>
           )}
 
@@ -327,15 +324,15 @@ function List() {
             <section className="flex flex-wrap items-center space-x-4 justify-center md:justify-start">
               {isSearching
                 ? searchList.map((item, index) => (
-                    <div key={item.id}>
-                      <NFTListCard nft={item} projectWork="ethereum" />
-                    </div>
-                  ))
+                  <div key={item.id}>
+                    <NFTListCard nft={item} projectWork="ethereum" />
+                  </div>
+                ))
                 : projectList.map((item, index) => (
-                    <div key={item.id}>
-                      <NFTListCard nft={item} projectWork="ethereum" />
-                    </div>
-                  ))}
+                  <div key={item.id}>
+                    <NFTListCard nft={item} projectWork="ethereum" />
+                  </div>
+                ))}
             </section>
           )}
         </section>
