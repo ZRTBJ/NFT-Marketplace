@@ -2,7 +2,7 @@ import React from "react";
 import { Switch } from "react-router-dom";
 import { Redirect, Route } from "react-router-dom";
 import { useAuthState } from "../Context";
-import Home from "../Pages/Home";
+import Home from "Pages/Home/Homepage";
 
 const AppRoutes = ({ component: Component, path, isPrivate, ...rest }) => {
   const userDetails = useAuthState();
