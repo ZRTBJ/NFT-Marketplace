@@ -13,7 +13,7 @@ import ConfirmationModal from "components/modalDialog/ConfirmationModal";
 import { DebounceInput } from "react-debounce-input";
 import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import Spinner from "components/Common/Spinner";
+import Spinner from "./Spinner";
 
 const CollectionTab = (props) => {
   const { id } = useParams();

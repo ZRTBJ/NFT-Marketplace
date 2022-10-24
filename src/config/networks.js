@@ -86,7 +86,8 @@ const MAINNET = {
   },
 };
 
-
-let NETWORKS = process.env.REACT_APP_ENV === "production" ? MAINNET : TESTNET;
+//TODO: Deploy to firebase, why this NODE_ENV does not work
+// let NETWORKS = process.env.NODE_ENV === "production" ? MAINNET : TESTNET;
+let NETWORKS = TESTNET;
 
 export { NETWORKS };
