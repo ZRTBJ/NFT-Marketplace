@@ -1,0 +1,5 @@
+{
+	// JSHint Default Configuration File (as on JSHint website)
+	// See http://jshint.com/docs/ for more details
+	"eqeqeq": false, // true: Require triple equals (===) for comparison
+}
