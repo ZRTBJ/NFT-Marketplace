@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
-import { signMetaTxRequest } from "../../../eth/utils/signer";
-import { createInstance } from "../../../eth/abis/forwarder";
-import { RoyaltyInstance } from "../../../eth/abis/royalty-claim-contract";
+import { signMetaTxRequest } from "eth/utils/signer";
+import { createInstance } from "eth/abis/forwarder";
+import { RoyaltyInstance } from "eth/abis/royalty-claim-contract";
 import { NETWORKS } from "config/networks";
 
 async function sendMetaTx(provider, signer, config) {

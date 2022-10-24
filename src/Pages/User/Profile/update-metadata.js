@@ -1,8 +1,8 @@
 // 0x7A18eD040cC4E4f2774658651beDaC0A96ba0cb3
 
 import { ethers } from "ethers";
-import { createInstance } from "../../../eth/abis/forwarder";
-import { signMetaTxRequest } from "../../../eth/utils/signer";
+import { createInstance } from "eth/abis/forwarder";
+import { signMetaTxRequest } from "eth/utils/signer";
 import { NETWORKS } from "config/networks";
 
 async function sendMetaTx(contract, provider, signer, nftInfo) {

@@ -1,8 +1,6 @@
 import styles from "./style.module.css";
 import Edit from "assets/images/icons/edit.svg";
 import Trash from "assets/images/icons/trash.svg";
-import Left from "assets/images/icons/chevron-left.svg";
-import Right from "assets/images/icons/chevron-right.svg";
 import { useMemo, useState, useEffect } from "react";
 import MemeberListMobile from "../MemberListMobile/MemberListMobile";
 import ConfirmationModal from "components/Modals/ConfirmationModal";
@@ -176,8 +174,8 @@ const MemberListTable = ({
                 <td className={`py-4 px-5`}>
                   <p
                     className={`text-[13px] bg-opacity-[0.2] py-1 px-2 w-fit rounded-[4px] font-bold ${r.is_owner
-                        ? "text-info-1 bg-[#46A6FF]"
-                        : " text-success-1 bg-[#32E865]"
+                      ? "text-info-1 bg-[#46A6FF]"
+                      : " text-success-1 bg-[#32E865]"
                       }`}
                   >
                     {r.is_owner ? "Owner" : "Contributor"}

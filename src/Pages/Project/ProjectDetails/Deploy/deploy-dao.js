@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
-import { createInstance } from "../../../../eth/abis/forwarder";
-import { signMetaTxRequest } from "../../../../eth/utils/signer";
+import { createInstance } from "eth/abis/forwarder";
+import { signMetaTxRequest } from "eth/utils/signer";
 import { addressGnosisSetup } from "services/project/projectService";
 import { NETWORKS } from "config/networks";
 
