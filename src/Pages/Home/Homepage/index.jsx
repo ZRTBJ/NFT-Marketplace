@@ -14,7 +14,7 @@ import thumbIcon from "assets/images/profile/card.svg";
 import DAOCard from "components/Cards/DAOCard";
 import { getCollections } from "services/collection/collectionService";
 import { Link } from "react-router-dom";
-import InviteModal from "components/Modals/InviteModal";
+import InviteModal from "Pages/Collection/CollectionDetail/RoyaltySplitter/Invite/InviteModal";
 import { getIdbyCode } from "services/nft/nftService";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";

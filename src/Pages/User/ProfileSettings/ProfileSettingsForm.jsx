@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import FileDragAndDrop from "../../../components/FormUtility/FileDragAndDrop";
-import { updateUserInfo } from "../../../services/User/userService";
+import FileDragAndDrop from "components/FormUtility/FileDragAndDrop";
+import { updateUserInfo } from "services/User/userService";
 import { useAuthState } from "Context";
 import { useSelector } from "react-redux";
-import { setUserInfo } from "../../../Slice/userSlice";
+import { setUserInfo } from "Slice/userSlice";
 import { useDispatch } from "react-redux";
-import { getUserInfo } from "../../../services/User/userService";
+import { getUserInfo } from "services/User/userService";
 import deleteIcon from "assets/images/projectCreate/ico_delete01.svg";
-import SuccessModal from "../../../components/Modals/SuccessModal";
-import ErrorModal from "../../../components/Modals/ErrorModal";
+import SuccessModal from "components/Modals/SuccessModal";
+import ErrorModal from "components/Modals/ErrorModal";
 
 const ProfileSettingsForm = () => {
   const dispatch = useDispatch();

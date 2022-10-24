@@ -15,12 +15,11 @@ import {
 } from "services/nft/nftService";
 import Config from "config/config";
 import { getNotificationData } from "Slice/notificationSlice";
-import { getFunctionStatus } from "services/websocketFunction/webSocketFunctionService";
 import SuccessModal from "components/Modals/SuccessModal";
 import { useHistory } from "react-router-dom";
 import { createProject } from "services/project/projectService";
 import { createCollection } from "services/collection/collectionService";
-import PublishingProductNFT from "components/Modals/PublishingProductNFT";
+import PublishingProductNFT from "./PublishingProductNFT";
 import { updateRoyaltySplitter } from "services/collection/collectionService";
 
 export default function ProductNFT(props) {

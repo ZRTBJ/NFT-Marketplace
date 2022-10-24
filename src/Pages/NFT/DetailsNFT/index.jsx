@@ -18,18 +18,17 @@ import {
 import FB from "assets/images/facebook.svg";
 import twitter from "assets/images/twitter.svg";
 import reddit from "assets/images/reddit.svg";
-import TransactionModal from "components/Modals/TransactionModal";
-import WaitingModal from "components/Modals/WaitingModal";
-import NftSuccessModal from "components/Modals/NftSuccessModal";
-import { getNotificationData } from "Slice/notificationSlice";
+import TransactionModal from "Pages/NFT/DetailsNFT/MintNFT/TransactionModal";
+import WaitingModal from "Pages/NFT/DetailsNFT/MintNFT/WaitingModal";
+import NftSuccessModal from "Pages/NFT/DetailsNFT/MintNFT/NftSuccessModal";
 import ErrorModal from "components/Modals/ErrorModal";
-import WalletConnectModal from "components/Modals/WalletConnectModal";
-import { createMintNFT } from "eth/logics/deploy-mintnft";
-import { createProvider } from "eth/logics/provider";
+import WalletConnectModal from "Pages/User/Login/WalletConnectModal";
+import { createMintNFT } from "Pages/NFT/DetailsNFT/MintNFT/deploy-mintnft";
+import { createProvider } from "eth/utils/provider";
 import { createMintInstance } from "eth/abis/mint-nft";
 import { createMembsrshipMintInstance } from "eth/abis/mint-membershipNFT";
-import { createMembershipMintNFT } from "eth/logics/deploy-membershipNFTMint";
-import EmbedNFTModal from "components/Modals/EmbedNFTModal";
+import { createMembershipMintNFT } from "Pages/NFT/DetailsNFT/MintNFT/deploy-membershipNFTMint";
+import EmbedNFTModal from "Pages/NFT/Embed/EmbedNFTModal";
 
 export default function DetailsNFT(props) {
   const userinfo = useSelector((state) => state.user.userinfo);

@@ -1,4 +1,4 @@
-import NotFound from "Pages/Home/NotFound";
+import NotFound from "Pages/NotFound";
 import Profile from "Pages/User/Profile";
 import ProfileSettings from "Pages/User/ProfileSettings";
 import ProjectCreate from "Pages/Project/ProjectCreate";

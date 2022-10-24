@@ -4,8 +4,8 @@ import { ToastContainer } from "react-toastify";
 import routes from "routes/routes.js";
 import { AuthProvider } from "./Context";
 import AppRoute from "components/AppRoute";
-import Header from "components/TopHeader/Header";
-import Sidebar from "components/Sidebar/Sidebar";
+import Header from "Pages/Common/TopHeader/Header";
+import Sidebar from "Pages/Common/Sidebar/Sidebar";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {

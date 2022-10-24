@@ -7,7 +7,7 @@ import NFTCard from "components/Cards/NFTCard";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper";
 import styles from "./style.module.css";
-import CreateNFTModal from "../../../components/Modals/CreateNFTModal";
+import CreateNFTModal from "./components/CreateNFTModal";
 import { Link } from "react-router-dom";
 import { getUserProjectListById } from "services/project/projectService";
 import { useEffect } from "react";

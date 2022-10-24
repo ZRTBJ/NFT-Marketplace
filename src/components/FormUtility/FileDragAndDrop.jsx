@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { useDropzone } from "react-dropzone";
-import dragSvg from "assets/images/projectCreate/dragSvg.svg";
 
 export default function FileDragAndDrop({
   height,

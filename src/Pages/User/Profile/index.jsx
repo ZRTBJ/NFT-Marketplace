@@ -27,9 +27,9 @@ import { walletAddressTruncate } from "util/walletAddressTruncate";
 import { getMintedNftListByUserId } from "services/nft/nftService";
 import NFTListCard from "components/Cards/NFTListCard";
 import { refreshNFT } from "services/nft/nftService";
-import { royaltyClaim } from "eth/logics/royalty-claim";
-import { updateMetadata } from "eth/logics/update-metadata";
-import { createProvider } from "eth/logics/provider";
+import { royaltyClaim } from "Pages/User/Profile/royalty-claim";
+import { updateMetadata } from "Pages/User/Profile/update-metadata";
+import { createProvider } from "eth/utils/provider";
 import { createMintInstance } from "eth/abis/mint-nft";
 import { toast } from "react-toastify";
 const Profile = () => {

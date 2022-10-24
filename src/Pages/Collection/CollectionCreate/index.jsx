@@ -6,8 +6,8 @@ import {
   checkUniqueCollectionName,
   checkUniqueCollectionSymbol,
 } from "services/collection/collectionService";
-import Outline from "components/FormUtility/Outline";
-import Confirmation from "components/FormUtility/Confirmation";
+import Outline from "Pages/Project/ProjectCreate/Outline";
+import Confirmation from "Pages/Project/ProjectCreate/Confirmation";
 import { mockCreateProject } from "services/project/projectService";
 import {
   createCollection,

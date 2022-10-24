@@ -13,10 +13,10 @@ import Cover from "assets/images/cover-default.svg";
 import manImg from "assets/images/image-default.svg";
 import avatar from "assets/images/dummy-img.svg";
 import { Link } from "react-router-dom";
-import PublishModal from "components/Modals/PublishModal";
-import SalesPageModal from "components/Modals/SalesPageModal";
+import PublishCollectionModal from "./Publish/PublishCollectionModal";
+import SalesPageModal from "Pages/Collection/SaleSetting/SalesPageModal";
 import SuccessModal from "components/Modals/SuccessModal";
-import DeployingCollectiontModal from "components/Modals/DeployingCollectionModal";
+import DeployingCollectiontModal from "Pages/Collection/CollectionDetail/Publish/DeployingCollectionModal";
 import ErrorModal from "components/Modals/ErrorModal";
 import Facebook from "assets/images/facebook.svg";
 import Instagram from "assets/images/instagram.svg";
@@ -24,19 +24,19 @@ import Twitter from "assets/images/twitter.svg";
 import Github from "assets/images/github.svg";
 import Reddit from "assets/images/reddit.svg";
 import ExternalLink from "assets/images/link.svg";
-import TransferNFT from "components/Modals/TransferNFT";
+import TransferNFT from "Pages/NFT/TransferNFT/TransferNFT";
 import { getProjectDetailsById } from "services/project/projectService";
 import Eth from "assets/images/network/eth.svg";
 import Polygon from "assets/images/network/polygon.svg";
-import MemberListTable from "./MemberListTable";
+import MemberListTable from "./RoyaltySplitter/MemberListTable";
 import PlusIcon from "assets/images/icons/plus-circle.svg";
 import NFTSales from "./NFTSale";
 import ConfirmationModal from "components/Modals/ConfirmationModal";
 import ImportWalletModal from "Pages/Collection/CollectionDetail/RoyaltySplitter/ImportWalletModal/ImportWalletModal";
 import { walletAddressTruncate } from "util/walletAddressTruncate";
-import usePublishRoyaltySplitter from "hooks/usePublishRoyaltySplitter";
-import PublishRoyaltyModal from "components/Modals/StatusModal/PublishRoyaltyModal";
-import SalesSuccessModal from "components/Modals/SalesSuccessModal";
+import usePublishRoyaltySplitter from "Pages/Collection/CollectionDetail/RoyaltySplitter/Publish/hooks/usePublishRoyaltySplitter";
+import PublishRoyaltyModal from "Pages/Collection/CollectionDetail/RoyaltySplitter/Publish/PublishRoyaltyModal";
+import SalesSuccessModal from "Pages/Collection/SaleSetting/SalesSuccessModal";
 import defaultCover from "assets/images/image-default.svg";
 const TABLE_HEADERS = [
   { id: 0, label: "Wallet Address" },
@@ -391,7 +391,7 @@ const CollectionDetail = () => {
   return (
     <div className="mx-4 md:mx-0">
       {ShowPublishModal && (
-        <PublishModal
+        <PublishCollectionModal
           show={ShowPublishModal}
           handleClose={() => setShowPublishModal(false)}
           publishProject={handlePublish}
@@ -1081,7 +1081,7 @@ const CollectionDetail = () => {
           }}
         />
       )}
-      <PublishModal
+      <PublishCollectionModal
         show={showPublishRoyaltySpliterConfirmModal}
         handleClose={() => setShowPublishRoyaltySpliterConfirmModal(false)}
         publishProject={handlePublishRoyaltySplitter}

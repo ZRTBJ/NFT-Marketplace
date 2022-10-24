@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import WalletConnectModal from "components/Modals/WalletConnectModal";
+import WalletConnectModal from "Pages/User/Login/WalletConnectModal";
 import { useHistory } from "react-router-dom";
 const HomeNavigateCard = () => {
   const history = useHistory();

@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
-import WalletConnectModal from "components/Modals/WalletConnectModal";
+import WalletConnectModal from "Pages/User/Login/WalletConnectModal";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import {
   getNftDetails,
   mintProductOrMembershipNft,
 } from "services/nft/nftService";
-import { createMintNFT } from "eth/logics/deploy-mintnft";
-import { createProvider } from "eth/logics/provider";
+import { createMintNFT } from "Pages/NFT/DetailsNFT/MintNFT/deploy-mintnft";
+import { createProvider } from "eth/utils/provider";
 import { createMintInstance } from "eth/abis/mint-nft";
 import { createMembsrshipMintInstance } from "eth/abis/mint-membershipNFT";
-import { createMembershipMintNFT } from "eth/logics/deploy-membershipNFTMint";
+import { createMembershipMintNFT } from "Pages/NFT/DetailsNFT/MintNFT/deploy-membershipNFTMint";
 
 function EmbedNFT(props) {
   const [isLoading, setIsLoading] = useState(true);
