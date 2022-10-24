@@ -86,6 +86,7 @@ const MAINNET = {
   },
 };
 
-let NETWORKS = process.env.NODE_ENV === "production" ? MAINNET : TESTNET;
+
+let NETWORKS = process.env.REACT_APP_ENV === "production" ? MAINNET : TESTNET;
 
 export { NETWORKS };
