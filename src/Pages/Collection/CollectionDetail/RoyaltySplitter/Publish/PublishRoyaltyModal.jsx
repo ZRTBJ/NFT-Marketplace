@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import StatusModal from 'components/Modals/InformationModal';
+import StatusModal from 'components/Modals/StatusModal';
 
 const PublishRoyaltyModal = (props) => {
   const {
