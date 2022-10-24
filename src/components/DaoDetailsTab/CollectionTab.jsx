@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import Spinner from "components/common/Spinner";
 import defaultCover from "assets/images/image-default.svg";
 import ReactPaginate from "react-paginate";
 import deleteSvg from "assets/images/projectDetails/delete.svg";
@@ -14,6 +13,7 @@ import ConfirmationModal from "components/modalDialog/ConfirmationModal";
 import { DebounceInput } from "react-debounce-input";
 import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
+import Spinner from "components/Common/Spinner";
 
 const CollectionTab = (props) => {
   const { id } = useParams();
@@ -154,22 +154,20 @@ const CollectionTab = (props) => {
               >
                 <li onClick={() => handleSortType("newer")}>
                   <div
-                    className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${
-                      payload.order_by === "newer"
-                        ? "text-primary-900"
-                        : "text-txtblack"
-                    } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                    className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${payload.order_by === "newer"
+                      ? "text-primary-900"
+                      : "text-txtblack"
+                      } hover:bg-slate-50 transition duration-150 ease-in-out`}
                   >
                     Newer
                   </div>
                 </li>
                 <li onClick={() => handleSortType("older")}>
                   <div
-                    className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${
-                      payload.order_by === "older"
-                        ? "text-primary-900"
-                        : "text-txtblack"
-                    } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                    className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${payload.order_by === "older"
+                      ? "text-primary-900"
+                      : "text-txtblack"
+                      } hover:bg-slate-50 transition duration-150 ease-in-out`}
                   >
                     Older
                   </div>
@@ -227,11 +225,11 @@ const CollectionTab = (props) => {
                       src={
                         element?.assets?.length > 0
                           ? element.assets.find(
-                              (img) => img["asset_purpose"] === "logo"
-                            )
+                            (img) => img["asset_purpose"] === "logo"
+                          )
                             ? element.assets.find(
-                                (img) => img["asset_purpose"] === "logo"
-                              ).path
+                              (img) => img["asset_purpose"] === "logo"
+                            ).path
                             : defaultCover
                           : defaultCover
                       }
