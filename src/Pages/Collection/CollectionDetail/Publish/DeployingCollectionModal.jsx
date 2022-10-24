@@ -1,7 +1,7 @@
 import ico_gas from "assets/images/projectEdit/ico_gas.svg";
 import ico_matic from "assets/images/projectEdit/ico_matic.svg";
 import IconSuccess from "assets/images/modal/success/success_modal_img.svg";
-import Modal from "components/Common/Modal";
+import Modal from "components/Commons/Modal";
 import { Step, Stepper } from "react-form-stepper";
 import { useEffect, useState } from "react";
 import { SendTransactionMetaMask } from "util/metaMaskWallet";

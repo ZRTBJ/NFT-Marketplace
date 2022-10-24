@@ -1,4 +1,4 @@
-import Modal from "../Common/Modal";
+import Modal from "../Commons/Modal";
 import deploySuccessSvg from "assets/images/modal/deploySuccessSvg.svg";
 
 const StatusModal = (props) => {

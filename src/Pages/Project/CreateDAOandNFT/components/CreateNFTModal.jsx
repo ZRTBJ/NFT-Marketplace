@@ -1,7 +1,7 @@
-import Modal from "components/Common/Modal";
+import Modal from "components/Commons/Modal";
 import Users from "assets/images/createDAO/users.svg";
 import Product from "assets/images/createDAO/product.svg";
-import Tooltip from "components/Common/Tooltip";
+import Tooltip from "components/Commons/Tooltip";
 import { Link, useHistory } from "react-router-dom";
 
 const CreateNFTModal = ({ handleClose, show }) => {

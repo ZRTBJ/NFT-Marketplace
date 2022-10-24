@@ -9,10 +9,10 @@ import { setSalesPage } from "services/nft/nftService";
 import { setNFTPrice } from "./deploy-nftPrice";
 import { createProvider } from "eth/utils/provider";
 import { createMintInstance } from "eth/abis/mint-nft";
-import DropdownCreabo from "components/Common/Dropdown";
+import DropdownCreabo from "components/Commons/Dropdown";
 import Matic from "assets/images/polygon.svg";
 import Eth from "assets/images/eth.svg";
-import Modal from "components/Common/Modal";
+import Modal from "components/Commons/Modal";
 import Select, { components } from "react-select";
 import {
   getExchangeRate,

@@ -1,5 +1,5 @@
 import publishModalSvg from "assets/images/modal/publishModalSvg.svg";
-import Modal from "components/Common/Modal";
+import Modal from "components/Commons/Modal";
 
 const PublishCollectionModal = ({ handleClose, show, publishProject, type }) => {
   return (

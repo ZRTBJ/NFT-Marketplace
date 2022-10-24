@@ -1,4 +1,4 @@
-import Modal from "components/Common/Modal";
+import Modal from "components/Commons/Modal";
 import { useEffect, useState } from "react";
 import { publishProject } from "services/project/projectService";
 import { useDispatch, useSelector } from "react-redux";

@@ -4,7 +4,7 @@ import "assets/css/CreateProject/Outline.css";
 import { useState, useEffect } from "react";
 
 import { getProjectCategory } from "services/project/projectService";
-import Tooltip from "components/Common/Tooltip";
+import Tooltip from "components/Commons/Tooltip";
 import { NETWORKS } from "config/networks";
 
 export default function Outline({

@@ -1,5 +1,5 @@
 import IconSuccess from "assets/images/modal/success/success_modal_img.svg";
-import Modal from "../Common/Modal";
+import Modal from "../Commons/Modal";
 import NewSuccess from "assets/images/new-success.svg";
 import { Link, useHistory } from "react-router-dom";
 

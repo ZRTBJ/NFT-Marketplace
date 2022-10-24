@@ -2,8 +2,8 @@ import React from "react";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import Tooltip from "components/Common/Tooltip";
-import Modal from "components/Common/Modal";
+import Tooltip from "components/Commons/Tooltip";
+import Modal from "components/Commons/Modal";
 import { useForm } from "react-hook-form";
 import ErrorModal from "components/Modals/ErrorModal";
 import {

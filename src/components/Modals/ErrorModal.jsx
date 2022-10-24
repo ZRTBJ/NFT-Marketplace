@@ -1,6 +1,6 @@
 import IconError from "assets/images/modal/error/error_modal_img.svg";
 import { Link } from "react-router-dom";
-import Modal from "../Common/Modal";
+import Modal from "../Commons/Modal";
 
 const ErrorModal = ({
   handleClose,

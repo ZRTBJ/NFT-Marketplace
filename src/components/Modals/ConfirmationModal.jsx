@@ -1,4 +1,4 @@
-import Modal from "../Common/Modal";
+import Modal from "../Commons/Modal";
 
 const ConfirmationModal = ({ show, handleClose, handleApply, message }) => {
   return (

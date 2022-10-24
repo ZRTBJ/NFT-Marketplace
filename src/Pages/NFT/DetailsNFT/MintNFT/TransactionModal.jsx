@@ -1,4 +1,4 @@
-import Modal from "components/Common/Modal";
+import Modal from "components/Commons/Modal";
 import polygon from "assets/images/transection.svg";
 import eth from "assets/images/eth.svg";
 const TransactionModal = ({

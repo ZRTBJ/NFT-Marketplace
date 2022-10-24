@@ -1,4 +1,4 @@
-import Modal from "components/Common/Modal";
+import Modal from "components/Commons/Modal";
 import InviteImage from "assets/images/invitebox.svg";
 import WalletConnectModal from "Pages/User/Login/WalletConnectModal";
 import { useState, useEffect } from "react";

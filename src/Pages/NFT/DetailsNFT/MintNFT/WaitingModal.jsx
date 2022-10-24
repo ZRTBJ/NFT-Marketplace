@@ -1,4 +1,4 @@
-import Modal from "components/Common/Modal";
+import Modal from "components/Commons/Modal";
 import Lottie from "react-lottie";
 import lottieJson from "assets/lottieFiles/nft-minting-process";
 const WaitingModal = ({ handleClose, show }) => {

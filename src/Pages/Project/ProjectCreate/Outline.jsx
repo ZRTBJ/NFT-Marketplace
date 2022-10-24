@@ -4,7 +4,7 @@ import FileDragAndDrop from "components/FormUtility/FileDragAndDrop";
 import { useState, useEffect } from "react";
 import { DebounceInput } from "react-debounce-input";
 import { getProjectCategory } from "services/project/projectService";
-import Tooltip from "components/Common/Tooltip";
+import Tooltip from "components/Commons/Tooltip";
 import { NETWORKS } from "config/networks";
 
 export default function Outline({

@@ -1,4 +1,4 @@
-import Modal from "components/Common/Modal";
+import Modal from "components/Commons/Modal";
 import { useState, useRef, useEffect } from "react";
 
 const EmbedNFTModal = ({ show, type, handleClose, nftId }) => {

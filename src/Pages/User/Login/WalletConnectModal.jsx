@@ -7,7 +7,7 @@ import {
 import { useEthers, useEtherBalance } from "@usedapp/core";
 import { ethers } from "ethers";
 import { useSelector } from "react-redux";
-import Modal from "components/Common/Modal";
+import Modal from "components/Commons/Modal";
 import torusIcon from "assets/images/modal/torus.png";
 import metamaskIcon from "assets/images/modal/metamask.png";
 import { torusWalletLogin } from "util/Torus";

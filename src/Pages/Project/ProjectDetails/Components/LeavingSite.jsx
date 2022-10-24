@@ -1,6 +1,6 @@
 import publishModalSvg from "assets/images/modal/publishModalSvg.svg";
 import { ethers } from "ethers";
-import Modal from "components/Common/Modal";
+import Modal from "components/Commons/Modal";
 
 const LeavingSite = ({ handleClose, show, treasuryAddress }) => {
   async function goToSafe() {

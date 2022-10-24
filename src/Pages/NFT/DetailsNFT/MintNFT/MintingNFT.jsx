@@ -1,4 +1,4 @@
-import Modal from "components/Common/Modal";
+import Modal from "components/Commons/Modal";
 import deploySuccessSvg from "assets/images/modal/deploySuccessSvg.svg";
 import { useHistory } from "react-router-dom";
 

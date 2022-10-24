@@ -1,4 +1,4 @@
-import Modal from "components/Common/Modal";
+import Modal from "components/Commons/Modal";
 import { NETWORKS } from "config/networks";
 import { useHistory } from "react-router-dom";
 import { logout, useAuthDispatch } from "Context";

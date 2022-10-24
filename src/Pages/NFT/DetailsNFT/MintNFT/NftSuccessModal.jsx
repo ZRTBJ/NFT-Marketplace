@@ -1,4 +1,4 @@
-import Modal from "components/Common/Modal";
+import Modal from "components/Commons/Modal";
 import FB from "assets/images/facebook.svg";
 import twitter from "assets/images/twitter.svg";
 import reddit from "assets/images/reddit.svg";
