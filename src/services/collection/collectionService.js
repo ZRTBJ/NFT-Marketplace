@@ -130,3 +130,9 @@ export async function getNetWorth(id) {
 export async function getExchangeRate() {
   return await client("GET", `/meta/exchange-rate`);
 }
+export async function getCollectionSalesInformation(payload) {
+  return await client(
+    "GET",
+    `/collection/sales?project_id=${payload.projectId}&page=${payload.page}&limit=${payload.limit}&keyword=${payload.keyword}&order_by=${payload.order_by}`
+  );
+}
