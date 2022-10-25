@@ -3,7 +3,11 @@ import { client } from "../httpClient";
 export async function getUserProjectListById(payload) {
   return await client(
     "GET",
-    `/user/${payload.id}/project?page=${payload?.page}&limit=${payload?.perPage}`
+    `/user/${payload.id}/project?page=${payload?.page}&limit=${
+      payload?.perPage
+    }&keyword=${payload.keyword ? payload.keyword : ""}&order_by=${
+      payload.order_by ? payload.order_by : ""
+    }`
   );
 }
 export async function getPublicProjectList(payload) {
