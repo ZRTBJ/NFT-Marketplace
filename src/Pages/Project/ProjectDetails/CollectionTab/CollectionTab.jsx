@@ -13,10 +13,11 @@ import ErrorModal from "components/Modals/ErrorModal";
 import ConfirmationModal from "components/Modals/ConfirmationModal";
 import { DebounceInput } from "react-debounce-input";
 import { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useHistory, Link, useParams } from "react-router-dom";
 
 const CollectionTab = (props) => {
   const { id } = useParams();
+  const history = useHistory();
   const [overlayLoading, setOverlayLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [collectionList, setCollectionList] = useState([]);
@@ -74,6 +75,9 @@ const CollectionTab = (props) => {
     const newPayload = { ...payload };
     newPayload.page = event.selected + 1;
     setPayload(newPayload);
+  };
+  const viewDetails = (id) => {
+    history.push(`/collection-details/${id}/`);
   };
 
   async function getCollectionList() {
@@ -154,20 +158,22 @@ const CollectionTab = (props) => {
               >
                 <li onClick={() => handleSortType("newer")}>
                   <div
-                    className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${payload.order_by === "newer"
-                      ? "text-primary-900"
-                      : "text-txtblack"
-                      } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                    className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${
+                      payload.order_by === "newer"
+                        ? "text-primary-900"
+                        : "text-txtblack"
+                    } hover:bg-slate-50 transition duration-150 ease-in-out`}
                   >
                     Newer
                   </div>
                 </li>
                 <li onClick={() => handleSortType("older")}>
                   <div
-                    className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${payload.order_by === "older"
-                      ? "text-primary-900"
-                      : "text-txtblack"
-                      } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                    className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${
+                      payload.order_by === "older"
+                        ? "text-primary-900"
+                        : "text-txtblack"
+                    } hover:bg-slate-50 transition duration-150 ease-in-out`}
                   >
                     Older
                   </div>
@@ -207,62 +213,93 @@ const CollectionTab = (props) => {
             </>
           )}
           {collectionList.length > 0 && (
-            <div>
-              {/* table */}
-              <div>
-                <div className="hidden md:mb-4 md:flex flex-wrap items-center justify-between">
-                  <p>Collections</p>
-                  <p>Actions</p>
-                </div>
-
-                {collectionList.map((element) => (
-                  <div
-                    key={element.id}
-                    className="mb-5 md:mb-[60px]  flex flex-wrap items-center"
-                  >
-                    <img
-                      className="md:h-[66px] md:w-[66px] h-[38px] w-[38px] rounded-lg mr-4"
-                      src={
-                        element?.assets?.length > 0
-                          ? element.assets.find(
-                            (img) => img["asset_purpose"] === "logo"
-                          )
-                            ? element.assets.find(
-                              (img) => img["asset_purpose"] === "logo"
-                            ).path
-                            : defaultCover
-                          : defaultCover
-                      }
-                      alt="collection cover"
-                    />
-                    <Link
-                      className="flex-1"
-                      to={`/collection-details/${element.id}`}
-                    >
-                      <h4 className="text-[16px]">{element.name}</h4>
-                    </Link>
-                    <Link to={`/collection-details/${element.id}`}>
-                      <img
-                        src={viewSvg}
-                        className="cursor-pointer h-[32px] w-[32px] rounded mr-3"
-                        alt=""
-                      />
-                    </Link>
-                    {props.projectOwner && (
-                      <>
-                        {element.status !== "published" && (
+            <div class="overflow-x-auto relative">
+              <table class="w-full text-left">
+                <thead className="text-textSubtle font-bold">
+                  <tr>
+                    <th scope="col" class="py-3 px-6">
+                      Collection
+                    </th>
+                    <th scope="col" class="py-3 px-6">
+                      Status
+                    </th>
+                    <th scope="col" class="py-3 px-6">
+                      Type
+                    </th>
+                    <th scope="col" class="py-3 px-6">
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {collectionList.map((element, index) => (
+                    <tr>
+                      <th scope="row" class="py-4 px-6  ">
+                        <div className="flex items-center">
                           <img
-                            onClick={() => deleteCollection(element)}
-                            src={deleteSvg}
-                            className="cursor-pointer h-[32px] w-[32px] rounded"
+                            className="md:h-[66px] object-fit md:w-[66px] h-[38px] w-[38px] rounded-lg mr-4"
+                            src={
+                              element?.assets?.length > 0
+                                ? element.assets.find(
+                                    (img) => img["asset_purpose"] === "logo"
+                                  )
+                                  ? element.assets.find(
+                                      (img) => img["asset_purpose"] === "logo"
+                                    ).path
+                                  : defaultCover
+                                : defaultCover
+                            }
+                            alt="collection cover"
+                          />
+                          <Link
+                            className="!no-underline"
+                            to={`/collection-details/${element.id}`}
+                          >
+                            <h4 className="text-[16px] !no-underline">
+                              {element.name}
+                            </h4>
+                          </Link>
+                        </div>
+                      </th>
+                      <td class="py-4 px-6">
+                        {" "}
+                        {element.status.replace(
+                          /^./,
+                          element.status[0].toUpperCase()
+                        )}
+                      </td>
+                      <td class="py-4 px-6">
+                        {element.type.replace(
+                          /^./,
+                          element.type[0].toUpperCase()
+                        )}
+                      </td>
+                      <td class="py-4 px-6 ">
+                        <div className="flex">
+                          <img
+                            onClick={() => viewDetails(element.id)}
+                            src={viewSvg}
+                            className="cursor-pointer h-[32px] w-[32px] rounded mr-3"
                             alt=""
                           />
-                        )}
-                      </>
-                    )}
-                  </div>
-                ))}
-              </div>
+                          {props.projectOwner && (
+                            <>
+                              {element.status !== "published" && (
+                                <img
+                                  onClick={() => deleteCollection(element)}
+                                  src={deleteSvg}
+                                  className="cursor-pointer h-[32px] w-[32px] rounded"
+                                  alt=""
+                                />
+                              )}
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
           <div className="mt-[30px]">
