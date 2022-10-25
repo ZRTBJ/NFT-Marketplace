@@ -30,6 +30,7 @@ import "swiper/css/navigation";
 import { walletAddressTruncate } from "util/walletAddressTruncate";
 import LeavingSite from "Pages/Project/ProjectDetails/Components/LeavingSite";
 import CollectionTab from "Pages/Project/ProjectDetails/CollectionTab/CollectionTab";
+import SalesSettingsTab from "Pages/Project/ProjectDetails/SalesSettingTab/SalesSettingTab";
 
 export default function ProjectDetails(props) {
   const dispatch = useDispatch();
@@ -96,7 +97,11 @@ export default function ProjectDetails(props) {
     getNewWorth(projectId).then((resp) => {
       if (resp.code === 0) {
         setBalanceLoading(false);
-        setNetWorth({ balance: resp.balance, currency: resp.currency, balanceUSD: resp.balance_usd });
+        setNetWorth({
+          balance: resp.balance,
+          currency: resp.currency,
+          balanceUSD: resp.balance_usd,
+        });
       } else {
         setBalanceLoading(false);
         setNetWorth({ balance: 0, currency: "", balanceUSD: 0 });
@@ -128,7 +133,7 @@ export default function ProjectDetails(props) {
                     value: Object.values(url)[2],
                   });
                 }
-              } catch { }
+              } catch {}
               setLinks(webLinks);
             }
           }
@@ -346,10 +351,11 @@ export default function ProjectDetails(props) {
                         ? walletAddressTruncate(project.contract_address)
                         : "Smart Contract not released"}
                       <i
-                        className={`fa-solid fa-copy ml-2 ${project?.contract_address
-                          ? "cursor-pointer"
-                          : "cursor-not-allowed"
-                          }`}
+                        className={`fa-solid fa-copy ml-2 ${
+                          project?.contract_address
+                            ? "cursor-pointer"
+                            : "cursor-not-allowed"
+                        }`}
                         disabled={!project?.contract_address}
                         onClick={() =>
                           copyToClipboard(project?.contract_address)
@@ -377,9 +383,10 @@ export default function ProjectDetails(props) {
                     ?.length > 0 && (
                     <div className="social-icon-button cursor-pointer w-9 h-9 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 md:ml-4">
                       <a
-                        href={`${links.find((link) => link.title === "linkFacebook")
-                          .value
-                          }`}
+                        href={`${
+                          links.find((link) => link.title === "linkFacebook")
+                            .value
+                        }`}
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -393,8 +400,9 @@ export default function ProjectDetails(props) {
                     ?.length > 0 && (
                     <div className="social-icon-button cursor-pointer w-9 h-9 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                       <a
-                        href={`${links.find((link) => link.title === "linkInsta").value
-                          }`}
+                        href={`${
+                          links.find((link) => link.title === "linkInsta").value
+                        }`}
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -407,9 +415,10 @@ export default function ProjectDetails(props) {
                     ?.length > 0 && (
                     <div className="social-icon-button cursor-pointer w-9 h-9 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                       <a
-                        href={`${links.find((link) => link.title === "linkTwitter")
-                          .value
-                          }`}
+                        href={`${
+                          links.find((link) => link.title === "linkTwitter")
+                            .value
+                        }`}
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -422,9 +431,10 @@ export default function ProjectDetails(props) {
                     ?.length > 0 && (
                     <div className="social-icon-button cursor-pointer w-9 h-9 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                       <a
-                        href={`${links.find((link) => link.title === "linkGithub")
-                          .value
-                          }`}
+                        href={`${
+                          links.find((link) => link.title === "linkGithub")
+                            .value
+                        }`}
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -437,9 +447,10 @@ export default function ProjectDetails(props) {
                     ?.length > 0 && (
                     <div className="social-icon-button cursor-pointer w-9 h-9 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                       <a
-                        href={`${links.find((link) => link.title === "customLinks1")
-                          .value
-                          }`}
+                        href={`${
+                          links.find((link) => link.title === "customLinks1")
+                            .value
+                        }`}
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -516,11 +527,14 @@ export default function ProjectDetails(props) {
                   <div className="bg-primary-900 md:mt-4 md:ml-3 bg-opacity-10 rounded-md p-3 px-5 relative md:w-56">
                     <i
                       onClick={getProjectNetWorth}
-                      className={`fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3 ${balanceLoading ? "fa-spin" : ""
-                        } cursor-pointer`}
+                      className={`fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3 ${
+                        balanceLoading ? "fa-spin" : ""
+                      } cursor-pointer`}
                     ></i>
                     <p className=" text-sm text-textSubtle ">Net Worth</p>
-                    <h4>{newWorth?.balance} {newWorth?.currency}</h4>
+                    <h4>
+                      {newWorth?.balance} {newWorth?.currency}
+                    </h4>
                     <p className="text-sm text-textSubtle">
                       $ {newWorth.balanceUSD.toFixed(2)}
                     </p>
@@ -564,10 +578,11 @@ export default function ProjectDetails(props) {
                   onClick={() => setSelectedTab(1)}
                 >
                   <button
-                    className={`inline-block py-2 md:p-4 md:text-lg rounded-t-lg ${selectedTab === 1
-                      ? "border-b-2 border-primary-900 text-primary-900"
-                      : "border-transparent text-textSubtle"
-                      } hover:text-primary-600`}
+                    className={`inline-block py-2 md:p-4 md:text-lg rounded-t-lg ${
+                      selectedTab === 1
+                        ? "border-b-2 border-primary-900 text-primary-900"
+                        : "border-transparent text-textSubtle"
+                    } hover:text-primary-600`}
                     id="membership_nft"
                     data-tabs-target="#membership_nft"
                     type="button"
@@ -584,10 +599,11 @@ export default function ProjectDetails(props) {
                   onClick={() => setSelectedTab(2)}
                 >
                   <button
-                    className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${selectedTab === 2
-                      ? "border-b-2 border-primary-900 text-primary-900"
-                      : "border-transparent text-textSubtle"
-                      } hover:text-primary-900`}
+                    className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${
+                      selectedTab === 2
+                        ? "border-b-2 border-primary-900 text-primary-900"
+                        : "border-transparent text-textSubtle"
+                    } hover:text-primary-900`}
                     id="dashboard-tab"
                     data-tabs-target="#dashboard"
                     type="button"
@@ -604,10 +620,11 @@ export default function ProjectDetails(props) {
                   onClick={() => setSelectedTab(3)}
                 >
                   <button
-                    className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${selectedTab === 3
-                      ? "border-b-2 border-primary-900 text-primary-900"
-                      : "border-transparent text-textSubtle"
-                      } hover:text-primary-900`}
+                    className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${
+                      selectedTab === 3
+                        ? "border-b-2 border-primary-900 text-primary-900"
+                        : "border-transparent text-textSubtle"
+                    } hover:text-primary-900`}
                     id="dashboard-tab"
                     data-tabs-target="#dashboard"
                     type="button"
@@ -618,6 +635,29 @@ export default function ProjectDetails(props) {
                     Collections
                   </button>
                 </li>
+                {project?.is_owner && (
+                  <li
+                    className="mr-2"
+                    role="presentation"
+                    onClick={() => setSelectedTab(4)}
+                  >
+                    <button
+                      className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${
+                        selectedTab === 4
+                          ? "border-b-2 border-primary-900 text-primary-900"
+                          : "border-transparent text-textSubtle"
+                      } hover:text-primary-900`}
+                      id="dashboard-tab"
+                      data-tabs-target="#dashboard"
+                      type="button"
+                      role="tab"
+                      aria-controls="dashboard"
+                      aria-selected="false"
+                    >
+                      Sales Settings
+                    </button>
+                  </li>
+                )}
               </ul>
             </div>
 
@@ -674,9 +714,9 @@ export default function ProjectDetails(props) {
                               </div>
                               <p className="mb-3 text-textSubtle text-[13px]">
                                 {collection.description &&
-                                  collection.description.length > 70
+                                collection.description.length > 70
                                   ? collection.description.substring(0, 67) +
-                                  "..."
+                                    "..."
                                   : collection.description}
                               </p>
                               <div className="flex items-center">
@@ -815,9 +855,9 @@ export default function ProjectDetails(props) {
                             </div>
                             <p className="mb-3 text-textSubtle text-[13px]">
                               {collection.description &&
-                                collection.description.length > 70
+                              collection.description.length > 70
                                 ? collection.description.substring(0, 67) +
-                                "..."
+                                  "..."
                                 : collection.description}
                             </p>
                             <div className="flex items-center">
@@ -868,7 +908,9 @@ export default function ProjectDetails(props) {
                 <CollectionTab projectOwner={project?.is_owner}></CollectionTab>
               )}
               {/* collection tab end */}
-
+              {/* Sales Setting tab start */}
+              {selectedTab === 4 && <SalesSettingsTab></SalesSettingsTab>}
+              {/* sales setting tab end */}
             </div>
           </section>
           {showDeployModal && (
