@@ -22,6 +22,7 @@ import { createMembsrshipMintInstance } from "eth/abis/mint-membershipNFT";
 import { setMemNFTPrice } from "Pages/Collection/SaleSetting/deploy-membershipNFTPrice";
 import { ethers } from "ethers";
 
+//TODO: in the future, 1 network can support multiple currency, please fix this
 const CURRENCY = [
   { id: 5, value: "eth", label: "ETH", icon: Eth },
   { id: 80001, value: "matic", label: "MATIC", icon: Matic },
@@ -134,6 +135,7 @@ const SalesPageModal = ({
         collectionId: collectionId,
         nftId: nftId,
       };
+
       setIsLoading(true);
       try {
         const priceContract = createMintInstance(address, provider);
@@ -158,8 +160,8 @@ const SalesPageModal = ({
           request.append("price", data["price"]);
           request.append("start_time", payload.startTime);
           request.append("end_time", payload.endTime);
-          request.append("reserve_EOA", "0xabcd");
-          request.append("currency", "eth");
+          request.append("currency", selectedCurrency.value);
+          request.append("transaction_hash", response?.txReceipt?.transactionHash);
 
           setSalesPage(collectionType, collectionId, request, nftId)
             .then((res) => {
@@ -327,7 +329,7 @@ const SalesPageModal = ({
                       className="date-range-picker"
                     />
                   </div>
-                  <div className="mb-6 ">
+                  {/* <div className="mb-6 ">
                     <div className="flex items-center mb-2">
                       <div className="txtblack text-[14px]">
                         Reserve for specific buyer
@@ -350,7 +352,7 @@ const SalesPageModal = ({
                         </p>
                       )}
                     </>
-                  </div>
+                  </div> */}
                   <label htmlFor="agree-terms" className="flex">
                     <input
                       type="checkbox"
