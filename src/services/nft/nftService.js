@@ -104,7 +104,11 @@ export async function mintProductOrMembershipNft(payload) {
 export async function getMintedNftListByUserId(payload) {
   return await client(
     "GET",
-    `/user/${payload.userId}/nft?page=${payload.page}&limit=${payload.limit}`
+    `/user/${payload.userId}/nft?page=${payload.page}&limit=${
+      payload.limit
+    }&keyword=${payload.keyword ? payload.keyword : ""}&order_by=${
+      payload.order_by ? payload.order_by : ""
+    }`
   );
 }
 

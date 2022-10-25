@@ -1,23 +1,22 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import EditSvg from "assets/images/projectDetails/edit.svg";
+import openSeaLogo from "assets/images/icons/opensea.svg";
+import raribleLogo from "assets/images/icons/rarible.svg";
+
+import { getCollectionSalesInformation } from "services/collection/collectionService";
+import { DebounceInput } from "react-debounce-input";
+import { useState, useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
 import Spinner from "components/Commons/Spinner";
 import defaultCover from "assets/images/image-default.svg";
 import ReactPaginate from "react-paginate";
 import deleteSvg from "assets/images/projectDetails/delete.svg";
-import viewSvg from "assets/images/projectDetails/eye.svg";
-import {
-  getCollections,
-  deleteUnpublishedCollection,
-} from "services/collection/collectionService";
 import SuccessModal from "components/Modals/SuccessModal";
 import ErrorModal from "components/Modals/ErrorModal";
 import ConfirmationModal from "components/Modals/ConfirmationModal";
-import { DebounceInput } from "react-debounce-input";
-import { useState, useEffect } from "react";
-import { useHistory, Link, useParams } from "react-router-dom";
-
-const CollectionTab = (props) => {
+import SalesPageModal from "Pages/Collection/SaleSetting/SalesPageModal";
+const SalesSettingsTab = () => {
   const { id } = useParams();
-  const history = useHistory();
   const [overlayLoading, setOverlayLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [collectionList, setCollectionList] = useState([]);
@@ -28,10 +27,15 @@ const CollectionTab = (props) => {
   const [errorModal, setErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [payload, setPayload] = useState({
-    order_by: "",
+    // projectId: "0657b1e8-3d55-44bb-93bb-0f1e130129ff",
+    projectId: id,
+    order_by: "newer",
     page: 1,
+    limit: 10,
     keyword: "",
   });
+  const [showSalesModal, setShowSalesModal] = useState(false);
+  const [collection, setCollection] = useState({});
   function handleSortType(order_by) {
     const newPayload = { ...payload };
     newPayload.order_by = order_by;
@@ -47,26 +51,26 @@ const CollectionTab = (props) => {
     setToDelete(true);
   }
   async function onDeleteCollection() {
-    setOverlayLoading(true);
-    await deleteUnpublishedCollection(collectionId)
-      .then((res) => {
-        if (res.code === 0) {
-          getCollectionList();
-          setOverlayLoading(false);
-          setToDelete(false);
-          setShowSuccessModal(true);
-        } else {
-          setOverlayLoading(false);
-          setToDelete(false);
-          setErrorModal(true);
-          setErrorMessage(res.message);
-        }
-      })
-      .catch(() => {
-        setOverlayLoading(false);
-        setToDelete(false);
-        setErrorModal(true);
-      });
+    // setOverlayLoading(true);
+    // await deleteUnpublishedCollection(collectionId)
+    //   .then((res) => {
+    //     if (res.code === 0) {
+    //       getCollectionList();
+    //       setOverlayLoading(false);
+    //       setToDelete(false);
+    //       setShowSuccessModal(true);
+    //     } else {
+    //       setOverlayLoading(false);
+    //       setToDelete(false);
+    //       setErrorModal(true);
+    //       setErrorMessage(res.message);
+    //     }
+    //   })
+    //   .catch(() => {
+    //     setOverlayLoading(false);
+    //     setToDelete(false);
+    //     setErrorModal(true);
+    //   });
   }
   const calculatePageCount = (pageSize, totalItems) => {
     return totalItems < pageSize ? 1 : Math.ceil(totalItems / pageSize);
@@ -76,23 +80,12 @@ const CollectionTab = (props) => {
     newPayload.page = event.selected + 1;
     setPayload(newPayload);
   };
-  const viewDetails = (id) => {
-    history.push(`/collection-details/${id}/`);
-  };
 
   async function getCollectionList() {
     setLoading(true);
-    await getCollections(
-      "project",
-      id,
-      payload.page,
-      10,
-      payload.keyword,
-      payload.order_by
-    )
+    await getCollectionSalesInformation(payload)
       .then((e) => {
         if (e.code === 0 && e.data !== null) {
-          // e.data[0].assets = [];
           setCollectionList(e.data);
           if (e.total && e.total > 0) {
             const page = calculatePageCount(10, e.total);
@@ -111,6 +104,18 @@ const CollectionTab = (props) => {
       .catch(() => {
         setLoading(false);
       });
+  }
+  function goMarketPlace(url) {
+    try {
+      window.open(url, "_blank");
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  function openSalesModal(collectionSales) {
+    console.log(collectionSales);
+    setCollection(collectionSales);
+    setShowSalesModal(true);
   }
   useEffect(() => {
     getCollectionList();
@@ -131,13 +136,12 @@ const CollectionTab = (props) => {
           {/* action row */}
           <div className="flex flex-wrap mb-[40px]  items-center">
             <div className=" mr-4">
-              {props.projectOwner && (
-                <Link to={`/collection-create/?dao_id=${id}`}>
-                  <button className="contained-button h-[45px]">
-                    + Create New Collection
-                  </button>
-                </Link>
-              )}
+              <button
+                onClick={() => setShowSalesModal(true)}
+                className="contained-button h-[45px]"
+              >
+                + Create Sales Page
+              </button>
             </div>
 
             <div className="dropdown mt-4 md:mt-0  relative md:order-last">
@@ -196,18 +200,11 @@ const CollectionTab = (props) => {
             <>
               {payload.keyword === "" ? (
                 <div className="grid mt-[40px] h-full place-items-center">
-                  <h1>This Project has no collection yet</h1>
-                  {props.projectOwner && (
-                    <Link to={`/collection-create/?dao_id=${id}`}>
-                      <button className="contained-button h-[45px] mt-2">
-                        + Create New Collection
-                      </button>
-                    </Link>
-                  )}
+                  <h1>This Project has no collection sales yet</h1>
                 </div>
               ) : (
                 <div className="text-center">
-                  <h1>No collection found</h1>
+                  <h1>No data found</h1>
                 </div>
               )}
             </>
@@ -220,9 +217,16 @@ const CollectionTab = (props) => {
                     <th scope="col" className="py-3 px-6">
                       Collection
                     </th>
-                    <th scope="col" className="py-3 px-6">
-                      Status
+                    <th scope="col" className="ml-4 py-3 px-6">
+                      Items on sale
                     </th>
+                    <th scope="col" className="py-3 px-6">
+                      Basic price
+                    </th>
+                    <th scope="col" className="py-3 px-6">
+                      List of marketplace
+                    </th>
+
                     <th scope="col" className="py-3 px-6">
                       Type
                     </th>
@@ -234,10 +238,10 @@ const CollectionTab = (props) => {
                 <tbody>
                   {collectionList.map((element, index) => (
                     <tr key={index}>
-                      <th scope="row" className="py-4 px-6  ">
+                      <th scope="row" className="py-4 px-6  whitespace-nowrap ">
                         <div className="flex items-center">
                           <img
-                            className="md:h-[66px] object-cover md:w-[66px] h-[38px] w-[38px] rounded-lg mr-4"
+                            className="object-cover md:h-[66px] md:w-[66px] h-[38px] w-[38px] rounded-lg mr-4"
                             src={
                               element?.assets?.length > 0
                                 ? element.assets.find(
@@ -255,17 +259,29 @@ const CollectionTab = (props) => {
                             className="!no-underline"
                             to={`/collection-details/${element.id}`}
                           >
-                            <h4 className="text-[16px] !no-underline">
+                            <h4 className="text-[16px] pr-[40px] md:pr-0">
                               {element.name}
                             </h4>
                           </Link>
                         </div>
                       </th>
+                      <td className=" py-4 px-6">{element.total_supply}</td>
                       <td className="py-4 px-6">
-                        {" "}
-                        {element.status.replace(
-                          /^./,
-                          element.status[0].toUpperCase()
+                        {element.price} {element.currency}
+                      </td>
+                      <td className="py-4 px-6">
+                        {element.marketplace && element.marketplace.length > 0 && (
+                          <div className="flex items-center">
+                            {element.marketplace.map((m) => (
+                              <img
+                                key={m?.id}
+                                onClick={() => goMarketPlace(m?.url)}
+                                className="cursor-pointer mx-1 h-[30px] w-[30px] rounded object-cover"
+                                src={m?.id === 1 ? openSeaLogo : raribleLogo}
+                                alt="marketplace logo"
+                              />
+                            ))}
+                          </div>
                         )}
                       </td>
                       <td className="py-4 px-6">
@@ -274,27 +290,13 @@ const CollectionTab = (props) => {
                           element.type[0].toUpperCase()
                         )}
                       </td>
-                      <td className="py-4 px-6 ">
-                        <div className="flex">
-                          <img
-                            onClick={() => viewDetails(element.id)}
-                            src={viewSvg}
-                            className="cursor-pointer h-[32px] w-[32px] rounded mr-3"
-                            alt=""
-                          />
-                          {props.projectOwner && (
-                            <>
-                              {element.status !== "published" && (
-                                <img
-                                  onClick={() => deleteCollection(element)}
-                                  src={deleteSvg}
-                                  className="cursor-pointer h-[32px] w-[32px] rounded"
-                                  alt=""
-                                />
-                              )}
-                            </>
-                          )}
-                        </div>
+                      <td className="py-4 px-6">
+                        <img
+                          onClick={() => openSalesModal(element)}
+                          src={EditSvg}
+                          className="cursor-pointer h-[32px] w-[32px] rounded mr-3"
+                          alt=""
+                        />
                       </td>
                     </tr>
                   ))}
@@ -323,6 +325,23 @@ const CollectionTab = (props) => {
           </div>
         </div>
       )}
+      {showSalesModal && (
+        <SalesPageModal
+          show={showSalesModal}
+          address={collection?.contract_address}
+          collectionId={collection?.id}
+          collectionType={`${collection?.type}`}
+          nftId={"1"}
+          collectionName={collection?.name}
+          handleClose={() => setShowSalesModal(false)}
+          successClose={() => {
+            setShowSalesModal(false);
+            setShowSuccessModal(true);
+          }}
+          supply={collection.currency}
+          projectNetwork={collection?.currency}
+        />
+      )}
       {toDelete && (
         <ConfirmationModal
           show={toDelete}
@@ -334,7 +353,7 @@ const CollectionTab = (props) => {
       {showSuccessModal && (
         <SuccessModal
           show={showSuccessModal}
-          message="You successfully deleted the collection!"
+          message="You successfully Created / updated the sales page"
           buttonText="Close"
           handleClose={() => setShowSuccessModal(false)}
         />
@@ -354,4 +373,4 @@ const CollectionTab = (props) => {
   );
 };
 
-export default CollectionTab;
+export default SalesSettingsTab;

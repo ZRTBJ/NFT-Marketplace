@@ -15,8 +15,13 @@ import Sort from "assets/images/icons/sort.svg";
 import { useLocation } from "react-router-dom";
 import { getCollections } from "services/collection/collectionService";
 import ReactPaginate from "react-paginate";
-import { getMintedNftListByUserId } from "services/nft/nftService";
+import { getMintedNftListByUserId, refreshNFT } from "services/nft/nftService";
+import { updateMetadata } from "Pages/User/Profile/update-metadata";
+import { createProvider } from "eth/utils/provider";
+import { createMintInstance } from "eth/abis/mint-nft";
+import { toast } from "react-toastify";
 function List() {
+  const provider = createProvider();
   function useQuery() {
     const { search } = useLocation();
     return React.useMemo(() => new URLSearchParams(search), [search]);
@@ -58,7 +63,8 @@ function List() {
         "",
         payload.page,
         10,
-        payload.keyword
+        payload.keyword,
+        payload.order_by
       );
     } else if (query.get("type") === "dao") {
       let payloadData = {
@@ -66,6 +72,7 @@ function List() {
         page: payload.page,
         perPage: 10,
         keyword: payload.keyword,
+        order_by: payload.order_by,
       };
       projectResponse = await getUserProjectListById(payloadData);
     } else if (query.get("type") === "nft") {
@@ -73,6 +80,8 @@ function List() {
         userId: query.get("user"),
         page: payload.page,
         limit: 10,
+        keyword: payload.keyword,
+        order_by: payload.order_by,
       };
       projectResponse = await getMintedNftListByUserId(payloadData);
     }
@@ -180,6 +189,99 @@ function List() {
   const handlePageClick = (event) => {
     setIsactive(event.selected + 1);
   };
+  function setNftData(nft, type) {
+    let nftList = [...projectList];
+    const nftIndex = nftList.findIndex((item) => item.id === nft.id);
+    const nftLocal = { ...nft };
+    if (type === "loadingTrue") {
+      nftLocal.loading = true;
+    } else if (type === "loadingFalse") {
+      nftLocal.loading = false;
+    } else if (type === "hideRefreshButton") {
+      nftLocal.refresh_status = "notRequired";
+    } else if (type === "showRefreshButton") {
+      nftLocal.refresh_status = "failed";
+    }
+    nftList[nftIndex] = nftLocal;
+    setProjectList(nftList);
+  }
+  async function refreshNFTWithtnx(payload) {
+    return await refreshNFT(payload);
+  }
+
+  async function onRefreshNft(nft) {
+    // hide the refresh button start
+    setNftData(nft, "hideRefreshButton");
+    // hide the refresh end
+
+    // 1. set Loading true start
+    setNftData(nft, "loadingTrue");
+    // 1. set loading true end
+
+    // 2. call refresh api for getting config object
+    const payload = {
+      id: nft.id,
+      tokenId: nft.token_id,
+    };
+    let config = {};
+    let hasConfigForNft = false;
+
+    await refreshNFT(payload)
+      .then((res) => {
+        if (res.code === 0) {
+          if (res.config.collection_contract_address !== "") {
+            config = res.config;
+            hasConfigForNft = true;
+          }
+        } else {
+          setNftData(nft, "loadingFalse");
+          setNftData(nft, "sowRefreshButton");
+        }
+      })
+      .catch((error) => {
+        setNftData(nft, "loadingFalse");
+        setNftData(nft, "sowRefreshButton");
+      });
+    if (hasConfigForNft) {
+      const erc721CollectionContract = createMintInstance(
+        config.collection_contract_address,
+        provider
+      );
+      const result = await updateMetadata(
+        erc721CollectionContract,
+        provider,
+        config
+      );
+      if (result) {
+        console.log(result);
+        const data = {
+          id: nft.id,
+          tokenId: nft.token_id,
+          tnxHash: result,
+        };
+        await refreshNFTWithtnx(data)
+          .then((res) => {
+            if (res.code === 0) {
+              if (res.function.status === "success") {
+                setNftData(nft, "loadingFalse");
+                setNftData(nft, "hideRefreshButton");
+                toast.success(`Successfully refreshed ${nft.name} NFT`);
+              }
+              if (res.function.status === "failed") {
+                setNftData(nft, "loadingFalse");
+                setNftData(nft, "sowRefreshButton");
+                toast.error(`Unexpected error, Please try again`);
+              }
+            }
+          })
+          .catch((err) => {
+            setNftData(nft, "loadingFalse");
+          });
+      }
+    } else {
+      setNftData(nft, "loadingFalse");
+    }
+  }
 
   useEffect(() => {
     payload.page = isActive;
@@ -198,8 +300,8 @@ function List() {
           {query.get("type") === "collection"
             ? "Collection List"
             : query.get("type") === "dao"
-              ? "DAO List"
-              : "Minted NFTs List"}
+            ? "DAO List"
+            : "Minted NFTs List"}
         </h1>
         <section className="flex mb-6">
           <div className="mr-4 flex-1">
@@ -246,24 +348,27 @@ function List() {
             >
               <li onClick={() => handleSortType("newer")}>
                 <div
-                  className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${sortType === "newer" ? "text-primary-900" : "text-txtblack"
-                    } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                  className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${
+                    sortType === "newer" ? "text-primary-900" : "text-txtblack"
+                  } hover:bg-slate-50 transition duration-150 ease-in-out`}
                 >
                   Newer
                 </div>
               </li>
               <li onClick={() => handleSortType("older")}>
                 <div
-                  className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${sortType === "older" ? "text-primary-900" : "text-txtblack"
-                    } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                  className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${
+                    sortType === "older" ? "text-primary-900" : "text-txtblack"
+                  } hover:bg-slate-50 transition duration-150 ease-in-out`}
                 >
                   older
                 </div>
               </li>
               <li onClick={() => handleSortType("view")}>
                 <div
-                  className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${sortType === "view" ? "text-primary-900" : "text-txtblack"
-                    } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                  className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${
+                    sortType === "view" ? "text-primary-900" : "text-txtblack"
+                  } hover:bg-slate-50 transition duration-150 ease-in-out`}
                 >
                   view
                 </div>
@@ -292,15 +397,15 @@ function List() {
             <section className="flex flex-wrap items-start  space-x-4 justify-center md:justify-start">
               {isSearching
                 ? searchList.map((item, index) => (
-                  <div key={item.id}>
-                    <CollectionCard key={index} collection={item} />
-                  </div>
-                ))
+                    <div key={item.id}>
+                      <CollectionCard key={index} collection={item} />
+                    </div>
+                  ))
                 : projectList.map((item, index) => (
-                  <div key={item.id}>
-                    <CollectionCard key={item.id} collection={item} />
-                  </div>
-                ))}
+                    <div key={item.id}>
+                      <CollectionCard key={item.id} collection={item} />
+                    </div>
+                  ))}
             </section>
           )}
 
@@ -308,15 +413,15 @@ function List() {
             <section className="flex flex-wrap items-center  justify-center md:justify-start">
               {isSearching
                 ? searchList.map((item, index) => (
-                  <div key={item.id}>
-                    <DAOCard item={item} key={item.id} />
-                  </div>
-                ))
+                    <div key={item.id}>
+                      <DAOCard item={item} key={item.id} />
+                    </div>
+                  ))
                 : projectList.map((item, index) => (
-                  <div key={item.id}>
-                    <DAOCard item={item} key={item.id} />
-                  </div>
-                ))}
+                    <div key={item.id}>
+                      <DAOCard item={item} key={item.id} />
+                    </div>
+                  ))}
             </section>
           )}
 
@@ -324,15 +429,25 @@ function List() {
             <section className="flex flex-wrap items-center space-x-4 justify-center md:justify-start">
               {isSearching
                 ? searchList.map((item, index) => (
-                  <div key={item.id}>
-                    <NFTListCard nft={item} projectWork="ethereum" />
-                  </div>
-                ))
+                    <div key={item.id}>
+                      <NFTListCard
+                        nft={item}
+                        projectWork="ethereum"
+                        refresh={onRefreshNft}
+                        loading={item.loading}
+                      />
+                    </div>
+                  ))
                 : projectList.map((item, index) => (
-                  <div key={item.id}>
-                    <NFTListCard nft={item} projectWork="ethereum" />
-                  </div>
-                ))}
+                    <div key={item.id}>
+                      <NFTListCard
+                        nft={item}
+                        projectWork="ethereum"
+                        refresh={onRefreshNft}
+                        loading={item.loading}
+                      />
+                    </div>
+                  ))}
             </section>
           )}
         </section>
