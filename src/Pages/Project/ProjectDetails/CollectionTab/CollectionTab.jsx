@@ -213,31 +213,31 @@ const CollectionTab = (props) => {
             </>
           )}
           {collectionList.length > 0 && (
-            <div class="overflow-x-auto relative">
-              <table class="w-full text-left">
+            <div className="overflow-x-auto relative">
+              <table className="w-full text-left">
                 <thead className="text-textSubtle font-bold">
                   <tr>
-                    <th scope="col" class="py-3 px-6">
+                    <th scope="col" className="py-3 px-6">
                       Collection
                     </th>
-                    <th scope="col" class="py-3 px-6">
+                    <th scope="col" className="py-3 px-6">
                       Status
                     </th>
-                    <th scope="col" class="py-3 px-6">
+                    <th scope="col" className="py-3 px-6">
                       Type
                     </th>
-                    <th scope="col" class="py-3 px-6">
+                    <th scope="col" className="py-3 px-6">
                       Action
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {collectionList.map((element, index) => (
-                    <tr>
-                      <th scope="row" class="py-4 px-6  ">
+                    <tr key={index}>
+                      <th scope="row" className="py-4 px-6  ">
                         <div className="flex items-center">
                           <img
-                            className="md:h-[66px] object-fit md:w-[66px] h-[38px] w-[38px] rounded-lg mr-4"
+                            className="md:h-[66px] object-cover md:w-[66px] h-[38px] w-[38px] rounded-lg mr-4"
                             src={
                               element?.assets?.length > 0
                                 ? element.assets.find(
@@ -261,20 +261,20 @@ const CollectionTab = (props) => {
                           </Link>
                         </div>
                       </th>
-                      <td class="py-4 px-6">
+                      <td className="py-4 px-6">
                         {" "}
                         {element.status.replace(
                           /^./,
                           element.status[0].toUpperCase()
                         )}
                       </td>
-                      <td class="py-4 px-6">
+                      <td className="py-4 px-6">
                         {element.type.replace(
                           /^./,
                           element.type[0].toUpperCase()
                         )}
                       </td>
-                      <td class="py-4 px-6 ">
+                      <td className="py-4 px-6 ">
                         <div className="flex">
                           <img
                             onClick={() => viewDetails(element.id)}
