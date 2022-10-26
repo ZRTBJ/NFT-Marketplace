@@ -1,4 +1,5 @@
 import axios from "axios";
+import { ls_GetUserRefreshToken, ls_GetUserToken, ls_SetUserID, ls_SetUserRefreshToken, ls_SetUserToken } from "util/ApplicationStorage";
 import Config from "../config/config";
 // import jwt from "jwt-decode";
 
@@ -6,7 +7,7 @@ const ROOT_URL = Config.API_ENDPOINT;
 
 export async function client(method, url, body, contentType) {
   let token;
-  const refreshTkn = localStorage.getItem("refresh_token");
+  const refreshTkn = ls_GetUserRefreshToken();
 
   if (refreshTkn && refreshTkn.length > 0) {
     token = await refreshToken();
@@ -33,8 +34,8 @@ export async function client(method, url, body, contentType) {
 }
 
 async function refreshToken() {
-  const refreshTkn = localStorage.getItem("refresh_token");
-  let token = localStorage.getItem("currentUser");
+  const refreshTkn = ls_GetUserRefreshToken();
+  let token = ls_GetUserToken();
   if (refreshTkn) {
     // const user = jwt(refreshTkn);
     // const tknExpDate = new Date(user.exp * 1000);
@@ -53,10 +54,9 @@ async function refreshToken() {
       data: bodyFormData,
       headers: headers,
     });
-
-    localStorage.setItem("currentUser", response.token);
-    localStorage.setItem("user_id", response.user_id);
-    localStorage.setItem("refresh_token", response["refresh_token"]);
+    ls_SetUserToken(response.token);
+    ls_SetUserRefreshToken(response.refresh_token);
+    ls_SetUserID(response.user_id);
 
     token = response.token;
     // }

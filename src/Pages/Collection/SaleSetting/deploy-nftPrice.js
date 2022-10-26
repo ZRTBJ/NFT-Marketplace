@@ -2,6 +2,7 @@ import { ethers } from "ethers";
 import { createInstance } from "eth/abis/forwarder";
 import { signMetaTxRequest } from "eth/utils/signer";
 import { NETWORKS } from "config/networks";
+import { ls_GetChainID } from "util/ApplicationStorage";
 
 async function sendMetaTx(contract, provider, signer, price) {
   const forwarder = createInstance(provider);
@@ -18,8 +19,8 @@ async function sendMetaTx(contract, provider, signer, price) {
     data,
   });
 
-  let chainId = localStorage.getItem("networkChain");
-  let webhook = NETWORKS[Number(chainId)]?.webhook;
+  let chainId = ls_GetChainID()
+  let webhook = NETWORKS[chainId]?.webhook;
 
   return fetch(webhook, {
     method: "POST",

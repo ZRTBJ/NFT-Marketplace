@@ -1,7 +1,9 @@
-let user = localStorage && localStorage.getItem("user_id");
-let token = localStorage && localStorage.getItem("currentUser");
-let wallet = localStorage && localStorage.getItem("wallet");
-let walletAddress = localStorage && localStorage.getItem("walletAddress");
+import { ls_GetUserID, ls_GetUserToken, ls_GetWalletAddress, ls_GetWalletType } from "util/ApplicationStorage";
+
+let user = ls_GetUserID();
+let token = ls_GetUserToken();
+let wallet = ls_GetWalletType();
+let walletAddress = ls_GetWalletAddress();
 
 export const initialState = {
   user: "" || user,

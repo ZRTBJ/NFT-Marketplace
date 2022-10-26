@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import { NETWORKS } from "config/networks";
+import { ls_GetChainID } from "util/ApplicationStorage";
 
 const abi = [
   {
@@ -112,8 +113,7 @@ const abi = [
 ];
 
 export function createInstance(provider) {
-  let chainId = localStorage.getItem("networkChain");
-  let createRoyaltySplitter =
-    NETWORKS?.[Number(chainId)]?.createRoyaltySplitter;
+  let chainId = ls_GetChainID()
+  let createRoyaltySplitter = NETWORKS?.[chainId]?.createRoyaltySplitter;
   return new ethers.Contract(createRoyaltySplitter, abi, provider);
 }

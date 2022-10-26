@@ -22,6 +22,7 @@ import Logo from "assets/images/header/logo.svg";
 import AccountChangedModal from "./Account/AccountChangedModal";
 import NetworkChangedModal from "./Account/NetworkChangedModal";
 import { walletAddressTruncate } from "util/walletAddressTruncate";
+import { ls_GetUserToken, ls_SetChainID } from "util/ApplicationStorage";
 
 const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const history = useHistory();
@@ -63,7 +64,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
       if (!networkId) setNetworkId(window.ethereum.networkVersion);
       window?.ethereum?.on("networkChanged", function (networkId) {
         setNetworkId(networkId);
-        localStorage.setItem("networkChain", networkId);
+        ls_SetChainID(networkId)
         setShowNetworkChanged(true);
         window.location.reload();
       });
@@ -84,7 +85,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
 
   useEffect(() => {
     if (userId && userId.length > 0) {
-      const cUser = localStorage.getItem("currentUser");
+      const cUser = ls_GetUserToken();
       if (cUser) {
         sendMessage(JSON.stringify({ Token: cUser }));
       }
@@ -163,8 +164,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     getWebSocket,
   } = useWebSocket(socketUrl, {
     onOpen: () => {
-      // console.log("webSocket connected");
-      const cUser = localStorage.getItem("currentUser");
+      const cUser = ls_GetUserToken();
       if (cUser) {
         sendMessage(JSON.stringify({ Token: cUser }));
       }

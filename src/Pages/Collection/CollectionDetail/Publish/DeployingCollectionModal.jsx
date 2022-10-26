@@ -1,28 +1,16 @@
-import ico_gas from "assets/images/projectEdit/ico_gas.svg";
-import ico_matic from "assets/images/projectEdit/ico_matic.svg";
-import IconSuccess from "assets/images/modal/success/success_modal_img.svg";
 import Modal from "components/Commons/Modal";
-import { Step, Stepper } from "react-form-stepper";
 import { useEffect, useState } from "react";
-import { SendTransactionMetaMask } from "util/metaMaskWallet";
-import {
-  contractDeploy,
-  publishFundTransfer,
-} from "services/project/projectService";
 import {
   getCollectionDetailsById,
   publishCollection,
 } from "services/collection/collectionService";
-import { SendTransactionTorus } from "util/Torus";
-import { getWalletType } from "util/ApplicationStorage";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
-import { useAuthState } from "redux/auth/context";
 import deploySuccessSvg from "assets/images/modal/deploySuccessSvg.svg";
 import { createProvider } from "eth/utils/provider";
 import { createInstance } from "eth/abis/collection-factory";
 import { createCollection } from "Pages/Collection/CollectionDetail/Publish/deploy-collection";
 import { NETWORKS } from "config/networks";
+import { ls_GetChainID } from "util/ApplicationStorage";
 
 const DeployingCollectiontModal = ({
   handleClose,
@@ -37,30 +25,17 @@ const DeployingCollectiontModal = ({
   publishStep,
 }) => {
   const dispatch = useDispatch();
-  const history = useHistory();
-  const btnText = buttomText ? buttomText : "View on Polygonscan";
-  const selectedWallet = getWalletType();
   const [isLoading, setIsLoading] = useState(false);
-  const context = useAuthState();
-  const [userId, setUserId] = useState(context ? context.user : "");
   const [statusStep, setStatusStep] = useState(1);
   const [funcId, setFuncId] = useState("");
   const [step, setStep] = useState(publishStep ? publishStep : 1);
-  const [publishedData, setPublishedData] = useState();
-  const collectionDeploy = useSelector((state) =>
-    state?.notifications?.notificationData
-      ? state?.notifications?.notificationData
-      : []
-  );
 
   const [contractAdd, setContractAdd] = useState("");
   const [txnData, setTxnData] = useState();
   const provider = createProvider();
-  let chainId = localStorage.getItem("networkChain");
-  let createFactoryCollection =
-    NETWORKS[Number(chainId)]?.createFactoryCollection;
-  let createMembershipFactoryCollection =
-    NETWORKS[Number(chainId)]?.createMembershipFactoryCollection;
+  let chainId = ls_GetChainID()
+  let createFactoryCollection = NETWORKS[chainId]?.createFactoryCollection;
+  let createMembershipFactoryCollection = NETWORKS[chainId]?.createMembershipFactoryCollection;
   const collectionContract = createInstance(
     collectionType === "membership"
       ? createMembershipFactoryCollection
