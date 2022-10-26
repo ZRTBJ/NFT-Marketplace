@@ -333,7 +333,7 @@ export default function ProjectDetails(props) {
 
           {/* end gallery */}
           {/* profile information section */}
-          <div className="bg-white-shade-900 shadow-lg rounded-xl mt-4 py-6 px-4 md:p-6">
+          <div className="bg-[#122478]/[0.03]  rounded-xl mt-4 py-6 px-4 md:p-6">
             <div className="flex flex-col md:flex-row ">
               <div className="md:w-2/3 ">
                 <div className="flex">
@@ -567,7 +567,7 @@ export default function ProjectDetails(props) {
           <section className="mb-10 mt-4">
             <div className="mb-4">
               <ul
-                className="flex flex-wrap  text-sm font-medium text-center"
+                className="flex flex-wrap  border-b  border-b-[2px] text-sm font-medium text-center "
                 id="myTab"
                 data-tabs-toggle="#myTabContent"
                 role="tablist"
