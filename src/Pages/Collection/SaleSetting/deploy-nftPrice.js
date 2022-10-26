@@ -7,7 +7,7 @@ import { ls_GetChainID } from "util/ApplicationStorage";
 async function sendMetaTx(contract, provider, signer, price) {
   const forwarder = createInstance(provider);
   const from = await signer.getAddress();
-
+  console.log(contract, provider, signer, price);
   const data = contract.interface.encodeFunctionData("setPrimaryMintPrice", [
     ethers.utils.parseUnits(price.toString(), "ether"),
   ]);
@@ -43,8 +43,8 @@ export async function setNFTPrice(collection, provider, price) {
   await result.json().then(async (response) => {
     const tx = JSON.parse(response.result);
     const txReceipt = await provider.waitForTransaction(tx.txHash);
-    console.log(txReceipt);
     output = { txReceipt };
+    console.log(output);
   });
 
   return output;

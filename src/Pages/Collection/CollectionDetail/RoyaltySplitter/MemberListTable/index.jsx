@@ -72,7 +72,7 @@ const MemberListTable = ({
   const addNewContributorData = () => {
     setIsAdded(true);
     if (address && percentage) {
-      let value = { user_eoa: address, royalty_percent: parseInt(percentage) };
+      let value = { user_eoa: address, royalty_percent: parseFloat(percentage) };
       setRoyalityMembers([...list, value]);
     }
   };
@@ -142,8 +142,17 @@ const MemberListTable = ({
                       />
                     </div>
                   ) : (
-                    <span className="w-[40px]">
-                      {r.royalty_percent ? `${r.royalty_percent}%` : "-"}
+                    <span className="w-[60px]">
+                      {r.royalty_percent
+                        ? Intl.NumberFormat(
+                            'en-US',
+                            {
+                              style: 'percent',
+                              minimumFractionDigits: 3,
+                            }
+                          )
+                          .format(r.royalty_percent / 100)
+                        : "-"}
                     </span>
                   )}
                   {isOwner && (

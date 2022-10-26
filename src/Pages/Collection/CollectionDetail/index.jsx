@@ -86,6 +86,8 @@ const CollectionDetail = () => {
   const [nftSales, setNFTSales] = useState([]);
   const [nftMemSupply, setNftMemSupply] = useState(0);
   const [daoInfo, setDaoInfo] = useState({});
+  const [nftShareURL, setNFTShareURL] = useState("");
+  const [membershipNFTId, setMembershipNFTId] = useState("");
 
   // Publish royalty splitter
   const [showPublishRoyaltySpliterModal, setShowPublishRoyaltySpliterModal] =
@@ -353,7 +355,7 @@ const CollectionDetail = () => {
       if (id === mem.user_eoa) {
         return {
           ...mem,
-          royalty_percent: parseInt(e.target.value),
+          royalty_percent: parseFloat(e.target.value),
         };
       }
       return mem;
@@ -1069,6 +1071,7 @@ const CollectionDetail = () => {
       </section>
       {showSalesPageModal && (
         <SalesPageModal
+          projectId={projectID}
           show={showSalesPageModal}
           address={Collection?.contract_address}
           collectionId={collectionId}
@@ -1082,6 +1085,8 @@ const CollectionDetail = () => {
           }}
           supply={nftMemSupply}
           projectNetwork={projectNetwork}
+          setNFTShareURL={setNFTShareURL}
+          setMembershipNFTId={setMembershipNFTId}
         />
       )}
       {showSuccessModal && (
@@ -1091,6 +1096,9 @@ const CollectionDetail = () => {
             setShowSuccessModal(false);
             getCollectionDetail();
           }}
+          projectId={projectID}
+          nftShareURL={nftShareURL}
+          membershipNFTId={membershipNFTId}
         />
       )}
       <PublishCollectionModal

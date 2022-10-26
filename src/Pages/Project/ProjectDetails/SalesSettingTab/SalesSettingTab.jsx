@@ -15,7 +15,9 @@ import SuccessModal from "components/Modals/SuccessModal";
 import ErrorModal from "components/Modals/ErrorModal";
 import ConfirmationModal from "components/Modals/ConfirmationModal";
 import SalesPageModal from "Pages/Collection/SaleSetting/SalesPageModal";
-const SalesSettingsTab = () => {
+import SalesSuccessModal from "Pages/Collection/SaleSetting/SalesSuccessModal";
+
+const SalesSettingsTab = ({ projectNetwork }) => {
   const { id } = useParams();
   const [overlayLoading, setOverlayLoading] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -27,13 +29,14 @@ const SalesSettingsTab = () => {
   const [errorModal, setErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [payload, setPayload] = useState({
-    // projectId: "0657b1e8-3d55-44bb-93bb-0f1e130129ff",
     projectId: id,
     order_by: "newer",
     page: 1,
     limit: 10,
     keyword: "",
   });
+  const [membershipNFTId, setMembershipNFTId] = useState("");
+  const [nftShareURL, setNFTShareURL] = useState("dfdf");
   const [showSalesModal, setShowSalesModal] = useState(false);
   const [collection, setCollection] = useState({});
   function handleSortType(order_by) {
@@ -327,19 +330,23 @@ const SalesSettingsTab = () => {
       )}
       {showSalesModal && (
         <SalesPageModal
+          projectView={true}
+          projectId={id}
           show={showSalesModal}
           address={collection?.contract_address}
           collectionId={collection?.id}
-          collectionType={`${collection?.type}`}
-          nftId={"1"}
+          collectionType={collection?.type}
+          nftId={""}
           collectionName={collection?.name}
           handleClose={() => setShowSalesModal(false)}
           successClose={() => {
             setShowSalesModal(false);
             setShowSuccessModal(true);
           }}
-          supply={collection.currency}
-          projectNetwork={collection?.currency}
+          supply={collection.supply}
+          projectNetwork={projectNetwork}
+          setNFTShareURL={setNFTShareURL}
+          setMembershipNFTId={setMembershipNFTId}
         />
       )}
       {toDelete && (
@@ -351,11 +358,14 @@ const SalesSettingsTab = () => {
         />
       )}
       {showSuccessModal && (
-        <SuccessModal
+        <SalesSuccessModal
           show={showSuccessModal}
-          message="You successfully Created / updated the sales page"
-          buttonText="Close"
-          handleClose={() => setShowSuccessModal(false)}
+          handleClose={() => {
+            setShowSuccessModal(false);
+          }}
+          nftShareURL={nftShareURL}
+          projectId={id}
+          membershipNFTId={membershipNFTId}
         />
       )}
       {errorModal && (
