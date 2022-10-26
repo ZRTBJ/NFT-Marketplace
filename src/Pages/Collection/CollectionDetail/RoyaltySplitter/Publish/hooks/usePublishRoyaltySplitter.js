@@ -109,8 +109,7 @@ export default function usePublishRoyaltySplitter(payload = {}) {
     const creator = await provider.current.getSigner().getAddress();
     let chainId = ls_GetChainID()
     let minimalForwarder = NETWORKS?.[chainId]?.forwarder;
-    let masterRoyaltySplitter =
-      NETWORKS?.[Number(chainId)]?.masterRoyaltySplitter;
+    let masterRoyaltySplitter = NETWORKS?.[chainId]?.masterRoyaltySplitter;
     const functionPayload = [
       {
         receivers: splitters.map((spliter) => spliter.user_eoa),
