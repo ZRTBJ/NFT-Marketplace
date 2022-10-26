@@ -23,6 +23,7 @@ import { getNotificationData } from "Slice/notificationSlice";
 import { getFunctionStatus } from "services/websocketFunction/webSocketFunctionService";
 import { getAsset } from "services/notification/notificationService";
 import { useHistory } from "react-router-dom";
+import ErrorModal from "components/Modals/ErrorModal";
 export default function MembershipNFT() {
   const history = useHistory();
   const fileUploadNotification = useSelector((state) =>
@@ -76,11 +77,14 @@ export default function MembershipNFT() {
   const [projectCreated, setProjectCreated] = useState(false);
   const [projectId, setProjectId] = useState("");
   const [projectInfo, setProjectInfo] = useState({});
+  const [showErrorModal, setShowErrorModal] = useState(false);
   const jobIds = [];
   const [calledIds, setCalledIds] = useState([]);
   const [showDataUploadingModal, setShowDataUploadingModal] = useState(false);
   const [nftItem, setNft] = useState(null);
   const [updateMode, setUpdateMode] = useState(false);
+  const [errorTitle, setErrorTitle] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
   const [isNftLoading, setIsNftLoading] = useState(false);
   const [asseteRemoveInUpdateMode, setAsseteRemoveInUpdateMode] =
     useState(false);
@@ -288,18 +292,26 @@ export default function MembershipNFT() {
     if (!updateMode) {
       await createMembershipNft(request)
         .then((res) => {
-          localStorage.removeItem(`${jobId}`);
-          const index = jobIds.indexOf(jobId);
-          if (index > -1) {
-            jobIds.splice(index, 1); // 2nd parameter means remove one item only
-          }
-          console.log("remove", jobIds.length);
-          const upload_number = localStorage.getItem("upload_number");
-          const update_upload_number = parseInt(upload_number) - 1;
-          localStorage.setItem("upload_number", update_upload_number);
-          if (update_upload_number === 0) {
+          if (res.code === 0) {
+            localStorage.removeItem(`${jobId}`);
+            const index = jobIds.indexOf(jobId);
+            if (index > -1) {
+              jobIds.splice(index, 1); // 2nd parameter means remove one item only
+            }
+            console.log("remove", jobIds.length);
+            const upload_number = localStorage.getItem("upload_number");
+            const update_upload_number = parseInt(upload_number) - 1;
+            localStorage.setItem("upload_number", update_upload_number);
+            if (update_upload_number === 0) {
+              setShowDataUploadingModal(false);
+              setShowSuccessModal(true);
+            }
+          } else {
+            localStorage.removeItem(`${jobId}`);
+            setErrorTitle("Error");
+            setErrorMessage(res.message);
+            setShowErrorModal(true);
             setShowDataUploadingModal(false);
-            setShowSuccessModal(true);
           }
         })
         .catch((err) => {
@@ -308,8 +320,16 @@ export default function MembershipNFT() {
     } else if (updateMode) {
       await updateMembershipNFT(nftItem.id, request)
         .then((res) => {
-          setShowDataUploadingModal(false);
-          setShowSuccessModal(true);
+          if (res.code === 0) {
+            setShowDataUploadingModal(false);
+            setShowSuccessModal(true);
+          } else {
+            localStorage.removeItem(`${jobId}`);
+            setErrorTitle("Error");
+            setErrorMessage(res.message);
+            setShowErrorModal(true);
+            setShowDataUploadingModal(false);
+          }
         })
         .catch((err) => {
           console.log(err);
@@ -588,10 +608,10 @@ export default function MembershipNFT() {
     try {
       const query = new URLSearchParams(history.location.search);
       const nftId = query.get("nftId");
-      if (nftId) {
+      if (nftId !== null) {
         nftDetails("membership", nftId);
       }
-    } catch { }
+    } catch {}
   }, []);
 
   function removePropertyOfTier(nft, index) {
@@ -615,8 +635,8 @@ export default function MembershipNFT() {
             {isPreview
               ? "Review Membership NFT"
               : updateMode
-                ? "Update Membership NFT"
-                : "Create Membership NFT"}
+              ? "Update Membership NFT"
+              : "Create Membership NFT"}
           </h1>
           <p className="text-[14px] text-textSubtle ">
             {isPreview
@@ -645,8 +665,9 @@ export default function MembershipNFT() {
                   <DebounceInput
                     minLength={1}
                     debounceTimeout={0}
-                    className={`debounceInput mt-1 ${isPreview ? " !border-none bg-transparent" : ""
-                      } `}
+                    className={`debounceInput mt-1 ${
+                      isPreview ? " !border-none bg-transparent" : ""
+                    } `}
                     disabled={isPreview}
                     value={nft.tierName}
                     onChange={(e) =>
@@ -670,20 +691,23 @@ export default function MembershipNFT() {
                   you can use format PNG, GIF, WEBP, MP4 or MP3. Max 100MB.
                 </p>
                 <div
-                  className={`flex justify-center items-center max-w-full ${nft.assets.file?.type?.split("/")[0]?.toLowerCase() ===
+                  className={`flex justify-center items-center max-w-full ${
+                    nft.assets.file?.type?.split("/")[0]?.toLowerCase() ===
                     "video"
-                    ? ""
-                    : "w-40 h-40"
-                    }`}
+                      ? ""
+                      : "w-40 h-40"
+                  }`}
                 >
                   <label
                     htmlFor={`dropzone-file${index}`}
-                    className={`flex flex-col justify-center items-center w-full  ${nft.assets.file?.type?.split("/")[0]?.toLowerCase() ===
+                    className={`flex flex-col justify-center items-center w-full  ${
+                      nft.assets.file?.type?.split("/")[0]?.toLowerCase() ===
                       "video"
-                      ? ""
-                      : "h-40"
-                      } ${nft.assets.file ? "" : "bg-white-filled-form"
-                      } rounded-xl  cursor-pointer`}
+                        ? ""
+                        : "h-40"
+                    } ${
+                      nft.assets.file ? "" : "bg-white-filled-form"
+                    } rounded-xl  cursor-pointer`}
                   >
                     <div className="flex flex-col justify-center items-center pt-5 pb-6 relative">
                       {nft.assets.file ? (
@@ -691,45 +715,45 @@ export default function MembershipNFT() {
                           {nft.assets.file?.type
                             ?.split("/")[0]
                             ?.toLowerCase() === "image" && (
-                              <img
-                                src={nft.assets.path}
-                                alt="nft"
-                                className="rounded-xl  max-w-full w-40 h-40 object-cover"
-                              />
-                            )}
+                            <img
+                              src={nft.assets.path}
+                              alt="nft"
+                              className="rounded-xl  max-w-full w-40 h-40 object-cover"
+                            />
+                          )}
                           {nft.assets.file?.type
                             ?.split("/")[0]
                             ?.toLowerCase() === "audio" && (
-                              <>
-                                <i
-                                  onClick={(e) => nftFileChangeHandler(e, index)}
-                                  className="absolute top-0 text-[18px] cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark"
-                                ></i>
-                                <audio
-                                  ref={audioRef}
-                                  src={nft.assets.path}
-                                  controls
-                                  autoPlay={false}
-                                  className="ml-[8rem]"
-                                />
-                              </>
-                            )}
+                            <>
+                              <i
+                                onClick={(e) => nftFileChangeHandler(e, index)}
+                                className="absolute top-0 text-[18px] cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark"
+                              ></i>
+                              <audio
+                                ref={audioRef}
+                                src={nft.assets.path}
+                                controls
+                                autoPlay={false}
+                                className="ml-[8rem]"
+                              />
+                            </>
+                          )}
                           {nft.assets.file?.type
                             ?.split("/")[0]
                             ?.toLowerCase() === "video" && (
-                              <>
-                                <i
-                                  onClick={(e) => nftFileChangeHandler(e, index)}
-                                  className="absolute top-0 text-[18px] cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark"
-                                ></i>
-                                <video width="650" height="400" controls>
-                                  <source
-                                    src={nft.assets.path}
-                                    type="video/mp4"
-                                  />
-                                </video>
-                              </>
-                            )}
+                            <>
+                              <i
+                                onClick={(e) => nftFileChangeHandler(e, index)}
+                                className="absolute top-0 text-[18px] cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark"
+                              ></i>
+                              <video width="650" height="400" controls>
+                                <source
+                                  src={nft.assets.path}
+                                  type="video/mp4"
+                                />
+                              </video>
+                            </>
+                          )}
                         </>
                       ) : (
                         <>
@@ -812,8 +836,9 @@ export default function MembershipNFT() {
                   <DebounceInput
                     minLength={1}
                     debounceTimeout={0}
-                    className={`debounceInput mt-1 ${isPreview ? " !border-none bg-transparent" : ""
-                      } `}
+                    className={`debounceInput mt-1 ${
+                      isPreview ? " !border-none bg-transparent" : ""
+                    } `}
                     disabled={isPreview}
                     value={nft.externalLink}
                     onChange={(e) =>
@@ -835,8 +860,9 @@ export default function MembershipNFT() {
                   cols="30"
                   rows="6"
                   placeholder="Add brief description about this NFT"
-                  className={`mt-1 ${isPreview ? " !border-none bg-transparent" : ""
-                    } `}
+                  className={`mt-1 ${
+                    isPreview ? " !border-none bg-transparent" : ""
+                  } `}
                   disabled={isPreview}
                 ></textarea>
               </div>
@@ -850,8 +876,9 @@ export default function MembershipNFT() {
                     <DebounceInput
                       minLength={1}
                       debounceTimeout={0}
-                      className={`debounceInput mt-1 ${isPreview ? " !border-none bg-transparent" : ""
-                        } `}
+                      className={`debounceInput mt-1 ${
+                        isPreview ? " !border-none bg-transparent" : ""
+                      } `}
                       disabled={isPreview}
                       value={benefit.title}
                       onChange={(e) =>
@@ -989,8 +1016,9 @@ export default function MembershipNFT() {
                   <DebounceInput
                     minLength={1}
                     debounceTimeout={0}
-                    className={`debounceInput mt-1 ${isPreview ? " !border-none bg-transparent" : ""
-                      } `}
+                    className={`debounceInput mt-1 ${
+                      isPreview ? " !border-none bg-transparent" : ""
+                    } `}
                     disabled={isPreview}
                     value={nft.supply}
                     type="number"
@@ -1142,6 +1170,18 @@ export default function MembershipNFT() {
           redirection={`/collection-details/${collection_id}`}
           handleClose={() => setShowSuccessModal(false)}
           show={showSuccessModal}
+        />
+      )}
+      {showErrorModal && (
+        <ErrorModal
+          handleClose={() => {
+            setShowErrorModal(false);
+            setErrorTitle(null);
+            setErrorMessage(null);
+          }}
+          show={showErrorModal}
+          title={errorTitle}
+          message={errorMessage}
         />
       )}
       {showDataUploadingModal && (
