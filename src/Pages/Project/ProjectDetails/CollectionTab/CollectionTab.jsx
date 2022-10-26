@@ -215,18 +215,18 @@ const CollectionTab = (props) => {
           {collectionList.length > 0 && (
             <div className="overflow-x-auto relative">
               <table className="w-full text-left">
-                <thead className="text-textSubtle font-bold">
+                <thead className="text-black">
                   <tr>
-                    <th scope="col" className="py-3 px-6">
+                    <th scope="col" className="py-3 px-6 !font-black">
                       Collection
                     </th>
-                    <th scope="col" className="py-3 px-6">
+                    <th scope="col" className="py-3 px-6 !font-black">
                       Status
                     </th>
-                    <th scope="col" className="py-3 px-6">
+                    <th scope="col" className="py-3 px-6 !font-black">
                       Type
                     </th>
-                    <th scope="col" className="py-3 px-6">
+                    <th scope="col" className="py-3 px-6 !font-black">
                       Action
                     </th>
                   </tr>

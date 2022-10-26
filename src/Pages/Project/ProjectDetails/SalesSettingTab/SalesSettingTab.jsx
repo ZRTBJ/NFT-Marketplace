@@ -212,25 +212,25 @@ const SalesSettingsTab = () => {
           {collectionList.length > 0 && (
             <div className="overflow-x-auto relative">
               <table className="w-full text-left">
-                <thead className="text-textSubtle font-bold">
+                <thead className="text-black ">
                   <tr>
-                    <th scope="col" className="py-3 px-6">
+                    <th scope="col" className="py-3 px-6 !font-black">
                       Collection
                     </th>
-                    <th scope="col" className="ml-4 py-3 px-6">
+                    <th scope="col" className="ml-4 py-3 px-6 !font-black">
                       Items on sale
                     </th>
-                    <th scope="col" className="py-3 px-6">
+                    <th scope="col" className="py-3 px-6 !font-black">
                       Basic price
                     </th>
-                    <th scope="col" className="py-3 px-6">
+                    <th scope="col" className="py-3 px-6 !font-black">
                       List of marketplace
                     </th>
 
-                    <th scope="col" className="py-3 px-6">
+                    <th scope="col" className="py-3 px-6 !font-black">
                       Type
                     </th>
-                    <th scope="col" className="py-3 px-6">
+                    <th scope="col" className="py-3 px-6 !font-black">
                       Action
                     </th>
                   </tr>
