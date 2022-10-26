@@ -3,7 +3,6 @@ import {
   addNotificationData,
   getAllNotificationData,
 } from "util/ApplicationStorage";
-import { getUserProjectListById } from "../services/project/projectService";
 
 const notifyData = getAllNotificationData();
 const initialState = {

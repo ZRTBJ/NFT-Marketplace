@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
-import notificationSlice from "Slice/notificationSlice";
-import projectSlice from "../Slice/projectSlice";
-import userSlice from "../Slice/userSlice";
+import notificationSlice from "redux/slice/notificationSlice";
+import projectSlice from "./slice/projectSlice";
+import userSlice from "./slice/userSlice";
 
 const store = configureStore({
   reducer: {

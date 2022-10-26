@@ -11,11 +11,11 @@ import Modal from "components/Commons/Modal";
 import torusIcon from "assets/images/modal/torus.png";
 import metamaskIcon from "assets/images/modal/metamask.png";
 import { torusWalletLogin } from "util/Torus";
-import { loginUser, useAuthState, useAuthDispatch, logout } from "Context";
+import { loginUser, useAuthState, useAuthDispatch, logout } from "redux/auth";
 import { useHistory } from "react-router-dom";
 import { getUserInfo } from "services/User/userService";
 import { useDispatch } from "react-redux";
-import { setUserInfo, setUserLoading } from "Slice/userSlice";
+import { setUserInfo, setUserLoading } from "redux/slice/userSlice";
 const WalletConnectModal = ({
   showModal,
   closeModal,

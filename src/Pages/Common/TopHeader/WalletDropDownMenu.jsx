@@ -1,4 +1,4 @@
-import { useAuthState, useAuthDispatch, logout } from "Context";
+import { useAuthState, useAuthDispatch, logout } from "redux/auth";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import metamaskIcon from "assets/images/modal/metamask.png";

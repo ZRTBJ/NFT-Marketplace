@@ -1,6 +1,6 @@
 import { createSlice, createSelector } from "@reduxjs/toolkit";
 
-import { getUserProjectListById } from "../services/project/projectService";
+import { getUserProjectListById } from "services/project/projectService";
 
 const initialState = {
   status: "idle",

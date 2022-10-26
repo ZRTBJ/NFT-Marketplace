@@ -1,10 +1,10 @@
 import "assets/css/Sidebar.css";
-import { useAuthState } from "Context";
+import { useAuthState } from "redux/auth/context";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { getUserInfo } from "services/User/userService";
-import { setUserInfo, setSideBar } from "Slice/userSlice";
+import { setUserInfo, setSideBar } from "redux/slice/userSlice";
 
 const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
   const dispatch = useDispatch();

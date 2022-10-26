@@ -9,7 +9,7 @@ import "rsuite/dist/rsuite.min.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "tw-elements";
-import store from "./store/store";
+import store from "redux/store";
 import { Provider } from "react-redux";
 import { DAppProvider } from "@usedapp/core";
 

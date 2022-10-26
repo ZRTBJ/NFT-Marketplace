@@ -1,6 +1,6 @@
 import Modal from "components/Commons/Modal";
 import { useHistory } from "react-router-dom";
-import { logout, useAuthDispatch } from "Context";
+import { logout, useAuthDispatch } from "redux/auth";
 
 const AccountChangedModal = ({ show, handleClose }) => {
   const dispatch = useAuthDispatch();

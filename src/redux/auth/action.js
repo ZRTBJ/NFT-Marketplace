@@ -1,4 +1,4 @@
-import Config from "../config/config";
+import Config from "../../config/config";
 import { torusLogout } from "util/Torus";
 
 const ROOT_URL = Config.API_ENDPOINT; //"https://reqres.in/api";

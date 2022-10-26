@@ -14,7 +14,7 @@ import {
   updateProductNFT,
 } from "services/nft/nftService";
 import Config from "config/config";
-import { getNotificationData } from "Slice/notificationSlice";
+import { getNotificationData } from "redux/slice/notificationSlice";
 import SuccessModal from "components/Modals/SuccessModal";
 import { useHistory } from "react-router-dom";
 import { createProject } from "services/project/projectService";
