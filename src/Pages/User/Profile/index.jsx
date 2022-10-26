@@ -32,6 +32,7 @@ import { updateMetadata } from "Pages/User/Profile/update-metadata";
 import { createProvider } from "eth/utils/provider";
 import { createMintInstance } from "eth/abis/mint-nft";
 import { toast } from "react-toastify";
+import ReactPaginate from "react-paginate";
 const Profile = () => {
   const provider = createProvider();
   SwiperCore.use([Autoplay]);
@@ -59,12 +60,14 @@ const Profile = () => {
   const [royaltyId, setRoyaltyId] = useState("");
   const [errorModal, setErrorModal] = useState(false);
   const [totalRoyality, setTotalRoyality] = useState(0);
+  const [royaltyErrormessage, setRoyaltyErrormessage] = useState("");
   async function onRoyaltiesListSort(e) {
     setRoyaltiesListSortBy(e.target.value);
     let oldRoyalties = [...royaltiesList];
     const sorted = oldRoyalties.reverse();
     setRoyaltiesList(sorted);
   }
+
   // Royalties End
 
   const [isLoading, setIsLoading] = useState(true);
@@ -124,7 +127,14 @@ const Profile = () => {
   const [mintedNftList, setMintedNftList] = useState([]);
   const [nftErrorModalMessage, setNftErrorModalMessage] = useState("");
   const [nftErrorModal, setNftErrorModal] = useState(false);
+
+  const [pagination, SetPagination] = useState([]);
+  const [isActive, setIsactive] = useState(1);
   // function start
+  const calculatePageCount = (pageSize, totalItems) => {
+    return totalItems < pageSize ? 1 : Math.ceil(totalItems / pageSize);
+  };
+
   async function userInfo() {
     await getUserInfo(id)
       .then((response) => {
@@ -154,14 +164,34 @@ const Profile = () => {
       });
   }
 
-  async function getUserRoyaltiesInfo() {
-    await getRoyalties(id).then((res) => {
-      res.royalties.forEach((element) => {
-        element.isLoading = false;
-      });
-      setRoyaltiesList(res.royalties);
+  async function getUserRoyaltiesInfo(page) {
+    setIsLoading(true);
+    await getRoyalties(id, page).then((res) => {
+      if (res.code === 0 && res.royalties && res.royalties.length > 0) {
+        res.royalties.forEach((element) => {
+          element.isLoading = false;
+        });
+        if (res.total && res.total > 0) {
+          const page = calculatePageCount(5, res.total);
+          const pageList = [];
+          for (let index = 1; index <= page; index++) {
+            pageList.push(index);
+          }
+          console.log(pageList);
+          SetPagination(pageList);
+        } else {
+          SetPagination([]);
+        }
+        setRoyaltiesList(res.royalties);
+      } else {
+        setRoyaltiesList([]);
+      }
     });
+    setIsLoading(false);
   }
+  const handlePageClick = (event) => {
+    setIsactive(event.selected + 1);
+  };
 
   async function getProjectList() {
     let payload = {
@@ -243,6 +273,7 @@ const Profile = () => {
         } else {
           setIsLoading(false);
           setErrorModal(true);
+          setRoyaltyErrormessage(res.message);
           setRoyaltyData(royalty, "loadingFalse");
         }
       })
@@ -265,10 +296,13 @@ const Profile = () => {
           }
           if (res.function.status === "failed") {
             setRoyaltyData(royalty, "loadingFalse");
-            toast.error(`Unexpected error, Please try again`);
+            toast.error(`Failed, ${res.function.message}`);
           }
         });
       }
+    } else {
+      setErrorModal(true);
+      setRoyaltyErrormessage("no config found");
     }
   }
   async function getNftList() {
@@ -313,7 +347,7 @@ const Profile = () => {
   function setRoyaltyData(royalty, type) {
     let royaltyList = [...royaltiesList];
     const royaltyIndex = royaltyList.findIndex(
-      (item) => item.id === royalty.id
+      (item) => item.royalty_id === royalty.royalty_id
     );
     const royaltyLocal = { ...royalty };
     if (type === "loadingTrue") {
@@ -370,8 +404,13 @@ const Profile = () => {
     if (hasConfigForNft) {
       const erc721CollectionContract = createMintInstance(
         config.collection_contract_address,
-        provider);
-      const result = await updateMetadata(erc721CollectionContract, provider, config);
+        provider
+      );
+      const result = await updateMetadata(
+        erc721CollectionContract,
+        provider,
+        config
+      );
       if (result) {
         console.log(result);
         const data = {
@@ -439,7 +478,7 @@ const Profile = () => {
     setWalletAddress(user.eao);
   }, [user]);
   useEffect(() => {
-    getUserRoyaltiesInfo();
+    getUserRoyaltiesInfo(1);
   }, []);
   useEffect(() => {
     getProjectList();
@@ -454,6 +493,9 @@ const Profile = () => {
   useEffect(() => {
     calculateTotalRoyalties();
   }, [royaltiesList]);
+  useEffect(() => {
+    getUserRoyaltiesInfo(isActive);
+  }, [isActive]);
 
   return (
     <>
@@ -529,10 +571,11 @@ const Profile = () => {
                                 rel="noreferrer"
                               >
                                 <i
-                                  className={`fa-brands fa-${socialLinks.find(
-                                    (x) => x.title === snc.title
-                                  ).icon
-                                    } text-[20px] gradient-text text-white-shade-900 mt-1`}
+                                  className={`fa-brands fa-${
+                                    socialLinks.find(
+                                      (x) => x.title === snc.title
+                                    ).icon
+                                  } text-[20px] gradient-text text-white-shade-900 mt-1`}
                                 ></i>
                               </a>
                             )}
@@ -563,7 +606,8 @@ const Profile = () => {
                   <i className="fa-solid fa-up text-[#FFFF] ml-1.5  mt-[3px] text-[20px]"></i>
                 </div>
                 <div className="text-[14px] ml-2">
-                  Last month earned $ {royaltyEarned.last_month_earn_usd?.toFixed(3)}
+                  Last month earned ${" "}
+                  {royaltyEarned.last_month_earn_usd?.toFixed(3)}
                 </div>
               </div>
             </div>
@@ -610,99 +654,123 @@ const Profile = () => {
             {/* table for desktop */}
             <div className="hidden md:block">
               {royaltiesList?.length > 0 ? (
-                <div className="overflow-x-auto relative mt-[54px]">
-                  <table className="w-full text-left">
-                    <thead>
-                      <tr className="text-textSubtle text-[12px] ">
-                        <th scope="col" className="px-5">
-                          Icon
-                        </th>
-                        <th scope="col" className="px-5">
-                          Project Name
-                        </th>
-                        <th scope="col" className="px-5">
-                          Collection Name
-                        </th>
-                        <th scope="col" className="px-5">
-                          Percentage
-                        </th>
-                        <th scope="col" className="px-5">
-                          Role
-                        </th>
-                        <th scope="col" className="px-5">
-                          Earnable Amount
-                        </th>
-                        <th scope="col" className="px-5">
-                          Action
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {royaltiesList.map((r, index) => (
-                        <tr
-                          key={r.index}
-                          className={`${index < royaltiesList.length - 1 ? "border-b" : ""
-                            } text-left text-txtblack text-[14px]`}
-                        >
-                          <td className="py-4 px-5">
-                            <img
-                              src={DefaultProjectLogo}
-                              className="h-[34px] w-[34px] object-cover rounded-full"
-                              alt={r.project_name + "logo"}
-                            />
-                          </td>
-                          <td className="py-4 px-5 font-black ">
-                            {r.project_name}
-                          </td>
-                          <td className="py-4 px-5 font-black ">
-                            {r.collection_name}
-                          </td>
-                          <td className="py-4 px-5">{r.royalty_percent} %</td>
-                          <td
-                            className={`py-4 px-5  ${r.is_owner ? "text-info-1" : " text-success-1"
-                              }`}
-                          >
-                            {r.is_owner ? "Owner" : "Member"}
-                          </td>
-                          <td className="py-4 px-5">${r.earnable_amount?.toFixed(3)}</td>
-                          <td className="py-4 px-5">
-                            {r.isLoading ? (
-                              <div role="status" className="">
-                                <svg
-                                  aria-hidden="true"
-                                  className=" w-6 h-6 text-gray-200 animate-spin dark:text-gray-600 fill-secondary-900"
-                                  viewBox="0 0 100 101"
-                                  fill="none"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <path
-                                    d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                                    fill="currentColor"
-                                  />
-                                  <path
-                                    d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                                    fill="currentFill"
-                                  />
-                                </svg>
-                                <span className="sr-only">Loading...</span>
-                              </div>
-                            ) : (
-                              <>
-                                {r.earnable_amount > 0 && (
-                                  <button
-                                    onClick={() => claimRoyaltyById(r)}
-                                    className="bg-primary-900/[.20] h-[32px] w-[57px] rounded text-primary-900"
-                                  >
-                                    Claim
-                                  </button>
-                                )}
-                              </>
-                            )}
-                          </td>
+                <div>
+                  <div className="overflow-x-auto relative mt-[54px]">
+                    <table className="w-full text-left">
+                      <thead>
+                        <tr className="text-textSubtle text-[12px] ">
+                          <th scope="col" className="px-5">
+                            Icon
+                          </th>
+                          <th scope="col" className="px-5">
+                            Project Name
+                          </th>
+                          <th scope="col" className="px-5">
+                            Collection Name
+                          </th>
+                          <th scope="col" className="px-5">
+                            Percentage
+                          </th>
+                          <th scope="col" className="px-5">
+                            Role
+                          </th>
+                          <th scope="col" className="px-5">
+                            Earnable Amount
+                          </th>
+                          <th scope="col" className="px-5">
+                            Action
+                          </th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {royaltiesList.map((r, index) => (
+                          <tr
+                            key={r.royalty_id}
+                            className={`${
+                              index < royaltiesList.length - 1 ? "border-b" : ""
+                            } text-left text-txtblack text-[14px]`}
+                          >
+                            <td className="py-4 px-5">
+                              <img
+                                src={DefaultProjectLogo}
+                                className="h-[34px] w-[34px] object-cover rounded-full"
+                                alt={r.project_name + "logo"}
+                              />
+                            </td>
+                            <td className="py-4 px-5 font-black ">
+                              {r.project_name}
+                            </td>
+                            <td className="py-4 px-5 font-black ">
+                              {r.collection_name}
+                            </td>
+                            <td className="py-4 px-5">{r.royalty_percent}%</td>
+                            <td
+                              className={`py-4 px-5  ${
+                                r.is_owner ? "text-info-1" : " text-success-1"
+                              }`}
+                            >
+                              {r.is_owner ? "Owner" : "Member"}
+                            </td>
+                            <td className="py-4 px-5">
+                              ${r.earnable_amount?.toFixed(3)}
+                            </td>
+                            <td className="py-4 px-5">
+                              {r.isLoading ? (
+                                <div role="status" className="">
+                                  <svg
+                                    aria-hidden="true"
+                                    className=" w-6 h-6 text-gray-200 animate-spin dark:text-gray-600 fill-secondary-900"
+                                    viewBox="0 0 100 101"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                                      fill="currentColor"
+                                    />
+                                    <path
+                                      d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                                      fill="currentFill"
+                                    />
+                                  </svg>
+                                  <span className="sr-only">Loading...</span>
+                                </div>
+                              ) : (
+                                <>
+                                  {r.earnable_amount > 0 && (
+                                    <button
+                                      onClick={() => claimRoyaltyById(r)}
+                                      className="bg-primary-900/[.20] h-[32px] w-[57px] rounded text-primary-900"
+                                    >
+                                      Claim
+                                    </button>
+                                  )}
+                                </>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  {pagination.length > 0 && (
+                    <>
+                      <ReactPaginate
+                        className="flex flex-wrap md:space-x-10 space-x-3 justify-center items-center my-6"
+                        pageClassName="px-3 py-1 font-satoshi-bold text-sm  bg-opacity-5 rounded hover:bg-opacity-7 !text-txtblack "
+                        breakLabel="..."
+                        nextLabel=">"
+                        onPageChange={handlePageClick}
+                        pageRangeDisplayed={3}
+                        pageCount={pagination.length}
+                        previousLabel="<"
+                        renderOnZeroPageCount={null}
+                        activeClassName="text-primary-900 bg-primary-900 !no-underline"
+                        activeLinkClassName="!text-txtblack !no-underline"
+                      />
+                    </>
+                  )}
+                  {/* End pagination */}
                 </div>
               ) : (
                 <div className="text-center ">
@@ -718,9 +786,10 @@ const Profile = () => {
                 <div>
                   {royaltiesList.map((r, index) => (
                     <div
-                      key={index}
-                      className={`my-8 py-7  ${index < royaltiesList.length - 1 ? "border-b" : ""
-                        }`}
+                      key={r.royalty_id}
+                      className={`my-8 py-7  ${
+                        index < royaltiesList.length - 1 ? "border-b" : ""
+                      }`}
                     >
                       <div className={`flex   items-center mb-8 `}>
                         <div className={"flex  items-center"}>
@@ -771,13 +840,16 @@ const Profile = () => {
                       <div className="flex justify-between items-center">
                         <div>
                           <div>Percentage</div>
-                          <div className="text-center">{r.royalty_percent}</div>
+                          <div className="text-center">
+                            {r.royalty_percent}%
+                          </div>
                         </div>
                         <div>
                           <div>Role</div>
                           <div
-                            className={`text-centre ${r.is_owner ? "text-info-1" : " text-success-1"
-                              }`}
+                            className={`text-centre ${
+                              r.is_owner ? "text-info-1" : " text-success-1"
+                            }`}
                           >
                             {r.is_owner ? "Owner" : "Member"}
                           </div>
@@ -785,12 +857,29 @@ const Profile = () => {
                         <div>
                           <div>Earnable Amount</div>
                           <div className="text-center">
-                            ${r.earnable_amount}
+                            ${r.earnable_amount?.toFixed(3)}
                           </div>
                         </div>
                       </div>
                     </div>
                   ))}
+                  {pagination.length > 0 && (
+                    <>
+                      <ReactPaginate
+                        className="flex flex-wrap md:space-x-10 space-x-3 justify-center items-center my-6"
+                        pageClassName="px-3 py-1 font-satoshi-bold text-sm  bg-opacity-5 rounded hover:bg-opacity-7 !text-txtblack "
+                        breakLabel="..."
+                        nextLabel=">"
+                        onPageChange={handlePageClick}
+                        pageRangeDisplayed={3}
+                        pageCount={pagination.length}
+                        previousLabel="<"
+                        renderOnZeroPageCount={null}
+                        activeClassName="text-primary-900 bg-primary-900 !no-underline"
+                        activeLinkClassName="!text-txtblack !no-underline"
+                      />
+                    </>
+                  )}
                 </div>
               ) : (
                 <div className="text-center ">
@@ -876,8 +965,8 @@ const Profile = () => {
                               className="rounded-xl h-[211px] md:h-[276px] object-cover w-full"
                               src={
                                 collection &&
-                                  collection.assets &&
-                                  collection.assets[0]
+                                collection.assets &&
+                                collection.assets[0]
                                   ? collection.assets[0].path
                                   : thumbIcon
                               }
@@ -891,9 +980,9 @@ const Profile = () => {
                             </div>
                             <p className="mb-3 text-textSubtle text-[13px]">
                               {collection.description &&
-                                collection.description.length > 70
+                              collection.description.length > 70
                                 ? collection.description.substring(0, 67) +
-                                "..."
+                                  "..."
                                 : collection.description}
                             </p>
 
@@ -989,8 +1078,11 @@ const Profile = () => {
       {errorModal && (
         <ErrorModal
           title={"Royalty can not claim right now."}
-          message={`Please try again later`}
-          handleClose={() => setErrorModal(false)}
+          royaltyErrormessage={royaltyErrormessage}
+          handleClose={() => {
+            setErrorModal(false);
+            setRoyaltyErrormessage("");
+          }}
           show={errorModal}
         />
       )}
