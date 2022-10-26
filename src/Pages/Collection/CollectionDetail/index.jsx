@@ -353,7 +353,7 @@ const CollectionDetail = () => {
       if (id === mem.user_eoa) {
         return {
           ...mem,
-          royalty_percent: parseInt(e.target.value),
+          royalty_percent: parseFloat(e.target.value),
         };
       }
       return mem;
