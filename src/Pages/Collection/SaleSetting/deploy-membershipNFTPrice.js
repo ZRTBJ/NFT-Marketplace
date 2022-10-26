@@ -6,7 +6,6 @@ import { NETWORKS } from "config/networks";
 async function sendMetaTx(contract, provider, signer, tier) {
   const forwarder = createInstance(provider);
   const from = await signer.getAddress();
-
   const data = contract.interface.encodeFunctionData("setTiers", [tier]);
   const to = contract.address;
 
@@ -31,7 +30,6 @@ export async function setMemNFTPrice(collection, provider, tier) {
   const userProvider = new ethers.providers.Web3Provider(window.ethereum);
 
   const signer = userProvider.getSigner();
-
   let output;
   const result = await sendMetaTx(collection, provider, signer, tier);
 

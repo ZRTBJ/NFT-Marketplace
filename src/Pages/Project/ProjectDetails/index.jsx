@@ -31,6 +31,7 @@ import { walletAddressTruncate } from "util/walletAddressTruncate";
 import LeavingSite from "Pages/Project/ProjectDetails/Components/LeavingSite";
 import CollectionTab from "Pages/Project/ProjectDetails/CollectionTab/CollectionTab";
 import SalesSettingsTab from "Pages/Project/ProjectDetails/SalesSettingTab/SalesSettingTab";
+import SalesSuccessModal from "Pages/Collection/SaleSetting/SalesSuccessModal";
 
 export default function ProjectDetails(props) {
   const dispatch = useDispatch();
@@ -909,7 +910,9 @@ export default function ProjectDetails(props) {
               )}
               {/* collection tab end */}
               {/* Sales Setting tab start */}
-              {selectedTab === 4 && <SalesSettingsTab></SalesSettingsTab>}
+              {selectedTab === 4 && (
+                <SalesSettingsTab projectNetwork={project?.blockchain} />
+              )}
               {/* sales setting tab end */}
             </div>
           </section>
