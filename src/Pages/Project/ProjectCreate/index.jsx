@@ -49,7 +49,7 @@ export default function ProjectCreate() {
     }
   }
   // Logo End
-  let chainId = ls_GetChainID()
+  let chainId = ls_GetChainID();
   // Project Name start
   const [projectName, setProjectName] = useState("");
   const [emptyProjectName, setemptyProjectName] = useState(false);
@@ -391,6 +391,10 @@ export default function ProjectCreate() {
           // token_amount_total: numberOfTokens,
         };
         // console.log(payload);
+        const categoryName = projectCategoryList.find(
+          (x) => x.id === parseInt(projectCategory)
+        );
+        setProjectCategoryName(categoryName ? categoryName.name : "");
         setcurrentStep([1, 2]);
       }
     }

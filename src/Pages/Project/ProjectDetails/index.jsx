@@ -506,7 +506,7 @@ export default function ProjectDetails(props) {
               <div className="md:flex-1">
                 <h3>About</h3>
                 {project.overview ? (
-                  <div className="whitespace-pre-line text-textLight text-sm">
+                  <div className="whitespace-pre-line text-textLight text-sm break-all">
                     {project.overview}
                   </div>
                 ) : (
