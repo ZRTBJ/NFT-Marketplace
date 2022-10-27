@@ -1,7 +1,7 @@
 import React from "react";
 import { Switch } from "react-router-dom";
 import { Redirect, Route } from "react-router-dom";
-import { useAuthState } from "../redux/auth/context";
+import { useAuthState } from "redux/auth/context";
 import Home from "Pages/Home/Homepage";
 
 const AppRoutes = ({ component: Component, path, isPrivate, ...rest }) => {

@@ -145,7 +145,7 @@ const RoyaltySplitter = () => {
             </div>
           </div>
           <>
-            {collections.length === 0 ? (
+            {(collections == null || collections.length === 0) ? (
               <>
                 {payload.keyword === "" ? (
                   <div className="grid mt-[40px] h-full place-items-center">

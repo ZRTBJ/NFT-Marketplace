@@ -216,11 +216,11 @@ export default function Outline({
           <div className="flex flex-wrap items-center">
             {/* <Tooltip></Tooltip> */}
             <div className="txtblack text-[14px] mb-[6px]">
-              Collection Updatable
+              Metadata Updatable
             </div>
           </div>
           <p className="text-textSubtle">
-            {isMetaDaFreezed?.toString()?.toUpperCase()}
+            {isMetaDaFreezed ? 'Yes' : 'No'}
           </p>
         </div>
       )}
@@ -233,7 +233,7 @@ export default function Outline({
             </div>
           </div>
           <p className="text-textSubtle">
-            {isTokenTransferable.toString().toUpperCase()}
+            {isTokenTransferable ? 'Yes' : 'No'}
           </p>
         </div>
       )}

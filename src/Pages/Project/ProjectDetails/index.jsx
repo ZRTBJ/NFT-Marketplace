@@ -136,7 +136,7 @@ export default function ProjectDetails(props) {
                     value: Object.values(url)[2],
                   });
                 }
-              } catch {}
+              } catch { }
               setLinks(webLinks);
             }
           }
@@ -355,11 +355,10 @@ export default function ProjectDetails(props) {
                         ? walletAddressTruncate(project.contract_address)
                         : "Smart Contract not released"}
                       <i
-                        className={`fa-solid fa-copy ml-2 ${
-                          project?.contract_address
-                            ? "cursor-pointer"
-                            : "cursor-not-allowed"
-                        }`}
+                        className={`fa-solid fa-copy ml-2 ${project?.contract_address
+                          ? "cursor-pointer"
+                          : "cursor-not-allowed"
+                          }`}
                         disabled={!project?.contract_address}
                         onClick={() =>
                           copyToClipboard(project?.contract_address)
@@ -409,10 +408,9 @@ export default function ProjectDetails(props) {
                     ?.length > 0 && (
                     <div className="social-icon-button cursor-pointer w-9 h-9 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 md:ml-4">
                       <a
-                        href={`${
-                          links.find((link) => link.title === "linkFacebook")
-                            .value
-                        }`}
+                        href={`${links.find((link) => link.title === "linkFacebook")
+                          .value
+                          }`}
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -426,9 +424,8 @@ export default function ProjectDetails(props) {
                     ?.length > 0 && (
                     <div className="social-icon-button cursor-pointer w-9 h-9 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                       <a
-                        href={`${
-                          links.find((link) => link.title === "linkInsta").value
-                        }`}
+                        href={`${links.find((link) => link.title === "linkInsta").value
+                          }`}
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -441,10 +438,9 @@ export default function ProjectDetails(props) {
                     ?.length > 0 && (
                     <div className="social-icon-button cursor-pointer w-9 h-9 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                       <a
-                        href={`${
-                          links.find((link) => link.title === "linkTwitter")
-                            .value
-                        }`}
+                        href={`${links.find((link) => link.title === "linkTwitter")
+                          .value
+                          }`}
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -457,10 +453,9 @@ export default function ProjectDetails(props) {
                     ?.length > 0 && (
                     <div className="social-icon-button cursor-pointer w-9 h-9 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                       <a
-                        href={`${
-                          links.find((link) => link.title === "linkGithub")
-                            .value
-                        }`}
+                        href={`${links.find((link) => link.title === "linkGithub")
+                          .value
+                          }`}
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -473,10 +468,9 @@ export default function ProjectDetails(props) {
                     ?.length > 0 && (
                     <div className="social-icon-button cursor-pointer w-9 h-9 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                       <a
-                        href={`${
-                          links.find((link) => link.title === "customLinks1")
-                            .value
-                        }`}
+                        href={`${links.find((link) => link.title === "customLinks1")
+                          .value
+                          }`}
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -543,14 +537,13 @@ export default function ProjectDetails(props) {
                         Net Worth{" "}
                         <i
                           onClick={getProjectNetWorth}
-                          className={`fa-regular fa-arrows-rotate text-textSubtle text-sm ${
-                            balanceLoading ? "fa-spin" : ""
-                          } cursor-pointer`}
+                          className={`fa-regular fa-arrows-rotate text-textSubtle text-sm ${balanceLoading ? "fa-spin" : ""
+                            } cursor-pointer`}
                         ></i>
                       </p>
                       <div className="ml-auto">
                         <h4 className="text-black">
-                          {newWorth?.balance} {newWorth?.currency}
+                          {newWorth?.balance} {newWorth?.currency?.toUpperCase()}
                         </h4>
                         <p className="text-sm text-textSubtle">
                           (${newWorth.balanceUSD.toFixed(2)})
@@ -564,7 +557,7 @@ export default function ProjectDetails(props) {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className=" text-textSubtle mt-1">
+                      <p className="text-sm	 mt-1">
                         Powered by{" "}
                         <Link
                           className="ml-1 font-bold"
@@ -594,11 +587,10 @@ export default function ProjectDetails(props) {
                   onClick={() => setSelectedTab(1)}
                 >
                   <button
-                    className={`inline-block py-2 md:p-4 md:text-lg rounded-t-lg ${
-                      selectedTab === 1
-                        ? "border-b-2 border-primary-900 text-primary-900"
-                        : "border-transparent text-textSubtle"
-                    } hover:text-primary-600`}
+                    className={`inline-block py-2 md:p-4 md:text-lg rounded-t-lg ${selectedTab === 1
+                      ? "border-b-2 border-primary-900 text-primary-900"
+                      : "border-transparent text-textSubtle"
+                      } hover:text-primary-600`}
                     id="membership_nft"
                     data-tabs-target="#membership_nft"
                     type="button"
@@ -615,11 +607,10 @@ export default function ProjectDetails(props) {
                   onClick={() => setSelectedTab(2)}
                 >
                   <button
-                    className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${
-                      selectedTab === 2
-                        ? "border-b-2 border-primary-900 text-primary-900"
-                        : "border-transparent text-textSubtle"
-                    } hover:text-primary-900`}
+                    className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${selectedTab === 2
+                      ? "border-b-2 border-primary-900 text-primary-900"
+                      : "border-transparent text-textSubtle"
+                      } hover:text-primary-900`}
                     id="dashboard-tab"
                     data-tabs-target="#dashboard"
                     type="button"
@@ -636,11 +627,10 @@ export default function ProjectDetails(props) {
                   onClick={() => setSelectedTab(3)}
                 >
                   <button
-                    className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${
-                      selectedTab === 3
-                        ? "border-b-2 border-primary-900 text-primary-900"
-                        : "border-transparent text-textSubtle"
-                    } hover:text-primary-900`}
+                    className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${selectedTab === 3
+                      ? "border-b-2 border-primary-900 text-primary-900"
+                      : "border-transparent text-textSubtle"
+                      } hover:text-primary-900`}
                     id="dashboard-tab"
                     data-tabs-target="#dashboard"
                     type="button"
@@ -658,11 +648,10 @@ export default function ProjectDetails(props) {
                     onClick={() => setSelectedTab(4)}
                   >
                     <button
-                      className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${
-                        selectedTab === 4
-                          ? "border-b-2 border-primary-900 text-primary-900"
-                          : "border-transparent text-textSubtle"
-                      } hover:text-primary-900`}
+                      className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${selectedTab === 4
+                        ? "border-b-2 border-primary-900 text-primary-900"
+                        : "border-transparent text-textSubtle"
+                        } hover:text-primary-900`}
                       id="dashboard-tab"
                       data-tabs-target="#dashboard"
                       type="button"
@@ -681,11 +670,10 @@ export default function ProjectDetails(props) {
                     onClick={() => setSelectedTab(5)}
                   >
                     <button
-                      className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${
-                        selectedTab === 5
-                          ? "border-b-2 border-primary-900 text-primary-900"
-                          : "border-transparent text-textSubtle"
-                      } hover:text-primary-900`}
+                      className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${selectedTab === 5
+                        ? "border-b-2 border-primary-900 text-primary-900"
+                        : "border-transparent text-textSubtle"
+                        } hover:text-primary-900`}
                       id="dashboard-tab"
                       data-tabs-target="#dashboard"
                       type="button"
@@ -753,9 +741,9 @@ export default function ProjectDetails(props) {
                               </div>
                               <p className="mb-3 text-textSubtle text-[13px]">
                                 {collection.description &&
-                                collection.description.length > 70
+                                  collection.description.length > 70
                                   ? collection.description.substring(0, 67) +
-                                    "..."
+                                  "..."
                                   : collection.description}
                               </p>
                               <div className="flex items-center">
@@ -894,9 +882,9 @@ export default function ProjectDetails(props) {
                             </div>
                             <p className="mb-3 text-textSubtle text-[13px]">
                               {collection.description &&
-                              collection.description.length > 70
+                                collection.description.length > 70
                                 ? collection.description.substring(0, 67) +
-                                  "..."
+                                "..."
                                 : collection.description}
                             </p>
                             <div className="flex items-center">

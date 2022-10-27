@@ -527,7 +527,7 @@ const CollectionDetail = () => {
       )}
       {collectionNotUpdatableModal && (
         <ErrorModal
-          title={"NFT is not updatable"}
+          title={"NFT is not updatable once its collection is published or its metadata was freezed"}
           message={`  `}
           handleClose={() => {
             setCollectionNotUpdatableModal(false);

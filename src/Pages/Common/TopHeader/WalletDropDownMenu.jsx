@@ -99,16 +99,19 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
             />
             <span>Total Balance </span>
           </p>
+          <h4 className="text-sm ">
+            {NETWORKS[networkId] && <div>{NETWORKS[networkId].networkName}</div>}
+          </h4>
           <h4 className="txtblack text-xl  mb-6 tracking-wide">
             {isLoadingBalance && (
               <i className="fa fa-spinner fa-pulse fa-fw"></i>
             )}
-            {NETWORKS[networkId] && <div>{NETWORKS[networkId].networkName}</div>}
             <span>
               {balance ? balance.toFixed(4) : 0}{" "}
               {NETWORKS[networkId] ? NETWORKS[networkId].cryto : ""}
             </span>
           </h4>
+
           <a className="btn-fund" href="#">
             <span>Add Funds</span>
           </a>

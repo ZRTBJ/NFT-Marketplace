@@ -1,6 +1,6 @@
 import axios from "axios";
 import { ls_GetUserRefreshToken, ls_GetUserToken, ls_SetUserID, ls_SetUserRefreshToken, ls_SetUserToken } from "util/ApplicationStorage";
-import Config from "../config/config";
+import Config from "config/config";
 // import jwt from "jwt-decode";
 
 const ROOT_URL = Config.API_ENDPOINT;
