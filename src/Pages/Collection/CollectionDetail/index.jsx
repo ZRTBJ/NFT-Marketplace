@@ -797,27 +797,29 @@ const CollectionDetail = () => {
                   NFT
                 </button>
               </li>
-              <li
-                className="mr-2"
-                role="presentation"
-                onClick={() => setSelectedTab(2)}
-              >
-                <button
-                  className={`inline-block p-4 text-lg rounded-t-lg ${
-                    selectedTab === 2
-                      ? "border-b-2 border-primary-900 text-primary-900"
-                      : "border-transparent text-textSubtle"
-                  } hover:text-primary-900`}
-                  id="dashboard"
-                  data-tabs-target="#dashboard"
-                  type="button"
-                  role="tab"
-                  aria-controls="dashboard"
-                  aria-selected="false"
+              {Collection?.is_owner && (
+                <li
+                  className="mr-2"
+                  role="presentation"
+                  onClick={() => setSelectedTab(2)}
                 >
-                  Dashboard
-                </button>
-              </li>
+                  <button
+                    className={`inline-block p-4 text-lg rounded-t-lg ${
+                      selectedTab === 2
+                        ? "border-b-2 border-primary-900 text-primary-900"
+                        : "border-transparent text-textSubtle"
+                    } hover:text-primary-900`}
+                    id="dashboard"
+                    data-tabs-target="#dashboard"
+                    type="button"
+                    role="tab"
+                    aria-controls="dashboard"
+                    aria-selected="false"
+                  >
+                    Dashboard
+                  </button>
+                </li>
+              )}
             </ul>
           </div>
           <div id="myTabContent">
@@ -833,7 +835,7 @@ const CollectionDetail = () => {
                         <Link to={`/nft-details/${nft?.nft_type}/${nft.id}`}>
                           {imageRegex.test(nft?.asset?.asset_type) && (
                             <img
-                              className="rounded-xl h-[176px] md:h-[276px] w-[150px] md:w-[276px] object-contain"
+                              className="rounded-xl h-[176px] md:h-[276px] w-[150px] md:w-[276px] object-cover"
                               src={nft?.asset?.path}
                               alt=""
                             />
@@ -922,7 +924,7 @@ const CollectionDetail = () => {
 
                                     {Collection?.type === "membership" && (
                                       <>
-                                        <li className="border">
+                                        {/* <li className="border">
                                           <div
                                             onClick={() => {
                                               setShowTransferNFT(true);
@@ -932,7 +934,7 @@ const CollectionDetail = () => {
                                           >
                                             Transfer NFT
                                           </div>
-                                        </li>
+                                        </li> */}
                                         <li className="border">
                                           <div
                                             onClick={(e) =>
@@ -978,8 +980,10 @@ const CollectionDetail = () => {
                 ) : (
                   <div className="w-full">
                     <p className="font-bold text-center">
-                      You don't have any NFT's. Start minting NFT's to display
-                      here
+                      You don't have any NFT's.
+                      {Collection?.status === "draft"
+                        ? `Start minting NFT's to display here`
+                        : ``}
                     </p>
                   </div>
                 )}

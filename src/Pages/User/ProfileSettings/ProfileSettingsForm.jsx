@@ -91,7 +91,7 @@ const ProfileSettingsForm = () => {
           console.log(ex);
         }
       }
-    } catch { }
+    } catch {}
     dispatch(setUserInfo(userinfo));
     setIsLoading(false);
   }
@@ -278,9 +278,11 @@ const ProfileSettingsForm = () => {
               you can use your name or your nickname.
             </div>
             <input
-              className={`block w-full border ${errors.displayName ? "border-red-500" : "border-dark-300"
-                } rounded py-3 px-4 mb-3 leading-tight ${errors.displayName ? "focus:border focus:border-red-500" : ""
-                }`}
+              className={`block w-full border ${
+                errors.displayName ? "border-red-500" : "border-dark-300"
+              } rounded py-3 px-4 mb-3 leading-tight ${
+                errors.displayName ? "focus:border focus:border-red-500" : ""
+              }`}
               id="display-name"
               name="displayName"
               type="text"
@@ -300,9 +302,11 @@ const ProfileSettingsForm = () => {
             <div className="label">Email</div>
             <div className="label-grey">Enter your email address.</div>
             <input
-              className={`block w-full border ${errors.email ? "border-red-500" : "border-dark-300"
-                } rounded py-3 px-4 mb-3 leading-tight ${errors.email ? "focus:border focus:border-red-500" : ""
-                }`}
+              className={`block w-full border ${
+                errors.email ? "border-red-500" : "border-dark-300"
+              } rounded py-3 px-4 mb-3 leading-tight ${
+                errors.email ? "focus:border focus:border-red-500" : ""
+              }`}
               id="email"
               name="email"
               type="text"
@@ -509,6 +513,7 @@ const ProfileSettingsForm = () => {
         <SuccessModal
           handleClose={setShowSuccessModal}
           show={showSuccessModal}
+          redirection={"/"}
         />
       )}
       {showErrorModal && (
