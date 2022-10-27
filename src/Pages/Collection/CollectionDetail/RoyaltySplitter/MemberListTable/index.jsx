@@ -231,7 +231,7 @@ const MemberListTable = ({
       <div className="mb-4">
         {newItems ? (
           <div className="flex items-center ml-0 md:ml-4">
-            <div class="w-[250px] mr-8">
+            <div class="w-[250px] mr-4 md:mr-8">
               <input
                 id={"address"}
                 type="text"
@@ -241,14 +241,14 @@ const MemberListTable = ({
                 class="w-full bg-secondary rounded-[6px] text-[12px] px-[10px] py-[14px] text-text-base"
               />
             </div>
-            <div class="w-[150px] mr-8 relative">
+            <div class="w-[150px] mr-4 md:mr-8 relative">
               <input
                 id={"percentage"}
                 type="number"
                 value={percentage}
                 onChange={(e) => setPercentage(e.target.value)}
                 placeholder="-"
-                class="w-full bg-secondary rounded-[6px] text-[12px] px-[10px] py-[14px] text-text-base"
+                class="w-full bg-secondary rounded-[6px] text-[12px] pl-[10px] !pr-[30px] py-[14px] text-text-base"
               />
               <p className="absolute top-3 right-4">%</p>
             </div>
