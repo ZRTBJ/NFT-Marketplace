@@ -1,3 +1,4 @@
+import { round } from 'lodash';
 import { useEffect, useState, useMemo } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -264,7 +265,7 @@ const CollectionDetail = () => {
     let values = royalityMembers.map((mem) => {
       return {
         ...mem,
-        royalty_percent: parseInt(value),
+        royalty_percent: parseFloat(round(value, 3)),
       };
     });
     setRoyalityMembers(values);
