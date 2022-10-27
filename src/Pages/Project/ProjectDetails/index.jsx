@@ -66,6 +66,7 @@ export default function ProjectDetails(props) {
   const [showTransferFundModal, setShowTransferFundModal] = useState(false);
   const [fnId, setFnId] = useState("");
   const [balanceLoading, setBalanceLoading] = useState(false);
+  const [collection, setCollection] = useState();
   const [newWorth, setNetWorth] = useState({
     balance: 0,
     currency: "",
@@ -236,6 +237,7 @@ export default function ProjectDetails(props) {
     await getCollections("project", projectId, page, limit)
       .then((e) => {
         if (e.code === 0 && e.data !== null) {
+          setCollection(e);
           const membershipcoll = e.data.filter(
             (col) => col.type === "membership"
           );
@@ -334,7 +336,7 @@ export default function ProjectDetails(props) {
 
           {/* end gallery */}
           {/* profile information section */}
-          <div className="bg-[#122478]/[0.03]  rounded-xl mt-4 py-6 px-4 md:p-6">
+          <div className="bg-[#122478]/[0.03]  rounded-xl mt-4 py-6 px-4 md:py-8 md:px-6">
             <div className="flex flex-col md:flex-row ">
               <div className="md:w-2/3 ">
                 <div className="flex">
@@ -379,6 +381,28 @@ export default function ProjectDetails(props) {
                 className="flex flex-wrap mt-5 items-start md:justify-end md:w-1/3 md:mt-0"
                 role="group"
               >
+                <div className="flex items-center">
+                  {project &&
+                    project.members &&
+                    project.members.length > 0 &&
+                    project.members.map((img, index) => (
+                      <>
+                        {index < 5 && (
+                          <img
+                            key={`member-img-${index}`}
+                            className="rounded-full object-cover w-9 h-9 mr-2 border-2 border-white"
+                            src={img.avatar ? img.avatar : avatar}
+                            alt=""
+                          />
+                        )}
+                      </>
+                    ))}
+                  {project && project.members && project.members.length > 5 && (
+                    <span className="ml-2 bg-primary-900 bg-opacity-5  text-primary-900 rounded p-1 text-xs  ">
+                      +{project.members.length - 5}
+                    </span>
+                  )}
+                </div>
                 {links.find((link) => link.title === "linkFacebook") &&
                   links.find((link) => link.title === "linkFacebook").value
                     ?.length > 0 && (
@@ -479,7 +503,7 @@ export default function ProjectDetails(props) {
             </div>
 
             <div className="flex flex-col md:flex-row  md:pt-5">
-              <div className="md:w-2/3">
+              <div className="md:flex-1">
                 <h3>About</h3>
                 {project.overview ? (
                   <div className="whitespace-pre-line text-textLight text-sm">
@@ -490,77 +514,67 @@ export default function ProjectDetails(props) {
                     Please add description to show here
                   </p>
                 )}
-
-                <div className="flex items-center ml-2 md:ml-0 mt-3">
-                  {project &&
-                    project.members &&
-                    project.members.length > 0 &&
-                    project.members.map((img, index) => (
-                      <>
-                        {index < 5 && (
-                          <img
-                            key={`member-img-${index}`}
-                            className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
-                            src={img.avatar ? img.avatar : avatar}
-                            alt=""
-                          />
-                        )}
-                      </>
-                    ))}
-                  {project && project.members && project.members.length > 5 && (
-                    <span className="ml-2 bg-primary-900 bg-opacity-5  text-primary-900 rounded p-1 text-xs  ">
-                      +{project.members.length - 5}
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              <div className="md:flex md:items-center md:justify-center flex-wrap mt-3 md:justify-end md:w-1/3  md:mt-0">
-                {project?.project_status === "published" && project?.is_owner && (
-                  <div
-                    onClick={() => setShowTransferFundModal(true)}
-                    className="hidden md:flex outlined-button ml-4 cursor-pointer font-satoshi-bold cursor-pointer"
-                  >
-                    <span className="gradient-text">Transfer Funds</span>
-                  </div>
-                )}
-                {project?.project_status === "published" ? (
-                  <div className="bg-primary-900 md:mt-4 md:ml-3 bg-opacity-10 rounded-md p-3 px-5 relative md:w-56">
-                    <i
-                      onClick={getProjectNetWorth}
-                      className={`fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3 ${
-                        balanceLoading ? "fa-spin" : ""
-                      } cursor-pointer`}
-                    ></i>
-                    <p className=" text-sm text-textSubtle ">Net Worth</p>
-                    <h4>
-                      {newWorth?.balance} {newWorth?.currency}
-                    </h4>
-                    <p className="text-sm text-textSubtle">
-                      $ {newWorth.balanceUSD.toFixed(2)}
-                    </p>
-                  </div>
-                ) : null}
-
-                <div className="md:hidden flex mt-4">
-                  {project?.is_owner && (
-                    <div
-                      onClick={() => setShowTransferFundModal(true)}
-                      className="outlined-button w-[120px] text-center !px-0  md:ml-4 cursor-pointer font-satoshi-bold cursor-pointer"
-                    >
-                      <span className="gradient-text">Transfer Funds</span>
-                    </div>
-                  )}
+                <div className="flex mt-4 mb-4 md:mb-0 md:mt-[50px]">
                   {project?.project_status !== "published" &&
                     project?.is_owner && (
                       <div
                         onClick={() => setShowPublishModal(true)}
-                        className=" cursor-pointer  w-[120px] contained-button text-center  ml-4  font-satoshi-bold"
+                        className=" cursor-pointer  w-[120px] contained-button text-center font-satoshi-bold"
                       >
                         Publish
                       </div>
                     )}
+                  {project?.is_owner && (
+                    <div
+                      onClick={() => setShowTransferFundModal(true)}
+                      className="outlined-button w-[120px] text-center !px-0 mr-4 cursor-pointer font-satoshi-bold cursor-pointer"
+                    >
+                      <span className="gradient-text">Transfer Funds</span>
+                    </div>
+                  )}
                 </div>
+              </div>
+              <div className="md:flex md:items-center md:justify-center self-end flex-wrap mt-3 md:justify-end  md:mt-0">
+                {project?.project_status === "published" ? (
+                  <div className="bg-[#122478]/[0.05]  md:mt-4 md:ml-3  rounded-md p-3 px-5 relative md:w-80 ">
+                    <div className="flex mb-4">
+                      <p className=" text-textSubtle mt-1">
+                        Net Worth{" "}
+                        <i
+                          onClick={getProjectNetWorth}
+                          className={`fa-regular fa-arrows-rotate text-textSubtle text-sm ${
+                            balanceLoading ? "fa-spin" : ""
+                          } cursor-pointer`}
+                        ></i>
+                      </p>
+                      <div className="ml-auto">
+                        <h4 className="text-black">
+                          {newWorth?.balance} {newWorth?.currency}
+                        </h4>
+                        <p className="text-sm text-textSubtle">
+                          (${newWorth.balanceUSD.toFixed(2)})
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center mb-4">
+                      <p className=" text-textSubtle mt-1">Collections</p>
+                      <div className="ml-auto">
+                        <h4 className="text-black">{collection?.total}</h4>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className=" text-textSubtle mt-1">
+                        Powered by{" "}
+                        <Link
+                          className="ml-1 font-bold"
+                          to="https://www.coingecko.com/"
+                        >
+                          CoinGecko
+                        </Link>
+                      </p>
+                    </div>
+                  </div>
+                ) : null}
               </div>
             </div>
           </div>
