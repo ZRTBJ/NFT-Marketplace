@@ -33,9 +33,10 @@ const DeployingCollectiontModal = ({
   const [contractAdd, setContractAdd] = useState("");
   const [txnData, setTxnData] = useState();
   const provider = createProvider();
-  let chainId = ls_GetChainID()
+  let chainId = ls_GetChainID();
   let createFactoryCollection = NETWORKS[chainId]?.createFactoryCollection;
-  let createMembershipFactoryCollection = NETWORKS[chainId]?.createMembershipFactoryCollection;
+  let createMembershipFactoryCollection =
+    NETWORKS[chainId]?.createMembershipFactoryCollection;
   const collectionContract = createInstance(
     collectionType === "membership"
       ? createMembershipFactoryCollection
@@ -143,12 +144,18 @@ const DeployingCollectiontModal = ({
         config,
         collectionType
       );
-      const hash = response.txReceipt;
-      let data = {
-        transactionHash: hash.transactionHash,
-        block_number: hash.blockNumber,
-      };
-      setTxnData(data);
+      let hash;
+
+      if (response?.txReceipt) {
+        hash = response.txReceipt;
+        let data = {
+          transactionHash: hash.transactionHash,
+          block_number: hash.blockNumber,
+        };
+        setTxnData(data);
+      } else {
+        errorClose(response);
+      }
     } catch (err) {
       errorClose(err);
     }

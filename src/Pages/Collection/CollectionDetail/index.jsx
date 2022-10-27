@@ -185,6 +185,7 @@ const CollectionDetail = () => {
   const getSplittedContributors = (id) => {
     getSplitterDetails(id).then((data) => {
       if (data.code === 0) {
+        console.log(data);
         setRoyalityMembers(data?.members);
       }
     });

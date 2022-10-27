@@ -53,8 +53,9 @@ const ContributorsList = ({
             {contributors.map((r, index) => (
               <tr
                 key={r.id}
-                className={`${index < contributors.length - 1 ? "border-b" : ""
-                  } text-left text-[13px]`}
+                className={`${
+                  index < contributors.length - 1 ? "border-b" : ""
+                } text-left text-[13px]`}
               >
                 <td className="py-4 px-5">
                   {ownerWallet !== r.wallet_address ? (
@@ -136,8 +137,9 @@ const ContributorsList = ({
         </table>
       ) : null}{" "}
       <button
-        className={`contained-button font-satoshi-bold w-full mt-4 text-[14px] font-bold ${showPercentError ? "opacity-[0.5]" : ""
-          }`}
+        className={`contained-button font-satoshi-bold w-full mt-4 text-[14px] font-bold ${
+          showPercentError ? "opacity-[0.5]" : ""
+        }`}
         onClick={handleAddWallet}
         disabled={showPercentError}
       >

@@ -36,7 +36,7 @@ const SalesSettingsTab = ({ projectNetwork }) => {
     keyword: "",
   });
   const [membershipNFTId, setMembershipNFTId] = useState("");
-  const [nftShareURL, setNFTShareURL] = useState("dfdf");
+  const [nftShareURL, setNFTShareURL] = useState("");
   const [showSalesModal, setShowSalesModal] = useState(false);
   const [collection, setCollection] = useState({});
   function handleSortType(order_by) {
