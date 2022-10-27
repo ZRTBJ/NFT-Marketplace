@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { formatNumber } from 'accounting';
 import {
   getNftDetails,
   mintProductOrMembershipNft,
@@ -417,7 +418,7 @@ export default function DetailsNFT(props) {
                 :
               </span>
               <span className="text-textSubtle leading-8">
-                {availableSupply} / {nft?.lnft?.supply}
+                {formatNumber(availableSupply)} / {formatNumber(nft?.lnft?.supply)}
               </span>
             </div>
             <h3 className="txtblack">Description</h3>

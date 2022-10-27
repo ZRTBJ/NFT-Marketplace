@@ -10,6 +10,7 @@
     "@testing-library/user-event": "^13.5.0",
     "@toruslabs/torus-embed": "^1.20.4",
     "@usedapp/core": "^0.5.1",
+    "accounting": "^0.4.1",
     "axios": "^0.26.1",
     "date-fns": "^2.29.2",
     "dayjs": "^1.11.5",
