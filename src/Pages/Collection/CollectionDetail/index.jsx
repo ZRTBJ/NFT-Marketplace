@@ -1,4 +1,4 @@
-import { round } from 'lodash';
+import { round } from "lodash";
 import { useEffect, useState, useMemo } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -89,6 +89,8 @@ const CollectionDetail = () => {
   const [daoInfo, setDaoInfo] = useState({});
   const [nftShareURL, setNFTShareURL] = useState("");
   const [membershipNFTId, setMembershipNFTId] = useState("");
+  const [collectionNotUpdatableModal, setCollectionNotUpdatableModal] =
+    useState(false);
 
   // Publish royalty splitter
   const [showPublishRoyaltySpliterModal, setShowPublishRoyaltySpliterModal] =
@@ -183,6 +185,7 @@ const CollectionDetail = () => {
   const getSplittedContributors = (id) => {
     getSplitterDetails(id).then((data) => {
       if (data.code === 0) {
+        console.log(data);
         setRoyalityMembers(data?.members);
       }
     });
@@ -277,17 +280,39 @@ const CollectionDetail = () => {
     setRoyalityMembers(values);
   };
 
-  const handleEditNFT = (e, id) => {
+  const handleEditNFT = (e, nft) => {
     e.stopPropagation();
     e.preventDefault();
     setShowOptions(null);
-    history.push(
-      `${
-        Collection?.type === "product"
-          ? `/product-nft?collectionId=${collectionId}&nftId=${id}`
-          : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}&nftId=${id}`
-      }`
-    );
+    if (!Collection?.updatable) {
+      setCollectionNotUpdatableModal(true);
+    } else {
+      if (Collection?.status === "draft") {
+        history.push(
+          `${
+            Collection?.type === "product"
+              ? `/product-nft?collectionId=${collectionId}&nftId=${nft.id}`
+              : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}&nftId=${nft.id}`
+          }`
+        );
+      } else if (Collection.status === "published") {
+        if (Collection?.type === "product") {
+          if (nft.freeze_metadata) {
+            setCollectionNotUpdatableModal(true);
+          } else {
+            history.push(
+              `${
+                Collection?.type === "product"
+                  ? `/product-nft?collectionId=${collectionId}&nftId=${nft.id}`
+                  : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}&nftId=${nft.id}`
+              }`
+            );
+          }
+        } else {
+          setCollectionNotUpdatableModal(true);
+        }
+      }
+    }
   };
 
   const handleUpdateMeta = (e, id) => {
@@ -500,6 +525,16 @@ const CollectionDetail = () => {
           setShowRoyalityErrorMessage={setShowRoyalityErrorMessage}
         />
       )}
+      {collectionNotUpdatableModal && (
+        <ErrorModal
+          title={"NFT is not updatable"}
+          message={`  `}
+          handleClose={() => {
+            setCollectionNotUpdatableModal(false);
+          }}
+          show={collectionNotUpdatableModal}
+        />
+      )}
       <section className="mt-6">
         <div className="row-span-2 col-span-2">
           <img
@@ -675,7 +710,7 @@ const CollectionDetail = () => {
             <h3>About</h3>
             <div className="text-textLight text-sm">
               {Collection?.description ? (
-                <p className="whitespace-pre-line text-textLight text-sm">
+                <p className="whitespace-pre-line text-textLight break-all text-sm">
                   {Collection.description}
                 </p>
               ) : (
@@ -687,7 +722,7 @@ const CollectionDetail = () => {
                 Collection.members &&
                 Collection.members.length > 0 &&
                 Collection.members.map((img, index) => (
-                  <>
+                  <div key={index}>
                     {index < 5 && (
                       <img
                         key={`member-img-${index}`}
@@ -696,7 +731,7 @@ const CollectionDetail = () => {
                         alt=""
                       />
                     )}
-                  </>
+                  </div>
                 ))}
               {Collection &&
                 Collection.members &&
@@ -890,45 +925,14 @@ const CollectionDetail = () => {
                               {ShowOptions === nft.id && (
                                 <div className="z-10 w-48 bg-white   rounded-md  absolute left-0 top-8 mb-6 block">
                                   <ul className="text-sm mb-0">
-                                    {Collection.updatable && (
-                                      <>
-                                        {Collection.status === "draft" && (
-                                          <>
-                                            <li className="border">
-                                              <div
-                                                onClick={(e) =>
-                                                  handleEditNFT(e, nft.id)
-                                                }
-                                                className="py-3 pl-3 block hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
-                                              >
-                                                Edit NFT
-                                              </div>
-                                            </li>
-                                          </>
-                                        )}
-                                        {Collection.status === "published" && (
-                                          <>
-                                            {Collection.type === "product" && (
-                                              <>
-                                                {!nft.freeze_metadata && (
-                                                  <li className="border-b border-divide">
-                                                    <div
-                                                      onClick={(e) =>
-                                                        handleEditNFT(e, nft.id)
-                                                      }
-                                                      className="py-3 pl-3 block hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
-                                                    >
-                                                      Edit NFT
-                                                    </div>
-                                                  </li>
-                                                )}
-                                              </>
-                                            )}
-                                          </>
-                                        )}
-                                      </>
-                                    )}
-
+                                    <li className="border">
+                                      <div
+                                        onClick={(e) => handleEditNFT(e, nft)}
+                                        className="py-3 pl-3 block hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
+                                      >
+                                        Edit NFT
+                                      </div>
+                                    </li>
                                     {Collection?.type === "membership" && (
                                       <>
                                         {/* <li className="border">

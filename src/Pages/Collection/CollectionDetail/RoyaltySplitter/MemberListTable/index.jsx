@@ -1,6 +1,6 @@
-import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCopy } from '@fortawesome/free-solid-svg-icons'
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import styles from "./style.module.css";
 import Edit from "assets/images/icons/edit.svg";
 import Trash from "assets/images/icons/trash.svg";
@@ -29,8 +29,8 @@ const MemberListTable = ({
   const [isAdded, setIsAdded] = useState(false);
 
   const hasPublishedRoyaltySplitter = useMemo(
-    () => collection?.royalty_splitter?.status === 'published',
-    [collection],
+    () => collection?.royalty_splitter?.status === "published",
+    [collection]
   );
 
   useEffect(() => {
@@ -57,7 +57,8 @@ const MemberListTable = ({
   }, [showRoyalityErrorModal]);
 
   useEffect(() => {
-    let percent = list.reduce((acc, val) => acc + val.royalty_percent, 0);
+    let percent =
+      list.length && list.reduce((acc, val) => acc + val.royalty_percent, 0);
     let total = percent + parseInt(percentage ? percentage : 0);
 
     if (total > 100) {
@@ -75,7 +76,10 @@ const MemberListTable = ({
   const addNewContributorData = () => {
     setIsAdded(true);
     if (address && percentage) {
-      let value = { user_eoa: address, royalty_percent: parseFloat(percentage) };
+      let value = {
+        user_eoa: address,
+        royalty_percent: parseFloat(percentage),
+      };
       setRoyalityMembers([...list, value]);
     }
   };
@@ -92,7 +96,7 @@ const MemberListTable = ({
     setRoyalityMembers(values);
     setToDelete(true);
   };
-  
+
   const deleteContributor = () => {
     handleAutoFill();
     setToDelete(false);
@@ -124,96 +128,97 @@ const MemberListTable = ({
             </tr>
           </thead>
           <tbody>
-            {list.map((r, index) => (
-              <tr
-                key={r.id}
-                className={`${index < list.length - 1 ? "border-b" : ""
+            {list?.length &&
+              list.map((r, index) => (
+                <tr
+                  key={r.id}
+                  className={`${
+                    index < list.length - 1 ? "border-b" : ""
                   } text-left text-[13px]`}
-              >
-                <td className="py-4 px-5">
-                  <div className="inline-flex items-center">
-                    <span>{walletAddressTruncate(r.user_eoa)}</span>
-                    <CopyToClipboard text={r.user_eoa}>
-                      <button className="ml-1 w-[32px] h-[32px] rounded-[4px] flex items-center justify-center cursor-pointer text-[#A3D7EF] active:text-black">
-                        <FontAwesomeIcon className="" icon={faCopy} />
-                      </button>
-                    </CopyToClipboard>
-                  </div>
-                </td>
-                {/* <td className="py-4 px-5">{r.email}</td> */}
-                <td className="py-4 px-5">
-                  <div className="inline-flex items-center">
-                    {isEdit === r.user_eoa && isOwner ? (
-                      <div className="w-[75px] mr-2">
-                        <input
-                          type="number"
-                          value={r.royalty_percent}
-                          style={{ padding: "5px 10px" }}
-                          onChange={(e) => handleValueChange(e, r.user_eoa)}
-                        />
-                      </div>
-                    ) : (
-                      <span className="w-[60px]">
-                        {r.royalty_percent
-                          ? Intl.NumberFormat(
-                              'en-US',
-                              {
-                                style: 'percent',
-                                minimumFractionDigits: 3,
-                              }
-                            )
-                            .format(r.royalty_percent / 100)
-                          : "-"}
-                      </span>
-                    )}
-                    {isOwner && (
-                      <>
-                        {isEdit === r.user_eoa ? (
-                          <div>
-                            <i
-                              class="fa-solid fa-check bg-green-400 rounded-[4px] text-white flex items-center justify-center h-[24px] w-[24px] text-[20px] cursor-pointer"
-                              onClick={handleAutoFill}
-                            ></i>
-                            <i
-                              class="fa-solid fa-xmark bg-red-400 rounded-[4px] text-white flex items-center justify-center h-[24px] w-[24px] text-[20px] cursor-pointer"
-                              onClick={() => setIsEdit(null)}
-                            ></i>
-                          </div>
-                        ) : !hasPublishedRoyaltySplitter ? (
-                          <img
-                            src={Edit}
-                            alt="edit"
-                            className="cursor-pointer"
-                            onClick={() => setIsEdit(r.user_eoa)}
-                          />
-                        ) : null}
-                      </>
-                    )}
-                  </div>
-                </td>
-                <td className="py-4 px-5">{r.user_name ? r.user_name : "-"}</td>
-                <td className={`py-4 px-5`}>
-                  <p
-                    className={`text-[13px] bg-opacity-[0.2] py-1 px-2 w-fit rounded-[4px] font-bold ${r.is_owner
-                      ? "text-info-1 bg-[#46A6FF]"
-                      : " text-success-1 bg-[#32E865]"
-                      }`}
-                  >
-                    {r.is_owner ? "Owner" : "Contributor"}
-                  </p>
-                </td>
-                <td className="py-4 px-5">
-                  {r.is_owner || hasPublishedRoyaltySplitter ? null : (
-                    <div
-                      className="w-[32px] h-[32px] bg-[#FF3C3C] rounded-[4px] flex items-center justify-center cursor-pointer"
-                      onClick={() => handleDeleteContributor(r.user_eoa)}
-                    >
-                      <img src={Trash} alt="delete" />
+                >
+                  <td className="py-4 px-5">
+                    <div className="inline-flex items-center">
+                      <span>{walletAddressTruncate(r.user_eoa)}</span>
+                      <CopyToClipboard text={r.user_eoa}>
+                        <button className="ml-1 w-[32px] h-[32px] rounded-[4px] flex items-center justify-center cursor-pointer text-[#A3D7EF] active:text-black">
+                          <FontAwesomeIcon className="" icon={faCopy} />
+                        </button>
+                      </CopyToClipboard>
                     </div>
-                  )}
-                </td>
-              </tr>
-            ))}
+                  </td>
+                  {/* <td className="py-4 px-5">{r.email}</td> */}
+                  <td className="py-4 px-5">
+                    <div className="inline-flex items-center">
+                      {isEdit === r.user_eoa && isOwner ? (
+                        <div className="w-[75px] mr-2">
+                          <input
+                            type="number"
+                            value={r.royalty_percent}
+                            style={{ padding: "5px 10px" }}
+                            onChange={(e) => handleValueChange(e, r.user_eoa)}
+                          />
+                        </div>
+                      ) : (
+                        <span className="w-[60px]">
+                          {r.royalty_percent
+                            ? Intl.NumberFormat("en-US", {
+                                style: "percent",
+                                minimumFractionDigits: 3,
+                              }).format(r.royalty_percent / 100)
+                            : "-"}
+                        </span>
+                      )}
+                      {isOwner && (
+                        <>
+                          {isEdit === r.user_eoa ? (
+                            <div>
+                              <i
+                                class="fa-solid fa-check bg-green-400 rounded-[4px] text-white flex items-center justify-center h-[24px] w-[24px] text-[20px] cursor-pointer"
+                                onClick={handleAutoFill}
+                              ></i>
+                              <i
+                                class="fa-solid fa-xmark bg-red-400 rounded-[4px] text-white flex items-center justify-center h-[24px] w-[24px] text-[20px] cursor-pointer"
+                                onClick={() => setIsEdit(null)}
+                              ></i>
+                            </div>
+                          ) : !hasPublishedRoyaltySplitter ? (
+                            <img
+                              src={Edit}
+                              alt="edit"
+                              className="cursor-pointer"
+                              onClick={() => setIsEdit(r.user_eoa)}
+                            />
+                          ) : null}
+                        </>
+                      )}
+                    </div>
+                  </td>
+                  <td className="py-4 px-5">
+                    {r.user_name ? r.user_name : "-"}
+                  </td>
+                  <td className={`py-4 px-5`}>
+                    <p
+                      className={`text-[13px] bg-opacity-[0.2] py-1 px-2 w-fit rounded-[4px] font-bold ${
+                        r.is_owner
+                          ? "text-info-1 bg-[#46A6FF]"
+                          : " text-success-1 bg-[#32E865]"
+                      }`}
+                    >
+                      {r.is_owner ? "Owner" : "Contributor"}
+                    </p>
+                  </td>
+                  <td className="py-4 px-5">
+                    {r.is_owner || hasPublishedRoyaltySplitter ? null : (
+                      <div
+                        className="w-[32px] h-[32px] bg-[#FF3C3C] rounded-[4px] flex items-center justify-center cursor-pointer"
+                        onClick={() => handleDeleteContributor(r.user_eoa)}
+                      >
+                        <img src={Trash} alt="delete" />
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
         {/* <div className='flex items-center justify-center mt-10 w-fit mx-auto'>

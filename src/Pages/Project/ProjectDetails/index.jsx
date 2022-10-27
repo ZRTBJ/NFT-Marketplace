@@ -32,6 +32,7 @@ import LeavingSite from "Pages/Project/ProjectDetails/Components/LeavingSite";
 import CollectionTab from "Pages/Project/ProjectDetails/CollectionTab/CollectionTab";
 import SalesSettingsTab from "Pages/Project/ProjectDetails/SalesSettingTab/SalesSettingTab";
 import SalesSuccessModal from "Pages/Collection/SaleSetting/SalesSuccessModal";
+import RoyaltySplitter from "./RoyaltySplitter/RoyaltySplitter";
 
 export default function ProjectDetails(props) {
   const dispatch = useDispatch();
@@ -506,7 +507,7 @@ export default function ProjectDetails(props) {
               <div className="md:flex-1">
                 <h3>About</h3>
                 {project.overview ? (
-                  <div className="whitespace-pre-line text-textLight text-sm">
+                  <div className="whitespace-pre-line text-textLight text-sm break-all">
                     {project.overview}
                   </div>
                 ) : (
@@ -659,6 +660,29 @@ export default function ProjectDetails(props) {
                     <button
                       className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${
                         selectedTab === 4
+                          ? "border-b-2 border-primary-900 text-primary-900"
+                          : "border-transparent text-textSubtle"
+                      } hover:text-primary-900`}
+                      id="dashboard-tab"
+                      data-tabs-target="#dashboard"
+                      type="button"
+                      role="tab"
+                      aria-controls="dashboard"
+                      aria-selected="false"
+                    >
+                      Royalty Splitter
+                    </button>
+                  </li>
+                )}
+                {project?.is_owner && (
+                  <li
+                    className="mr-2"
+                    role="presentation"
+                    onClick={() => setSelectedTab(5)}
+                  >
+                    <button
+                      className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${
+                        selectedTab === 5
                           ? "border-b-2 border-primary-900 text-primary-900"
                           : "border-transparent text-textSubtle"
                       } hover:text-primary-900`}
@@ -923,8 +947,13 @@ export default function ProjectDetails(props) {
                 <CollectionTab projectOwner={project?.is_owner}></CollectionTab>
               )}
               {/* collection tab end */}
-              {/* Sales Setting tab start */}
+              {/* Royalty Splitter tab start */}
               {selectedTab === 4 && (
+                <RoyaltySplitter projectNetwork={project?.blockchain} />
+              )}
+              {/* Royalty Splitter tab end */}
+              {/* Sales Setting tab start */}
+              {selectedTab === 5 && (
                 <SalesSettingsTab projectNetwork={project?.blockchain} />
               )}
               {/* sales setting tab end */}
