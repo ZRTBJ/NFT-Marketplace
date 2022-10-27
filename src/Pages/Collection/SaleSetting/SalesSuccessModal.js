@@ -168,7 +168,7 @@ const SalesSuccessModal = ({
           className="w-full contained-button font-bold mt-6 text-[16px] h-[44px] bg-primary-50 text-primary-900 "
           onClick={handleNavigatetoDao}
         >
-          Back to DAO detail
+          Close
         </button>
       </div>
     </Modal>

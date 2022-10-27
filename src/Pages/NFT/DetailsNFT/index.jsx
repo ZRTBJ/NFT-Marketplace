@@ -169,7 +169,7 @@ export default function DetailsNFT(props) {
             setErrorMsg("");
             if (resp?.function?.status === "success") {
               nftDetails();
-              setHash(resp?.function?.transactionHash);
+              setHash(response.hash);
               setTransactionWaitingModal(false);
               setNftSuccessModal(true);
               setMintData(resp);
