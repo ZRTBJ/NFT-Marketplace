@@ -79,7 +79,7 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
 
       <div
         ref={ref}
-        className="w-52 md:w-52 h-auto md:h-auto md:border border-slate-300  bg-[#fff] rounded-xl absolute top-14 right-6 md:right-36 z-20"
+        className="h-auto md:h-auto md:border border-slate-300  bg-[#fff] rounded-xl absolute top-14 right-6 md:right-36 z-20"
       >
         <div className="pl-10 pr-3 py-3 border-b border-slate-300">
           <h3 className="txtblack text-sm  mb-6 ">Wallet</h3>
@@ -103,9 +103,10 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
             {isLoadingBalance && (
               <i className="fa fa-spinner fa-pulse fa-fw"></i>
             )}
+            {NETWORKS[networkId] && <div>{NETWORKS[networkId].networkName}</div>}
             <span>
               {balance ? balance.toFixed(4) : 0}{" "}
-              {NETWORKS[networkId] ? NETWORKS[networkId].crypto : ""}
+              {NETWORKS[networkId] ? NETWORKS[networkId].cryto : ""}
             </span>
           </h4>
           <a className="btn-fund" href="#">

@@ -33,10 +33,12 @@ const SalesSuccessModal = ({
   };
 
   useEffect(() => {
-    setIframeContent(
-      `<iframe src='${host}/embed-nft/membership/${membershipNFTId}' width='274px' height='477px' style="border:none" title='NFT'></iframe>`
-    );
-  }, [host]);
+    if (membershipNFTId) {
+      setIframeContent(
+        `<iframe src='${host}/embed-nft/membership/${membershipNFTId}' width='274px' height='477px' style="border:none" title='NFT'></iframe>`
+      );
+    }
+  }, [host, membershipNFTId]);
 
   const history = useHistory();
 
@@ -78,64 +80,64 @@ const SalesSuccessModal = ({
       overflow="auto"
     >
       <div>
-        <div className="text-center">
+        <div className="text-center -mt-[40px]">
           {" "}
-          <Lottie options={defaultOptions} height={305} width={305} />
-          <h1 className="text-[28px] mt-5">Your Sales Page are set!</h1>
-          <p className="text-[14px] text-[#5F6479] mt-5 w-[400px] mx-auto">
+          <Lottie options={defaultOptions} height={290} width={290} />
+          <h1 className="text-[21px] mt-5">Your Sales Page are set!</h1>
+          <p className="text-[14px] text-[#5F6479] mt-3 w-[400px] mx-auto">
             Your collections are set to sale. it’s already listed in the
             platform that you choose!
           </p>
         </div>
+
+        <div className="relative w-fit mx-auto my-5">
+          <p
+            className="text-[14px] block py-[10px] pl-[15px] pr-[40px]  text-primary-900 bg-primary-50 w-full rounded-[12px]"
+            id="iframe"
+          >
+            Link: <span className="font-black">{nftShareURL}</span>
+          </p>
+          <div className="text-primary-900 absolute top-2 right-2">
+            <i
+              className="fa fa-copy text-lg cursor-pointer"
+              onClick={() => copyToClipboardShare(`${nftShareURL}`)}
+            ></i>
+          </div>
+          <p
+            id="copied-share-message"
+            className="hidden text-green-500 text-[14px] text-center"
+          >
+            Copied Successfully!
+          </p>
+        </div>
         {membershipNFTId ? (
-          <div className="relative w-fit mx-auto my-5">
-            <p
-              className="text-[16px] block py-[10px] pl-[15px] pr-[40px]  text-primary-900 bg-primary-50 w-full rounded-[12px]"
+          <div className="mt-2">
+            <textarea
+              className="text-[14px] block mb-3 py-[10px] pl-[15px] pr-[15px] bg-[#122478] bg-opacity-[0.1] text-[#9499ae] w-full rounded-[12px]"
               id="iframe"
-            >
-              Link: <span className="font-black">{nftShareURL}</span>
-            </p>
-            <div className="text-primary-900 absolute top-2 right-2">
-              <i
-                className="fa fa-copy text-lg cursor-pointer"
-                onClick={() => copyToClipboardShare(`${nftShareURL}`)}
-              ></i>
+              name="iframe"
+              ref={copyRef}
+              value={iframeContent}
+            />
+            <div className="text-center mt-5 relative">
+              <button
+                onClick={copyToClipboard}
+                className="bg-primary-100 text-primary-900 py-2 px-3 rounded-[4px] text-[14px] font-black"
+              >
+                Copy Embed Code
+              </button>
+              {isTextCopied && (
+                <p className="right-10 bottom-2 absolute txtblack text-center text-xs text-success-900">
+                  Copied Successfully!
+                </p>
+              )}
             </div>
-            <p
-              id="copied-share-message"
-              className="hidden text-green-500 text-[14px] text-center"
-            >
-              Copied Successfully!
-            </p>
           </div>
         ) : null}
 
-        <div className="mt-2">
-          <textarea
-            className=" text-[14px] block mb-3 py-[10px] pl-[15px] pr-[40px] bg-[#122478] bg-opacity-[0.1] text-[#9499ae] w-full rounded-[12px]"
-            id="iframe"
-            name="iframe"
-            ref={copyRef}
-            value={iframeContent}
-          />
-          <div className="text-center mt-5 relative">
-            <button
-              onClick={copyToClipboard}
-              className="bg-primary-100 text-primary-900 py-2 px-3 rounded-[4px] text-[14px] font-black"
-            >
-              Copy Embed Code
-            </button>
-            {isTextCopied && (
-              <p className="right-10 bottom-2 absolute txtblack text-center text-xs text-success-900">
-                Copied Successfully!
-              </p>
-            )}
-          </div>
-        </div>
-
         {nftShareURL && (
           <div className="mt-3 mb-4 text-center">
-            <p className="mb-5">Share on Social Media</p>
+            <p className="mb-2">Share on Social Media</p>
             <div className="flex items-center justify-center">
               <FacebookShareButton url={`${nftShareURL}`} quote={"NFT"}>
                 <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[44px] w-[44px] flex items-center justify-center mr-2">
@@ -159,13 +161,13 @@ const SalesSuccessModal = ({
           </div>
         )}
         <p
-          className="cursor-pointer text-center text-[14px] text-primary-900 font-black mt-5"
+          className="cursor-pointer text-center text-[14px] text-primary-900 font-black mt-4"
           onClick={handleNavigateCollection}
         >
           Preview
         </p>
         <button
-          className="w-full contained-button font-bold mt-6 text-[16px] h-[44px] bg-primary-50 text-primary-900 "
+          className="w-full contained-button font-bold mt-4 text-[16px] h-[44px] bg-primary-50 text-primary-900 "
           onClick={handleNavigatetoDao}
         >
           Close
