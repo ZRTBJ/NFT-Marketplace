@@ -259,8 +259,14 @@ const CollectionDetail = () => {
   };
 
   const handleAutoAssign = (e) => {
-    setAutoAssign(!AutoAssign);
     let memberCount = royalityMembers.length;
+
+    if (!memberCount) {
+      return;
+    }
+
+    setAutoAssign(!AutoAssign);
+
     let value = 100 / memberCount;
     let values = royalityMembers.map((mem) => {
       return {
