@@ -1,3 +1,6 @@
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCopy } from '@fortawesome/free-solid-svg-icons'
 import styles from "./style.module.css";
 import Edit from "assets/images/icons/edit.svg";
 import Trash from "assets/images/icons/trash.svg";
@@ -89,7 +92,7 @@ const MemberListTable = ({
     setRoyalityMembers(values);
     setToDelete(true);
   };
-
+  
   const deleteContributor = () => {
     handleAutoFill();
     setToDelete(false);
@@ -127,57 +130,66 @@ const MemberListTable = ({
                 className={`${index < list.length - 1 ? "border-b" : ""
                   } text-left text-[13px]`}
               >
-                <td className="py-4 px-5 w-fit">
-                  {walletAddressTruncate(r.user_eoa)}
+                <td className="py-4 px-5">
+                  <div className="inline-flex items-center">
+                    <span>{walletAddressTruncate(r.user_eoa)}</span>
+                    <CopyToClipboard text={r.user_eoa}>
+                      <button className="ml-1 w-[32px] h-[32px] rounded-[4px] flex items-center justify-center cursor-pointer text-[#A3D7EF] active:text-black">
+                        <FontAwesomeIcon className="" icon={faCopy} />
+                      </button>
+                    </CopyToClipboard>
+                  </div>
                 </td>
                 {/* <td className="py-4 px-5">{r.email}</td> */}
-                <td className={`py-4 px-5 flex items-center`}>
-                  {isEdit === r.user_eoa && isOwner ? (
-                    <div className="w-[75px] mr-2">
-                      <input
-                        type="number"
-                        value={r.royalty_percent}
-                        style={{ padding: "5px 10px" }}
-                        onChange={(e) => handleValueChange(e, r.user_eoa)}
-                      />
-                    </div>
-                  ) : (
-                    <span className="w-[60px]">
-                      {r.royalty_percent
-                        ? Intl.NumberFormat(
-                            'en-US',
-                            {
-                              style: 'percent',
-                              minimumFractionDigits: 3,
-                            }
-                          )
-                          .format(r.royalty_percent / 100)
-                        : "-"}
-                    </span>
-                  )}
-                  {isOwner && (
-                    <>
-                      {isEdit === r.user_eoa ? (
-                        <div>
-                          <i
-                            class="fa-solid fa-check bg-green-400 rounded-[4px] text-white flex items-center justify-center h-[24px] w-[24px] text-[20px] cursor-pointer"
-                            onClick={handleAutoFill}
-                          ></i>
-                          <i
-                            class="fa-solid fa-xmark bg-red-400 rounded-[4px] text-white flex items-center justify-center h-[24px] w-[24px] text-[20px] cursor-pointer"
-                            onClick={() => setIsEdit(null)}
-                          ></i>
-                        </div>
-                      ) : !hasPublishedRoyaltySplitter ? (
-                        <img
-                          src={Edit}
-                          alt="edit"
-                          className="cursor-pointer"
-                          onClick={() => setIsEdit(r.user_eoa)}
+                <td className="py-4 px-5">
+                  <div className="inline-flex items-center">
+                    {isEdit === r.user_eoa && isOwner ? (
+                      <div className="w-[75px] mr-2">
+                        <input
+                          type="number"
+                          value={r.royalty_percent}
+                          style={{ padding: "5px 10px" }}
+                          onChange={(e) => handleValueChange(e, r.user_eoa)}
                         />
-                      ) : null}
-                    </>
-                  )}
+                      </div>
+                    ) : (
+                      <span className="w-[60px]">
+                        {r.royalty_percent
+                          ? Intl.NumberFormat(
+                              'en-US',
+                              {
+                                style: 'percent',
+                                minimumFractionDigits: 3,
+                              }
+                            )
+                            .format(r.royalty_percent / 100)
+                          : "-"}
+                      </span>
+                    )}
+                    {isOwner && (
+                      <>
+                        {isEdit === r.user_eoa ? (
+                          <div>
+                            <i
+                              class="fa-solid fa-check bg-green-400 rounded-[4px] text-white flex items-center justify-center h-[24px] w-[24px] text-[20px] cursor-pointer"
+                              onClick={handleAutoFill}
+                            ></i>
+                            <i
+                              class="fa-solid fa-xmark bg-red-400 rounded-[4px] text-white flex items-center justify-center h-[24px] w-[24px] text-[20px] cursor-pointer"
+                              onClick={() => setIsEdit(null)}
+                            ></i>
+                          </div>
+                        ) : !hasPublishedRoyaltySplitter ? (
+                          <img
+                            src={Edit}
+                            alt="edit"
+                            className="cursor-pointer"
+                            onClick={() => setIsEdit(r.user_eoa)}
+                          />
+                        ) : null}
+                      </>
+                    )}
+                  </div>
                 </td>
                 <td className="py-4 px-5">{r.user_name ? r.user_name : "-"}</td>
                 <td className={`py-4 px-5`}>

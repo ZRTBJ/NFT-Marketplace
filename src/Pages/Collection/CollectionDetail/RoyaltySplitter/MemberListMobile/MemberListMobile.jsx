@@ -1,3 +1,6 @@
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCopy } from '@fortawesome/free-solid-svg-icons'
 import Trash from "assets/images/icons/trash.svg";
 import { walletAddressTruncate } from "util/walletAddressTruncate";
 
@@ -12,9 +15,16 @@ const MemeberListMobile = ({ list }) => {
           <div className="flex items-center justify-between">
             <div className="mb-3">
               <p className="text-[14px] font-bold">Wallet Address</p>
-              <p className="text-[13px] mt-0">
-                {walletAddressTruncate(item.user_eoa)}
-              </p>
+              <div className="flex items-center">
+                <p className="text-[13px] mt-0">
+                  {walletAddressTruncate(item.user_eoa)}
+                </p>
+                <CopyToClipboard text={item.user_eoa}>
+                  <button className="ml-1 w-[32px] h-[32px] rounded-[4px] flex items-center justify-center cursor-pointer text-[#A3D7EF] active:text-black">
+                    <FontAwesomeIcon className="" icon={faCopy} />
+                  </button>
+                </CopyToClipboard>
+              </div>
             </div>
             {item.is_owner ? null : (
               <div className="w-[32px] h-[32px] bg-[#FF3C3C] rounded-[4px] flex items-center justify-center cursor-pointer">
