@@ -2,11 +2,11 @@ import { ethers } from "ethers";
 import { createInstance } from "eth/abis/forwarder";
 import { signMetaTxRequest } from "eth/utils/signer";
 import { NETWORKS } from "config/networks";
+import { ls_GetChainID } from "util/ApplicationStorage";
 
 async function sendMetaTx(contract, provider, signer, tier) {
   const forwarder = createInstance(provider);
   const from = await signer.getAddress();
-
   const data = contract.interface.encodeFunctionData("setTiers", [tier]);
   const to = contract.address;
 
@@ -15,8 +15,8 @@ async function sendMetaTx(contract, provider, signer, tier) {
     from,
     data,
   });
-  let chainId = localStorage.getItem("networkChain");
-  let webhook = NETWORKS?.[Number(chainId)]?.webhook;
+  let chainId = ls_GetChainID()
+  let webhook = NETWORKS?.[chainId]?.webhook;
   return fetch(webhook, {
     method: "POST",
     body: JSON.stringify(request),
@@ -31,7 +31,6 @@ export async function setMemNFTPrice(collection, provider, tier) {
   const userProvider = new ethers.providers.Web3Provider(window.ethereum);
 
   const signer = userProvider.getSigner();
-
   let output;
   const result = await sendMetaTx(collection, provider, signer, tier);
 

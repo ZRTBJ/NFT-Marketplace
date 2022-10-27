@@ -211,7 +211,7 @@ export default function CollectionCreate() {
   // Blockchain end
 
   // Freeze MetaData start
-  const [isMetaDaFreezed, setIsMetaDataFreezed] = useState(false);
+  const [isMetaDaFreezed, setIsMetaDataFreezed] = useState(true);
   const [freezeMetadataDisabled, setFreezeMetadataDisabled] = useState(false);
   function onMetadataFreezeChange(data) {
     setIsMetaDataFreezed((o) => !o);
@@ -385,7 +385,7 @@ export default function CollectionCreate() {
         setCoverPhotoUrl(cover ? cover : "");
         try {
           setWebLinks(JSON.parse(response.links));
-        } catch (e) { }
+        } catch (e) {}
         setProjectCategory(response.category_id);
         setIsTokenTransferable(response.token_transferable);
         setIsMetaDataFreezed(response.updatable);
@@ -477,8 +477,13 @@ export default function CollectionCreate() {
           isMetaDaFreezed: isMetaDaFreezed,
           isTokenTransferable: isTokenTransferable,
           royaltyPercentage: royaltyPercentage,
+          projectCategoryName: projectCategoryName,
         };
         console.log(payload);
+        const categoryName = projectCategoryList.find(
+          (x) => x.id === parseInt(projectCategory)
+        );
+        setProjectCategoryName(categoryName ? categoryName.name : "");
         setcurrentStep([1, 2]);
       }
     }

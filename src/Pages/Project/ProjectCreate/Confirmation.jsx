@@ -176,10 +176,11 @@ export default function Outline({
             {webLinks.map((link, index) => (
               <div key={index} className="inline-flex items-center w-full my-2">
                 <i
-                  className={` ${link.title.startsWith("customLinks")
-                    ? `fa-solid fa-${link.icon}`
-                    : `fa-brands fa-${link.icon}`
-                    }  text-[24px] text-primary-900  mr-2`}
+                  className={` ${
+                    link.title.startsWith("customLinks")
+                      ? `fa-solid fa-${link.icon}`
+                      : `fa-brands fa-${link.icon}`
+                  }  text-[24px] text-primary-900  mr-2`}
                 ></i>
                 <p
                   className={`block w-full   text-[14px] text-textSubtle rounded  pl-3  outline-none`}
@@ -214,10 +215,12 @@ export default function Outline({
         <div className="mb-6">
           <div className="flex flex-wrap items-center">
             {/* <Tooltip></Tooltip> */}
-            <div className="txtblack text-[14px] mb-[6px]">Freeze Metadata</div>
+            <div className="txtblack text-[14px] mb-[6px]">
+              Metadata Updatable
+            </div>
           </div>
           <p className="text-textSubtle">
-            {isMetaDaFreezed?.toString()?.toUpperCase()}
+            {isMetaDaFreezed ? 'Yes' : 'No'}
           </p>
         </div>
       )}
@@ -230,7 +233,7 @@ export default function Outline({
             </div>
           </div>
           <p className="text-textSubtle">
-            {isTokenTransferable.toString().toUpperCase()}
+            {isTokenTransferable ? 'Yes' : 'No'}
           </p>
         </div>
       )}

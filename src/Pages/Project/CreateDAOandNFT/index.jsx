@@ -13,6 +13,7 @@ import { getUserProjectListById } from "services/project/projectService";
 import { useEffect } from "react";
 import { getCollections } from "services/collection/collectionService";
 import Plus from "assets/images/icons/plus.svg";
+import { ls_GetUserID } from "util/ApplicationStorage";
 
 const CreateDAOandNFT = () => {
   const [ShowCreateNFT, setShowCreateNFT] = useState(false);
@@ -43,7 +44,7 @@ const CreateDAOandNFT = () => {
   };
 
   useEffect(() => {
-    let userId = localStorage.getItem("user_id");
+    let userId = ls_GetUserID();
     let payload = {
       id: userId,
     };

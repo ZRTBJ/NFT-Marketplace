@@ -6,6 +6,11 @@ import { addDays } from "date-fns";
 import getUnixTime from "date-fns/getUnixTime";
 import { DateRangePicker } from "rsuite";
 import { setSalesPage } from "services/nft/nftService";
+import {
+  getExchangeRate,
+  getCollections,
+  getCollectionNFTs,
+} from "services/collection/collectionService";
 import { setNFTPrice } from "./deploy-nftPrice";
 import { createProvider } from "eth/utils/provider";
 import { createMintInstance } from "eth/abis/mint-nft";
@@ -14,13 +19,10 @@ import Matic from "assets/images/polygon.svg";
 import Eth from "assets/images/eth.svg";
 import Modal from "components/Commons/Modal";
 import Select, { components } from "react-select";
-import {
-  getExchangeRate,
-  getCollectionNFTs,
-} from "services/collection/collectionService";
 import { createMembsrshipMintInstance } from "eth/abis/mint-membershipNFT";
 import { setMemNFTPrice } from "Pages/Collection/SaleSetting/deploy-membershipNFTPrice";
 import { ethers } from "ethers";
+import Delete from "assets/images/trash.svg";
 
 //TODO: in the future, 1 network can support multiple currency, please fix this
 const CURRENCY = [
@@ -32,7 +34,7 @@ const CURRENCY = [
 
 const Control = ({ children, ...props }) => {
   const { value } = props.selectProps;
-  let selectedValue = CURRENCY.find((item) => value.value === item.value);
+  let selectedValue = CURRENCY.find((item) => value?.value === item?.value);
   return (
     <components.Control {...props}>
       <div className="flex items-center w-full h-[42px]">
@@ -50,6 +52,8 @@ const Control = ({ children, ...props }) => {
 };
 
 const SalesPageModal = ({
+  projectView,
+  projectId,
   handleClose,
   show,
   collectionId,
@@ -60,6 +64,8 @@ const SalesPageModal = ({
   collectionName = "",
   supply,
   projectNetwork,
+  setNFTShareURL,
+  setMembershipNFTId,
 }) => {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
@@ -69,14 +75,17 @@ const SalesPageModal = ({
   const [agree, setAgree] = useState(false);
   const [memNFTs, setMemNFTs] = useState([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
-
+  const [publishedCollections, setPublishedCollections] = useState([]);
+  const [collectionTiers, setCollectionTiers] = useState([]);
   const [selectedCurrency, setSelectedCurrency] = useState({
     id: 0,
     value: "eth",
     label: "ETH",
     icon: Eth,
   });
-  const [selectedCollection, setSelectedCollection] = useState(collectionName);
+  const [selectedCollection, setSelectedCollection] = useState("");
+  const [selectedTier, setSelectedTier] = useState("");
+  const [selectedTiers, setSelectedTiers] = useState([]);
   const [date, setDate] = useState();
   const provider = createProvider();
   const {
@@ -92,6 +101,18 @@ const SalesPageModal = ({
     let detail = CURRENCY.find((value) => value.id === Number(projectNetwork));
     setSelectedCurrency(detail);
   }, [projectNetwork]);
+
+  useEffect(() => {
+    if (collectionId) {
+      setSelectedCollection(collectionId);
+    }
+  }, [collectionId]);
+
+  useEffect(() => {
+    if (nftId) {
+      setSelectedTier(nftId);
+    }
+  }, [nftId]);
 
   // useEffect(() => {
   //   if (collectionType === "membership") {
@@ -123,24 +144,54 @@ const SalesPageModal = ({
     });
   }, [watch("price")]);
 
+  useEffect(() => {
+    if (projectId)
+      getCollections("project", projectId).then((resp) => {
+        if (resp.code === 0) {
+          let collections = resp.data.filter(
+            (item) => item.status === "published"
+          );
+          setPublishedCollections(collections);
+        }
+      });
+  }, [projectId]);
+
+  useEffect(() => {
+    if (selectedCollection) {
+      getCollectionNFTs(selectedCollection).then((resp) => {
+        if (resp.code === 0) {
+          setCollectionTiers(resp.lnfts);
+        }
+      });
+    }
+  }, [selectedCollection]);
+
+  let currentCollection =
+    selectedCollection &&
+    publishedCollections.find((item) => item.id === selectedCollection);
+
   const onSubmit = async (data) => {
     setIsSubmitted(true);
+    let type = collectionType ? collectionType : currentCollection.type;
     if (agree && date.length === 2) {
       const payload = {
         price: data?.["price"],
         startTime: getUnixTime(date?.[0]),
         endTime: getUnixTime(date?.[1]),
         reserve_EOA: data["eoa"],
-        collectionType: collectionType,
-        collectionId: collectionId,
+        collectionType: type,
+        collectionId: selectedCollection,
         nftId: nftId,
       };
 
       setIsLoading(true);
       try {
-        const priceContract = createMintInstance(address, provider);
+        const priceContract = createMintInstance(
+          address ? address : currentCollection.contract_address,
+          provider
+        );
         const membershipPriceContract = createMembsrshipMintInstance(
-          address,
+          address ? address : currentCollection.contract_address,
           provider
         );
 
@@ -151,36 +202,45 @@ const SalesPageModal = ({
             totalSupply: supply,
           },
         ];
+
+        let allTiers = selectedTiers.map((value) => {
+          return {
+            tierId: value.id,
+            floorPrice: ethers.utils.parseEther(data["price"].toString()),
+            totalSupply: value.supply,
+          };
+        });
         const response =
-          collectionType === "membership"
-            ? await setMemNFTPrice(membershipPriceContract, provider, tiers)
+          type === "membership"
+            ? await setMemNFTPrice(
+                membershipPriceContract,
+                provider,
+                nftId ? tiers : allTiers
+              )
             : await setNFTPrice(priceContract, provider, data["price"]);
+
         if (response?.txReceipt?.status === 1) {
           const request = new FormData();
           request.append("price", data["price"]);
           request.append("start_time", payload.startTime);
           request.append("end_time", payload.endTime);
           request.append("currency", selectedCurrency.value);
-          request.append("transaction_hash", response?.txReceipt?.transactionHash);
-
-          setSalesPage(collectionType, collectionId, request, nftId)
-            .then((res) => {
-              if (res.code === 0) {
-                setIsSubmitted(false);
-                successClose();
-              } else {
-                setErrorMessage(res.message);
-                setShowErrorModal(true);
-                setIsSubmitted(false);
-              }
-              setIsLoading(false);
-              setIsSubmitted(false);
-            })
-            .catch((err) => {
-              setIsLoading(false);
-              console.log(err);
-              setIsSubmitted(false);
-            });
+          request.append(
+            "transaction_hash",
+            response?.txReceipt?.transactionHash
+          );
+          if (allTiers.length && !nftId) {
+            allTiers.map((value) =>
+              handleSalesAPICall(
+                type,
+                selectedCollection,
+                request,
+                value.tierId
+              )
+            );
+          } else {
+            handleSalesAPICall(type, selectedCollection, request, nftId);
+          }
         }
       } catch (err) {
         if (err.message) {
@@ -198,8 +258,59 @@ const SalesPageModal = ({
     }
   };
 
+  const handleSalesAPICall = async (
+    type,
+    selectedCollection,
+    request,
+    nftId
+  ) => {
+    let host = window.location.origin;
+    await setSalesPage(type, selectedCollection, request, nftId)
+      .then((res) => {
+        if (res.code === 0) {
+          setIsSubmitted(false);
+          successClose();
+          if (type === "product") {
+            setNFTShareURL(`${host}/collection-details/${selectedCollection}`);
+          } else {
+            setNFTShareURL(`${host}/nft-details/membership/${nftId}`);
+            setMembershipNFTId(nftId);
+          }
+        } else {
+          setErrorMessage(res.message);
+          setShowErrorModal(true);
+          setIsSubmitted(false);
+        }
+        setIsLoading(false);
+        setIsSubmitted(false);
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        setIsSubmitted(false);
+      });
+  };
+
   const modalBodyClicked = (e) => {
     e.stopPropagation();
+  };
+
+  const handleSelectedCollection = (e) => {
+    setSelectedCollection(e.target.value);
+    setSelectedTiers([]);
+    setSelectedTier("");
+  };
+
+  const handleSelectTier = (e) => {
+    setSelectedTier(e.target.value);
+    let tier = collectionTiers.find((tier) => tier.id === e.target.value);
+    let tiers = [...selectedTiers, tier];
+    setSelectedTiers(tiers);
+  };
+
+  const handleRemoveTier = (value) => {
+    let tiers = selectedTiers.filter((tier) => tier.id !== value);
+    setSelectedTier("");
+    setSelectedTiers(tiers);
   };
 
   return (
@@ -224,8 +335,9 @@ const SalesPageModal = ({
             data-toggle="modal"
             data-backdrop="static"
             data-keyboard="false"
-            className={`${show ? "modal display-block" : "modal display-none"
-              } z-[2] `}
+            className={`${
+              show ? "modal display-block" : "modal display-none"
+            } z-[2] `}
           >
             <section
               onClick={(e) => modalBodyClicked(e)}
@@ -247,12 +359,41 @@ const SalesPageModal = ({
                       label="Select Collection"
                       value={selectedCollection}
                       id="select-collection"
-                      defaultValue={selectedCollection}
-                      // handleChange={handleChange}
-                      // options={Collections}
-                      disabled={true}
+                      defaultValue={"Select a Collection"}
+                      handleChange={handleSelectedCollection}
+                      options={publishedCollections}
+                      disabled={!projectView}
                     />
                   </div>
+                  {currentCollection &&
+                  currentCollection?.type === "membership" ? (
+                    <div className="mb-6 ">
+                      <DropdownCreabo
+                        label="Select Tier"
+                        defaultValue={"Select a Tier"}
+                        value={selectedTier}
+                        id="select-tier"
+                        handleChange={handleSelectTier}
+                        options={collectionTiers}
+                        disabled={!projectView}
+                      />
+                      {selectedTiers.length ? (
+                        <div className="mt-1">
+                          {selectedTiers.map((tier) => (
+                            <div className="flex items-center justify-between mb-2">
+                              <p className="text-[16px]">{tier.name}</p>
+                              <img
+                                src={Delete}
+                                alt="delete"
+                                className="mr-1 cursor-pointer"
+                                onClick={() => handleRemoveTier(tier.id)}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+                  ) : null}
                   <div className="mb-6 ">
                     <div className="flex items-center justify-between mb-2">
                       <div className="txtblack text-[14px]">Price</div>

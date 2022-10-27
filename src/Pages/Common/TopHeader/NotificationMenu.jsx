@@ -13,11 +13,10 @@ const NotificatioMenu = ({
   function markAsRead(notification) {
     if (notification?.data?.project_uid) {
       markNotificationAsRead(notification.uuid)
-        .then((res) => {})
-        .catch(() => {});
+        .then((res) => { })
+        .catch(() => { });
       history.push(
-        `/project-details/${
-          notification?.data?.project_uid ? notification.data.project_uid : ""
+        `/project-details/${notification?.data?.project_uid ? notification.data.project_uid : ""
         }`
       );
       handleNotifictionClose();
@@ -30,8 +29,7 @@ const NotificatioMenu = ({
       className="w-screen md:w-1/4 max-h-[450px] overflow-y-auto md:h-auto md:border border-slate-300  bg-[#fff] rounded-xl absolute top-16 right-[-44px] md:right-20 z-20 pb-2"
     >
       <div className="mt-4 txtblack px-4">
-        <h3>Notifiction</h3>
-        <small>Recent Activity</small>
+        <h3>Notifications</h3>
       </div>
       <div className="grid grid-cols-1 divide-y divide-slate-300 px-4">
         {notificationList.map((notification, index) => (

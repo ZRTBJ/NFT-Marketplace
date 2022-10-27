@@ -1,3 +1,4 @@
+import { round } from "lodash";
 import { useEffect, useState, useMemo } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -86,6 +87,10 @@ const CollectionDetail = () => {
   const [nftSales, setNFTSales] = useState([]);
   const [nftMemSupply, setNftMemSupply] = useState(0);
   const [daoInfo, setDaoInfo] = useState({});
+  const [nftShareURL, setNFTShareURL] = useState("");
+  const [membershipNFTId, setMembershipNFTId] = useState("");
+  const [collectionNotUpdatableModal, setCollectionNotUpdatableModal] =
+    useState(false);
 
   // Publish royalty splitter
   const [showPublishRoyaltySpliterModal, setShowPublishRoyaltySpliterModal] =
@@ -180,6 +185,7 @@ const CollectionDetail = () => {
   const getSplittedContributors = (id) => {
     getSplitterDetails(id).then((data) => {
       if (data.code === 0) {
+        console.log(data);
         setRoyalityMembers(data?.members);
       }
     });
@@ -228,7 +234,7 @@ const CollectionDetail = () => {
                   value: Object.values(url)[2],
                 });
               }
-            } catch { }
+            } catch {}
             setLinks(webLinks);
           }
         }
@@ -256,28 +262,57 @@ const CollectionDetail = () => {
   };
 
   const handleAutoAssign = (e) => {
-    setAutoAssign(!AutoAssign);
     let memberCount = royalityMembers.length;
+
+    if (!memberCount) {
+      return;
+    }
+
+    setAutoAssign(!AutoAssign);
+
     let value = 100 / memberCount;
     let values = royalityMembers.map((mem) => {
       return {
         ...mem,
-        royalty_percent: parseInt(value),
+        royalty_percent: parseFloat(round(value, 3)),
       };
     });
     setRoyalityMembers(values);
   };
 
-  const handleEditNFT = (e, id) => {
+  const handleEditNFT = (e, nft) => {
     e.stopPropagation();
     e.preventDefault();
     setShowOptions(null);
-    history.push(
-      `${Collection?.type === "product"
-        ? `/product-nft?collectionId=${collectionId}&nftId=${id}`
-        : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}&nftId=${id}`
-      }`
-    );
+    if (!Collection?.updatable) {
+      setCollectionNotUpdatableModal(true);
+    } else {
+      if (Collection?.status === "draft") {
+        history.push(
+          `${
+            Collection?.type === "product"
+              ? `/product-nft?collectionId=${collectionId}&nftId=${nft.id}`
+              : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}&nftId=${nft.id}`
+          }`
+        );
+      } else if (Collection.status === "published") {
+        if (Collection?.type === "product") {
+          if (nft.freeze_metadata) {
+            setCollectionNotUpdatableModal(true);
+          } else {
+            history.push(
+              `${
+                Collection?.type === "product"
+                  ? `/product-nft?collectionId=${collectionId}&nftId=${nft.id}`
+                  : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}&nftId=${nft.id}`
+              }`
+            );
+          }
+        } else {
+          setCollectionNotUpdatableModal(true);
+        }
+      }
+    }
   };
 
   const handleUpdateMeta = (e, id) => {
@@ -352,7 +387,7 @@ const CollectionDetail = () => {
       if (id === mem.user_eoa) {
         return {
           ...mem,
-          royalty_percent: parseInt(e.target.value),
+          royalty_percent: parseFloat(e.target.value),
         };
       }
       return mem;
@@ -490,6 +525,16 @@ const CollectionDetail = () => {
           setShowRoyalityErrorMessage={setShowRoyalityErrorMessage}
         />
       )}
+      {collectionNotUpdatableModal && (
+        <ErrorModal
+          title={"NFT is not updatable once its collection is published or its metadata was freezed"}
+          message={`  `}
+          handleClose={() => {
+            setCollectionNotUpdatableModal(false);
+          }}
+          show={collectionNotUpdatableModal}
+        />
+      )}
       <section className="mt-6">
         <div className="row-span-2 col-span-2">
           <img
@@ -517,10 +562,11 @@ const CollectionDetail = () => {
                     ? walletAddressTruncate(Collection.contract_address)
                     : "Smart Contract not released"}
                   <i
-                    className={`fa-solid fa-copy ml-2 ${Collection?.contract_address
-                      ? "cursor-pointer"
-                      : "cursor-not-allowed"
-                      }`}
+                    className={`fa-solid fa-copy ml-2 ${
+                      Collection?.contract_address
+                        ? "cursor-pointer"
+                        : "cursor-not-allowed"
+                    }`}
                     disabled={!Collection?.contract_address}
                     onClick={() =>
                       copyToClipboard(Collection?.contract_address)
@@ -541,11 +587,11 @@ const CollectionDetail = () => {
                       src={
                         daoInfo?.assets?.length > 0
                           ? daoInfo.assets.find(
-                            (img) => img["asset_purpose"] === "cover"
-                          )
-                            ? daoInfo.assets.find(
                               (img) => img["asset_purpose"] === "cover"
-                            ).path
+                            )
+                            ? daoInfo.assets.find(
+                                (img) => img["asset_purpose"] === "cover"
+                              ).path
                             : defaultCover
                           : defaultCover
                       }
@@ -567,8 +613,9 @@ const CollectionDetail = () => {
                 ?.length > 0 && (
                 <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300">
                   <a
-                    href={`${Links.find((link) => link.title === "linkFacebook").value
-                      }`}
+                    href={`${
+                      Links.find((link) => link.title === "linkFacebook").value
+                    }`}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -579,11 +626,12 @@ const CollectionDetail = () => {
 
             {Links.find((link) => link.title === "linkInsta") &&
               Links.find((link) => link.title === "linkInsta").value?.length >
-              0 && (
+                0 && (
                 <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                   <a
-                    href={`${Links.find((link) => link.title === "linkInsta").value
-                      }`}
+                    href={`${
+                      Links.find((link) => link.title === "linkInsta").value
+                    }`}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -594,11 +642,12 @@ const CollectionDetail = () => {
 
             {Links.find((link) => link.title === "linkTwitter") &&
               Links.find((link) => link.title === "linkTwitter").value?.length >
-              0 && (
+                0 && (
                 <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                   <a
-                    href={`${Links.find((link) => link.title === "linkTwitter").value
-                      }`}
+                    href={`${
+                      Links.find((link) => link.title === "linkTwitter").value
+                    }`}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -609,11 +658,12 @@ const CollectionDetail = () => {
 
             {Links.find((link) => link.title === "linkGitub") &&
               Links.find((link) => link.title === "linkGitub").value?.length >
-              0 && (
+                0 && (
                 <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 ">
                   <a
-                    href={`${Links.find((link) => link.title === "linkGitub").value
-                      }`}
+                    href={`${
+                      Links.find((link) => link.title === "linkGitub").value
+                    }`}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -623,11 +673,12 @@ const CollectionDetail = () => {
               )}
             {Links.find((link) => link.title === "linkReddit") &&
               Links.find((link) => link.title === "linkReddit").value?.length >
-              0 && (
+                0 && (
                 <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 ">
                   <a
-                    href={`${Links.find((link) => link.title === "linkReddit").value
-                      }`}
+                    href={`${
+                      Links.find((link) => link.title === "linkReddit").value
+                    }`}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -641,8 +692,9 @@ const CollectionDetail = () => {
                 ?.length > 0 && (
                 <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 ">
                   <a
-                    href={`${Links.find((link) => link.title === "customLinks1").value
-                      }`}
+                    href={`${
+                      Links.find((link) => link.title === "customLinks1").value
+                    }`}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -658,7 +710,7 @@ const CollectionDetail = () => {
             <h3>About</h3>
             <div className="text-textLight text-sm">
               {Collection?.description ? (
-                <p className="whitespace-pre-line text-textLight text-sm">
+                <p className="whitespace-pre-line text-textLight break-all text-sm">
                   {Collection.description}
                 </p>
               ) : (
@@ -670,7 +722,7 @@ const CollectionDetail = () => {
                 Collection.members &&
                 Collection.members.length > 0 &&
                 Collection.members.map((img, index) => (
-                  <>
+                  <div key={index}>
                     {index < 5 && (
                       <img
                         key={`member-img-${index}`}
@@ -679,7 +731,7 @@ const CollectionDetail = () => {
                         alt=""
                       />
                     )}
-                  </>
+                  </div>
                 ))}
               {Collection &&
                 Collection.members &&
@@ -695,8 +747,9 @@ const CollectionDetail = () => {
             <div className="bg-[#E8F5FB] ml-0 md:ml-3 rounded-md p-3 px-5 relative w-56">
               <i
                 onClick={getCollectionNewWorth}
-                className={`cursor-pointer fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3 ${balanceLoading ? "fa-spin" : ""
-                  }'}`}
+                className={`cursor-pointer fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3 ${
+                  balanceLoading ? "fa-spin" : ""
+                }'}`}
               ></i>
               <p className=" text-sm text-textSubtle ">Net Worth</p>
               <h4>
@@ -741,13 +794,14 @@ const CollectionDetail = () => {
         </div>
       </section>
       <section>
-        {Collection?.is_owner && (
+        {Collection?.is_owner && Collection.status !== "published" ? (
           <div
             onClick={() =>
               history.push(
-                `${Collection?.type === "product"
-                  ? `/product-nft?collectionId=${collectionId}`
-                  : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}`
+                `${
+                  Collection?.type === "product"
+                    ? `/product-nft?collectionId=${collectionId}`
+                    : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}`
                 }`
               )
             }
@@ -755,7 +809,7 @@ const CollectionDetail = () => {
           >
             <span> Create NFT</span>
           </div>
-        )}
+        ) : null}
         <section>
           <div className="mb-4">
             <ul
@@ -770,10 +824,11 @@ const CollectionDetail = () => {
                 onClick={() => setSelectedTab(1)}
               >
                 <button
-                  className={`inline-block p-4 text-lg rounded-t-lg ${selectedTab === 1
-                    ? "border-b-2 border-primary-900 text-primary-900"
-                    : "border-transparent text-textSubtle"
-                    } hover:text-primary-600`}
+                  className={`inline-block p-4 text-lg rounded-t-lg ${
+                    selectedTab === 1
+                      ? "border-b-2 border-primary-900 text-primary-900"
+                      : "border-transparent text-textSubtle"
+                  } hover:text-primary-600`}
                   id="nft"
                   data-tabs-target="#nft"
                   type="button"
@@ -784,26 +839,29 @@ const CollectionDetail = () => {
                   NFT
                 </button>
               </li>
-              <li
-                className="mr-2"
-                role="presentation"
-                onClick={() => setSelectedTab(2)}
-              >
-                <button
-                  className={`inline-block p-4 text-lg rounded-t-lg ${selectedTab === 2
-                    ? "border-b-2 border-primary-900 text-primary-900"
-                    : "border-transparent text-textSubtle"
-                    } hover:text-primary-900`}
-                  id="dashboard"
-                  data-tabs-target="#dashboard"
-                  type="button"
-                  role="tab"
-                  aria-controls="dashboard"
-                  aria-selected="false"
+              {Collection?.is_owner && (
+                <li
+                  className="mr-2"
+                  role="presentation"
+                  onClick={() => setSelectedTab(2)}
                 >
-                  Dashboard
-                </button>
-              </li>
+                  <button
+                    className={`inline-block p-4 text-lg rounded-t-lg ${
+                      selectedTab === 2
+                        ? "border-b-2 border-primary-900 text-primary-900"
+                        : "border-transparent text-textSubtle"
+                    } hover:text-primary-900`}
+                    id="dashboard"
+                    data-tabs-target="#dashboard"
+                    type="button"
+                    role="tab"
+                    aria-controls="dashboard"
+                    aria-selected="false"
+                  >
+                    Dashboard
+                  </button>
+                </li>
+              )}
             </ul>
           </div>
           <div id="myTabContent">
@@ -819,13 +877,13 @@ const CollectionDetail = () => {
                         <Link to={`/nft-details/${nft?.nft_type}/${nft.id}`}>
                           {imageRegex.test(nft?.asset?.asset_type) && (
                             <img
-                              className="rounded-xl h-[176px] md:h-[276px] w-[150px] md:w-[276px] object-contain"
+                              className="rounded-xl h-[176px] md:h-[276px] w-[150px] md:w-[276px] object-cover"
                               src={nft?.asset?.path}
                               alt=""
                             />
                           )}
                           {nft?.asset?.asset_type === "movie" ||
-                            nft?.asset?.asset_type === "video/mp4" ? (
+                          nft?.asset?.asset_type === "video/mp4" ? (
                             <video
                               className="h-[176px] md:h-[276px] w-[150px] md:w-[276px]"
                               controls
@@ -835,7 +893,7 @@ const CollectionDetail = () => {
                             </video>
                           ) : null}
                           {nft?.asset?.asset_type === "audio" ||
-                            nft?.asset?.asset_type === "audio/mpeg" ? (
+                          nft?.asset?.asset_type === "audio/mpeg" ? (
                             <audio
                               src={nft?.asset?.path}
                               controls
@@ -867,48 +925,17 @@ const CollectionDetail = () => {
                               {ShowOptions === nft.id && (
                                 <div className="z-10 w-48 bg-white   rounded-md  absolute left-0 top-8 mb-6 block">
                                   <ul className="text-sm mb-0">
-                                    {Collection.updatable && (
-                                      <>
-                                        {Collection.status === "draft" && (
-                                          <>
-                                            <li className="border">
-                                              <div
-                                                onClick={(e) =>
-                                                  handleEditNFT(e, nft.id)
-                                                }
-                                                className="py-3 pl-3 block hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
-                                              >
-                                                Edit NFT
-                                              </div>
-                                            </li>
-                                          </>
-                                        )}
-                                        {Collection.status === "published" && (
-                                          <>
-                                            {Collection.type === "product" && (
-                                              <>
-                                                {!nft.freeze_metadata && (
-                                                  <li className="border-b border-divide">
-                                                    <div
-                                                      onClick={(e) =>
-                                                        handleEditNFT(e, nft.id)
-                                                      }
-                                                      className="py-3 pl-3 block hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
-                                                    >
-                                                      Edit NFT
-                                                    </div>
-                                                  </li>
-                                                )}
-                                              </>
-                                            )}
-                                          </>
-                                        )}
-                                      </>
-                                    )}
-
+                                    <li className="border">
+                                      <div
+                                        onClick={(e) => handleEditNFT(e, nft)}
+                                        className="py-3 pl-3 block hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
+                                      >
+                                        Edit NFT
+                                      </div>
+                                    </li>
                                     {Collection?.type === "membership" && (
                                       <>
-                                        <li className="border">
+                                        {/* <li className="border">
                                           <div
                                             onClick={() => {
                                               setShowTransferNFT(true);
@@ -918,7 +945,7 @@ const CollectionDetail = () => {
                                           >
                                             Transfer NFT
                                           </div>
-                                        </li>
+                                        </li> */}
                                         <li className="border">
                                           <div
                                             onClick={(e) =>
@@ -964,8 +991,10 @@ const CollectionDetail = () => {
                 ) : (
                   <div className="w-full">
                     <p className="font-bold text-center">
-                      You don't have any NFT's. Start minting NFT's to display
-                      here
+                      You don't have any NFT's.
+                      {Collection?.status === "draft"
+                        ? `Start minting NFT's to display here`
+                        : ``}
                     </p>
                   </div>
                 )}
@@ -1057,6 +1086,7 @@ const CollectionDetail = () => {
       </section>
       {showSalesPageModal && (
         <SalesPageModal
+          projectId={projectID}
           show={showSalesPageModal}
           address={Collection?.contract_address}
           collectionId={collectionId}
@@ -1070,6 +1100,8 @@ const CollectionDetail = () => {
           }}
           supply={nftMemSupply}
           projectNetwork={projectNetwork}
+          setNFTShareURL={setNFTShareURL}
+          setMembershipNFTId={setMembershipNFTId}
         />
       )}
       {showSuccessModal && (
@@ -1079,6 +1111,9 @@ const CollectionDetail = () => {
             setShowSuccessModal(false);
             getCollectionDetail();
           }}
+          projectId={projectID}
+          nftShareURL={nftShareURL}
+          membershipNFTId={membershipNFTId}
         />
       )}
       <PublishCollectionModal

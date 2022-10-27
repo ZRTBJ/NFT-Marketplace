@@ -2,13 +2,14 @@ import { ethers } from "ethers";
 import { createInstance } from "eth/abis/forwarder";
 import { signMetaTxRequest } from "eth/utils/signer";
 import { NETWORKS } from "config/networks";
+import { ls_GetChainID } from "util/ApplicationStorage";
 
 async function sendMetaTx(collection, provider, signer, config, type) {
   const forwarder = createInstance(provider);
   const from = await signer.getAddress();
-  let chainId = localStorage.getItem("networkChain");
-  let minimalForwarder = NETWORKS[Number(chainId)]?.forwarder;
-  let masterCopyCollection = NETWORKS[Number(chainId)]?.masterCopyCollection;
+  let chainId = ls_GetChainID();
+  let minimalForwarder = NETWORKS[chainId]?.forwarder;
+  let masterCopyCollection = NETWORKS[chainId]?.masterCopyCollection;
   let masterMembershipCollection =
     NETWORKS[Number(chainId)]?.masterMembershipCollection;
   let webhook = NETWORKS[Number(chainId)]?.webhook;
@@ -63,13 +64,16 @@ export async function createCollection(collection, provider, config, type) {
   const signer = userProvider.getSigner();
 
   let output;
-  const result = await sendMetaTx(collection, provider, signer, config, type);
 
+  const result = await sendMetaTx(collection, provider, signer, config, type);
   await result.json().then(async (response) => {
-    const tx = JSON.parse(response.result);
-    const txReceipt = await provider.waitForTransaction(tx.txHash);
-    console.log(txReceipt);
-    output = { txReceipt };
+    if (response.status === "success") {
+      const tx = JSON.parse(response.result);
+      const txReceipt = await provider.waitForTransaction(tx.txHash);
+      output = { txReceipt };
+    } else {
+      output = response.message;
+    }
   });
 
   return output;

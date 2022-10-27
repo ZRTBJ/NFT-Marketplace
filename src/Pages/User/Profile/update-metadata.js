@@ -1,9 +1,8 @@
-// 0x7A18eD040cC4E4f2774658651beDaC0A96ba0cb3
-
 import { ethers } from "ethers";
 import { createInstance } from "eth/abis/forwarder";
 import { signMetaTxRequest } from "eth/utils/signer";
 import { NETWORKS } from "config/networks";
+import { ls_GetChainID } from "util/ApplicationStorage";
 
 async function sendMetaTx(contract, provider, signer, nftInfo) {
   const forwarder = createInstance(provider);
@@ -23,8 +22,8 @@ async function sendMetaTx(contract, provider, signer, nftInfo) {
     });
     console.log(request);
 
-    let chainId = localStorage.getItem("networkChain");
-    let webhook = NETWORKS[Number(chainId)]?.webhook;
+    let chainId = ls_GetChainID()
+    let webhook = NETWORKS[chainId]?.webhook;
 
     return fetch(webhook, {
       method: "POST",

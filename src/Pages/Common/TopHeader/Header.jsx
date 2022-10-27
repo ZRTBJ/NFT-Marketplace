@@ -3,14 +3,13 @@ import { useState, useEffect, useRef } from "react";
 import WalletDropDownMenu from "./WalletDropDownMenu";
 import { useHistory, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setSideBar } from "Slice/userSlice";
-import { useAuthState } from "Context";
+import { useAuthState } from "redux/auth/context";
 import WalletConnectModal from "Pages/User/Login/WalletConnectModal";
 import useWebSocket from "react-use-websocket";
 import config from "config/config";
 import { getProjectListBySearch } from "services/project/projectService";
 import SearchBarResult from "./SearchBarResult";
-import { getNotificationData } from "Slice/notificationSlice";
+import { getNotificationData } from "redux/slice/notificationSlice";
 import NotificatioMenu from "./NotificationMenu";
 import { getUserNotifications } from "services/notification/notificationService";
 import UserDropDownMenu from "./UserDropDownMenu";
@@ -23,6 +22,7 @@ import Logo from "assets/images/header/logo.svg";
 import AccountChangedModal from "./Account/AccountChangedModal";
 import NetworkChangedModal from "./Account/NetworkChangedModal";
 import { walletAddressTruncate } from "util/walletAddressTruncate";
+import { ls_GetUserToken, ls_SetChainID } from "util/ApplicationStorage";
 
 const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const history = useHistory();
@@ -64,7 +64,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
       if (!networkId) setNetworkId(window.ethereum.networkVersion);
       window?.ethereum?.on("networkChanged", function (networkId) {
         setNetworkId(networkId);
-        localStorage.setItem("networkChain", networkId);
+        ls_SetChainID(networkId)
         setShowNetworkChanged(true);
         window.location.reload();
       });
@@ -85,7 +85,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
 
   useEffect(() => {
     if (userId && userId.length > 0) {
-      const cUser = localStorage.getItem("currentUser");
+      const cUser = ls_GetUserToken();
       if (cUser) {
         sendMessage(JSON.stringify({ Token: cUser }));
       }
@@ -164,8 +164,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     getWebSocket,
   } = useWebSocket(socketUrl, {
     onOpen: () => {
-      // console.log("webSocket connected");
-      const cUser = localStorage.getItem("currentUser");
+      const cUser = ls_GetUserToken();
       if (cUser) {
         sendMessage(JSON.stringify({ Token: cUser }));
       }

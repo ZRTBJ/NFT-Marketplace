@@ -3,6 +3,7 @@ import { signMetaTxRequest } from "eth/utils/signer";
 import { createInstance } from "eth/abis/forwarder";
 import { RoyaltyInstance } from "eth/abis/royalty-claim-contract";
 import { NETWORKS } from "config/networks";
+import { ls_GetChainID } from "util/ApplicationStorage";
 
 async function sendMetaTx(provider, signer, config) {
   try {
@@ -28,8 +29,8 @@ async function sendMetaTx(provider, signer, config) {
       data,
     });
 
-    let chainId = localStorage.getItem("networkChain");
-    let webhook = NETWORKS[Number(chainId)]?.webhook;
+    let chainId = ls_GetChainID()
+    let webhook = NETWORKS[chainId]?.webhook;
 
     return fetch(webhook, {
       method: "POST",

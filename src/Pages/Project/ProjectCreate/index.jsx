@@ -13,7 +13,7 @@ import ErrorModal from "components/Modals/ErrorModal";
 import SuccessModal from "components/Modals/SuccessModal";
 import { getProjectCategory } from "services/project/projectService";
 import { useLocation } from "react-router-dom";
-import { NETWORKS } from "config/networks";
+import { ls_GetChainID } from "util/ApplicationStorage";
 
 export default function ProjectCreate() {
   // Logo start
@@ -49,7 +49,7 @@ export default function ProjectCreate() {
     }
   }
   // Logo End
-  let chainId = localStorage.getItem("networkChain");
+  let chainId = ls_GetChainID();
   // Project Name start
   const [projectName, setProjectName] = useState("");
   const [emptyProjectName, setemptyProjectName] = useState(false);
@@ -391,6 +391,10 @@ export default function ProjectCreate() {
           // token_amount_total: numberOfTokens,
         };
         // console.log(payload);
+        const categoryName = projectCategoryList.find(
+          (x) => x.id === parseInt(projectCategory)
+        );
+        setProjectCategoryName(categoryName ? categoryName.name : "");
         setcurrentStep([1, 2]);
       }
     }

@@ -4,6 +4,7 @@ import * as collectionService from "services/collection/collectionService";
 import * as RoyaltySplitter from "eth/abis/royalty-splitter-factory";
 import useSendTransaction from "./useSendTransaction";
 import { NETWORKS } from "config/networks";
+import { ls_GetChainID } from "util/ApplicationStorage";
 
 export default function usePublishRoyaltySplitter(payload = {}) {
   const { collection, splitters, onUpdateStatus = () => { } } = payload;
@@ -106,10 +107,9 @@ export default function usePublishRoyaltySplitter(payload = {}) {
 
   const sendOnChainTransaction = async () => {
     const creator = await provider.current.getSigner().getAddress();
-    let chainId = localStorage.getItem("networkChain");
-    let minimalForwarder = NETWORKS?.[Number(chainId)]?.forwarder;
-    let masterRoyaltySplitter =
-      NETWORKS?.[Number(chainId)]?.masterRoyaltySplitter;
+    let chainId = ls_GetChainID()
+    let minimalForwarder = NETWORKS?.[chainId]?.forwarder;
+    let masterRoyaltySplitter = NETWORKS?.[chainId]?.masterRoyaltySplitter;
     const functionPayload = [
       {
         receivers: splitters.map((spliter) => spliter.user_eoa),

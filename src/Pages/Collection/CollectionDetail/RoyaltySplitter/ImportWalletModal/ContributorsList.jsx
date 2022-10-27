@@ -1,6 +1,7 @@
 import manImg from "assets/images/image-default.svg";
 import { useState } from "react";
 import Edit from "assets/images/icons/edit.svg";
+import { ls_GetWalletAddress } from "util/ApplicationStorage";
 
 const Headers = ["checkbox", "Wallet Address", "Name", "Percentage"];
 
@@ -15,7 +16,7 @@ const ContributorsList = ({
   isLoading,
 }) => {
   const [isEdit, setIsEdit] = useState(null);
-  const ownerWallet = localStorage.getItem("walletAddress");
+  const ownerWallet = ls_GetWalletAddress();
 
   return (
     <div className="overflow-x-auto relative">

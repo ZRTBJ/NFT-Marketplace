@@ -211,6 +211,7 @@ const ImportWalletModal = ({
         }
       })
       .catch((err) => {
+        console.log("Sdsd");
         setIsLoading(false);
         setRoyaltyUpdatedSuccessfully(false);
         handleClose();
@@ -244,10 +245,11 @@ const ImportWalletModal = ({
             }}
           >
             <button
-              className={`inline-block font-bold p-4 text-[18px] rounded-t-lg ${selectedTab === 1
-                ? "border-b-2 border-primary-900 text-primary-900"
-                : "border-transparent text-textSubtle"
-                } hover:text-primary-600`}
+              className={`inline-block font-bold p-4 text-[18px] rounded-t-lg ${
+                selectedTab === 1
+                  ? "border-b-2 border-primary-900 text-primary-900"
+                  : "border-transparent text-textSubtle"
+              } hover:text-primary-600`}
               id="nft"
               data-tabs-target="#nft"
               type="button"
@@ -268,10 +270,11 @@ const ImportWalletModal = ({
             }}
           >
             <button
-              className={`inline-block p-4 font-bold text-[18px] rounded-t-lg ${selectedTab === 2
-                ? "border-b-2 border-primary-900 text-primary-900"
-                : "border-transparent text-textSubtle"
-                } hover:text-primary-900`}
+              className={`inline-block p-4 font-bold text-[18px] rounded-t-lg ${
+                selectedTab === 2
+                  ? "border-b-2 border-primary-900 text-primary-900"
+                  : "border-transparent text-textSubtle"
+              } hover:text-primary-900`}
               id="dashboard"
               data-tabs-target="#dashboard"
               type="button"
@@ -298,26 +301,34 @@ const ImportWalletModal = ({
                   isLoading={isLoading}
                 />
               ) : (
-                collections.map((collection) => {
-                  let image = collection?.assets?.find(
-                    (img) => img["asset_purpose"] === "logo"
-                  );
-                  return (
-                    <div
-                      className="flex items-center mb-6 cursor-pointer"
-                      onClick={() => handleCollectionContributor(collection.id)}
-                    >
-                      <img
-                        src={image ? image.path : manImg}
-                        className="w-[56px] h-[56px] rounded-[6px]"
-                        alt="Collection"
-                      />
-                      <p className="text-[14px] font-bold ml-4">
-                        {collection.name}
-                      </p>
-                    </div>
-                  );
-                })
+                <>
+                  {collections?.length ? (
+                    collections.map((collection) => {
+                      let image = collection?.assets?.find(
+                        (img) => img["asset_purpose"] === "logo"
+                      );
+                      return (
+                        <div
+                          className="flex items-center mb-6 cursor-pointer"
+                          onClick={() =>
+                            handleCollectionContributor(collection.id)
+                          }
+                        >
+                          <img
+                            src={image ? image.path : manImg}
+                            className="w-[56px] h-[56px] rounded-[6px]"
+                            alt="Collection"
+                          />
+                          <p className="text-[14px] font-bold ml-4">
+                            {collection.name}
+                          </p>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <p>No collections to show</p>
+                  )}
+                </>
               )}
             </div>
           )}

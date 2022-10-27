@@ -1,4 +1,4 @@
-import { useAuthState } from "Context";
+import { useAuthState } from "redux/auth/context";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import { useDetectClickOutside } from "react-detect-click-outside";

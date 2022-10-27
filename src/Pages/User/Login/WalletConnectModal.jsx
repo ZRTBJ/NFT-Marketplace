@@ -4,18 +4,19 @@ import {
   isWalletConnected,
   getWalletAccount,
 } from "util/metaMaskWallet";
-import { useEthers, useEtherBalance } from "@usedapp/core";
 import { ethers } from "ethers";
 import { useSelector } from "react-redux";
 import Modal from "components/Commons/Modal";
 import torusIcon from "assets/images/modal/torus.png";
 import metamaskIcon from "assets/images/modal/metamask.png";
 import { torusWalletLogin } from "util/Torus";
-import { loginUser, useAuthState, useAuthDispatch, logout } from "Context";
+import { loginUser, useAuthState, useAuthDispatch, logout } from "redux/auth";
 import { useHistory } from "react-router-dom";
 import { getUserInfo } from "services/User/userService";
 import { useDispatch } from "react-redux";
-import { setUserInfo, setUserLoading } from "Slice/userSlice";
+import { setUserInfo, setUserLoading } from "redux/slice/userSlice";
+import { ls_GetUserID, ls_SetChainID, ls_SetUserID, ls_SetWalletAddress } from "util/ApplicationStorage";
+
 const WalletConnectModal = ({
   showModal,
   closeModal,
@@ -99,7 +100,7 @@ const WalletConnectModal = ({
           if (navigateToPage) {
             history.push(`/${navigateToPage}`);
           } else {
-            history.push(`/profile/${localStorage.getItem("user_id")}`);
+            history.push(`/profile/${ls_GetUserID()}`);
             window.location.reload();
           }
         } else {
@@ -120,17 +121,13 @@ const WalletConnectModal = ({
     try {
       setIsLoading(true);
       let response = await loginUser(authDispatch, request);
-      localStorage.setItem("walletAddress", address);
+      ls_SetWalletAddress(address);
       const userProvider = new ethers.providers.Web3Provider(window.ethereum);
       const userNetwork = await userProvider.getNetwork();
-      localStorage.setItem("networkChain", userNetwork.chainId);
+      ls_SetChainID(userNetwork.chainId);
       setUserId(response["user_id"]);
       getUserDetails(response["user_id"], true);
 
-      const apiCall = {
-        event: "bts:subscribe",
-        data: { channel: "order_book_btcusd" },
-      };
     } catch (error) {
       setIsLoading(false);
       console.log(error);

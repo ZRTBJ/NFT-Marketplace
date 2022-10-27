@@ -19,10 +19,9 @@ import { updateRoyaltySplitter } from "services/collection/collectionService";
 
 import axios from "axios";
 import Config from "config/config";
-import { getNotificationData } from "Slice/notificationSlice";
-import { getFunctionStatus } from "services/websocketFunction/webSocketFunctionService";
-import { getAsset } from "services/notification/notificationService";
+import { getNotificationData } from "redux/slice/notificationSlice";
 import { useHistory } from "react-router-dom";
+import ErrorModal from "components/Modals/ErrorModal";
 export default function MembershipNFT() {
   const history = useHistory();
   const fileUploadNotification = useSelector((state) =>
@@ -76,11 +75,14 @@ export default function MembershipNFT() {
   const [projectCreated, setProjectCreated] = useState(false);
   const [projectId, setProjectId] = useState("");
   const [projectInfo, setProjectInfo] = useState({});
+  const [showErrorModal, setShowErrorModal] = useState(false);
   const jobIds = [];
   const [calledIds, setCalledIds] = useState([]);
   const [showDataUploadingModal, setShowDataUploadingModal] = useState(false);
   const [nftItem, setNft] = useState(null);
   const [updateMode, setUpdateMode] = useState(false);
+  const [errorTitle, setErrorTitle] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
   const [isNftLoading, setIsNftLoading] = useState(false);
   const [asseteRemoveInUpdateMode, setAsseteRemoveInUpdateMode] =
     useState(false);
@@ -288,18 +290,26 @@ export default function MembershipNFT() {
     if (!updateMode) {
       await createMembershipNft(request)
         .then((res) => {
-          localStorage.removeItem(`${jobId}`);
-          const index = jobIds.indexOf(jobId);
-          if (index > -1) {
-            jobIds.splice(index, 1); // 2nd parameter means remove one item only
-          }
-          console.log("remove", jobIds.length);
-          const upload_number = localStorage.getItem("upload_number");
-          const update_upload_number = parseInt(upload_number) - 1;
-          localStorage.setItem("upload_number", update_upload_number);
-          if (update_upload_number === 0) {
+          if (res.code === 0) {
+            localStorage.removeItem(`${jobId}`);
+            const index = jobIds.indexOf(jobId);
+            if (index > -1) {
+              jobIds.splice(index, 1); // 2nd parameter means remove one item only
+            }
+            console.log("remove", jobIds.length);
+            const upload_number = localStorage.getItem("upload_number");
+            const update_upload_number = parseInt(upload_number) - 1;
+            localStorage.setItem("upload_number", update_upload_number);
+            if (update_upload_number === 0) {
+              setShowDataUploadingModal(false);
+              setShowSuccessModal(true);
+            }
+          } else {
+            localStorage.removeItem(`${jobId}`);
+            setErrorTitle("Error");
+            setErrorMessage(res.message);
+            setShowErrorModal(true);
             setShowDataUploadingModal(false);
-            setShowSuccessModal(true);
           }
         })
         .catch((err) => {
@@ -308,8 +318,16 @@ export default function MembershipNFT() {
     } else if (updateMode) {
       await updateMembershipNFT(nftItem.id, request)
         .then((res) => {
-          setShowDataUploadingModal(false);
-          setShowSuccessModal(true);
+          if (res.code === 0) {
+            setShowDataUploadingModal(false);
+            setShowSuccessModal(true);
+          } else {
+            localStorage.removeItem(`${jobId}`);
+            setErrorTitle("Error");
+            setErrorMessage(res.message);
+            setShowErrorModal(true);
+            setShowDataUploadingModal(false);
+          }
         })
         .catch((err) => {
           console.log(err);
@@ -588,7 +606,7 @@ export default function MembershipNFT() {
     try {
       const query = new URLSearchParams(history.location.search);
       const nftId = query.get("nftId");
-      if (nftId) {
+      if (nftId !== null) {
         nftDetails("membership", nftId);
       }
     } catch { }
@@ -1142,6 +1160,18 @@ export default function MembershipNFT() {
           redirection={`/collection-details/${collection_id}`}
           handleClose={() => setShowSuccessModal(false)}
           show={showSuccessModal}
+        />
+      )}
+      {showErrorModal && (
+        <ErrorModal
+          handleClose={() => {
+            setShowErrorModal(false);
+            setErrorTitle(null);
+            setErrorMessage(null);
+          }}
+          show={showErrorModal}
+          title={errorTitle}
+          message={errorMessage}
         />
       )}
       {showDataUploadingModal && (

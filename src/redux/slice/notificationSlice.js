@@ -1,11 +1,10 @@
 import { createSlice, createSelector } from "@reduxjs/toolkit";
 import {
-  addNotificationData,
-  getAllNotificationData,
+  ls_AddNotificationData,
+  ls_GetAllNotificationData,
 } from "util/ApplicationStorage";
-import { getUserProjectListById } from "../services/project/projectService";
 
-const notifyData = getAllNotificationData();
+const notifyData = ls_GetAllNotificationData();
 const initialState = {
   status: "idle",
   notificationData: notifyData ? notifyData : [],
@@ -34,7 +33,7 @@ export default notificationSlice.reducer;
 
 export const getNotificationData = (payload) => async (dispatch) => {
   dispatch(notificationLoading());
-  addNotificationData(payload);
-  const data = getAllNotificationData();
+  ls_AddNotificationData(payload);
+  const data = ls_GetAllNotificationData();
   dispatch(setNotificationData(data));
 };

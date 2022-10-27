@@ -4,7 +4,7 @@ import WalletConnectModal from "Pages/User/Login/WalletConnectModal";
 import { useState, useEffect } from "react";
 import { mintRANFT } from "services/nft/nftService";
 import { useDispatch, useSelector } from "react-redux";
-import { getNotificationData } from "Slice/notificationSlice";
+import { getNotificationData } from "redux/slice/notificationSlice";
 import MintingNFT from "Pages/NFT/DetailsNFT/MintNFT/MintingNFT";
 import ErrorModal from "components/Modals/ErrorModal";
 

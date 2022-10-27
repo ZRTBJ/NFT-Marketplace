@@ -1,4 +1,4 @@
-import { useAuthState, useAuthDispatch, logout } from "Context";
+import { useAuthState, useAuthDispatch, logout } from "redux/auth";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import metamaskIcon from "assets/images/modal/metamask.png";
@@ -79,7 +79,7 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
 
       <div
         ref={ref}
-        className="w-52 md:w-52 h-auto md:h-auto md:border border-slate-300  bg-[#fff] rounded-xl absolute top-14 right-6 md:right-36 z-20"
+        className="h-auto md:h-auto md:border border-slate-300  bg-[#fff] rounded-xl absolute top-14 right-6 md:right-36 z-20"
       >
         <div className="pl-10 pr-3 py-3 border-b border-slate-300">
           <h3 className="txtblack text-sm  mb-6 ">Wallet</h3>
@@ -99,15 +99,19 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
             />
             <span>Total Balance </span>
           </p>
+          <h4 className="text-sm ">
+            {NETWORKS[networkId] && <div>{NETWORKS[networkId].networkName}</div>}
+          </h4>
           <h4 className="txtblack text-xl  mb-6 tracking-wide">
             {isLoadingBalance && (
               <i className="fa fa-spinner fa-pulse fa-fw"></i>
             )}
             <span>
               {balance ? balance.toFixed(4) : 0}{" "}
-              {NETWORKS[networkId] ? NETWORKS[networkId].crypto : ""}
+              {NETWORKS[networkId] ? NETWORKS[networkId].cryto : ""}
             </span>
           </h4>
+
           <a className="btn-fund" href="#">
             <span>Add Funds</span>
           </a>

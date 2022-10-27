@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import FileDragAndDrop from "components/FormUtility/FileDragAndDrop";
 import { updateUserInfo } from "services/User/userService";
-import { useAuthState } from "Context";
+import { useAuthState } from "redux/auth/context";
 import { useSelector } from "react-redux";
-import { setUserInfo } from "Slice/userSlice";
+import { setUserInfo } from "redux/slice/userSlice";
 import { useDispatch } from "react-redux";
 import { getUserInfo } from "services/User/userService";
 import deleteIcon from "assets/images/projectCreate/ico_delete01.svg";
@@ -91,7 +91,7 @@ const ProfileSettingsForm = () => {
           console.log(ex);
         }
       }
-    } catch { }
+    } catch {}
     dispatch(setUserInfo(userinfo));
     setIsLoading(false);
   }
@@ -278,9 +278,11 @@ const ProfileSettingsForm = () => {
               you can use your name or your nickname.
             </div>
             <input
-              className={`block w-full border ${errors.displayName ? "border-red-500" : "border-dark-300"
-                } rounded py-3 px-4 mb-3 leading-tight ${errors.displayName ? "focus:border focus:border-red-500" : ""
-                }`}
+              className={`block w-full border ${
+                errors.displayName ? "border-red-500" : "border-dark-300"
+              } rounded py-3 px-4 mb-3 leading-tight ${
+                errors.displayName ? "focus:border focus:border-red-500" : ""
+              }`}
               id="display-name"
               name="displayName"
               type="text"
@@ -300,9 +302,11 @@ const ProfileSettingsForm = () => {
             <div className="label">Email</div>
             <div className="label-grey">Enter your email address.</div>
             <input
-              className={`block w-full border ${errors.email ? "border-red-500" : "border-dark-300"
-                } rounded py-3 px-4 mb-3 leading-tight ${errors.email ? "focus:border focus:border-red-500" : ""
-                }`}
+              className={`block w-full border ${
+                errors.email ? "border-red-500" : "border-dark-300"
+              } rounded py-3 px-4 mb-3 leading-tight ${
+                errors.email ? "focus:border focus:border-red-500" : ""
+              }`}
               id="email"
               name="email"
               type="text"
@@ -509,6 +513,7 @@ const ProfileSettingsForm = () => {
         <SuccessModal
           handleClose={setShowSuccessModal}
           show={showSuccessModal}
+          redirection={"/"}
         />
       )}
       {showErrorModal && (

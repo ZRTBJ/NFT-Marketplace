@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import { NETWORKS } from "config/networks";
+import { ls_GetChainID } from "util/ApplicationStorage";
 
 const abi = [
   { inputs: [], stateMutability: "nonpayable", type: "constructor" },
@@ -60,7 +61,7 @@ const abi = [
 ];
 
 export function createInstance(provider) {
-  let chainId = localStorage.getItem("networkChain");
-  let minimalForwarder = NETWORKS[Number(chainId)]?.forwarder;
+  let chainId = ls_GetChainID()
+  let minimalForwarder = NETWORKS[chainId]?.forwarder;
   return new ethers.Contract(minimalForwarder, abi, provider);
 }

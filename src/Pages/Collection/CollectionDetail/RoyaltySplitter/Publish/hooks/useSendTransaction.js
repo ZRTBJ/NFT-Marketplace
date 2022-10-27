@@ -2,6 +2,7 @@ import { ethers } from "ethers";
 import axios from "axios";
 import * as Forwarder from "eth/abis/forwarder";
 import { NETWORKS } from "config/networks";
+import { ls_GetChainID } from "util/ApplicationStorage";
 
 class RequestSigner {
   constructor(payload) {
@@ -144,8 +145,8 @@ export default function useSendTransaction() {
   };
 
   const sendToRelayer = async ({ request, signature }) => {
-    let chainId = localStorage.getItem("networkChain");
-    let webhook = NETWORKS[Number(chainId)]?.webhook;
+    let chainId = ls_GetChainID()
+    let webhook = NETWORKS[chainId]?.webhook;
     const response = await axios.post(webhook, {
       request,
       signature,

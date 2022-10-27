@@ -17,20 +17,23 @@ export default function NFTListCard({ nft, projectNetwork, refresh }) {
           />
         </Link>
         <div className="py-2 md:py-5 h-[156px] ">
-          <div className="flex w-[150px] md:w-[276px] ml-2">
-            <h2 className="mb-2 text-txtblack truncate flex-1 mr-3 m-w-0 text-[24px]">
+          <div className="flex px-2">
+            <h2 className="mb-2 text-txtblack truncate flex-1  m-w-0  text-[24px]">
               {nft?.name}
             </h2>
           </div>
-          <div className="flex  flex-wrap mx-2">
+          <div className="flex px-2">
             <p className="text-[13px]">
-              {nft?.price} {projectNetwork === "ethereum" ? "ETH" : "MATIC"}
+              {nft?.price}{" "}
+              {nft.currency && nft.currency === "eth" ? "ETH" : "MATIC"}
             </p>
-            <img
-              className="ml-auto"
-              src={projectNetwork === "ethereum" ? Eth : Polygon}
-              alt={projectNetwork}
-            />
+            {nft.currency ? (
+              <img
+                className="ml-auto"
+                src={nft.currency === "eth" ? Eth : Polygon}
+                alt={projectNetwork}
+              />
+            ) : null}
           </div>
           <div className="text-right mt-2">
             {nft.loading ? (
