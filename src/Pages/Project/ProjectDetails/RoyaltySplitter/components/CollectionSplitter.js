@@ -15,6 +15,20 @@ const CollectionSplitter = ({
   setOpenedCollection,
   date,
 }) => {
+  const dea = [
+    {
+      avatar:
+        "https://storage.googleapis.com/apollo_creabo_dev/user/3eb10edb-b3b6-409f-b1d3-ee005291d364/avatar.jpg?v=1661100535",
+    },
+    {
+      avatar:
+        "https://storage.googleapis.com/apollo_creabo_dev/user/3eb10edb-b3b6-409f-b1d3-ee005291d364/avatar.jpg?v=1661100535",
+    },
+    {
+      avatar:
+        "https://storage.googleapis.com/apollo_creabo_dev/user/3eb10edb-b3b6-409f-b1d3-ee005291d364/avatar.jpg?v=1661100535",
+    },
+  ];
   return (
     <div className="mb-10">
       <div className="flex items-center w-full flex-wrap">
@@ -26,13 +40,13 @@ const CollectionSplitter = ({
           />
           <p className="text-[16px] font-black">{name}</p>
         </div>
-        <div className="w-[20%] text-center hidden md:block ">
+        <div className="w-[20%] text-center hidden md:flex items-center justify-center">
           {members ? (
             members.map((member) => (
               <img
                 src={member?.avatar ? member.avatar : Profile}
                 alt="member"
-                className="w-[32px] h-[32px] rounded-full mx-auto -ml-[50px]"
+                className="w-[32px] h-[32px] rounded-full -ml-[8px] -mr-[8px]"
               />
             ))
           ) : (
@@ -63,13 +77,13 @@ const CollectionSplitter = ({
             />
           )}
         </div>
-        <div className="w-[33%] text-center block md:hidden mt-4">
+        <div className="w-[33%] text-center flex md:hidden mt-4 items-center justify-center">
           {members ? (
             members.map((member) => (
               <img
                 src={member?.avatar ? member.avatar : Profile}
                 alt="member"
-                className="w-[32px] h-[32px] rounded-full mx-auto -ml-[50px]"
+                className="w-[32px] h-[32px] rounded-full -ml-[8px] -mr-[8px]"
               />
             ))
           ) : (

@@ -111,6 +111,7 @@ const Splitter = ({ collectionId }) => {
       })
       .catch((err) => setIsLoading(false));
   };
+
   const calculatePageCount = (pageSize, totalItems) => {
     return totalItems < pageSize ? 1 : Math.ceil(totalItems / pageSize);
   };
@@ -240,7 +241,7 @@ const Splitter = ({ collectionId }) => {
   const currentMembers =
     royalityMembers?.length &&
     royalityMembers.slice(indexOfFirstPost, indexOfLastPost);
-  console.log(royalityMembers);
+
   return (
     <>
       {loading && (

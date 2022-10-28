@@ -211,7 +211,6 @@ const ImportWalletModal = ({
         }
       })
       .catch((err) => {
-        console.log("Sdsd");
         setIsLoading(false);
         setRoyaltyUpdatedSuccessfully(false);
         handleClose();
@@ -224,7 +223,7 @@ const ImportWalletModal = ({
       <p className="text-[12px]">
         Choose Collection to add member for {collectionName} Contributors
       </p>
-      <p className="text-[12px] text-danger-900 w-[350px] leading-[18px] mt-0">
+      <p className="text-[12px] text-danger-900 w-[380px] leading-[18px] mt-0">
         Note : If you already have a list and importing new new list. The old
         list that you have will be deleted
       </p>
