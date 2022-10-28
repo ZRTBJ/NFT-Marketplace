@@ -1,3 +1,4 @@
+import { ethers } from "ethers";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
@@ -73,11 +74,18 @@ const MemberListTable = ({
     setNewItems(value);
   };
 
-  const addNewContributorData = () => {
+  const addNewContributorData = async () => {
     setIsAdded(true);
     if (address && percentage) {
+      let userAddress = address;
+
+      if (!ethers.utils.isAddress(address)) {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        userAddress = await provider.resolveName(address);
+      }
+
       let value = {
-        user_eoa: address,
+        user_eoa: userAddress,
         royalty_percent: parseFloat(percentage),
       };
       setRoyalityMembers([...list, value]);
