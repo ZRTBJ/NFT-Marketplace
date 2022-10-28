@@ -18,14 +18,14 @@ export default function NFTListCard({ nft, projectNetwork, refresh }) {
         </Link>
         <div className="py-2 md:py-5 h-[156px] ">
           <div className="flex px-2">
-            <h2 className="mb-2 text-txtblack truncate flex-1  m-w-0  text-[24px]">
+            <h3 className="mb-2 text-txtblack truncate flex-1  m-w-0  text-[24px]">
               {nft?.name}
-            </h2>
+            </h3>
           </div>
           <div className="flex px-2">
             <p className="text-[13px]">
               {nft?.price}{" "}
-              {nft.currency && nft.currency === "eth" ? "ETH" : "MATIC"}
+              {nft?.currency?.toUpperCase()}
             </p>
             {nft.currency ? (
               <img
@@ -60,13 +60,13 @@ export default function NFTListCard({ nft, projectNetwork, refresh }) {
               <>
                 {(nft.refresh_status === "required" ||
                   nft.refresh_status === "processing") && (
-                  <button
-                    onClick={() => refreshNft(nft)}
-                    className="contained-button mt-4 !px-2 mr-2 rounded"
-                  >
-                    <i className="fa-solid fa-arrows-rotate"></i>
-                  </button>
-                )}
+                    <button
+                      onClick={() => refreshNft(nft)}
+                      className="contained-button mt-4 !px-2 mr-2 rounded"
+                    >
+                      <i className="fa-solid fa-arrows-rotate"></i>
+                    </button>
+                  )}
               </>
             )}
           </div>

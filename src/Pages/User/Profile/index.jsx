@@ -34,6 +34,7 @@ import { createMintInstance } from "eth/abis/mint-nft";
 import { toast } from "react-toastify";
 import ReactPaginate from "react-paginate";
 import Spinner from "components/Commons/Spinner";
+import { NETWORKS } from "config/networks";
 
 const Profile = () => {
   const provider = createProvider();
@@ -544,10 +545,9 @@ const Profile = () => {
                           ) : (
                             <a href={snc.url} target="_blank" rel="noreferrer">
                               <i
-                                className={`fa-brands fa-${
-                                  socialLinks.find((x) => x.title === snc.title)
-                                    .icon
-                                } text-[20px] gradient-text text-white-shade-900 mt-1`}
+                                className={`fa-brands fa-${socialLinks.find((x) => x.title === snc.title)
+                                  .icon
+                                  } text-[20px] gradient-text text-white-shade-900 mt-1`}
                               ></i>
                             </a>
                           )}
@@ -641,17 +641,16 @@ const Profile = () => {
                           {royaltiesList.map((r, index) => (
                             <tr
                               key={r.royalty_id}
-                              className={`${
-                                index < royaltiesList.length - 1
-                                  ? "border-b"
-                                  : ""
-                              } text-left text-txtblack text-[14px]`}
+                              className={`${index < royaltiesList.length - 1
+                                ? "border-b"
+                                : ""
+                                } text-left text-txtblack text-[14px]`}
                             >
                               <td className="py-4 px-5">
                                 <img
-                                  src={DefaultProjectLogo}
+                                  src={NETWORKS[Number(r.blockchain)].icon}
                                   className="h-[34px] w-[34px] object-cover rounded-full"
-                                  alt={r.project_name + "logo"}
+                                  alt={DefaultProjectLogo}
                                 />
                               </td>
                               <td className="py-4 px-5 font-black ">
@@ -674,9 +673,8 @@ const Profile = () => {
                                 {r.royalty_percent}%
                               </td>
                               <td
-                                className={`py-4 px-5  ${
-                                  r.is_owner ? "text-info-1" : " text-success-1"
-                                }`}
+                                className={`py-4 px-5  ${r.is_owner ? "text-info-1" : " text-success-1"
+                                  }`}
                               >
                                 {r.is_owner ? "Owner" : "Member"}
                               </td>
@@ -738,16 +736,15 @@ const Profile = () => {
                     {royaltiesList.map((r, index) => (
                       <div
                         key={r.royalty_id}
-                        className={`my-8 py-7  ${
-                          index < royaltiesList.length - 1 ? "border-b" : ""
-                        }`}
+                        className={`my-8 py-7  ${index < royaltiesList.length - 1 ? "border-b" : ""
+                          }`}
                       >
                         <div className={`flex   items-center mb-8 `}>
                           <div className={"flex  items-center"}>
                             <img
-                              src={DefaultProjectLogo}
+                              src={NETWORKS[Number(r.blockchain)].icon}
                               className="h-[34px] w-[34px] object-cover rounded-full"
-                              alt={r.project_name + "logo"}
+                              alt={DefaultProjectLogo}
                             />
                             <div className="mx-4 font-black ">
                               <Link
@@ -803,9 +800,8 @@ const Profile = () => {
                           <div>
                             <div>Role</div>
                             <div
-                              className={`text-centre ${
-                                r.is_owner ? "text-info-1" : " text-success-1"
-                              }`}
+                              className={`text-centre ${r.is_owner ? "text-info-1" : " text-success-1"
+                                }`}
                             >
                               {r.is_owner ? "Owner" : "Member"}
                             </div>
@@ -938,8 +934,8 @@ const Profile = () => {
                                 className="rounded-xl h-[211px] md:h-[276px] object-cover w-full"
                                 src={
                                   collection &&
-                                  collection.assets &&
-                                  collection.assets[0]
+                                    collection.assets &&
+                                    collection.assets[0]
                                     ? collection.assets[0].path
                                     : thumbIcon
                                 }
@@ -948,14 +944,14 @@ const Profile = () => {
                             </Link>
 
                             <div className="p-5">
-                              <div className="pb-2 text-[18px] font-black md:text-[24px] text-txtblack truncate">
+                              <div className="pb-2 text-[14px] font-black md:text-[18px] text-txtblack truncate">
                                 {collection.name}
                               </div>
                               <p className="mb-3 text-textSubtle text-[13px]">
                                 {collection.description &&
-                                collection.description.length > 70
+                                  collection.description.length > 70
                                   ? collection.description.substring(0, 67) +
-                                    "..."
+                                  "..."
                                   : collection.description}
                               </p>
 

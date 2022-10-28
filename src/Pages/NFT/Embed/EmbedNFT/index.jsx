@@ -152,7 +152,7 @@ function EmbedNFT(props) {
             <div className="flex items-center justify-center w-100 mt-3 bg-[#122478] rounded-[12px] p-4 bg-opacity-[0.1]">
               <div className="w-2/2 pl-3">
                 <p className="text-textSubtle text-[12px] text-center">Price</p>
-                <h2 className="text-black">{nft?.more_info?.price}</h2>
+                <h2 className="text-black">{nft?.more_info?.price} {nft?.more_info?.currency?.toUpperCase()}</h2>
               </div>
             </div>
             <p className="text-danger-900 text-sm text-center">

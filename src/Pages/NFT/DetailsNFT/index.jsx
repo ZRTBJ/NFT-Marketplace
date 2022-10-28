@@ -30,6 +30,8 @@ import { createMintInstance } from "eth/abis/mint-nft";
 import { createMembsrshipMintInstance } from "eth/abis/mint-membershipNFT";
 import { createMembershipMintNFT } from "Pages/NFT/DetailsNFT/MintNFT/deploy-membershipNFTMint";
 import EmbedNFTModal from "Pages/NFT/Embed/EmbedNFTModal";
+import { NETWORKS } from "config/networks";
+import { ls_GetChainID } from "util/ApplicationStorage";
 
 export default function DetailsNFT(props) {
   const userinfo = useSelector((state) => state.user.userinfo);
@@ -232,8 +234,9 @@ export default function DetailsNFT(props) {
           nftName={nft?.lnft?.name}
           address={userinfo?.eoa}
           collectionName={"Collection1"}
-          blockChain={"Ethereum"}
+          blockChain={ls_GetChainID()}
           price={info?.price}
+          currency={info?.currency}
           handleNext={() => handleProceedPayment("")}
         />
       )}
@@ -481,7 +484,7 @@ export default function DetailsNFT(props) {
             )}
             {/* {!nft.lnft.is_owner && ( */}
             <>
-              {nft?.lnft.minted_amount < nft?.lnft.supply && (
+              {nft?.lnft?.minted_amount < nft?.lnft?.supply && (
                 <div className="text-center mt-[62px] mb-5">
                   <button
                     className=" w-[140px] !text-[16px] h-[44px] contained-button "

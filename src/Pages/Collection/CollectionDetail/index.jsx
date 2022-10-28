@@ -234,7 +234,7 @@ const CollectionDetail = () => {
                   value: Object.values(url)[2],
                 });
               }
-            } catch {}
+            } catch { }
             setLinks(webLinks);
           }
         }
@@ -289,10 +289,9 @@ const CollectionDetail = () => {
     } else {
       if (Collection?.status === "draft") {
         history.push(
-          `${
-            Collection?.type === "product"
-              ? `/product-nft?collectionId=${collectionId}&nftId=${nft.id}`
-              : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}&nftId=${nft.id}`
+          `${Collection?.type === "product"
+            ? `/product-nft?collectionId=${collectionId}&nftId=${nft.id}`
+            : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}&nftId=${nft.id}`
           }`
         );
       } else if (Collection.status === "published") {
@@ -301,10 +300,9 @@ const CollectionDetail = () => {
             setCollectionNotUpdatableModal(true);
           } else {
             history.push(
-              `${
-                Collection?.type === "product"
-                  ? `/product-nft?collectionId=${collectionId}&nftId=${nft.id}`
-                  : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}&nftId=${nft.id}`
+              `${Collection?.type === "product"
+                ? `/product-nft?collectionId=${collectionId}&nftId=${nft.id}`
+                : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}&nftId=${nft.id}`
               }`
             );
           }
@@ -562,11 +560,10 @@ const CollectionDetail = () => {
                     ? walletAddressTruncate(Collection.contract_address)
                     : "Smart Contract not released"}
                   <i
-                    className={`fa-solid fa-copy ml-2 ${
-                      Collection?.contract_address
-                        ? "cursor-pointer"
-                        : "cursor-not-allowed"
-                    }`}
+                    className={`fa-solid fa-copy ml-2 ${Collection?.contract_address
+                      ? "cursor-pointer"
+                      : "cursor-not-allowed"
+                      }`}
                     disabled={!Collection?.contract_address}
                     onClick={() =>
                       copyToClipboard(Collection?.contract_address)
@@ -587,11 +584,11 @@ const CollectionDetail = () => {
                       src={
                         daoInfo?.assets?.length > 0
                           ? daoInfo.assets.find(
-                              (img) => img["asset_purpose"] === "cover"
-                            )
+                            (img) => img["asset_purpose"] === "cover"
+                          )
                             ? daoInfo.assets.find(
-                                (img) => img["asset_purpose"] === "cover"
-                              ).path
+                              (img) => img["asset_purpose"] === "cover"
+                            ).path
                             : defaultCover
                           : defaultCover
                       }
@@ -613,9 +610,8 @@ const CollectionDetail = () => {
                 ?.length > 0 && (
                 <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300">
                   <a
-                    href={`${
-                      Links.find((link) => link.title === "linkFacebook").value
-                    }`}
+                    href={`${Links.find((link) => link.title === "linkFacebook").value
+                      }`}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -626,12 +622,11 @@ const CollectionDetail = () => {
 
             {Links.find((link) => link.title === "linkInsta") &&
               Links.find((link) => link.title === "linkInsta").value?.length >
-                0 && (
+              0 && (
                 <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                   <a
-                    href={`${
-                      Links.find((link) => link.title === "linkInsta").value
-                    }`}
+                    href={`${Links.find((link) => link.title === "linkInsta").value
+                      }`}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -642,12 +637,11 @@ const CollectionDetail = () => {
 
             {Links.find((link) => link.title === "linkTwitter") &&
               Links.find((link) => link.title === "linkTwitter").value?.length >
-                0 && (
+              0 && (
                 <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                   <a
-                    href={`${
-                      Links.find((link) => link.title === "linkTwitter").value
-                    }`}
+                    href={`${Links.find((link) => link.title === "linkTwitter").value
+                      }`}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -658,12 +652,11 @@ const CollectionDetail = () => {
 
             {Links.find((link) => link.title === "linkGitub") &&
               Links.find((link) => link.title === "linkGitub").value?.length >
-                0 && (
+              0 && (
                 <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 ">
                   <a
-                    href={`${
-                      Links.find((link) => link.title === "linkGitub").value
-                    }`}
+                    href={`${Links.find((link) => link.title === "linkGitub").value
+                      }`}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -673,12 +666,11 @@ const CollectionDetail = () => {
               )}
             {Links.find((link) => link.title === "linkReddit") &&
               Links.find((link) => link.title === "linkReddit").value?.length >
-                0 && (
+              0 && (
                 <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 ">
                   <a
-                    href={`${
-                      Links.find((link) => link.title === "linkReddit").value
-                    }`}
+                    href={`${Links.find((link) => link.title === "linkReddit").value
+                      }`}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -692,9 +684,8 @@ const CollectionDetail = () => {
                 ?.length > 0 && (
                 <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 ">
                   <a
-                    href={`${
-                      Links.find((link) => link.title === "customLinks1").value
-                    }`}
+                    href={`${Links.find((link) => link.title === "customLinks1").value
+                      }`}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -747,13 +738,12 @@ const CollectionDetail = () => {
             <div className="bg-[#E8F5FB] ml-0 md:ml-3 rounded-md p-3 px-5 relative w-56">
               <i
                 onClick={getCollectionNewWorth}
-                className={`cursor-pointer fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3 ${
-                  balanceLoading ? "fa-spin" : ""
-                }'}`}
+                className={`cursor-pointer fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3 ${balanceLoading ? "fa-spin" : ""
+                  }'}`}
               ></i>
               <p className=" text-sm text-textSubtle ">Net Worth</p>
               <h4>
-                {newWorth?.balance} {newWorth?.currency}
+                {newWorth?.balance} {newWorth?.currency?.toUpperCase()}
               </h4>
               <p className="text-sm text-textSubtle">
                 $ {newWorth.balanceUSD?.toFixed(2)}
@@ -798,10 +788,9 @@ const CollectionDetail = () => {
           <div
             onClick={() =>
               history.push(
-                `${
-                  Collection?.type === "product"
-                    ? `/product-nft?collectionId=${collectionId}`
-                    : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}`
+                `${Collection?.type === "product"
+                  ? `/product-nft?collectionId=${collectionId}`
+                  : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}`
                 }`
               )
             }
@@ -824,11 +813,10 @@ const CollectionDetail = () => {
                 onClick={() => setSelectedTab(1)}
               >
                 <button
-                  className={`inline-block p-4 text-lg rounded-t-lg ${
-                    selectedTab === 1
-                      ? "border-b-2 border-primary-900 text-primary-900"
-                      : "border-transparent text-textSubtle"
-                  } hover:text-primary-600`}
+                  className={`inline-block p-4 text-lg rounded-t-lg ${selectedTab === 1
+                    ? "border-b-2 border-primary-900 text-primary-900"
+                    : "border-transparent text-textSubtle"
+                    } hover:text-primary-600`}
                   id="nft"
                   data-tabs-target="#nft"
                   type="button"
@@ -846,11 +834,10 @@ const CollectionDetail = () => {
                   onClick={() => setSelectedTab(2)}
                 >
                   <button
-                    className={`inline-block p-4 text-lg rounded-t-lg ${
-                      selectedTab === 2
-                        ? "border-b-2 border-primary-900 text-primary-900"
-                        : "border-transparent text-textSubtle"
-                    } hover:text-primary-900`}
+                    className={`inline-block p-4 text-lg rounded-t-lg ${selectedTab === 2
+                      ? "border-b-2 border-primary-900 text-primary-900"
+                      : "border-transparent text-textSubtle"
+                      } hover:text-primary-900`}
                     id="dashboard"
                     data-tabs-target="#dashboard"
                     type="button"
@@ -883,7 +870,7 @@ const CollectionDetail = () => {
                             />
                           )}
                           {nft?.asset?.asset_type === "movie" ||
-                          nft?.asset?.asset_type === "video/mp4" ? (
+                            nft?.asset?.asset_type === "video/mp4" ? (
                             <video
                               className="h-[176px] md:h-[276px] w-[150px] md:w-[276px]"
                               controls
@@ -893,7 +880,7 @@ const CollectionDetail = () => {
                             </video>
                           ) : null}
                           {nft?.asset?.asset_type === "audio" ||
-                          nft?.asset?.asset_type === "audio/mpeg" ? (
+                            nft?.asset?.asset_type === "audio/mpeg" ? (
                             <audio
                               src={nft?.asset?.path}
                               controls
@@ -904,9 +891,9 @@ const CollectionDetail = () => {
                         </Link>
                         <div className="py-2 md:py-5">
                           <div className="flex w-[150px] md:w-[276px]">
-                            <h2 className="mb-2 text-txtblack truncate flex-1 mr-3 m-w-0 text-[24px]">
+                            <h3 className="mb-2 text-txtblack truncate flex-1 mr-3 m-w-0 text-[24px]">
                               {nft?.name}
-                            </h2>
+                            </h3>
                             <div className="relative">
                               {/* Dropdown menu  */}
                               {Collection?.is_owner && (
@@ -971,10 +958,8 @@ const CollectionDetail = () => {
 
                           <div className="flex  w-[150px] md:w-[276px]">
                             <p className="text-[13px]">
-                              {nft?.price}{" "}
-                              {nft.currency && nft.currency === "eth"
-                                ? "ETH"
-                                : "MATIC"}
+                              {nft?.price ? nft?.price : "Price not set"}{" "}
+                              {nft?.currency?.toUpperCase()}
                             </p>
                             {nft.currency ? (
                               <img
