@@ -1,0 +1,38 @@
+/* btn-fund */
+
+.btn-fund {
+	width: 114px;
+	height: 30px;
+	background: #f3d3fe;
+	border-radius: 5px;
+	padding: 1px;
+	position: relative;
+	z-index: 2;
+	font-weight: 900;
+	font-size: 14px;
+	line-height: 16px;
+	display: flex;
+	align-items: center;
+	text-align: center;
+	color: #d66efb;
+	letter-spacing: 0.2px;
+}
+
+/* .btn-fund:hover {
+  color: #fff;
+} */
+
+.btn-fund span {
+	align-items: center;
+	/* background: rgba(255, 168, 0, 0.2); */
+	border-radius: 5px;
+	display: flex;
+	justify-content: center;
+	height: 100%;
+	transition: background 0.5s ease;
+	width: 100%;
+}
+
+/* .btn-fund:hover span {
+  background: rgba(255, 168, 0, 1);
+} */

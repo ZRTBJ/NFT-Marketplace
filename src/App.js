@@ -5,7 +5,7 @@ import routes from "routes/routes.js";
 import { AuthProvider } from "redux/auth/context";
 import AppRoute from "routes/AppRoute";
 import Header from "Pages/Common/TopHeader/Header";
-import Sidebar from "Pages/Common/Sidebar/Sidebar";
+import Sidebar from "Pages/Common/Sidebar";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {

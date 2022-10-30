@@ -1,8 +1,8 @@
 import React, { useState, useCallback, useEffect } from "react";
-import "assets/css/CreateProject/mainView.css";
+import "./index.css";
 import { checkUniqueProjectName } from "services/project/projectService";
 import Outline from "Pages/Project/ProjectCreate/Outline";
-import Confirmation from "Pages/Project/ProjectCreate/Confirmation";
+import Confirmation from "Pages/Project/ProjectCreate/Confirm";
 import {
   createProject,
   updateProject,

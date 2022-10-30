@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from "react";
-import WalletDropDownMenu from "./WalletDropDownMenu";
+import WalletDropDownMenu from "./WalletDropdownMenu";
 import { useHistory, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useAuthState } from "redux/auth/context";
@@ -152,7 +152,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     if (loc.protocol === "https:") {
       host = "wss:";
     }
-  } catch {}
+  } catch { }
   const socketUrl = `${host}//${config.WEB_SOKET}/ws`;
 
   const {
@@ -215,7 +215,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
           }
         }, 2000);
       }
-    } catch (err) {}
+    } catch (err) { }
   }
 
   function searchProject(keyword) {
@@ -347,9 +347,8 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
             )}
 
             <ul
-              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${
-                userId ? "" : "sm:py-2"
-              }`}
+              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${userId ? "" : "sm:py-2"
+                }`}
             >
               {userinfo.id && (
                 <>
@@ -561,10 +560,10 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
               onClick={
                 userinfo.id
                   ? (e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      showHideUserPopupWallet();
-                    }
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showHideUserPopupWallet();
+                  }
                   : () => setShowModal(true)
               }
             />

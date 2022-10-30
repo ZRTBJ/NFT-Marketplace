@@ -578,7 +578,7 @@ const CollectionDetail = () => {
                     Copied !
                   </span>
                 </p>
-                <p className="my-2 text-textLight text-sm md:flex items-center">
+                <p className="my-2 text-textLight md:text-sm text:xs md:flex items-center">
                   Connected With :
                   <Link
                     className="md:ml-2 mt-1 md:mt-0 font-bold flex items-center !no-underline"

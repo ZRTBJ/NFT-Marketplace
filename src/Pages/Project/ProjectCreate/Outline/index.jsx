@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import "assets/css/CreateProject/Outline.css";
+import "./index.css";
 import FileDragAndDrop from "components/FormUtility/FileDragAndDrop";
 import { useState, useEffect } from "react";
 import { DebounceInput } from "react-debounce-input";

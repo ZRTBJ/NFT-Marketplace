@@ -1,3 +1,4 @@
+import "./index.css";
 import { useAuthState, useAuthDispatch, logout } from "redux/auth";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";

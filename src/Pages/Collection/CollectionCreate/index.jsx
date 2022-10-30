@@ -1,13 +1,13 @@
 import React from "react";
 import { useState, useCallback, useEffect } from "react";
-import "assets/css/CreateProject/mainView.css";
+import "./index.css";
 import { useSelector } from "react-redux";
 import {
   checkUniqueCollectionName,
   checkUniqueCollectionSymbol,
 } from "services/collection/collectionService";
 import Outline from "Pages/Project/ProjectCreate/Outline";
-import Confirmation from "Pages/Project/ProjectCreate/Confirmation";
+import Confirmation from "Pages/Project/ProjectCreate/Confirm";
 import { mockCreateProject } from "services/project/projectService";
 import {
   createCollection,
@@ -385,7 +385,7 @@ export default function CollectionCreate() {
         setCoverPhotoUrl(cover ? cover : "");
         try {
           setWebLinks(JSON.parse(response.links));
-        } catch (e) {}
+        } catch (e) { }
         setProjectCategory(response.category_id);
         setIsTokenTransferable(response.token_transferable);
         setIsMetaDataFreezed(response.updatable);
@@ -552,7 +552,7 @@ export default function CollectionCreate() {
           </h3>
         ) : (
           <>
-            <div className="create-project-container">
+            <div className="create-collection-container">
               {currentStep.length === 1 && (
                 <div>
                   <h1 className="txtblack text-[28px] font-black mb-[6px]">
