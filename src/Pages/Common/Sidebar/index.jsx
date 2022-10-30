@@ -23,7 +23,7 @@ const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
     let userinfoResponse;
     try {
       userinfoResponse = response["user"];
-    } catch { }
+    } catch {}
     dispatch(setUserInfo(userinfoResponse));
   }
 
@@ -34,7 +34,7 @@ const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
     try {
       e.preventDefault();
       dispatch(setSideBar(false));
-    } catch { }
+    } catch {}
   }
 
   function accessCheck(e) {
@@ -51,7 +51,7 @@ const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
       <div className="bg-light1 h-screen sticky top-0 sidenav">
         <div className="sidebarLinksContainer flex flex-col">
           <div className="pl-6 pr-10 flex-0 flex flex-col">
-            <NavLink
+            {/* <NavLink
               to={"/"}
               id="nav-home"
               onClick={handleToggleSideBar}
@@ -60,7 +60,7 @@ const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
             >
               <i className="fa-solid fa-home"></i>
               <span className="ml-2">Home</span>
-            </NavLink>
+            </NavLink> */}
             <NavLink
               onClick={accessCheck}
               to={`/profile/${userId}`}

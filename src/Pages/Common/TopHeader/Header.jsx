@@ -303,13 +303,10 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
               className="cp mr-5 lg:ml-1 lg:mr-20"
               onClick={() => history.push("/")}
             >
-              {/* <div className="text-primary-900 font-satoshi-bold font-black text-xl lg:text-3xl relative logo">
-                CREAB
-              </div> */}
               <img src={Logo} alt="DeCir" />
             </div>
 
-            <form className="mr-6 flex-1 hidden md:block">
+            {/* <form className="mr-6 flex-1 hidden md:block">
               <label
                 htmlFor="default-search"
                 className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300"
@@ -339,7 +336,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                     handleSearchClose={handleSearchClose}
                   />
                 )}
-            </form>
+            </form> */}
           </div>
 
           <div className="flex items-center" id="mobile-menu">
@@ -485,7 +482,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
           </div>
         </div>
 
-        {pathname === "/" && (
+        {/* {pathname === "/" && (
           <div className="md:hidden">
             <label
               htmlFor="default-search"
@@ -517,7 +514,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                 )}
             </div>
           </div>
-        )}
+        )} */}
       </nav>
       <nav className="block md:hidden">
         <div className="h-[56px] p-4 flex items-center justify-between">
@@ -531,7 +528,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
           </div>
 
           <div className="flex items-center justify-between z-[100]">
-            {showSearchMobile ? (
+            {/* {showSearchMobile ? (
               <i
                 className="fa fa-xmark cursor-pointer text-xl text-black mr-4"
                 onClick={handleShowMobileSearch}
@@ -543,7 +540,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                 className="mr-3"
                 onClick={handleShowMobileSearch}
               />
-            )}
+            )} */}
             {userinfo.id ? (
               <img
                 src={bellImage}
@@ -572,11 +569,12 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
             />
           </div>
         </div>
-        <form
-          className={`${showSearchMobile
-            ? "translate-y-0 opacity-1"
-            : "-translate-y-[6pc] opacity-0"
-            } ml-2 duration-500 ease-in-out mr-2`}
+        {/* <form
+          className={`${
+            showSearchMobile
+              ? "translate-y-0 opacity-1"
+              : "-translate-y-[6pc] opacity-0"
+          } ml-2 duration-500 ease-in-out mr-2`}
         >
           <label
             htmlFor="default-search"
@@ -608,7 +606,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                 handleSearchClose={handleSearchClose}
               />
             )}
-        </form>
+        </form> */}
       </nav>
       <WalletConnectModal showModal={showModal} closeModal={hideModal} />
     </header>

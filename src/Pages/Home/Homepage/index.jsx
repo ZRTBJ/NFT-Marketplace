@@ -13,16 +13,16 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import thumbIcon from "assets/images/profile/card.svg";
 import DAOCard from "components/Cards/DAOCard";
 import { getCollections } from "services/collection/collectionService";
-import { Link } from "react-router-dom";
+import { useParams, Link, useHistory } from "react-router-dom";
 import InviteModal from "Pages/Collection/CollectionDetail/RoyaltySplitter/Invite/InviteModal";
 import { getIdbyCode } from "services/nft/nftService";
-import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Sort from "assets/images/icons/sort.svg";
 import { Navigation } from "swiper";
 import ReactPaginate from "react-paginate";
 function Home() {
   SwiperCore.use([Autoplay]);
+  const history = useHistory();
   // const [categories, setCategories] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState([]);
   const [searchList, setSearchList] = useState([]);
@@ -68,6 +68,18 @@ function Home() {
       spaceBetween: 15,
     },
   };
+  useEffect(() => {
+    if (userinfo.id) {
+      console.log(userinfo);
+      history.push(`/profile/${userinfo.id}/`);
+    } else {
+      history.push(`/profile/login`);
+    }
+  }, []);
+  useEffect(() => {
+    const navItem = document.getElementById("nav-home");
+    if (navItem) navItem.classList.add("active-menu");
+  }, []);
 
   useEffect(() => {
     if (invite) {
@@ -268,24 +280,27 @@ function Home() {
             >
               <li onClick={() => handleSortType("newer")}>
                 <a
-                  className={`dropdown-item py-2 px-4 block whitespace-nowrap ${sortType === "newer" ? "text-primary-900" : "text-txtblack"
-                    } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                  className={`dropdown-item py-2 px-4 block whitespace-nowrap ${
+                    sortType === "newer" ? "text-primary-900" : "text-txtblack"
+                  } hover:bg-slate-50 transition duration-150 ease-in-out`}
                 >
                   Newer
                 </a>
               </li>
               <li onClick={() => handleSortType("older")}>
                 <a
-                  className={`dropdown-item py-2 px-4 block whitespace-nowrap ${sortType === "older" ? "text-primary-900" : "text-txtblack"
-                    } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                  className={`dropdown-item py-2 px-4 block whitespace-nowrap ${
+                    sortType === "older" ? "text-primary-900" : "text-txtblack"
+                  } hover:bg-slate-50 transition duration-150 ease-in-out`}
                 >
                   older
                 </a>
               </li>
               <li onClick={() => handleSortType("view")}>
                 <a
-                  className={`dropdown-item py-2 px-4 block whitespace-nowrap ${sortType === "view" ? "text-primary-900" : "text-txtblack"
-                    } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                  className={`dropdown-item py-2 px-4 block whitespace-nowrap ${
+                    sortType === "view" ? "text-primary-900" : "text-txtblack"
+                  } hover:bg-slate-50 transition duration-150 ease-in-out`}
                 >
                   view
                 </a>
@@ -313,15 +328,15 @@ function Home() {
           <section className="flex flex-wrap items-center justify-center md:justify-start">
             {isSearching
               ? searchList.map((item, index) => (
-                <div key={item.id}>
-                  <DAOCard item={item} key={item.id} />
-                </div>
-              ))
+                  <div key={item.id}>
+                    <DAOCard item={item} key={item.id} />
+                  </div>
+                ))
               : projectList.map((item, index) => (
-                <div key={item.id}>
-                  <DAOCard item={item} key={item.id} />
-                </div>
-              ))}
+                  <div key={item.id}>
+                    <DAOCard item={item} key={item.id} />
+                  </div>
+                ))}
           </section>
         </section>
 
@@ -383,8 +398,8 @@ function Home() {
                           className="rounded-xl h-[276px] object-cover w-full"
                           src={
                             collection &&
-                              collection.assets &&
-                              collection.assets[0]
+                            collection.assets &&
+                            collection.assets[0]
                               ? collection.assets[0].path
                               : thumbIcon
                           }
@@ -398,7 +413,7 @@ function Home() {
                         </h3>
                         <p className="mb-3 text-textSubtle text-[13px]">
                           {collection.description &&
-                            collection.description.length > 70
+                          collection.description.length > 70
                             ? collection.description.substring(0, 67) + "..."
                             : collection.description}
                         </p>
