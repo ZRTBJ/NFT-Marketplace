@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
-import "assets/css/profile.css";
 import DefaultProfilePicture from "assets/images/defaultProfile.svg";
 import DefaultProjectLogo from "assets/images/profile/defaultProjectLogo.svg";
 import { Swiper, SwiperSlide } from "swiper/react";

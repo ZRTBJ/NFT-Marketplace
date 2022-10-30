@@ -172,9 +172,8 @@ const WalletConnectModal = ({
         handleClose={() => closeModal()}
       >
         <div
-          className={`text-center px-[11px] md:px-[0px] mb-8 text-black ${
-            isLoading ? "loading" : ""
-          }`}
+          className={`text-center px-[11px] md:px-[0px] mb-8 text-black ${isLoading ? "loading" : ""
+            }`}
         >
           <h1 className="text-[30px] md:text-[46px]">Connect wallet</h1>
           <p className="mt-3 text-white-shade-600 font-bold break-normal">

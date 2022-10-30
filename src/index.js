@@ -1,7 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import "./assets/css/Header.css";
 import "./assets/css/common.css";
 import "rsuite/dist/rsuite.min.css";
 

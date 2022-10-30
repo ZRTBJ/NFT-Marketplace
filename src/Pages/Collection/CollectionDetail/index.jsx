@@ -555,7 +555,7 @@ const CollectionDetail = () => {
                 <h1 className="-mt-1 mb-1 md:mb-2 truncate">
                   {Collection?.name}
                 </h1>
-                <p className="text-textLight text-sm">
+                <p className="text-textLight md:text-sm text-xs">
                   {Collection?.contract_address
                     ? walletAddressTruncate(Collection.contract_address)
                     : "Smart Contract not released"}
@@ -573,7 +573,7 @@ const CollectionDetail = () => {
                     Copied !
                   </span>
                 </p>
-                <p className="my-2 text-textLight text-sm flex items-center">
+                <p className="my-2 text-textLight md:text-sm text-xs flex items-center">
                   Connected With :
                   <Link
                     className="ml-2 font-bold flex items-center !no-underline"

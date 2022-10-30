@@ -1,4 +1,4 @@
-import "assets/css/Sidebar.css";
+import "./index.css";
 import { useAuthState } from "redux/auth/context";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";

@@ -126,7 +126,7 @@ function EmbedNFT(props) {
         }
       })
       .catch((err) => {
-        setErrorMessage("Minting Failed. Please tru again later");
+        setErrorMessage("Minting Failed. Please try again later");
       });
   }
   return (
