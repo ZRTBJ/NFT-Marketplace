@@ -17,8 +17,10 @@ const CollectionSplitter = ({
 }) => {
   return (
     <div className="mb-10">
-      <div className="flex items-center w-full flex-wrap">
-
+      <div
+        className="flex items-center w-full flex-wrap cursor-pointer"
+        onClick={() => setOpenedCollection(openedCollection === id ? null : id)}
+      >
         <div className="flex items-center w-[50%] md:w-[20%]">
           <img
             src={image?.path ? image.path : DefaultImage}
@@ -54,19 +56,9 @@ const CollectionSplitter = ({
         </p>
         <div className="w-[50%] md:w-[20%]">
           {openedCollection === id ? (
-            <img
-              src={Open}
-              alt="Open"
-              className="ml-auto cursor-pointer"
-              onClick={() => setOpenedCollection(null)}
-            />
+            <img src={Open} alt="Open" className="ml-auto cursor-pointer" />
           ) : (
-            <img
-              src={Closed}
-              alt="Close"
-              className="ml-auto cursor-pointer"
-              onClick={() => setOpenedCollection(id)}
-            />
+            <img src={Closed} alt="Close" className="ml-auto cursor-pointer" />
           )}
         </div>
         <div className="w-[33%] text-center flex md:hidden mt-4 items-center justify-center">

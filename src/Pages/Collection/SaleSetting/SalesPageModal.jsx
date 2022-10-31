@@ -114,22 +114,6 @@ const SalesPageModal = ({
     }
   }, [nftId]);
 
-  // useEffect(() => {
-  //   if (collectionType === "membership") {
-  //     getCollectionNFTs(collectionId).then((resp) => {
-  //       if (resp.code === 0) {
-  //         let mems = resp?.lnfts.map((nft) => ({
-  //           tierId: nft.id,
-  //           floorPrice: ethers.utils.parseEther("0.0001"),
-  //           totalSupply: nft.supply,
-  //         }));
-  //         setMemNFTs(mems);
-  //       }
-  //       console.log(resp);
-  //     });
-  //   }
-  // }, [collectionType]);
-
   useEffect(() => {
     getExchangeRate().then((resp) => {
       if (resp.code === 0) {
@@ -213,10 +197,10 @@ const SalesPageModal = ({
         const response =
           type === "membership"
             ? await setMemNFTPrice(
-              membershipPriceContract,
-              provider,
-              nftId ? tiers : allTiers
-            )
+                membershipPriceContract,
+                provider,
+                nftId ? tiers : allTiers
+              )
             : await setNFTPrice(priceContract, provider, data["price"]);
 
         if (response?.txReceipt?.status === 1) {
@@ -335,8 +319,9 @@ const SalesPageModal = ({
             data-toggle="modal"
             data-backdrop="static"
             data-keyboard="false"
-            className={`${show ? "modal display-block" : "modal display-none"
-              } z-[2] `}
+            className={`${
+              show ? "modal display-block" : "modal display-none"
+            } z-[2] `}
           >
             <section
               onClick={(e) => modalBodyClicked(e)}
@@ -365,7 +350,7 @@ const SalesPageModal = ({
                     />
                   </div>
                   {currentCollection &&
-                    currentCollection?.type === "membership" ? (
+                  currentCollection?.type === "membership" ? (
                     <div className="mb-6 ">
                       <DropdownCreabo
                         label="Select Tier"
@@ -442,7 +427,9 @@ const SalesPageModal = ({
                       </div>
                       {watch("price") ? (
                         <div className="w-1/4 ml-1">
-                          <p className="text-[14px]">$ {dollarValue?.toFixed(3)}</p>
+                          <p className="text-[14px]">
+                            $ {dollarValue?.toFixed(3)}
+                          </p>
                         </div>
                       ) : null}
                       {errors.price && (

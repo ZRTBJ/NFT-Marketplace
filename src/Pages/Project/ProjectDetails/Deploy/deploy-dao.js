@@ -72,9 +72,13 @@ export async function createDAO(dao, provider, name, treasuryAddress, chainId) {
   );
 
   await result.json().then(async (response) => {
-    const tx = JSON.parse(response.result);
-    const txReceipt = await provider.waitForTransaction(tx.txHash);
-    output = { txReceipt };
+    if (response.status === "success") {
+      const tx = JSON.parse(response.result);
+      const txReceipt = await provider.waitForTransaction(tx.txHash);
+      output = { txReceipt };
+    } else {
+      output = response.message;
+    }
   });
 
   return output;

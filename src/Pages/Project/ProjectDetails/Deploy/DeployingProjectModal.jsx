@@ -37,55 +37,6 @@ const DeployingProjectModal = ({
   const dao = createInstance(provider);
   const [contractAdd, setContractAdd] = useState("");
   const [txnData, setTxnData] = useState();
-  // useEffect(() => {
-  //   const projectDeployStatus = projectDeploy.find(
-  //     (x) => x.projectId === projectId
-  //   );
-  //   if (
-  //     projectDeployStatus &&
-  //     projectDeployStatus.projectId &&
-  //     projectDeployStatus.data &&
-  //     projectDeployStatus.data.length > 5
-  //   ) {
-  //     const statusData = JSON.parse(projectDeployStatus.data);
-  //     const status = {
-  //       projectId: projectDeployStatus.projectId,
-  //       etherscan: projectDeployStatus.etherscan,
-  //       function_uuid: projectDeployStatus.function_uuid,
-  //       fn_name: statusData["fn_name"],
-  //       fn_status: statusData["fn_status"],
-  //       message: statusData?.fn_response_data?.message,
-  //       step: statusData?.fn_response_data?.step,
-  //     };
-
-  //     setDeployStatus(status);
-  //     if (statusData["fn_status"] === "success") {
-  //       setStep(2);
-  //     }
-  //   } else if (projectDeployStatus && projectDeployStatus.projectId) {
-  //     const status = {
-  //       projectId: projectDeployStatus.projectId,
-  //       etherscan: projectDeployStatus.etherscan,
-  //       function_uuid: projectDeployStatus.function_uuid,
-  //       fn_name: "",
-  //       fn_status: "pending",
-  //       message: "",
-  //       step: 1,
-  //     };
-  //     setDeployStatus(status);
-  //   } else {
-  //     const status = {
-  //       projectId: "",
-  //       etherscan: "",
-  //       function_uuid: "",
-  //       fn_name: "",
-  //       fn_status: "pending",
-  //       message: "",
-  //       step: 1,
-  //     };
-  //     setDeployStatus(status);
-  //   }
-  // }, [projectDeploy]);
 
   useEffect(() => {
     if (publishStep >= 1) {
@@ -99,17 +50,8 @@ const DeployingProjectModal = ({
     }
   }, [contractAdd, txnData]);
 
-  function publishThisProject(transactionData) {
-    setIsLoading(true);
-    let payload = new FormData();
-    if (transactionData) {
-      payload.append("transaction_hash", transactionData.transactionHash);
-      payload.append("contract_address", contractAdd);
-      payload.append("block_number", transactionData.block_number);
-    }
-
+  useEffect(() => {
     const filter = dao?.filters?.ProxyCreated();
-
     const listener = (args) => {
       setContractAdd(args);
     };
@@ -119,8 +61,20 @@ const DeployingProjectModal = ({
 
       dao.on(filter, listener);
     };
-
     subscribe();
+    return () => {
+      dao.removeAllListeners();
+    };
+  }, []);
+
+  function publishThisProject(transactionData) {
+    setIsLoading(true);
+    let payload = new FormData();
+    if (transactionData) {
+      payload.append("transaction_hash", transactionData.transactionHash);
+      payload.append("contract_address", contractAdd);
+      payload.append("block_number", transactionData.block_number);
+    }
 
     publishProject(projectId, transactionData ? payload : null)
       .then((res) => {
@@ -141,8 +95,7 @@ const DeployingProjectModal = ({
               setTxnData();
               errorClose(res?.function?.message);
             }
-            const filter = dao.filters.ProxyCreated();
-            dao.removeListener(filter);
+
             dispatch(getNotificationData(deployData));
             setContractAdd("");
             setTxnData();
@@ -174,12 +127,17 @@ const DeployingProjectModal = ({
         treasuryAddress,
         chainId
       );
-      const hash = response.txReceipt;
-      let data = {
-        transactionHash: hash.transactionHash,
-        block_number: hash.blockNumber,
-      };
-      setTxnData(data);
+      let hash;
+      if (response?.txReceipt) {
+        hash = response.txReceipt;
+        let data = {
+          transactionHash: hash.transactionHash,
+          block_number: hash.blockNumber,
+        };
+        setTxnData(data);
+      } else {
+        errorClose(response);
+      }
     } catch (err) {
       errorClose(err.message);
     }
