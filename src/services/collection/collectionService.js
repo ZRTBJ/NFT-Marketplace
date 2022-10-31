@@ -71,11 +71,12 @@ export async function getCollections(
   page,
   limit,
   keyword = "",
-  order_by = ""
+  order_by = "",
+  showRoyalty = false
 ) {
   return await client(
     "GET",
-    `/collection?list_type=${listType}&project_id=${projectId}&page=${page}&limit=${limit}&keyword=${keyword}&order_by=${order_by}`
+    `/collection?list_type=${listType}&project_id=${projectId}&page=${page}&limit=${limit}&keyword=${keyword}&order_by=${order_by}&royalty_splitter=${showRoyalty}`
   );
 }
 export async function getUserCollections(payload) {

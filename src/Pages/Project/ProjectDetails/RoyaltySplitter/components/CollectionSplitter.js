@@ -15,20 +15,6 @@ const CollectionSplitter = ({
   setOpenedCollection,
   date,
 }) => {
-  const dea = [
-    {
-      avatar:
-        "https://storage.googleapis.com/apollo_creabo_dev/user/3eb10edb-b3b6-409f-b1d3-ee005291d364/avatar.jpg?v=1661100535",
-    },
-    {
-      avatar:
-        "https://storage.googleapis.com/apollo_creabo_dev/user/3eb10edb-b3b6-409f-b1d3-ee005291d364/avatar.jpg?v=1661100535",
-    },
-    {
-      avatar:
-        "https://storage.googleapis.com/apollo_creabo_dev/user/3eb10edb-b3b6-409f-b1d3-ee005291d364/avatar.jpg?v=1661100535",
-    },
-  ];
   return (
     <div className="mb-10">
       <div className="flex items-center w-full flex-wrap">
@@ -58,7 +44,7 @@ const CollectionSplitter = ({
           {dayjs(date).format("DD/MM/YYYY - HH:mm")}
         </p>
         <p className="text-[14px] font-normal w-[20%] text-center hidden md:block">
-          {status === "published" ? "Locked" : "Not Locked"}
+          {status && status === "published" ? "Locked" : "Not Locked"}
         </p>
         <div className="w-[50%] md:w-[20%]">
           {openedCollection === id ? (
@@ -91,7 +77,6 @@ const CollectionSplitter = ({
           )}
         </div>
         <p className="w-[33%] text-[14px] font-normal text-center  block md:hidden  mt-4">
-          {" "}
           {dayjs(date).format("DD/MM/YYYY - HH:mm")}
         </p>
         <p className="text-[14px] font-normal w-[33%] text-center  block md:hidden  mt-4">
