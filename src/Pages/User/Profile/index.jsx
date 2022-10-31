@@ -16,7 +16,7 @@ import {
   getRoyalties,
   claimRoyalty,
 } from "services/User/userService";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useHistory } from "react-router-dom";
 import SuccessModal from "components/Modals/SuccessModal";
 import { getUserCollections } from "services/collection/collectionService";
 import thumbIcon from "assets/images/cover-default.svg";
@@ -35,9 +35,11 @@ import ReactPaginate from "react-paginate";
 import Spinner from "components/Commons/Spinner";
 import { NETWORKS } from "config/networks";
 import WalletConnectModal from "../Login/WalletConnectModal";
+import { ls_GetUserID } from "util/ApplicationStorage";
 const Profile = () => {
   const provider = createProvider();
   SwiperCore.use([Autoplay]);
+  const history = useHistory();
   // User general data start
   const { id } = useParams();
   const [user, setUser] = useState({});
@@ -144,11 +146,15 @@ const Profile = () => {
   };
 
   async function userInfo() {
-    await getUserInfo(id)
-      .then((response) => {
-        if (response.user.eoa === "") {
-          setShowLoginModal(true);
-        } else {
+    if (id === "login") {
+      if (ls_GetUserID()) {
+        history.replace(`/profile/${ls_GetUserID()}`);
+      } else {
+        setShowLoginModal(true);
+      }
+    } else {
+      await getUserInfo(id)
+        .then((response) => {
           setUser(response.user);
           setRoyaltyEarned(response.royalty_earned);
           setWalletAddress(response.user.eao);
@@ -169,11 +175,11 @@ const Profile = () => {
               setsncList([]);
             }
           }
-        }
-      })
-      .catch(() => {
-        setIsLoading(false);
-      });
+        })
+        .catch(() => {
+          setIsLoading(false);
+        });
+    }
   }
 
   async function getUserRoyaltiesInfo(pageNumber) {
@@ -459,6 +465,7 @@ const Profile = () => {
       }
     }
   }
+
   useEffect(() => {
     userInfo();
   }, []);
@@ -1087,6 +1094,8 @@ const Profile = () => {
           <WalletConnectModal
             showModal={showLoginModal}
             closeModal={() => setShowLoginModal(true)}
+            navigateToPage={false}
+            noRedirection={false}
           />
         </>
       )}
