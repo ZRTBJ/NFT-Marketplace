@@ -50,11 +50,11 @@ const NftSuccessModal = ({
         <div className="mb-6">
           <div className="flex flex-wrap items-center border-b-[1px] border-b-[#C7CEE6] pb-3">
             <p className="font-black text-[14px]">Status</p>
-            <p className=" ml-auto text-[14px]">Mined</p>
+            <p className=" ml-auto text-[14px]">Minted</p>
           </div>
           <div className="mt-4  md:flex flex-wrap items-center">
             <p className="font-black text-[14px]">Transaction Hash</p>
-            <p className=" ml-auto text-[14px]">{transactionHash}</p>
+            <p className=" ml-auto text-[14px] truncate">{transactionHash}</p>
           </div>
         </div>
 

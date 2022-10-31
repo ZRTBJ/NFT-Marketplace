@@ -6,8 +6,8 @@ import {
 } from "services/collection/collectionService";
 import { useDispatch, useSelector } from "react-redux";
 import deploySuccessSvg from "assets/images/modal/deploySuccessSvg.svg";
-import { createProvider } from "eth/utils/provider";
-import { createInstance } from "eth/abis/collection-factory";
+import { createProvider } from "util/smartcontract/provider";
+import { createInstance } from "config/ABI/collection-factory";
 import { createCollection } from "Pages/Collection/CollectionDetail/Publish/deploy-collection";
 import { NETWORKS } from "config/networks";
 import { ls_GetChainID } from "util/ApplicationStorage";
@@ -43,7 +43,6 @@ const DeployingCollectiontModal = ({
       : createFactoryCollection,
     provider
   );
-  const collectionListener = collectionContract.filters.ProxyCreated();
 
   useEffect(() => {
     if (contractAdd && txnData) {
@@ -57,6 +56,23 @@ const DeployingCollectiontModal = ({
     }
   }, []);
 
+  useEffect(() => {
+    const filter = collectionContract?.filters?.ProxyCreated();
+    const listener = (args) => {
+      setContractAdd(args);
+    };
+
+    const subscribe = async () => {
+      const captured = await collectionContract.queryFilter(filter);
+
+      collectionContract.on(filter, listener);
+    };
+    subscribe();
+    return () => {
+      collectionContract.removeAllListeners();
+    };
+  }, []);
+
   function publishThisCollection(data) {
     setIsLoading(true);
     let payload = new FormData();
@@ -66,18 +82,6 @@ const DeployingCollectiontModal = ({
       payload.append("block_number", data.block_number);
     }
 
-    const listener = (args) => {
-      console.log(args);
-      setContractAdd(args);
-    };
-
-    const subscribe = async () => {
-      const captured = await collectionContract.queryFilter(collectionListener);
-
-      collectionContract.on(collectionListener, listener);
-    };
-
-    subscribe();
     publishCollection(collectionId, txnData ? payload : null)
       .then((res) => {
         setIsLoading(false);
@@ -85,7 +89,6 @@ const DeployingCollectiontModal = ({
           if (txnData) {
             setStatusStep(2);
             setFuncId(res.function_uuid);
-            collectionContract.removeListener(collectionListener, listener);
             if (res?.function?.status === "success") {
               setStep(2);
             } else if (res?.function?.status === "failed") {

@@ -3,19 +3,22 @@ import {
   getPersonalSign,
   isWalletConnected,
   getWalletAccount,
-} from "util/metaMaskWallet";
+} from "util/MetaMaskWallet";
 import { ethers } from "ethers";
 import { useSelector } from "react-redux";
 import Modal from "components/Commons/Modal";
-import torusIcon from "assets/images/modal/torus.png";
 import metamaskIcon from "assets/images/modal/metamask.png";
-import { torusWalletLogin } from "util/Torus";
-import { loginUser, useAuthState, useAuthDispatch, logout } from "redux/auth";
+import { loginUser, useAuthState, useAuthDispatch } from "redux/auth";
 import { useHistory } from "react-router-dom";
 import { getUserInfo } from "services/User/userService";
 import { useDispatch } from "react-redux";
 import { setUserInfo, setUserLoading } from "redux/slice/userSlice";
-import { ls_GetUserID, ls_SetChainID, ls_SetUserID, ls_SetWalletAddress } from "util/ApplicationStorage";
+import {
+  ls_GetUserID,
+  ls_SetChainID,
+  ls_SetUserID,
+  ls_SetWalletAddress,
+} from "util/ApplicationStorage";
 
 const WalletConnectModal = ({
   showModal,
@@ -34,10 +37,17 @@ const WalletConnectModal = ({
   const [showMessage, setshowMessage] = useState(false);
   const [metamaskConnectAttempt, setMetamaskConnectAttempt] = useState(0);
   const [metamaskAccount, setMetamaskAccount] = useState("");
-  const [torusAccountInfo, setTorusAccountInfo] = useState(null);
   const authDispatch = useAuthDispatch();
-
   const [userId, setUserId] = useState(context ? context.user : "");
+
+
+  useEffect(() => {
+    if (userId && !userinfo.display_name) {
+      getUserDetails(userId, false);
+    }
+  }, []);
+
+  /** Connection to wallet */
   async function handleConnectWallet() {
     if (isTermsAndConditionsChecked) {
       setMetamaskConnectAttempt(metamaskConnectAttempt + 1);
@@ -69,16 +79,30 @@ const WalletConnectModal = ({
       setshowMessage(true);
     }
   }
-  async function loginTorus() {
-    if (isTermsAndConditionsChecked) {
-      await torusWalletLogin().then((e) => {
-        setTorusAccountInfo(e);
-        userLogin(e.address, e.signature, "torus");
-      });
-    } else {
-      setshowMessage(true);
+
+  /** Login to our server, save token info*/
+  async function userLogin(address, signature, wallet) {
+    const request = {
+      address,
+      signature,
+      wallet,
+    };
+    try {
+      setIsLoading(true);
+      let response = await loginUser(authDispatch, request);
+      const userProvider = new ethers.providers.Web3Provider(window.ethereum);
+      const userNetwork = await userProvider.getNetwork();
+      ls_SetWalletAddress(address);
+      ls_SetChainID(userNetwork.chainId);
+      setUserId(response["user_id"]);
+      getUserDetails(response["user_id"], true);
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
     }
   }
+
+  /** Get user info and save it to redux store */
   async function getUserDetails(userID, isNavigate) {
     dispatch(setUserLoading("loading"));
     const response = await getUserInfo(userID);
@@ -92,6 +116,7 @@ const WalletConnectModal = ({
     setIsLoading(false);
     if (!noRedirection) {
       if (isNavigate === true) {
+        //We might navigate to specific page after login, or go to profile, if user hasn't create any profile (display name)
         if (
           userinfoResponse &&
           userinfoResponse["display_name"] &&
@@ -112,82 +137,27 @@ const WalletConnectModal = ({
     closeModal();
   }
 
-  async function userLogin(address, signature, wallet) {
-    const request = {
-      address,
-      signature,
-      wallet,
-    };
-    try {
-      setIsLoading(true);
-      let response = await loginUser(authDispatch, request);
-      ls_SetWalletAddress(address);
-      const userProvider = new ethers.providers.Web3Provider(window.ethereum);
-      const userNetwork = await userProvider.getNetwork();
-      ls_SetChainID(userNetwork.chainId);
-      setUserId(response["user_id"]);
-      getUserDetails(response["user_id"], true);
-
-    } catch (error) {
-      setIsLoading(false);
-      console.log(error);
-    }
-  }
   function handelTermsChecked(value) {
     setIsTermsAndConditionsChecked(value);
     setModalKey((pre) => pre + 1);
     setshowMessage(false);
   }
-  useEffect(() => {
-    if (window.ethereum) {
-      window.ethereum.on("accountsChanged", handleAccountsChanged);
-    }
-  }, []);
-
-  function handleAccountsChanged(accounts) {
-    if (accounts.length === 0) {
-      console.log("Please connect to MetaMask.");
-    } else if (
-      metamaskAccount &&
-      metamaskAccount.length > 1 &&
-      metamaskAccount !== accounts[0]
-    ) {
-      const currentAccount = accounts[0];
-      if (!userId || userId.length < 1) {
-        getPersonalSign()
-          .then((signature) => {
-            userLogin(currentAccount, signature, "metamask");
-          })
-          .catch((error) => {
-            alert(error.message);
-          });
-      }
-    }
-  }
-
-  useEffect(() => {
-    if (userId && !userinfo.display_name) {
-      getUserDetails(userId, false);
-    }
-  }, []);
 
   return (
     <div>
       <Modal
         key={modalKey}
-        height={437}
-        width={705}
+        width={500}
         show={showModal}
         handleClose={() => closeModal()}
       >
         <div
-          className={`text-center px-[11px] md:px-[0px] text-black ${isLoading ? "loading" : ""
+          className={`text-center px-[11px] md:px-[0px] mb-8 text-black ${isLoading ? "loading" : ""
             }`}
         >
           <h1 className="text-[30px] md:text-[46px]">Connect wallet</h1>
           <p className="mt-3 text-white-shade-600 font-bold break-normal">
-            Connect with one of our available wallet providers or create a new
-            one.
+            Connect with your existing Metamask account or create a new one
           </p>
           <div className="mt-[26px] w-full max-w-[355px]  block mx-auto ">
             <div className="flex items-baseline">
@@ -230,7 +200,7 @@ const WalletConnectModal = ({
           </div>
           <div className="mt-[26px]">
             <div
-              className="w-full max-w-[355px] cursor-pointer  h-[52px] border rounded border-primary-900 rounded-lg block mx-auto px-[14px]"
+              className="w-full max-w-[355px] cursor-pointer  h-[52px] border rounded  rounded-lg block mx-auto px-[14px] bg-primary-100"
               onClick={handleConnectWallet}
             >
               <div className="flex items-center  pt-[10px]">
@@ -241,42 +211,12 @@ const WalletConnectModal = ({
                     alt="metamask wallet login button"
                   />
                   <div className="ml-[11px] font-satoshi-bold font-black">
-                    {metamaskAccount ? (
-                      <p>
-                        {/* Login with Address: {metamaskAccount.substring(0, 5)}
-                        ...{" "} */}
-                        MetaMask
-                      </p>
-                    ) : (
-                      <span>MetaMask</span>
-                    )}
+                    {metamaskAccount ? <p>MetaMask</p> : <span>MetaMask</span>}
                   </div>
                 </div>
-                <div className="ml-auto bg-primary-900 px-2 py-1 text-[10px] rounded-lg font-satoshi-bold font-black text-white">
+                {/* <div className="ml-auto bg-primary-900 px-2 py-1 text-[10px] rounded-lg font-satoshi-bold font-black text-white">
                   Popular
-                </div>
-              </div>
-            </div>
-            <div
-              className="w-full max-w-[355px] h-[52px] border border-primary-900 rounded-lg mt-[12px] block mx-auto px-[14px]"
-              onClick={loginTorus}
-            >
-              <div className="flex items-center pt-[10px] cursor-pointer">
-                <img
-                  className="h-[28px] w-[28px]"
-                  src={torusIcon}
-                  alt="Touras wallet login button"
-                />
-                <div className="ml-[11px] font-satoshi-bold font-black">
-                  {torusAccountInfo == null ? (
-                    <div className="torusButtonLabel">Torus</div>
-                  ) : (
-                    <div className="torusButtonLabel">
-                      Torus
-                      {/* Account : {torusAccountInfo.address.substring(0, 8)} */}
-                    </div>
-                  )}
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

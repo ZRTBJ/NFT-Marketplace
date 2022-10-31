@@ -1,3 +1,4 @@
+import { ethers } from "ethers";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
@@ -7,7 +8,7 @@ import Trash from "assets/images/icons/trash.svg";
 import { useMemo, useState, useEffect } from "react";
 import MemeberListMobile from "../MemberListMobile/MemberListMobile";
 import ConfirmationModal from "components/Modals/ConfirmationModal";
-import { walletAddressTruncate } from "util/walletAddressTruncate";
+import { walletAddressTruncate } from "util/WalletUtils";
 
 const MemberListTable = ({
   collection,
@@ -73,11 +74,18 @@ const MemberListTable = ({
     setNewItems(value);
   };
 
-  const addNewContributorData = () => {
+  const addNewContributorData = async () => {
     setIsAdded(true);
     if (address && percentage) {
+      let userAddress = address;
+
+      if (!ethers.utils.isAddress(address)) {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        userAddress = await provider.resolveName(address);
+      }
+
       let value = {
-        user_eoa: address,
+        user_eoa: userAddress,
         royalty_percent: parseFloat(percentage),
       };
       setRoyalityMembers([...list, value]);
@@ -128,13 +136,12 @@ const MemberListTable = ({
             </tr>
           </thead>
           <tbody>
-            {list?.length &&
-              list.map((r, index) => (
+            {list?.length
+              ? list.map((r, index) => (
                 <tr
                   key={r.id}
-                  className={`${
-                    index < list.length - 1 ? "border-b" : ""
-                  } text-left text-[13px]`}
+                  className={`${index < list.length - 1 ? "border-b" : ""
+                    } text-left text-[13px]`}
                 >
                   <td className="py-4 px-5">
                     <div className="inline-flex items-center">
@@ -162,9 +169,9 @@ const MemberListTable = ({
                         <span className="w-[60px]">
                           {r.royalty_percent
                             ? Intl.NumberFormat("en-US", {
-                                style: "percent",
-                                minimumFractionDigits: 3,
-                              }).format(r.royalty_percent / 100)
+                              style: "percent",
+                              minimumFractionDigits: 3,
+                            }).format(r.royalty_percent / 100)
                             : "-"}
                         </span>
                       )}
@@ -198,11 +205,10 @@ const MemberListTable = ({
                   </td>
                   <td className={`py-4 px-5`}>
                     <p
-                      className={`text-[13px] bg-opacity-[0.2] py-1 px-2 w-fit rounded-[4px] font-bold ${
-                        r.is_owner
+                      className={`text-[13px] bg-opacity-[0.2] py-1 px-2 w-fit rounded-[4px] font-bold ${r.is_owner
                           ? "text-info-1 bg-[#46A6FF]"
                           : " text-success-1 bg-[#32E865]"
-                      }`}
+                        }`}
                     >
                       {r.is_owner ? "Owner" : "Contributor"}
                     </p>
@@ -218,21 +224,10 @@ const MemberListTable = ({
                     )}
                   </td>
                 </tr>
-              ))}
+              ))
+              : null}
           </tbody>
         </table>
-        {/* <div className='flex items-center justify-center mt-10 w-fit mx-auto'>
-        <div className='w-[32px] h-[32px] bg-[#9A5AFF] bg-opacity-[0.1] flex align-items justify-center'>
-          <img src={Left} alt='Previous' className='w-[8px]' />
-        </div>
-        <p className='mx-3'>1</p>
-        <p className='mx-3'>2</p>
-        <p className='mx-3'>3</p>
-        <p className='mx-3'>4</p>
-        <div className='w-[32px] h-[32px] bg-[#9A5AFF] bg-opacity-[0.1] flex align-items justify-center'>
-          <img src={Right} alt='Next' className='w-[8px]' />
-        </div>
-      </div> */}
       </div>
       <div className="block md:hidden">
         <MemeberListMobile

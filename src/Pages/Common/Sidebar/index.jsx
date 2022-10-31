@@ -1,5 +1,4 @@
-import "assets/css/Sidebar.css";
-import { useAuthState } from "redux/auth/context";
+import "./index.css";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
@@ -8,13 +7,10 @@ import { setUserInfo, setSideBar } from "redux/slice/userSlice";
 
 const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
   const dispatch = useDispatch();
-  const context = useAuthState();
-  const [userId, setUserId] = useState(context ? context.user : "");
   const userinfo = useSelector((state) => state.user.userinfo);
-
   useEffect(() => {
-    if (userId && !userinfo.display_name) {
-      getUserDetails(userId);
+    if (userinfo.id) {
+      getUserDetails(userinfo.id);
     }
   }, []);
 
@@ -23,7 +19,7 @@ const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
     let userinfoResponse;
     try {
       userinfoResponse = response["user"];
-    } catch { }
+    } catch {}
     dispatch(setUserInfo(userinfoResponse));
   }
 
@@ -34,12 +30,12 @@ const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
     try {
       e.preventDefault();
       dispatch(setSideBar(false));
-    } catch { }
+    } catch {}
   }
 
   function accessCheck(e) {
     handleToggleSideBar();
-    if (!userId || userId.length < 1) {
+    if (!userinfo.id || userinfo.id.length < 1) {
       e.preventDefault();
       e.stopPropagation();
       setShowModal(true);
@@ -51,7 +47,7 @@ const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
       <div className="bg-light1 h-screen sticky top-0 sidenav">
         <div className="sidebarLinksContainer flex flex-col">
           <div className="pl-6 pr-10 flex-0 flex flex-col">
-            <NavLink
+            {/* <NavLink
               to={"/"}
               id="nav-home"
               onClick={handleToggleSideBar}
@@ -60,10 +56,10 @@ const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
             >
               <i className="fa-solid fa-home"></i>
               <span className="ml-2">Home</span>
-            </NavLink>
+            </NavLink> */}
             <NavLink
               onClick={accessCheck}
-              to={`/profile/${userId}`}
+              to={`/profile/${userinfo?.id}`}
               activeClassName="active-menu"
               className="flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-[#199BD8] last:mt-auto text-textSubtle cursor-pointer hover:border-[#199BD8] hover:border-r-4"
             >

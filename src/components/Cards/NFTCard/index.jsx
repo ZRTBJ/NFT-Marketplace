@@ -36,9 +36,11 @@ const NFTCard = ({ item }) => {
       className="rounded-[12px] relative flex flex-col cursor-pointer hover:no-underline text-black hover:text-black"
     >
       <img
-        src={item?.image ? item.image : NFTSample}
+        src={item.assets && item.assets[0]
+          ? item.assets[0].path
+          : NFTSample}
         alt={item.name}
-        className="w-[276px] h-[276px]"
+        className="w-[276px] h-[276px] rounded-[50px]"
       />
       <h3 className="text-[18px] md:text-[24px] font-bold">
         {item.name
@@ -59,12 +61,12 @@ const NFTCard = ({ item }) => {
       <div className="flex mt-3 ml-3">
         {NFTs?.length
           ? truncateArray(NFTs).slicedItems.map((nft) => (
-              <img
-                src={nft?.asset?.path ? nft.asset.path : ProfileImage}
-                alt={nft?.asset?.name}
-                className=" rounded-[50px] w-[24px] h-[24px] -ml-3"
-              />
-            ))
+            <img
+              src={nft?.asset?.path ? nft.asset.path : ProfileImage}
+              alt={nft?.asset?.name}
+              className=" rounded-[50px] w-[24px] h-[24px] -ml-3"
+            />
+          ))
           : null}
         {NFTs?.length > 3 && (
           <div className="flex items-center mt-[2px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[22px] h-[22px]">

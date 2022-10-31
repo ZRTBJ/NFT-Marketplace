@@ -1,25 +1,14 @@
-.buttonContainer button {
-  border-radius: 4px;
-}
-.backButton,
-.nextButton {
-  background-color: #0ab4af;
-  color: white;
-  padding: 8px 37px;
-  font-family: "Montserrat", sans-serif;
-  font-weight: 500;
-  margin-bottom: 30px;
-}
-
 .backButton:hover,
 .nextButton:hover,
 .saveDraft:hover {
   background: #192434;
 }
+
 .buttonContainer .saveDraft {
   display: block;
   margin: auto;
 }
+
 .saveDraft {
   background-color: #b9ccd5;
   color: white;
@@ -28,15 +17,11 @@
   width: 200px;
   height: 54px;
 }
+
 .buttonContainer {
   margin-top: 42px;
   margin-bottom: 0px;
   padding-bottom: 30px;
-}
-.dragAndDropLable {
-  color: #8b9199;
-  font-family: "Roboto", sans-serif;
-  font-weight: 600;
 }
 
 .stepTitleName {
@@ -47,12 +32,13 @@
   font-weight: 700;
   margin-top: -30px;
 }
+
 @media only screen and (max-width: 767px) {
   .stepTitleName {
     font-size: 40px;
     margin-top: -10px;
   }
-  
+
   .backButton,
   .nextButton {
     padding: 0px;
@@ -63,25 +49,30 @@
     width: 102px;
     font-size: 14px;
   }
+
   .buttonContainer {
     margin-top: 40px;
     margin-bottom: 40px;
   }
+
   .saveDraft {
     width: 160px;
     height: 44px;
   }
 }
+
 .draftModalText {
   font-family: "Roboto", sans-serif;
   font-weight: 600;
 }
+
 .selectProjectTypeCardHeaderRedient {
   color: #ffffff;
   font-family: "Roboto", sans-serif;
   font-weight: 600;
   font-size: 22px;
 }
+
 .selectTypeCardBoxShadow {
   box-shadow: 0px 0px 8px #0000004d;
 }
@@ -89,17 +80,18 @@
 
 @media only screen and (max-width: 767px) {
   .create-project-container {
-    overflow:auto;
-    height: calc(100vh - 168px )
+    overflow: auto;
+    height: calc(100vh - 168px)
   }
+
   .buttonContainer {
-      position: fixed;
-      width: 100vw;
-      bottom: 0;
-      left: 0;
-      z-index: 9;
-      padding: 15px;
-      background : #161423;
-      margin-bottom: 0;
+    position: fixed;
+    width: 100vw;
+    bottom: 0;
+    left: 0;
+    z-index: 9;
+    padding: 15px;
+    background: #161423;
+    margin-bottom: 0;
   }
 }

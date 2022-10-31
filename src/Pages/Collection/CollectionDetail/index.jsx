@@ -34,11 +34,12 @@ import PlusIcon from "assets/images/icons/plus-circle.svg";
 import NFTSales from "./NFTSale";
 import ConfirmationModal from "components/Modals/ConfirmationModal";
 import ImportWalletModal from "Pages/Collection/CollectionDetail/RoyaltySplitter/ImportWalletModal/ImportWalletModal";
-import { walletAddressTruncate } from "util/walletAddressTruncate";
 import usePublishRoyaltySplitter from "Pages/Collection/CollectionDetail/RoyaltySplitter/Publish/hooks/usePublishRoyaltySplitter";
 import PublishRoyaltyModal from "Pages/Collection/CollectionDetail/RoyaltySplitter/Publish/PublishRoyaltyModal";
 import SalesSuccessModal from "Pages/Collection/SaleSetting/SalesSuccessModal";
 import defaultCover from "assets/images/image-default.svg";
+import { walletAddressTruncate } from "util/WalletUtils";
+
 const TABLE_HEADERS = [
   { id: 0, label: "Wallet Address" },
   // { id: 2, label: "Email" },
@@ -527,7 +528,9 @@ const CollectionDetail = () => {
       )}
       {collectionNotUpdatableModal && (
         <ErrorModal
-          title={"NFT is not updatable once its collection is published or its metadata was freezed"}
+          title={
+            "NFT is not updatable once its collection is published or its metadata was freezed"
+          }
           message={`  `}
           handleClose={() => {
             setCollectionNotUpdatableModal(false);
@@ -576,10 +579,10 @@ const CollectionDetail = () => {
                     Copied !
                   </span>
                 </p>
-                <p className="my-2 text-textLight text-sm flex items-center">
+                <p className="my-2 text-textLight md:text-sm text:xs md:flex items-center">
                   Connected With :
                   <Link
-                    className="ml-2 font-bold flex items-center !no-underline"
+                    className="md:ml-2 mt-1 md:mt-0 font-bold flex items-center !no-underline"
                     to={`/project-details/${daoInfo?.id}`}
                   >
                     <img
@@ -753,7 +756,7 @@ const CollectionDetail = () => {
               ></i>
               <p className=" text-sm text-textSubtle ">Net Worth</p>
               <h4>
-                {newWorth?.balance} {newWorth?.currency}
+                {newWorth?.balance} {newWorth?.currency?.toUpperCase()}
               </h4>
               <p className="text-sm text-textSubtle">
                 $ {newWorth.balanceUSD?.toFixed(2)}
@@ -904,9 +907,9 @@ const CollectionDetail = () => {
                         </Link>
                         <div className="py-2 md:py-5">
                           <div className="flex w-[150px] md:w-[276px]">
-                            <h2 className="mb-2 text-txtblack truncate flex-1 mr-3 m-w-0 text-[24px]">
+                            <h3 className="mb-2 text-txtblack truncate flex-1 mr-3 m-w-0 text-[24px]">
                               {nft?.name}
-                            </h2>
+                            </h3>
                             <div className="relative">
                               {/* Dropdown menu  */}
                               {Collection?.is_owner && (
@@ -971,10 +974,8 @@ const CollectionDetail = () => {
 
                           <div className="flex  w-[150px] md:w-[276px]">
                             <p className="text-[13px]">
-                              {nft?.price}{" "}
-                              {nft.currency && nft.currency === "eth"
-                                ? "ETH"
-                                : "MATIC"}
+                              {nft?.price ? nft?.price : "Price not set"}{" "}
+                              {nft?.currency?.toUpperCase()}
                             </p>
                             {nft.currency ? (
                               <img

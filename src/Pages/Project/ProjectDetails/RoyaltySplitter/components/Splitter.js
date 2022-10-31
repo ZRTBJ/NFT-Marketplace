@@ -26,7 +26,7 @@ const TABLE_HEADERS = [
   { id: 4, label: "Action" },
 ];
 
-const Splitter = ({ collectionId }) => {
+const Splitter = ({ collectionId, getProjectCollections }) => {
   const [ShowPercentError, setShowPercentError] = useState(false);
   const [AutoAssign, setAutoAssign] = useState(false);
   const [isEdit, setIsEdit] = useState(null);
@@ -42,6 +42,7 @@ const Splitter = ({ collectionId }) => {
   });
   const [Collection, setCollection] = useState();
   const [projectID, setProjectID] = useState("");
+
   const hasPublishedRoyaltySplitter = useMemo(
     () => Collection?.royalty_splitter?.status === "published",
     [Collection]
@@ -70,9 +71,11 @@ const Splitter = ({ collectionId }) => {
             status: "published",
           },
         });
+        getProjectCollections();
       }
     }
   };
+
   const {
     isLoading: isPublishingRoyaltySplitter,
     status: publishRoyaltySplitterStatus,
@@ -91,7 +94,7 @@ const Splitter = ({ collectionId }) => {
     getCollectionDetail();
   }, [collectionId]);
 
-  useEffect(() => {}, [payload]);
+  // useEffect(() => {}, [payload]);
 
   const getCollectionDetail = () => {
     let payload = {
@@ -111,6 +114,7 @@ const Splitter = ({ collectionId }) => {
       })
       .catch((err) => setIsLoading(false));
   };
+
   const calculatePageCount = (pageSize, totalItems) => {
     return totalItems < pageSize ? 1 : Math.ceil(totalItems / pageSize);
   };
@@ -183,7 +187,6 @@ const Splitter = ({ collectionId }) => {
     } else {
       setShowPercentError(false);
     }
-
     setRoyalityMembers(values);
   };
 
@@ -240,7 +243,7 @@ const Splitter = ({ collectionId }) => {
   const currentMembers =
     royalityMembers?.length &&
     royalityMembers.slice(indexOfFirstPost, indexOfLastPost);
-  console.log(royalityMembers);
+
   return (
     <>
       {loading && (

@@ -1,4 +1,4 @@
-import "../../assets/css/Modal.css";
+import "./index.css";
 const Modal = ({
   handleClose,
   show,
@@ -15,9 +15,7 @@ const Modal = ({
   };
 
   const modalBodyClicked = (e) => {
-    // e.preventDefault();
     e.stopPropagation();
-    // e.stopImmediatePropagation();
   };
   return (
     <div

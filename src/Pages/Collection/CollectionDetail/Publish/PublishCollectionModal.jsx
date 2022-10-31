@@ -17,7 +17,7 @@ const PublishCollectionModal = ({ handleClose, show, publishProject, type }) => 
         />
         <div className="md:mx-16">
           <div className="font-black text-[24px] md:text-[32px]">
-            You can’t Change some Field once you Publish this {type}
+            You can’t change some fields once you publish this {type}
           </div>
           <div className="text-[#9499AE] mt-[12px]">
             Do you want to publish anyway?
@@ -33,7 +33,7 @@ const PublishCollectionModal = ({ handleClose, show, publishProject, type }) => 
               className="btn contained-button btn-sm"
               onClick={publishProject}
             >
-              Publish Now
+              Publish now
             </button>
             <button
               className="ml-4 bg-primary-900/[0.20] text-primary-900 px-3 font-semibold rounded w-[110px] h-[38px]"

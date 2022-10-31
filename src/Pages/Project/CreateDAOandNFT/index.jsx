@@ -119,8 +119,8 @@ const CreateDAOandNFT = () => {
       <div className="mt-4">
         <h3 className="text-[28px] font-black mb-2">Create new NFT</h3>
         <p className="text-[14px] text-[#5F6479] pr-6 md:pr-0 break-normal font-normal w-[350px] md:w-[450px]">
-          Start creating your NFT with many of choice, you can create 3 type of
-          NFT such like Membership,Pre-Product and Product.
+          Start creating your NFT with many of choice, you can create 2 type of
+          NFT such like Membership and Product.
         </p>
         {Collections?.length ? (
           <div

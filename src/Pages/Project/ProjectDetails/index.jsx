@@ -27,13 +27,13 @@ import { Navigation } from "swiper";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import { walletAddressTruncate } from "util/walletAddressTruncate";
+import { walletAddressTruncate } from "util/WalletUtils";
 import LeavingSite from "Pages/Project/ProjectDetails/Components/LeavingSite";
 import CollectionTab from "Pages/Project/ProjectDetails/CollectionTab/CollectionTab";
 import SalesSettingsTab from "Pages/Project/ProjectDetails/SalesSettingTab/SalesSettingTab";
 import SalesSuccessModal from "Pages/Collection/SaleSetting/SalesSuccessModal";
 import RoyaltySplitter from "./RoyaltySplitter/RoyaltySplitter";
-
+import { NETWORKS } from "config/networks";
 export default function ProjectDetails(props) {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -136,7 +136,7 @@ export default function ProjectDetails(props) {
                     value: Object.values(url)[2],
                   });
                 }
-              } catch { }
+              } catch {}
               setLinks(webLinks);
             }
           }
@@ -337,7 +337,7 @@ export default function ProjectDetails(props) {
 
           {/* end gallery */}
           {/* profile information section */}
-          <div className="bg-[#122478]/[0.03]  rounded-xl mt-4 py-6 px-4 md:py-8 md:px-6">
+          <div className="bg-[#122478]/[0.03]  rounded-xl mt-4 pt-4 px-4 md:py-8 md:px-6">
             <div className="flex flex-col md:flex-row ">
               <div className="md:w-2/3 ">
                 <div className="flex">
@@ -355,10 +355,11 @@ export default function ProjectDetails(props) {
                         ? walletAddressTruncate(project.contract_address)
                         : "Smart Contract not released"}
                       <i
-                        className={`fa-solid fa-copy ml-2 ${project?.contract_address
-                          ? "cursor-pointer"
-                          : "cursor-not-allowed"
-                          }`}
+                        className={`fa-solid fa-copy ml-2 ${
+                          project?.contract_address
+                            ? "cursor-pointer"
+                            : "cursor-not-allowed"
+                        }`}
                         disabled={!project?.contract_address}
                         onClick={() =>
                           copyToClipboard(project?.contract_address)
@@ -368,11 +369,6 @@ export default function ProjectDetails(props) {
                         Copied !
                       </span>
                     </p>
-                  </div>
-                  <div className="cursor-pointer w-8 h-10   text-white flex md:hidden justify-center items-start rounded-md ease-in-out duration-300 ">
-                    <Link to={`/project-create?id=${project?.id}`}>
-                      <i className="fa-solid fa-pen-to-square text-primary-900"></i>
-                    </Link>
                   </div>
                 </div>
               </div>
@@ -408,9 +404,10 @@ export default function ProjectDetails(props) {
                     ?.length > 0 && (
                     <div className="social-icon-button cursor-pointer w-9 h-9 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 md:ml-4">
                       <a
-                        href={`${links.find((link) => link.title === "linkFacebook")
-                          .value
-                          }`}
+                        href={`${
+                          links.find((link) => link.title === "linkFacebook")
+                            .value
+                        }`}
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -424,8 +421,9 @@ export default function ProjectDetails(props) {
                     ?.length > 0 && (
                     <div className="social-icon-button cursor-pointer w-9 h-9 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                       <a
-                        href={`${links.find((link) => link.title === "linkInsta").value
-                          }`}
+                        href={`${
+                          links.find((link) => link.title === "linkInsta").value
+                        }`}
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -438,9 +436,10 @@ export default function ProjectDetails(props) {
                     ?.length > 0 && (
                     <div className="social-icon-button cursor-pointer w-9 h-9 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                       <a
-                        href={`${links.find((link) => link.title === "linkTwitter")
-                          .value
-                          }`}
+                        href={`${
+                          links.find((link) => link.title === "linkTwitter")
+                            .value
+                        }`}
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -453,9 +452,10 @@ export default function ProjectDetails(props) {
                     ?.length > 0 && (
                     <div className="social-icon-button cursor-pointer w-9 h-9 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                       <a
-                        href={`${links.find((link) => link.title === "linkGithub")
-                          .value
-                          }`}
+                        href={`${
+                          links.find((link) => link.title === "linkGithub")
+                            .value
+                        }`}
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -468,9 +468,10 @@ export default function ProjectDetails(props) {
                     ?.length > 0 && (
                     <div className="social-icon-button cursor-pointer w-9 h-9 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
                       <a
-                        href={`${links.find((link) => link.title === "customLinks1")
-                          .value
-                          }`}
+                        href={`${
+                          links.find((link) => link.title === "customLinks1")
+                            .value
+                        }`}
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -478,22 +479,6 @@ export default function ProjectDetails(props) {
                       </a>
                     </div>
                   )}
-
-                {project?.is_owner && (
-                  <div className=" cursor-pointer w-8 h-10 mb-4  text-white hidden   md:flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
-                    <Link to={`/project-create?id=${project?.id}`}>
-                      <i className="fa-solid fa-pen-to-square text-primary-900"></i>
-                    </Link>
-                  </div>
-                )}
-                {project?.project_status !== "published" && project?.is_owner && (
-                  <div
-                    onClick={() => setShowPublishModal(true)}
-                    className="cursor-pointer hidden md:flex contained-button mt-2 ml-auto md:mr-0 mr-4 md:ml-4 font-satoshi-bold"
-                  >
-                    Publish
-                  </div>
-                )}
               </div>
             </div>
 
@@ -510,53 +495,83 @@ export default function ProjectDetails(props) {
                   </p>
                 )}
                 <div className="flex mt-4 mb-4 md:mb-0 md:mt-[50px]">
-                  {project?.project_status !== "published" &&
-                    project?.is_owner && (
-                      <div
-                        onClick={() => setShowPublishModal(true)}
-                        className=" cursor-pointer  w-[120px] contained-button text-center font-satoshi-bold"
-                      >
-                        Publish
-                      </div>
-                    )}
                   {project?.is_owner && (
-                    <div
-                      onClick={() => setShowTransferFundModal(true)}
-                      className="outlined-button w-[120px] text-center !px-0 mr-4 cursor-pointer font-satoshi-bold cursor-pointer"
-                    >
-                      <span className="gradient-text">Transfer Funds</span>
-                    </div>
+                    <>
+                      {project?.project_status === "published" ? (
+                        <>
+                          <button
+                            onClick={() => setShowTransferFundModal(true)}
+                            className="contained-button w-[120px] text-center !px-0 mr-4 cursor-pointer font-satoshi-bold cursor-pointer"
+                          >
+                            Transfer Funds
+                          </button>
+                          <Link to={`/project-create?id=${project?.id}`}>
+                            <button className="outlined-button w-[120px] text-center !px-0 mr-4 cursor-pointer font-satoshi-bold cursor-pointer">
+                              <span className="gradient-text">Edit</span>
+                            </button>
+                          </Link>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => setShowPublishModal(true)}
+                            className="contained-button w-[120px] text-center !px-0 mr-4 cursor-pointer font-satoshi-bold cursor-pointer"
+                          >
+                            Publish
+                          </button>
+                          <Link to={`/project-create?id=${project?.id}`}>
+                            <button className="outlined-button w-[120px] text-center !px-0 mr-4 cursor-pointer font-satoshi-bold cursor-pointer">
+                              <span className="gradient-text">Edit</span>
+                            </button>
+                          </Link>
+                        </>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
-              <div className="md:flex md:items-center md:justify-center self-end flex-wrap mt-3 md:justify-end  md:mt-0">
+              <div className="md:flex md:items-center pb-4 md:pb-0 md:justify-center md:self-end md:flex-wrap mt-3 md:justify-end  md:mt-0">
                 {project?.project_status === "published" ? (
-                  <div className="bg-[#122478]/[0.05]  md:mt-4 md:ml-3  rounded-md p-3 px-5 relative md:w-80 ">
-                    <div className="flex mb-4">
+                  <div className="bg-[#122478]/[0.05]  md:mt-4 md:ml-3  rounded-md py-4 px-4 relative w-full md:min-w-[260px]">
+                    <div className="flex">
                       <p className=" text-textSubtle mt-1">
                         Net Worth{" "}
                         <i
                           onClick={getProjectNetWorth}
-                          className={`fa-regular fa-arrows-rotate text-textSubtle text-sm ${balanceLoading ? "fa-spin" : ""
-                            } cursor-pointer`}
+                          className={`fa-regular fa-arrows-rotate text-textSubtle text-sm ${
+                            balanceLoading ? "fa-spin" : ""
+                          } cursor-pointer`}
                         ></i>
                       </p>
                       <div className="ml-auto">
-                        <h4 className="text-black">
-                          {newWorth?.balance} {newWorth?.currency?.toUpperCase()}
-                        </h4>
-                        <p className="text-sm text-textSubtle">
+                        <p className="pb-0 text-black font-black text-[16px] md:text-[20px] ">
+                          {newWorth?.balance}{" "}
+                          {newWorth?.currency?.toUpperCase()}
+                        </p>
+                        <p className="text-sm  mt-0 text-textSubtle">
                           (${newWorth.balanceUSD.toFixed(2)})
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center mb-4">
+                    <div className="flex items-center mb-1">
                       <p className=" text-textSubtle mt-1">Collections</p>
                       <div className="ml-auto">
-                        <h4 className="text-black">{collection?.total}</h4>
+                        <p className="text-black mr-3 text-black font-black text-[16px] md:text-[20px]">
+                          {collection?.total}
+                        </p>
                       </div>
                     </div>
-                    <div className="text-right">
+                    <div className="flex items-center">
+                      <p className=" text-textSubtle mt-1">BlockChain</p>
+                      <div className="ml-auto">
+                        <img
+                          src={NETWORKS[Number(project?.blockchain)].icon}
+                          className="ml-2 h-[24px] w-[24px] object-cover rounded-full"
+                          alt=""
+                        />
+                      </div>
+                    </div>
+                    <div className="text-right mt-2">
                       <p className="text-sm	 mt-1">
                         Powered by{" "}
                         <Link
@@ -587,10 +602,11 @@ export default function ProjectDetails(props) {
                   onClick={() => setSelectedTab(1)}
                 >
                   <button
-                    className={`inline-block py-2 md:p-4 md:text-lg rounded-t-lg ${selectedTab === 1
-                      ? "border-b-2 border-primary-900 text-primary-900"
-                      : "border-transparent text-textSubtle"
-                      } hover:text-primary-600`}
+                    className={`inline-block py-2 md:p-4 md:text-lg rounded-t-lg ${
+                      selectedTab === 1
+                        ? "border-b-2 border-primary-900 text-primary-900"
+                        : "border-transparent text-textSubtle"
+                    } hover:text-primary-600`}
                     id="membership_nft"
                     data-tabs-target="#membership_nft"
                     type="button"
@@ -607,10 +623,11 @@ export default function ProjectDetails(props) {
                   onClick={() => setSelectedTab(2)}
                 >
                   <button
-                    className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${selectedTab === 2
-                      ? "border-b-2 border-primary-900 text-primary-900"
-                      : "border-transparent text-textSubtle"
-                      } hover:text-primary-900`}
+                    className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${
+                      selectedTab === 2
+                        ? "border-b-2 border-primary-900 text-primary-900"
+                        : "border-transparent text-textSubtle"
+                    } hover:text-primary-900`}
                     id="dashboard-tab"
                     data-tabs-target="#dashboard"
                     type="button"
@@ -627,10 +644,11 @@ export default function ProjectDetails(props) {
                   onClick={() => setSelectedTab(3)}
                 >
                   <button
-                    className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${selectedTab === 3
-                      ? "border-b-2 border-primary-900 text-primary-900"
-                      : "border-transparent text-textSubtle"
-                      } hover:text-primary-900`}
+                    className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${
+                      selectedTab === 3
+                        ? "border-b-2 border-primary-900 text-primary-900"
+                        : "border-transparent text-textSubtle"
+                    } hover:text-primary-900`}
                     id="dashboard-tab"
                     data-tabs-target="#dashboard"
                     type="button"
@@ -648,10 +666,11 @@ export default function ProjectDetails(props) {
                     onClick={() => setSelectedTab(4)}
                   >
                     <button
-                      className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${selectedTab === 4
-                        ? "border-b-2 border-primary-900 text-primary-900"
-                        : "border-transparent text-textSubtle"
-                        } hover:text-primary-900`}
+                      className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${
+                        selectedTab === 4
+                          ? "border-b-2 border-primary-900 text-primary-900"
+                          : "border-transparent text-textSubtle"
+                      } hover:text-primary-900`}
                       id="dashboard-tab"
                       data-tabs-target="#dashboard"
                       type="button"
@@ -670,10 +689,11 @@ export default function ProjectDetails(props) {
                     onClick={() => setSelectedTab(5)}
                   >
                     <button
-                      className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${selectedTab === 5
-                        ? "border-b-2 border-primary-900 text-primary-900"
-                        : "border-transparent text-textSubtle"
-                        } hover:text-primary-900`}
+                      className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${
+                        selectedTab === 5
+                          ? "border-b-2 border-primary-900 text-primary-900"
+                          : "border-transparent text-textSubtle"
+                      } hover:text-primary-900`}
                       id="dashboard-tab"
                       data-tabs-target="#dashboard"
                       type="button"
@@ -741,9 +761,9 @@ export default function ProjectDetails(props) {
                               </div>
                               <p className="mb-3 text-textSubtle text-[13px]">
                                 {collection.description &&
-                                  collection.description.length > 70
+                                collection.description.length > 70
                                   ? collection.description.substring(0, 67) +
-                                  "..."
+                                    "..."
                                   : collection.description}
                               </p>
                               <div className="flex items-center">
@@ -882,9 +902,9 @@ export default function ProjectDetails(props) {
                             </div>
                             <p className="mb-3 text-textSubtle text-[13px]">
                               {collection.description &&
-                                collection.description.length > 70
+                              collection.description.length > 70
                                 ? collection.description.substring(0, 67) +
-                                "..."
+                                  "..."
                                 : collection.description}
                             </p>
                             <div className="flex items-center">

@@ -87,9 +87,6 @@ const MAINNET = {
 };
 
 let NETWORKS = process.env.REACT_APP_ENV === "production" ? MAINNET : TESTNET;
-console.log(NETWORKS);
 console.log(process.env.REACT_APP_ENV);
-console.log(process.env.REACT_APP_COMMON_THING);
-
 
 export { NETWORKS };

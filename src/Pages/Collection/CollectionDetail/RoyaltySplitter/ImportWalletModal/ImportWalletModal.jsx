@@ -211,7 +211,6 @@ const ImportWalletModal = ({
         }
       })
       .catch((err) => {
-        console.log("Sdsd");
         setIsLoading(false);
         setRoyaltyUpdatedSuccessfully(false);
         handleClose();
@@ -224,7 +223,7 @@ const ImportWalletModal = ({
       <p className="text-[12px]">
         Choose Collection to add member for {collectionName} Contributors
       </p>
-      <p className="text-[12px] text-danger-900 w-[350px] leading-[18px] mt-0">
+      <p className="text-[12px] text-danger-900 w-[380px] leading-[18px] mt-0">
         Note : If you already have a list and importing new new list. The old
         list that you have will be deleted
       </p>
@@ -245,11 +244,10 @@ const ImportWalletModal = ({
             }}
           >
             <button
-              className={`inline-block font-bold p-4 text-[18px] rounded-t-lg ${
-                selectedTab === 1
-                  ? "border-b-2 border-primary-900 text-primary-900"
-                  : "border-transparent text-textSubtle"
-              } hover:text-primary-600`}
+              className={`inline-block font-bold p-4 text-[18px] rounded-t-lg ${selectedTab === 1
+                ? "border-b-2 border-primary-900 text-primary-900"
+                : "border-transparent text-textSubtle"
+                } hover:text-primary-600`}
               id="nft"
               data-tabs-target="#nft"
               type="button"
@@ -270,11 +268,10 @@ const ImportWalletModal = ({
             }}
           >
             <button
-              className={`inline-block p-4 font-bold text-[18px] rounded-t-lg ${
-                selectedTab === 2
-                  ? "border-b-2 border-primary-900 text-primary-900"
-                  : "border-transparent text-textSubtle"
-              } hover:text-primary-900`}
+              className={`inline-block p-4 font-bold text-[18px] rounded-t-lg ${selectedTab === 2
+                ? "border-b-2 border-primary-900 text-primary-900"
+                : "border-transparent text-textSubtle"
+                } hover:text-primary-900`}
               id="dashboard"
               data-tabs-target="#dashboard"
               type="button"

@@ -1,6 +1,11 @@
 import Config from "../../config/config";
-import { torusLogout } from "util/Torus";
-import { ls_ClearLocalStorage, ls_SetUserID, ls_SetUserRefreshToken, ls_SetUserToken, ls_SetWalletType } from "util/ApplicationStorage";
+import {
+  ls_ClearLocalStorage,
+  ls_SetUserID,
+  ls_SetUserRefreshToken,
+  ls_SetUserToken,
+  ls_SetWalletType,
+} from "util/ApplicationStorage";
 
 const ROOT_URL = Config.API_ENDPOINT; //"https://reqres.in/api";
 
@@ -27,7 +32,7 @@ export async function loginUser(dispatch, loginPayload) {
       ls_SetUserToken(data.token);
       ls_SetUserID(data.user_id);
       ls_SetUserRefreshToken(data.refresh_token);
-      ls_SetWalletType(loginPayload["wallet"])
+      ls_SetWalletType(loginPayload["wallet"]);
       return data;
     }
 
@@ -41,7 +46,6 @@ export async function loginUser(dispatch, loginPayload) {
 }
 
 export async function logout(dispatch) {
-  torusLogout();
   dispatch({ type: "LOGOUT" });
   ls_ClearLocalStorage();
 }

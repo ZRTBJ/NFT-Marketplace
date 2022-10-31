@@ -25,11 +25,13 @@ import NftSuccessModal from "Pages/NFT/DetailsNFT/MintNFT/NftSuccessModal";
 import ErrorModal from "components/Modals/ErrorModal";
 import WalletConnectModal from "Pages/User/Login/WalletConnectModal";
 import { createMintNFT } from "Pages/NFT/DetailsNFT/MintNFT/deploy-mintnft";
-import { createProvider } from "eth/utils/provider";
-import { createMintInstance } from "eth/abis/mint-nft";
-import { createMembsrshipMintInstance } from "eth/abis/mint-membershipNFT";
+import { createProvider } from "util/smartcontract/provider";
+import { createMintInstance } from "config/ABI/mint-nft";
+import { createMembsrshipMintInstance } from "config/ABI/mint-membershipNFT";
 import { createMembershipMintNFT } from "Pages/NFT/DetailsNFT/MintNFT/deploy-membershipNFTMint";
 import EmbedNFTModal from "Pages/NFT/Embed/EmbedNFTModal";
+import { NETWORKS } from "config/networks";
+import { ls_GetChainID } from "util/ApplicationStorage";
 
 export default function DetailsNFT(props) {
   const userinfo = useSelector((state) => state.user.userinfo);
@@ -232,8 +234,9 @@ export default function DetailsNFT(props) {
           nftName={nft?.lnft?.name}
           address={userinfo?.eoa}
           collectionName={"Collection1"}
-          blockChain={"Ethereum"}
+          blockChain={ls_GetChainID()} //TODO: This should show current wallet, not user's previously logged in data
           price={info?.price}
+          currency={info?.currency}
           handleNext={() => handleProceedPayment("")}
         />
       )}
@@ -481,7 +484,7 @@ export default function DetailsNFT(props) {
             )}
             {/* {!nft.lnft.is_owner && ( */}
             <>
-              {nft?.lnft.minted_amount < nft?.lnft.supply && (
+              {nft?.lnft?.minted_amount < nft?.lnft?.supply && (
                 <div className="text-center mt-[62px] mb-5">
                   <button
                     className=" w-[140px] !text-[16px] h-[44px] contained-button "

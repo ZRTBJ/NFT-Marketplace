@@ -34,7 +34,8 @@ const RoyaltySplitter = () => {
       payload.page,
       payload.limit,
       payload.keyword,
-      payload.order_by
+      payload.order_by,
+      true
     )
       .then((resp) => {
         setLoading(false);
@@ -87,12 +88,6 @@ const RoyaltySplitter = () => {
       {!loading && (
         <div>
           <div className="flex flex-wrap mb-[40px]  items-center">
-            {/* <div className=" mr-4">
-              <button className="contained-button h-[45px]">
-                + Create New Splitter
-              </button>
-            </div> */}
-
             <div className="dropdown mt-4 md:mt-0  relative md:order-last">
               <button
                 className="bg-white dropdown-toggle px-4  text-textSubtle font-black font-satoshi-bold rounded-lg shadow-main flex items-center justify-between w-44 h-[45px] "
@@ -145,7 +140,7 @@ const RoyaltySplitter = () => {
             </div>
           </div>
           <>
-            {(collections == null || collections.length === 0) ? (
+            {collections == null || collections.length === 0 ? (
               <>
                 {payload.keyword === "" ? (
                   <div className="grid mt-[40px] h-full place-items-center">
@@ -163,17 +158,17 @@ const RoyaltySplitter = () => {
                   let image = collection?.assets?.find(
                     (asset) => asset.asset_type === "image"
                   );
-                  console.log(collection);
                   return (
                     <CollectionSplitter
                       members={collection?.members}
                       name={collection.name}
-                      status={collection.status}
+                      status={collection?.royalty_splitter?.status}
                       image={image}
                       id={collection.id}
                       openedCollection={openedCollection}
                       setOpenedCollection={setOpenedCollection}
                       date={collection.created_at}
+                      getProjectCollections={getProjectCollections}
                     />
                   );
                 })}

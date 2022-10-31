@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
-import { createInstance } from "eth/abis/forwarder";
-import { signMetaTxRequest } from "eth/utils/signer";
+import { createInstance } from "config/ABI/forwarder";
+import { signMetaTxRequest } from "util/smartcontract/signer";
 import { addressGnosisSetup } from "services/project/projectService";
 import { NETWORKS } from "config/networks";
 
@@ -72,9 +72,13 @@ export async function createDAO(dao, provider, name, treasuryAddress, chainId) {
   );
 
   await result.json().then(async (response) => {
-    const tx = JSON.parse(response.result);
-    const txReceipt = await provider.waitForTransaction(tx.txHash);
-    output = { txReceipt };
+    if (response.status === "success") {
+      const tx = JSON.parse(response.result);
+      const txReceipt = await provider.waitForTransaction(tx.txHash);
+      output = { txReceipt };
+    } else {
+      output = response.message;
+    }
   });
 
   return output;

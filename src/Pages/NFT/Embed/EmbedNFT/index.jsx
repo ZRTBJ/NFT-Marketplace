@@ -7,9 +7,9 @@ import {
   mintProductOrMembershipNft,
 } from "services/nft/nftService";
 import { createMintNFT } from "Pages/NFT/DetailsNFT/MintNFT/deploy-mintnft";
-import { createProvider } from "eth/utils/provider";
-import { createMintInstance } from "eth/abis/mint-nft";
-import { createMembsrshipMintInstance } from "eth/abis/mint-membershipNFT";
+import { createProvider } from "util/smartcontract/provider";
+import { createMintInstance } from "config/ABI/mint-nft";
+import { createMembsrshipMintInstance } from "config/ABI/mint-membershipNFT";
 import { createMembershipMintNFT } from "Pages/NFT/DetailsNFT/MintNFT/deploy-membershipNFTMint";
 
 function EmbedNFT(props) {
@@ -126,7 +126,7 @@ function EmbedNFT(props) {
         }
       })
       .catch((err) => {
-        setErrorMessage("Minting Failed. Please tru again later");
+        setErrorMessage("Minting Failed. Please try again later");
       });
   }
   return (
@@ -152,7 +152,7 @@ function EmbedNFT(props) {
             <div className="flex items-center justify-center w-100 mt-3 bg-[#122478] rounded-[12px] p-4 bg-opacity-[0.1]">
               <div className="w-2/2 pl-3">
                 <p className="text-textSubtle text-[12px] text-center">Price</p>
-                <h2 className="text-black">{nft?.more_info?.price}</h2>
+                <h2 className="text-black">{nft?.more_info?.price} {nft?.more_info?.currency?.toUpperCase()}</h2>
               </div>
             </div>
             <p className="text-danger-900 text-sm text-center">

@@ -17,8 +17,8 @@ import { getCollections } from "services/collection/collectionService";
 import ReactPaginate from "react-paginate";
 import { getMintedNftListByUserId, refreshNFT } from "services/nft/nftService";
 import { updateMetadata } from "Pages/User/Profile/update-metadata";
-import { createProvider } from "eth/utils/provider";
-import { createMintInstance } from "eth/abis/mint-nft";
+import { createProvider } from "util/smartcontract/provider";
+import { createMintInstance } from "config/ABI/mint-nft";
 import { toast } from "react-toastify";
 function List() {
   const provider = createProvider();

@@ -165,22 +165,20 @@ const SalesSettingsTab = ({ projectNetwork }) => {
               >
                 <li onClick={() => handleSortType("newer")}>
                   <div
-                    className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${
-                      payload.order_by === "newer"
+                    className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${payload.order_by === "newer"
                         ? "text-primary-900"
                         : "text-txtblack"
-                    } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                      } hover:bg-slate-50 transition duration-150 ease-in-out`}
                   >
                     Newer
                   </div>
                 </li>
                 <li onClick={() => handleSortType("older")}>
                   <div
-                    className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${
-                      payload.order_by === "older"
+                    className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${payload.order_by === "older"
                         ? "text-primary-900"
                         : "text-txtblack"
-                    } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                      } hover:bg-slate-50 transition duration-150 ease-in-out`}
                   >
                     Older
                   </div>
@@ -248,11 +246,11 @@ const SalesSettingsTab = ({ projectNetwork }) => {
                             src={
                               element?.assets?.length > 0
                                 ? element.assets.find(
-                                    (img) => img["asset_purpose"] === "logo"
-                                  )
+                                  (img) => img["asset_purpose"] === "logo"
+                                )
                                   ? element.assets.find(
-                                      (img) => img["asset_purpose"] === "logo"
-                                    ).path
+                                    (img) => img["asset_purpose"] === "logo"
+                                  ).path
                                   : defaultCover
                                 : defaultCover
                             }
@@ -270,7 +268,7 @@ const SalesSettingsTab = ({ projectNetwork }) => {
                       </th>
                       <td className=" py-4 px-6">{element.total_supply}</td>
                       <td className="py-4 px-6">
-                        {element.price} {element.currency}
+                        {element.price} {element.currency?.toUpperCase()}
                       </td>
                       <td className="py-4 px-6">
                         {element.marketplace && element.marketplace.length > 0 && (
