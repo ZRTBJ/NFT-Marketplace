@@ -5,13 +5,14 @@ import { logout, useAuthDispatch } from "redux/auth";
 const AccountChangedModal = ({ show, handleClose }) => {
   const dispatch = useAuthDispatch();
   let history = useHistory();
+
   function handleLogout() {
     logout(dispatch);
-    // showHideUserPopup();
     history.push("/");
     handleClose();
     window.location.reload();
   }
+
   return (
     <Modal
       width={400}
@@ -21,14 +22,13 @@ const AccountChangedModal = ({ show, handleClose }) => {
     >
       <div className="text-center">
         <h1>
-          Your Metamask account has got changed. So, please logout and connect
-          again.
+          Your Metamask account has got changed. Please login again.
         </h1>
         <button
           onClick={handleLogout}
           className="rounded-[4px] bg-primary-900 text-white py-2 px-4 px-3 mt-6"
         >
-          Logout
+          OK
         </button>
       </div>
     </Modal>

@@ -38,8 +38,14 @@ const WalletConnectModal = ({
   const [metamaskConnectAttempt, setMetamaskConnectAttempt] = useState(0);
   const [metamaskAccount, setMetamaskAccount] = useState("");
   const authDispatch = useAuthDispatch();
-
   const [userId, setUserId] = useState(context ? context.user : "");
+
+
+  useEffect(() => {
+    if (userId && !userinfo.display_name) {
+      getUserDetails(userId, false);
+    }
+  }, []);
 
   /** Connection to wallet */
   async function handleConnectWallet() {
@@ -74,7 +80,29 @@ const WalletConnectModal = ({
     }
   }
 
-  /** Get user info */
+  /** Login to our server, save token info*/
+  async function userLogin(address, signature, wallet) {
+    const request = {
+      address,
+      signature,
+      wallet,
+    };
+    try {
+      setIsLoading(true);
+      let response = await loginUser(authDispatch, request);
+      const userProvider = new ethers.providers.Web3Provider(window.ethereum);
+      const userNetwork = await userProvider.getNetwork();
+      ls_SetWalletAddress(address);
+      ls_SetChainID(userNetwork.chainId);
+      setUserId(response["user_id"]);
+      getUserDetails(response["user_id"], true);
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
+    }
+  }
+
+  /** Get user info and save it to redux store */
   async function getUserDetails(userID, isNavigate) {
     dispatch(setUserLoading("loading"));
     const response = await getUserInfo(userID);
@@ -88,6 +116,7 @@ const WalletConnectModal = ({
     setIsLoading(false);
     if (!noRedirection) {
       if (isNavigate === true) {
+        //We might navigate to specific page after login, or go to profile, if user hasn't create any profile (display name)
         if (
           userinfoResponse &&
           userinfoResponse["display_name"] &&
@@ -108,64 +137,11 @@ const WalletConnectModal = ({
     closeModal();
   }
 
-  /** Login to our server */
-  async function userLogin(address, signature, wallet) {
-    const request = {
-      address,
-      signature,
-      wallet,
-    };
-    try {
-      setIsLoading(true);
-      let response = await loginUser(authDispatch, request);
-      ls_SetWalletAddress(address);
-      const userProvider = new ethers.providers.Web3Provider(window.ethereum);
-      const userNetwork = await userProvider.getNetwork();
-      ls_SetChainID(userNetwork.chainId);
-      setUserId(response["user_id"]);
-      getUserDetails(response["user_id"], true);
-    } catch (error) {
-      setIsLoading(false);
-      console.log(error);
-    }
-  }
   function handelTermsChecked(value) {
     setIsTermsAndConditionsChecked(value);
     setModalKey((pre) => pre + 1);
     setshowMessage(false);
   }
-  useEffect(() => {
-    if (window.ethereum) {
-      window.ethereum.on("accountsChanged", handleAccountsChanged);
-    }
-  }, []);
-
-  function handleAccountsChanged(accounts) {
-    if (accounts.length === 0) {
-      console.log("Please connect to MetaMask.");
-    } else if (
-      metamaskAccount &&
-      metamaskAccount.length > 1 &&
-      metamaskAccount !== accounts[0]
-    ) {
-      const currentAccount = accounts[0];
-      if (!userId || userId.length < 1) {
-        getPersonalSign()
-          .then((signature) => {
-            userLogin(currentAccount, signature, "metamask");
-          })
-          .catch((error) => {
-            alert(error.message);
-          });
-      }
-    }
-  }
-
-  useEffect(() => {
-    if (userId && !userinfo.display_name) {
-      getUserDetails(userId, false);
-    }
-  }, []);
 
   return (
     <div>

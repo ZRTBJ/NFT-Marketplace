@@ -6,6 +6,8 @@ const LeavingSite = ({ handleClose, show, treasuryAddress }) => {
   async function goToSafe() {
     const userProvider = new ethers.providers.Web3Provider(window.ethereum);
     const userNetwork = await userProvider.getNetwork();
+    //TODO This part you must get network from DAO itself, not user
+
     let network = "";
     if (userNetwork.chainId === 1) {
       network = "matic";

@@ -234,7 +234,7 @@ export default function DetailsNFT(props) {
           nftName={nft?.lnft?.name}
           address={userinfo?.eoa}
           collectionName={"Collection1"}
-          blockChain={ls_GetChainID()}
+          blockChain={ls_GetChainID()} //TODO: This should show current wallet, not user's previously logged in data
           price={info?.price}
           currency={info?.currency}
           handleNext={() => handleProceedPayment("")}

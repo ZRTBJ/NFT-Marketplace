@@ -68,14 +68,7 @@ function Home() {
       spaceBetween: 15,
     },
   };
-  useEffect(() => {
-    if (userinfo.id) {
-      console.log(userinfo);
-      history.push(`/profile/${userinfo.id}/`);
-    } else {
-      history.push(`/profile/login`);
-    }
-  }, []);
+
   useEffect(() => {
     const navItem = document.getElementById("nav-home");
     if (navItem) navItem.classList.add("active-menu");

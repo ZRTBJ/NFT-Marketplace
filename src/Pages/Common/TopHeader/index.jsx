@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import "./index.css"
 import { useState, useEffect, useRef } from "react";
 import WalletDropDownMenu from "./WalletDropdownMenu";
 import { useHistory, useLocation } from "react-router-dom";
@@ -59,6 +60,18 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
       : []
   );
 
+  /**
+   * TODO: In header, we check if user logged in, and should check metamask logged in, otherwise logout and navigate them to logi
+   */
+  useEffect(() => {
+    if (userinfo.id) {
+      console.log(userinfo);
+      history.push(`/profile/${userinfo.id}/`);
+    } else {
+      history.push(`/profile/login`);
+    }
+  }, []);
+
   /** Metamask network change detection */
   useEffect(() => {
     if (window?.ethereum) {
@@ -72,30 +85,24 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     }
   }, []);
 
+
+  /** Metamask account change detection. It will show logout popup if user signin with new address 
+   * In case if user re-login, if same account with wallet address, nothing will happen
+   * In case accounts == null, mean metamask logged out, no smartcontract interaction can be called
+  */
+  useEffect(() => {
+    window?.ethereum?.on("accountsChanged", function (accounts) {
+      if (accounts != null && accounts.length > 0 && accounts[0] != ls_GetWalletAddress()) {
+        setShowAccountChanged(true);
+      }
+    });
+  }, []);
+
   useEffect(() => {
     if (showSearchMobile) {
       inputRef?.current.focus();
     }
   }, [showSearchMobile]);
-
-
-  /** Metamask account change detection. It will show logout popup if user signin with new address, or they logout  */
-  useEffect(() => {
-    window?.ethereum?.on("accountsChanged", function (accounts) {
-      setShowAccountChanged(true);
-    });
-  }, []);
-
-  useEffect(() => {
-    if (userId && userId.length > 0) {
-      const cUser = ls_GetUserToken();
-      if (cUser) {
-        sendMessage(JSON.stringify({ Token: cUser }));
-      }
-    } else {
-      // console.log("no user");
-    }
-  }, [userId]);
 
   useEffect(() => {
     getNotificationList();
@@ -141,9 +148,6 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     }
   }
 
-  // function toogleNotificationList() {
-  //   setShowNotificationList((pre) => !pre);
-  // }
   function hideModal() {
     setShowModal(false);
   }
@@ -176,6 +180,19 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     shouldReconnect: (closeEvent) => true,
   });
 
+  /** After user logged in, we also get notified that userId(auth) has been updated, then we send websocket message to auth websocket */
+  useEffect(() => {
+    if (userId && userId.length > 0) {
+      const cUser = ls_GetUserToken();
+      if (cUser) {
+        sendMessage(JSON.stringify({ Token: cUser }));
+      }
+    } else {
+      // console.log("no user");
+    }
+  }, [userId]);
+
+  /** Send other websocket event to whole system */
   useEffect(() => {
     if (lastMessage !== null) {
       try {

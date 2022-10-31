@@ -6,13 +6,14 @@ import { logout, useAuthDispatch } from "redux/auth";
 const NetworkChangedModal = ({ show, handleClose, networkId }) => {
   const dispatch = useAuthDispatch();
   let history = useHistory();
+
   function handleLogout() {
     logout(dispatch);
-    // showHideUserPopup();
     history.push("/");
     handleClose();
     window.location.reload();
   }
+
   return (
     <Modal
       show={show}
