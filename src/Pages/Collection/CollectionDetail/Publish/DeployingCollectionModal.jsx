@@ -6,8 +6,8 @@ import {
 } from "services/collection/collectionService";
 import { useDispatch, useSelector } from "react-redux";
 import deploySuccessSvg from "assets/images/modal/deploySuccessSvg.svg";
-import { createProvider } from "eth/utils/provider";
-import { createInstance } from "eth/abis/collection-factory";
+import { createProvider } from "util/smartcontract/provider";
+import { createInstance } from "config/ABI/collection-factory";
 import { createCollection } from "Pages/Collection/CollectionDetail/Publish/deploy-collection";
 import { NETWORKS } from "config/networks";
 import { ls_GetChainID } from "util/ApplicationStorage";

@@ -21,8 +21,8 @@ import searchImage from "assets/images/search.svg";
 import Logo from "assets/images/header/logo.svg";
 import AccountChangedModal from "./Account/AccountChangedModal";
 import NetworkChangedModal from "./Account/NetworkChangedModal";
-import { walletAddressTruncate } from "util/walletAddressTruncate";
-import { ls_GetUserToken, ls_SetChainID } from "util/ApplicationStorage";
+import { walletAddressTruncate } from "util/WalletUtils";
+import { ls_GetUserToken, ls_GetWalletAddress, ls_SetChainID } from "util/ApplicationStorage";
 
 const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const history = useHistory();
@@ -59,6 +59,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
       : []
   );
 
+  /** Metamask network change detection */
   useEffect(() => {
     if (window?.ethereum) {
       if (!networkId) setNetworkId(window.ethereum.networkVersion);
@@ -77,6 +78,8 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     }
   }, [showSearchMobile]);
 
+
+  /** Metamask account change detection. It will show logout popup if user signin with new address, or they logout  */
   useEffect(() => {
     window?.ethereum?.on("accountsChanged", function (accounts) {
       setShowAccountChanged(true);
@@ -145,7 +148,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     setShowModal(false);
   }
 
-  // web socket implementation
+  //--------------------------------- web socket implementation
   let host = "ws:";
   try {
     const loc = window.location;
@@ -383,23 +386,6 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                     </a>
                     {/* wallet popup */}
                   </li>
-
-                  {/* <li>
-                    <Link to="/profile-settings">
-                      <svg
-                        width="20"
-                        height="21"
-                        viewBox="0 0 20 21"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M18.6391 10.6053L18.4204 10.5L18.6391 10.3947C19.9514 9.6579 20.3888 8.07895 19.6233 6.81579L18.0923 4.28947C17.7643 3.65789 17.1081 3.23684 16.452 3.02632C15.7959 2.81579 15.0304 2.92105 14.3742 3.23684L14.1555 3.34211V3.13158C14.1555 1.65789 12.9526 0.5 11.4216 0.5H8.46902C6.93803 0.5 5.73512 1.65789 5.73512 3.13158V3.34211H5.62576C4.96962 2.92105 4.31349 2.81579 3.54799 3.02632C2.7825 3.23684 2.23572 3.65789 1.90765 4.28947L0.376671 6.81579C-0.388821 8.07895 0.0486025 9.6579 1.36087 10.3947L1.57959 10.5L1.36087 10.6053C0.0486025 11.3421 -0.388821 12.9211 0.376671 14.1842L1.90765 16.7105C2.23572 17.3421 2.89186 17.7632 3.54799 17.9737C4.31349 18.1842 4.96962 18.0789 5.62576 17.6579H5.73512V17.8684C5.73512 19.3421 6.93803 20.5 8.46902 20.5H11.4216C12.9526 20.5 14.1555 19.3421 14.1555 17.8684V17.6579L14.3742 17.7632C15.0304 18.0789 15.7959 18.1842 16.452 17.9737C17.2175 17.7632 17.7643 17.3421 18.0923 16.7105L19.6233 14.1842C20.3888 12.9211 19.9514 11.3421 18.6391 10.6053ZM10 14.5C7.70352 14.5 5.84447 12.7105 5.84447 10.5C5.84447 8.28947 7.70352 6.5 10 6.5C12.2965 6.5 14.1555 8.28947 14.1555 10.5C14.1555 12.7105 12.2965 14.5 10 14.5Z"
-                          fill="#7D849D"
-                        />
-                      </svg>
-                    </Link>
-                  </li> */}
 
                   <li className="relative">
                     <div

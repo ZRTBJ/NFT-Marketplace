@@ -8,7 +8,7 @@ import Trash from "assets/images/icons/trash.svg";
 import { useMemo, useState, useEffect } from "react";
 import MemeberListMobile from "../MemberListMobile/MemberListMobile";
 import ConfirmationModal from "components/Modals/ConfirmationModal";
-import { walletAddressTruncate } from "util/walletAddressTruncate";
+import { walletAddressTruncate } from "util/WalletUtils";
 
 const MemberListTable = ({
   collection,

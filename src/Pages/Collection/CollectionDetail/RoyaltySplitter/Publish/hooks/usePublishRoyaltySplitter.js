@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ethers } from "ethers";
 import * as collectionService from "services/collection/collectionService";
-import * as RoyaltySplitter from "eth/abis/royalty-splitter-factory";
+import * as RoyaltySplitter from "config/ABI/royalty-splitter-factory";
 import useSendTransaction from "./useSendTransaction";
 import { NETWORKS } from "config/networks";
 import { ls_GetChainID } from "util/ApplicationStorage";

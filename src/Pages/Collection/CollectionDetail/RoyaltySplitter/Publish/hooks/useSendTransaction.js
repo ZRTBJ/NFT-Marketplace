@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import axios from "axios";
-import * as Forwarder from "eth/abis/forwarder";
+import * as Forwarder from "config/ABI/forwarder";
 import { NETWORKS } from "config/networks";
 import { ls_GetChainID } from "util/ApplicationStorage";
 

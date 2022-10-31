@@ -2,7 +2,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import Trash from "assets/images/icons/trash.svg";
-import { walletAddressTruncate } from "util/walletAddressTruncate";
+import { walletAddressTruncate } from "util/WalletUtils";
 
 const MemeberListMobile = ({ list }) => {
   return (

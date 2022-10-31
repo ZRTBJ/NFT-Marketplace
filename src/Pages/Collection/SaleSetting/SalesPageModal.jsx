@@ -12,14 +12,14 @@ import {
   getCollectionNFTs,
 } from "services/collection/collectionService";
 import { setNFTPrice } from "./deploy-nftPrice";
-import { createProvider } from "eth/utils/provider";
-import { createMintInstance } from "eth/abis/mint-nft";
+import { createProvider } from "util/smartcontract/provider";
+import { createMintInstance } from "config/ABI/mint-nft";
 import DropdownCreabo from "components/Commons/Dropdown";
 import Matic from "assets/images/polygon.svg";
 import Eth from "assets/images/eth.svg";
 import Modal from "components/Commons/Modal";
 import Select, { components } from "react-select";
-import { createMembsrshipMintInstance } from "eth/abis/mint-membershipNFT";
+import { createMembsrshipMintInstance } from "config/ABI/mint-membershipNFT";
 import { setMemNFTPrice } from "Pages/Collection/SaleSetting/deploy-membershipNFTPrice";
 import { ethers } from "ethers";
 import Delete from "assets/images/trash.svg";

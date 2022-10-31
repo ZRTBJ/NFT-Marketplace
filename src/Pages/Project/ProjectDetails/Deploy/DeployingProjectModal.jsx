@@ -5,8 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { getNotificationData } from "redux/slice/notificationSlice";
 import deploySuccessSvg from "assets/images/modal/deploySuccessSvg.svg";
 import { createDAO } from "Pages/Project/ProjectDetails/Deploy/deploy-dao";
-import { createProvider } from "eth/utils/provider";
-import { createInstance } from "eth/abis/dao-factory";
+import { createProvider } from "util/smartcontract/provider";
+import { createInstance } from "config/ABI/dao-factory";
 
 const DeployingProjectModal = ({
   handleClose,

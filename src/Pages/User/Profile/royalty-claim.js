@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
-import { signMetaTxRequest } from "eth/utils/signer";
-import { createInstance } from "eth/abis/forwarder";
-import { RoyaltyInstance } from "eth/abis/royalty-claim-contract";
+import { signMetaTxRequest } from "util/smartcontract/signer";
+import { createInstance } from "config/ABI/forwarder";
+import { RoyaltyInstance } from "config/ABI/royalty-claim-contract";
 import { NETWORKS } from "config/networks";
 import { ls_GetChainID } from "util/ApplicationStorage";
 

@@ -44,7 +44,6 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
     setWallet(context ? context.wallet : "");
     try {
       setIsLoadingBalance(true);
-      // const web3 = new Web3(new Web3.providers.HttpProvider(Config.RPC_URL));
       const web3 = new Web3(window?.ethereum);
       if (selectedWallet && selectedWallet.length > 5) {
         web3.eth.getBalance(selectedWallet).then((res) => {
@@ -94,17 +93,6 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
             <span>Add Funds</span>
           </a>
         </div>
-
-        {/* Switch wallet */}
-        {/* <div className="pl-10 pr-3 py-3 border-b border-slate-300">
-          <div
-            onClick={handleLogout}
-            className="items-center txtblack flex content-center font-base text-sm cursor-pointer"
-          >
-            <i className="fa-solid fa-arrow-right-arrow-left"></i>
-            <span className="ml-2">Switch Wallet</span>
-          </div>
-        </div> */}
         <div className="pl-10 pr-3 py-3">
           <div
             onClick={handleLogout}

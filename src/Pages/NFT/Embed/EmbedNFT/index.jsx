@@ -7,9 +7,9 @@ import {
   mintProductOrMembershipNft,
 } from "services/nft/nftService";
 import { createMintNFT } from "Pages/NFT/DetailsNFT/MintNFT/deploy-mintnft";
-import { createProvider } from "eth/utils/provider";
-import { createMintInstance } from "eth/abis/mint-nft";
-import { createMembsrshipMintInstance } from "eth/abis/mint-membershipNFT";
+import { createProvider } from "util/smartcontract/provider";
+import { createMintInstance } from "config/ABI/mint-nft";
+import { createMembsrshipMintInstance } from "config/ABI/mint-membershipNFT";
 import { createMembershipMintNFT } from "Pages/NFT/DetailsNFT/MintNFT/deploy-membershipNFTMint";
 
 function EmbedNFT(props) {

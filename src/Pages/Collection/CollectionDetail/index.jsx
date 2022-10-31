@@ -34,11 +34,12 @@ import PlusIcon from "assets/images/icons/plus-circle.svg";
 import NFTSales from "./NFTSale";
 import ConfirmationModal from "components/Modals/ConfirmationModal";
 import ImportWalletModal from "Pages/Collection/CollectionDetail/RoyaltySplitter/ImportWalletModal/ImportWalletModal";
-import { walletAddressTruncate } from "util/walletAddressTruncate";
 import usePublishRoyaltySplitter from "Pages/Collection/CollectionDetail/RoyaltySplitter/Publish/hooks/usePublishRoyaltySplitter";
 import PublishRoyaltyModal from "Pages/Collection/CollectionDetail/RoyaltySplitter/Publish/PublishRoyaltyModal";
 import SalesSuccessModal from "Pages/Collection/SaleSetting/SalesSuccessModal";
 import defaultCover from "assets/images/image-default.svg";
+import { walletAddressTruncate } from "util/WalletUtils";
+
 const TABLE_HEADERS = [
   { id: 0, label: "Wallet Address" },
   // { id: 2, label: "Email" },

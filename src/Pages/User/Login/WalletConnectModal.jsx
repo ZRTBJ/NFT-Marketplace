@@ -3,7 +3,7 @@ import {
   getPersonalSign,
   isWalletConnected,
   getWalletAccount,
-} from "util/metaMaskWallet";
+} from "util/MetaMaskWallet";
 import { ethers } from "ethers";
 import { useSelector } from "react-redux";
 import Modal from "components/Commons/Modal";
@@ -40,6 +40,8 @@ const WalletConnectModal = ({
   const authDispatch = useAuthDispatch();
 
   const [userId, setUserId] = useState(context ? context.user : "");
+
+  /** Connection to wallet */
   async function handleConnectWallet() {
     if (isTermsAndConditionsChecked) {
       setMetamaskConnectAttempt(metamaskConnectAttempt + 1);
@@ -72,6 +74,7 @@ const WalletConnectModal = ({
     }
   }
 
+  /** Get user info */
   async function getUserDetails(userID, isNavigate) {
     dispatch(setUserLoading("loading"));
     const response = await getUserInfo(userID);
@@ -105,6 +108,7 @@ const WalletConnectModal = ({
     closeModal();
   }
 
+  /** Login to our server */
   async function userLogin(address, signature, wallet) {
     const request = {
       address,

@@ -27,7 +27,7 @@ import { Navigation } from "swiper";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import { walletAddressTruncate } from "util/walletAddressTruncate";
+import { walletAddressTruncate } from "util/WalletUtils";
 import LeavingSite from "Pages/Project/ProjectDetails/Components/LeavingSite";
 import CollectionTab from "Pages/Project/ProjectDetails/CollectionTab/CollectionTab";
 import SalesSettingsTab from "Pages/Project/ProjectDetails/SalesSettingTab/SalesSettingTab";
