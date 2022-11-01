@@ -21,6 +21,7 @@ const MemberListTable = ({
   isOwner,
   setRoyalityMembers,
   showRoyalityErrorModal,
+  onShowError = () => {},
 }) => {
   const [newItems, setNewItems] = useState(null);
   const [address, setAddress] = useState("");
@@ -28,6 +29,7 @@ const MemberListTable = ({
   const [toDelete, setToDelete] = useState(false);
   const [showError, setShowError] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
+  const [addError, setAddError] = useState('');
 
   const hasPublishedRoyaltySplitter = useMemo(
     () => collection?.royalty_splitter?.status === "published",
@@ -82,6 +84,11 @@ const MemberListTable = ({
       if (!ethers.utils.isAddress(address)) {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         userAddress = await provider.resolveName(address);
+      }
+
+      if (userAddress === null) {
+        setAddError('Invalid address or ENS');
+        return;
       }
 
       let value = {
@@ -288,6 +295,11 @@ const MemberListTable = ({
             Total percent of contributors should equal to or lesser than 100%.
           </p>
         ) : null}
+        {addError && (
+          <p className="text-red-400 text-[14px] mt-1 ml-4">
+            {addError}
+          </p>
+        )}
       </div>
       {!newItems && !hasPublishedRoyaltySplitter ? (
         <button
