@@ -47,7 +47,12 @@ const WalletConnectModal = ({
     }
   }, []);
 
-  /** Connection to wallet */
+  /** Connection to wallet 
+   * Login mechanism: We let user to login using metamask, then will login to our server to get JWT token.
+   * From then , all action will rely on JWT Token. 
+   * If interact with smartcontract, we will check if metamask is connected with correct wallet address and network, otherwise htey need to login again
+   * Also, we verify often to detect if metamask account change, or network change so we can login in-time
+  */
   async function handleConnectWallet() {
     if (isTermsAndConditionsChecked) {
       setMetamaskConnectAttempt(metamaskConnectAttempt + 1);

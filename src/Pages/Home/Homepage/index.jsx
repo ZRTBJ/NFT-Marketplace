@@ -4,7 +4,7 @@ import {
   getPublicProjectList,
   getProjectCategory,
 } from "services/project/projectService";
-import HomeNavigateCard from "Pages/Home/Homepage/HomeNavigateCard";
+import HomeNavigateCard from "Pages/Home/Homepage/components/HomeNavigateCard";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
@@ -68,6 +68,19 @@ function Home() {
       spaceBetween: 15,
     },
   };
+
+  /**
+ * TODO: In header, we check if user logged in, and should check metamask logged in, otherwise logout and navigate them to logi
+ */
+  useEffect(() => {
+    if (userinfo.id) {
+      console.log(userinfo);
+      history.push(`/profile/${userinfo.id}/`);
+    } else {
+      history.push(`/profile/login`);
+    }
+    window.location.reload();
+  }, []);
 
   useEffect(() => {
     const navItem = document.getElementById("nav-home");
@@ -273,27 +286,24 @@ function Home() {
             >
               <li onClick={() => handleSortType("newer")}>
                 <a
-                  className={`dropdown-item py-2 px-4 block whitespace-nowrap ${
-                    sortType === "newer" ? "text-primary-900" : "text-txtblack"
-                  } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                  className={`dropdown-item py-2 px-4 block whitespace-nowrap ${sortType === "newer" ? "text-primary-900" : "text-txtblack"
+                    } hover:bg-slate-50 transition duration-150 ease-in-out`}
                 >
                   Newer
                 </a>
               </li>
               <li onClick={() => handleSortType("older")}>
                 <a
-                  className={`dropdown-item py-2 px-4 block whitespace-nowrap ${
-                    sortType === "older" ? "text-primary-900" : "text-txtblack"
-                  } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                  className={`dropdown-item py-2 px-4 block whitespace-nowrap ${sortType === "older" ? "text-primary-900" : "text-txtblack"
+                    } hover:bg-slate-50 transition duration-150 ease-in-out`}
                 >
                   older
                 </a>
               </li>
               <li onClick={() => handleSortType("view")}>
                 <a
-                  className={`dropdown-item py-2 px-4 block whitespace-nowrap ${
-                    sortType === "view" ? "text-primary-900" : "text-txtblack"
-                  } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                  className={`dropdown-item py-2 px-4 block whitespace-nowrap ${sortType === "view" ? "text-primary-900" : "text-txtblack"
+                    } hover:bg-slate-50 transition duration-150 ease-in-out`}
                 >
                   view
                 </a>
@@ -321,15 +331,15 @@ function Home() {
           <section className="flex flex-wrap items-center justify-center md:justify-start">
             {isSearching
               ? searchList.map((item, index) => (
-                  <div key={item.id}>
-                    <DAOCard item={item} key={item.id} />
-                  </div>
-                ))
+                <div key={item.id}>
+                  <DAOCard item={item} key={item.id} />
+                </div>
+              ))
               : projectList.map((item, index) => (
-                  <div key={item.id}>
-                    <DAOCard item={item} key={item.id} />
-                  </div>
-                ))}
+                <div key={item.id}>
+                  <DAOCard item={item} key={item.id} />
+                </div>
+              ))}
           </section>
         </section>
 
@@ -391,8 +401,8 @@ function Home() {
                           className="rounded-xl h-[276px] object-cover w-full"
                           src={
                             collection &&
-                            collection.assets &&
-                            collection.assets[0]
+                              collection.assets &&
+                              collection.assets[0]
                               ? collection.assets[0].path
                               : thumbIcon
                           }
@@ -406,7 +416,7 @@ function Home() {
                         </h3>
                         <p className="mb-3 text-textSubtle text-[13px]">
                           {collection.description &&
-                          collection.description.length > 70
+                            collection.description.length > 70
                             ? collection.description.substring(0, 67) + "..."
                             : collection.description}
                         </p>
