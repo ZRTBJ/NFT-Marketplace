@@ -192,7 +192,9 @@ function List() {
   };
   function setNftData(nft, type) {
     let nftList = [...projectList];
-    const nftIndex = nftList.findIndex((item) => item.id === nft.id);
+    const nftIndex = nftList.findIndex(
+      (item) => item.id === nft.id && item.token_id === nft.token_id
+    );
     const nftLocal = { ...nft };
     if (type === "loadingTrue") {
       nftLocal.loading = true;
