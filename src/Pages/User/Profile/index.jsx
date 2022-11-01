@@ -36,6 +36,11 @@ import Spinner from "components/Commons/Spinner";
 import { NETWORKS } from "config/networks";
 import WalletConnectModal from "../Login/WalletConnectModal";
 import { ls_GetUserID } from "util/ApplicationStorage";
+import nftSvg from "assets/images/profile/nftSvg.svg";
+import daoCreate from "assets/images/profile/daoCreate.svg";
+import CreateNFTModal from "Pages/Project/CreateDAOandNFT/components/CreateNFTModal.jsx";
+import emptyStateCommon from "assets/images/profile/emptyStateCommon.svg";
+import emptyStateRoyalty from "assets/images/profile/emptyStateRoyalty.svg";
 const Profile = () => {
   const provider = createProvider();
   SwiperCore.use([Autoplay]);
@@ -140,6 +145,7 @@ const Profile = () => {
   const [isActive, setIsactive] = useState(1);
 
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [ShowCreateNFT, setShowCreateNFT] = useState(false);
   // function start
   const calculatePageCount = (pageSize, totalItems) => {
     return totalItems < pageSize ? 1 : Math.ceil(totalItems / pageSize);
@@ -149,6 +155,7 @@ const Profile = () => {
     if (id === "login") {
       if (ls_GetUserID()) {
         history.replace(`/profile/${ls_GetUserID()}`);
+        window.location.reload();
       } else {
         setShowLoginModal(true);
       }
@@ -207,10 +214,6 @@ const Profile = () => {
       });
     setRoyaltyLoading(false);
   }
-  const handlePageClick = (event) => {
-    setIsactive(event.selected + 1);
-  };
-
   async function getProjectList() {
     let payload = {
       id: id,
@@ -231,6 +234,10 @@ const Profile = () => {
       });
     setDaoLoading(false);
   }
+  const handlePageClick = (event) => {
+    setIsactive(event.selected + 1);
+  };
+
   async function calculateTotalRoyalties() {
     const sum = royaltiesList
       .map((item) => item.earnable_amount)
@@ -504,7 +511,7 @@ const Profile = () => {
                 <div className="flex">
                   <img
                     src={
-                      user.avatar === "" ? DefaultProfilePicture : user.avatar
+                      user?.avatar === "" ? DefaultProfilePicture : user?.avatar
                     }
                     className="rounded-lg w-[102px] object-cover h-[102px]"
                     alt={"profile"}
@@ -610,6 +617,31 @@ const Profile = () => {
                 </div>
               </div>
             </div>
+
+            <div className="mx-3 my-6 flex flex-wrap items-center">
+              <div
+                onClick={() => setShowCreateNFT(true)}
+                className="w-full cursor-pointer md:mr-4 mb-4 md:mb-0 p-3 md:max-w-[252px] rounded h-[72px] bg-primary-900/[0.10] border border-primary-900"
+              >
+                <img src={nftSvg} className="mb-1 h-[24px] w-[24px]" alt="" />
+                <span className="text-primary-900 font-black">
+                  Create New NFT
+                </span>
+              </div>
+              <div
+                onClick={() => history.push("/project-create")}
+                className=" cursor-pointer h-[72px] p-3 w-full md:max-w-[252px] rounded  bg-secondary-900/[0.10] border border-secondary-900"
+              >
+                <img
+                  src={daoCreate}
+                  className="mb-1 h-[24px] w-[24px]"
+                  alt=""
+                />
+                <span className="text-secondary-900 font-black">
+                  Create New Dao
+                </span>
+              </div>
+            </div>
             {/* Royalties Table */}
             <div className=" mt-[20px] mx-3 mb-[36px] pt-[30px] shadow-lg px-4  pb-[35px] bg-white-shade-900 rounded-xl">
               <div className="flex  items-center mb-[24px]">
@@ -679,7 +711,7 @@ const Profile = () => {
                                   <td className="py-4 px-5">
                                     <img
                                       src={NETWORKS[Number(r.blockchain)].icon}
-                                      className="h-[34px] w-[34px] object-cover rounded-full"
+                                      className="h-[30px] w-[30px]  rounded-full"
                                       alt={DefaultProjectLogo}
                                     />
                                   </td>
@@ -757,10 +789,15 @@ const Profile = () => {
                         </div>
                       </div>
                     ) : (
-                      <div className="text-center ">
-                        <h2 className="text-textSubtle mb-6">
+                      <div className="text-center">
+                        <img
+                          src={emptyStateRoyalty}
+                          className="h-[210px] w-[315px] m-auto"
+                          alt=""
+                        />
+                        <p className="text-subtitle font-bold">
                           You don't have any Royalty yet
-                        </h2>
+                        </p>
                       </div>
                     )}
                   </div>
@@ -857,9 +894,14 @@ const Profile = () => {
                       </div>
                     ) : (
                       <div className="text-center ">
-                        <h2 className="text-textSubtle mb-6">
+                        <img
+                          src={emptyStateRoyalty}
+                          className="h-[210px] w-[315px] m-auto"
+                          alt=""
+                        />
+                        <p className="text-subtitle font-bold">
                           You don't have any Royalty yet
-                        </h2>
+                        </p>
                       </div>
                     )}
                   </div>
@@ -922,9 +964,14 @@ const Profile = () => {
                     </Swiper>
                   ) : (
                     <div className="text-center mt-6">
-                      <h2 className="text-textSubtle">
-                        You don't have any DAO yet
-                      </h2>
+                      <img
+                        src={emptyStateCommon}
+                        className="h-[210px] w-[315px] m-auto"
+                        alt=""
+                      />
+                      <p className="text-subtitle font-bold">
+                        You have no DAO Created
+                      </p>
                     </div>
                   )}
                 </>
@@ -1034,7 +1081,14 @@ const Profile = () => {
                     </Swiper>
                   ) : (
                     <div className="text-center mt-6 text-textSubtle">
-                      <h2>You don't have any Collection yet</h2>
+                      <img
+                        src={emptyStateCommon}
+                        className="h-[210px] w-[315px] m-auto"
+                        alt=""
+                      />
+                      <p className="text-subtitle font-bold">
+                        You have no Collection Created
+                      </p>
                     </div>
                   )}
                 </>
@@ -1080,7 +1134,14 @@ const Profile = () => {
                     </Swiper>
                   ) : (
                     <div className="text-center mt-6 text-textSubtle">
-                      <h2>You don't have any minted NFT yet</h2>
+                      <img
+                        src={emptyStateCommon}
+                        className="h-[210px] w-[315px] m-auto"
+                        alt=""
+                      />
+                      <p className="text-subtitle font-bold">
+                        You have no NFT minted
+                      </p>
                     </div>
                   )}
                 </>
@@ -1132,6 +1193,10 @@ const Profile = () => {
           show={nftErrorModal}
         />
       )}
+      <CreateNFTModal
+        show={ShowCreateNFT}
+        handleClose={() => setShowCreateNFT(false)}
+      />
     </>
   );
 };

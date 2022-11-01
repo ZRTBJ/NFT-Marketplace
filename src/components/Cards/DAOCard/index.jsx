@@ -74,7 +74,7 @@ const DAOCard = ({ item }) => {
               key={member.id}
               src={member.avatar ? member.avatar : avatar}
               alt={member.id}
-              className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
+              className="rounded-full object-cover h-[35px] w-[35px] ml-2 border-2 border-white"
             />
           ))}
         {item.members && item.members.length > 3 && (
