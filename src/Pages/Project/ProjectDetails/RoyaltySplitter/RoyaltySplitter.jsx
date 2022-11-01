@@ -4,7 +4,7 @@ import { getCollections } from "services/collection/collectionService";
 import ReactPaginate from "react-paginate";
 import Spinner from "components/Commons/Spinner";
 import { DebounceInput } from "react-debounce-input";
-import CollectionSplitter from "./components/CollectionSplitter";
+import CollectionSplitterItem from "./components/CollectionSplitterItem";
 
 const RoyaltySplitter = () => {
   const { id } = useParams();
@@ -106,22 +106,20 @@ const RoyaltySplitter = () => {
               >
                 <li onClick={() => handleSortType("newer")}>
                   <div
-                    className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${
-                      payload.order_by === "newer"
-                        ? "text-primary-900"
-                        : "text-txtblack"
-                    } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                    className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${payload.order_by === "newer"
+                      ? "text-primary-900"
+                      : "text-txtblack"
+                      } hover:bg-slate-50 transition duration-150 ease-in-out`}
                   >
                     Newer
                   </div>
                 </li>
                 <li onClick={() => handleSortType("older")}>
                   <div
-                    className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${
-                      payload.order_by === "older"
-                        ? "text-primary-900"
-                        : "text-txtblack"
-                    } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                    className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${payload.order_by === "older"
+                      ? "text-primary-900"
+                      : "text-txtblack"
+                      } hover:bg-slate-50 transition duration-150 ease-in-out`}
                   >
                     Older
                   </div>
@@ -159,7 +157,7 @@ const RoyaltySplitter = () => {
                     (asset) => asset.asset_type === "image"
                   );
                   return (
-                    <CollectionSplitter
+                    <CollectionSplitterItem
                       members={collection?.members}
                       name={collection.name}
                       status={collection?.royalty_splitter?.status}

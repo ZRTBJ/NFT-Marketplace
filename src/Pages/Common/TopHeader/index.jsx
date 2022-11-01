@@ -60,18 +60,6 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
       : []
   );
 
-  /**
-   * TODO: In header, we check if user logged in, and should check metamask logged in, otherwise logout and navigate them to logi
-   */
-  useEffect(() => {
-    if (userinfo.id) {
-      console.log(userinfo);
-      history.push(`/profile/${userinfo.id}/`);
-    } else {
-      history.push(`/profile/login`);
-    }
-  }, []);
-
   /** Metamask network change detection */
   useEffect(() => {
     if (window?.ethereum) {
