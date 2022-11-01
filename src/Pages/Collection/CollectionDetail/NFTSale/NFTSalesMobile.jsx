@@ -1,6 +1,7 @@
 import manImg from "assets/images/image-default.svg";
 import Polygon from "assets/images/network/polygon.svg";
 import dayjs from "dayjs";
+import { walletAddressTruncate } from "util/walletAddressTruncate";
 
 const NFTSalesMobile = ({ items }) => {
   return (
@@ -45,11 +46,11 @@ const NFTSalesMobile = ({ items }) => {
                 </div>
               </div>
               <div className="flex items-center mt-4">
-                <div>
+                <div className="flex-1">
                   <span className="text-[14px] text-[#303548] pb-2 block">
                     Buyer
                   </span>
-                  <span>{item.user_eoa ? item.user_eoa : "-"}</span>
+                  <span>{item.user_eoa ? walletAddressTruncate(item.user_eoa) : "-"}</span>
                 </div>
                 <div className="ml-10">
                   <span className="text-[14px] text-[#303548] pb-2 block">
