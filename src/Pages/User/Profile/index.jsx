@@ -36,6 +36,9 @@ import Spinner from "components/Commons/Spinner";
 import { NETWORKS } from "config/networks";
 import WalletConnectModal from "../Login/WalletConnectModal";
 import { ls_GetUserID } from "util/ApplicationStorage";
+import { getCurrentNetworkId } from "util/MetaMask";
+import NetworkHandlerModal from "components/Modals/NetworkHandlerModal";
+
 import nftSvg from "assets/images/profile/nftSvg.svg";
 import daoCreate from "assets/images/profile/daoCreate.svg";
 import CreateNFTModal from "Pages/Project/CreateDAOandNFT/components/CreateNFTModal.jsx";
@@ -61,6 +64,7 @@ const Profile = () => {
     { title: "linkFacebook", icon: "facebook", value: "" },
     { title: "webLink1", icon: "link", value: "" },
   ];
+  const [showNetworkHandler, setShowNetworkHandler] = useState(false);
 
   const [projectList, setProjectList] = useState([]);
   // project List End
@@ -74,6 +78,7 @@ const Profile = () => {
   const [errorModal, setErrorModal] = useState(false);
   const [totalRoyality, setTotalRoyality] = useState(0);
   const [royaltyErrormessage, setRoyaltyErrormessage] = useState("");
+  const [daoNetwork, setDAONetwork] = useState("");
   async function onRoyaltiesListSort(e) {
     setRoyaltiesListSortBy(e.target.value);
     let oldRoyalties = [...royaltiesList];
@@ -287,51 +292,60 @@ const Profile = () => {
     };
     return await claimRoyalty(payload);
   }
+
   async function claimRoyaltyById(royalty) {
-    setRoyaltyData(royalty, "loadingTrue");
-    const payload = {
-      royalty_uid: royalty.royalty_id,
-    };
-    let config = {};
-    let hasConfig = false;
-    await claimRoyalty(payload)
-      .then((res) => {
-        if (res.code === 0) {
-          config = res.config;
-          hasConfig = true;
-        } else {
+    let networkId = await getCurrentNetworkId();
+    setDAONetwork(royalty.blockchain);
+    if (Number(royalty.blockchain) === networkId) {
+      setRoyaltyData(royalty, "loadingTrue");
+      const payload = {
+        royalty_uid: royalty.royalty_id,
+      };
+      let config = {};
+      let hasConfig = false;
+      await claimRoyalty(payload)
+        .then((res) => {
+          if (res.code === 0) {
+            config = res.config;
+            hasConfig = true;
+          } else {
+            setIsLoading(false);
+            setErrorModal(true);
+            setRoyaltyErrormessage(res.message);
+            setRoyaltyData(royalty, "loadingFalse");
+          }
+        })
+        .catch(() => {
           setIsLoading(false);
           setErrorModal(true);
-          setRoyaltyErrormessage(res.message);
-          setRoyaltyData(royalty, "loadingFalse");
-        }
-      })
-      .catch(() => {
-        setIsLoading(false);
-        setErrorModal(true);
-      });
-    if (hasConfig) {
-      const result = await royaltyClaim(provider, config);
-      if (result) {
-        const data = {
-          id: royalty.royalty_id,
-          transaction_hash: result,
-        };
-        await claimRoyaltyWithtnx(data).then((res) => {
-          if (res.function.status === "success") {
-            setRoyaltyData(royalty, "loadingFalse");
-            setRoyaltyData(royalty, "claimButtonDisable");
-            toast.success(`Successfully claimed for  ${royalty.project_name}`);
-          }
-          if (res.function.status === "failed") {
-            setRoyaltyData(royalty, "loadingFalse");
-            toast.error(`Failed, ${res.function.message}`);
-          }
         });
+      if (hasConfig) {
+        const result = await royaltyClaim(provider, config);
+        if (result) {
+          const data = {
+            id: royalty.royalty_id,
+            transaction_hash: result,
+          };
+          await claimRoyaltyWithtnx(data).then((res) => {
+            if (res.function.status === "success") {
+              setRoyaltyData(royalty, "loadingFalse");
+              setRoyaltyData(royalty, "claimButtonDisable");
+              toast.success(
+                `Successfully claimed for  ${royalty.project_name}`
+              );
+            }
+            if (res.function.status === "failed") {
+              setRoyaltyData(royalty, "loadingFalse");
+              toast.error(`Failed, ${res.function.message}`);
+            }
+          });
+        }
+      } else {
+        setErrorModal(true);
+        setRoyaltyErrormessage("no config found");
       }
     } else {
-      setErrorModal(true);
-      setRoyaltyErrormessage("no config found");
+      setShowNetworkHandler(true);
     }
   }
   async function getNftList() {
@@ -504,6 +518,13 @@ const Profile = () => {
     <>
       {!showLoginModal && (
         <>
+          {showNetworkHandler && (
+            <NetworkHandlerModal
+              show={showNetworkHandler}
+              handleClose={() => setShowNetworkHandler(false)}
+              projectNetwork={daoNetwork}
+            />
+          )}
           <div className="container mx-auto">
             {/* profile information section */}
             <div className="lg:flex items-center">

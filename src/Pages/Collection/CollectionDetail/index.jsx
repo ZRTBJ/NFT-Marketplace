@@ -39,6 +39,8 @@ import PublishRoyaltyModal from "Pages/Collection/CollectionDetail/RoyaltySplitt
 import SalesSuccessModal from "Pages/Collection/SaleSetting/SalesSuccessModal";
 import defaultCover from "assets/images/image-default.svg";
 import { walletAddressTruncate } from "util/WalletUtils";
+import { getCurrentNetworkId } from "util/MetaMask";
+import NetworkHandlerModal from "components/Modals/NetworkHandlerModal";
 
 const TABLE_HEADERS = [
   { id: 0, label: "Wallet Address" },
@@ -90,6 +92,7 @@ const CollectionDetail = () => {
   const [daoInfo, setDaoInfo] = useState({});
   const [nftShareURL, setNFTShareURL] = useState("");
   const [membershipNFTId, setMembershipNFTId] = useState("");
+  const [showNetworkHandler, setShowNetworkHandler] = useState(false);
   const [collectionNotUpdatableModal, setCollectionNotUpdatableModal] =
     useState(false);
 
@@ -419,8 +422,33 @@ const CollectionDetail = () => {
     }
   };
 
+  const handlePublishModal = async () => {
+    let networkId = await getCurrentNetworkId();
+    if (Number(projectNetwork) === networkId) {
+      setShowPublishModal(true);
+    } else {
+      setShowNetworkHandler(true);
+    }
+  };
+
+  const handlePublishSpliter = async () => {
+    let networkId = await getCurrentNetworkId();
+    if (Number(projectNetwork) === networkId) {
+      setShowPublishRoyaltySpliterConfirmModal(true);
+    } else {
+      setShowNetworkHandler(true);
+    }
+  };
+
   return (
     <div className="mx-4 md:mx-0">
+      {showNetworkHandler && (
+        <NetworkHandlerModal
+          show={showNetworkHandler}
+          handleClose={() => setShowNetworkHandler(false)}
+          projectNetwork={projectNetwork}
+        />
+      )}
       {ShowPublishModal && (
         <PublishCollectionModal
           show={ShowPublishModal}
@@ -781,7 +809,7 @@ const CollectionDetail = () => {
               )}
               {Collection?.status !== "published" && Collection?.is_owner && (
                 <a
-                  onClick={() => setShowPublishModal(true)}
+                  onClick={handlePublishModal}
                   className="contained-button ml-4 font-satoshi-bold"
                 >
                   Publish
@@ -1054,9 +1082,7 @@ const CollectionDetail = () => {
                     {!hasPublishedRoyaltySplitter && (
                       <button
                         className="block ml-auto bg-primary-100 text-primary-900 p-3 font-black text-[14px]"
-                        onClick={() =>
-                          setShowPublishRoyaltySpliterConfirmModal(true)
-                        }
+                        onClick={handlePublishSpliter}
                         disabled={
                           !canPublishRoyaltySplitter ||
                           isPublishingRoyaltySplitter

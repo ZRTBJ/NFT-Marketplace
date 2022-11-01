@@ -34,6 +34,9 @@ import SalesSettingsTab from "Pages/Project/ProjectDetails/SalesSettingTab/Sales
 import SalesSuccessModal from "Pages/Collection/SaleSetting/SalesSuccessModal";
 import RoyaltySplitter from "./RoyaltySplitter/RoyaltySplitter";
 import { NETWORKS } from "config/networks";
+import NetworkHandlerModal from "components/Modals/NetworkHandlerModal";
+import { getCurrentNetworkId } from "util/MetaMask";
+
 export default function ProjectDetails(props) {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -73,6 +76,7 @@ export default function ProjectDetails(props) {
     currency: "",
     balanceUSD: 0,
   });
+  const [showNetworkHandler, setShowNetworkHandler] = useState(false);
   const fileUploadNotification = useSelector((state) =>
     state?.notifications?.notificationData
       ? state?.notifications?.notificationData
@@ -274,9 +278,25 @@ export default function ProjectDetails(props) {
     }
   }, [fileUploadNotification]);
 
+  const handlePublishModal = async () => {
+    let networkId = await getCurrentNetworkId();
+    if (Number(project?.blockchain) === networkId) {
+      setShowPublishModal(true);
+    } else {
+      setShowNetworkHandler(true);
+    }
+  };
+
   return (
     <>
       {isLoading && <div className="loading"></div>}
+      {showNetworkHandler && (
+        <NetworkHandlerModal
+          show={showNetworkHandler}
+          handleClose={() => setShowNetworkHandler(false)}
+          projectNetwork={project?.blockchain}
+        />
+      )}
       {!isLoading && (
         <div className="mx-4">
           {/* dekstop gallery */}
@@ -514,7 +534,7 @@ export default function ProjectDetails(props) {
                       ) : (
                         <>
                           <button
-                            onClick={() => setShowPublishModal(true)}
+                            onClick={handlePublishModal}
                             className="contained-button w-[120px] text-center !px-0 mr-4 cursor-pointer font-satoshi-bold cursor-pointer"
                           >
                             Publish

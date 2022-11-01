@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { formatNumber } from 'accounting';
+import { formatNumber } from "accounting";
 import {
   getNftDetails,
   mintProductOrMembershipNft,
@@ -32,6 +32,8 @@ import { createMembershipMintNFT } from "Pages/NFT/DetailsNFT/MintNFT/deploy-mem
 import EmbedNFTModal from "Pages/NFT/Embed/EmbedNFTModal";
 import { NETWORKS } from "config/networks";
 import { ls_GetChainID } from "util/ApplicationStorage";
+import { getCurrentNetworkId } from "util/MetaMask";
+import NetworkHandlerModal from "components/Modals/NetworkHandlerModal";
 
 export default function DetailsNFT(props) {
   const userinfo = useSelector((state) => state.user.userinfo);
@@ -47,41 +49,14 @@ export default function DetailsNFT(props) {
   const [mintData, setMintData] = useState();
   const [hash, setHash] = useState("");
   const [showEmbedNFT, setShowEmbedNFT] = useState(false);
+  const [showNetworkHandler, setShowNetworkHandler] = useState(false);
 
   const provider = createProvider();
 
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   const mintDataStatus = inviteData.find((x) => x.function_uuid === funcId);
-  //   if (mintDataStatus && mintDataStatus.data) {
-  //     const data = JSON.parse(mintDataStatus.data);
-  //     console.log(data);
-  //     if (data?.fn_status === "success") {
-  //       nftDetails();
-  //       setHash(data?.fn_response_data?.transactionHash);
-  //       setTransactionWaitingModal(false);
-  //       setNftSuccessModal(true);
-  //       setMintData(data);
-  //       setErrorMsg("");
-  //     } else {
-  //       setTransactionWaitingModal(false);
-  //       let message = data?.fn_response_data?.ErrorReason;
-  //       let errorMessage = message && JSON.parse(message);
-  //       setErrorMsg(errorMessage?.reason);
-  //     }
-  //   } else {
-  //     let message = mintDataStatus?.data?.fn_response_data?.ErrorReason;
-  //     let errorMessage = message && JSON.parse(message);
-  //     if (errorMessage) {
-  //       setTransactionWaitingModal(false);
-  //       setErrorMsg(errorMessage?.reason);
-  //     }
-  //   }
-  // }, [inviteData]);
   const { type, id } = useParams();
   const handleContract = async (config) => {
-    console.log(config);
     try {
       const mintContract = createMintInstance(config.contract, provider);
       const membershipMintContract = createMembsrshipMintInstance(
@@ -91,18 +66,18 @@ export default function DetailsNFT(props) {
       const response =
         type === "membership"
           ? await createMembershipMintNFT(
-            membershipMintContract,
-            config.metadataUrl,
-            id,
-            provider,
-            config.price
-          )
+              membershipMintContract,
+              config.metadataUrl,
+              id,
+              provider,
+              config.price
+            )
           : await createMintNFT(
-            mintContract,
-            config.metadataUrl,
-            config.price,
-            provider
-          );
+              mintContract,
+              config.metadataUrl,
+              config.price,
+              provider
+            );
       if (response) {
         setHash(response?.transactionHash);
         let data = {
@@ -186,7 +161,8 @@ export default function DetailsNFT(props) {
             handleContract(resp.config);
           }
         } else {
-          setErrorMsg(resp.message);
+          let message = resp?.function?.message || resp.message;
+          setErrorMsg(message);
           setTransactionWaitingModal(false);
         }
       })
@@ -202,13 +178,30 @@ export default function DetailsNFT(props) {
   }
 
   function handleMint(params) {
-    // console.log(userinfo);
     if (userinfo.eoa) {
       setTransactionModal(true);
     } else {
       setShowModal(true);
     }
   }
+
+  const getCurrentNftNetwork = () => {
+    let currency = nft?.more_info?.currency;
+    let networks = Object.values(NETWORKS);
+    let currentNetwork = networks.find((value) => value.value === currency);
+
+    return currentNetwork.network;
+  };
+
+  const handlePublishModal = async () => {
+    let nftNetwork = await getCurrentNftNetwork();
+    let networkId = await getCurrentNetworkId();
+    if (nftNetwork === networkId) {
+      setTransactionModal(true);
+    } else {
+      setShowNetworkHandler(true);
+    }
+  };
 
   let info = nft?.more_info;
 
@@ -217,6 +210,13 @@ export default function DetailsNFT(props) {
 
   return (
     <>
+      {showNetworkHandler && (
+        <NetworkHandlerModal
+          show={showNetworkHandler}
+          handleClose={() => setShowNetworkHandler(false)}
+          projectNetwork={getCurrentNftNetwork()}
+        />
+      )}
       {comingSoon && (
         <SuccessModal
           show={comingSoon}
@@ -234,7 +234,7 @@ export default function DetailsNFT(props) {
           nftName={nft?.lnft?.name}
           address={userinfo?.eoa}
           collectionName={"Collection1"}
-          blockChain={ls_GetChainID()} //TODO: This should show current wallet, not user's previously logged in data
+          blockChain={getCurrentNftNetwork()}
           price={info?.price}
           currency={info?.currency}
           handleNext={() => handleProceedPayment("")}
@@ -256,7 +256,7 @@ export default function DetailsNFT(props) {
           transactionHash={hash}
           collectionName={"Collection1"}
           shareUrl={`${nft?.lnft?.invitation_code}`}
-        // handleNext={handleProceedPayment}
+          // handleNext={handleProceedPayment}
         />
       )}
       {errorMsg && (
@@ -421,7 +421,8 @@ export default function DetailsNFT(props) {
                 :
               </span>
               <span className="text-textSubtle leading-8">
-                {formatNumber(availableSupply)} / {formatNumber(nft?.lnft?.supply)}
+                {formatNumber(availableSupply)} /{" "}
+                {formatNumber(nft?.lnft?.supply)}
               </span>
             </div>
             <h3 className="txtblack">Description</h3>
@@ -488,7 +489,7 @@ export default function DetailsNFT(props) {
                 <div className="text-center mt-[62px] mb-5">
                   <button
                     className=" w-[140px] !text-[16px] h-[44px] contained-button "
-                    onClick={() => setTransactionModal(true)}
+                    onClick={handlePublishModal}
                   >
                     Mint NFT
                   </button>

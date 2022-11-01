@@ -19,6 +19,8 @@ import {
   ls_SetUserID,
   ls_SetWalletAddress,
 } from "util/ApplicationStorage";
+import { NETWORKS } from "config/networks";
+import WrongNetwork from "./components/WrongNetwork";
 
 const WalletConnectModal = ({
   showModal,
@@ -37,6 +39,7 @@ const WalletConnectModal = ({
   const [showMessage, setshowMessage] = useState(false);
   const [metamaskConnectAttempt, setMetamaskConnectAttempt] = useState(0);
   const [metamaskAccount, setMetamaskAccount] = useState("");
+  const [isWrongNetwork, setIsWrongNetwork] = useState(false);
   const authDispatch = useAuthDispatch();
   const [userId, setUserId] = useState(context ? context.user : "");
 
@@ -63,22 +66,29 @@ const WalletConnectModal = ({
       }, 1000);
       const isConnected = await isWalletConnected();
       const account = await getWalletAccount();
-      if (isConnected && account && account.length > 5) {
-        setMetamaskConnectAttempt(0);
-        setMetamaskAccount(account);
-        getPersonalSign()
-          .then((signature) => {
-            if (userinfo && !userinfo["display_name"]) {
-              userLogin(account, signature, "metamask");
-            }
-          })
-          .catch((error) => {
-            alert(error.message);
-          });
-      } else {
-        if (!isConnected && !account) {
-          window.location.reload();
+      const userProvider = new ethers.providers.Web3Provider(window.ethereum);
+      const userNetwork = await userProvider.getNetwork();
+      if (NETWORKS?.[userNetwork.chainId]) {
+        setIsWrongNetwork(false);
+        if (isConnected && account && account.length > 5) {
+          setMetamaskConnectAttempt(0);
+          setMetamaskAccount(account);
+          getPersonalSign()
+            .then((signature) => {
+              if (userinfo && !userinfo["display_name"]) {
+                userLogin(account, signature, "metamask");
+              }
+            })
+            .catch((error) => {
+              alert(error.message);
+            });
+        } else {
+          if (!isConnected && !account) {
+            window.location.reload();
+          }
         }
+      } else {
+        setIsWrongNetwork(true);
       }
     } else {
       setshowMessage(true);
@@ -156,9 +166,16 @@ const WalletConnectModal = ({
         show={showModal}
         handleClose={() => closeModal()}
       >
+        {isWrongNetwork && (
+          <WrongNetwork
+            show={isWrongNetwork}
+            handleClose={() => setIsWrongNetwork(false)}
+          />
+        )}
         <div
-          className={`text-center px-[11px] md:px-[0px] mb-8 text-black ${isLoading ? "loading" : ""
-            }`}
+          className={`text-center px-[11px] md:px-[0px] mb-8 text-black ${
+            isLoading ? "loading" : ""
+          }`}
         >
           <h1 className="text-[30px] md:text-[46px]">Connect wallet</h1>
           <p className="mt-3 text-white-shade-600 font-bold break-normal">
@@ -216,7 +233,7 @@ const WalletConnectModal = ({
                     alt="metamask wallet login button"
                   />
                   <div className="ml-[11px] font-satoshi-bold font-black">
-                    {metamaskAccount ? <p>MetaMask</p> : <span>MetaMask</span>}
+                    <p>MetaMask</p>
                   </div>
                 </div>
                 {/* <div className="ml-auto bg-primary-900 px-2 py-1 text-[10px] rounded-lg font-satoshi-bold font-black text-white">

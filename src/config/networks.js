@@ -23,6 +23,7 @@ const TESTNET = {
       address.CreateMembershipCollectionFactory,
     masterRoyaltySplitter: address.RoyaltySplitterMasterCopy,
     createRoyaltySplitter: address.RoyaltySplitterFactory,
+    network: 5,
     gnosis: `${gnosisFundTransferUrl}/gor/`,
   },
   80001: {
@@ -44,6 +45,7 @@ const TESTNET = {
       address.CreateMembershipCollectionFactoryMumbai,
     masterRoyaltySplitter: address.RoyaltySplitterMasterCopyMumbai,
     createRoyaltySplitter: address.RoyaltySplitterFactoryMumbai,
+    network: 80001,
     gnosis: `${gnosisFundTransferUrl}/matic/`,
   },
 };
@@ -68,6 +70,7 @@ const MAINNET = {
       address.CreateMembershipCollectionFactory,
     masterRoyaltySplitter: address.RoyaltySplitterMasterCopy,
     createRoyaltySplitter: address.RoyaltySplitterFactory,
+    network: 1,
     gnosis: `${gnosisFundTransferUrl}/eth/`,
   },
   137: {
@@ -88,6 +91,7 @@ const MAINNET = {
       address.CreateMembershipCollectionFactory,
     masterRoyaltySplitter: address.RoyaltySplitterMasterCopy,
     createRoyaltySplitter: address.RoyaltySplitterFactory,
+    network: 137,
     gnosis: `${gnosisFundTransferUrl}/matic/`,
   },
 };

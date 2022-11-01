@@ -1,7 +1,10 @@
 import MetaMaskOnboarding from "@metamask/onboarding";
+import { NETWORKS } from "config/networks";
+import Web3 from "web3";
 
 const currentUrl = new URL(window.location.href);
-const forwarderOrigin = currentUrl.hostname === "localhost" ? "http://localhost:3000" : undefined;
+const forwarderOrigin =
+  currentUrl.hostname === "localhost" ? "http://localhost:3000" : undefined;
 let onboarding = new MetaMaskOnboarding({ forwarderOrigin });
 
 export async function getWalletAccount() {
@@ -82,3 +85,31 @@ function onBoardBrowserPlugin() {
     onboarding.stopOnboarding();
   }
 }
+
+//To get current Metamask wallet network ID
+export const getCurrentNetworkId = async () => {
+  if (window.ethereum) {
+    let network = window.ethereum?.networkVersion;
+    return Number(network);
+  } else {
+    onBoardBrowserPlugin();
+    return;
+  }
+};
+
+//To Switch network
+export const handleSwitchNetwork = async (projectNetwork) => {
+  if (window.ethereum) {
+    try {
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: Web3.utils.toHex(projectNetwork) }],
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  } else {
+    onBoardBrowserPlugin();
+    return;
+  }
+};

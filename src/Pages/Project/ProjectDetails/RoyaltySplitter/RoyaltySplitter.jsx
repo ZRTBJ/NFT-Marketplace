@@ -6,7 +6,7 @@ import Spinner from "components/Commons/Spinner";
 import { DebounceInput } from "react-debounce-input";
 import CollectionSplitterItem from "./components/CollectionSplitterItem";
 
-const RoyaltySplitter = () => {
+const RoyaltySplitter = ({ projectNetwork }) => {
   const { id } = useParams();
   const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -167,6 +167,7 @@ const RoyaltySplitter = () => {
                       setOpenedCollection={setOpenedCollection}
                       date={collection.created_at}
                       getProjectCollections={getProjectCollections}
+                      projectNetwork={projectNetwork}
                     />
                   );
                 })}

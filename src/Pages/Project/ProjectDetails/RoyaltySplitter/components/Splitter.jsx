@@ -17,6 +17,8 @@ import PublishRoyaltyModal from "Pages/Collection/CollectionDetail/RoyaltySplitt
 import PublishCollectionModal from "Pages/Collection/CollectionDetail/Publish/PublishCollectionModal";
 import Spinner from "components/Commons/Spinner";
 import ReactPaginate from "react-paginate";
+import { getCurrentNetworkId } from "util/MetaMask";
+import NetworkHandlerModal from "components/Modals/NetworkHandlerModal";
 
 const TABLE_HEADERS = [
   { id: 0, label: "Wallet Address" },
@@ -26,7 +28,7 @@ const TABLE_HEADERS = [
   { id: 4, label: "Action" },
 ];
 
-const Splitter = ({ collectionId, getProjectCollections }) => {
+const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
   const [ShowPercentError, setShowPercentError] = useState(false);
   const [AutoAssign, setAutoAssign] = useState(false);
   const [isEdit, setIsEdit] = useState(null);
@@ -42,6 +44,7 @@ const Splitter = ({ collectionId, getProjectCollections }) => {
   });
   const [Collection, setCollection] = useState();
   const [projectID, setProjectID] = useState("");
+  const [showNetworkHandler, setShowNetworkHandler] = useState(false);
 
   const hasPublishedRoyaltySplitter = useMemo(
     () => Collection?.royalty_splitter?.status === "published",
@@ -236,6 +239,15 @@ const Splitter = ({ collectionId, getProjectCollections }) => {
     setPayload(newPayload);
   };
 
+  const handlePublishSpliter = async () => {
+    let networkId = await getCurrentNetworkId();
+    if (Number(projectNetwork) === networkId) {
+      setShowPublishRoyaltySpliterConfirmModal(true);
+    } else {
+      setShowNetworkHandler(true);
+    }
+  };
+
   const indexOfLastPost = payload.page * payload.limit;
 
   const indexOfFirstPost = indexOfLastPost - payload.limit;
@@ -250,6 +262,13 @@ const Splitter = ({ collectionId, getProjectCollections }) => {
         <div className="grid mt-[40px] place-items-center">
           <Spinner />
         </div>
+      )}
+      {showNetworkHandler && (
+        <NetworkHandlerModal
+          show={showNetworkHandler}
+          handleClose={() => setShowNetworkHandler(false)}
+          projectNetwork={projectNetwork}
+        />
       )}
       {AutoAssign && (
         <ConfirmationModal
@@ -394,7 +413,7 @@ const Splitter = ({ collectionId, getProjectCollections }) => {
             {!hasPublishedRoyaltySplitter && (
               <button
                 className="block ml-auto bg-primary-100 text-primary-900 p-3 font-black text-[14px]"
-                onClick={() => setShowPublishRoyaltySpliterConfirmModal(true)}
+                onClick={handlePublishSpliter}
                 disabled={
                   !canPublishRoyaltySplitter || isPublishingRoyaltySplitter
                 }
