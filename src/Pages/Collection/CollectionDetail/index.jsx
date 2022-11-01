@@ -285,30 +285,25 @@ const CollectionDetail = () => {
     e.stopPropagation();
     e.preventDefault();
     setShowOptions(null);
-    if (!Collection?.updatable) {
-      setCollectionNotUpdatableModal(true);
-    } else {
-      if (Collection?.status === "draft") {
+
+    if (Collection?.status === "draft") {
+      history.push(
+        `${
+          Collection?.type === "product"
+            ? `/product-nft?collectionId=${collectionId}&nftId=${nft.id}`
+            : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}&nftId=${nft.id}`
+        }`
+      );
+    } else if (Collection?.status === "published") {
+      if (Collection?.type === "membership") {
         history.push(
-          `${
-            Collection?.type === "product"
-              ? `/product-nft?collectionId=${collectionId}&nftId=${nft.id}`
-              : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}&nftId=${nft.id}`
-          }`
+          `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}&nftId=${nft.id}`
         );
-      } else if (Collection.status === "published") {
-        if (Collection?.type === "product") {
-          if (nft.freeze_metadata) {
-            setCollectionNotUpdatableModal(true);
-          } else {
-            history.push(
-              `${
-                Collection?.type === "product"
-                  ? `/product-nft?collectionId=${collectionId}&nftId=${nft.id}`
-                  : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}&nftId=${nft.id}`
-              }`
-            );
-          }
+      } else if (Collection.type === "product") {
+        if (Collection?.updatable && !nft.freeze_metadata) {
+          history.push(
+            `/product-nft?collectionId=${collectionId}&nftId=${nft.id}`
+          );
         } else {
           setCollectionNotUpdatableModal(true);
         }
