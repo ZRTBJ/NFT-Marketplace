@@ -1038,6 +1038,7 @@ export default function ProjectDetails(props) {
           )}
           {showTransferFundModal && (
             <LeavingSite
+              network={project.blockchain}
               treasuryAddress={project.treasury_wallet}
               show={showTransferFundModal}
               handleClose={() => setShowTransferFundModal(false)}

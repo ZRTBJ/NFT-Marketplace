@@ -2,6 +2,8 @@ import Eth from "assets/images/eth.svg";
 import Matic from "assets/images/polygon.svg";
 import address from "./deploy.json";
 
+const gnosisFundTransferUrl = "https://gnosis-safe.io/app";
+
 const TESTNET = {
   5: {
     networkName: "Goerli Testnet",
@@ -21,6 +23,7 @@ const TESTNET = {
       address.CreateMembershipCollectionFactory,
     masterRoyaltySplitter: address.RoyaltySplitterMasterCopy,
     createRoyaltySplitter: address.RoyaltySplitterFactory,
+    gnosis: `${gnosisFundTransferUrl}/gor/`,
   },
   80001: {
     networkName: "Polygon Testnet Mumbai",
@@ -41,6 +44,7 @@ const TESTNET = {
       address.CreateMembershipCollectionFactoryMumbai,
     masterRoyaltySplitter: address.RoyaltySplitterMasterCopyMumbai,
     createRoyaltySplitter: address.RoyaltySplitterFactoryMumbai,
+    gnosis: `${gnosisFundTransferUrl}/matic/`,
   },
 };
 
@@ -64,6 +68,7 @@ const MAINNET = {
       address.CreateMembershipCollectionFactory,
     masterRoyaltySplitter: address.RoyaltySplitterMasterCopy,
     createRoyaltySplitter: address.RoyaltySplitterFactory,
+    gnosis: `${gnosisFundTransferUrl}/eth/`,
   },
   137: {
     networkName: "Polygon Mainnet",
@@ -83,6 +88,7 @@ const MAINNET = {
       address.CreateMembershipCollectionFactory,
     masterRoyaltySplitter: address.RoyaltySplitterMasterCopy,
     createRoyaltySplitter: address.RoyaltySplitterFactory,
+    gnosis: `${gnosisFundTransferUrl}/matic/`,
   },
 };
 
