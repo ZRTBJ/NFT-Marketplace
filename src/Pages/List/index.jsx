@@ -20,6 +20,7 @@ import { updateMetadata } from "Pages/User/Profile/update-metadata";
 import { createProvider } from "util/smartcontract/provider";
 import { createMintInstance } from "config/ABI/mint-nft";
 import { toast } from "react-toastify";
+import emptyStateCommon from "assets/images/profile/emptyStateCommon.svg";
 function List() {
   const provider = createProvider();
   function useQuery() {
@@ -390,65 +391,95 @@ function List() {
           ) : null}
           {isSearching && searchList.length === 0 ? (
             <div className="p-5 text-center min-h-[100px] text-primary-700">
-              <h2> Nothing found</h2>
+              <div className="text-center mt-6 text-textSubtle">
+                <img
+                  src={emptyStateCommon}
+                  className="h-[210px] w-[315px] m-auto"
+                  alt=""
+                />
+                <p className="text-subtitle font-bold">Nothing Found</p>
+              </div>
             </div>
           ) : null}
-          {query.get("type") === "collection" && (
-            <section className="flex flex-wrap items-start  space-x-4 justify-center md:justify-start">
-              {isSearching
-                ? searchList.map((item, index) => (
-                    <div key={item.id}>
-                      <CollectionCard key={index} collection={item} />
-                    </div>
-                  ))
-                : projectList.map((item, index) => (
-                    <div key={item.id}>
-                      <CollectionCard key={item.id} collection={item} />
-                    </div>
-                  ))}
-            </section>
-          )}
+          {!isLoading && (
+            <>
+              {projectList.length > 0 ? (
+                <>
+                  {query.get("type") === "collection" && (
+                    <section className="flex flex-wrap items-start  space-x-4 justify-center md:justify-start">
+                      {isSearching
+                        ? searchList.map((item, index) => (
+                            <div key={item.id}>
+                              <CollectionCard key={index} collection={item} />
+                            </div>
+                          ))
+                        : projectList.map((item, index) => (
+                            <div key={item.id}>
+                              <CollectionCard key={item.id} collection={item} />
+                            </div>
+                          ))}
+                    </section>
+                  )}
 
-          {query.get("type") === "dao" && (
-            <section className="flex flex-wrap items-center  justify-center md:justify-start">
-              {isSearching
-                ? searchList.map((item, index) => (
-                    <div key={item.id}>
-                      <DAOCard item={item} key={item.id} />
-                    </div>
-                  ))
-                : projectList.map((item, index) => (
-                    <div key={item.id}>
-                      <DAOCard item={item} key={item.id} />
-                    </div>
-                  ))}
-            </section>
-          )}
+                  {query.get("type") === "dao" && (
+                    <section className="flex flex-wrap items-center  justify-center md:justify-start">
+                      {isSearching
+                        ? searchList.map((item, index) => (
+                            <div key={item.id}>
+                              <DAOCard item={item} key={item.id} />
+                            </div>
+                          ))
+                        : projectList.map((item, index) => (
+                            <div key={item.id}>
+                              <DAOCard item={item} key={item.id} />
+                            </div>
+                          ))}
+                    </section>
+                  )}
 
-          {query.get("type") === "nft" && (
-            <section className="flex flex-wrap items-center space-x-4 justify-center md:justify-start">
-              {isSearching
-                ? searchList.map((item, index) => (
-                    <div key={item.id}>
-                      <NFTListCard
-                        nft={item}
-                        projectWork="ethereum"
-                        refresh={onRefreshNft}
-                        loading={item.loading}
+                  {query.get("type") === "nft" && (
+                    <section className="flex flex-wrap items-center space-x-4 justify-center md:justify-start">
+                      {isSearching
+                        ? searchList.map((nft, index) => (
+                            <div key={`${nft.id}-${nft.token_id}`}>
+                              <NFTListCard
+                                nft={nft}
+                                projectWork="ethereum"
+                                refresh={onRefreshNft}
+                                loading={nft.loading}
+                              />
+                            </div>
+                          ))
+                        : projectList.map((nft, index) => (
+                            <div key={`${nft.id}-${nft.token_id}`}>
+                              <NFTListCard
+                                nft={nft}
+                                projectWork="ethereum"
+                                refresh={onRefreshNft}
+                                loading={nft.loading}
+                              />
+                            </div>
+                          ))}
+                    </section>
+                  )}
+                </>
+              ) : (
+                <>
+                  <div className="p-5 text-center min-h-[100px] text-primary-700">
+                    <div className="text-center mt-6 text-textSubtle">
+                      <img
+                        src={emptyStateCommon}
+                        className="h-[210px] w-[315px] m-auto"
+                        alt=""
                       />
+                      <p className="text-subtitle font-bold">
+                        You don`t have any {query.get("type")} yet
+                      </p>
                     </div>
-                  ))
-                : projectList.map((item, index) => (
-                    <div key={item.id}>
-                      <NFTListCard
-                        nft={item}
-                        projectWork="ethereum"
-                        refresh={onRefreshNft}
-                        loading={item.loading}
-                      />
-                    </div>
-                  ))}
-            </section>
+                  </div>
+                </>
+              )}
+            </>
           )}
         </section>
 
