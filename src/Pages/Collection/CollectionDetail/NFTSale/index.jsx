@@ -32,6 +32,7 @@ const time = ["Day", "Week", "Month"];
 
 const NFTSales = ({ items }) => {
   const [selectedTime, setSelectedTime] = useState("Day");
+  console.log('items', items);
   return (
     <div>
       <div className="flex items-start md:items-center pb-7 border-b-[1px] mb-6 border-[#E3DEEA]">
@@ -95,7 +96,7 @@ const NFTSales = ({ items }) => {
                   </td>
                   <td className="py-4 px-5">
                     <span>
-                      {dayjs(r.purchase_time).format("DD/MM/YYYY - HH:mm")}
+                      {dayjs(r.purchase_time * 1000).format("DD/MM/YYYY - HH:mm")}
                     </span>
                   </td>
                 </tr>
