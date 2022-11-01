@@ -3,7 +3,7 @@ import {
   getPersonalSign,
   isWalletConnected,
   getWalletAccount,
-} from "util/MetaMaskWallet";
+} from "util/MetaMask";
 import { ethers } from "ethers";
 import { useSelector } from "react-redux";
 import Modal from "components/Commons/Modal";
