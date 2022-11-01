@@ -1,5 +1,7 @@
 import Modal from "components/Commons/Modal";
 import { NETWORKS } from "config/networks";
+import { walletAddressTruncate } from "util/WalletUtils";
+
 const TransactionModal = ({
   handleClose,
   show,
@@ -28,11 +30,14 @@ const TransactionModal = ({
         </p>
         <div className="mt-6 mb-6 bg-primary-50 md:h-[83px] rounded-[12px] p-4 flex flex-wrap items-center">
           <div className="flex items-center">
-            <img src={NETWORKS[blockChain].icon}
-              alt="Eth" className="w-[46px] h-[46px]" />
+            <img
+              src={NETWORKS[blockChain].icon}
+              alt="Eth"
+              className="w-[46px] h-[46px]"
+            />
             <div className="ml-3">
               <p className="text-[18px] font-black">
-                {address?.slice(0, 15)}...
+                {walletAddressTruncate(address)}
               </p>
               <p>{NETWORKS[blockChain].networkName}</p>
             </div>
@@ -44,7 +49,9 @@ const TransactionModal = ({
         <div className="mb-6">
           <div className="flex flex-wrap items-center border-b-[1px] border-b-[#C7CEE6] pb-3">
             <p className="font-black text-[14px]">Price</p>
-            <p className=" ml-auto text-[14px]">{price} {currency?.toUpperCase()}</p>
+            <p className=" ml-auto text-[14px]">
+              {price} {currency?.toUpperCase()}
+            </p>
           </div>
           {/* <div className="mt-4  flex flex-wrap items-center">
                 <p className="font-black text-[14px]">Gas Fee</p>

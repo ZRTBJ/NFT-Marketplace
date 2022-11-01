@@ -616,48 +616,52 @@ export default function ProjectDetails(props) {
                 data-tabs-toggle="#myTabContent"
                 role="tablist"
               >
-                <li
-                  className="mr-2"
-                  role="presentation"
-                  onClick={() => setSelectedTab(1)}
-                >
-                  <button
-                    className={`inline-block py-2 md:p-4 md:text-lg rounded-t-lg ${
-                      selectedTab === 1
-                        ? "border-b-2 border-primary-900 text-primary-900"
-                        : "border-transparent text-textSubtle"
-                    } hover:text-primary-600`}
-                    id="membership_nft"
-                    data-tabs-target="#membership_nft"
-                    type="button"
-                    role="tab"
-                    aria-controls="MembershipNFT"
-                    aria-selected="true"
+                {membershipCollectionList.length > 0 ? (
+                  <li
+                    className="mr-2"
+                    role="presentation"
+                    onClick={() => setSelectedTab(1)}
                   >
-                    Membership NFT
-                  </button>
-                </li>
-                <li
-                  className="mr-2"
-                  role="presentation"
-                  onClick={() => setSelectedTab(2)}
-                >
-                  <button
-                    className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${
-                      selectedTab === 2
-                        ? "border-b-2 border-primary-900 text-primary-900"
-                        : "border-transparent text-textSubtle"
-                    } hover:text-primary-900`}
-                    id="dashboard-tab"
-                    data-tabs-target="#dashboard"
-                    type="button"
-                    role="tab"
-                    aria-controls="dashboard"
-                    aria-selected="false"
+                    <button
+                      className={`inline-block py-2 md:p-4 md:text-lg rounded-t-lg ${
+                        selectedTab === 1
+                          ? "border-b-2 border-primary-900 text-primary-900"
+                          : "border-transparent text-textSubtle"
+                      } hover:text-primary-600`}
+                      id="membership_nft"
+                      data-tabs-target="#membership_nft"
+                      type="button"
+                      role="tab"
+                      aria-controls="MembershipNFT"
+                      aria-selected="true"
+                    >
+                      Membership NFT
+                    </button>
+                  </li>
+                ) : null}
+                {productCollectionList.length > 0 ? (
+                  <li
+                    className="mr-2"
+                    role="presentation"
+                    onClick={() => setSelectedTab(2)}
                   >
-                    Product NFT
-                  </button>
-                </li>
+                    <button
+                      className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${
+                        selectedTab === 2
+                          ? "border-b-2 border-primary-900 text-primary-900"
+                          : "border-transparent text-textSubtle"
+                      } hover:text-primary-900`}
+                      id="dashboard-tab"
+                      data-tabs-target="#dashboard"
+                      type="button"
+                      role="tab"
+                      aria-controls="dashboard"
+                      aria-selected="false"
+                    >
+                      Product NFT
+                    </button>
+                  </li>
+                ) : null}
                 <li
                   className="mr-2"
                   role="presentation"

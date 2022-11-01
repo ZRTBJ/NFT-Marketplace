@@ -252,7 +252,6 @@ export default function DetailsNFT(props) {
           handleClose={() => setNftSuccessModal(false)}
           nftName={nft?.lnft?.name}
           assetUrl={nft?.lnft?.asset?.path ? nft?.lnft?.asset?.path : manImg}
-          address={"sjdklsjlksd4654054f654fds5df0sd4f6d54f56d"}
           transactionHash={hash}
           collectionName={"Collection1"}
           shareUrl={`${nft?.lnft?.invitation_code}`}

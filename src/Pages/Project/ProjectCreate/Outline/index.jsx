@@ -6,6 +6,7 @@ import { DebounceInput } from "react-debounce-input";
 import { getProjectCategory } from "services/project/projectService";
 import Tooltip from "components/Commons/Tooltip";
 import { NETWORKS } from "config/networks";
+import Safe from "assets/images/safe.svg";
 
 export default function Outline({
   // logo
@@ -247,23 +248,42 @@ export default function Outline({
       {showDaoWallet && (
         <div className="mb-6">
           <div className="flex flex-wrap items-center">
-            <Tooltip message="This field will not be changeable after publishing on the blockchain."></Tooltip>
-            <div className="txtblack text-[14px]">Treasury Wallet</div>
+            <Tooltip message="Enter gnosis-safe address or leave it empty"></Tooltip>
+            <div className="txtblack text-[14px]">
+              Treasury Contract Address
+            </div>
           </div>
           {!daoWalletDisable && (
-            <>
+            <div className="flex items-center">
               <DebounceInput
                 minLength={1}
                 debounceTimeout={300}
                 onChange={(e) => onDaoWalletChange(e.target.value)}
                 className="debounceInput mt-1"
                 value={daoWallet}
-                placeholder="Add Address"
+                placeholder="Add gnosis-safe Address"
               />
+              <p className="font-black text-[14px] text-textSubtle word-break w-[35px] md:w-[25px] mx-2">
+                Or
+              </p>
+              <div className="relative">
+                <p className="text-[12px] text-normal absolute -top-[24px]">
+                  Create with
+                </p>
+                <a
+                  href="https://gnosis-safe.io/"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <div className="w-[100px] md:w-[140px] h-[47px] bg-black-shade-800 bg-opacity-[0.3] rounded-[4px] flex items-center justify-center">
+                    <img src={Safe} alt="Gnosis safe" />
+                  </div>
+                </a>
+              </div>
               {/* {emptyDaoWallet && (
                 <div className="validationTag">Treasury Wallet is required</div>
               )} */}
-            </>
+            </div>
           )}
           {daoWalletDisable && <h3 className="mt-3 ml-3">{daoWallet}</h3>}
         </div>
@@ -415,10 +435,11 @@ export default function Outline({
             {webLinks.map((link, index) => (
               <div key={index} className="inline-flex items-center w-full mb-4">
                 <i
-                  className={` ${link.title.startsWith("customLinks")
-                    ? `fa-solid fa-${link.icon}`
-                    : `fa-brands fa-${link.icon}`
-                    }  text-[24px] text-primary-900  mr-2`}
+                  className={` ${
+                    link.title.startsWith("customLinks")
+                      ? `fa-solid fa-${link.icon}`
+                      : `fa-brands fa-${link.icon}`
+                  }  text-[24px] text-primary-900  mr-2`}
                 ></i>
                 <input
                   className={`block w-full border border-divider h-[48px] text-[14px] text-textSubtle rounded  pl-3  outline-none`}
