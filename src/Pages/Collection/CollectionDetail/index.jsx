@@ -189,7 +189,6 @@ const CollectionDetail = () => {
   const getSplittedContributors = (id) => {
     getSplitterDetails(id).then((data) => {
       if (data.code === 0) {
-        console.log(data);
         setRoyalityMembers(data?.members);
       }
     });
@@ -202,7 +201,6 @@ const CollectionDetail = () => {
     getCollectionDetailsById(payload)
       .then((resp) => {
         if (resp.code === 0) {
-          console.log(resp);
           setProjectID(resp?.collection?.project_uid);
           getProjectDetailsById({ id: resp?.collection?.project_uid }).then(
             (resp) => {

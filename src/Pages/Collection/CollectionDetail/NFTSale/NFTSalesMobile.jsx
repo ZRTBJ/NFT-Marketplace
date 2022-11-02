@@ -10,7 +10,7 @@ const NFTSalesMobile = ({ items }) => {
         <div>
           {items.map((item, index) => (
             <div
-              key={item.id}
+              key={index}
               className={`${
                 index < items.length - 1 ? "border-b" : ""
               } text-left text-[13px] pt-4 pb-2`}

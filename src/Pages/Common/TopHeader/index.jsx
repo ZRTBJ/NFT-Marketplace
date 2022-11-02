@@ -32,6 +32,8 @@ import {
 import { toast } from "react-toastify";
 import { NETWORKS } from "config/networks";
 import { useAuthDispatch, logout } from "redux/auth";
+import { getWalletAccount } from "util/MetaMask";
+
 
 const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const history = useHistory();
@@ -61,6 +63,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   );
   const [showAccountChanged, setShowAccountChanged] = useState(false);
   const [showNetworkChanged, setShowNetworkChanged] = useState(false);
+  const [networkChangeDetected, setNetworkChangeDetected] = useState(false);
   const [networkId, setNetworkId] = useState();
   const [showSearchMobile, setShowSearchMobile] = useState(false);
   const projectDeploy = useSelector((state) =>
@@ -71,9 +74,11 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
 
   /** Metamask network change detection */
   useEffect(() => {
+    setNetworkChangeDetected(false);
     if (window?.ethereum) {
       if (!networkId) setNetworkId(window.ethereum.networkVersion);
       window?.ethereum?.on("networkChanged", function (networkId) {
+        setNetworkChangeDetected(true);
         setNetworkId(networkId);
         ls_SetChainID(networkId);
         if (NETWORKS[networkId]) {
@@ -86,6 +91,42 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
         }
       });
     }
+
+    return () => {
+      setNetworkChangeDetected(false);
+    };
+  }, []);
+
+  const handleLogout = () => {
+    logout(dispatch);
+    history.push("/");
+    window.location.reload();
+  };
+
+  let localChainId = ls_GetChainID();
+  useEffect(() => {
+    if (!networkChangeDetected && networkId && localChainId) {
+      if (Number(networkId) !== Number(localChainId)) {
+        handleLogout();
+      }
+    }
+  }, [networkId, localChainId]);
+
+  let localAccountAddress = ls_GetWalletAddress();
+  const handleAccountDifference = async () => {
+    if (window?.ethereum) {
+      const account = await getWalletAccount();
+
+      if (localAccountAddress && account) {
+        if (localAccountAddress !== account) {
+          setShowAccountChanged(true);
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    handleAccountDifference();
   }, []);
 
   const handleLogout = () => {

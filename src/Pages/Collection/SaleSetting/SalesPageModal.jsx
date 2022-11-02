@@ -207,29 +207,35 @@ const SalesPageModal = ({
                   nftId ? tiers : allTiers
                 )
               : await setNFTPrice(priceContract, provider, data["price"]);
-
-          if (response?.txReceipt?.status === 1) {
-            const request = new FormData();
-            request.append("price", data["price"]);
-            request.append("start_time", payload.startTime);
-            request.append("end_time", payload.endTime);
-            request.append("currency", selectedCurrency.value);
-            request.append(
-              "transaction_hash",
-              response?.txReceipt?.transactionHash
-            );
-            if (allTiers.length && !nftId) {
-              allTiers.map((value) =>
-                handleSalesAPICall(
-                  type,
-                  selectedCollection,
-                  request,
-                  value.tierId
-                )
+          if (response?.txReceipt) {
+            if (response.txReceipt?.status === 1) {
+              const request = new FormData();
+              request.append("price", data["price"]);
+              request.append("start_time", payload.startTime);
+              request.append("end_time", payload.endTime);
+              request.append("currency", selectedCurrency.value);
+              request.append(
+                "transaction_hash",
+                response?.txReceipt?.transactionHash
               );
-            } else {
-              handleSalesAPICall(type, selectedCollection, request, nftId);
+              if (allTiers.length && !nftId) {
+                allTiers.map((value) =>
+                  handleSalesAPICall(
+                    type,
+                    selectedCollection,
+                    request,
+                    value.tierId
+                  )
+                );
+              } else {
+                handleSalesAPICall(type, selectedCollection, request, nftId);
+              }
             }
+          } else {
+            setErrorMessage(response);
+            setIsLoading(false);
+            setIsSubmitted(false);
+            setShowErrorModal(true);
           }
         } catch (err) {
           if (err.message) {

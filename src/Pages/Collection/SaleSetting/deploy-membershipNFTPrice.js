@@ -15,7 +15,7 @@ async function sendMetaTx(contract, provider, signer, tier) {
     from,
     data,
   });
-  let chainId = ls_GetChainID()
+  let chainId = ls_GetChainID();
   let webhook = NETWORKS?.[chainId]?.webhook;
   return fetch(webhook, {
     method: "POST",
@@ -35,10 +35,13 @@ export async function setMemNFTPrice(collection, provider, tier) {
   const result = await sendMetaTx(collection, provider, signer, tier);
 
   await result.json().then(async (response) => {
-    const tx = JSON.parse(response.result);
-    const txReceipt = await provider.waitForTransaction(tx.txHash);
-    console.log(txReceipt);
-    output = { txReceipt };
+    if (response.status === "success") {
+      const tx = JSON.parse(response.result);
+      const txReceipt = await provider.waitForTransaction(tx.txHash);
+      output = { txReceipt };
+    } else {
+      output = response.message;
+    }
   });
 
   return output;

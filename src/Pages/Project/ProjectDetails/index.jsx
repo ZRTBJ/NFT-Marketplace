@@ -310,9 +310,9 @@ export default function ProjectDetails(props) {
             </div>
             {project?.assets?.length > 0 &&
               project.assets.map((img, index) => (
-                <>
+                <div key={`dao-image-${index}`}>
                   {img["asset_purpose"] !== "cover" && (
-                    <div key={`dao-image-${index}`}>
+                    <div>
                       <img
                         className="rounded-xl object-cover h-[122px] w-full"
                         src={img ? img.path : manImg}
@@ -320,7 +320,7 @@ export default function ProjectDetails(props) {
                       />
                     </div>
                   )}
-                </>
+                </div>
               ))}
           </section>
 
@@ -339,9 +339,9 @@ export default function ProjectDetails(props) {
             </SwiperSlide>
             {project?.assets?.length > 0 &&
               project.assets.map((img, index) => (
-                <>
+                <div key={`dao-image-${index}`}>
                   {img["asset_purpose"] !== "cover" && (
-                    <div key={`dao-image-${index}`}>
+                    <div>
                       <SwiperSlide className="!w-[212px] mx-4">
                         <img
                           className="rounded-xl object-cover h-[124px] w-full"
@@ -351,7 +351,7 @@ export default function ProjectDetails(props) {
                       </SwiperSlide>
                     </div>
                   )}
-                </>
+                </div>
               ))}
           </Swiper>
 
@@ -402,16 +402,15 @@ export default function ProjectDetails(props) {
                     project.members &&
                     project.members.length > 0 &&
                     project.members.map((img, index) => (
-                      <>
+                      <div key={`member-img-${index}`}>
                         {index < 5 && (
                           <img
-                            key={`member-img-${index}`}
                             className="rounded-full object-cover w-9 h-9 mr-2 border-2 border-white"
                             src={img.avatar ? img.avatar : avatar}
                             alt=""
                           />
                         )}
-                      </>
+                      </div>
                     ))}
                   {project && project.members && project.members.length > 5 && (
                     <span className="ml-2 bg-primary-900 bg-opacity-5  text-primary-900 rounded p-1 text-xs  ">
@@ -797,6 +796,7 @@ export default function ProjectDetails(props) {
                                     collection.members
                                   ).slicedItems.map((member) => (
                                     <img
+                                      key={member.id}
                                       src={member.avatar}
                                       alt={member.id}
                                       className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
@@ -938,6 +938,7 @@ export default function ProjectDetails(props) {
                                   collection.members
                                 ).slicedItems.map((member) => (
                                   <img
+                                    key={member.id}
                                     src={member.avatar}
                                     alt={member.id}
                                     className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
