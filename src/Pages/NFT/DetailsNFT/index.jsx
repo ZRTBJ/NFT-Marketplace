@@ -66,18 +66,18 @@ export default function DetailsNFT(props) {
       const response =
         type === "membership"
           ? await createMembershipMintNFT(
-              membershipMintContract,
-              config.metadataUrl,
-              id,
-              provider,
-              config.price
-            )
+            membershipMintContract,
+            config.metadataUrl,
+            id,
+            provider,
+            config.price
+          )
           : await createMintNFT(
-              mintContract,
-              config.metadataUrl,
-              config.price,
-              provider
-            );
+            mintContract,
+            config.metadataUrl,
+            config.price,
+            provider
+          );
       if (response) {
         setHash(response?.transactionHash);
         let data = {
@@ -194,6 +194,10 @@ export default function DetailsNFT(props) {
   };
 
   const handlePublishModal = async () => {
+    if (!nft.more_info.currency) {
+      setErrorMsg("This NFT is not for sale yet, please try again later");
+      return;
+    }
     let nftNetwork = await getCurrentNftNetwork();
     let networkId = await getCurrentNetworkId();
     if (nftNetwork === networkId) {
@@ -255,12 +259,12 @@ export default function DetailsNFT(props) {
           transactionHash={hash}
           collectionName={"Collection1"}
           shareUrl={`${nft?.lnft?.invitation_code}`}
-          // handleNext={handleProceedPayment}
+        // handleNext={handleProceedPayment}
         />
       )}
       {errorMsg && (
         <ErrorModal
-          title={"Minting NFT failed !"}
+          title={"Mint NFT"}
           message={`${errorMsg}`}
           handleClose={() => {
             setErrorMsg("");
@@ -293,7 +297,7 @@ export default function DetailsNFT(props) {
                 alt="nft"
               />
               <div className="rounded bg-success-1 bg-opacity-20 font-satoshi-bold text-success-1 font-black p-4 mt-4">
-                {info?.price}{" "}
+                {info?.price ? info?.price : "Not for sale"}{" "}
                 <span className="uppercase">{info?.currency}</span>
               </div>
             </div>
@@ -405,12 +409,12 @@ export default function DetailsNFT(props) {
               <span className="font-satoshi-bold font-black text-lg text-txtblack mx-3">
                 :
               </span>
-              {info?.start_datetime ? (
+              {(info?.currency && info?.start_datetime) ? (
                 <span className="text-textSubtle leading-8">
                   {format(new Date(info.start_datetime), "dd/MM/yy (HH:mm)")} -{" "}
                   {format(new Date(info.end_datetime), "dd/MM/yy (HH:mm)")}
                 </span>
-              ) : null}
+              ) : "Not for sale"}
             </div>
             <div className="flex mb-4">
               <span className="w-20 font-satoshi-bold font-black text-lg text-txtblack">
