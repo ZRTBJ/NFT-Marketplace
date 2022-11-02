@@ -375,7 +375,9 @@ const Profile = () => {
   }
   function setNftData(nft, type) {
     let nftList = [...mintedNftList];
-    const nftIndex = nftList.findIndex((item) => item.id === nft.id);
+    const nftIndex = nftList.findIndex(
+      (item) => item.id === nft.id && item.token_id === nft.token_id
+    );
     const nftLocal = { ...nft };
     if (type === "loadingTrue") {
       nftLocal.loading = true;
@@ -1142,7 +1144,10 @@ const Profile = () => {
                     >
                       <div>
                         {mintedNftList.map((nft) => (
-                          <SwiperSlide className={styles.nftCard} key={nft.id}>
+                          <SwiperSlide
+                            className={styles.nftCard}
+                            key={`${nft.id}-${nft.token_id}`}
+                          >
                             <NFTListCard
                               nft={nft}
                               projectWork="ethereum"
