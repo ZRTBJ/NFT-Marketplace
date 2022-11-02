@@ -107,24 +107,6 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     }
   }, [showSearchMobile]);
 
-  /** Metamask account change detection. It will show logout popup if user signin with new address, or they logout  */
-  useEffect(() => {
-    window?.ethereum?.on("accountsChanged", function (accounts) {
-      setShowAccountChanged(true);
-    });
-  }, []);
-
-  useEffect(() => {
-    if (userId && userId.length > 0) {
-      const cUser = ls_GetUserToken();
-      if (cUser) {
-        sendMessage(JSON.stringify({ Token: cUser }));
-      }
-    } else {
-      // console.log("no user");
-    }
-  }, [userId]);
-
   useEffect(() => {
     getNotificationList();
   }, [projectDeploy]);
@@ -180,7 +162,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     if (loc.protocol === "https:") {
       host = "wss:";
     }
-  } catch {}
+  } catch { }
   const socketUrl = `${host}//${config.WEB_SOKET}/ws`;
 
   const {
@@ -256,7 +238,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
           }
         }, 2000);
       }
-    } catch (err) {}
+    } catch (err) { }
   }
 
   function searchProject(keyword) {
@@ -388,9 +370,8 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
             )}
 
             <ul
-              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${
-                userId ? "" : "sm:py-2"
-              }`}
+              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${userId ? "" : "sm:py-2"
+                }`}
             >
               {userinfo.id && (
                 <>
@@ -585,10 +566,10 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
               onClick={
                 userinfo.id
                   ? (e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      showHideUserPopupWallet();
-                    }
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showHideUserPopupWallet();
+                  }
                   : () => setShowModal(true)
               }
             />
