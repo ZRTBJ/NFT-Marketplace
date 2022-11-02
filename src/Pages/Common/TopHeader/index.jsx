@@ -96,35 +96,34 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     };
   }, []);
 
-  const handleLogout = () => {
-    logout(dispatch);
-    history.push("/");
-    window.location.reload();
-  };
-
+  /** Here if unsupport network is found, logout automatically */
   let localChainId = ls_GetChainID();
   useEffect(() => {
     if (!networkChangeDetected && networkId && localChainId) {
       if (Number(networkId) !== Number(localChainId)) {
-        handleLogout();
+        logout(dispatch);
+        history.push("/");
+        window.location.reload();
       }
     }
   }, [networkId, localChainId]);
 
-  let localAccountAddress = ls_GetWalletAddress();
-  const handleAccountDifference = async () => {
-    if (window?.ethereum) {
-      const account = await getWalletAccount();
 
-      if (localAccountAddress && account) {
-        if (localAccountAddress !== account) {
-          setShowAccountChanged(true);
-        }
-      }
-    }
-  };
+  /** Detect account whenever user come back to site */
+  let localAccountAddress = ls_GetWalletAddress();
 
   useEffect(() => {
+    const handleAccountDifference = async () => {
+      if (window?.ethereum) {
+        const account = await getWalletAccount();
+
+        if (localAccountAddress && account) {
+          if (localAccountAddress !== account) {
+            setShowAccountChanged(true);
+          }
+        }
+      }
+    };
     handleAccountDifference();
   }, []);
 

@@ -59,17 +59,17 @@ function EmbedNFT(props) {
       const response =
         type === "membership"
           ? await createMembershipMintNFT(
-              membershipMintContract,
-              config.metadataUrl,
-              id,
-              provider
-            )
+            membershipMintContract,
+            config.metadataUrl,
+            id,
+            provider
+          )
           : await createMintNFT(
-              mintContract,
-              config.metadataUrl,
-              config.price,
-              provider
-            );
+            mintContract,
+            config.metadataUrl,
+            config.price,
+            provider
+          );
       if (response) {
         let data = {
           hash: response?.transactionHash,
@@ -96,6 +96,10 @@ function EmbedNFT(props) {
   };
 
   async function handleProceedPayment(response) {
+    if (!nft.more_info.currency) {
+      setErrorMessage("This NFT is not for sale yet");
+      return;
+    }
     let nftNetwork = await getCurrentNftNetwork();
     let networkId = await getCurrentNetworkId();
     setIsMinting(true);
@@ -196,8 +200,8 @@ function EmbedNFT(props) {
               {isMinting
                 ? "Minting NFT..."
                 : userinfo.id
-                ? "Buy Now"
-                : "Connect Wallet"}
+                  ? "Buy Now"
+                  : "Connect Wallet"}
             </button>
           </div>
           <WalletConnectModal
