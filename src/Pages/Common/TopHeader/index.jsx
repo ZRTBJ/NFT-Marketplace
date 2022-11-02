@@ -27,13 +27,16 @@ import {
   ls_GetUserToken,
   ls_GetWalletAddress,
   ls_SetChainID,
+  ls_GetChainID,
 } from "util/ApplicationStorage";
 import { toast } from "react-toastify";
 import { NETWORKS } from "config/networks";
+import { useAuthDispatch, logout } from "redux/auth";
 
 const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const history = useHistory();
   const dispatch = useDispatch();
+  const authDispatch = useAuthDispatch();
   const context = useAuthState();
   const { pathname } = useLocation();
   const inputRef = useRef(null);
@@ -84,6 +87,22 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
       });
     }
   }, []);
+
+  const handleLogout = () => {
+    logout(dispatch);
+    history.push("/");
+    window.location.reload();
+  };
+
+  let localChainId = ls_GetChainID();
+
+  useEffect(() => {
+    if (networkId && localChainId) {
+      if (Number(networkId) !== Number(localChainId)) {
+        handleLogout();
+      }
+    }
+  }, [networkId, localChainId]);
 
   /** Metamask account change detection. It will show logout popup if user signin with new address
    * In case if user re-login, if same account with wallet address, nothing will happen
@@ -162,7 +181,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     if (loc.protocol === "https:") {
       host = "wss:";
     }
-  } catch { }
+  } catch {}
   const socketUrl = `${host}//${config.WEB_SOKET}/ws`;
 
   const {
@@ -238,7 +257,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
           }
         }, 2000);
       }
-    } catch (err) { }
+    } catch (err) {}
   }
 
   function searchProject(keyword) {
@@ -370,8 +389,9 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
             )}
 
             <ul
-              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${userId ? "" : "sm:py-2"
-                }`}
+              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${
+                userId ? "" : "sm:py-2"
+              }`}
             >
               {userinfo.id && (
                 <>
@@ -566,10 +586,10 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
               onClick={
                 userinfo.id
                   ? (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    showHideUserPopupWallet();
-                  }
+                      e.preventDefault();
+                      e.stopPropagation();
+                      showHideUserPopupWallet();
+                    }
                   : () => setShowModal(true)
               }
             />
