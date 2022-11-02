@@ -21,7 +21,7 @@ const MemberListTable = ({
   isOwner,
   setRoyalityMembers,
   showRoyalityErrorModal,
-  onShowError = () => {},
+  onShowError = () => { },
 }) => {
   const [newItems, setNewItems] = useState(null);
   const [address, setAddress] = useState("");
@@ -82,8 +82,13 @@ const MemberListTable = ({
       let userAddress = address;
 
       if (!ethers.utils.isAddress(address)) {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        userAddress = await provider.resolveName(address);
+        try {
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          userAddress = await provider.resolveName(address);
+        } catch (error) {
+          setAddError('Invalid address or ENS');
+          return;
+        }
       }
 
       if (userAddress === null) {
