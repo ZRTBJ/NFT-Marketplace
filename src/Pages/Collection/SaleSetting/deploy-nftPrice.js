@@ -7,7 +7,6 @@ import { ls_GetChainID } from "util/ApplicationStorage";
 async function sendMetaTx(contract, provider, signer, price) {
   const forwarder = createInstance(provider);
   const from = await signer.getAddress();
-  console.log(contract, provider, signer, price);
   const data = contract.interface.encodeFunctionData("setPrimaryMintPrice", [
     ethers.utils.parseUnits(price.toString(), "ether"),
   ]);
@@ -19,7 +18,7 @@ async function sendMetaTx(contract, provider, signer, price) {
     data,
   });
 
-  let chainId = ls_GetChainID()
+  let chainId = ls_GetChainID();
   let webhook = NETWORKS[chainId]?.webhook;
 
   return fetch(webhook, {
@@ -41,10 +40,13 @@ export async function setNFTPrice(collection, provider, price) {
   const result = await sendMetaTx(collection, provider, signer, price);
 
   await result.json().then(async (response) => {
-    const tx = JSON.parse(response.result);
-    const txReceipt = await provider.waitForTransaction(tx.txHash);
-    output = { txReceipt };
-    console.log(output);
+    if (response.status === "success") {
+      const tx = JSON.parse(response.result);
+      const txReceipt = await provider.waitForTransaction(tx.txHash);
+      output = { txReceipt };
+    } else {
+      output = response.message;
+    }
   });
 
   return output;

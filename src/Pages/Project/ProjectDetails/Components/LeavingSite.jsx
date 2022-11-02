@@ -1,24 +1,12 @@
 import publishModalSvg from "assets/images/modal/publishModalSvg.svg";
-import { ethers } from "ethers";
 import Modal from "components/Commons/Modal";
+import { NETWORKS } from "config/networks";
 
-const LeavingSite = ({ handleClose, show, treasuryAddress }) => {
+const LeavingSite = ({ handleClose, show, treasuryAddress, network }) => {
   async function goToSafe() {
-    const userProvider = new ethers.providers.Web3Provider(window.ethereum);
-    const userNetwork = await userProvider.getNetwork();
-    //TODO This part you must get network from DAO itself, not user
-
-    let network = "";
-    if (userNetwork.chainId === 1) {
-      network = "matic";
-    } else if (userNetwork.chainId === 5) {
-      network = "gor";
-    } else {
-      alert("Please Choose Goerli or Ethereum network from you wallet ");
-    }
     if (network !== "" && treasuryAddress !== "") {
       window.open(
-        `https://gnosis-safe.io/app/${network}:${treasuryAddress}/home`,
+        `${NETWORKS[network].gnosis}:${treasuryAddress}/home`,
         "_blank"
       );
       handleClose(false);

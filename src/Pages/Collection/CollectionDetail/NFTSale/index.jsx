@@ -32,13 +32,15 @@ const time = ["Day", "Week", "Month"];
 
 const NFTSales = ({ items }) => {
   const [selectedTime, setSelectedTime] = useState("Day");
+
   return (
     <div>
       <div className="flex items-start md:items-center pb-7 border-b-[1px] mb-6 border-[#E3DEEA]">
         <h3 className="text-[18px] font-black mr-10">NFT Sale's</h3>
         <div className="bg-primary-100 rounded-[6px] p-2 ">
-          {time.map((item) => (
+          {time.map((item, index) => (
             <button
+              key={index}
               className={`text-[12px] text-textSubtle rounded-[6px] px-4 py-2 transition duration-150 ease-linear ${
                 selectedTime === item ? "bg-primary-900 text-white" : ""
               }`}
@@ -54,11 +56,11 @@ const NFTSales = ({ items }) => {
           <table className="w-full text-left">
             <thead>
               <tr className="text-textSubtle text-[12px] ">
-                {headers.map((item) => (
+                {headers.map((item, index) => (
                   <th
                     scope="col"
                     className={`px-5 text-[14px] text-[#303548] ${styles.tableHeader}`}
-                    key={item.id}
+                    key={index}
                   >
                     {item.label}
                   </th>
@@ -68,7 +70,7 @@ const NFTSales = ({ items }) => {
             <tbody>
               {items.map((r, index) => (
                 <tr
-                  key={r.id}
+                  key={index}
                   className={`${
                     index < items.length - 1 ? "border-b" : ""
                   } text-left text-[13px]`}
@@ -95,7 +97,9 @@ const NFTSales = ({ items }) => {
                   </td>
                   <td className="py-4 px-5">
                     <span>
-                      {dayjs(r.purchase_time).format("DD/MM/YYYY - HH:mm")}
+                      {dayjs(r.purchase_time * 1000).format(
+                        "DD/MM/YYYY - HH:mm"
+                      )}
                     </span>
                   </td>
                 </tr>

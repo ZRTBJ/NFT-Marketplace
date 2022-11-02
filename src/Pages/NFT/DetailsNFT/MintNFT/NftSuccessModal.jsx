@@ -7,6 +7,7 @@ import {
   TwitterShareButton,
   RedditShareButton,
 } from "react-share";
+import { walletAddressTruncate } from "util/WalletUtils";
 const NftSuccessModal = ({
   handleClose,
   show,
@@ -14,10 +15,17 @@ const NftSuccessModal = ({
   collectionName,
   assetUrl,
   transactionHash,
-  address,
   shareUrl,
   handleNext,
 }) => {
+  const copyToClipboardShare = (text) => {
+    navigator.clipboard.writeText(text);
+    const copyEl = document.getElementById("copied-share-message-success");
+    copyEl.classList.toggle("hidden");
+    setTimeout(() => {
+      copyEl.classList.toggle("hidden");
+    }, 2000);
+  };
   return (
     <Modal
       width={532}
@@ -54,7 +62,19 @@ const NftSuccessModal = ({
           </div>
           <div className="mt-4  md:flex flex-wrap items-center">
             <p className="font-black text-[14px]">Transaction Hash</p>
-            <p className=" ml-auto text-[14px] truncate">{transactionHash}</p>
+            <p className="ml-auto text-[14px] relative min-w-[200px] text-right">
+              {walletAddressTruncate(transactionHash)}{" "}
+              <i
+                className="fa fa-copy text-md cursor-pointer text-primary-900 ml-2"
+                onClick={() => copyToClipboardShare(transactionHash)}
+              ></i>
+              <p
+                id="copied-share-message-success"
+                className="hidden text-green-500 text-[14px] text-right absolute top-4 right-0 word-break"
+              >
+                Copied Successfully!
+              </p>
+            </p>
           </div>
         </div>
 

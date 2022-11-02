@@ -20,6 +20,7 @@ import { updateMetadata } from "Pages/User/Profile/update-metadata";
 import { createProvider } from "util/smartcontract/provider";
 import { createMintInstance } from "config/ABI/mint-nft";
 import { toast } from "react-toastify";
+import emptyStateCommon from "assets/images/profile/emptyStateCommon.svg";
 function List() {
   const provider = createProvider();
   function useQuery() {
@@ -191,7 +192,9 @@ function List() {
   };
   function setNftData(nft, type) {
     let nftList = [...projectList];
-    const nftIndex = nftList.findIndex((item) => item.id === nft.id);
+    const nftIndex = nftList.findIndex(
+      (item) => item.id === nft.id && item.token_id === nft.token_id
+    );
     const nftLocal = { ...nft };
     if (type === "loadingTrue") {
       nftLocal.loading = true;
@@ -243,41 +246,50 @@ function List() {
         setNftData(nft, "sowRefreshButton");
       });
     if (hasConfigForNft) {
-      const erc721CollectionContract = createMintInstance(
-        config.collection_contract_address,
-        provider
-      );
-      const result = await updateMetadata(
-        erc721CollectionContract,
-        provider,
-        config
-      );
-      if (result) {
-        console.log(result);
-        const data = {
-          id: nft.id,
-          tokenId: nft.token_id,
-          tnxHash: result,
-        };
-        await refreshNFTWithtnx(data)
-          .then((res) => {
-            if (res.code === 0) {
-              if (res.function.status === "success") {
-                setNftData(nft, "loadingFalse");
-                setNftData(nft, "hideRefreshButton");
-                toast.success(`Successfully refreshed ${nft.name} NFT`);
+      try {
+        const erc721CollectionContract = createMintInstance(
+          config.collection_contract_address,
+          provider
+        );
+        const result = await updateMetadata(
+          erc721CollectionContract,
+          provider,
+          config
+        );
+        if (result) {
+          console.log(result);
+          const data = {
+            id: nft.id,
+            tokenId: nft.token_id,
+            tnxHash: result,
+          };
+          await refreshNFTWithtnx(data)
+            .then((res) => {
+              if (res.code === 0) {
+                if (res.function.status === "success") {
+                  setNftData(nft, "loadingFalse");
+                  setNftData(nft, "hideRefreshButton");
+                  toast.success(`Successfully refreshed ${nft.name} NFT`);
+                }
+                if (res.function.status === "failed") {
+                  setNftData(nft, "loadingFalse");
+                  setNftData(nft, "sowRefreshButton");
+                  toast.error(`Unexpected error, Please try again`);
+                }
               }
-              if (res.function.status === "failed") {
-                setNftData(nft, "loadingFalse");
-                setNftData(nft, "sowRefreshButton");
-                toast.error(`Unexpected error, Please try again`);
-              }
-            }
-          })
-          .catch((err) => {
-            setNftData(nft, "loadingFalse");
-          });
+            })
+            .catch((err) => {
+              setNftData(nft, "loadingFalse");
+            });
+        } else {
+          setNftData(nft, "loadingFalse");
+        }
+      } catch (error) {
+        setNftData(nft, "loadingFalse");
+        setNftData(nft, "sowRefreshButton");
+        toast.error(`Unexpected error or cancelled, please try again`);
       }
+
     } else {
       setNftData(nft, "loadingFalse");
     }
@@ -300,8 +312,8 @@ function List() {
           {query.get("type") === "collection"
             ? "Collection List"
             : query.get("type") === "dao"
-            ? "DAO List"
-            : "Minted NFTs List"}
+              ? "DAO List"
+              : "Minted NFTs List"}
         </h1>
         <section className="flex mb-6">
           <div className="mr-4 flex-1">
@@ -348,27 +360,24 @@ function List() {
             >
               <li onClick={() => handleSortType("newer")}>
                 <div
-                  className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${
-                    sortType === "newer" ? "text-primary-900" : "text-txtblack"
-                  } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                  className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${sortType === "newer" ? "text-primary-900" : "text-txtblack"
+                    } hover:bg-slate-50 transition duration-150 ease-in-out`}
                 >
                   Newer
                 </div>
               </li>
               <li onClick={() => handleSortType("older")}>
                 <div
-                  className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${
-                    sortType === "older" ? "text-primary-900" : "text-txtblack"
-                  } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                  className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${sortType === "older" ? "text-primary-900" : "text-txtblack"
+                    } hover:bg-slate-50 transition duration-150 ease-in-out`}
                 >
                   older
                 </div>
               </li>
               <li onClick={() => handleSortType("view")}>
                 <div
-                  className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${
-                    sortType === "view" ? "text-primary-900" : "text-txtblack"
-                  } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                  className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${sortType === "view" ? "text-primary-900" : "text-txtblack"
+                    } hover:bg-slate-50 transition duration-150 ease-in-out`}
                 >
                   view
                 </div>
@@ -390,65 +399,95 @@ function List() {
           ) : null}
           {isSearching && searchList.length === 0 ? (
             <div className="p-5 text-center min-h-[100px] text-primary-700">
-              <h2> Nothing found</h2>
+              <div className="text-center mt-6 text-textSubtle">
+                <img
+                  src={emptyStateCommon}
+                  className="h-[210px] w-[315px] m-auto"
+                  alt=""
+                />
+                <p className="text-subtitle font-bold">Nothing Found</p>
+              </div>
             </div>
           ) : null}
-          {query.get("type") === "collection" && (
-            <section className="flex flex-wrap items-start  space-x-4 justify-center md:justify-start">
-              {isSearching
-                ? searchList.map((item, index) => (
-                    <div key={item.id}>
-                      <CollectionCard key={index} collection={item} />
-                    </div>
-                  ))
-                : projectList.map((item, index) => (
-                    <div key={item.id}>
-                      <CollectionCard key={item.id} collection={item} />
-                    </div>
-                  ))}
-            </section>
-          )}
+          {!isLoading && (
+            <>
+              {projectList.length > 0 ? (
+                <>
+                  {query.get("type") === "collection" && (
+                    <section className="flex flex-wrap items-start  space-x-4 justify-center md:justify-start">
+                      {isSearching
+                        ? searchList.map((item, index) => (
+                          <div key={item.id}>
+                            <CollectionCard key={index} collection={item} />
+                          </div>
+                        ))
+                        : projectList.map((item, index) => (
+                          <div key={item.id}>
+                            <CollectionCard key={item.id} collection={item} />
+                          </div>
+                        ))}
+                    </section>
+                  )}
 
-          {query.get("type") === "dao" && (
-            <section className="flex flex-wrap items-center  justify-center md:justify-start">
-              {isSearching
-                ? searchList.map((item, index) => (
-                    <div key={item.id}>
-                      <DAOCard item={item} key={item.id} />
-                    </div>
-                  ))
-                : projectList.map((item, index) => (
-                    <div key={item.id}>
-                      <DAOCard item={item} key={item.id} />
-                    </div>
-                  ))}
-            </section>
-          )}
+                  {query.get("type") === "dao" && (
+                    <section className="flex flex-wrap items-center  justify-center md:justify-start">
+                      {isSearching
+                        ? searchList.map((item, index) => (
+                          <div key={item.id}>
+                            <DAOCard item={item} key={item.id} />
+                          </div>
+                        ))
+                        : projectList.map((item, index) => (
+                          <div key={item.id}>
+                            <DAOCard item={item} key={item.id} />
+                          </div>
+                        ))}
+                    </section>
+                  )}
 
-          {query.get("type") === "nft" && (
-            <section className="flex flex-wrap items-center space-x-4 justify-center md:justify-start">
-              {isSearching
-                ? searchList.map((item, index) => (
-                    <div key={item.id}>
-                      <NFTListCard
-                        nft={item}
-                        projectWork="ethereum"
-                        refresh={onRefreshNft}
-                        loading={item.loading}
+                  {query.get("type") === "nft" && (
+                    <section className="flex flex-wrap items-center space-x-4 justify-center md:justify-start">
+                      {isSearching
+                        ? searchList.map((nft, index) => (
+                          <div key={`${nft.id}-${nft.token_id}`}>
+                            <NFTListCard
+                              nft={nft}
+                              projectWork="ethereum"
+                              refresh={onRefreshNft}
+                              loading={nft.loading}
+                            />
+                          </div>
+                        ))
+                        : projectList.map((nft, index) => (
+                          <div key={`${nft.id}-${nft.token_id}`}>
+                            <NFTListCard
+                              nft={nft}
+                              projectWork="ethereum"
+                              refresh={onRefreshNft}
+                              loading={nft.loading}
+                            />
+                          </div>
+                        ))}
+                    </section>
+                  )}
+                </>
+              ) : (
+                <>
+                  <div className="p-5 text-center min-h-[100px] text-primary-700">
+                    <div className="text-center mt-6 text-textSubtle">
+                      <img
+                        src={emptyStateCommon}
+                        className="h-[210px] w-[315px] m-auto"
+                        alt=""
                       />
+                      <p className="text-subtitle font-bold">
+                        You don`t have any {query.get("type")} yet
+                      </p>
                     </div>
-                  ))
-                : projectList.map((item, index) => (
-                    <div key={item.id}>
-                      <NFTListCard
-                        nft={item}
-                        projectWork="ethereum"
-                        refresh={onRefreshNft}
-                        loading={item.loading}
-                      />
-                    </div>
-                  ))}
-            </section>
+                  </div>
+                </>
+              )}
+            </>
           )}
         </section>
 

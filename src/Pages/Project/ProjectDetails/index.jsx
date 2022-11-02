@@ -34,6 +34,9 @@ import SalesSettingsTab from "Pages/Project/ProjectDetails/SalesSettingTab/Sales
 import SalesSuccessModal from "Pages/Collection/SaleSetting/SalesSuccessModal";
 import RoyaltySplitter from "./RoyaltySplitter/RoyaltySplitter";
 import { NETWORKS } from "config/networks";
+import NetworkHandlerModal from "components/Modals/NetworkHandlerModal";
+import { getCurrentNetworkId } from "util/MetaMask";
+
 export default function ProjectDetails(props) {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -73,6 +76,7 @@ export default function ProjectDetails(props) {
     currency: "",
     balanceUSD: 0,
   });
+  const [showNetworkHandler, setShowNetworkHandler] = useState(false);
   const fileUploadNotification = useSelector((state) =>
     state?.notifications?.notificationData
       ? state?.notifications?.notificationData
@@ -274,9 +278,25 @@ export default function ProjectDetails(props) {
     }
   }, [fileUploadNotification]);
 
+  const handlePublishModal = async () => {
+    let networkId = await getCurrentNetworkId();
+    if (Number(project?.blockchain) === networkId) {
+      setShowPublishModal(true);
+    } else {
+      setShowNetworkHandler(true);
+    }
+  };
+
   return (
     <>
       {isLoading && <div className="loading"></div>}
+      {showNetworkHandler && (
+        <NetworkHandlerModal
+          show={showNetworkHandler}
+          handleClose={() => setShowNetworkHandler(false)}
+          projectNetwork={project?.blockchain}
+        />
+      )}
       {!isLoading && (
         <div className="mx-4">
           {/* dekstop gallery */}
@@ -290,9 +310,9 @@ export default function ProjectDetails(props) {
             </div>
             {project?.assets?.length > 0 &&
               project.assets.map((img, index) => (
-                <>
+                <div key={`dao-image-${index}`}>
                   {img["asset_purpose"] !== "cover" && (
-                    <div key={`dao-image-${index}`}>
+                    <div>
                       <img
                         className="rounded-xl object-cover h-[122px] w-full"
                         src={img ? img.path : manImg}
@@ -300,7 +320,7 @@ export default function ProjectDetails(props) {
                       />
                     </div>
                   )}
-                </>
+                </div>
               ))}
           </section>
 
@@ -319,9 +339,9 @@ export default function ProjectDetails(props) {
             </SwiperSlide>
             {project?.assets?.length > 0 &&
               project.assets.map((img, index) => (
-                <>
+                <div key={`dao-image-${index}`}>
                   {img["asset_purpose"] !== "cover" && (
-                    <div key={`dao-image-${index}`}>
+                    <div>
                       <SwiperSlide className="!w-[212px] mx-4">
                         <img
                           className="rounded-xl object-cover h-[124px] w-full"
@@ -331,7 +351,7 @@ export default function ProjectDetails(props) {
                       </SwiperSlide>
                     </div>
                   )}
-                </>
+                </div>
               ))}
           </Swiper>
 
@@ -382,16 +402,15 @@ export default function ProjectDetails(props) {
                     project.members &&
                     project.members.length > 0 &&
                     project.members.map((img, index) => (
-                      <>
+                      <div key={`member-img-${index}`}>
                         {index < 5 && (
                           <img
-                            key={`member-img-${index}`}
                             className="rounded-full object-cover w-9 h-9 mr-2 border-2 border-white"
                             src={img.avatar ? img.avatar : avatar}
                             alt=""
                           />
                         )}
-                      </>
+                      </div>
                     ))}
                   {project && project.members && project.members.length > 5 && (
                     <span className="ml-2 bg-primary-900 bg-opacity-5  text-primary-900 rounded p-1 text-xs  ">
@@ -514,7 +533,7 @@ export default function ProjectDetails(props) {
                       ) : (
                         <>
                           <button
-                            onClick={() => setShowPublishModal(true)}
+                            onClick={handlePublishModal}
                             className="contained-button w-[120px] text-center !px-0 mr-4 cursor-pointer font-satoshi-bold cursor-pointer"
                           >
                             Publish
@@ -596,48 +615,52 @@ export default function ProjectDetails(props) {
                 data-tabs-toggle="#myTabContent"
                 role="tablist"
               >
-                <li
-                  className="mr-2"
-                  role="presentation"
-                  onClick={() => setSelectedTab(1)}
-                >
-                  <button
-                    className={`inline-block py-2 md:p-4 md:text-lg rounded-t-lg ${
-                      selectedTab === 1
-                        ? "border-b-2 border-primary-900 text-primary-900"
-                        : "border-transparent text-textSubtle"
-                    } hover:text-primary-600`}
-                    id="membership_nft"
-                    data-tabs-target="#membership_nft"
-                    type="button"
-                    role="tab"
-                    aria-controls="MembershipNFT"
-                    aria-selected="true"
+                {membershipCollectionList.length > 0 ? (
+                  <li
+                    className="mr-2"
+                    role="presentation"
+                    onClick={() => setSelectedTab(1)}
                   >
-                    Membership NFT
-                  </button>
-                </li>
-                <li
-                  className="mr-2"
-                  role="presentation"
-                  onClick={() => setSelectedTab(2)}
-                >
-                  <button
-                    className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${
-                      selectedTab === 2
-                        ? "border-b-2 border-primary-900 text-primary-900"
-                        : "border-transparent text-textSubtle"
-                    } hover:text-primary-900`}
-                    id="dashboard-tab"
-                    data-tabs-target="#dashboard"
-                    type="button"
-                    role="tab"
-                    aria-controls="dashboard"
-                    aria-selected="false"
+                    <button
+                      className={`inline-block py-2 md:p-4 md:text-lg rounded-t-lg ${
+                        selectedTab === 1
+                          ? "border-b-2 border-primary-900 text-primary-900"
+                          : "border-transparent text-textSubtle"
+                      } hover:text-primary-600`}
+                      id="membership_nft"
+                      data-tabs-target="#membership_nft"
+                      type="button"
+                      role="tab"
+                      aria-controls="MembershipNFT"
+                      aria-selected="true"
+                    >
+                      Membership NFT
+                    </button>
+                  </li>
+                ) : null}
+                {productCollectionList.length > 0 ? (
+                  <li
+                    className="mr-2"
+                    role="presentation"
+                    onClick={() => setSelectedTab(2)}
                   >
-                    Product NFT
-                  </button>
-                </li>
+                    <button
+                      className={`inline-block  py-2 md:p-4 md:text-lg rounded-t-lg ${
+                        selectedTab === 2
+                          ? "border-b-2 border-primary-900 text-primary-900"
+                          : "border-transparent text-textSubtle"
+                      } hover:text-primary-900`}
+                      id="dashboard-tab"
+                      data-tabs-target="#dashboard"
+                      type="button"
+                      role="tab"
+                      aria-controls="dashboard"
+                      aria-selected="false"
+                    >
+                      Product NFT
+                    </button>
+                  </li>
+                ) : null}
                 <li
                   className="mr-2"
                   role="presentation"
@@ -773,6 +796,7 @@ export default function ProjectDetails(props) {
                                     collection.members
                                   ).slicedItems.map((member) => (
                                     <img
+                                      key={member.id}
                                       src={member.avatar}
                                       alt={member.id}
                                       className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
@@ -914,6 +938,7 @@ export default function ProjectDetails(props) {
                                   collection.members
                                 ).slicedItems.map((member) => (
                                   <img
+                                    key={member.id}
                                     src={member.avatar}
                                     alt={member.id}
                                     className="rounded-full w-9 h-9 -ml-2 border-2 border-white"
@@ -1038,6 +1063,7 @@ export default function ProjectDetails(props) {
           )}
           {showTransferFundModal && (
             <LeavingSite
+              network={project.blockchain}
               treasuryAddress={project.treasury_wallet}
               show={showTransferFundModal}
               handleClose={() => setShowTransferFundModal(false)}

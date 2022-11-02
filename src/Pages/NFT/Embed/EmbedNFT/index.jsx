@@ -11,6 +11,8 @@ import { createProvider } from "util/smartcontract/provider";
 import { createMintInstance } from "config/ABI/mint-nft";
 import { createMembsrshipMintInstance } from "config/ABI/mint-membershipNFT";
 import { createMembershipMintNFT } from "Pages/NFT/DetailsNFT/MintNFT/deploy-membershipNFTMint";
+import { handleSwitchNetwork, getCurrentNetworkId } from "util/MetaMask";
+import { NETWORKS } from "config/networks";
 
 function EmbedNFT(props) {
   const [isLoading, setIsLoading] = useState(true);
@@ -86,48 +88,72 @@ function EmbedNFT(props) {
     }
   };
 
+  const getCurrentNftNetwork = () => {
+    let currency = nft?.more_info?.currency;
+    let networks = Object.values(NETWORKS);
+    let currentNetwork = networks.find((value) => value.value === currency);
+    return currentNetwork.network;
+  };
+
   async function handleProceedPayment(response) {
+    if (!nft.more_info.currency) {
+      setErrorMessage("This NFT is not for sale yet");
+      return;
+    }
+    let nftNetwork = await getCurrentNftNetwork();
+    let networkId = await getCurrentNetworkId();
     setIsMinting(true);
-    let formData = new FormData();
+    if (nftNetwork === networkId) {
+      setErrorMessage("");
+      let formData = new FormData();
 
-    formData.append("transaction_hash", response.hash);
-    formData.append("block_number", response.blockNumber);
-    const payload = {
-      id: nft?.lnft?.id,
-      data: formData,
-      type: nft?.lnft?.nft_type,
-    };
+      formData.append("transaction_hash", response.hash);
+      formData.append("block_number", response.blockNumber);
+      const payload = {
+        id: nft?.lnft?.id,
+        data: formData,
+        type: nft?.lnft?.nft_type,
+      };
 
-    await mintProductOrMembershipNft(payload)
-      .then((resp) => {
-        if (resp.code === 0) {
-          if (response.hash) {
-            setErrorMessage("");
-            if (resp?.function?.status === "success") {
-              setIsMinting(false);
+      await mintProductOrMembershipNft(payload)
+        .then((resp) => {
+          if (resp.code === 0) {
+            if (response.hash) {
               setErrorMessage("");
-              setSuccess(true);
+              if (resp?.function?.status === "success") {
+                setIsMinting(false);
+                setErrorMessage("");
+                setSuccess(true);
 
-              setTimeout(() => {
-                setSuccess(false);
-              }, 5000);
-            } else if (resp?.function?.status === "failed") {
-              let message = resp?.function?.message;
-              setErrorMessage(message);
-              setIsMinting(false);
+                setTimeout(() => {
+                  setSuccess(false);
+                }, 5000);
+              } else if (resp?.function?.status === "failed") {
+                let message = resp?.function?.message;
+                setErrorMessage(message);
+                setIsMinting(false);
+              }
+            } else {
+              handleContract(resp.config);
             }
           } else {
-            handleContract(resp.config);
+            let message = resp?.function?.message || resp.message;
+            setErrorMessage(message);
+            setIsMinting(false);
           }
-        } else {
-          let message = resp?.function?.message;
-          setErrorMessage(message);
-          setIsMinting(false);
-        }
-      })
-      .catch((err) => {
-        setErrorMessage("Minting Failed. Please try again later");
-      });
+        })
+        .catch((err) => {
+          setErrorMessage("Minting Failed. Please try again later");
+        });
+    } else {
+      try {
+        await handleSwitchNetwork(nftNetwork);
+      } catch (err) {
+        setErrorMessage(
+          `Please add ${NETWORKS?.[nftNetwork]?.networkName} network to your metamask wallet and then try again`
+        );
+      }
+    }
   }
   return (
     <>
@@ -152,7 +178,10 @@ function EmbedNFT(props) {
             <div className="flex items-center justify-center w-100 mt-3 bg-[#122478] rounded-[12px] p-4 bg-opacity-[0.1]">
               <div className="w-2/2 pl-3">
                 <p className="text-textSubtle text-[12px] text-center">Price</p>
-                <h2 className="text-black">{nft?.more_info?.price} {nft?.more_info?.currency?.toUpperCase()}</h2>
+                <h2 className="text-black">
+                  {nft?.more_info?.price}{" "}
+                  {nft?.more_info?.currency?.toUpperCase()}
+                </h2>
               </div>
             </div>
             <p className="text-danger-900 text-sm text-center">

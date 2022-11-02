@@ -14,6 +14,10 @@ const NetworkChangedModal = ({ show, handleClose, networkId }) => {
     window.location.reload();
   }
 
+  const handleOk = () => {
+    window.location.reload();
+    handleClose();
+  };
   return (
     <Modal
       show={show}
@@ -31,7 +35,7 @@ const NetworkChangedModal = ({ show, handleClose, networkId }) => {
         </h3>
         {NETWORKS[networkId] ? (
           <button
-            onClick={handleClose}
+            onClick={handleOk}
             className="rounded-[4px] bg-primary-900 text-white py-1 px-3 mt-3"
           >
             Ok

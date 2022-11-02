@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import "./index.css"
+import "./index.css";
 import { useState, useEffect, useRef } from "react";
 import WalletDropDownMenu from "./WalletDropdownMenu";
 import { useHistory, useLocation } from "react-router-dom";
@@ -23,11 +23,21 @@ import Logo from "assets/images/header/logo.svg";
 import AccountChangedModal from "./Account/AccountChangedModal";
 import NetworkChangedModal from "./Account/NetworkChangedModal";
 import { walletAddressTruncate } from "util/WalletUtils";
-import { ls_GetUserToken, ls_GetWalletAddress, ls_SetChainID } from "util/ApplicationStorage";
+import {
+  ls_GetUserToken,
+  ls_GetWalletAddress,
+  ls_SetChainID,
+  ls_GetChainID,
+} from "util/ApplicationStorage";
+import { toast } from "react-toastify";
+import { NETWORKS } from "config/networks";
+import { useAuthDispatch, logout } from "redux/auth";
+import { getWalletAccount } from "util/MetaMask";
 
 const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const history = useHistory();
   const dispatch = useDispatch();
+  const authDispatch = useAuthDispatch();
   const context = useAuthState();
   const { pathname } = useLocation();
   const inputRef = useRef(null);
@@ -52,6 +62,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   );
   const [showAccountChanged, setShowAccountChanged] = useState(false);
   const [showNetworkChanged, setShowNetworkChanged] = useState(false);
+  const [networkChangeDetected, setNetworkChangeDetected] = useState(false);
   const [networkId, setNetworkId] = useState();
   const [showSearchMobile, setShowSearchMobile] = useState(false);
   const projectDeploy = useSelector((state) =>
@@ -62,25 +73,71 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
 
   /** Metamask network change detection */
   useEffect(() => {
+    setNetworkChangeDetected(false);
     if (window?.ethereum) {
       if (!networkId) setNetworkId(window.ethereum.networkVersion);
       window?.ethereum?.on("networkChanged", function (networkId) {
+        setNetworkChangeDetected(true);
         setNetworkId(networkId);
         ls_SetChainID(networkId);
-        setShowNetworkChanged(true);
-        window.location.reload();
+        if (NETWORKS[networkId]) {
+          toast.success(
+            `Your network got changed to ${NETWORKS?.[networkId]?.networkName}`,
+            { toastId: "network-change-deduction" }
+          );
+        } else {
+          setShowNetworkChanged(true);
+        }
       });
     }
+
+    return () => {
+      setNetworkChangeDetected(false);
+    };
   }, []);
 
+  /** Here if unsupport network is found, logout automatically */
+  let localChainId = ls_GetChainID();
+  useEffect(() => {
+    if (!networkChangeDetected && networkId && localChainId) {
+      if (Number(networkId) !== Number(localChainId)) {
+        logout(dispatch);
+        history.push("/");
+        window.location.reload();
+      }
+    }
+  }, [networkId, localChainId]);
 
-  /** Metamask account change detection. It will show logout popup if user signin with new address 
+
+  /** Detect account whenever user come back to site */
+  let localAccountAddress = ls_GetWalletAddress();
+
+  useEffect(() => {
+    const handleAccountDifference = async () => {
+      if (window?.ethereum) {
+        const account = await getWalletAccount();
+
+        if (localAccountAddress && account) {
+          if (localAccountAddress !== account) {
+            setShowAccountChanged(true);
+          }
+        }
+      }
+    };
+    handleAccountDifference();
+  }, []);
+
+  /** Metamask account change detection. It will show logout popup if user signin with new address
    * In case if user re-login, if same account with wallet address, nothing will happen
    * In case accounts == null, mean metamask logged out, no smartcontract interaction can be called
-  */
+   */
   useEffect(() => {
     window?.ethereum?.on("accountsChanged", function (accounts) {
-      if (accounts != null && accounts.length > 0 && accounts[0] != ls_GetWalletAddress()) {
+      if (
+        accounts != null &&
+        accounts.length > 0 &&
+        accounts[0] != ls_GetWalletAddress()
+      ) {
         setShowAccountChanged(true);
       }
     });
@@ -147,7 +204,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     if (loc.protocol === "https:") {
       host = "wss:";
     }
-  } catch { }
+  } catch {}
   const socketUrl = `${host}//${config.WEB_SOKET}/ws`;
 
   const {
@@ -223,7 +280,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
           }
         }, 2000);
       }
-    } catch (err) { }
+    } catch (err) {}
   }
 
   function searchProject(keyword) {
@@ -355,8 +412,9 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
             )}
 
             <ul
-              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${userId ? "" : "sm:py-2"
-                }`}
+              className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${
+                userId ? "" : "sm:py-2"
+              }`}
             >
               {userinfo.id && (
                 <>
@@ -551,10 +609,10 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
               onClick={
                 userinfo.id
                   ? (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    showHideUserPopupWallet();
-                  }
+                      e.preventDefault();
+                      e.stopPropagation();
+                      showHideUserPopupWallet();
+                    }
                   : () => setShowModal(true)
               }
             />

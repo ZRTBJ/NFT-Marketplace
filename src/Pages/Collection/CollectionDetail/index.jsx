@@ -39,6 +39,8 @@ import PublishRoyaltyModal from "Pages/Collection/CollectionDetail/RoyaltySplitt
 import SalesSuccessModal from "Pages/Collection/SaleSetting/SalesSuccessModal";
 import defaultCover from "assets/images/image-default.svg";
 import { walletAddressTruncate } from "util/WalletUtils";
+import { getCurrentNetworkId } from "util/MetaMask";
+import NetworkHandlerModal from "components/Modals/NetworkHandlerModal";
 
 const TABLE_HEADERS = [
   { id: 0, label: "Wallet Address" },
@@ -90,6 +92,7 @@ const CollectionDetail = () => {
   const [daoInfo, setDaoInfo] = useState({});
   const [nftShareURL, setNFTShareURL] = useState("");
   const [membershipNFTId, setMembershipNFTId] = useState("");
+  const [showNetworkHandler, setShowNetworkHandler] = useState(false);
   const [collectionNotUpdatableModal, setCollectionNotUpdatableModal] =
     useState(false);
 
@@ -186,7 +189,6 @@ const CollectionDetail = () => {
   const getSplittedContributors = (id) => {
     getSplitterDetails(id).then((data) => {
       if (data.code === 0) {
-        console.log(data);
         setRoyalityMembers(data?.members);
       }
     });
@@ -199,7 +201,6 @@ const CollectionDetail = () => {
     getCollectionDetailsById(payload)
       .then((resp) => {
         if (resp.code === 0) {
-          console.log(resp);
           setProjectID(resp?.collection?.project_uid);
           getProjectDetailsById({ id: resp?.collection?.project_uid }).then(
             (resp) => {
@@ -285,30 +286,25 @@ const CollectionDetail = () => {
     e.stopPropagation();
     e.preventDefault();
     setShowOptions(null);
-    if (!Collection?.updatable) {
-      setCollectionNotUpdatableModal(true);
-    } else {
-      if (Collection?.status === "draft") {
+
+    if (Collection?.status === "draft") {
+      history.push(
+        `${
+          Collection?.type === "product"
+            ? `/product-nft?collectionId=${collectionId}&nftId=${nft.id}`
+            : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}&nftId=${nft.id}`
+        }`
+      );
+    } else if (Collection?.status === "published") {
+      if (Collection?.type === "membership") {
         history.push(
-          `${
-            Collection?.type === "product"
-              ? `/product-nft?collectionId=${collectionId}&nftId=${nft.id}`
-              : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}&nftId=${nft.id}`
-          }`
+          `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}&nftId=${nft.id}`
         );
-      } else if (Collection.status === "published") {
-        if (Collection?.type === "product") {
-          if (nft.freeze_metadata) {
-            setCollectionNotUpdatableModal(true);
-          } else {
-            history.push(
-              `${
-                Collection?.type === "product"
-                  ? `/product-nft?collectionId=${collectionId}&nftId=${nft.id}`
-                  : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}&nftId=${nft.id}`
-              }`
-            );
-          }
+      } else if (Collection.type === "product") {
+        if (Collection?.updatable && !nft.freeze_metadata) {
+          history.push(
+            `/product-nft?collectionId=${collectionId}&nftId=${nft.id}`
+          );
         } else {
           setCollectionNotUpdatableModal(true);
         }
@@ -424,8 +420,33 @@ const CollectionDetail = () => {
     }
   };
 
+  const handlePublishModal = async () => {
+    let networkId = await getCurrentNetworkId();
+    if (Number(projectNetwork) === networkId) {
+      setShowPublishModal(true);
+    } else {
+      setShowNetworkHandler(true);
+    }
+  };
+
+  const handlePublishSpliter = async () => {
+    let networkId = await getCurrentNetworkId();
+    if (Number(projectNetwork) === networkId) {
+      setShowPublishRoyaltySpliterConfirmModal(true);
+    } else {
+      setShowNetworkHandler(true);
+    }
+  };
+
   return (
     <div className="mx-4 md:mx-0">
+      {showNetworkHandler && (
+        <NetworkHandlerModal
+          show={showNetworkHandler}
+          handleClose={() => setShowNetworkHandler(false)}
+          projectNetwork={projectNetwork}
+        />
+      )}
       {ShowPublishModal && (
         <PublishCollectionModal
           show={ShowPublishModal}
@@ -786,7 +807,7 @@ const CollectionDetail = () => {
               )}
               {Collection?.status !== "published" && Collection?.is_owner && (
                 <a
-                  onClick={() => setShowPublishModal(true)}
+                  onClick={handlePublishModal}
                   className="contained-button ml-4 font-satoshi-bold"
                 >
                   Publish
@@ -1059,9 +1080,7 @@ const CollectionDetail = () => {
                     {!hasPublishedRoyaltySplitter && (
                       <button
                         className="block ml-auto bg-primary-100 text-primary-900 p-3 font-black text-[14px]"
-                        onClick={() =>
-                          setShowPublishRoyaltySpliterConfirmModal(true)
-                        }
+                        onClick={handlePublishSpliter}
                         disabled={
                           !canPublishRoyaltySplitter ||
                           isPublishingRoyaltySplitter

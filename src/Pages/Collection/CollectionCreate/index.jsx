@@ -385,7 +385,7 @@ export default function CollectionCreate() {
         setCoverPhotoUrl(cover ? cover : "");
         try {
           setWebLinks(JSON.parse(response.links));
-        } catch (e) { }
+        } catch (e) {}
         setProjectCategory(response.category_id);
         setIsTokenTransferable(response.token_transferable);
         setIsMetaDataFreezed(response.updatable);
@@ -621,8 +621,12 @@ export default function CollectionCreate() {
                     onProjectCategoryChange={onProjectCategoryChange}
                     // blockchainCategory={blockchainCategory}
                     // Freeze metadata
-                    showFreezeMetadata={true}
-                    isMetadataFreezed={isMetaDaFreezed}
+                    showFreezeMetadata={
+                      collectionType === "membership" ? false : true
+                    }
+                    isMetadataFreezed={
+                      collectionType === "membership" ? false : true
+                    }
                     onMetadataFreezeChange={onMetadataFreezeChange}
                     freezeMetadataDisabled={freezeMetadataDisabled}
                     // Token Transferable
@@ -674,7 +678,9 @@ export default function CollectionCreate() {
                     collectionType === "right_attach" ? false : true
                   }
                   projectCategoryName={projectCategoryName}
-                  showFreezeMetadata={true}
+                  showFreezeMetadata={
+                    collectionType === "membership" ? false : true
+                  }
                   isMetaDaFreezed={isMetaDaFreezed}
                   showTokenTransferable={showTokenTransferable}
                   isTokenTransferable={isTokenTransferable}

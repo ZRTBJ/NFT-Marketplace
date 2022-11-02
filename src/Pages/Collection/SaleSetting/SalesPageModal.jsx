@@ -23,6 +23,8 @@ import { createMembsrshipMintInstance } from "config/ABI/mint-membershipNFT";
 import { setMemNFTPrice } from "Pages/Collection/SaleSetting/deploy-membershipNFTPrice";
 import { ethers } from "ethers";
 import Delete from "assets/images/trash.svg";
+import { getCurrentNetworkId } from "util/MetaMask";
+import NetworkHandlerModal from "components/Modals/NetworkHandlerModal";
 
 //TODO: in the future, 1 network can support multiple currency, please fix this
 const CURRENCY = [
@@ -96,6 +98,7 @@ const SalesPageModal = ({
     getValues,
     formState: { errors },
   } = useForm();
+  const [showNetworkHandler, setShowNetworkHandler] = useState(false);
 
   useEffect(() => {
     let detail = CURRENCY.find((value) => value.id === Number(projectNetwork));
@@ -122,7 +125,7 @@ const SalesPageModal = ({
         );
         if (watch("price")) {
           let usd = value.rate * watch("price");
-          setDollarValue(usd);
+          setDollarValue(Number(usd));
         }
       }
     });
@@ -155,90 +158,101 @@ const SalesPageModal = ({
     publishedCollections.find((item) => item.id === selectedCollection);
 
   const onSubmit = async (data) => {
-    setIsSubmitted(true);
-    let type = collectionType ? collectionType : currentCollection.type;
-    if (agree && date.length === 2) {
-      const payload = {
-        price: data?.["price"],
-        startTime: getUnixTime(date?.[0]),
-        endTime: getUnixTime(date?.[1]),
-        reserve_EOA: data["eoa"],
-        collectionType: type,
-        collectionId: selectedCollection,
-        nftId: nftId,
-      };
+    let networkId = await getCurrentNetworkId();
+    if (Number(projectNetwork) === networkId) {
+      setIsSubmitted(true);
+      let type = collectionType ? collectionType : currentCollection.type;
+      if (agree && date.length === 2) {
+        const payload = {
+          price: data?.["price"],
+          startTime: getUnixTime(date?.[0]),
+          endTime: getUnixTime(date?.[1]),
+          reserve_EOA: data["eoa"],
+          collectionType: type,
+          collectionId: selectedCollection,
+          nftId: nftId,
+        };
 
-      setIsLoading(true);
-      try {
-        const priceContract = createMintInstance(
-          address ? address : currentCollection.contract_address,
-          provider
-        );
-        const membershipPriceContract = createMembsrshipMintInstance(
-          address ? address : currentCollection.contract_address,
-          provider
-        );
-
-        let tiers = [
-          {
-            tierId: nftId,
-            floorPrice: ethers.utils.parseEther(data["price"].toString()),
-            totalSupply: supply,
-          },
-        ];
-
-        let allTiers = selectedTiers.map((value) => {
-          return {
-            tierId: value.id,
-            floorPrice: ethers.utils.parseEther(data["price"].toString()),
-            totalSupply: value.supply,
-          };
-        });
-        const response =
-          type === "membership"
-            ? await setMemNFTPrice(
-                membershipPriceContract,
-                provider,
-                nftId ? tiers : allTiers
-              )
-            : await setNFTPrice(priceContract, provider, data["price"]);
-
-        if (response?.txReceipt?.status === 1) {
-          const request = new FormData();
-          request.append("price", data["price"]);
-          request.append("start_time", payload.startTime);
-          request.append("end_time", payload.endTime);
-          request.append("currency", selectedCurrency.value);
-          request.append(
-            "transaction_hash",
-            response?.txReceipt?.transactionHash
+        setIsLoading(true);
+        try {
+          const priceContract = createMintInstance(
+            address ? address : currentCollection.contract_address,
+            provider
           );
-          if (allTiers.length && !nftId) {
-            allTiers.map((value) =>
-              handleSalesAPICall(
-                type,
-                selectedCollection,
-                request,
-                value.tierId
-              )
-            );
+          const membershipPriceContract = createMembsrshipMintInstance(
+            address ? address : currentCollection.contract_address,
+            provider
+          );
+
+          let tiers = [
+            {
+              tierId: nftId,
+              floorPrice: ethers.utils.parseEther(data["price"].toString()),
+              totalSupply: supply,
+            },
+          ];
+
+          let allTiers = selectedTiers.map((value) => {
+            return {
+              tierId: value.id,
+              floorPrice: ethers.utils.parseEther(data["price"].toString()),
+              totalSupply: value.supply,
+            };
+          });
+          const response =
+            type === "membership"
+              ? await setMemNFTPrice(
+                  membershipPriceContract,
+                  provider,
+                  nftId ? tiers : allTiers
+                )
+              : await setNFTPrice(priceContract, provider, data["price"]);
+          if (response?.txReceipt) {
+            if (response.txReceipt?.status === 1) {
+              const request = new FormData();
+              request.append("price", data["price"]);
+              request.append("start_time", payload.startTime);
+              request.append("end_time", payload.endTime);
+              request.append("currency", selectedCurrency.value);
+              request.append(
+                "transaction_hash",
+                response?.txReceipt?.transactionHash
+              );
+              if (allTiers.length && !nftId) {
+                allTiers.map((value) =>
+                  handleSalesAPICall(
+                    type,
+                    selectedCollection,
+                    request,
+                    value.tierId
+                  )
+                );
+              } else {
+                handleSalesAPICall(type, selectedCollection, request, nftId);
+              }
+            }
           } else {
-            handleSalesAPICall(type, selectedCollection, request, nftId);
+            setErrorMessage(response);
+            setIsLoading(false);
+            setIsSubmitted(false);
+            setShowErrorModal(true);
+          }
+        } catch (err) {
+          if (err.message) {
+            setErrorMessage(err.message);
+            setShowErrorModal(true);
+            setIsLoading(false);
+            setIsSubmitted(false);
+          } else {
+            setIsLoading(false);
+            setShowErrorModal(true);
+            setIsSubmitted(false);
+            setErrorMessage("Setting price failed. Please try again later");
           }
         }
-      } catch (err) {
-        if (err.message) {
-          setErrorMessage(err.message);
-          setShowErrorModal(true);
-          setIsLoading(false);
-          setIsSubmitted(false);
-        } else {
-          setIsLoading(false);
-          setShowErrorModal(true);
-          setIsSubmitted(false);
-          setErrorMessage("Setting price failed. Please try again later");
-        }
       }
+    } else {
+      setShowNetworkHandler(true);
     }
   };
 
@@ -296,7 +310,6 @@ const SalesPageModal = ({
     setSelectedTier("");
     setSelectedTiers(tiers);
   };
-
   return (
     <>
       {isLoading ? (
@@ -315,6 +328,13 @@ const SalesPageModal = ({
         </Modal>
       ) : (
         <>
+          {showNetworkHandler && (
+            <NetworkHandlerModal
+              show={showNetworkHandler}
+              handleClose={() => setShowNetworkHandler(false)}
+              projectNetwork={projectNetwork}
+            />
+          )}
           <div
             data-toggle="modal"
             data-backdrop="static"
@@ -428,7 +448,7 @@ const SalesPageModal = ({
                       {watch("price") ? (
                         <div className="w-1/4 ml-1">
                           <p className="text-[14px]">
-                            $ {dollarValue?.toFixed(3)}
+                            $ {Number(dollarValue)?.toFixed(3)}
                           </p>
                         </div>
                       ) : null}

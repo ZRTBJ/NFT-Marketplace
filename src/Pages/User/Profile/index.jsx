@@ -36,6 +36,14 @@ import Spinner from "components/Commons/Spinner";
 import { NETWORKS } from "config/networks";
 import WalletConnectModal from "../Login/WalletConnectModal";
 import { ls_GetUserID } from "util/ApplicationStorage";
+import { getCurrentNetworkId } from "util/MetaMask";
+import NetworkHandlerModal from "components/Modals/NetworkHandlerModal";
+
+import nftSvg from "assets/images/profile/nftSvg.svg";
+import daoCreate from "assets/images/profile/daoCreate.svg";
+import CreateNFTModal from "Pages/Project/CreateDAOandNFT/components/CreateNFTModal.jsx";
+import emptyStateCommon from "assets/images/profile/emptyStateCommon.svg";
+import emptyStateRoyalty from "assets/images/profile/emptyStateRoyalty.svg";
 const Profile = () => {
   const provider = createProvider();
   SwiperCore.use([Autoplay]);
@@ -56,6 +64,7 @@ const Profile = () => {
     { title: "linkFacebook", icon: "facebook", value: "" },
     { title: "webLink1", icon: "link", value: "" },
   ];
+  const [showNetworkHandler, setShowNetworkHandler] = useState(false);
 
   const [projectList, setProjectList] = useState([]);
   // project List End
@@ -69,6 +78,7 @@ const Profile = () => {
   const [errorModal, setErrorModal] = useState(false);
   const [totalRoyality, setTotalRoyality] = useState(0);
   const [royaltyErrormessage, setRoyaltyErrormessage] = useState("");
+  const [daoNetwork, setDAONetwork] = useState("");
   async function onRoyaltiesListSort(e) {
     setRoyaltiesListSortBy(e.target.value);
     let oldRoyalties = [...royaltiesList];
@@ -140,6 +150,7 @@ const Profile = () => {
   const [isActive, setIsactive] = useState(1);
 
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [ShowCreateNFT, setShowCreateNFT] = useState(false);
   // function start
   const calculatePageCount = (pageSize, totalItems) => {
     return totalItems < pageSize ? 1 : Math.ceil(totalItems / pageSize);
@@ -149,6 +160,7 @@ const Profile = () => {
     if (id === "login") {
       if (ls_GetUserID()) {
         history.replace(`/profile/${ls_GetUserID()}`);
+        window.location.reload();
       } else {
         setShowLoginModal(true);
       }
@@ -207,10 +219,6 @@ const Profile = () => {
       });
     setRoyaltyLoading(false);
   }
-  const handlePageClick = (event) => {
-    setIsactive(event.selected + 1);
-  };
-
   async function getProjectList() {
     let payload = {
       id: id,
@@ -231,6 +239,10 @@ const Profile = () => {
       });
     setDaoLoading(false);
   }
+  const handlePageClick = (event) => {
+    setIsactive(event.selected + 1);
+  };
+
   async function calculateTotalRoyalties() {
     const sum = royaltiesList
       .map((item) => item.earnable_amount)
@@ -280,51 +292,60 @@ const Profile = () => {
     };
     return await claimRoyalty(payload);
   }
+
   async function claimRoyaltyById(royalty) {
-    setRoyaltyData(royalty, "loadingTrue");
-    const payload = {
-      royalty_uid: royalty.royalty_id,
-    };
-    let config = {};
-    let hasConfig = false;
-    await claimRoyalty(payload)
-      .then((res) => {
-        if (res.code === 0) {
-          config = res.config;
-          hasConfig = true;
-        } else {
+    let networkId = await getCurrentNetworkId();
+    setDAONetwork(royalty.blockchain);
+    if (Number(royalty.blockchain) === networkId) {
+      setRoyaltyData(royalty, "loadingTrue");
+      const payload = {
+        royalty_uid: royalty.royalty_id,
+      };
+      let config = {};
+      let hasConfig = false;
+      await claimRoyalty(payload)
+        .then((res) => {
+          if (res.code === 0) {
+            config = res.config;
+            hasConfig = true;
+          } else {
+            setIsLoading(false);
+            setErrorModal(true);
+            setRoyaltyErrormessage(res.message);
+            setRoyaltyData(royalty, "loadingFalse");
+          }
+        })
+        .catch(() => {
           setIsLoading(false);
           setErrorModal(true);
-          setRoyaltyErrormessage(res.message);
-          setRoyaltyData(royalty, "loadingFalse");
-        }
-      })
-      .catch(() => {
-        setIsLoading(false);
-        setErrorModal(true);
-      });
-    if (hasConfig) {
-      const result = await royaltyClaim(provider, config);
-      if (result) {
-        const data = {
-          id: royalty.royalty_id,
-          transaction_hash: result,
-        };
-        await claimRoyaltyWithtnx(data).then((res) => {
-          if (res.function.status === "success") {
-            setRoyaltyData(royalty, "loadingFalse");
-            setRoyaltyData(royalty, "claimButtonDisable");
-            toast.success(`Successfully claimed for  ${royalty.project_name}`);
-          }
-          if (res.function.status === "failed") {
-            setRoyaltyData(royalty, "loadingFalse");
-            toast.error(`Failed, ${res.function.message}`);
-          }
         });
+      if (hasConfig) {
+        const result = await royaltyClaim(provider, config);
+        if (result) {
+          const data = {
+            id: royalty.royalty_id,
+            transaction_hash: result,
+          };
+          await claimRoyaltyWithtnx(data).then((res) => {
+            if (res.function.status === "success") {
+              setRoyaltyData(royalty, "loadingFalse");
+              setRoyaltyData(royalty, "claimButtonDisable");
+              toast.success(
+                `Successfully claimed for  ${royalty.project_name}`
+              );
+            }
+            if (res.function.status === "failed") {
+              setRoyaltyData(royalty, "loadingFalse");
+              toast.error(`Failed, ${res.function.message}`);
+            }
+          });
+        }
+      } else {
+        setErrorModal(true);
+        setRoyaltyErrormessage("no config found");
       }
     } else {
-      setErrorModal(true);
-      setRoyaltyErrormessage("no config found");
+      setShowNetworkHandler(true);
     }
   }
   async function getNftList() {
@@ -354,7 +375,9 @@ const Profile = () => {
   }
   function setNftData(nft, type) {
     let nftList = [...mintedNftList];
-    const nftIndex = nftList.findIndex((item) => item.id === nft.id);
+    const nftIndex = nftList.findIndex(
+      (item) => item.id === nft.id && item.token_id === nft.token_id
+    );
     const nftLocal = { ...nft };
     if (type === "loadingTrue") {
       nftLocal.loading = true;
@@ -426,42 +449,51 @@ const Profile = () => {
         setNftData(nft, "sowRefreshButton");
       });
     if (hasConfigForNft) {
-      const erc721CollectionContract = createMintInstance(
-        config.collection_contract_address,
-        provider
-      );
-      const result = await updateMetadata(
-        erc721CollectionContract,
-        provider,
-        config
-      );
-      if (result) {
-        console.log(result);
-        const data = {
-          id: nft.id,
-          tokenId: nft.token_id,
-          tnxHash: result,
-        };
-        await refreshNFTWithtnx(data)
-          .then((res) => {
-            if (res.code === 0) {
-              if (res.function.status === "success") {
-                setNftData(nft, "loadingFalse");
-                setNftData(nft, "hideRefreshButton");
-                toast.success(`Successfully refreshed ${nft.name} NFT`);
+      try {
+        const erc721CollectionContract = createMintInstance(
+          config.collection_contract_address,
+          provider
+        );
+        const result = await updateMetadata(
+          erc721CollectionContract,
+          provider,
+          config
+        );
+        if (result) {
+          console.log(result);
+          const data = {
+            id: nft.id,
+            tokenId: nft.token_id,
+            tnxHash: result,
+          };
+          await refreshNFTWithtnx(data)
+            .then((res) => {
+              if (res.code === 0) {
+                if (res.function.status === "success") {
+                  setNftData(nft, "loadingFalse");
+                  setNftData(nft, "hideRefreshButton");
+                  toast.success(`Successfully refreshed ${nft.name} NFT`);
+                }
+                if (res.function.status === "failed") {
+                  setNftData(nft, "loadingFalse");
+                  setNftData(nft, "sowRefreshButton");
+                  toast.error(`Unexpected error, Please try again`);
+                }
               }
-              if (res.function.status === "failed") {
-                setNftData(nft, "loadingFalse");
-                setNftData(nft, "sowRefreshButton");
-                toast.error(`Unexpected error, Please try again`);
-              }
-            }
-          })
-          .catch((err) => {
-            setNftErrorModalMessage(err);
-            setNftErrorModal(true);
-            setNftData(nft, "loadingFalse");
-          });
+            })
+            .catch((err) => {
+              setNftErrorModalMessage(err);
+              setNftErrorModal(true);
+              setNftData(nft, "loadingFalse");
+            });
+        } else {
+          setNftData(nft, "loadingFalse");
+        }
+      } catch (error) {
+        console.log(error);
+        setNftData(nft, "loadingFalse");
+        setNftData(nft, "sowRefreshButton");
+        toast.error(`Unexpected error or cancelled, Please try again`);
       }
     }
   }
@@ -497,6 +529,13 @@ const Profile = () => {
     <>
       {!showLoginModal && (
         <>
+          {showNetworkHandler && (
+            <NetworkHandlerModal
+              show={showNetworkHandler}
+              handleClose={() => setShowNetworkHandler(false)}
+              projectNetwork={daoNetwork}
+            />
+          )}
           <div className="container mx-auto">
             {/* profile information section */}
             <div className="lg:flex items-center">
@@ -504,7 +543,7 @@ const Profile = () => {
                 <div className="flex">
                   <img
                     src={
-                      user.avatar === "" ? DefaultProfilePicture : user.avatar
+                      user?.avatar === "" ? DefaultProfilePicture : user?.avatar
                     }
                     className="rounded-lg w-[102px] object-cover h-[102px]"
                     alt={"profile"}
@@ -569,11 +608,10 @@ const Profile = () => {
                                   rel="noreferrer"
                                 >
                                   <i
-                                    className={`fa-brands fa-${
-                                      socialLinks.find(
-                                        (x) => x.title === snc.title
-                                      ).icon
-                                    } text-[20px] gradient-text text-white-shade-900 mt-1`}
+                                    className={`fa-brands fa-${socialLinks.find(
+                                      (x) => x.title === snc.title
+                                    ).icon
+                                      } text-[20px] gradient-text text-white-shade-900 mt-1`}
                                   ></i>
                                 </a>
                               )}
@@ -608,6 +646,31 @@ const Profile = () => {
                     {royaltyEarned.last_month_earn_usd?.toFixed(3)}
                   </div>
                 </div>
+              </div>
+            </div>
+
+            <div className="mx-3 my-6 flex flex-wrap items-center">
+              <div
+                onClick={() => setShowCreateNFT(true)}
+                className="w-full cursor-pointer md:mr-4 mb-4 md:mb-0 p-3 md:max-w-[252px] rounded h-[72px] bg-primary-900/[0.10] border border-primary-900"
+              >
+                <img src={nftSvg} className="mb-1 h-[24px] w-[24px]" alt="" />
+                <span className="text-primary-900 font-black">
+                  Create New NFT
+                </span>
+              </div>
+              <div
+                onClick={() => history.push("/project-create")}
+                className=" cursor-pointer h-[72px] p-3 w-full md:max-w-[252px] rounded  bg-secondary-900/[0.10] border border-secondary-900"
+              >
+                <img
+                  src={daoCreate}
+                  className="mb-1 h-[24px] w-[24px]"
+                  alt=""
+                />
+                <span className="text-secondary-900 font-black">
+                  Create New Dao
+                </span>
               </div>
             </div>
             {/* Royalties Table */}
@@ -670,16 +733,15 @@ const Profile = () => {
                               {royaltiesList.map((r, index) => (
                                 <tr
                                   key={r.royalty_id}
-                                  className={`${
-                                    index < royaltiesList.length - 1
-                                      ? "border-b"
-                                      : ""
-                                  } text-left text-txtblack text-[14px]`}
+                                  className={`${index < royaltiesList.length - 1
+                                    ? "border-b"
+                                    : ""
+                                    } text-left text-txtblack text-[14px]`}
                                 >
                                   <td className="py-4 px-5">
                                     <img
                                       src={NETWORKS[Number(r.blockchain)].icon}
-                                      className="h-[34px] w-[34px] object-cover rounded-full"
+                                      className="h-[30px] w-[30px]  rounded-full"
                                       alt={DefaultProjectLogo}
                                     />
                                   </td>
@@ -703,11 +765,10 @@ const Profile = () => {
                                     {r.royalty_percent}%
                                   </td>
                                   <td
-                                    className={`py-4 px-5  ${
-                                      r.is_owner
-                                        ? "text-info-1"
-                                        : " text-success-1"
-                                    }`}
+                                    className={`py-4 px-5  ${r.is_owner
+                                      ? "text-info-1"
+                                      : " text-success-1"
+                                      }`}
                                   >
                                     {r.is_owner ? "Owner" : "Member"}
                                   </td>
@@ -757,10 +818,15 @@ const Profile = () => {
                         </div>
                       </div>
                     ) : (
-                      <div className="text-center ">
-                        <h2 className="text-textSubtle mb-6">
+                      <div className="text-center">
+                        <img
+                          src={emptyStateRoyalty}
+                          className="h-[210px] w-[315px] m-auto"
+                          alt=""
+                        />
+                        <p className="text-subtitle font-bold">
                           You don't have any Royalty yet
-                        </h2>
+                        </p>
                       </div>
                     )}
                   </div>
@@ -771,9 +837,8 @@ const Profile = () => {
                         {royaltiesList.map((r, index) => (
                           <div
                             key={r.royalty_id}
-                            className={`my-8 py-7  ${
-                              index < royaltiesList.length - 1 ? "border-b" : ""
-                            }`}
+                            className={`my-8 py-7  ${index < royaltiesList.length - 1 ? "border-b" : ""
+                              }`}
                           >
                             <div className={`flex   items-center mb-8 `}>
                               <div className={"flex  items-center"}>
@@ -836,11 +901,10 @@ const Profile = () => {
                               <div>
                                 <div>Role</div>
                                 <div
-                                  className={`text-centre ${
-                                    r.is_owner
-                                      ? "text-info-1"
-                                      : " text-success-1"
-                                  }`}
+                                  className={`text-centre ${r.is_owner
+                                    ? "text-info-1"
+                                    : " text-success-1"
+                                    }`}
                                 >
                                   {r.is_owner ? "Owner" : "Member"}
                                 </div>
@@ -857,9 +921,14 @@ const Profile = () => {
                       </div>
                     ) : (
                       <div className="text-center ">
-                        <h2 className="text-textSubtle mb-6">
+                        <img
+                          src={emptyStateRoyalty}
+                          className="h-[210px] w-[315px] m-auto"
+                          alt=""
+                        />
+                        <p className="text-subtitle font-bold">
                           You don't have any Royalty yet
-                        </h2>
+                        </p>
                       </div>
                     )}
                   </div>
@@ -922,9 +991,14 @@ const Profile = () => {
                     </Swiper>
                   ) : (
                     <div className="text-center mt-6">
-                      <h2 className="text-textSubtle">
-                        You don't have any DAO yet
-                      </h2>
+                      <img
+                        src={emptyStateCommon}
+                        className="h-[210px] w-[315px] m-auto"
+                        alt=""
+                      />
+                      <p className="text-subtitle font-bold">
+                        You have no DAO Created
+                      </p>
                     </div>
                   )}
                 </>
@@ -976,8 +1050,8 @@ const Profile = () => {
                                     className="rounded-xl h-[211px] md:h-[276px] object-cover w-full"
                                     src={
                                       collection &&
-                                      collection.assets &&
-                                      collection.assets[0]
+                                        collection.assets &&
+                                        collection.assets[0]
                                         ? collection.assets[0].path
                                         : thumbIcon
                                     }
@@ -991,11 +1065,11 @@ const Profile = () => {
                                   </div>
                                   <p className="mb-3 text-textSubtle text-[13px]">
                                     {collection.description &&
-                                    collection.description.length > 70
+                                      collection.description.length > 70
                                       ? collection.description.substring(
-                                          0,
-                                          67
-                                        ) + "..."
+                                        0,
+                                        67
+                                      ) + "..."
                                       : collection.description}
                                   </p>
 
@@ -1034,7 +1108,14 @@ const Profile = () => {
                     </Swiper>
                   ) : (
                     <div className="text-center mt-6 text-textSubtle">
-                      <h2>You don't have any Collection yet</h2>
+                      <img
+                        src={emptyStateCommon}
+                        className="h-[210px] w-[315px] m-auto"
+                        alt=""
+                      />
+                      <p className="text-subtitle font-bold">
+                        You have no Collection Created
+                      </p>
                     </div>
                   )}
                 </>
@@ -1067,7 +1148,10 @@ const Profile = () => {
                     >
                       <div>
                         {mintedNftList.map((nft) => (
-                          <SwiperSlide className={styles.nftCard} key={nft.id}>
+                          <SwiperSlide
+                            className={styles.nftCard}
+                            key={`${nft.id}-${nft.token_id}`}
+                          >
                             <NFTListCard
                               nft={nft}
                               projectWork="ethereum"
@@ -1080,7 +1164,14 @@ const Profile = () => {
                     </Swiper>
                   ) : (
                     <div className="text-center mt-6 text-textSubtle">
-                      <h2>You don't have any minted NFT yet</h2>
+                      <img
+                        src={emptyStateCommon}
+                        className="h-[210px] w-[315px] m-auto"
+                        alt=""
+                      />
+                      <p className="text-subtitle font-bold">
+                        You have no NFT minted
+                      </p>
                     </div>
                   )}
                 </>
@@ -1132,6 +1223,10 @@ const Profile = () => {
           show={nftErrorModal}
         />
       )}
+      <CreateNFTModal
+        show={ShowCreateNFT}
+        handleClose={() => setShowCreateNFT(false)}
+      />
     </>
   );
 };

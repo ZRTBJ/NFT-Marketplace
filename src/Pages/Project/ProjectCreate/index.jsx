@@ -204,7 +204,7 @@ export default function ProjectCreate() {
 
   // Blockchain start
   const [blockchainCategory, setBlockchaainCategory] = useState(
-    chainId.toString()
+    chainId?.toString()
   );
   // Blockchain end
   let query = useQuery();
