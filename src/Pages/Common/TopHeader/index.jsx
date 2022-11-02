@@ -34,7 +34,6 @@ import { NETWORKS } from "config/networks";
 import { useAuthDispatch, logout } from "redux/auth";
 import { getWalletAccount } from "util/MetaMask";
 
-
 const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const history = useHistory();
   const dispatch = useDispatch();
@@ -128,22 +127,6 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   useEffect(() => {
     handleAccountDifference();
   }, []);
-
-  const handleLogout = () => {
-    logout(dispatch);
-    history.push("/");
-    window.location.reload();
-  };
-
-  let localChainId = ls_GetChainID();
-
-  useEffect(() => {
-    if (networkId && localChainId) {
-      if (Number(networkId) !== Number(localChainId)) {
-        handleLogout();
-      }
-    }
-  }, [networkId, localChainId]);
 
   /** Metamask account change detection. It will show logout popup if user signin with new address
    * In case if user re-login, if same account with wallet address, nothing will happen
