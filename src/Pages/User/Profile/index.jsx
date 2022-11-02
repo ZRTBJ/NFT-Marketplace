@@ -449,42 +449,51 @@ const Profile = () => {
         setNftData(nft, "sowRefreshButton");
       });
     if (hasConfigForNft) {
-      const erc721CollectionContract = createMintInstance(
-        config.collection_contract_address,
-        provider
-      );
-      const result = await updateMetadata(
-        erc721CollectionContract,
-        provider,
-        config
-      );
-      if (result) {
-        console.log(result);
-        const data = {
-          id: nft.id,
-          tokenId: nft.token_id,
-          tnxHash: result,
-        };
-        await refreshNFTWithtnx(data)
-          .then((res) => {
-            if (res.code === 0) {
-              if (res.function.status === "success") {
-                setNftData(nft, "loadingFalse");
-                setNftData(nft, "hideRefreshButton");
-                toast.success(`Successfully refreshed ${nft.name} NFT`);
+      try {
+        const erc721CollectionContract = createMintInstance(
+          config.collection_contract_address,
+          provider
+        );
+        const result = await updateMetadata(
+          erc721CollectionContract,
+          provider,
+          config
+        );
+        if (result) {
+          console.log(result);
+          const data = {
+            id: nft.id,
+            tokenId: nft.token_id,
+            tnxHash: result,
+          };
+          await refreshNFTWithtnx(data)
+            .then((res) => {
+              if (res.code === 0) {
+                if (res.function.status === "success") {
+                  setNftData(nft, "loadingFalse");
+                  setNftData(nft, "hideRefreshButton");
+                  toast.success(`Successfully refreshed ${nft.name} NFT`);
+                }
+                if (res.function.status === "failed") {
+                  setNftData(nft, "loadingFalse");
+                  setNftData(nft, "sowRefreshButton");
+                  toast.error(`Unexpected error, Please try again`);
+                }
               }
-              if (res.function.status === "failed") {
-                setNftData(nft, "loadingFalse");
-                setNftData(nft, "sowRefreshButton");
-                toast.error(`Unexpected error, Please try again`);
-              }
-            }
-          })
-          .catch((err) => {
-            setNftErrorModalMessage(err);
-            setNftErrorModal(true);
-            setNftData(nft, "loadingFalse");
-          });
+            })
+            .catch((err) => {
+              setNftErrorModalMessage(err);
+              setNftErrorModal(true);
+              setNftData(nft, "loadingFalse");
+            });
+        } else {
+          setNftData(nft, "loadingFalse");
+        }
+      } catch (error) {
+        console.log(error);
+        setNftData(nft, "loadingFalse");
+        setNftData(nft, "sowRefreshButton");
+        toast.error(`Unexpected error or cancelled, Please try again`);
       }
     }
   }
@@ -599,11 +608,10 @@ const Profile = () => {
                                   rel="noreferrer"
                                 >
                                   <i
-                                    className={`fa-brands fa-${
-                                      socialLinks.find(
-                                        (x) => x.title === snc.title
-                                      ).icon
-                                    } text-[20px] gradient-text text-white-shade-900 mt-1`}
+                                    className={`fa-brands fa-${socialLinks.find(
+                                      (x) => x.title === snc.title
+                                    ).icon
+                                      } text-[20px] gradient-text text-white-shade-900 mt-1`}
                                   ></i>
                                 </a>
                               )}
@@ -725,11 +733,10 @@ const Profile = () => {
                               {royaltiesList.map((r, index) => (
                                 <tr
                                   key={r.royalty_id}
-                                  className={`${
-                                    index < royaltiesList.length - 1
-                                      ? "border-b"
-                                      : ""
-                                  } text-left text-txtblack text-[14px]`}
+                                  className={`${index < royaltiesList.length - 1
+                                    ? "border-b"
+                                    : ""
+                                    } text-left text-txtblack text-[14px]`}
                                 >
                                   <td className="py-4 px-5">
                                     <img
@@ -758,11 +765,10 @@ const Profile = () => {
                                     {r.royalty_percent}%
                                   </td>
                                   <td
-                                    className={`py-4 px-5  ${
-                                      r.is_owner
-                                        ? "text-info-1"
-                                        : " text-success-1"
-                                    }`}
+                                    className={`py-4 px-5  ${r.is_owner
+                                      ? "text-info-1"
+                                      : " text-success-1"
+                                      }`}
                                   >
                                     {r.is_owner ? "Owner" : "Member"}
                                   </td>
@@ -831,9 +837,8 @@ const Profile = () => {
                         {royaltiesList.map((r, index) => (
                           <div
                             key={r.royalty_id}
-                            className={`my-8 py-7  ${
-                              index < royaltiesList.length - 1 ? "border-b" : ""
-                            }`}
+                            className={`my-8 py-7  ${index < royaltiesList.length - 1 ? "border-b" : ""
+                              }`}
                           >
                             <div className={`flex   items-center mb-8 `}>
                               <div className={"flex  items-center"}>
@@ -896,11 +901,10 @@ const Profile = () => {
                               <div>
                                 <div>Role</div>
                                 <div
-                                  className={`text-centre ${
-                                    r.is_owner
-                                      ? "text-info-1"
-                                      : " text-success-1"
-                                  }`}
+                                  className={`text-centre ${r.is_owner
+                                    ? "text-info-1"
+                                    : " text-success-1"
+                                    }`}
                                 >
                                   {r.is_owner ? "Owner" : "Member"}
                                 </div>
@@ -1046,8 +1050,8 @@ const Profile = () => {
                                     className="rounded-xl h-[211px] md:h-[276px] object-cover w-full"
                                     src={
                                       collection &&
-                                      collection.assets &&
-                                      collection.assets[0]
+                                        collection.assets &&
+                                        collection.assets[0]
                                         ? collection.assets[0].path
                                         : thumbIcon
                                     }
@@ -1061,11 +1065,11 @@ const Profile = () => {
                                   </div>
                                   <p className="mb-3 text-textSubtle text-[13px]">
                                     {collection.description &&
-                                    collection.description.length > 70
+                                      collection.description.length > 70
                                       ? collection.description.substring(
-                                          0,
-                                          67
-                                        ) + "..."
+                                        0,
+                                        67
+                                      ) + "..."
                                       : collection.description}
                                   </p>
 
