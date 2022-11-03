@@ -59,7 +59,7 @@ export default function ProjectDetails(props) {
   const [showDeployModal, setShowDeployModal] = useState(false);
   const [tnxData, setTnxData] = useState({});
   const [publishStep, setPublishStep] = useState(1);
-  const [selectedTab, setSelectedTab] = useState(3);
+  const [selectedTab, setSelectedTab] = useState(1);
   const [membershipCollectionList, setMembershipCollectionList] = useState([]);
   const [productCollectionList, setProductCollectionList] = useState([]);
   const [errorMsg, setErrorMsg] = useState(null);

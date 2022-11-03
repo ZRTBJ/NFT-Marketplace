@@ -1,6 +1,6 @@
 import MetaMaskOnboarding from "@metamask/onboarding";
+import { NETWORKS } from "config/networks";
 import Web3 from "web3";
-import { ethers } from "ethers";
 
 const currentUrl = new URL(window.location.href);
 const forwarderOrigin =
@@ -19,7 +19,7 @@ export async function getWalletAccount() {
       const account = accounts[0];
       return account;
     } catch (error) {
-      console.log(error.message);
+      alert(error.message);
       return;
     }
   } else {
@@ -107,26 +107,6 @@ export const handleSwitchNetwork = async (projectNetwork) => {
       });
     } catch (error) {
       console.log(error);
-    }
-  } else {
-    onBoardBrowserPlugin();
-    return;
-  }
-};
-
-//To get balance
-export const getAccountBalance = async () => {
-  if (window.ethereum) {
-    try {
-      let accountAddress = await getWalletAccount();
-      let balance = await window.ethereum.request({
-        method: "eth_getBalance",
-        params: [accountAddress, "latest"],
-      });
-      return ethers.utils.formatEther(balance);
-    } catch (error) {
-      console.log(error.message);
-      return;
     }
   } else {
     onBoardBrowserPlugin();
