@@ -7,10 +7,10 @@ import {
 import manImg from "assets/images/defaultImage.svg";
 import opensea from "assets/images/icons/opensea.svg";
 import rarible from "assets/images/icons/rarible.svg";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { format } from "date-fns";
 import SuccessModal from "components/Modals/SuccessModal";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   FacebookShareButton,
   TwitterShareButton,
@@ -32,7 +32,7 @@ import { createMembershipMintNFT } from "Pages/NFT/DetailsNFT/MintNFT/deploy-mem
 import EmbedNFTModal from "Pages/NFT/Embed/EmbedNFTModal";
 import { NETWORKS } from "config/networks";
 import { ls_GetChainID } from "util/ApplicationStorage";
-import { getCurrentNetworkId } from "util/MetaMask";
+import { getCurrentNetworkId, getAccountBalance } from "util/MetaMask";
 import NetworkHandlerModal from "components/Modals/NetworkHandlerModal";
 
 export default function DetailsNFT(props) {
@@ -53,9 +53,8 @@ export default function DetailsNFT(props) {
 
   const provider = createProvider();
 
-  const dispatch = useDispatch();
-
   const { type, id } = useParams();
+
   const handleContract = async (config) => {
     try {
       const mintContract = createMintInstance(config.contract, provider);
@@ -63,28 +62,35 @@ export default function DetailsNFT(props) {
         config.contract,
         provider
       );
-      const response =
-        type === "membership"
-          ? await createMembershipMintNFT(
-            membershipMintContract,
-            config.metadataUrl,
-            id,
-            provider,
-            config.price
-          )
-          : await createMintNFT(
-            mintContract,
-            config.metadataUrl,
-            config.price,
-            provider
-          );
-      if (response) {
-        setHash(response?.transactionHash);
-        let data = {
-          hash: response?.transactionHash,
-          blockNumber: response?.blockNumber,
-        };
-        handleProceedPayment(data);
+      let nftPrice = config.price;
+      const accountBalance = await getAccountBalance();
+      if (Number(accountBalance) > Number(nftPrice)) {
+        const response =
+          type === "membership"
+            ? await createMembershipMintNFT(
+                membershipMintContract,
+                config.metadataUrl,
+                id,
+                provider,
+                config.price
+              )
+            : await createMintNFT(
+                mintContract,
+                config.metadataUrl,
+                config.price,
+                provider
+              );
+        if (response) {
+          setHash(response?.transactionHash);
+          let data = {
+            hash: response?.transactionHash,
+            blockNumber: response?.blockNumber,
+          };
+          handleProceedPayment(data);
+        }
+      } else {
+        setTransactionWaitingModal(false);
+        setErrorMsg("You don't have enough balance in your wallet to Mint NFT");
       }
     } catch (err) {
       setTransactionWaitingModal(false);
@@ -175,14 +181,7 @@ export default function DetailsNFT(props) {
 
   function hideModal(e) {
     setShowModal(false);
-  }
-
-  function handleMint(params) {
-    if (userinfo.eoa) {
-      setTransactionModal(true);
-    } else {
-      setShowModal(true);
-    }
+    window.location.reload();
   }
 
   const getCurrentNftNetwork = () => {
@@ -194,16 +193,20 @@ export default function DetailsNFT(props) {
   };
 
   const handlePublishModal = async () => {
-    if (!nft.more_info.currency) {
-      setErrorMsg("This NFT is not for sale yet, please try again later");
-      return;
-    }
-    let nftNetwork = await getCurrentNftNetwork();
-    let networkId = await getCurrentNetworkId();
-    if (nftNetwork === networkId) {
-      setTransactionModal(true);
+    if (userinfo.eoa) {
+      if (!nft.more_info.currency) {
+        setErrorMsg("This NFT is not for sale yet, please try again later");
+        return;
+      }
+      let nftNetwork = await getCurrentNftNetwork();
+      let networkId = await getCurrentNetworkId();
+      if (nftNetwork === networkId) {
+        setTransactionModal(true);
+      } else {
+        setShowNetworkHandler(true);
+      }
     } else {
-      setShowNetworkHandler(true);
+      setShowModal(true);
     }
   };
 
@@ -259,7 +262,7 @@ export default function DetailsNFT(props) {
           transactionHash={hash}
           collectionName={"Collection1"}
           shareUrl={`${nft?.lnft?.invitation_code}`}
-        // handleNext={handleProceedPayment}
+          // handleNext={handleProceedPayment}
         />
       )}
       {errorMsg && (
@@ -272,11 +275,13 @@ export default function DetailsNFT(props) {
           show={errorMsg}
         />
       )}
-      <WalletConnectModal
-        showModal={showModal}
-        closeModal={(e) => hideModal(e)}
-        noRedirection={true}
-      />
+      {showModal && (
+        <WalletConnectModal
+          showModal={showModal}
+          closeModal={(e) => hideModal(e)}
+          noRedirection={true}
+        />
+      )}
       {showEmbedNFT && (
         <EmbedNFTModal
           show={showEmbedNFT}
@@ -409,12 +414,14 @@ export default function DetailsNFT(props) {
               <span className="font-satoshi-bold font-black text-lg text-txtblack mx-3">
                 :
               </span>
-              {(info?.currency && info?.start_datetime) ? (
+              {info?.currency && info?.start_datetime ? (
                 <span className="text-textSubtle leading-8">
                   {format(new Date(info.start_datetime), "dd/MM/yy (HH:mm)")} -{" "}
                   {format(new Date(info.end_datetime), "dd/MM/yy (HH:mm)")}
                 </span>
-              ) : "Not for sale"}
+              ) : (
+                "Not for sale"
+              )}
             </div>
             <div className="flex mb-4">
               <span className="w-20 font-satoshi-bold font-black text-lg text-txtblack">
