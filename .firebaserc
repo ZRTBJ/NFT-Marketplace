@@ -1,5 +1,19 @@
 {
   "projects": {
-    "default": "apollo-creabo-dev"
-  }
+    "default": "apollo-creabo-dev",
+    "prod": "apollo-creabo-prod"
+  },
+  "targets": {
+    "apollo-creabo-prod": {
+      "hosting": {
+        "develop": [
+          "apollo-creabo-dev"
+        ],
+        "prod": [
+          "apollo-creabo-prod"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
