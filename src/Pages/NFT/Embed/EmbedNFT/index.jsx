@@ -11,11 +11,7 @@ import { createProvider } from "util/smartcontract/provider";
 import { createMintInstance } from "config/ABI/mint-nft";
 import { createMembsrshipMintInstance } from "config/ABI/mint-membershipNFT";
 import { createMembershipMintNFT } from "Pages/NFT/DetailsNFT/MintNFT/deploy-membershipNFTMint";
-import {
-  handleSwitchNetwork,
-  getCurrentNetworkId,
-  getAccountBalance,
-} from "util/MetaMask";
+import { handleSwitchNetwork, getCurrentNetworkId } from "util/MetaMask";
 import { NETWORKS } from "config/networks";
 
 function EmbedNFT(props) {
@@ -60,36 +56,26 @@ function EmbedNFT(props) {
         config.contract,
         provider
       );
-      let nftPrice = config.price;
-      const accountBalance = await getAccountBalance();
-
-      if (Number(accountBalance) > Number(nftPrice)) {
-        const response =
-          type === "membership"
-            ? await createMembershipMintNFT(
-                membershipMintContract,
-                config.metadataUrl,
-                id,
-                provider
-              )
-            : await createMintNFT(
-                mintContract,
-                config.metadataUrl,
-                config.price,
-                provider
-              );
-        if (response) {
-          let data = {
-            hash: response?.transactionHash,
-            blockNumber: response?.blockNumber,
-          };
-          handleProceedPayment(data);
-        }
-      } else {
-        setErrorMessage(
-          "You don't have enough balance in your wallet to Mint NFT"
-        );
-        setIsMinting(false);
+      const response =
+        type === "membership"
+          ? await createMembershipMintNFT(
+            membershipMintContract,
+            config.metadataUrl,
+            id,
+            provider
+          )
+          : await createMintNFT(
+            mintContract,
+            config.metadataUrl,
+            config.price,
+            provider
+          );
+      if (response) {
+        let data = {
+          hash: response?.transactionHash,
+          blockNumber: response?.blockNumber,
+        };
+        handleProceedPayment(data);
       }
     } catch (err) {
       if (err.message) {
