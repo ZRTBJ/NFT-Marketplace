@@ -1129,7 +1129,7 @@ const Profile = () => {
             {/* Nft */}
             <div className="mb-[50px]">
               <div className="mb-5 flex px-4 flex-wrap">
-                <h1>Minted NFTs List</h1>
+                <h1>Minted NFT</h1>
                 <Link
                   to={`/list/?type=nft&user=${id}`}
                   className="contained-button  py-1 px-3 rounded ml-auto"

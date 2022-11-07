@@ -3,6 +3,14 @@ import Matic from "assets/images/polygon.svg";
 import { address } from "./contractAddresses.js";
 
 const gnosisFundTransferUrl = "https://gnosis-safe.io/app";
+const raribleNFTDetailsUrl =
+  process.env.REACT_APP_ENV === "production"
+    ? "https://rarible.com/token"
+    : "https://testnet.rarible.com/token/";
+const openSeaNFTDetailsUrl =
+  process.env.REACT_APP_ENV === "production"
+    ? "https://opensea.io/assets/"
+    : "https://testnets.opensea.io/assets";
 
 const TESTNET = {
   5: {
@@ -25,6 +33,9 @@ const TESTNET = {
     createRoyaltySplitter: address.RoyaltySplitterFactory,
     network: 5,
     gnosis: `${gnosisFundTransferUrl}/gor/`,
+    raribleNFTDetailsUrl: raribleNFTDetailsUrl,
+    openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/goerli/`,
+    viewContractAddressUrl: `https://goerli.etherscan.io/address/`,
   },
   80001: {
     networkName: "Polygon Testnet Mumbai",
@@ -47,6 +58,9 @@ const TESTNET = {
     createRoyaltySplitter: address.RoyaltySplitterFactoryMumbai,
     network: 80001,
     gnosis: `${gnosisFundTransferUrl}/matic/`,
+    raribleNFTDetailsUrl: raribleNFTDetailsUrl,
+    openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/mumbai/`,
+    viewContractAddressUrl: ``,
   },
 };
 
@@ -72,6 +86,9 @@ const MAINNET = {
     createRoyaltySplitter: address.RoyaltySplitterFactory,
     network: 1,
     gnosis: `${gnosisFundTransferUrl}/eth/`,
+    raribleNFTDetailsUrl: raribleNFTDetailsUrl,
+    openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/ethereum/`,
+    viewContractAddressUrl: ``,
   },
   137: {
     networkName: "Polygon Mainnet",
@@ -93,6 +110,9 @@ const MAINNET = {
     createRoyaltySplitter: address.RoyaltySplitterFactory,
     network: 137,
     gnosis: `${gnosisFundTransferUrl}/matic/`,
+    raribleNFTDetailsUrl: raribleNFTDetailsUrl,
+    openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/matic/`,
+    viewContractAddressUrl: ``,
   },
 };
 

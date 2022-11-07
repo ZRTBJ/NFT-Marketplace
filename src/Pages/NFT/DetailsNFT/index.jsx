@@ -38,6 +38,7 @@ import Eth from "assets/images/network/eth.svg";
 import Polygon from "assets/images/network/polygon.svg";
 import { toast } from "react-toastify";
 import { cryptoConvert } from "services/chainlinkService";
+import tickIcon from "assets/images/tick.svg";
 export default function DetailsNFT(props) {
   const userinfo = useSelector((state) => state.user.userinfo);
   const [isLoading, setIsLoading] = useState(true);
@@ -355,7 +356,6 @@ export default function DetailsNFT(props) {
               <p className="mb-2">Share with link</p>
               <div className="w-fit flex items-center bg-primary-900/[0.2] rounded ">
                 <div className="p-3 text-primary-900">
-                  <span>Link : </span>
                   <span className="font-black  mr-2">
                     {window.location.href}
                   </span>
@@ -389,24 +389,12 @@ export default function DetailsNFT(props) {
           </div>
 
           <div className="bg-white rounded-xl shadow-main md:px-4 pt-0 mt-6 md:mt-0 flex-1 mx-4 md:mx-0">
-            <h1 className="text-txtblack">{nft?.lnft?.name}</h1>
-            {/* <p className="txtblack text-sm pb-4">Find it On</p>
-            <div className="mb-4">
-              <div
-                onClick={() => setComingSoon(true)}
-                className="inline-flex items-center mr-3 cursor-pointer border border-color-blue p-3 text-color-blue font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-color-blue hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
-              >
-                <img src={opensea} alt="opensea" className="mr-1" />
-                Opensea
-              </div>
-              <div
-                onClick={() => setComingSoon(true)}
-                className="inline-flex cursor-pointer items-center mr-3 border border-color-yellow p-3 text-color-yellow font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-color-yellow hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
-              >
-                <img src={rarible} alt="rarible" className="mr-1" />
-                Rarible
-              </div>
-            </div> */}
+            <div className="flex items-center">
+              <h1 className="text-txtblack">{nft?.lnft?.name}</h1>
+              {info?.currency && (
+                <img className="ml-1 mt-1" src={tickIcon} alt="" />
+              )}
+            </div>
 
             <div className="my-4 border border-primary-border shadow rounded-xl w-full   md:max-w-[564px] p-3">
               <div className="mt-2 ml-4 ">
