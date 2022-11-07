@@ -457,6 +457,26 @@ export default function DetailsNFT(props) {
                 {formatNumber(nft?.lnft?.supply)}
               </span>
             </div>
+            <div className="flex items-center mb-4">
+              <h3 className="w-30  txtblack">External Link</h3>
+              <span className="font-satoshi-bold font-black text-lg text-txtblack mx-3">
+                :
+              </span>
+              {nft?.lnft?.external_url ? (
+                <>
+                  <a
+                    href={nft?.lnft?.external_url}
+                    target="_blank"
+                    className="!no-underline"
+                    rel="noreferrer"
+                  >
+                    {nft?.lnft?.external_url}
+                  </a>
+                </>
+              ) : (
+                "No external url found"
+              )}
+            </div>
             <h3 className="txtblack">Description:</h3>
             <p className="txtblack text-sm mb-4">
               {nft?.lnft?.description

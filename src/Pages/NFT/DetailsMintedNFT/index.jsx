@@ -13,7 +13,6 @@ import FB from "assets/images/facebook.svg";
 import twitter from "assets/images/twitter.svg";
 import reddit from "assets/images/reddit.svg";
 import { toast } from "react-toastify";
-import DefaultProfilePicture from "assets/images/defaultProfile.svg";
 import { getUserInfo } from "services/User/userService";
 import { NETWORKS } from "config/networks";
 import { refreshNFT } from "services/nft/nftService";
@@ -381,7 +380,7 @@ export default function DetailsNFT(props) {
                     :
                   </span>
                   <Link
-                    className="!no-underline text-txtblack"
+                    className="!no-underline"
                     to={`/collection-details/${collection?.id}`}
                   >
                     {collection?.name}
@@ -394,7 +393,7 @@ export default function DetailsNFT(props) {
                   </span>
                   <Link
                     to={`/profile/${owner?.id}`}
-                    className="break-all !no-underline text-txtblack"
+                    className="break-all !no-underline"
                   >
                     {owner?.display_name ? owner?.display_name : "View profile"}
                   </Link>
@@ -406,9 +405,20 @@ export default function DetailsNFT(props) {
               <span className="font-satoshi-bold font-black text-lg text-txtblack mx-3">
                 :
               </span>
-              {nft?.lnft?.external_url
-                ? nft?.lnft?.external_url
-                : "No external url found"}
+              {nft?.lnft?.external_url ? (
+                <>
+                  <a
+                    href={nft?.lnft?.external_url}
+                    target="_blank"
+                    className="!no-underline"
+                    rel="noreferrer"
+                  >
+                    {nft?.lnft?.external_url}
+                  </a>
+                </>
+              ) : (
+                "No external url found"
+              )}
             </div>
             <h3 className="txtblack">Description:</h3>
             <p className="txtblack text-sm mb-4">

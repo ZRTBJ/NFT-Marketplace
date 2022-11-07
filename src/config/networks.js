@@ -60,7 +60,7 @@ const TESTNET = {
     gnosis: `${gnosisFundTransferUrl}/matic/`,
     raribleNFTDetailsUrl: raribleNFTDetailsUrl,
     openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/mumbai/`,
-    viewContractAddressUrl: ``,
+    viewContractAddressUrl: `https://mumbai.polygonscan.com/address/`,
   },
 };
 
@@ -88,7 +88,7 @@ const MAINNET = {
     gnosis: `${gnosisFundTransferUrl}/eth/`,
     raribleNFTDetailsUrl: raribleNFTDetailsUrl,
     openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/ethereum/`,
-    viewContractAddressUrl: ``,
+    viewContractAddressUrl: `https://etherscan.io/address/`,
   },
   137: {
     networkName: "Polygon Mainnet",
@@ -112,7 +112,7 @@ const MAINNET = {
     gnosis: `${gnosisFundTransferUrl}/matic/`,
     raribleNFTDetailsUrl: raribleNFTDetailsUrl,
     openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/matic/`,
-    viewContractAddressUrl: ``,
+    viewContractAddressUrl: `https://polygonscan.com/address/`,
   },
 };
 
