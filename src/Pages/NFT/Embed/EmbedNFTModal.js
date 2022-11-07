@@ -41,7 +41,7 @@ const EmbedNFTModal = ({ show, type, handleClose, nftId }) => {
             title="NFT"
           ></iframe>
         </div>
-        <div className="flex items-center w-full space-x-2 justify-between mt-4">
+        <div className="flex items-center w-full justify-between mt-4">
           <div className="w-[1/2]">
             <div className="relative">
               <p className="text-[#9499ae] text-md absolute left-2 top-3 text-[14px]">
@@ -86,7 +86,6 @@ const EmbedNFTModal = ({ show, type, handleClose, nftId }) => {
             name="iframe"
             ref={copyRef}
             value={iframeContent}
-            readOnly={true}
           />
           <div className="text-center mt-5 relative">
             <button

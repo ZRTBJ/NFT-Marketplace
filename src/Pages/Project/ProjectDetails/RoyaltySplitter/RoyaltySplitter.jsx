@@ -5,7 +5,6 @@ import ReactPaginate from "react-paginate";
 import Spinner from "components/Commons/Spinner";
 import { DebounceInput } from "react-debounce-input";
 import CollectionSplitterItem from "./components/CollectionSplitterItem";
-import emptyStateCommon from "assets/images/profile/emptyStateCommon.svg";
 
 const RoyaltySplitter = ({ projectNetwork }) => {
   const { id } = useParams();
@@ -145,16 +144,7 @@ const RoyaltySplitter = ({ projectNetwork }) => {
               <>
                 {payload.keyword === "" ? (
                   <div className="grid mt-[40px] h-full place-items-center">
-                    <div className="text-center mt-6">
-                      <img
-                        src={emptyStateCommon}
-                        className="h-[210px] w-[315px] m-auto"
-                        alt=""
-                      />
-                      <p className="text-subtitle font-bold">
-                        No royalty splitter found
-                      </p>
-                    </div>
+                    <h1>This Project has no collections yet</h1>
                   </div>
                 ) : (
                   <div className="text-center">

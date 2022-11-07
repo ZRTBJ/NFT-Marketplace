@@ -11,13 +11,9 @@ import { createProvider } from "util/smartcontract/provider";
 import { createMintInstance } from "config/ABI/mint-nft";
 import { createMembsrshipMintInstance } from "config/ABI/mint-membershipNFT";
 import { createMembershipMintNFT } from "Pages/NFT/DetailsNFT/MintNFT/deploy-membershipNFTMint";
-import {
-  handleSwitchNetwork,
-  getCurrentNetworkId,
-  getAccountBalance,
-} from "util/MetaMask";
+import { handleSwitchNetwork, getCurrentNetworkId } from "util/MetaMask";
 import { NETWORKS } from "config/networks";
-const imageRegex = new RegExp("image");
+
 function EmbedNFT(props) {
   const [isLoading, setIsLoading] = useState(true);
   const [isMinting, setIsMinting] = useState(false);
@@ -60,36 +56,26 @@ function EmbedNFT(props) {
         config.contract,
         provider
       );
-      let nftPrice = config.price;
-      const accountBalance = await getAccountBalance();
-
-      if (Number(accountBalance) > Number(nftPrice)) {
-        const response =
-          type === "membership"
-            ? await createMembershipMintNFT(
-                membershipMintContract,
-                config.metadataUrl,
-                id,
-                provider
-              )
-            : await createMintNFT(
-                mintContract,
-                config.metadataUrl,
-                config.price,
-                provider
-              );
-        if (response) {
-          let data = {
-            hash: response?.transactionHash,
-            blockNumber: response?.blockNumber,
-          };
-          handleProceedPayment(data);
-        }
-      } else {
-        setErrorMessage(
-          "You don't have enough balance in your wallet to Mint NFT"
-        );
-        setIsMinting(false);
+      const response =
+        type === "membership"
+          ? await createMembershipMintNFT(
+            membershipMintContract,
+            config.metadataUrl,
+            id,
+            provider
+          )
+          : await createMintNFT(
+            mintContract,
+            config.metadataUrl,
+            config.price,
+            provider
+          );
+      if (response) {
+        let data = {
+          hash: response?.transactionHash,
+          blockNumber: response?.blockNumber,
+        };
+        handleProceedPayment(data);
       }
     } catch (err) {
       if (err.message) {
@@ -178,37 +164,18 @@ function EmbedNFT(props) {
           <div
             className={`overflow-y-auto h-[100vh] bg-white border-[1px] p-2 border-[1px] rounded-[12px] border-[#C7CEE6]`}
           >
-            {imageRegex.test(nft?.lnft?.asset?.asset_type) && (
+            {nft?.lnft?.asset?.path && (
               <img
-                className="rounded-xl h-[200px] w-[421px] object-contain max-w-full"
-                src={nft?.lnft?.asset?.path}
-                alt="nft asset"
+                src={nft.lnft.asset.path}
+                alt="NFT"
+                className="w-[254px] h-[254px] object-contain"
               />
             )}
-            {nft?.lnft?.asset?.asset_type === "movie" ||
-            nft?.lnft?.asset?.asset_type === "video/mp4" ? (
-              <video
-                className="rounded-xl h-[200px] w-[421px] object-contain max-w-full"
-                controls
-              >
-                <source src={nft?.lnft?.asset?.path} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            ) : null}
-            {nft?.lnft?.asset?.asset_type === "audio" ||
-            nft?.lnft?.asset?.asset_type === "audio/mpeg" ? (
-              <audio
-                src={nft?.lnft?.asset?.path}
-                controls
-                autoPlay={false}
-                className="rounded-xl h-[100px] w-[421px] object-contain max-w-full"
-              />
-            ) : null}
             <div className="text-left mt-4">
               <p className="text-textSubtle text-[12px]">Name</p>
               <h2 className="text-black">{nft?.lnft?.name}</h2>
             </div>
-            <div className="flex items-center justify-center w-100 mt-3 bg-[#122478] rounded-[12px] px-4 py-2 bg-opacity-[0.1]">
+            <div className="flex items-center justify-center w-100 mt-3 bg-[#122478] rounded-[12px] p-4 bg-opacity-[0.1]">
               <div className="w-2/2 pl-3">
                 <p className="text-textSubtle text-[12px] text-center">Price</p>
                 <h2 className="text-black">
@@ -233,8 +200,8 @@ function EmbedNFT(props) {
               {isMinting
                 ? "Minting NFT..."
                 : userinfo.id
-                ? "Buy Now"
-                : "Connect Wallet"}
+                  ? "Buy Now"
+                  : "Connect Wallet"}
             </button>
           </div>
           <WalletConnectModal

@@ -113,11 +113,7 @@ export default function usePublishRoyaltySplitter(payload = {}) {
     const functionPayload = [
       {
         receivers: splitters.map((spliter) => spliter.user_eoa),
-        shares: splitters.map(
-          (splitter) => ethers.utils.parseUnits(
-            splitter.royalty_percent.toString(),
-          ),
-        ),
+        shares: splitters.map((splitter) => splitter.royalty_percent),
         collection: collection.contract_address,
         masterCopy: masterRoyaltySplitter,
         creator,

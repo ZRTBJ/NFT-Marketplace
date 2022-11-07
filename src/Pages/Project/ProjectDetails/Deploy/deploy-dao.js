@@ -3,7 +3,6 @@ import { createInstance } from "config/ABI/forwarder";
 import { signMetaTxRequest } from "util/smartcontract/signer";
 import { addressGnosisSetup } from "services/project/projectService";
 import { NETWORKS } from "config/networks";
-import { address } from "config/contractAddresses";
 
 async function sendMetaTx(
   dao,
@@ -28,8 +27,8 @@ async function sendMetaTx(
     masterCopy: masterCopy,
     forwarder: minimalForwarder,
     name,
-    safeFactory: address.SafeProxyAddress,
-    singleton: address.SafeSingletonAddress,
+    safeFactory: process.env.REACT_APP_SAFE_PROXY_ADDRESS,
+    singleton: process.env.REACT_APP_SAFE_SINGLETON_ADDRESS,
     setupData: `0x${setupData.call_data}`,
     nonce: new Date().getTime(),
     hasTreasury: treasuryAddress ? true : false,

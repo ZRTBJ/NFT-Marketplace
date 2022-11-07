@@ -14,7 +14,6 @@ import ConfirmationModal from "components/Modals/ConfirmationModal";
 import { DebounceInput } from "react-debounce-input";
 import { useState, useEffect } from "react";
 import { useHistory, Link, useParams } from "react-router-dom";
-import emptyStateCommon from "assets/images/profile/emptyStateCommon.svg";
 
 const CollectionTab = (props) => {
   const { id } = useParams();
@@ -197,16 +196,14 @@ const CollectionTab = (props) => {
             <>
               {payload.keyword === "" ? (
                 <div className="grid mt-[40px] h-full place-items-center">
-                  <div className="text-center mt-6">
-                    <img
-                      src={emptyStateCommon}
-                      className="h-[210px] w-[315px] m-auto"
-                      alt=""
-                    />
-                    <p className="text-subtitle font-bold">
-                      This DAO has no Collection yet
-                    </p>
-                  </div>
+                  <h1>This Project has no collection yet</h1>
+                  {props.projectOwner && (
+                    <Link to={`/collection-create/?dao_id=${id}`}>
+                      <button className="contained-button h-[45px] mt-2">
+                        + Create New Collection
+                      </button>
+                    </Link>
+                  )}
                 </div>
               ) : (
                 <div className="text-center">
@@ -216,8 +213,8 @@ const CollectionTab = (props) => {
             </>
           )}
           {collectionList.length > 0 && (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left !whitespace-nowrap">
+            <div className="overflow-x-auto relative">
+              <table className="w-full text-left">
                 <thead className="text-black">
                   <tr>
                     <th scope="col" className="py-3 px-6 !font-black">
@@ -237,7 +234,7 @@ const CollectionTab = (props) => {
                 <tbody>
                   {collectionList.map((element, index) => (
                     <tr key={index}>
-                      <th scope="row" className="py-4 px-6 ">
+                      <th scope="row" className="py-4 px-6  ">
                         <div className="flex items-center">
                           <img
                             className="md:h-[66px] object-cover md:w-[66px] h-[38px] w-[38px] rounded-lg mr-4"
