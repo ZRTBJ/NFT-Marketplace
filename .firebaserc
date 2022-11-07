@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "apollo-creabo-dev"
+    "default": "apollo-creabo-dev",
+    "prod": "apollo-creabo-prod"
   }
 }

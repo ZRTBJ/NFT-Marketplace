@@ -7,12 +7,7 @@ import Edit from "assets/images/icons/edit.svg";
 import { walletAddressTruncate } from "util/WalletUtils";
 
 const MemberRowMobile = (props) => {
-  const {
-    item,
-    isLastItem,
-    handleValueChange,
-    handleAutoFill,
-  } = props;
+  const { item, isLastItem, handleValueChange, handleAutoFill } = props;
   const [isEdit, setIsEdit] = useState(false);
 
   const handleUpdatePercent = async (e) => {
@@ -21,8 +16,7 @@ const MemberRowMobile = (props) => {
   };
 
   return (
-    <
-      div className={`${isLastItem ? "border-b" : ""} pb-4 mb-4`}>
+    <div className={`${isLastItem ? "border-b" : ""} pb-4 mb-4`}>
       <div className="flex items-center justify-between">
         <div className="mb-3">
           <p className="text-[14px] font-bold">Wallet Address</p>
@@ -43,14 +37,14 @@ const MemberRowMobile = (props) => {
           </div>
         )}
       </div>
-      <div className="flex items-center">
-        <div className="w-2/6">
+      <div className="flex items-center justify-between">
+        <div className="">
           <p className="text-[14px] font-bold">Name</p>
           <p className="text-[13px] mt-0">
             {item.user_name ? item.user_name : "-"}
           </p>
         </div>
-        <div className="w-2/6">
+        <div className="">
           <p className="text-[14px] font-bold">Percentage</p>
           <div className="flex">
             {!isEdit && (
@@ -90,7 +84,7 @@ const MemberRowMobile = (props) => {
             )}
           </div>
         </div>
-        <div className="w-2/6">
+        <div className="">
           <p className="text-[14px] font-bold">Roles</p>
           <p
             className={`text-[13px] mt-0 bg-opacity-[0.2] py-1 px-2 w-fit rounded-[4px] font-bold ${
@@ -108,11 +102,7 @@ const MemberRowMobile = (props) => {
 };
 
 const MemeberListMobile = (props) => {
-  const {
-    list,
-    handleAutoFill,
-    handleValueChange,
-  } = props;
+  const { list, handleAutoFill, handleValueChange } = props;
 
   return (
     <div>

@@ -16,6 +16,7 @@ import ErrorModal from "components/Modals/ErrorModal";
 import ConfirmationModal from "components/Modals/ConfirmationModal";
 import SalesPageModal from "Pages/Collection/SaleSetting/SalesPageModal";
 import SalesSuccessModal from "Pages/Collection/SaleSetting/SalesSuccessModal";
+import emptyStateCommon from "assets/images/profile/emptyStateCommon.svg";
 
 const SalesSettingsTab = ({ projectNetwork }) => {
   const { id } = useParams();
@@ -147,7 +148,7 @@ const SalesSettingsTab = ({ projectNetwork }) => {
               </button>
             </div>
 
-            <div className="dropdown mt-4 md:mt-0  relative md:order-last">
+            <div className="dropdown  md:mt-0  relative md:order-last">
               <button
                 className="bg-white dropdown-toggle px-4  text-textSubtle font-black font-satoshi-bold rounded-lg shadow-main flex items-center justify-between w-44 h-[45px] "
                 type="button"
@@ -165,20 +166,22 @@ const SalesSettingsTab = ({ projectNetwork }) => {
               >
                 <li onClick={() => handleSortType("newer")}>
                   <div
-                    className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${payload.order_by === "newer"
+                    className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${
+                      payload.order_by === "newer"
                         ? "text-primary-900"
                         : "text-txtblack"
-                      } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                    } hover:bg-slate-50 transition duration-150 ease-in-out`}
                   >
                     Newer
                   </div>
                 </li>
                 <li onClick={() => handleSortType("older")}>
                   <div
-                    className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${payload.order_by === "older"
+                    className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${
+                      payload.order_by === "older"
                         ? "text-primary-900"
                         : "text-txtblack"
-                      } hover:bg-slate-50 transition duration-150 ease-in-out`}
+                    } hover:bg-slate-50 transition duration-150 ease-in-out`}
                   >
                     Older
                   </div>
@@ -201,7 +204,16 @@ const SalesSettingsTab = ({ projectNetwork }) => {
             <>
               {payload.keyword === "" ? (
                 <div className="grid mt-[40px] h-full place-items-center">
-                  <h1>This Project has no collection sales yet</h1>
+                  <div className="text-center mt-6">
+                    <img
+                      src={emptyStateCommon}
+                      className="h-[210px] w-[315px] m-auto"
+                      alt=""
+                    />
+                    <p className="text-subtitle font-bold">
+                      This DAO has no sales settings yet
+                    </p>
+                  </div>
                 </div>
               ) : (
                 <div className="text-center">
@@ -212,7 +224,7 @@ const SalesSettingsTab = ({ projectNetwork }) => {
           )}
           {collectionList.length > 0 && (
             <div className="overflow-x-auto relative">
-              <table className="w-full text-left">
+              <table className="w-full text-left !whitespace-nowrap">
                 <thead className="text-black ">
                   <tr>
                     <th scope="col" className="py-3 px-6 !font-black">
@@ -246,11 +258,11 @@ const SalesSettingsTab = ({ projectNetwork }) => {
                             src={
                               element?.assets?.length > 0
                                 ? element.assets.find(
-                                  (img) => img["asset_purpose"] === "logo"
-                                )
-                                  ? element.assets.find(
                                     (img) => img["asset_purpose"] === "logo"
-                                  ).path
+                                  )
+                                  ? element.assets.find(
+                                      (img) => img["asset_purpose"] === "logo"
+                                    ).path
                                   : defaultCover
                                 : defaultCover
                             }

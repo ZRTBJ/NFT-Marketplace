@@ -36,6 +36,7 @@ import RoyaltySplitter from "./RoyaltySplitter/RoyaltySplitter";
 import { NETWORKS } from "config/networks";
 import NetworkHandlerModal from "components/Modals/NetworkHandlerModal";
 import { getCurrentNetworkId } from "util/MetaMask";
+import tickSvg from "assets/images/icons/tick.svg";
 
 export default function ProjectDetails(props) {
   const dispatch = useDispatch();
@@ -59,7 +60,7 @@ export default function ProjectDetails(props) {
   const [showDeployModal, setShowDeployModal] = useState(false);
   const [tnxData, setTnxData] = useState({});
   const [publishStep, setPublishStep] = useState(1);
-  const [selectedTab, setSelectedTab] = useState(1);
+  const [selectedTab, setSelectedTab] = useState(3);
   const [membershipCollectionList, setMembershipCollectionList] = useState([]);
   const [productCollectionList, setProductCollectionList] = useState([]);
   const [errorMsg, setErrorMsg] = useState(null);
@@ -367,9 +368,13 @@ export default function ProjectDetails(props) {
                     alt="User profile"
                   />
                   <div className="flex-1 min-w-0  px-4">
-                    <h1 className="-mt-1 mb-1 md:mb-2 truncate">
-                      {project.name}
-                    </h1>
+                    <div className="flex items-center mb-1 md:mb-2">
+                      <h1 className="truncate">{project.name}</h1>
+                      {project?.project_status === "published" && (
+                        <img className="ml-1 mt-1" src={tickSvg} alt="" />
+                      )}
+                    </div>
+
                     <p className="text-textLight text-sm ">
                       {project?.contract_address
                         ? walletAddressTruncate(project.contract_address)
