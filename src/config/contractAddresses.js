@@ -1,4 +1,8 @@
 export const address = {
+  //Common
+  SafeSingletonAddress: "0x3E5c63644E683549055b9Be8653de26E0B4CD36E",
+  SafeProxyAddress: "0x76E2cFc1F5Fa8F6a5b3fC4c8F4788F0116861F9B",
+
   //Goerli Testnet
   MinimalForwarderGoerli: "0x5782544b27210363F7fFA9b15aea3459179c246c",
   CreatorDAOFactory: "0x46e30D782eeBB7689A7AD6fc69931Fb5B9690a8F",
