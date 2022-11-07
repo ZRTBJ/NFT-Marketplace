@@ -31,6 +31,7 @@ export async function getDefinedProperties() {
 }
 
 export async function getNftDetails(type, id) {
+  console.log(type, id);
   let typeValue =
     type === "membership"
       ? "/membership-nft/"
@@ -39,9 +40,7 @@ export async function getNftDetails(type, id) {
       : "/nft/";
   return await client("GET", `${typeValue}${id}`);
 }
-export async function getMintedNftDetails(nftId, tokenId) {
-  return await client("GET", `/lnft/${nftId}/${tokenId}`);
-}
+
 export async function saveRightAttachedNFT(payload) {
   return await client("POST", `/ranft`, payload, "formdata");
 }

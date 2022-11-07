@@ -1,16 +1,8 @@
 import Eth from "assets/images/eth.svg";
 import Matic from "assets/images/polygon.svg";
-import { address } from "./contractAddresses.js";
+import address from "./deploy.json";
 
 const gnosisFundTransferUrl = "https://gnosis-safe.io/app";
-const raribleNFTDetailsUrl =
-  process.env.REACT_APP_ENV === "production"
-    ? "https://rarible.com/token"
-    : "https://testnet.rarible.com/token/";
-const openSeaNFTDetailsUrl =
-  process.env.REACT_APP_ENV === "production"
-    ? "https://opensea.io/assets/"
-    : "https://testnets.opensea.io/assets";
 
 const TESTNET = {
   5: {
@@ -20,7 +12,7 @@ const TESTNET = {
     value: "eth",
     label: "ETH",
     icon: Eth,
-    forwarder: address.MinimalForwarderGoerli,
+    forwarder: process.env.REACT_APP_MINIMAL_FORWARDER_GOERLI,
     webhook: process.env.REACT_APP_WEBHOOK_URL_GOERLI,
     masterCopyDAO: address.CreatorDAOMasterCopy,
     createFactoryDAO: address.CreatorDAOFactory,
@@ -33,9 +25,6 @@ const TESTNET = {
     createRoyaltySplitter: address.RoyaltySplitterFactory,
     network: 5,
     gnosis: `${gnosisFundTransferUrl}/gor/`,
-    raribleNFTDetailsUrl: raribleNFTDetailsUrl,
-    openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/goerli/`,
-    viewContractAddressUrl: `https://goerli.etherscan.io/address/`,
   },
   80001: {
     networkName: "Polygon Testnet Mumbai",
@@ -44,7 +33,7 @@ const TESTNET = {
     value: "matic",
     label: "MATIC",
     icon: Matic,
-    forwarder: address.MinimalForwarderMumbai,
+    forwarder: process.env.REACT_APP_MINIMAL_FORWARDER_MUMBAI,
     webhook: process.env.REACT_APP_WEBHOOK_URL_MUMBAI,
     masterCopyDAO: address.CreatorDAOMasterCopyMumbai,
     createFactoryDAO: address.CreatorDAOFactoryMumbai,
@@ -58,9 +47,6 @@ const TESTNET = {
     createRoyaltySplitter: address.RoyaltySplitterFactoryMumbai,
     network: 80001,
     gnosis: `${gnosisFundTransferUrl}/matic/`,
-    raribleNFTDetailsUrl: raribleNFTDetailsUrl,
-    openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/mumbai/`,
-    viewContractAddressUrl: `https://mumbai.polygonscan.com/address/`,
   },
 };
 
@@ -86,9 +72,6 @@ const MAINNET = {
     createRoyaltySplitter: address.RoyaltySplitterFactory,
     network: 1,
     gnosis: `${gnosisFundTransferUrl}/eth/`,
-    raribleNFTDetailsUrl: raribleNFTDetailsUrl,
-    openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/ethereum/`,
-    viewContractAddressUrl: `https://etherscan.io/address/`,
   },
   137: {
     networkName: "Polygon Mainnet",
@@ -110,12 +93,10 @@ const MAINNET = {
     createRoyaltySplitter: address.RoyaltySplitterFactory,
     network: 137,
     gnosis: `${gnosisFundTransferUrl}/matic/`,
-    raribleNFTDetailsUrl: raribleNFTDetailsUrl,
-    openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/matic/`,
-    viewContractAddressUrl: `https://polygonscan.com/address/`,
   },
 };
 
 let NETWORKS = process.env.REACT_APP_ENV === "production" ? MAINNET : TESTNET;
+console.log(process.env.REACT_APP_ENV);
 
 export { NETWORKS };

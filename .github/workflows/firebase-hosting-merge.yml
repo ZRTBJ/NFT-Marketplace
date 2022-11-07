@@ -2,10 +2,10 @@
 # https://github.com/firebase/firebase-tools
 
 name: Deploy to Firebase Hosting on merge
-"on":
+'on':
   push:
     branches:
-      - main
+      - develop
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
@@ -16,12 +16,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: npm install
-      - run: npm run build:prod
-        env:
+      - run: npm run build:dev
+        env: 
           CI: false
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: "${{ secrets.GITHUB_TOKEN }}"
-          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_APOLLO_CREABO_PROD }}"
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_APOLLO_CREABO_DEV }}'
           channelId: live
-          projectId: apollo-creabo-prod
+          projectId: apollo-creabo-dev

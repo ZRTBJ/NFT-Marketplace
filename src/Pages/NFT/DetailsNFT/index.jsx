@@ -10,7 +10,7 @@ import rarible from "assets/images/icons/rarible.svg";
 import { Link, useParams } from "react-router-dom";
 import { format } from "date-fns";
 import SuccessModal from "components/Modals/SuccessModal";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   FacebookShareButton,
   TwitterShareButton,
@@ -32,13 +32,9 @@ import { createMembershipMintNFT } from "Pages/NFT/DetailsNFT/MintNFT/deploy-mem
 import EmbedNFTModal from "Pages/NFT/Embed/EmbedNFTModal";
 import { NETWORKS } from "config/networks";
 import { ls_GetChainID } from "util/ApplicationStorage";
-import { getCurrentNetworkId, getAccountBalance } from "util/MetaMask";
+import { getCurrentNetworkId } from "util/MetaMask";
 import NetworkHandlerModal from "components/Modals/NetworkHandlerModal";
-import Eth from "assets/images/network/eth.svg";
-import Polygon from "assets/images/network/polygon.svg";
-import { toast } from "react-toastify";
-import { cryptoConvert } from "services/chainlinkService";
-import tickIcon from "assets/images/tick.svg";
+
 export default function DetailsNFT(props) {
   const userinfo = useSelector((state) => state.user.userinfo);
   const [isLoading, setIsLoading] = useState(true);
@@ -54,11 +50,12 @@ export default function DetailsNFT(props) {
   const [hash, setHash] = useState("");
   const [showEmbedNFT, setShowEmbedNFT] = useState(false);
   const [showNetworkHandler, setShowNetworkHandler] = useState(false);
-  const imageRegex = new RegExp("image");
-  const provider = createProvider();
-  const { type, id } = useParams();
-  const [usdValue, setUsdValue] = useState();
 
+  const provider = createProvider();
+
+  const dispatch = useDispatch();
+
+  const { type, id } = useParams();
   const handleContract = async (config) => {
     try {
       const mintContract = createMintInstance(config.contract, provider);
@@ -66,35 +63,28 @@ export default function DetailsNFT(props) {
         config.contract,
         provider
       );
-      let nftPrice = config.price;
-      const accountBalance = await getAccountBalance();
-      if (Number(accountBalance) > Number(nftPrice)) {
-        const response =
-          type === "membership"
-            ? await createMembershipMintNFT(
-                membershipMintContract,
-                config.metadataUrl,
-                id,
-                provider,
-                config.price
-              )
-            : await createMintNFT(
-                mintContract,
-                config.metadataUrl,
-                config.price,
-                provider
-              );
-        if (response) {
-          setHash(response?.transactionHash);
-          let data = {
-            hash: response?.transactionHash,
-            blockNumber: response?.blockNumber,
-          };
-          handleProceedPayment(data);
-        }
-      } else {
-        setTransactionWaitingModal(false);
-        setErrorMsg("You don't have enough balance in your wallet to Mint NFT");
+      const response =
+        type === "membership"
+          ? await createMembershipMintNFT(
+            membershipMintContract,
+            config.metadataUrl,
+            id,
+            provider,
+            config.price
+          )
+          : await createMintNFT(
+            mintContract,
+            config.metadataUrl,
+            config.price,
+            provider
+          );
+      if (response) {
+        setHash(response?.transactionHash);
+        let data = {
+          hash: response?.transactionHash,
+          blockNumber: response?.blockNumber,
+        };
+        handleProceedPayment(data);
       }
     } catch (err) {
       setTransactionWaitingModal(false);
@@ -105,13 +95,6 @@ export default function DetailsNFT(props) {
       }
     }
   };
-
-  async function dollarConvert(formUnit) {
-    await cryptoConvert(formUnit).then((res) => {
-      setUsdValue(res.USD);
-      console.log(res);
-    });
-  }
 
   useEffect(() => {
     if (id) {
@@ -124,9 +107,6 @@ export default function DetailsNFT(props) {
       .then((resp) => {
         if (resp.code === 0) {
           setNft(resp);
-          if (resp.more_info.currency) {
-            dollarConvert(resp.more_info.currency);
-          }
           setIsLoading(false);
         } else {
           setIsLoading(false);
@@ -136,6 +116,15 @@ export default function DetailsNFT(props) {
         setIsLoading(false);
       });
   }
+
+  const copyToClipboardShare = (text) => {
+    navigator.clipboard.writeText(text);
+    const copyEl = document.getElementById("copied-share-message");
+    copyEl.classList.toggle("hidden");
+    setTimeout(() => {
+      copyEl.classList.toggle("hidden");
+    }, 2000);
+  };
 
   async function handleProceedPayment(response) {
     setTransactionModal(false);
@@ -182,10 +171,18 @@ export default function DetailsNFT(props) {
       });
   }
   const [showModal, setShowModal] = useState(false);
+  const [navigateToPage, setNavigateToPage] = useState("");
 
   function hideModal(e) {
     setShowModal(false);
-    window.location.reload();
+  }
+
+  function handleMint(params) {
+    if (userinfo.eoa) {
+      setTransactionModal(true);
+    } else {
+      setShowModal(true);
+    }
   }
 
   const getCurrentNftNetwork = () => {
@@ -197,29 +194,17 @@ export default function DetailsNFT(props) {
   };
 
   const handlePublishModal = async () => {
-    if (userinfo.eoa) {
-      if (!nft.more_info.currency) {
-        setErrorMsg("This NFT is not for sale yet, please try again later");
-        return;
-      }
-      let nftNetwork = await getCurrentNftNetwork();
-      let networkId = await getCurrentNetworkId();
-      if (nftNetwork === networkId) {
-        setTransactionModal(true);
-      } else {
-        setShowNetworkHandler(true);
-      }
-    } else {
-      setShowModal(true);
+    if (!nft.more_info.currency) {
+      setErrorMsg("This NFT is not for sale yet, please try again later");
+      return;
     }
-  };
-  function largeViewAsset() {
-    window.open(`${nft?.lnft?.asset?.path}`, "_blank");
-  }
-
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
-    toast.success(`Link successfully copied`);
+    let nftNetwork = await getCurrentNftNetwork();
+    let networkId = await getCurrentNetworkId();
+    if (nftNetwork === networkId) {
+      setTransactionModal(true);
+    } else {
+      setShowNetworkHandler(true);
+    }
   };
 
   let info = nft?.more_info;
@@ -274,7 +259,7 @@ export default function DetailsNFT(props) {
           transactionHash={hash}
           collectionName={"Collection1"}
           shareUrl={`${nft?.lnft?.invitation_code}`}
-          // handleNext={handleProceedPayment}
+        // handleNext={handleProceedPayment}
         />
       )}
       {errorMsg && (
@@ -287,13 +272,11 @@ export default function DetailsNFT(props) {
           show={errorMsg}
         />
       )}
-      {showModal && (
-        <WalletConnectModal
-          showModal={showModal}
-          closeModal={(e) => hideModal(e)}
-          noRedirection={true}
-        />
-      )}
+      <WalletConnectModal
+        showModal={showModal}
+        closeModal={(e) => hideModal(e)}
+        noRedirection={true}
+      />
       {showEmbedNFT && (
         <EmbedNFTModal
           show={showEmbedNFT}
@@ -306,144 +289,132 @@ export default function DetailsNFT(props) {
       {isLoading && <div className="loading"></div>}
       {!isLoading && (
         <section className="flex flex-col lg:flex-row py-5">
-          <div className="flex-1 w-full md:max-w-[471px] ">
-            <div className="bg-white rounded-xl shadow border border-border-primary flex flex-col items-center justify-start self-start p-4 ml-4 md:ml-0 mr-4 mb-5 md:mb-0">
-              {imageRegex.test(nft?.lnft?.asset?.asset_type) && (
-                <img
-                  className="rounded-xl  h-[200px] md:h-[421px] w-[421px] object-cover max-w-full"
-                  src={nft?.lnft?.asset?.path}
-                  alt="nft asset"
-                />
-              )}
-              {nft?.lnft?.asset?.asset_type === "movie" ||
-              nft?.lnft?.asset?.asset_type === "video/mp4" ? (
-                <video
-                  className="rounded-xl  h-[200px] md:h-[421px] w-[421px] object-cover max-w-full"
-                  controls
-                >
-                  <source src={nft?.lnft?.asset?.path} type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-              ) : null}
-              {nft?.lnft?.asset?.asset_type === "audio" ||
-              nft?.lnft?.asset?.asset_type === "audio/mpeg" ? (
-                <audio
-                  src={nft?.lnft?.asset?.path}
-                  controls
-                  autoPlay={false}
-                  className="rounded-xl h-[100px] w-[421px] object-cover max-w-full"
-                />
-              ) : null}
-
-              <div className="flex mt-4 flex-wrap items-center justify-center">
+          <div className="flex-1">
+            <div className="bg-white rounded-xl shadow-main flex flex-col items-center justify-start self-start p-4 ml-4 md:ml-0 mr-4 mb-5 md:mb-0">
+              <img
+                src={nft?.lnft?.asset?.path ? nft?.lnft?.asset?.path : manImg}
+                className="rounded-3xl h-[356px] w-[356px] object-cover max-w-full"
+                alt="nft"
+              />
+              <div className="rounded bg-success-1 bg-opacity-20 font-satoshi-bold text-success-1 font-black p-4 mt-4">
+                {info?.price ? info?.price : "Not for sale"}{" "}
+                <span className="uppercase">{info?.currency}</span>
+              </div>
+            </div>
+            {nft?.lnft?.is_owner ? (
+              <div className="flex w-100 items-center justify-center mt-4 ">
                 <button
-                  onClick={() => largeViewAsset()}
-                  className="rounded bg-primary-900 bg-opacity-20 font-bold text-primary-900 px-4 py-2"
+                  onClick={() => setShowEmbedNFT(true)}
+                  className="rounded-[4px] p-3 border-[1px] font-black font-[14px] text-primary-900 border-primary-900"
                 >
-                  View Large Asset
+                  Embed NFT
                 </button>
-                {nft?.lnft?.is_owner ? (
-                  <button
-                    onClick={() => setShowEmbedNFT(true)}
-                    className="rounded-[4px] ml-4  px-4 py-2 border-[1px] font-black font-[14px] text-primary-900 border-primary-900"
-                  >
-                    Embed NFT
-                  </button>
-                ) : null}
               </div>
-            </div>
-            <div className="my-6 mx-4 md:ml-0 mr-4">
-              <p className="mb-2">Share with link</p>
-              <div className="w-fit flex items-center bg-primary-900/[0.2] rounded ">
-                <div className="p-3 text-primary-900">
-                  <span className="font-black  mr-2">
-                    {window.location.href}
-                  </span>
+            ) : null}
+            {nft?.lnft?.invitation_code && (
+              <div className="bg-white rounded-xl shadow-main mt-3 flex flex-col items-center justify-start self-start p-4 mr-4 mb-5 md:mb-0">
+                <div className="mt-2">
+                  <p className="text-[14px] text-center text-[#5F6479] mb-1">
+                    Share with link
+                  </p>
+                  <div className="relative w-fit">
+                    <p
+                      className="text-[16px] block py-[10px] pl-[15px] pr-[40px]  text-primary-900 bg-primary-50 w-full rounded-[12px]"
+                      id="iframe"
+                    >
+                      Link:{" "}
+                      <span className="font-black">
+                        {origin}/{nft?.lnft?.invitation_code}
+                      </span>
+                    </p>
+                    <div className="text-primary-900 absolute top-2 right-2">
+                      <i
+                        className="fa fa-copy text-lg cursor-pointer"
+                        onClick={() =>
+                          copyToClipboardShare(
+                            `${origin}/${nft?.lnft?.invitation_code}`
+                          )
+                        }
+                      ></i>
+                    </div>
+                    <p
+                      id="copied-share-message"
+                      className="hidden text-green-500 text-[14px] text-center"
+                    >
+                      Copied Successfully!
+                    </p>
+                  </div>
                 </div>
-                <div className="text-primary-900 p-3">
-                  <i
-                    className="fa-regular fa-copy text-lg cursor-pointer"
-                    onClick={() => copyToClipboard(window.location.href)}
-                  ></i>
+                <div>
+                  <p className="text-[14px] text-[#5F6479] text-center mt-[46px] mb-1">
+                    Share on Social Media
+                  </p>
+                  <div className="flex items-center">
+                    <FacebookShareButton
+                      url={`${origin}/${nft?.lnft?.invitation_code}`}
+                      quote={"NFT"}
+                    >
+                      <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[44px] w-[44px] flex items-center justify-center mr-2">
+                        <img src={FB} alt="facebook" />
+                      </div>
+                    </FacebookShareButton>
+                    <TwitterShareButton
+                      title="NFT"
+                      url={`${origin}/${nft?.lnft?.invitation_code}`}
+                    >
+                      <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[44px] w-[44px] flex items-center justify-center mr-2">
+                        <img src={twitter} alt="twitter" />
+                      </div>
+                    </TwitterShareButton>
+                    <RedditShareButton
+                      title="NFT"
+                      url={`${origin}/${nft?.lnft?.invitation_code}`}
+                    >
+                      <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[44px] w-[44px] flex items-center justify-center">
+                        <img src={reddit} alt="reddit" />
+                      </div>
+                    </RedditShareButton>
+                    {/* <div className='cursor-pointer rounded-[4px] bg-opacity-[0.1] bg-[#9A5AFF] h-[44px] w-[44px] flex items-center justify-center mr-2'>
+                    <img src={instagram} alt='instagram' />
+                  </div> */}
+                  </div>
                 </div>
               </div>
-              <p className="my-3">Share on social media</p>
-              <div className="flex items-center">
-                <FacebookShareButton url={window.location.href} quote={"NFT"}>
-                  <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[35px] w-[35px] flex items-center justify-center mr-2">
-                    <img src={FB} alt="facebook" />
-                  </div>
-                </FacebookShareButton>
-                <TwitterShareButton title="NFT" url={window.location.href}>
-                  <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[35px] w-[35px] flex items-center justify-center mr-2">
-                    <img src={twitter} alt="twitter" />
-                  </div>
-                </TwitterShareButton>
-                <RedditShareButton title="NFT" url={window.location.href}>
-                  <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[35px] w-[35px] flex items-center justify-center">
-                    <img src={reddit} alt="reddit" />
-                  </div>
-                </RedditShareButton>
-              </div>
-            </div>
+            )}
           </div>
 
-          <div className="bg-white rounded-xl shadow-main md:px-4 pt-0 mt-6 md:mt-0 flex-1 mx-4 md:mx-0">
-            <div className="flex items-center">
-              <h1 className="text-txtblack">{nft?.lnft?.name}</h1>
-              {info?.currency && (
-                <img className="ml-1 mt-1" src={tickIcon} alt="" />
-              )}
-            </div>
-
-            <div className="my-4 border border-primary-border shadow rounded-xl w-full   md:max-w-[564px] p-3">
-              <div className="mt-2 ml-4 ">
-                <p>Price</p>
-                <div className="flex flex-wrap items-center mt-2">
-                  <div>
-                    {info?.currency ? (
-                      <img
-                        className="h-[22px] w-[22px]"
-                        src={info?.currency === "eth" ? Eth : Polygon}
-                        alt={"Currency Logo"}
-                      />
-                    ) : null}
-                  </div>
-                  <span className="uppercase text-[18px] font-black text-txtblack">
-                    {info?.price} {""}
-                    {info?.currency}
-                  </span>
-                  <span className="text text-[18px] text-textSubtle ml-2">
-                    (${usdValue})
-                  </span>
-                </div>
+          <div className="bg-white rounded-xl shadow-main p-4 flex-1 mx-4 md:mx-0">
+            <h1 className="txtblack pb-4">{nft?.lnft?.name}</h1>
+            <p className="txtblack text-sm pb-4">Find it On</p>
+            <div className="mb-4">
+              <div
+                onClick={() => setComingSoon(true)}
+                className="inline-flex items-center mr-3 cursor-pointer border border-color-blue p-3 text-color-blue font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-color-blue hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+              >
+                <img src={opensea} alt="opensea" className="mr-1" />
+                Opensea
               </div>
-              <div className="mt-6">
-                <button
-                  disabled={nft?.lnft?.minted_amount > nft?.lnft?.supply}
-                  className=" w-[264px] !text-[16px] h-[44px] contained-button "
-                  onClick={handlePublishModal}
-                >
-                  BUY NOW
-                </button>
+              <div
+                onClick={() => setComingSoon(true)}
+                className="inline-flex cursor-pointer items-center mr-3 border border-color-yellow p-3 text-color-yellow font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-color-yellow hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+              >
+                <img src={rarible} alt="rarible" className="mr-1" />
+                Rarible
               </div>
             </div>
-
-            <div className="flex items-center mb-4">
+            <div className="flex mb-4">
               <span className="w-20 font-satoshi-bold font-black text-lg text-txtblack">
                 Duration
               </span>
               <span className="font-satoshi-bold font-black text-lg text-txtblack mx-3">
                 :
               </span>
-              {info?.currency && info?.start_datetime ? (
+              {(info?.currency && info?.start_datetime) ? (
                 <span className="text-textSubtle leading-8">
                   {format(new Date(info.start_datetime), "dd/MM/yy (HH:mm)")} -{" "}
                   {format(new Date(info.end_datetime), "dd/MM/yy (HH:mm)")}
                 </span>
-              ) : (
-                "Not for sale"
-              )}
+              ) : "Not for sale"}
             </div>
             <div className="flex mb-4">
               <span className="w-20 font-satoshi-bold font-black text-lg text-txtblack">
@@ -457,38 +428,14 @@ export default function DetailsNFT(props) {
                 {formatNumber(nft?.lnft?.supply)}
               </span>
             </div>
-            <div className="flex items-center mb-4">
-              <h3 className="w-30  txtblack">External Link</h3>
-              <span className="font-satoshi-bold font-black text-lg text-txtblack mx-3">
-                :
-              </span>
-              {nft?.lnft?.external_url ? (
-                <>
-                  <a
-                    href={nft?.lnft?.external_url}
-                    target="_blank"
-                    className="!no-underline"
-                    rel="noreferrer"
-                  >
-                    {nft?.lnft?.external_url}
-                  </a>
-                </>
-              ) : (
-                "No external url found"
-              )}
-            </div>
-            <h3 className="txtblack">Description:</h3>
-            <p className="txtblack text-sm mb-4">
-              {nft?.lnft?.description
-                ? nft?.lnft?.description
-                : "No description found"}
-            </p>
+            <h3 className="txtblack">Description</h3>
+            <p className="txtblack text-sm mb-4">{nft?.lnft?.description}</p>
             <h3 className="txtblack mb-4">Attribute</h3>
             <div className="flex flex-wrap mb-6">
               {nft?.lnft?.attributes?.length ? (
                 nft?.lnft?.attributes.map((item, index) => (
-                  <div key={index}>
-                    {item.key !== "" && (
+                  <>
+                    {item.key !== "" ? (
                       <div
                         key={index}
                         className="w-[138px] h-28  mr-3 mb-3 rounded-xl border border-primary-900 bg-primary-900 bg-opacity-10 flex items-center justify-center flex-col"
@@ -497,34 +444,38 @@ export default function DetailsNFT(props) {
                           {item.key}
                         </p>
                         <h5 className="text-primary-900 mb-1">{item.value}</h5>
+                        {/* <p className='text-textSubtle text-sm'>Add 5% this trait</p> */}
                       </div>
+                    ) : (
+                      <p>No attributes to show</p>
                     )}
-                  </div>
+                  </>
                 ))
               ) : (
                 <p>No attributes to show</p>
               )}
+
+              {/* <div className='w-[138px] h-28  mr-3 mb-3 rounded-xl border border-primary-900 bg-primary-900 bg-opacity-10 flex items-center justify-center flex-col'>
+              <p className='text-textSubtle text-sm mb-1'>Background</p>
+              <h5 className='text-primary-900 mb-1'>Green</h5>
+              <p className='text-textSubtle text-sm'>Add 5% this trait</p>
+            </div>
+            <div className='w-[138px] h-28  mr-3 mb-3 rounded-xl border border-primary-900 bg-primary-900 bg-opacity-10 flex items-center justify-center flex-col'>
+              <p className='text-textSubtle text-sm mb-1'>Background</p>
+              <h5 className='text-primary-900 mb-1'>Green</h5>
+              <p className='text-textSubtle text-sm'>Add 5% this trait</p>
+            </div> */}
             </div>
             {nft?.lnft?.nft_type === "membership" && (
               <div>
-                <div className="flex mb-4 items-center flex-wrap md:max-w-[564px]">
-                  <h3 className="txtblack">Benefit</h3>
-                  {nft?.lnft?.is_owner && (
-                    <Link
-                      to={`/membershipNFT?dao_id=${nft?.lnft?.project_uuid}&collection_id=${nft?.lnft?.collection_uuid}&nftId=${nft?.lnft?.id}`}
-                      className="!no-underline txtblack text-primary-900 ml-auto mr-2 md:mr-0 font-black"
-                    >
-                      Edit Benefit
-                    </Link>
-                  )}
-                </div>
+                <h3 className="txtblack mb-4">Benefit</h3>
                 {benefits && benefits.length ? (
                   benefits.map((benefit, index) => (
                     <div
-                      className="mb-3 p-4 md:max-w-[564px] rounded-xl border border-primary-900 bg-primary-900 bg-opacity-20 flex items-center"
+                      className="mb-3 p-4 rounded-xl border border-primary-900 bg-primary-900 bg-opacity-20 flex items-center"
                       key={index}
                     >
-                      <div className="rounded-full text-white bg-primary-900 bg-opacity-90 w-[30px] h-[30px] font-satoshi-bold text-sm mr-4 flex items-center justify-center">
+                      <div className="rounded-full bg-primary-900 bg-opacity-90 w-[30px] h-[30px] font-satoshi-bold text-sm mr-4 flex items-center justify-center">
                         {index + 1}
                       </div>
                       <p className="text-sm w-[90%]">{benefit.title}</p>
@@ -535,6 +486,20 @@ export default function DetailsNFT(props) {
                 )}
               </div>
             )}
+            {/* {!nft.lnft.is_owner && ( */}
+            <>
+              {nft?.lnft?.minted_amount < nft?.lnft?.supply && (
+                <div className="text-center mt-[62px] mb-5">
+                  <button
+                    className=" w-[140px] !text-[16px] h-[44px] contained-button "
+                    onClick={handlePublishModal}
+                  >
+                    Mint NFT
+                  </button>
+                </div>
+              )}
+            </>
+            {/* )} */}
           </div>
         </section>
       )}
