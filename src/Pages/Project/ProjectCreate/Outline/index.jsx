@@ -143,7 +143,7 @@ export default function Outline({
               />
               <i
                 onClick={onLogoPhotoRemove}
-                class="absolute  top-0 mr-2 text-[18px] cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark"
+                className="absolute  top-0 mr-2 text-[18px] cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark"
               ></i>
               {/* <img
                 alt="coverPreviewIc"
@@ -375,7 +375,7 @@ export default function Outline({
               />
               <i
                 onClick={onCoverPhotoRemove}
-                class="absolute  top-0 mb-3 text-[18px]  cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark"
+                className="absolute  top-0 mb-3 text-[18px]  cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark"
               ></i>
             </div>
           )}
