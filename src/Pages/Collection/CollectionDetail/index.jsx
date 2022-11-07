@@ -41,6 +41,7 @@ import defaultCover from "assets/images/image-default.svg";
 import { walletAddressTruncate } from "util/WalletUtils";
 import { getCurrentNetworkId } from "util/MetaMask";
 import NetworkHandlerModal from "components/Modals/NetworkHandlerModal";
+import tickSvg from "assets/images/icons/tick.svg";
 
 const TABLE_HEADERS = [
   { id: 0, label: "Wallet Address" },
@@ -578,9 +579,13 @@ const CollectionDetail = () => {
                 alt="User profile"
               />
               <div className="flex-1 min-w-0  px-4">
-                <h1 className="-mt-1 mb-1 md:mb-2 truncate">
-                  {Collection?.name}
-                </h1>
+                <div className="flex items-center mb-1 md:mb-2">
+                  <h1 className="truncate">{Collection?.name}</h1>
+                  {Collection?.status === "published" && (
+                    <img className="ml-1 mt-1" src={tickSvg} alt="" />
+                  )}
+                </div>
+
                 <p className="text-textLight text-sm">
                   {Collection?.contract_address
                     ? walletAddressTruncate(Collection.contract_address)
