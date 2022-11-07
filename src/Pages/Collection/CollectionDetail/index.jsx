@@ -277,7 +277,7 @@ const CollectionDetail = () => {
     let values = royalityMembers.map((mem) => {
       return {
         ...mem,
-        royalty_percent: parseFloat(round(value, 3)),
+        royalty_percent: parseFloat(round(value, 18)),
       };
     });
     setRoyalityMembers(values);
