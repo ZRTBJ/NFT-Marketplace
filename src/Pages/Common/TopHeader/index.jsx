@@ -108,7 +108,6 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     }
   }, [networkId, localChainId]);
 
-
   /** Detect account whenever user come back to site */
   let localAccountAddress = ls_GetWalletAddress();
 
@@ -405,7 +404,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
           </div>
 
           <div className="flex items-center" id="mobile-menu">
-            {!userinfo.id && (
+            {!userinfo?.id && (
               <h5 className="text-primary-900 mr-2 hidden md:block">
                 What’s DeCir
               </h5>
@@ -416,7 +415,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                 userId ? "" : "sm:py-2"
               }`}
             >
-              {userinfo.id && (
+              {userinfo?.id && (
                 <>
                   <li>
                     <a
@@ -478,7 +477,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
               )}
 
               <li className="md:ml-2">
-                {userinfo.id ? (
+                {userinfo?.id ? (
                   <div className="flex space-x-2">
                     <div className="relative w-16 h-12 pt-2 cursor-pointer">
                       <div
@@ -590,7 +589,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                 onClick={handleShowMobileSearch}
               />
             )} */}
-            {userinfo.id ? (
+            {userinfo?.id ? (
               <img
                 src={bellImage}
                 alt="Notifications"
@@ -607,7 +606,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
               src={walletImage}
               alt="Wallet"
               onClick={
-                userinfo.id
+                userinfo?.id
                   ? (e) => {
                       e.preventDefault();
                       e.stopPropagation();
