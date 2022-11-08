@@ -39,6 +39,9 @@ import Polygon from "assets/images/network/polygon.svg";
 import { toast } from "react-toastify";
 import { cryptoConvert } from "services/chainlinkService";
 import tickIcon from "assets/images/tick.svg";
+import { getCollectionDetailsById } from "services/collection/collectionService";
+
+
 export default function DetailsNFT(props) {
   const userinfo = useSelector((state) => state.user.userinfo);
   const [isLoading, setIsLoading] = useState(true);
@@ -58,6 +61,7 @@ export default function DetailsNFT(props) {
   const provider = createProvider();
   const { type, id } = useParams();
   const [usdValue, setUsdValue] = useState();
+  const [collection, setCollection] = useState({});
 
   const handleContract = async (config) => {
     try {
@@ -72,18 +76,18 @@ export default function DetailsNFT(props) {
         const response =
           type === "membership"
             ? await createMembershipMintNFT(
-                membershipMintContract,
-                config.metadataUrl,
-                id,
-                provider,
-                config.price
-              )
+              membershipMintContract,
+              config.metadataUrl,
+              id,
+              provider,
+              config.price
+            )
             : await createMintNFT(
-                mintContract,
-                config.metadataUrl,
-                config.price,
-                provider
-              );
+              mintContract,
+              config.metadataUrl,
+              config.price,
+              provider
+            );
         if (response) {
           setHash(response?.transactionHash);
           let data = {
@@ -120,6 +124,7 @@ export default function DetailsNFT(props) {
   }, [id]);
 
   async function nftDetails() {
+    let collectionId = "";
     await getNftDetails(type, id)
       .then((resp) => {
         if (resp.code === 0) {
@@ -127,6 +132,7 @@ export default function DetailsNFT(props) {
           if (resp.more_info.currency) {
             dollarConvert(resp.more_info.currency);
           }
+          collectionId = resp?.lnft?.collection_uuid;
           setIsLoading(false);
         } else {
           setIsLoading(false);
@@ -135,6 +141,21 @@ export default function DetailsNFT(props) {
       .catch((e) => {
         setIsLoading(false);
       });
+
+    if (collectionId) {
+      await getCollectionDetailsById({ id: collectionId })
+        .then((resp) => {
+          if (resp.code === 0) {
+            setCollection(resp.collection);
+            setIsLoading(false);
+          } else {
+            setIsLoading(false);
+          }
+        })
+        .catch((err) => setIsLoading(false));
+    } else {
+      setIsLoading(false);
+    }
   }
 
   async function handleProceedPayment(response) {
@@ -274,7 +295,7 @@ export default function DetailsNFT(props) {
           transactionHash={hash}
           collectionName={"Collection1"}
           shareUrl={`${nft?.lnft?.invitation_code}`}
-          // handleNext={handleProceedPayment}
+        // handleNext={handleProceedPayment}
         />
       )}
       {errorMsg && (
@@ -316,7 +337,7 @@ export default function DetailsNFT(props) {
                 />
               )}
               {nft?.lnft?.asset?.asset_type === "movie" ||
-              nft?.lnft?.asset?.asset_type === "video/mp4" ? (
+                nft?.lnft?.asset?.asset_type === "video/mp4" ? (
                 <video
                   className="rounded-xl  h-[200px] md:h-[421px] w-[421px] object-cover max-w-full"
                   controls
@@ -326,7 +347,7 @@ export default function DetailsNFT(props) {
                 </video>
               ) : null}
               {nft?.lnft?.asset?.asset_type === "audio" ||
-              nft?.lnft?.asset?.asset_type === "audio/mpeg" ? (
+                nft?.lnft?.asset?.asset_type === "audio/mpeg" ? (
                 <audio
                   src={nft?.lnft?.asset?.path}
                   controls
@@ -388,12 +409,20 @@ export default function DetailsNFT(props) {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-main md:px-4 pt-0 mt-6 md:mt-0 flex-1 mx-4 md:mx-0">
+          <div className="bg-white md:px-4 pt-0 mt-6 md:mt-0 flex-1 mx-4 md:mx-0">
             <div className="flex items-center">
               <h1 className="text-txtblack">{nft?.lnft?.name}</h1>
               {info?.currency && (
                 <img className="ml-1 mt-1" src={tickIcon} alt="" />
               )}
+            </div>
+            <div >
+              <Link
+                className="!no-underline text-txtblack"
+                to={`/collection-details/${collection?.id}`}
+              >
+                {collection?.name}
+              </Link>
             </div>
 
             <div className="my-4 border border-primary-border shadow rounded-xl w-full   md:max-w-[564px] p-3">

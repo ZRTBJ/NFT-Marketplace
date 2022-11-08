@@ -101,15 +101,13 @@ export default function DetailsNFT(props) {
     window.open(`${nft?.lnft?.asset?.path}`, "_blank");
   }
   function goToOpenSea() {
-    const URL = `${NETWORKS[nft?.mint_info?.blockchain].openSeaNFTDetailsUrl}${
-      nft?.mint_info?.contract_address
-    }/${nft?.mint_info?.token_id}`;
+    const URL = `${NETWORKS[nft?.mint_info?.blockchain].openSeaNFTDetailsUrl}${nft?.mint_info?.contract_address
+      }/${nft?.mint_info?.token_id}`;
     window.open(URL, "_blank");
   }
   function goToRaribale() {
-    const URL = `${NETWORKS[nft?.mint_info?.blockchain].raribleNFTDetailsUrl}${
-      nft?.mint_info?.contract_address
-    }:${nft?.mint_info?.token_id}?tab=overview`;
+    const URL = `${NETWORKS[nft?.mint_info?.blockchain].raribleNFTDetailsUrl}${nft?.mint_info?.contract_address
+      }:${nft?.mint_info?.token_id}?tab=overview`;
     window.open(URL, "_blank");
   }
   async function refreshNFTWithtnx(payload) {
@@ -223,7 +221,7 @@ export default function DetailsNFT(props) {
                 />
               )}
               {nft?.lnft?.asset?.asset_type === "movie" ||
-              nft?.lnft?.asset?.asset_type === "video/mp4" ? (
+                nft?.lnft?.asset?.asset_type === "video/mp4" ? (
                 <video
                   className="rounded-xl  h-[200px] md:h-[421px] w-[421px] object-cover max-w-full"
                   controls
@@ -233,7 +231,7 @@ export default function DetailsNFT(props) {
                 </video>
               ) : null}
               {nft?.lnft?.asset?.asset_type === "audio" ||
-              nft?.lnft?.asset?.asset_type === "audio/mpeg" ? (
+                nft?.lnft?.asset?.asset_type === "audio/mpeg" ? (
                 <audio
                   src={nft?.lnft?.asset?.path}
                   controls
@@ -303,7 +301,7 @@ export default function DetailsNFT(props) {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-main md:px-4 pt-0 mt-6 md:mt-0 flex-1 mx-4 md:mx-0">
+          <div className="bg-white md:px-4 pt-0 mt-6 md:mt-0 flex-1 mx-4 md:mx-0">
             <div className="flex items-center">
               <h1 className="text-txtblack">{nft?.lnft?.name}</h1>
               <img className="ml-1 mt-1" src={tickIcon} alt="" />
@@ -336,10 +334,9 @@ export default function DetailsNFT(props) {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="no-underline"
-                    href={`${
-                      NETWORKS[nft?.mint_info?.blockchain]
+                    href={`${NETWORKS[nft?.mint_info?.blockchain]
                         .viewContractAddressUrl
-                    }${nft?.mint_info?.contract_address}`}
+                      }${nft?.mint_info?.contract_address}`}
                   >
                     {nft?.mint_info?.contract_address
                       ? nft?.mint_info?.contract_address
