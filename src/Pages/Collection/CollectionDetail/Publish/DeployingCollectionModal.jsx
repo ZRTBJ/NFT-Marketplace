@@ -105,6 +105,7 @@ const DeployingCollectiontModal = ({
       })
       .catch((err) => {
         setIsLoading(false);
+        errorClose("Failed to publish collection. Please try again later");
       });
   }
 

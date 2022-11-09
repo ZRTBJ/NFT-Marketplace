@@ -26,7 +26,6 @@ import {
 } from "services/collection/collectionService";
 import { useLocation } from "react-router-dom";
 import { ls_GetChainID } from "util/ApplicationStorage";
-import { v4 as uuidv4 } from "uuid";
 
 export default function ProductNFT(props) {
   let query = useQuery();
@@ -250,6 +249,19 @@ export default function ProductNFT(props) {
       });
   }
 
+  const handleErrorState = (msg) => {
+    setIsLoading(false);
+    setShowConfirmation(false);
+    setShowSteps(false);
+    setErrorTitle("Create Product NFT Failed");
+    setErrorMessage(msg);
+    setShowSuccessModal(false);
+    setShowErrorModal(true);
+    setSavingNFT(false);
+    setIsNFTSaved(false);
+    setShowConfirmation(false);
+  };
+
   function saveNFTDetails(assetId, collectionID) {
     if (assetId && assetId.length > 0) {
       setIsLoading(true);
@@ -297,33 +309,18 @@ export default function ProductNFT(props) {
             setIsLoading(false);
             setShowSuccessModal(true);
           } else {
-            setIsLoading(false);
-            setShowConfirmation(false);
-            setShowSteps(false);
-            setErrorTitle("Create Product NFT Failed");
-            setErrorMessage(
+            handleErrorState(
               "Failed to create product NFT. Please try again later"
             );
-            setShowSuccessModal(false);
-            setShowErrorModal(true);
           }
         })
         .catch((err) => {
-          setIsLoading(false);
-          setSavingNFT(false);
-          setIsNFTSaved(false);
-          setShowSteps(false);
-          setShowConfirmation(false);
-          setShowErrorModal(true);
+          handleErrorState(
+            "Failed to create product NFT. Please try again later"
+          );
         });
     } else {
-      setIsLoading(false);
-      setShowSteps(false);
-      setShowConfirmation(false);
-      setErrorTitle("Create Product NFT Failed");
-      setErrorMessage("AssetID  not found. Please try again later");
-      setShowSuccessModal(false);
-      setShowErrorModal(true);
+      handleErrorState("AssetID  not found. Please try again later");
     }
   }
 
@@ -389,35 +386,20 @@ export default function ProductNFT(props) {
             setIsLoading(false);
             setShowSuccessModal(true);
           } else {
-            setIsLoading(false);
-            setShowSteps(false);
-            setShowConfirmation(false);
-            setErrorTitle("Update Product NFT Failed");
-            setErrorMessage(
+            handleErrorState(
               "Failed to update product NFT. Please try again later"
             );
-            setShowSuccessModal(false);
-            setShowErrorModal(true);
           }
         })
         .catch((err) => {
-          setIsLoading(false);
-          setShowSteps(false);
-          setSavingNFT(false);
-          setIsNFTSaved(false);
-          setShowConfirmation(false);
-          setShowErrorModal(true);
+          handleErrorState(
+            "Failed to update product NFT. Please try again later"
+          );
         });
     } else {
-      setIsLoading(false);
-      setShowConfirmation(false);
-      setShowSteps(false);
-      setErrorTitle("update Product NFT Failed");
-      setErrorMessage(
+      handleErrorState(
         "AssetID and/or CollectionID not found. Please try again later"
       );
-      setShowSuccessModal(false);
-      setShowErrorModal(true);
     }
   }
 
@@ -446,7 +428,7 @@ export default function ProductNFT(props) {
 
   function createNewProject() {
     let payload = {
-      name: `DAO_${uuidv4()}`,
+      // name: `DAO_${uuidv4()}`,
       blockchain: ls_GetChainID(),
     };
     createProject(payload)
@@ -455,17 +437,11 @@ export default function ProductNFT(props) {
           setProjectId(res.project.id);
           createNewCollection(res.project.id);
         } else {
-          setErrorTitle("Create Product NFT Failed");
-          setErrorMessage(res.message);
-          setIsLoading(false);
-          setShowConfirmation(false);
-          setShowSteps(false);
-          setShowSuccessModal(false);
-          setShowErrorModal(true);
+          handleErrorState(res.message);
         }
       })
       .catch((err) => {
-        console.log(err);
+        handleErrorState("Please try again later");
       });
   }
 
@@ -485,10 +461,12 @@ export default function ProductNFT(props) {
           formData.append("collection_uid", res.collection.id);
           updateRoyaltySplitter(formData);
           genUploadKey(res.collection.id);
+        } else {
+          handleErrorState(res.message);
         }
       })
       .catch((err) => {
-        console.log(err);
+        handleErrorState("Please try again later");
       });
   }
 
