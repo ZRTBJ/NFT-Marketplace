@@ -167,7 +167,7 @@ const DeployingCollectiontModal = ({
 
   return (
     <Modal
-      width={800}
+      width={600}
       show={show}
       showCloseIcon={false}
       handleClose={() => handleClose(false)}
@@ -175,7 +175,7 @@ const DeployingCollectiontModal = ({
       <div className={`text-center md:my-6 ${isLoading ? "loading" : ""}`}>
         {step === 1 && (
           <div className="md:mx-16">
-            <div className="font-black text-[24px] md:text-[42px]">
+            <div className="font-black text-[24px] md:text-[30px]">
               Please wait we’re publishing your Collection
             </div>
             <div className="overflow-hidden rounded-full h-4 w-full mt-4  md:mt-12 mb-8 relative animated fadeIn">
@@ -199,7 +199,7 @@ const DeployingCollectiontModal = ({
               alt=""
             />
             <div className="md:mx-16">
-              <div className="font-black text-[24px] md:text-[42px]">
+              <div className="font-black text-[24px] md:text-[30px]">
                 You have successfully published your collection!
               </div>
               <div className="flex justify-center mt-4 md:mt-[30px]">

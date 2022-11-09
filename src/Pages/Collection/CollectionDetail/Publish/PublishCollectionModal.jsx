@@ -1,11 +1,16 @@
 import publishModalSvg from "assets/images/modal/publishModalSvg.svg";
 import Modal from "components/Commons/Modal";
 
-const PublishCollectionModal = ({ handleClose, show, publishProject, type }) => {
+const PublishCollectionModal = ({
+  handleClose,
+  show,
+  publishProject,
+  type,
+}) => {
   return (
     <Modal
       height={580}
-      width={800}
+      width={600}
       show={show}
       handleClose={() => handleClose(false)}
     >
@@ -16,7 +21,7 @@ const PublishCollectionModal = ({ handleClose, show, publishProject, type }) => 
           alt=""
         />
         <div className="md:mx-16">
-          <div className="font-black text-[24px] md:text-[32px]">
+          <div className="font-black text-[24px] md:text-[30px]">
             You can’t change some fields once you publish this {type}
           </div>
           <div className="text-[#9499AE] mt-[12px]">

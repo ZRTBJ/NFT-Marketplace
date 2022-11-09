@@ -101,13 +101,15 @@ export default function DetailsNFT(props) {
     window.open(`${nft?.lnft?.asset?.path}`, "_blank");
   }
   function goToOpenSea() {
-    const URL = `${NETWORKS[nft?.mint_info?.blockchain].openSeaNFTDetailsUrl}${nft?.mint_info?.contract_address
-      }/${nft?.mint_info?.token_id}`;
+    const URL = `${NETWORKS[nft?.mint_info?.blockchain].openSeaNFTDetailsUrl}${
+      nft?.mint_info?.contract_address
+    }/${nft?.mint_info?.token_id}`;
     window.open(URL, "_blank");
   }
   function goToRaribale() {
-    const URL = `${NETWORKS[nft?.mint_info?.blockchain].raribleNFTDetailsUrl}${nft?.mint_info?.contract_address
-      }:${nft?.mint_info?.token_id}?tab=overview`;
+    const URL = `${NETWORKS[nft?.mint_info?.blockchain].raribleNFTDetailsUrl}${
+      nft?.mint_info?.contract_address
+    }:${nft?.mint_info?.token_id}?tab=overview`;
     window.open(URL, "_blank");
   }
   async function refreshNFTWithtnx(payload) {
@@ -221,7 +223,7 @@ export default function DetailsNFT(props) {
                 />
               )}
               {nft?.lnft?.asset?.asset_type === "movie" ||
-                nft?.lnft?.asset?.asset_type === "video/mp4" ? (
+              nft?.lnft?.asset?.asset_type === "video/mp4" ? (
                 <video
                   className="rounded-xl  h-[200px] md:h-[421px] w-[421px] object-cover max-w-full"
                   controls
@@ -231,7 +233,7 @@ export default function DetailsNFT(props) {
                 </video>
               ) : null}
               {nft?.lnft?.asset?.asset_type === "audio" ||
-                nft?.lnft?.asset?.asset_type === "audio/mpeg" ? (
+              nft?.lnft?.asset?.asset_type === "audio/mpeg" ? (
                 <audio
                   src={nft?.lnft?.asset?.path}
                   controls
@@ -287,12 +289,12 @@ export default function DetailsNFT(props) {
                     <img src={FB} alt="facebook" />
                   </div>
                 </FacebookShareButton>
-                <TwitterShareButton title="NFT" url={window.location.href}>
+                <TwitterShareButton url={window.location.href}>
                   <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[35px] w-[35px] flex items-center justify-center mr-2">
                     <img src={twitter} alt="twitter" />
                   </div>
                 </TwitterShareButton>
-                <RedditShareButton title="NFT" url={window.location.href}>
+                <RedditShareButton url={window.location.href}>
                   <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[35px] w-[35px] flex items-center justify-center">
                     <img src={reddit} alt="reddit" />
                   </div>
@@ -334,9 +336,10 @@ export default function DetailsNFT(props) {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="no-underline"
-                    href={`${NETWORKS[nft?.mint_info?.blockchain]
+                    href={`${
+                      NETWORKS[nft?.mint_info?.blockchain]
                         .viewContractAddressUrl
-                      }${nft?.mint_info?.contract_address}`}
+                    }${nft?.mint_info?.contract_address}`}
                   >
                     {nft?.mint_info?.contract_address
                       ? nft?.mint_info?.contract_address
