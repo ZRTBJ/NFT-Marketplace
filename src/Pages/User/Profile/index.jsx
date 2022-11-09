@@ -675,7 +675,7 @@ const Profile = () => {
               </div>
             </div>
             {/* Royalties Table */}
-            <div className=" mt-[20px] mx-3 mb-[36px] pt-[30px] shadow-lg px-4  pb-[35px] bg-white-shade-900 rounded-xl">
+            <div className=" mt-[20px] mx-3 mb-[36px] pt-[30px]  px-4  pb-[35px] bg-white-shade-900 rounded-xl">
               <div className="flex  items-center mb-[24px]">
                 <div className="text-[24px] text-txtblack font-black ">
                   Royalties

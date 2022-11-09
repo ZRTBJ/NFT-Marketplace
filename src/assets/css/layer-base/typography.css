@@ -5,7 +5,7 @@
   }
 
   h2 {
-    @apply font-satoshi-bold text-base md:text-[26px] font-bold !important;
+    @apply font-satoshi-bold text-base md:text-[26px] font-black !important;
   }
 
   h3 {

@@ -369,7 +369,7 @@ export default function ProjectDetails(props) {
                   />
                   <div className="flex-1 min-w-0  px-4">
                     <div className="flex items-center mb-1 md:mb-2">
-                      <h1 className="truncate">{project.name}</h1>
+                      <h2 className="truncate">{project.name}</h2>
                       {project?.project_status === "published" && (
                         <img className="ml-1 mt-1" src={tickSvg} alt="" />
                       )}
