@@ -608,10 +608,11 @@ const Profile = () => {
                                   rel="noreferrer"
                                 >
                                   <i
-                                    className={`fa-brands fa-${socialLinks.find(
-                                      (x) => x.title === snc.title
-                                    ).icon
-                                      } text-[20px] gradient-text text-white-shade-900 mt-1`}
+                                    className={`fa-brands fa-${
+                                      socialLinks.find(
+                                        (x) => x.title === snc.title
+                                      ).icon
+                                    } text-[20px] gradient-text text-white-shade-900 mt-1`}
                                   ></i>
                                 </a>
                               )}
@@ -674,7 +675,7 @@ const Profile = () => {
               </div>
             </div>
             {/* Royalties Table */}
-            <div className=" mt-[20px] mx-3 mb-[36px] pt-[30px] shadow-lg px-4  pb-[35px] bg-white-shade-900 rounded-xl">
+            <div className=" mt-[20px] mx-3 mb-[36px] pt-[30px]  px-4  pb-[35px] bg-white-shade-900 rounded-xl">
               <div className="flex  items-center mb-[24px]">
                 <div className="text-[24px] text-txtblack font-black ">
                   Royalties
@@ -733,10 +734,11 @@ const Profile = () => {
                               {royaltiesList.map((r, index) => (
                                 <tr
                                   key={r.royalty_id}
-                                  className={`${index < royaltiesList.length - 1
-                                    ? "border-b"
-                                    : ""
-                                    } text-left text-txtblack text-[14px]`}
+                                  className={`${
+                                    index < royaltiesList.length - 1
+                                      ? "border-b"
+                                      : ""
+                                  } text-left text-txtblack text-[14px]`}
                                 >
                                   <td className="py-4 px-5">
                                     <img
@@ -765,10 +767,11 @@ const Profile = () => {
                                     {r.royalty_percent}%
                                   </td>
                                   <td
-                                    className={`py-4 px-5  ${r.is_owner
-                                      ? "text-info-1"
-                                      : " text-success-1"
-                                      }`}
+                                    className={`py-4 px-5  ${
+                                      r.is_owner
+                                        ? "text-info-1"
+                                        : " text-success-1"
+                                    }`}
                                   >
                                     {r.is_owner ? "Owner" : "Member"}
                                   </td>
@@ -837,8 +840,9 @@ const Profile = () => {
                         {royaltiesList.map((r, index) => (
                           <div
                             key={r.royalty_id}
-                            className={`my-8 py-7  ${index < royaltiesList.length - 1 ? "border-b" : ""
-                              }`}
+                            className={`my-8 py-7  ${
+                              index < royaltiesList.length - 1 ? "border-b" : ""
+                            }`}
                           >
                             <div className={`flex   items-center mb-8 `}>
                               <div className={"flex  items-center"}>
@@ -901,10 +905,11 @@ const Profile = () => {
                               <div>
                                 <div>Role</div>
                                 <div
-                                  className={`text-centre ${r.is_owner
-                                    ? "text-info-1"
-                                    : " text-success-1"
-                                    }`}
+                                  className={`text-centre ${
+                                    r.is_owner
+                                      ? "text-info-1"
+                                      : " text-success-1"
+                                  }`}
                                 >
                                   {r.is_owner ? "Owner" : "Member"}
                                 </div>
@@ -1050,8 +1055,8 @@ const Profile = () => {
                                     className="rounded-xl h-[211px] md:h-[276px] object-cover w-full"
                                     src={
                                       collection &&
-                                        collection.assets &&
-                                        collection.assets[0]
+                                      collection.assets &&
+                                      collection.assets[0]
                                         ? collection.assets[0].path
                                         : thumbIcon
                                     }
@@ -1065,11 +1070,11 @@ const Profile = () => {
                                   </div>
                                   <p className="mb-3 text-textSubtle text-[13px]">
                                     {collection.description &&
-                                      collection.description.length > 70
+                                    collection.description.length > 70
                                       ? collection.description.substring(
-                                        0,
-                                        67
-                                      ) + "..."
+                                          0,
+                                          67
+                                        ) + "..."
                                       : collection.description}
                                   </p>
 
@@ -1124,7 +1129,7 @@ const Profile = () => {
             {/* Nft */}
             <div className="mb-[50px]">
               <div className="mb-5 flex px-4 flex-wrap">
-                <h1>Minted NFTs List</h1>
+                <h1>Minted NFT</h1>
                 <Link
                   to={`/list/?type=nft&user=${id}`}
                   className="contained-button  py-1 px-3 rounded ml-auto"

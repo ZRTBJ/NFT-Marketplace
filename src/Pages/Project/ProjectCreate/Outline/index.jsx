@@ -143,7 +143,7 @@ export default function Outline({
               />
               <i
                 onClick={onLogoPhotoRemove}
-                class="absolute  top-0 mr-2 text-[18px] cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark"
+                className="absolute  top-0 mr-2 text-[18px] cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark"
               ></i>
               {/* <img
                 alt="coverPreviewIc"
@@ -160,21 +160,23 @@ export default function Outline({
       {showCollectionType && (
         <>
           <div className="mb-6">
-            <div className="flex flex-wrap items-center">
+            <div className="flex flex-wrap items-center mb-4">
               <Tooltip message="Please select the NFT type you would create."></Tooltip>
-              <div className="txtblack text-[14px] mb-[6px]">NFT Type</div>
+              <div className="txtblack text-[14px]">NFT Type</div>
             </div>
-            <select
-              value={collectionType}
-              onChange={onCollectionTypeSelect}
-              className="h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3"
-            >
-              <option value={"default"} defaultValue>
-                Select Type
-              </option>
-              <option value={"membership"}>Membership</option>
-              <option value={"product"}>Product</option>
-            </select>
+            <div className="select-wrapper">
+              <select
+                value={collectionType}
+                onChange={onCollectionTypeSelect}
+                className="h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3"
+              >
+                <option value={"default"} defaultValue>
+                  Select Type
+                </option>
+                <option value={"membership"}>Membership</option>
+                <option value={"product"}>Product</option>
+              </select>
+            </div>
             {emptyCollectionType && (
               <div className="validationTag">NFT type is required</div>
             )}
@@ -184,7 +186,7 @@ export default function Outline({
 
       {/* name */}
       <div className="mb-6">
-        <div className="flex flex-wrap items-center">
+        <div className="flex flex-wrap items-center mb-4">
           <Tooltip message="This field will not be changeable after publishing on the blockchain."></Tooltip>
           <div className="txtblack text-[14px]">{nameLabel}</div>
         </div>
@@ -215,7 +217,7 @@ export default function Outline({
       {/* Dao Symbol */}
       {showDaoSymbol && (
         <div className="mb-6" id="daoSymbol">
-          <div className="flex flex-wrap items-center">
+          <div className="flex flex-wrap items-center mb-4">
             <Tooltip></Tooltip>
             <div className="txtblack text-[14px]">{symbolTitle}</div>
           </div>
@@ -247,7 +249,7 @@ export default function Outline({
       {/* Dao Wallet */}
       {showDaoWallet && (
         <div className="mb-6">
-          <div className="flex flex-wrap items-center">
+          <div className="flex flex-wrap items-center mb-4">
             <Tooltip message="Enter gnosis-safe address or leave it empty"></Tooltip>
             <div className="txtblack text-[14px]">
               Treasury Contract Address
@@ -291,7 +293,7 @@ export default function Outline({
 
       {/* overview */}
       <div>
-        <div className="txtblack text-[14px]">Description</div>
+        <div className="txtblack text-[14px] mb-4">Description</div>
         <textarea
           value={overview}
           onChange={onOverviewChange}
@@ -353,7 +355,7 @@ export default function Outline({
       {/* cover */}
       {showCover && (
         <div className=" mb-[25px]">
-          <div className="txtblack text-[14px] mb-[6px]">Cover Photo</div>
+          <div className="txtblack text-[14px] mb-4">Cover Photo</div>
           {coverPhotoUrl === "" ? (
             <>
               <FileDragAndDrop
@@ -375,7 +377,7 @@ export default function Outline({
               />
               <i
                 onClick={onCoverPhotoRemove}
-                class="absolute  top-0 mb-3 text-[18px]  cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark"
+                className="absolute  top-0 mb-3 text-[18px]  cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark"
               ></i>
             </div>
           )}
@@ -386,7 +388,7 @@ export default function Outline({
       {showRoyalties && (
         <div>
           <div className="mb-6">
-            <div className="flex flex-wrap items-center">
+            <div className="flex flex-wrap items-center mb-4">
               <Tooltip></Tooltip>
               <div className="txtblack text-[14px]">
                 Primary Sales Royalty (in Percentage)
@@ -406,7 +408,7 @@ export default function Outline({
           </div>
 
           <div className="mb-6">
-            <div className="flex flex-wrap items-center">
+            <div className="flex flex-wrap items-center mb-4">
               <Tooltip></Tooltip>
               <div className="txtblack text-[14px]">
                 Secondary Sales Royalty(in Percentage)
@@ -430,7 +432,7 @@ export default function Outline({
       {/* web Links*/}
       {showWebLinks && (
         <div className="mb-3">
-          <div className="txtblack text-[14px] mb-[6px]">Add Social Link</div>
+          <div className="txtblack text-[14px] mb-4">Add Social Link</div>
           <div className="">
             {webLinks.map((link, index) => (
               <div key={index} className="inline-flex items-center w-full mb-4">
@@ -458,22 +460,24 @@ export default function Outline({
       {/* category */}
       {showProjectCategory && (
         <div className="mb-6">
-          <div className="txtblack text-[14px] mb-[6px] ">Category</div>
-          <select
-            value={projectCategory}
-            onChange={onProjectCategoryChange}
-            name="category"
-            className="h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3"
-          >
-            <option value={"default"} defaultValue>
-              Choose an option
-            </option>
-            {projectCategoryList.map((e) => (
-              <option key={e.id} value={e.id}>
-                {e.name}
+          <div className="txtblack text-[14px] mb-4 ">Category</div>
+          <div className="select-wrapper">
+            <select
+              value={projectCategory}
+              onChange={onProjectCategoryChange}
+              name="category"
+              className="h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3"
+            >
+              <option value={"default"} defaultValue>
+                Choose an option
               </option>
-            ))}
-          </select>
+              {projectCategoryList.map((e) => (
+                <option key={e.id} value={e.id}>
+                  {e.name}
+                </option>
+              ))}
+            </select>
+          </div>
           {emptyProjeCtCategory && (
             <div className="validationTag">Project category is required</div>
           )}
@@ -483,25 +487,27 @@ export default function Outline({
       {/* blockchain */}
       {blockchainCategory && (
         <div className="mb-6">
-          <div className="flex flex-wrap items-center">
+          <div className="flex flex-wrap items-center mb-4">
             <Tooltip message="This field will not be changeable after publishing on the blockchain."></Tooltip>
             <div className="txtblack text-[14px] mb-[6px]">Blockchain</div>
           </div>
-          <select
-            value={blockchainCategory}
-            onChange={onBlockchainCategoryChange}
-            disabled
-            className="h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3"
-          >
-            <option value={blockchainCategory} defaultValue>
-              {NETWORKS?.[Number(blockchainCategory)].networkName}
-            </option>
-            {/* {blockchainCategoryList.map((e) => (
+          <div className="select-wrapper">
+            <select
+              value={blockchainCategory}
+              onChange={onBlockchainCategoryChange}
+              disabled
+              className="h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3"
+            >
+              <option value={blockchainCategory} defaultValue>
+                {NETWORKS?.[Number(blockchainCategory)].networkName}
+              </option>
+              {/* {blockchainCategoryList.map((e) => (
             <option key={e.id} value={e.id}>
               {e.name}
             </option>
           ))} */}
-          </select>
+            </select>
+          </div>
         </div>
       )}
       {showTokenTransferable && (
@@ -527,7 +533,7 @@ export default function Outline({
                     onTokenTransferableChange(isTokenTransferable)
                   }
                 />
-                <div className="w-11 outline-none h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-900"></div>
+                <div className="w-11 outline-none h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-color-asss-3"></div>
               </label>
             ) : (
               <label
@@ -568,7 +574,7 @@ export default function Outline({
                 className="sr-only peer outline-none"
                 onChange={(e) => onMetadataFreezeChange(isMetadataFreezed)}
               />
-              <div className="w-11 outline-none h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-900"></div>
+              <div className="w-11 outline-none h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-color-asss-3"></div>
             </label>
           ) : (
             <label
@@ -593,7 +599,7 @@ export default function Outline({
       {showRoyaltyPercentage && (
         <div>
           <div className="mb-6">
-            <div className="flex flex-wrap items-center">
+            <div className="flex flex-wrap items-center mb-4">
               <Tooltip></Tooltip>
               <div className="txtblack text-[14px]">
                 Royalty Percentage (in Percentage)

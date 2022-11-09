@@ -177,15 +177,7 @@ textarea {
   color: #7d849d;
   border: 1px solid #c7cee5;
 }
-/*
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible {
-  border: 1px solid #232032;
-  outline: #232032;
-  background-color: #232032;
-  padding-left: 15px;
-} */
+
 textarea {
   /* border: 1px solid #cccccc; */
   border-radius: 4px;
@@ -198,6 +190,19 @@ select {
   height: 42px;
   border-radius: 6px;
   outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.select-wrapper {
+  position: relative;
+}
+
+.select-wrapper::after {
+  content: "▼";
+  font-size: 1rem;
+  top: 10px;
+  right: 15px;
+  position: absolute;
 }
 
 /**

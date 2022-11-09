@@ -5,6 +5,7 @@ import ProjectCreate from "Pages/Project/ProjectCreate";
 import CollectionCreate from "Pages/Collection/CollectionCreate";
 import projectDetails from "Pages/Project/ProjectDetails";
 import DetailsNFT from "Pages/NFT/DetailsNFT";
+import DetailsMintedNFT from "Pages/NFT/DetailsMintedNFT";
 import EmbedNFT from "Pages/NFT/Embed/EmbedNFT";
 import EmbedNFTPreview from "Pages/NFT/Embed/EmbedNFTPreview";
 import CreateDAOandNFT from "Pages/Project/CreateDAOandNFT";
@@ -57,6 +58,11 @@ const routes = [
   {
     path: "/nft-details/:type/:id",
     component: DetailsNFT,
+    isPrivate: false,
+  },
+  {
+    path: "/minted-nft-details/:nftId/:tokenId",
+    component: DetailsMintedNFT,
     isPrivate: false,
   },
   {

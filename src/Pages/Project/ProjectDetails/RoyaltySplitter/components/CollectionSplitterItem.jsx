@@ -25,11 +25,11 @@ const CollectionSplitter = ({
         <div className="flex items-center w-[50%] md:w-[20%]">
           <img
             src={image?.path ? image.path : DefaultImage}
-            className="w-[44px] h-[44px] rounded mr-4"
+            className="w-[44px] h-[44px] rounded mr-4 object-contain"
             alt="Collection"
           />
           <Link className="!no-underline" to={`/collection-details/${id}`}>
-            <p className="text-[16px] font-black">{name}</p>
+            <p className="text-[16px] font-black min-w-max">{name}</p>
           </Link>
         </div>
         <div className="w-[20%] text-center hidden md:flex items-center justify-center">
@@ -72,12 +72,12 @@ const CollectionSplitter = ({
             <p>No members</p>
           )} */}
         </div>
-        <p className="w-[33%] text-[14px] font-normal text-center  block md:hidden  mt-4">
+        {/* <p className="w-[33%] text-[14px] font-normal text-center  block md:hidden  mt-4">
           {dayjs(date).format("DD/MM/YYYY - HH:mm")}
         </p>
         <p className="text-[14px] font-normal w-[33%] text-center  block md:hidden  mt-4">
           {status === "published" ? "Locked" : "Not Locked"}
-        </p>
+        </p> */}
       </div>
       {openedCollection === id ? (
         <div className="transition duration-150 ease-in-out">

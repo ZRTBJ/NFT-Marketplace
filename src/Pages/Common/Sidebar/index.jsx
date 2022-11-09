@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { getUserInfo } from "services/User/userService";
-import { setUserInfo, setSideBar } from "redux/slice/userSlice";
+import { setUserInfo, setSideBar } from "redux/user";
 
 const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
   const dispatch = useDispatch();

@@ -313,6 +313,8 @@ export default function ProjectCreate() {
         setShowErrorModal(true);
       } else {
         // console.log(response);
+
+        setBlockchaainCategory(response.blockchain.toString());
         setProjectCategory(response.category_id);
         setProjectName(response.name);
         setDaoWallet(response.treasury_wallet);

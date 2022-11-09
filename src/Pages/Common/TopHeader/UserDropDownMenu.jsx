@@ -1,11 +1,11 @@
-import { useAuthState } from "redux/auth/context";
+import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import { useDetectClickOutside } from "react-detect-click-outside";
 
 const UserDropDownMenu = ({ handleUserDropdownClose }) => {
-  const context = useAuthState();
-  const [userId, setUserId] = useState(context ? context.user : "");
+  const { user } = useSelector((state) => state.auth);
+  const [userId, setUserId] = useState(user ? user : "");
   const ref = useDetectClickOutside({ onTriggered: handleUserDropdownClose });
 
   return (

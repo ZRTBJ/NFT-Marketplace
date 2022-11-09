@@ -6,7 +6,7 @@ import Tooltip from "components/Commons/Tooltip";
 import Modal from "components/Commons/Modal";
 import SuccessModal from "components/Modals/SuccessModal";
 import { useLocation } from "react-router-dom";
-import { mockCreateProject } from "services/project/projectService";
+import { createProject } from "services/project/projectService";
 import { mockCreateCollection } from "services/collection/collectionService";
 import {
   generateUploadkey,
@@ -19,10 +19,12 @@ import {
   updateRoyaltySplitter,
   getCollectionDetailsById,
 } from "services/collection/collectionService";
+import { ls_GetChainID } from "util/ApplicationStorage";
+import { v4 as uuidv4 } from "uuid";
 
 import axios from "axios";
 import Config from "config/config";
-import { getNotificationData } from "redux/slice/notificationSlice";
+import { getNotificationData } from "redux/notification";
 import { useHistory } from "react-router-dom";
 import ErrorModal from "components/Modals/ErrorModal";
 export default function MembershipNFT() {
@@ -245,7 +247,11 @@ export default function MembershipNFT() {
   }
   async function daoCreate() {
     let daoId = "";
-    await mockCreateProject().then((res) => {
+    let payload = {
+      name: `DAO_${uuidv4()}`,
+      blockchain: ls_GetChainID(),
+    };
+    await createProject(payload).then((res) => {
       daoId = res.project.id;
       setDao_id(daoId);
     });

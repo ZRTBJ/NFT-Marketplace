@@ -44,6 +44,7 @@ module.exports = {
         "success-1": "#32E865",
         divider: "#C7CEE5",
         "white-filled-form": "#E6E8EE",
+        "border-primary": "#C7CEE6",
 
         primary: {
           50: "#E8F5FB",

@@ -2,9 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import FileDragAndDrop from "components/FormUtility/FileDragAndDrop";
 import { updateUserInfo } from "services/User/userService";
-import { useAuthState } from "redux/auth/context";
 import { useSelector } from "react-redux";
-import { setUserInfo } from "redux/slice/userSlice";
+import { setUserInfo } from "redux/user";
 import { useDispatch } from "react-redux";
 import { getUserInfo } from "services/User/userService";
 import deleteIcon from "assets/images/projectCreate/ico_delete01.svg";
@@ -13,8 +12,8 @@ import ErrorModal from "components/Modals/ErrorModal";
 
 const ProfileSettingsForm = () => {
   const dispatch = useDispatch();
-  const context = useAuthState();
-  const [userId, setUserId] = useState(context ? context.user : "");
+  const { user } = useSelector((state) => state.auth);
+  const [userId, setUserId] = useState(user ? user : "");
   const userinfo = useSelector((state) => state.user.userinfo);
   const [isLoading, setIsLoading] = useState(false);
   const [profileImage, setProfileImage] = useState({ image: null, path: "" });

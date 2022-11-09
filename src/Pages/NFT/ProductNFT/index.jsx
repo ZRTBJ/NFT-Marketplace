@@ -14,7 +14,7 @@ import {
   updateProductNFT,
 } from "services/nft/nftService";
 import Config from "config/config";
-import { getNotificationData } from "redux/slice/notificationSlice";
+import { getNotificationData } from "redux/notification";
 import SuccessModal from "components/Modals/SuccessModal";
 import { useHistory } from "react-router-dom";
 import { createProject } from "services/project/projectService";
@@ -25,6 +25,8 @@ import {
   updateRoyaltySplitter,
 } from "services/collection/collectionService";
 import { useLocation } from "react-router-dom";
+import { ls_GetChainID } from "util/ApplicationStorage";
+import { v4 as uuidv4 } from "uuid";
 
 export default function ProductNFT(props) {
   let query = useQuery();
@@ -193,14 +195,14 @@ export default function ProductNFT(props) {
     }
   };
 
-  async function genUploadKey() {
+  async function genUploadKey(collectionID) {
     const request = new FormData();
     request.append("file_name", nftFile.file.name);
     request.append("mime_type", nftFile.file.type);
     await generateUploadkeyGcp(request)
       .then((res) => {
         if (res.code === 0 && res.signed_url && res.signed_url !== "") {
-          uploadAFile(res.signed_url, res.file_path);
+          uploadAFile(res.signed_url, res.file_path, collectionID);
         }
       })
       .catch((err) => {
@@ -208,7 +210,7 @@ export default function ProductNFT(props) {
       });
   }
 
-  async function uploadAFile(uploadKey, filePath) {
+  async function uploadAFile(uploadKey, filePath, collectionID) {
     const headers = {
       "Content-Type": nftFile.file.type,
     };
@@ -227,9 +229,9 @@ export default function ProductNFT(props) {
     })
       .then((response) => {
         if (updateMode) {
-          updateNFT(filePath);
+          updateNFT(filePath, collectionID);
         } else if (!updateMode) {
-          saveNFTDetails(filePath);
+          saveNFTDetails(filePath, collectionID);
         }
 
         // setJobId(response["job_id"]);
@@ -248,16 +250,14 @@ export default function ProductNFT(props) {
       });
   }
 
-  function saveNFTDetails(assetId) {
-    if (
-      assetId &&
-      assetId.length > 0 &&
-      collectionId &&
-      collectionId.length > 0
-    ) {
+  function saveNFTDetails(assetId, collectionID) {
+    if (assetId && assetId.length > 0) {
       setIsLoading(true);
       const request = new FormData();
-      request.append("collection_uid", collectionId);
+      request.append(
+        "collection_uid",
+        collectionID ? collectionID : collectionId
+      );
       request.append("name", watch("name"));
       request.append("asset_url", assetId);
       request.append("supply", watch("supply"));
@@ -321,21 +321,14 @@ export default function ProductNFT(props) {
       setShowSteps(false);
       setShowConfirmation(false);
       setErrorTitle("Create Product NFT Failed");
-      setErrorMessage(
-        "AssetID and/or CollectionID not found. Please try again later"
-      );
+      setErrorMessage("AssetID  not found. Please try again later");
       setShowSuccessModal(false);
       setShowErrorModal(true);
     }
   }
 
-  async function updateNFT(assetId) {
-    if (
-      assetId &&
-      assetId.length > 0 &&
-      collectionId &&
-      collectionId.length > 0
-    ) {
+  async function updateNFT(assetId, collectionID) {
+    if (assetId && assetId.length > 0) {
       setIsLoading(true);
       const request = new FormData();
       request.append("name", watch("name"));
@@ -368,11 +361,10 @@ export default function ProductNFT(props) {
       if (attributes && attributes.length > 0) {
         request.append("attributes", JSON.stringify(attributes));
       }
-      console.log("reached here");
+
       await updateProductNFT(nft.id, request)
         .then((res) => {
           setSavingNFT(false);
-          console.log(res);
           if (res["code"] === 0) {
             if (res["function_uuid"] === "") {
               setJobId("");
@@ -409,7 +401,6 @@ export default function ProductNFT(props) {
           }
         })
         .catch((err) => {
-          console.log(err);
           setIsLoading(false);
           setShowSteps(false);
           setSavingNFT(false);
@@ -454,11 +445,23 @@ export default function ProductNFT(props) {
   }
 
   function createNewProject() {
-    createProject()
+    let payload = {
+      name: `DAO_${uuidv4()}`,
+      blockchain: ls_GetChainID(),
+    };
+    createProject(payload)
       .then((res) => {
         if (res.code === 0) {
           setProjectId(res.project.id);
           createNewCollection(res.project.id);
+        } else {
+          setErrorTitle("Create Product NFT Failed");
+          setErrorMessage(res.message);
+          setIsLoading(false);
+          setShowConfirmation(false);
+          setShowSteps(false);
+          setShowSuccessModal(false);
+          setShowErrorModal(true);
         }
       })
       .catch((err) => {
@@ -481,7 +484,7 @@ export default function ProductNFT(props) {
           formData.append("royalty_data", JSON.stringify(members));
           formData.append("collection_uid", res.collection.id);
           updateRoyaltySplitter(formData);
-          genUploadKey();
+          genUploadKey(res.collection.id);
         }
       })
       .catch((err) => {

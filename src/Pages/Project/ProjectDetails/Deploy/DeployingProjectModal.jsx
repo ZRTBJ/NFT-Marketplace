@@ -2,7 +2,7 @@ import Modal from "components/Commons/Modal";
 import { useEffect, useState } from "react";
 import { publishProject } from "services/project/projectService";
 import { useDispatch, useSelector } from "react-redux";
-import { getNotificationData } from "redux/slice/notificationSlice";
+import { getNotificationData } from "redux/notification";
 import deploySuccessSvg from "assets/images/modal/deploySuccessSvg.svg";
 import { createDAO } from "Pages/Project/ProjectDetails/Deploy/deploy-dao";
 import { createProvider } from "util/smartcontract/provider";

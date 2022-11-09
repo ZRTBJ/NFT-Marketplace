@@ -9,7 +9,7 @@ export default function NFTListCard({ nft, projectNetwork, refresh }) {
   return (
     <>
       <div key={nft?.id} className=" rounded-xl mr-2 md:mr-4 mb-4 bg-white">
-        <Link to={`/nft-details/${nft?.nft_type}/${nft.id}`}>
+        <Link to={`/minted-nft-details/${nft?.id}/${nft?.token_id}`}>
           <img
             className="rounded h-[176px] md:h-[276px]  md:w-[276px] object-cover "
             src={nft?.asset?.path}
@@ -22,10 +22,14 @@ export default function NFTListCard({ nft, projectNetwork, refresh }) {
               {nft?.name}
             </h3>
           </div>
-          <div className="flex px-2">
-            <p className="text-[13px]">
-              {nft?.price}{" "}
-              {nft?.currency?.toUpperCase()}
+          <div className="flex items-center px-2">
+            <p>
+              <Link
+                className="text-[13px] pr-2 !no-underline font-black text-textSubtle"
+                to={`/collection-details/${nft?.collection_uuid}`}
+              >
+                {nft?.collection_name}
+              </Link>
             </p>
             {nft.currency ? (
               <img
@@ -35,7 +39,7 @@ export default function NFTListCard({ nft, projectNetwork, refresh }) {
               />
             ) : null}
           </div>
-          <div className="text-right mt-2">
+          {/* <div className="text-right mt-2">
             {nft.loading ? (
               <div role="status" className="flex justify-end">
                 <svg
@@ -69,7 +73,7 @@ export default function NFTListCard({ nft, projectNetwork, refresh }) {
                   )}
               </>
             )}
-          </div>
+          </div> */}
         </div>
       </div>
     </>
