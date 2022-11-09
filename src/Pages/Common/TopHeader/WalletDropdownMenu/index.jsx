@@ -1,7 +1,7 @@
 import "./index.css";
-import { useAuthState, useAuthDispatch, logout } from "redux/auth";
+import { logout } from "redux/auth";
 import { useHistory } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import metamaskIcon from "assets/images/modal/metamask.png";
 import Web3 from "web3";
 import { useEffect, useState } from "react";
@@ -10,15 +10,17 @@ import { NETWORKS } from "config/networks";
 
 const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
   let history = useHistory();
-  const dispatch = useAuthDispatch();
+  const dispatch = useDispatch();
+  const { walletAddress, wallet: userWallet } = useSelector(
+    (state) => state.auth
+  );
   const loadingStatus = useSelector((state) => state.user.status);
   const userinfo = useSelector((state) => state.user.userinfo);
   const [showWallet, setShowWallet] = useState(false);
-  const context = useAuthState();
   const [selectedWallet, setSelectedWallet] = useState(
-    context ? context.walletAddress : ""
+    walletAddress ? walletAddress : ""
   );
-  const [wallet, setWallet] = useState(context ? context.wallet : "");
+  const [wallet, setWallet] = useState(userWallet ? userWallet : "");
   const [balance, setBalance] = useState(0);
   const userLoadingStatus = useSelector((state) => state.user.status);
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
@@ -34,14 +36,14 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
   }
 
   function handleLogout() {
-    logout(dispatch);
+    dispatch(logout());
     // showHideUserPopup();
     history.push("/");
     window.location.reload();
   }
 
   useEffect(() => {
-    setWallet(context ? context.wallet : "");
+    setWallet(userWallet ? userWallet : "");
     try {
       setIsLoadingBalance(true);
       //TODO: it might be wrong if user is login in different metamask chain (but same account)

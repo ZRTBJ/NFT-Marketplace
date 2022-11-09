@@ -24,7 +24,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import axios from "axios";
 import Config from "config/config";
-import { getNotificationData } from "redux/slice/notificationSlice";
+import { getNotificationData } from "redux/notification";
 import { useHistory } from "react-router-dom";
 import ErrorModal from "components/Modals/ErrorModal";
 export default function MembershipNFT() {

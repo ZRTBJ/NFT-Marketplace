@@ -6,46 +6,46 @@ import {
   ls_SetUserToken,
   ls_SetWalletType,
 } from "util/ApplicationStorage";
+import { authSlice } from "./slice";
+const { loadingLogin, loginSuccess, loginError, logginOut } = authSlice.actions;
 
-const ROOT_URL = Config.API_ENDPOINT; //"https://reqres.in/api";
+const ROOT_URL = Config.API_ENDPOINT;
 
-export async function loginUser(dispatch, loginPayload) {
-  const bodyFormData = new FormData();
-  bodyFormData.append("address", loginPayload.address);
-  bodyFormData.append("signature", loginPayload.signature);
-  const requestOptions = {
-    method: "POST",
-    headers: {
-      "Access-Control-Allow-Origin": "http://127.0.0.1:3000/",
-      "Access-Control-Allow-Methods": "GET, POST",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    },
-    body: bodyFormData,
-  };
-
+export const loginUser = (loginPayload) => async (dispatch) => {
+  dispatch(loadingLogin());
   try {
-    dispatch({ type: "REQUEST_LOGIN" });
+    const bodyFormData = new FormData();
+    bodyFormData.append("address", loginPayload.address);
+    bodyFormData.append("signature", loginPayload.signature);
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Access-Control-Allow-Origin": "http://127.0.0.1:3000/",
+        "Access-Control-Allow-Methods": "GET, POST",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      },
+      body: bodyFormData,
+    };
     let response = await fetch(`${ROOT_URL}/auth/login`, requestOptions);
     let data = await response.json();
     if (data.token) {
-      dispatch({ type: "LOGIN_SUCCESS", payload: data });
+      dispatch(loginSuccess(data));
       ls_SetUserToken(data.token);
       ls_SetUserID(data.user_id);
       ls_SetUserRefreshToken(data.refresh_token);
       ls_SetWalletType(loginPayload["wallet"]);
       return data;
+    } else {
+      dispatch(loginError(data.errors[0]));
+      console.log(data.errors[0]);
     }
-
-    dispatch({ type: "LOGIN_ERROR", error: data.errors[0] });
-    console.log(data.errors[0]);
-    return;
-  } catch (error) {
-    dispatch({ type: "LOGIN_ERROR", error: error });
-    console.log(error);
+  } catch (err) {
+    dispatch(loginError(err));
+    console.log(err);
   }
-}
+};
 
-export async function logout(dispatch) {
-  dispatch({ type: "LOGOUT" });
+export const logout = () => async (dispatch) => {
+  dispatch(logginOut());
   ls_ClearLocalStorage();
-}
+};

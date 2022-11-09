@@ -5,14 +5,13 @@ import {
   getWalletAccount,
 } from "util/MetaMask";
 import { ethers } from "ethers";
-import { useSelector } from "react-redux";
 import Modal from "components/Commons/Modal";
 import metamaskIcon from "assets/images/modal/metamask.png";
-import { loginUser, useAuthState, useAuthDispatch } from "redux/auth";
+import { loginUser } from "redux/auth";
 import { useHistory } from "react-router-dom";
 import { getUserInfo } from "services/User/userService";
-import { useDispatch } from "react-redux";
-import { setUserInfo, setUserLoading } from "redux/slice/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { setUserInfo, setUserLoading } from "redux/user";
 import {
   ls_GetUserID,
   ls_SetChainID,
@@ -30,7 +29,6 @@ const WalletConnectModal = ({
 }) => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const context = useAuthState();
   const userinfo = useSelector((state) => state.user.userinfo);
   const [modalKey, setModalKey] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -40,9 +38,9 @@ const WalletConnectModal = ({
   const [metamaskConnectAttempt, setMetamaskConnectAttempt] = useState(0);
   const [metamaskAccount, setMetamaskAccount] = useState("");
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
-  const authDispatch = useAuthDispatch();
-  const [userId, setUserId] = useState(context ? context.user : "");
 
+  const { user } = useSelector((state) => state.auth);
+  const [userId, setUserId] = useState(user ? user : "");
   useEffect(() => {
     if (userId && !userinfo?.display_name) {
       getUserDetails(userId, false);
@@ -103,7 +101,7 @@ const WalletConnectModal = ({
     };
     try {
       setIsLoading(true);
-      let response = await loginUser(authDispatch, request);
+      let response = await dispatch(loginUser(request));
       const userProvider = new ethers.providers.Web3Provider(window.ethereum);
       const userNetwork = await userProvider.getNetwork();
       ls_SetWalletAddress(address);

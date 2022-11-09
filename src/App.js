@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Switch, useParams } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import routes from "routes/routes.js";
-import { AuthProvider } from "redux/auth/context";
 import AppRoute from "routes/AppRoute";
 import Header from "Pages/Common/TopHeader";
 import Sidebar from "Pages/Common/Sidebar";
@@ -23,52 +22,51 @@ function App() {
   return (
     <div>
       <Router>
-        <AuthProvider>
-          {!isEmbedView && (
-            <Header
-              handleSidebar={handleToggleSideBar}
-              setShowModal={setShowModal}
-              showModal={showModal}
-            />
-          )}
-          {/* Dynamic Body */}
-          <main className="container min-h-[calc(100vh-71px)]">
-            <div className="md:flex md:flex-row">
-              {!isEmbedView && (
-                <div className="hidden md:block mr-4 ">
-                  <Sidebar
-                    setShowModal={setShowModal}
-                    handleToggleSideBar={handleToggleSideBar}
-                  />
-                </div>
-              )}
-              {!isEmbedView && (
-                <div
-                  className={`${showSideBar ? "translate-x-0" : "-translate-x-full"
-                    } block md:hidden mr-4 absolute z-[100] ease-in-out duration-300`}
-                >
-                  <Sidebar
-                    setShowModal={setShowModal}
-                    handleToggleSideBar={handleToggleSideBar}
-                  />
-                </div>
-              )}
-
-              <div className="w-full min-w-[calc(100vw-300px)]">
-                <Switch>
-                  {routes.map((route) => (
-                    <AppRoute
-                      key={route.path}
-                      path={route.path}
-                      component={route.component}
-                      isPrivate={route.isPrivate}
-                    />
-                  ))}
-                </Switch>
+        {!isEmbedView && (
+          <Header
+            handleSidebar={handleToggleSideBar}
+            setShowModal={setShowModal}
+            showModal={showModal}
+          />
+        )}
+        {/* Dynamic Body */}
+        <main className="container min-h-[calc(100vh-71px)]">
+          <div className="md:flex md:flex-row">
+            {!isEmbedView && (
+              <div className="hidden md:block mr-4 ">
+                <Sidebar
+                  setShowModal={setShowModal}
+                  handleToggleSideBar={handleToggleSideBar}
+                />
               </div>
+            )}
+            {!isEmbedView && (
+              <div
+                className={`${
+                  showSideBar ? "translate-x-0" : "-translate-x-full"
+                } block md:hidden mr-4 absolute z-[100] ease-in-out duration-300`}
+              >
+                <Sidebar
+                  setShowModal={setShowModal}
+                  handleToggleSideBar={handleToggleSideBar}
+                />
+              </div>
+            )}
+
+            <div className="w-full min-w-[calc(100vw-300px)]">
+              <Switch>
+                {routes.map((route) => (
+                  <AppRoute
+                    key={route.path}
+                    path={route.path}
+                    component={route.component}
+                    isPrivate={route.isPrivate}
+                  />
+                ))}
+              </Switch>
             </div>
-          </main>
-        </AuthProvider>
+          </div>
+        </main>
       </Router>
       <ToastContainer
         position="top-right"

@@ -4,13 +4,12 @@ import { useState, useEffect, useRef } from "react";
 import WalletDropDownMenu from "./WalletDropdownMenu";
 import { useHistory, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useAuthState } from "redux/auth/context";
 import WalletConnectModal from "Pages/User/Login/WalletConnectModal";
 import useWebSocket from "react-use-websocket";
 import config from "config/config";
 import { getProjectListBySearch } from "services/project/projectService";
 import SearchBarResult from "./SearchBarResult";
-import { getNotificationData } from "redux/slice/notificationSlice";
+import { getNotificationData } from "redux/notification";
 import NotificatioMenu from "./NotificationMenu";
 import { getUserNotifications } from "services/notification/notificationService";
 import UserDropDownMenu from "./UserDropDownMenu";
@@ -31,18 +30,16 @@ import {
 } from "util/ApplicationStorage";
 import { toast } from "react-toastify";
 import { NETWORKS } from "config/networks";
-import { useAuthDispatch, logout } from "redux/auth";
+import { logout } from "redux/auth";
 import { getWalletAccount } from "util/MetaMask";
 
 const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const authDispatch = useAuthDispatch();
-  const context = useAuthState();
   const { pathname } = useLocation();
   const inputRef = useRef(null);
-
-  const [userId, setUserId] = useState(context ? context.user : "");
+  const { user, walletAddress } = useSelector((state) => state.auth);
+  const [userId, setUserId] = useState(user ? user : "");
   const userinfo = useSelector((state) => state.user.userinfo);
   const loggedIn = useSelector((state) => state.user.loggedIn);
   const [messageHistory, setMessageHistory] = useState([]);
@@ -58,7 +55,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const [isNotificationLoading, setIsNotificationLoading] = useState(false);
   const [notificationCount, setnotificationCount] = useState(0);
   const [selectedWallet, setSelectedWallet] = useState(
-    context ? context.walletAddress : ""
+    walletAddress ? walletAddress : ""
   );
   const [showAccountChanged, setShowAccountChanged] = useState(false);
   const [showNetworkChanged, setShowNetworkChanged] = useState(false);

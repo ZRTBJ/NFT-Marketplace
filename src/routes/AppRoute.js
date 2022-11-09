@@ -1,11 +1,11 @@
 import React from "react";
 import { Switch } from "react-router-dom";
 import { Redirect, Route } from "react-router-dom";
-import { useAuthState } from "redux/auth/context";
 import Home from "Pages/Home/Homepage";
+import { useSelector } from "react-redux";
 
 const AppRoutes = ({ component: Component, path, isPrivate, ...rest }) => {
-  const userDetails = useAuthState();
+  const { token } = useSelector((state) => state.auth);
   return (
     <Switch>
       <Route exact path="/" component={Home} />
@@ -13,7 +13,7 @@ const AppRoutes = ({ component: Component, path, isPrivate, ...rest }) => {
         exact
         path={path}
         render={(props) =>
-          isPrivate && !Boolean(userDetails.token) ? (
+          isPrivate && !Boolean(token) ? (
             <Redirect to={{ pathname: "/" }} />
           ) : (
             <Component {...props} />

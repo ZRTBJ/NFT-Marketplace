@@ -1,14 +1,15 @@
 import Modal from "components/Commons/Modal";
 import { NETWORKS } from "config/networks";
 import { useHistory } from "react-router-dom";
-import { logout, useAuthDispatch } from "redux/auth";
+import { logout } from "redux/auth";
+import { useDispatch } from "react-redux";
 
 const NetworkChangedModal = ({ show, handleClose, networkId }) => {
-  const dispatch = useAuthDispatch();
+  const dispatch = useDispatch();
   let history = useHistory();
 
   function handleLogout() {
-    logout(dispatch);
+    dispatch(logout());
     history.push("/");
     handleClose();
     window.location.reload();
