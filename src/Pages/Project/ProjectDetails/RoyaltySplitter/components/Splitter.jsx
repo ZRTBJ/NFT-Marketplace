@@ -74,7 +74,7 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
             status: "published",
           },
         });
-        getProjectCollections();
+        // getProjectCollections();
       }
     }
   };

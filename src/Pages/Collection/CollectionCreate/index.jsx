@@ -14,7 +14,6 @@ import {
   updateCollection,
   getCollectionDetailsById,
   deleteAssetsOfCollection,
-  updateRoyaltySplitter,
 } from "services/collection/collectionService";
 import ErrorModal from "components/Modals/ErrorModal";
 import SuccessModal from "components/Modals/SuccessModal";
@@ -345,10 +344,6 @@ export default function CollectionCreate() {
         if (res.code === 0) {
           projectId = res.collection.id;
           let members = [{ wallet_address: userinfo?.eoa, royalty: 100 }];
-          let formData = new FormData();
-          formData.append("royalty_data", JSON.stringify(members));
-          formData.append("collection_uid", projectId);
-          updateRoyaltySplitter(formData);
           setProjectCreated(true);
           setProjectId(projectId);
         } else if (res.code === 5001) {

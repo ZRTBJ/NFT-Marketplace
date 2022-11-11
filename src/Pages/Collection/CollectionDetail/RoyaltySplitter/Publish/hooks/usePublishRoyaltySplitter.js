@@ -149,7 +149,6 @@ export default function usePublishRoyaltySplitter(payload = {}) {
       txReceipt.current = await waitTransactionResult(transaction.current);
       await subscribeEventPromise;
       const publishResponse = await updateOffChainData();
-
       if (publishResponse.function.status === "failed") {
         throw new Error("Transaction failed");
       }
