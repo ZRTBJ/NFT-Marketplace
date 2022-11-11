@@ -505,20 +505,22 @@ export default function ProjectDetails(props) {
                   )}
               </div>
             </div>
+            <div className="mt-2">
+              <h3>About</h3>
+              {project.overview ? (
+                <p className="whitespace-pre-line text-textLight text-sm break-all">
+                  {project.overview}
+                </p>
+              ) : (
+                <p className="text-textLight text-sm">
+                  Please add description to show here
+                </p>
+              )}
+            </div>
 
-            <div className="flex flex-col md:flex-row  md:pt-5">
-              <div className="md:flex-1">
-                <h3>About</h3>
-                {project.overview ? (
-                  <div className="whitespace-pre-line text-textLight text-sm break-all">
-                    {project.overview}
-                  </div>
-                ) : (
-                  <p className="text-textLight text-sm">
-                    Please add description to show here
-                  </p>
-                )}
-                <div className="flex mt-4 mb-4 md:mb-0 md:mt-[50px]">
+            <div className="md:flex items-end">
+              <div className="md:flex-1 ">
+                <div className={`flex mt-4 mb-4 md:mb-0 `}>
                   {project?.is_owner && (
                     <>
                       {project?.project_status === "published" ? (

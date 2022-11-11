@@ -275,30 +275,43 @@ export default function CollectionCreate() {
     setcurrentStep(currentStep.filter((x) => x !== currentIndex));
   }
   async function createBlock(id) {
-    if (dao_id) {
-      setDataIsLoading(true);
-      id = await createNewProject(dao_id);
-      await updateExistingProject(id);
-      // await projectDetails(id);
+    try {
+      if (dao_id) {
+        setDataIsLoading(true);
+        id = await createNewProject(dao_id);
+        await updateExistingProject(id);
+        // await projectDetails(id);
+        setDataIsLoading(false);
+        setShowSuccessModal(true);
+      } else {
+        setDataIsLoading(true);
+        const daoId = await daoCreate();
+        id = await createNewProject(daoId);
+        await updateExistingProject(id);
+        // await projectDetails(id);
+        setDataIsLoading(false);
+        setShowSuccessModal(true);
+      }
+    } catch (err) {
       setDataIsLoading(false);
-      setShowSuccessModal(true);
-    } else {
-      setDataIsLoading(true);
-      const daoId = await daoCreate();
-      id = await createNewProject(daoId);
-      await updateExistingProject(id);
-      // await projectDetails(id);
-      setDataIsLoading(false);
-      setShowSuccessModal(true);
+      setShowSuccessModal(false);
+      setShowErrorModal(true);
     }
   }
   async function updateBlock(id) {
-    setDataIsLoading(true);
-    await updateExistingProject(id);
-    // await projectDetails(id);
-    setDataIsLoading(false);
-    setShowSuccessModal(true);
+    try {
+      setDataIsLoading(true);
+      await updateExistingProject(id);
+      // await projectDetails(id);
+      setDataIsLoading(false);
+      setShowSuccessModal(true);
+    } catch (err) {
+      setDataIsLoading(false);
+      setShowSuccessModal(false);
+      setShowErrorModal(true);
+    }
   }
+
   async function saveDraft() {
     // outline
     if (currentStep.length === 2) {

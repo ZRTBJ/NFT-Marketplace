@@ -20,7 +20,6 @@ import {
   getCollectionDetailsById,
 } from "services/collection/collectionService";
 import { ls_GetChainID } from "util/ApplicationStorage";
-import { v4 as uuidv4 } from "uuid";
 
 import axios from "axios";
 import Config from "config/config";
@@ -248,7 +247,6 @@ export default function MembershipNFT() {
   async function daoCreate() {
     let daoId = "";
     let payload = {
-      name: `DAO_${uuidv4()}`,
       blockchain: ls_GetChainID(),
     };
     await createProject(payload).then((res) => {
@@ -274,6 +272,16 @@ export default function MembershipNFT() {
     });
     return collection_id;
   }
+
+  const handleErrorState = (msg, jobId) => {
+    jobId && localStorage.removeItem(`${jobId}`);
+    setErrorTitle("Error");
+    setErrorMessage(msg);
+    setShowErrorModal(true);
+    setShowDataUploadingModal(false);
+    setIsNftLoading(false);
+    setShowDataUploadingModal(false);
+  };
   async function saveNFTDetails(assetId, jobId) {
     let nft = JSON.parse(localStorage.getItem(`${jobId}`));
     const request = new FormData();
@@ -308,11 +316,7 @@ export default function MembershipNFT() {
               setShowSuccessModal(true);
             }
           } else {
-            localStorage.removeItem(`${jobId}`);
-            setErrorTitle("Error");
-            setErrorMessage(res.message);
-            setShowErrorModal(true);
-            setShowDataUploadingModal(false);
+            handleErrorState(res.message, jobId);
           }
         })
         .catch((err) => {
@@ -325,15 +329,11 @@ export default function MembershipNFT() {
             setShowDataUploadingModal(false);
             setShowSuccessModal(true);
           } else {
-            localStorage.removeItem(`${jobId}`);
-            setErrorTitle("Error");
-            setErrorMessage(res.message);
-            setShowErrorModal(true);
-            setShowDataUploadingModal(false);
+            handleErrorState(res.message, jobId);
           }
         })
         .catch((err) => {
-          console.log(err);
+          handleErrorState("Failed to create NFT", jobId);
         });
     }
   }
@@ -377,8 +377,7 @@ export default function MembershipNFT() {
         dispatch(getNotificationData(notificationData));
       })
       .catch((err) => {
-        console.log(err);
-        // setIsLoading(false);
+        handleErrorState("Failed to create NFT");
       });
   }
   async function genUploadKey() {
@@ -412,7 +411,7 @@ export default function MembershipNFT() {
         setShowSuccessModal(true);
       })
       .catch((err) => {
-        console.log(err);
+        handleErrorState("Failed to update NFT");
       });
   }
   async function createBlock(validateNfts) {
@@ -585,13 +584,11 @@ export default function MembershipNFT() {
     let payload = {
       id: collectionId,
     };
-    await getCollectionDetailsById(payload)
-      .then((resp) => {
-        if (resp.code === 0) {
-          setCollection(resp.collection);
-        }
-      })
-      .catch((err) => console.log(err));
+    await getCollectionDetailsById(payload).then((resp) => {
+      if (resp.code === 0) {
+        setCollection(resp.collection);
+      }
+    });
   };
 
   useEffect(() => {

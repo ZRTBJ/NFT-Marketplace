@@ -107,6 +107,7 @@ const DeployingProjectModal = ({
             );
           }
         } else {
+          setIsLoading(false);
           setContractAdd("");
           setTxnData();
           errorClose(res.message);
@@ -114,6 +115,7 @@ const DeployingProjectModal = ({
       })
       .catch((err) => {
         setIsLoading(false);
+        errorClose("Failed to publish project. Please try agaon later");
       });
   }
 

@@ -43,7 +43,7 @@ import nftSvg from "assets/images/profile/nftSvg.svg";
 import daoCreate from "assets/images/profile/daoCreate.svg";
 import CreateNFTModal from "Pages/Project/CreateDAOandNFT/components/CreateNFTModal.jsx";
 import emptyStateCommon from "assets/images/profile/emptyStateCommon.svg";
-import emptyStateRoyalty from "assets/images/profile/emptyStateRoyalty.svg";
+import emptyStateRoyalty from "assets/images/profile/emptyStateRoyalty.png";
 const Profile = () => {
   const provider = createProvider();
   SwiperCore.use([Autoplay]);
@@ -824,7 +824,7 @@ const Profile = () => {
                       <div className="text-center">
                         <img
                           src={emptyStateRoyalty}
-                          className="h-[210px] w-[315px] m-auto"
+                          className="h-[249px] w-[373px] m-auto object-cover"
                           alt=""
                         />
                         <p className="text-subtitle font-bold">

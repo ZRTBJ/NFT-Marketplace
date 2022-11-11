@@ -73,18 +73,19 @@ const SalesSuccessModal = ({
 
   return (
     <Modal
-      width={532}
+      width={490}
       show={show}
+      height={600}
       handleClose={() => handleClose(false)}
       showCloseIcon={true}
       overflow="auto"
     >
       <div>
-        <div className="text-center -mt-[40px]">
+        <div className="text-center">
           {" "}
           <Lottie options={defaultOptions} height={290} width={290} />
-          <h1 className="text-[21px] mt-5">Your Sales Page are set!</h1>
-          <p className="text-[14px] text-[#5F6479] mt-3 w-[400px] mx-auto">
+          <h2 className="text-[21px] mt-5">Your Sales Page are set!</h2>
+          <p className="text-[14px] text-[#5F6479] mt-3 md:w-[400px] mx-auto">
             Your collections are set to sale. it’s already listed in the
             platform that you choose!
           </p>
@@ -95,7 +96,7 @@ const SalesSuccessModal = ({
             className="text-[14px] block py-[10px] pl-[15px] pr-[40px]  text-primary-900 bg-primary-50 w-full rounded-[12px]"
             id="iframe"
           >
-            Link: <span className="font-black">{nftShareURL}</span>
+            <span className="font-black">{nftShareURL}</span>
           </p>
           <div className="text-primary-900 absolute top-2 right-2">
             <i
@@ -160,12 +161,6 @@ const SalesSuccessModal = ({
             </div>
           </div>
         )}
-        <p
-          className="cursor-pointer text-center text-[14px] text-primary-900 font-black mt-4"
-          onClick={handleNavigateCollection}
-        >
-          Preview
-        </p>
         <button
           className="w-full contained-button font-bold mt-4 text-[16px] h-[44px] bg-primary-50 text-primary-900 "
           onClick={handleNavigatetoDao}

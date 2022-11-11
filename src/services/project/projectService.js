@@ -44,8 +44,9 @@ export async function getProjectCategory() {
 export async function createProject(payload) {
   const bodyFormData = new FormData();
   if (payload) {
-    bodyFormData.append("name", payload.name);
-    bodyFormData.append("category_id", payload.category_id);
+    payload.name && bodyFormData.append("name", payload.name);
+    payload.category_id &&
+      bodyFormData.append("category_id", payload.category_id);
     bodyFormData.append("blockchain", payload.blockchain);
   }
 

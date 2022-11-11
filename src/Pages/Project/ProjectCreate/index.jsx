@@ -224,22 +224,36 @@ export default function ProjectCreate() {
   }
 
   async function createBlock(id) {
-    setDataIsLoading(true);
-    id = await createNewProject();
-    await updateExistingProject(id);
-    // await projectDetails(id);
-    setDataIsLoading(false);
-    setShowSuccessModal(true);
-    setProjectId(id);
+    try {
+      setDataIsLoading(true);
+      id = await createNewProject();
+      await updateExistingProject(id);
+      // await projectDetails(id);
+      setDataIsLoading(false);
+      setShowSuccessModal(true);
+      setProjectId(id);
+      setShowErrorModal(false);
+    } catch (err) {
+      setDataIsLoading(false);
+      setShowErrorModal(true);
+    }
   }
+
   async function updateBlock(id) {
-    setDataIsLoading(true);
-    await updateExistingProject(id);
-    // await projectDetails(id);
-    setDataIsLoading(false);
-    setShowSuccessModal(true);
-    setProjectId(id);
+    try {
+      setDataIsLoading(true);
+      await updateExistingProject(id);
+      // await projectDetails(id);
+      setDataIsLoading(false);
+      setShowSuccessModal(true);
+      setProjectId(id);
+      setShowErrorModal(false);
+    } catch (err) {
+      setDataIsLoading(false);
+      setShowErrorModal(true);
+    }
   }
+
   async function saveDraft() {
     // outline
     if (currentStep.length === 2) {
@@ -284,22 +298,25 @@ export default function ProjectCreate() {
     return projectId;
   }
   async function updateExistingProject(id) {
-    let updatePayload = {
-      logo: logoPhoto.length > 0 ? logoPhoto[0] : null,
-      name: projectName,
-      daoSymbol: daoSymbol,
-      daoWallet: daoWallet,
-      overview: overview,
-      photos: photos.length > 0 ? photos : null,
-      photosLengthFromResponse: photosLengthFromResponse,
-      remainingPhotosName: remainingPhotosName,
-      webLinks: JSON.stringify(webLinks),
-      category_id: projectCategory,
-      blockchainCategory: blockchainCategory,
-      id: id,
-    };
-    // console.log(updatePayload);
-    await updateProject(updatePayload);
+    try {
+      let updatePayload = {
+        logo: logoPhoto.length > 0 ? logoPhoto[0] : null,
+        name: projectName,
+        daoSymbol: daoSymbol,
+        daoWallet: daoWallet,
+        overview: overview,
+        photos: photos.length > 0 ? photos : null,
+        photosLengthFromResponse: photosLengthFromResponse,
+        remainingPhotosName: remainingPhotosName,
+        webLinks: JSON.stringify(webLinks),
+        category_id: projectCategory,
+        blockchainCategory: blockchainCategory,
+        id: id,
+      };
+
+      // console.log(updatePayload);
+      await updateProject(updatePayload);
+    } catch (err) {}
   }
   async function projectDetails(id) {
     setDataIsLoading(true);

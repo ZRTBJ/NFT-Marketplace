@@ -26,8 +26,14 @@ const EmbedNFTModal = ({ show, type, handleClose, nftId }) => {
   };
 
   return (
-    <Modal width={520} show={show} handleClose={() => handleClose(false)}>
-      <div className="embed-nft-modal">
+    <Modal
+      width={520}
+      height={620}
+      overflow={"auto"}
+      show={show}
+      handleClose={() => handleClose(false)}
+    >
+      <div className="embed-nft-modal py-6">
         <p className="text-[24px] font-bold">Embed NFT</p>
         <p className="text-textSubtle text-[15px] mb-5">
           Embed the NFT and put it in your website using embed code

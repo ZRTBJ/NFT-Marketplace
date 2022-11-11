@@ -16,7 +16,7 @@ const ErrorModal = ({
   return (
     <Modal
       height={480}
-      width={800}
+      width={600}
       show={show}
       handleClose={() => handleClose(false)}
     >
