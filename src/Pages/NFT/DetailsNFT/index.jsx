@@ -41,7 +41,6 @@ import { cryptoConvert } from "services/chainlinkService";
 import tickIcon from "assets/images/tick.svg";
 import { getCollectionDetailsById } from "services/collection/collectionService";
 
-
 export default function DetailsNFT(props) {
   const userinfo = useSelector((state) => state.user.userinfo);
   const [isLoading, setIsLoading] = useState(true);
@@ -64,6 +63,7 @@ export default function DetailsNFT(props) {
   const [collection, setCollection] = useState({});
 
   const handleContract = async (config) => {
+    console.log(config);
     try {
       const mintContract = createMintInstance(config.contract, provider);
       const membershipMintContract = createMembsrshipMintInstance(
@@ -76,18 +76,18 @@ export default function DetailsNFT(props) {
         const response =
           type === "membership"
             ? await createMembershipMintNFT(
-              membershipMintContract,
-              config.metadataUrl,
-              id,
-              provider,
-              config.price
-            )
+                membershipMintContract,
+                config.metadataUrl,
+                id,
+                provider,
+                config.price
+              )
             : await createMintNFT(
-              mintContract,
-              config.metadataUrl,
-              config.price,
-              provider
-            );
+                mintContract,
+                config.metadataUrl,
+                config.price,
+                provider
+              );
         if (response) {
           setHash(response?.transactionHash);
           let data = {
@@ -295,7 +295,7 @@ export default function DetailsNFT(props) {
           transactionHash={hash}
           collectionName={"Collection1"}
           shareUrl={`${nft?.lnft?.invitation_code}`}
-        // handleNext={handleProceedPayment}
+          // handleNext={handleProceedPayment}
         />
       )}
       {errorMsg && (
@@ -337,7 +337,7 @@ export default function DetailsNFT(props) {
                 />
               )}
               {nft?.lnft?.asset?.asset_type === "movie" ||
-                nft?.lnft?.asset?.asset_type === "video/mp4" ? (
+              nft?.lnft?.asset?.asset_type === "video/mp4" ? (
                 <video
                   className="rounded-xl  h-[200px] md:h-[421px] w-[421px] object-cover max-w-full"
                   controls
@@ -347,7 +347,7 @@ export default function DetailsNFT(props) {
                 </video>
               ) : null}
               {nft?.lnft?.asset?.asset_type === "audio" ||
-                nft?.lnft?.asset?.asset_type === "audio/mpeg" ? (
+              nft?.lnft?.asset?.asset_type === "audio/mpeg" ? (
                 <audio
                   src={nft?.lnft?.asset?.path}
                   controls
@@ -416,7 +416,7 @@ export default function DetailsNFT(props) {
                 <img className="ml-1 mt-1" src={tickIcon} alt="" />
               )}
             </div>
-            <div >
+            <div>
               <Link
                 className="!no-underline text-txtblack"
                 to={`/collection-details/${collection?.id}`}

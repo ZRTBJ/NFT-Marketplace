@@ -14,32 +14,32 @@ async function sendMetaTx(collection, provider, signer, config, type) {
     NETWORKS[Number(chainId)]?.masterMembershipCollection;
   let webhook = NETWORKS[Number(chainId)]?.webhook;
   const args = {
-    deployConfig: {
-      name: config?.deploymentConfig?.name,
-      symbol: config?.deploymentConfig?.symbol,
-      owner: from,
-      tokensBurnable: config?.deploymentConfig?.tokensBurnable,
-      masterCopy:
-        type === "membership"
-          ? masterMembershipCollection
-          : masterCopyCollection,
-      forwarder: minimalForwarder,
+    isCollection: true,
+    collection: {
+      deployConfig: {
+        name: config?.deploymentConfig?.name,
+        symbol: config?.deploymentConfig?.symbol,
+        owner: from,
+        masterCopy:
+          type === "membership"
+            ? masterMembershipCollection
+            : masterCopyCollection,
+        forwarder: minimalForwarder,
+      },
+      runConfig: {
+        baseURI: config?.runtimeConfig?.baseURI,
+        royaltiesBps: config?.runtimeConfig?.royaltiesBps,
+        royaltyAddress: config?.runtimeConfig?.royaltiesAddress,
+        creatorDAO: config?.runtimeConfig?.DAOContractAddress,
+      },
     },
-    runConfig: {
-      baseURI: config?.runtimeConfig?.baseURI,
-      metadataUpdatable: config?.runtimeConfig?.metadataUpdatable,
-      tokensTransferable: config?.runtimeConfig?.tokensTransferable,
-      isRoyaltiesEnabled: config?.runtimeConfig?.isRoyaltiesEnabled,
-      royaltiesBps: config?.runtimeConfig?.royaltiesBps,
-      royaltyAddress: config?.runtimeConfig?.royaltiesAddress,
-      creatorDAO: config?.runtimeConfig?.DAOContractAddress,
-    },
+    forwarder: minimalForwarder,
   };
 
-  const data = collection.interface.encodeFunctionData("createProxyContract", [
-    args.deployConfig,
-    args.runConfig,
-  ]);
+  const data = collection.interface.encodeFunctionData(
+    type === "membership" ? "createMembershipProxy" : "createCollectionProxy",
+    [args]
+  );
   const to = collection.address;
 
   const request = await signMetaTxRequest(signer.provider, forwarder, {

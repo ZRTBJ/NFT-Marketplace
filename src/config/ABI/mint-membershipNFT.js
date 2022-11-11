@@ -6,61 +6,36 @@ const abi = [
       {
         internalType: "contract MinimalForwarderUpgradeable",
         name: "_minimalForwarder",
-        type: "address"
-      }
+        type: "address",
+      },
     ],
     stateMutability: "nonpayable",
-    type: "constructor"
+    type: "constructor",
   },
   {
     anonymous: false,
     inputs: [
       {
         indexed: true,
-        internalType: "address",
-        name: "owner",
-        type: "address"
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "approved",
-        type: "address"
-      },
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256"
-      }
-    ],
-    name: "Approval",
-    type: "event"
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "owner",
-        type: "address"
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "operator",
-        type: "address"
+        internalType: "contract IERC20Upgradeable",
+        name: "token",
+        type: "address",
       },
       {
         indexed: false,
-        internalType: "bool",
-        name: "approved",
-        type: "bool"
-      }
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
     ],
-    name: "ApprovalForAll",
-    type: "event"
+    name: "ERC20PaymentReleased",
+    type: "event",
   },
   {
     anonymous: false,
@@ -69,24 +44,24 @@ const abi = [
         indexed: false,
         internalType: "uint8",
         name: "version",
-        type: "uint8"
-      }
+        type: "uint8",
+      },
     ],
     name: "Initialized",
-    type: "event"
+    type: "event",
   },
   {
     anonymous: false,
     inputs: [
       {
         indexed: false,
-        internalType: "bytes32",
-        name: "root",
-        type: "bytes32"
-      }
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
     ],
-    name: "MerkleRootUpdated",
-    type: "event"
+    name: "MembershipTokenAdded",
+    type: "event",
   },
   {
     anonymous: false,
@@ -95,42 +70,17 @@ const abi = [
         indexed: true,
         internalType: "address",
         name: "previousOwner",
-        type: "address"
+        type: "address",
       },
       {
         indexed: true,
         internalType: "address",
         name: "newOwner",
-        type: "address"
-      }
+        type: "address",
+      },
     ],
     name: "OwnershipTransferred",
-    type: "event"
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "string",
-        name: "_value",
-        type: "string"
-      },
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "_id",
-        type: "uint256"
-      }
-    ],
-    name: "PermanentURI",
-    type: "event"
-  },
-  {
-    anonymous: false,
-    inputs: [],
-    name: "PermanentURIGlobal",
-    type: "event"
+    type: "event",
   },
   {
     anonymous: false,
@@ -138,450 +88,116 @@ const abi = [
       {
         indexed: false,
         internalType: "address",
-        name: "royaltiesSplitter",
-        type: "address"
-      }
-    ],
-    name: "RoyaltyAddressUpdated",
-    type: "event"
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "bool",
-        name: "",
-        type: "bool"
-      }
-    ],
-    name: "TierConfigured",
-    type: "event"
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256"
+        name: "account",
+        type: "address",
       },
       {
         indexed: false,
-        internalType: "string",
-        name: "tokenURI",
-        type: "string"
-      }
+        internalType: "uint256",
+        name: "shares",
+        type: "uint256",
+      },
     ],
-    name: "TokenMinted",
-    type: "event"
+    name: "PayeeAdded",
+    type: "event",
   },
   {
     anonymous: false,
     inputs: [
       {
-        indexed: true,
+        indexed: false,
         internalType: "address",
         name: "from",
-        type: "address"
+        type: "address",
       },
       {
-        indexed: true,
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "PaymentReceived",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
         internalType: "address",
         name: "to",
-        type: "address"
+        type: "address",
       },
       {
-        indexed: true,
+        indexed: false,
         internalType: "uint256",
-        name: "tokenId",
-        type: "uint256"
-      }
+        name: "amount",
+        type: "uint256",
+      },
     ],
-    name: "Transfer",
-    type: "event"
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "_tierId",
-        type: "string"
-      }
-    ],
-    name: "GetTierStatus",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32"
-      }
-    ],
-    name: "_suppliedTokens",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
+    name: "PaymentReleased",
+    type: "event",
   },
   {
     inputs: [
       {
         internalType: "address",
-        name: "to",
-        type: "address"
+        name: "account_",
+        type: "address",
       },
       {
         internalType: "uint256",
-        name: "tokenId",
-        type: "uint256"
-      }
+        name: "shares_",
+        type: "uint256",
+      },
     ],
-    name: "approve",
+    name: "addPayee",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function"
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: "address",
-        name: "owner",
-        type: "address"
-      }
-    ],
-    name: "balanceOf",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [],
-    name: "baseURI",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_tokenId",
-        type: "uint256"
-      }
-    ],
-    name: "burn",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "_tierId",
-        type: "string"
-      }
-    ],
-    name: "checkTierStatus",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32[]",
-        name: "_merkleProof",
-        type: "bytes32[]"
-      }
-    ],
-    name: "checkValidity",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [],
-    name: "contractURI",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256"
-      }
-    ],
-    name: "freezeTokenUris",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256"
-      }
-    ],
-    name: "getApproved",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [],
-    name: "getSalesRevenue",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "_tierId",
-        type: "string"
-      }
-    ],
-    name: "getTotalSupply",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "_name",
-        type: "string"
+        internalType: "uint256[]",
+        name: "shares_",
+        type: "uint256[]",
       },
       {
-        internalType: "string",
-        name: "_symbol",
-        type: "string"
+        internalType: "address[]",
+        name: "_receivers",
+        type: "address[]",
       },
       {
         internalType: "address",
-        name: "_creator",
-        type: "address"
+        name: "_owner",
+        type: "address",
       },
-      {
-        internalType: "bool",
-        name: "_tokensBurnable",
-        type: "bool"
-      },
-      {
-        internalType: "string",
-        name: "_tokenBaseURI",
-        type: "string"
-      },
-      {
-        internalType: "bool",
-        name: "_metadataUpdatable",
-        type: "bool"
-      },
-      {
-        internalType: "bool",
-        name: "_tokensTransferable",
-        type: "bool"
-      },
-      {
-        internalType: "address",
-        name: "_creatorDAO",
-        type: "address"
-      }
     ],
     name: "initialize",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "owner",
-        type: "address"
-      },
-      {
-        internalType: "address",
-        name: "operator",
-        type: "address"
-      }
-    ],
-    name: "isApprovedForAll",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
+    type: "function",
   },
   {
     inputs: [
       {
         internalType: "address",
         name: "forwarder",
-        type: "address"
-      }
+        type: "address",
+      },
     ],
     name: "isTrustedForwarder",
     outputs: [
       {
         internalType: "bool",
         name: "",
-        type: "bool"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [],
-    name: "merkleRoot",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [],
-    name: "metadataUpdatable",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "caller",
-        type: "address"
+        type: "bool",
       },
-      {
-        internalType: "string",
-        name: "tokenURI",
-        type: "string"
-      },
-      {
-        internalType: "string",
-        name: "_tier",
-        type: "string"
-      }
-    ],
-    name: "mintToCaller",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256"
-      }
-    ],
-    stateMutability: "payable",
-    type: "function"
-  },
-  {
-    inputs: [],
-    name: "name",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string"
-      }
     ],
     stateMutability: "view",
-    type: "function"
+    type: "function",
   },
   {
     inputs: [],
@@ -590,465 +206,249 @@ const abi = [
       {
         internalType: "address",
         name: "",
-        type: "address"
-      }
+        type: "address",
+      },
     ],
     stateMutability: "view",
-    type: "function"
+    type: "function",
   },
   {
     inputs: [
       {
         internalType: "uint256",
-        name: "tokenId",
-        type: "uint256"
-      }
+        name: "index",
+        type: "uint256",
+      },
     ],
-    name: "ownerOf",
+    name: "payee",
     outputs: [
       {
         internalType: "address",
         name: "",
-        type: "address"
-      }
+        type: "address",
+      },
     ],
     stateMutability: "view",
-    type: "function"
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "releasable",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IERC20Upgradeable",
+        name: "token",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "releasableToken",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address payable",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "release",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IERC20Upgradeable",
+        name: "token",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "releaseToken",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "released",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IERC20Upgradeable",
+        name: "token",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "releasedToken",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [],
     name: "renounceOwnership",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function"
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "shares",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IERC20Upgradeable",
+        name: "token",
+        type: "address",
+      },
+    ],
+    name: "totalReleased",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [],
-    name: "royaltiesAddress",
+    name: "totalReleased",
     outputs: [
       {
-        internalType: "address",
+        internalType: "uint256",
         name: "",
-        type: "address"
-      }
+        type: "uint256",
+      },
     ],
     stateMutability: "view",
-    type: "function"
+    type: "function",
   },
   {
     inputs: [],
-    name: "royaltiesBasisPoints",
+    name: "totalShares",
     outputs: [
       {
         internalType: "uint256",
         name: "",
-        type: "uint256"
-      }
+        type: "uint256",
+      },
     ],
     stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [],
-    name: "royaltiesEnabled",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256"
-      },
-      {
-        internalType: "uint256",
-        name: "salePrice",
-        type: "uint256"
-      }
-    ],
-    name: "royaltyInfo",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address"
-      },
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "from",
-        type: "address"
-      },
-      {
-        internalType: "address",
-        name: "to",
-        type: "address"
-      },
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256"
-      }
-    ],
-    name: "safeTransferFrom",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "from",
-        type: "address"
-      },
-      {
-        internalType: "address",
-        name: "to",
-        type: "address"
-      },
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256"
-      },
-      {
-        internalType: "bytes",
-        name: "data",
-        type: "bytes"
-      }
-    ],
-    name: "safeTransferFrom",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "operator",
-        type: "address"
-      },
-      {
-        internalType: "bool",
-        name: "approved",
-        type: "bool"
-      }
-    ],
-    name: "setApprovalForAll",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_royaltyReceiver",
-        type: "address"
-      }
-    ],
-    name: "setRoyaltyAddress",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        components: [
-          {
-            internalType: "string",
-            name: "tierId",
-            type: "string"
-          },
-          {
-            internalType: "uint256",
-            name: "floorPrice",
-            type: "uint256"
-          },
-          {
-            internalType: "uint256",
-            name: "totalSupply",
-            type: "uint256"
-          }
-        ],
-        internalType: "struct Config.TierConfig[]",
-        name: "_tierConfigs",
-        type: "tuple[]"
-      }
-    ],
-    name: "setTiers",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes4",
-        name: "interfaceId",
-        type: "bytes4"
-      }
-    ],
-    name: "supportsInterface",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [],
-    name: "symbol",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "index",
-        type: "uint256"
-      }
-    ],
-    name: "tokenByIndex",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "owner",
-        type: "address"
-      },
-      {
-        internalType: "uint256",
-        name: "index",
-        type: "uint256"
-      }
-    ],
-    name: "tokenOfOwnerByIndex",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256"
-      }
-    ],
-    name: "tokenURI",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [],
-    name: "tokensBurnable",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [],
-    name: "tokensTransferable",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [],
-    name: "totalSupply",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_to",
-        type: "address"
-      },
-      {
-        internalType: "uint256",
-        name: "_tokenId",
-        type: "uint256"
-      }
-    ],
-    name: "transferByOwner",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "from",
-        type: "address"
-      },
-      {
-        internalType: "address",
-        name: "to",
-        type: "address"
-      },
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256"
-      }
-    ],
-    name: "transferFrom",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function"
+    type: "function",
   },
   {
     inputs: [
       {
         internalType: "address",
         name: "newOwner",
-        type: "address"
-      }
+        type: "address",
+      },
     ],
     name: "transferOwnership",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function"
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: "bytes32",
-        name: "_merkleRoot",
-        type: "bytes32"
-      }
+        internalType: "address",
+        name: "membershipToken_",
+        type: "address",
+      },
     ],
-    name: "updateMerkleRoot",
+    name: "updateMembershipToken",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function"
+    type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_tokenId",
-        type: "uint256"
-      },
-      {
-        internalType: "string",
-        name: "_tokenUri",
-        type: "string"
-      },
-      {
-        internalType: "bool",
-        name: "_isFreezeTokenUri",
-        type: "bool"
-      }
-    ],
-    name: "updateTokenUri",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "tokenURI",
-        type: "string"
-      },
-      {
-        internalType: "bytes32[]",
-        name: "_merkleProof",
-        type: "bytes32[]"
-      }
-    ],
-    name: "whitelistedMint",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256"
-      }
-    ],
     stateMutability: "payable",
-    type: "function"
-  }
+    type: "receive",
+  },
 ];
 
 export function createMembsrshipMintInstance(address, provider) {

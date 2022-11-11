@@ -7,7 +7,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import deploySuccessSvg from "assets/images/modal/deploySuccessSvg.svg";
 import { createProvider } from "util/smartcontract/provider";
-import { createInstance } from "config/ABI/collection-factory";
+import { createInstance } from "config/ABI/genericProxyFactory";
 import { createCollection } from "Pages/Collection/CollectionDetail/Publish/deploy-collection";
 import { NETWORKS } from "config/networks";
 import { ls_GetChainID } from "util/ApplicationStorage";
@@ -33,16 +33,7 @@ const DeployingCollectiontModal = ({
   const [contractAdd, setContractAdd] = useState("");
   const [txnData, setTxnData] = useState();
   const provider = createProvider();
-  let chainId = ls_GetChainID();
-  let createFactoryCollection = NETWORKS[chainId]?.createFactoryCollection;
-  let createMembershipFactoryCollection =
-    NETWORKS[chainId]?.createMembershipFactoryCollection;
-  const collectionContract = createInstance(
-    collectionType === "membership"
-      ? createMembershipFactoryCollection
-      : createFactoryCollection,
-    provider
-  );
+  const collectionContract = createInstance(provider);
 
   useEffect(() => {
     if (contractAdd && txnData) {
@@ -149,7 +140,6 @@ const DeployingCollectiontModal = ({
         collectionType
       );
       let hash;
-
       if (response?.txReceipt) {
         hash = response.txReceipt;
         let data = {
