@@ -1088,7 +1088,8 @@ const CollectionDetail = () => {
                         onClick={handlePublishSpliter}
                         disabled={
                           !canPublishRoyaltySplitter ||
-                          isPublishingRoyaltySplitter
+                          isPublishingRoyaltySplitter ||
+                          !royalityMembers.length
                         }
                       >
                         {isPublishingRoyaltySplitter
