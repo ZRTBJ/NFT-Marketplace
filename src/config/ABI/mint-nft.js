@@ -353,29 +353,9 @@ const abi = [
         type: "address",
       },
       {
-        internalType: "bool",
-        name: "_tokensBurnable",
-        type: "bool",
-      },
-      {
         internalType: "string",
         name: "_tokenBaseURI",
         type: "string",
-      },
-      {
-        internalType: "bool",
-        name: "_metadataUpdatable",
-        type: "bool",
-      },
-      {
-        internalType: "bool",
-        name: "_tokensTransferable",
-        type: "bool",
-      },
-      {
-        internalType: "bool",
-        name: "_isRoyaltyEnabled",
-        type: "bool",
       },
       {
         internalType: "uint256",
@@ -449,19 +429,6 @@ const abi = [
         internalType: "bytes32",
         name: "",
         type: "bytes32",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "metadataUpdatable",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
       },
     ],
     stateMutability: "view",
@@ -742,49 +709,6 @@ const abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "index",
-        type: "uint256",
-      },
-    ],
-    name: "tokenByIndex",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "index",
-        type: "uint256",
-      },
-    ],
-    name: "tokenOfOwnerByIndex",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
         name: "tokenId",
         type: "uint256",
       },
@@ -795,32 +719,6 @@ const abi = [
         internalType: "string",
         name: "",
         type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "tokensBurnable",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "tokensTransferable",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
       },
     ],
     stateMutability: "view",
@@ -927,30 +825,6 @@ const abi = [
     name: "updateTokenUri",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "tokenURI",
-        type: "string",
-      },
-      {
-        internalType: "bytes32[]",
-        name: "_merkleProof",
-        type: "bytes32[]",
-      },
-    ],
-    name: "whitelistedMint",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "payable",
     type: "function",
   },
 ];

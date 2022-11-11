@@ -6,7 +6,7 @@ import { getNotificationData } from "redux/notification";
 import deploySuccessSvg from "assets/images/modal/deploySuccessSvg.svg";
 import { createDAO } from "Pages/Project/ProjectDetails/Deploy/deploy-dao";
 import { createProvider } from "util/smartcontract/provider";
-import { createInstance } from "config/ABI/dao-factory";
+import { createInstance } from "config/ABI/genericProxyFactory";
 
 const DeployingProjectModal = ({
   handleClose,
@@ -52,13 +52,13 @@ const DeployingProjectModal = ({
 
   useEffect(() => {
     const filter = dao?.filters?.ProxyCreated();
+
     const listener = (args) => {
       setContractAdd(args);
     };
 
     const subscribe = async () => {
       const captured = await dao.queryFilter(filter);
-
       dao.on(filter, listener);
     };
     subscribe();

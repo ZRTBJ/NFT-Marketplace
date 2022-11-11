@@ -74,7 +74,7 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
             status: "published",
           },
         });
-        getProjectCollections();
+        // getProjectCollections();
       }
     }
   };
@@ -415,7 +415,9 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
                 className="block ml-auto bg-primary-100 text-primary-900 p-3 font-black text-[14px]"
                 onClick={handlePublishSpliter}
                 disabled={
-                  !canPublishRoyaltySplitter || isPublishingRoyaltySplitter
+                  !canPublishRoyaltySplitter ||
+                  isPublishingRoyaltySplitter ||
+                  !royalityMembers.length
                 }
               >
                 {isPublishingRoyaltySplitter

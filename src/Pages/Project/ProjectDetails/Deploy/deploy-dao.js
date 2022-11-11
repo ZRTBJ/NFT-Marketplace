@@ -24,20 +24,24 @@ async function sendMetaTx(
   let minimalForwarder = NETWORKS?.[Number(chainId)]?.forwarder;
   let masterCopy = NETWORKS?.[Number(chainId)]?.masterCopyDAO;
   let webhook = NETWORKS?.[Number(chainId)]?.webhook;
-  let args = {
-    masterCopy: masterCopy,
+  let config = {
+    isDAO: true,
+    dao: {
+      masterCopy: masterCopy,
+      safeFactory: address.SafeProxyAddress,
+      singleton: address.SafeSingletonAddress,
+      setupData: `0x${setupData.call_data}`,
+      nonce: new Date().getTime(),
+      hasTreasury: treasuryAddress ? true : false,
+      safeProxy: treasuryAddress
+        ? treasuryAddress
+        : ethers.constants.AddressZero,
+      creator: from,
+    },
     forwarder: minimalForwarder,
-    name,
-    safeFactory: address.SafeProxyAddress,
-    singleton: address.SafeSingletonAddress,
-    setupData: `0x${setupData.call_data}`,
-    nonce: new Date().getTime(),
-    hasTreasury: treasuryAddress ? true : false,
-    safeProxy: treasuryAddress ? treasuryAddress : ethers.constants.AddressZero,
-    creator: from,
   };
 
-  const data = dao.interface.encodeFunctionData("createProxyContract", [args]);
+  const data = dao.interface.encodeFunctionData("createDAOProxy", [config]);
   const to = dao.address;
 
   const request = await signMetaTxRequest(signer.provider, forwarder, {
