@@ -889,79 +889,82 @@ export default function ProductNFT(props) {
             </div>
           </div>
         </form>
-        <Modal
-          show={showPropertyModal}
-          handleClose={() => setShowPropertyModal(false)}
-          height={"auto"}
-          width={"564"}
-        >
-          <h1>Add your Properties</h1>
-          <div className="md:w-10/12">
-            <p className="mb-4 break-normal">
-              Add the properties, with value , you can add more than 5
-              properties
-            </p>
-            <p className="text-color-ass-9 text-sm">Add Properties</p>
-            {isListUpdate && (
-              <div className="text-center mt-3">
-                <i className="fa-solid fa-loader fa-spin text-primary-900"></i>
-              </div>
-            )}
-            {!isListUpdate &&
-              propertyList &&
-              propertyList.map((property, index) => (
-                <div key={`properties-${index}`}>
-                  <div className="flex items-center mt-3">
-                    <input
-                      name={`type-${index}`}
-                      type={"text"}
-                      className="w-32"
-                      defaultValue={property.key}
-                      onChange={(e) => handleOnChangePropertyType(e, index)}
-                    />
-
-                    <input
-                      name={`name-${index}`}
-                      type={"text"}
-                      className="ml-3 w-32"
-                      defaultValue={property.value}
-                      onChange={(e) => handleOnChangePropertyName(e, index)}
-                    />
-                    <i
-                      className="fa-solid fa-trash cursor-pointer ml-3 text-danger-1/[0.7]"
-                      onClick={() => removeProperty(index)}
-                    ></i>
-                  </div>
+        {showPropertyModal && (
+          <Modal
+            show={showPropertyModal}
+            handleClose={() => setShowPropertyModal(false)}
+            height={"auto"}
+            width={"564"}
+          >
+            <p className="font-black mb-4">Add your Properties</p>
+            <div className="md:w-10/12">
+              <p className="mb-4 break-normal">
+                Add the properties, with value , you can add more than 5
+                properties
+              </p>
+              <p className="text-color-ass-9 text-sm">Add Properties</p>
+              {isListUpdate && (
+                <div className="text-center mt-3">
+                  <i className="fa-solid fa-loader fa-spin text-primary-900"></i>
                 </div>
-              ))}
+              )}
+              {!isListUpdate &&
+                propertyList &&
+                propertyList.map((property, index) => (
+                  <div key={`properties-${index}`}>
+                    <div className="flex items-center mt-3">
+                      <input
+                        name={`type-${index}`}
+                        type={"text"}
+                        className="w-32"
+                        defaultValue={property.key}
+                        onChange={(e) => handleOnChangePropertyType(e, index)}
+                      />
 
-            <div className="mt-5">
-              <button
-                type="button"
-                className="btn text-primary-900 btn-sm"
-                onClick={() => addProperty()}
-              >
-                Add more +
-              </button>
-            </div>
+                      <input
+                        name={`name-${index}`}
+                        type={"text"}
+                        className="ml-3 w-32"
+                        defaultValue={property.value}
+                        onChange={(e) => handleOnChangePropertyName(e, index)}
+                      />
+                      <i
+                        className="fa-solid fa-trash cursor-pointer ml-3 text-danger-1/[0.7]"
+                        onClick={() => removeProperty(index)}
+                      ></i>
+                    </div>
+                  </div>
+                ))}
 
-            <div className="mt-5">
-              <button
-                type="button"
-                className="btn text-white-shade-900 bg-primary-900 btn-sm"
-                onClick={() => {
-                  setIsListUpdate(true);
-                  setShowPropertyModal(false);
-                  setTimeout(() => {
-                    setIsListUpdate(false);
-                  }, 50);
-                }}
-              >
-                SAVE
-              </button>
+              <div className="mt-5">
+                <button
+                  type="button"
+                  className="btn text-primary-900 btn-sm"
+                  onClick={() => addProperty()}
+                >
+                  Add more +
+                </button>
+              </div>
+
+              <div className="mt-5">
+                <button
+                  type="button"
+                  className="contained-button text-white-shade-900 bg-primary-900 btn-sm"
+                  onClick={() => {
+                    setIsListUpdate(true);
+                    setShowPropertyModal(false);
+                    setTimeout(() => {
+                      setIsListUpdate(false);
+                    }, 50);
+                  }}
+                >
+                  SAVE
+                </button>
+              </div>
             </div>
-          </div>
-        </Modal>
+          </Modal>
+        )}
+
         {showErrorModal && (
           <ErrorModal
             handleClose={() => {

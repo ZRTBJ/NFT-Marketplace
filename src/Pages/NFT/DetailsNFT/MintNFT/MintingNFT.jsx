@@ -18,14 +18,14 @@ const MintingNFT = ({
     <Modal
       show={show}
       handleClose={handleClose}
-      width={700}
+      width={550}
       showCloseIcon={false}
     >
       <div>
         {step === 1 && (
           <div className="mx-4 md:mx-16 text-center">
-            <h1>Please wait we’re minting your NFT</h1>
-            <div className="overflow-hidden rounded-full h-4 w-full mt-4 md:mt-12 mb-8 relative animated fadeIn">
+            <h5 className="font-black">Please wait we’re minting your NFT</h5>
+            <div className="overflow-hidden rounded-full h-4 w-full mt-4 md:mt-6 mb-8 relative animated fadeIn">
               <div className="animated-process-bar"></div>
             </div>
             {/* {deployStatus.step === 1 && (
@@ -52,7 +52,9 @@ const MintingNFT = ({
               alt=""
             />
             <div className="mx-4 text-center md:mx-16">
-              <h1>You have successfully Minted your NFT!</h1>
+              <h5 className="font-black">
+                You have successfully Minted your NFT!
+              </h5>
               <div className="flex justify-center mt-[30px]">
                 <button
                   className="ml-4 bg-primary-900/[0.20] text-primary-900 px-3 font-semibold rounded w-[110px] h-[38px]"

@@ -18,17 +18,17 @@ const SuccessModal = ({
   const bodyMsg = message ? message : "Successfully saved.";
   return (
     <Modal
-      width={800}
+      width={400}
       show={show}
       handleClose={() => handleClose(false)}
       showCloseIcon={showCloseIcon}
     >
       <div className="text-center mt-2">
-        <img className="block mx-auto" src={NewSuccess} alt="" />
-        <div className="mb-2 text-[22px] md:text-[28px] font-black txtblack md:w-[350px] mx-auto">
+        <img className="block mx-auto h-[200px]" src={NewSuccess} alt="" />
+        <div className="mb-2 text-[16px]  font-black txtblack md:w-[350px] mx-auto">
           {bodyMsg}
         </div>
-        <p className="text-[#7D849D] text-[16px] mb-2">{subMessage}</p>
+        <p className="text-[#7D849D] text-[14px] mb-2">{subMessage}</p>
         <div className="flex justify-center">
           <button
             type="button"

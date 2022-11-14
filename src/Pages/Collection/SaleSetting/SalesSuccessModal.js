@@ -31,7 +31,6 @@ const SalesSuccessModal = ({
       preserveAspectRatio: "xMidYMid slice",
     },
   };
-
   useEffect(() => {
     if (membershipNFTId) {
       setIframeContent(
@@ -56,11 +55,6 @@ const SalesSuccessModal = ({
     handleClose();
   };
 
-  const handleNavigateCollection = () => {
-    history.push(`/collection-details/${projectId}`);
-    handleClose();
-  };
-
   const copyToClipboard = (e) => {
     copyRef.current.select();
     document.execCommand("copy");
@@ -73,30 +67,30 @@ const SalesSuccessModal = ({
 
   return (
     <Modal
-      width={490}
+      width={400}
       show={show}
-      height={600}
       handleClose={() => handleClose(false)}
       showCloseIcon={true}
       overflow="auto"
     >
       <div>
         <div className="text-center">
-          {" "}
-          <Lottie options={defaultOptions} height={290} width={290} />
-          <h2 className="text-[21px] mt-5">Your Sales Page are set!</h2>
-          <p className="text-[14px] text-[#5F6479] mt-3 md:w-[400px] mx-auto">
+          <Lottie options={defaultOptions} height={150} width={150} />
+          <p className="text-[16px] font-black mt-2">
+            Your Sales Page are set!
+          </p>
+          <p className="text-[14px] text-[#5F6479] mt-1 break-normal">
             Your collections are set to sale. it’s already listed in the
             platform that you choose!
           </p>
         </div>
 
-        <div className="relative w-fit mx-auto my-5">
+        <div className="relative w-fit mx-auto my-3">
           <p
-            className="text-[14px] block py-[10px] pl-[15px] pr-[40px]  text-primary-900 bg-primary-50 w-full rounded-[12px]"
+            className="text-[14px] inline-block md:max-w-[320px] max-w-[260px] py-[10px] pl-[15px] pr-[40px]  text-primary-900 bg-primary-50 w-full rounded-[12px]"
             id="iframe"
           >
-            <span className="font-black">{nftShareURL}</span>
+            <span className="font-black truncate block">{nftShareURL}</span>
           </p>
           <div className="text-primary-900 absolute top-2 right-2">
             <i
@@ -111,6 +105,7 @@ const SalesSuccessModal = ({
             Copied Successfully!
           </p>
         </div>
+
         {membershipNFTId ? (
           <div className="mt-2">
             <textarea
@@ -128,7 +123,7 @@ const SalesSuccessModal = ({
                 Copy Embed Code
               </button>
               {isTextCopied && (
-                <p className="right-10 bottom-2 absolute txtblack text-center text-xs text-success-900">
+                <p className=" text-green-500 text-[14px] text-center">
                   Copied Successfully!
                 </p>
               )}
@@ -138,31 +133,28 @@ const SalesSuccessModal = ({
 
         {nftShareURL && (
           <div className="mt-3 mb-4 text-center">
-            <p className="mb-2">Share on Social Media</p>
+            <p className="mb-2 text-[14px]">Share on Social Media</p>
             <div className="flex items-center justify-center">
               <FacebookShareButton url={`${nftShareURL}`} quote={"NFT"}>
-                <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[44px] w-[44px] flex items-center justify-center mr-2">
+                <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[34px] w-[34px] flex items-center justify-center mr-2">
                   <img src={FB} alt="facebook" />
                 </div>
               </FacebookShareButton>
               <TwitterShareButton title="NFT" url={`${nftShareURL}`}>
-                <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[44px] w-[44px] flex items-center justify-center mr-2">
+                <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[34px] w-[34px] flex items-center justify-center mr-2">
                   <img src={twitter} alt="twitter" />
                 </div>
               </TwitterShareButton>
               <RedditShareButton title="NFT" url={`${nftShareURL}`}>
-                <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[44px] w-[44px] flex items-center justify-center">
+                <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[34px] w-[34px] flex items-center justify-center">
                   <img src={reddit} alt="reddit" />
                 </div>
               </RedditShareButton>
-              {/* <div className='cursor-pointer rounded-[4px] bg-opacity-[0.1] bg-[#9A5AFF] h-[44px] w-[44px] flex items-center justify-center mr-2'>
-                    <img src={instagram} alt='instagram' />
-                  </div> */}
             </div>
           </div>
         )}
         <button
-          className="w-full contained-button font-bold mt-4 text-[16px] h-[44px] bg-primary-50 text-primary-900 "
+          className="w-[200px] mx-auto block contained-button font-bold mt-2 text-[16px] h-[44px] bg-primary-50 text-primary-900 "
           onClick={handleNavigatetoDao}
         >
           Close

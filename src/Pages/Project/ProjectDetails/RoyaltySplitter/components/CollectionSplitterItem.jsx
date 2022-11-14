@@ -25,7 +25,7 @@ const CollectionSplitter = ({
         <div className="flex items-center w-[50%] md:w-[20%]">
           <img
             src={image?.path ? image.path : DefaultImage}
-            className="w-[44px] h-[44px] rounded mr-4 object-contain"
+            className="md:h-[66px] object-cover md:w-[66px] h-[38px] w-[38px] rounded-lg mr-4"
             alt="Collection"
           />
           <Link className="!no-underline" to={`/collection-details/${id}`}>

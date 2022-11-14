@@ -32,7 +32,12 @@
 }
 @media (max-width: 767px) {
   .modal-main {
-    /* height: auto !important; */
+    max-height: 60%;
+  }
+}
+@media (min-width: 767px) {
+  .modal-main {
+    max-height: 85%;
   }
 }
 

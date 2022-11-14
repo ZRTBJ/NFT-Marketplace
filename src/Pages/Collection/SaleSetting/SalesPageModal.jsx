@@ -314,14 +314,14 @@ const SalesPageModal = ({
     <>
       {isLoading ? (
         <Modal
-          width={800}
+          width={500}
           show={isLoading}
           showCloseIcon={false}
           handleClose={() => isLoading(false)}
         >
           <div className="text-center md:my-6 md:mx-16">
-            <h1>We are creating the sales page for NFT</h1>
-            <div className="overflow-hidden rounded-full h-4 w-full mt-4 md:mt-12 mb-8 relative animated fadeIn">
+            <h5>Please wait, we are creating the sales page for NFT</h5>
+            <div className="overflow-hidden rounded-full h-4 w-full mt-4 md:mt-6 mb-8 relative animated fadeIn">
               <div className="animated-process-bar"></div>
             </div>
           </div>

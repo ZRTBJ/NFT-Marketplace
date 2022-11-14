@@ -22,7 +22,7 @@ const TransactionModal = ({
       showCloseIcon={true}
     >
       <div className="mt-2">
-        <div className="font-black text-[24px] md:text-[42px]">Transaction</div>
+        <div className="font-black text-[18px]">Transaction</div>
         <p className=" mt-3 text-textSubtle">
           You are about to purchase a{" "}
           <span className="font-black">{nftName}</span> from{" "}

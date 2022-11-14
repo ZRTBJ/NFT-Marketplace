@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import Spinner from "components/Commons/Spinner";
-import defaultCover from "assets/images/image-default.svg";
+import defaultCover from "assets/images/defaultImage.svg";
 import ReactPaginate from "react-paginate";
 import deleteSvg from "assets/images/projectDetails/delete.svg";
 import viewSvg from "assets/images/projectDetails/eye.svg";

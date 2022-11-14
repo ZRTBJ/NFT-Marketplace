@@ -1,4 +1,5 @@
 import "./index.css";
+import { useDetectClickOutside } from "react-detect-click-outside";
 const Modal = ({
   handleClose,
   show,
@@ -14,19 +15,18 @@ const Modal = ({
     overflow: overflow ? overflow : "hidden",
   };
 
-  const modalBodyClicked = (e) => {
-    e.stopPropagation();
-  };
+  const ref = useDetectClickOutside({ onTriggered: handleClose });
   return (
     <div
       data-toggle="modal"
       data-backdrop="static"
       data-keyboard="false"
-      className={`${show ? "modal display-block" : "modal display-none"
-        } z-[99] `}
+      className={`${
+        show ? "modal display-block" : "modal display-none"
+      } z-[99] `}
     >
       <section
-        onClick={(e) => modalBodyClicked(e)}
+        ref={ref}
         style={styleObj}
         className={
           " modal-main bg-white rounded-3xl relative txtblack px-4 py-6"
