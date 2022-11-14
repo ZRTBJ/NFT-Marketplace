@@ -7,4 +7,6 @@ const Config = {
   FILE_SERVER_URL: FILE_SERVER_URL,
 };
 
+console.log(Config);
+
 export default Config;
