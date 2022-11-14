@@ -110,18 +110,31 @@ export default function usePublishRoyaltySplitter(payload = {}) {
     let chainId = ls_GetChainID();
     let minimalForwarder = NETWORKS?.[chainId]?.forwarder;
     let masterRoyaltySplitter = NETWORKS?.[chainId]?.masterRoyaltySplitter;
+    // const functionPayload = [
+    //   {
+    //     isRoyalty: true,
+    //     royalty: {
+    //       receivers: splitters.map((spliter) => spliter.user_eoa),
+    //       shares: splitters.map((splitter) =>
+    //         ethers.utils.parseUnits(splitter.royalty_percent.toString())
+    //       ),
+    //       collection: collection.contract_address,
+    //       masterCopy: masterRoyaltySplitter,
+    //       creator,
+    //     },
+    //     forwarder: minimalForwarder,
+    //   },
+    // ];
+
     const functionPayload = [
       {
-        isRoyalty: true,
-        royalty: {
-          receivers: splitters.map((spliter) => spliter.user_eoa),
-          shares: splitters.map((splitter) =>
-            ethers.utils.parseUnits(splitter.royalty_percent.toString())
-          ),
-          collection: collection.contract_address,
-          masterCopy: masterRoyaltySplitter,
-          creator,
-        },
+        receivers: splitters.map((spliter) => spliter.user_eoa),
+        shares: splitters.map((splitter) =>
+          ethers.utils.parseUnits(splitter.royalty_percent.toString())
+        ),
+        collection: collection.contract_address,
+        masterCopy: masterRoyaltySplitter,
+        creator,
         forwarder: minimalForwarder,
       },
     ];

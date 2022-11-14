@@ -13,12 +13,12 @@ export const address = {
   RoyaltySplitterMasterCopy: "0x303D1fD78F6EeD222C238aDcE4fDcC256d15bf68",
 
   //Mumbai Testnet
-  GenericProxyFactoryMumbai: "0xa6c82248b93Fe8EF325035cfB0f0512C202BeF8b",
+  GenericProxyFactoryMumbai: "0x3dB777ce33E290312E4FE1Ec80A2AdE0a249d127",
   MinimalForwarderMumbai: "0x4565BbCA3b265C42Fc547B15a81CADB2159Ae96D",
   CreatorDAOMasterCopyMumbai: "0x01dFa5AFC212B1195E7B2b4B9467520ab2a10418",
   CreateCollectionMasterCopyMumbai:
-    "0x937780dE8b5e4007884B3e3Eb253400D29Ea8781",
+    "0xfC246263A1F0907309dE9E5E4732D8bEea2ac2a4",
   CreateMembershipCollectionMasterCopyMumbai:
     "0x1805E44A4b0310d2535BeD94DeDa4BFFc5C4A4ac",
-  RoyaltySplitterMasterCopyMumbai: "0x1587bf525FdF7f6c004930572969036C2119Eb41",
+  RoyaltySplitterMasterCopyMumbai: "0xF65055721a061A77c7a46ABb1CF7283361b8fd2e",
 };
