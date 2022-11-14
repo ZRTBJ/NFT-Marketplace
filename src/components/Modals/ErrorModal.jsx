@@ -14,16 +14,11 @@ const ErrorModal = ({
   const titleMsg = title ? title : "Sorry, something went wrong.";
   const bodyMsg = message ? message : "Please try again.";
   return (
-    <Modal
-      height={480}
-      width={600}
-      show={show}
-      handleClose={() => handleClose(false)}
-    >
+    <Modal width={400} show={show} handleClose={() => handleClose(false)}>
       <div className="text-center">
         <img className="block mx-auto" src={IconError} alt="" />
-        <div className="my-4 text-xl font-bold txtblack">{titleMsg}</div>
-        <div className="my-4 font-bold txtblack">{bodyMsg}</div>
+        <div className="mb-4 text-[16px] font-bold txtblack">{titleMsg}</div>
+        <div className="my-4 font-bold text-[14px] txtblack">{bodyMsg}</div>
         <div className="flex justify-center mb-4">
           {redirection ? (
             <Link to={redirection}>

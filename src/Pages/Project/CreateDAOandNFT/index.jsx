@@ -71,10 +71,12 @@ const CreateDAOandNFT = () => {
 
   return (
     <div className={`bg-white mt-4 py-6 pl-6 ${IsLoading ? "loading" : ""}`}>
-      <CreateNFTModal
-        show={ShowCreateNFT}
-        handleClose={() => setShowCreateNFT(false)}
-      />
+      {ShowCreateNFT && (
+        <CreateNFTModal
+          show={ShowCreateNFT}
+          handleClose={() => setShowCreateNFT(false)}
+        />
+      )}
       <div className="border-[#C7CEE5] border-b-[1px] pb-3">
         <h3 className="text-[28px] font-black mb-2">Create new DAO</h3>
         <p className="text-[14px] text-[#5F6479] pr-6 md:pr-0 break-normal font-normal w-[350px] md:w-[450px]">

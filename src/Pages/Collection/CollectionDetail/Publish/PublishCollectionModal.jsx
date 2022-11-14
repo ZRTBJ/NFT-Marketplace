@@ -8,12 +8,7 @@ const PublishCollectionModal = ({
   type,
 }) => {
   return (
-    <Modal
-      height={580}
-      width={600}
-      show={show}
-      handleClose={() => handleClose(false)}
-    >
+    <Modal width={600} show={show} handleClose={() => handleClose(false)}>
       <div className="text-center">
         <img
           className="h-[200px] md:w-[300px] mx-auto"
@@ -21,7 +16,7 @@ const PublishCollectionModal = ({
           alt=""
         />
         <div className="md:mx-16">
-          <div className="font-black text-[24px] md:text-[30px]">
+          <div className="font-black text-[16px]">
             You can’t change some fields once you publish this {type}
           </div>
           <div className="text-[#9499AE] mt-[12px]">

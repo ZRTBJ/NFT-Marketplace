@@ -3,21 +3,16 @@ import Modal from "components/Commons/Modal";
 
 const PublishProjectModal = ({ handleClose, show, publishProject, type }) => {
   return (
-    <Modal
-      height={580}
-      width={800}
-      show={show}
-      handleClose={() => handleClose(false)}
-    >
+    <Modal width={450} show={show} handleClose={() => handleClose(false)}>
       <div className="text-center">
         <img
-          className="h-[200px] md:w-[300px] mx-auto"
+          className="h-[150px] md:w-[300px] mx-auto"
           src={publishModalSvg}
           alt=""
         />
         <div className="md:mx-16">
-          <div className="font-black text-[24px] md:text-[32px]">
-            You can’t Change some Field once you Publish this {type}
+          <div className="font-black text-[18px]">
+            You can’t change some field once you publish this {type}
           </div>
           <div className="text-[#9499AE] mt-[12px]">
             Do you want to publish anyway?

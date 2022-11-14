@@ -22,22 +22,22 @@ const PublishingProductNFT = ({
     <Modal
       show={show}
       handleClose={handleClose}
-      width={700}
+      width={550}
       showCloseIcon={false}
     >
       <div>
         {step === 1 && (
           <div className="mx-4 md:mx-16">
-            <div className="font-black text-[24px] md:text-[42px]">
+            <div className="font-black text-[20px]">
               Please wait we’re uploading. It may take a while.
             </div>
             {fileSize && uploadedPercent !== 100 ? (
-              <div className="font-black text-[22px] md:text-[28px] md:leading-[42px] text-center mt-6">
+              <div className="font-black text-[18px] text-center mt-6">
                 {sizeUploaded}kb of {fileSize}kb | {uploadedPercent}%
               </div>
             ) : null}
             {uploadedPercent === 100 ? (
-              <div className="font-black text-[22px] md:text-[28px] md:leading-[42px] text-center mt-6">
+              <div className="font-black text-[18px] text-center mt-6">
                 File uploaded successfully. We are{" "}
                 {mode === "create" ? "creating " : "updating "} the Product NFT
                 now
@@ -70,7 +70,7 @@ const PublishingProductNFT = ({
               alt=""
             />
             <div className="mx-4 text-center">
-              <div className="font-black text-[22px] md:text-[42px]">
+              <div className="font-black text-[18px]">
                 You successfully {mode === "create" ? "Created a " : "Update "}{" "}
                 Product NFT!
               </div>

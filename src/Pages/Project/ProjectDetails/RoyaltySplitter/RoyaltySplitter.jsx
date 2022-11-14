@@ -166,7 +166,7 @@ const RoyaltySplitter = ({ projectNetwork }) => {
               <div className="w-full">
                 {collections.map((collection) => {
                   let image = collection?.assets?.find(
-                    (asset) => asset.asset_type === "image"
+                    (asset) => asset.asset_purpose === "logo"
                   );
                   return (
                     <CollectionSplitterItem

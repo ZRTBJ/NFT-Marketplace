@@ -110,10 +110,12 @@ export default function DetailsNFT(props) {
     }
   };
 
-  async function dollarConvert(formUnit) {
+  async function dollarConvert(formUnit, price) {
     await cryptoConvert(formUnit).then((res) => {
-      setUsdValue(res.USD);
-      console.log(res);
+      if (res) {
+        const usdValue = res.USD * price;
+        setUsdValue(usdValue.toFixed(2));
+      }
     });
   }
 
@@ -130,7 +132,10 @@ export default function DetailsNFT(props) {
         if (resp.code === 0) {
           setNft(resp);
           if (resp.more_info.currency) {
-            dollarConvert(resp.more_info.currency);
+            dollarConvert(
+              resp.more_info.currency.toUpperCase(),
+              resp.more_info.price
+            );
           }
           collectionId = resp?.lnft?.collection_uuid;
           setIsLoading(false);
@@ -273,7 +278,7 @@ export default function DetailsNFT(props) {
           handleClose={() => setTransactionModal(false)}
           nftName={nft?.lnft?.name}
           address={userinfo?.eoa}
-          collectionName={"Collection1"}
+          collectionName={collection?.name}
           blockChain={getCurrentNftNetwork()}
           price={info?.price}
           currency={info?.currency}
@@ -293,7 +298,7 @@ export default function DetailsNFT(props) {
           nftName={nft?.lnft?.name}
           assetUrl={nft?.lnft?.asset?.path ? nft?.lnft?.asset?.path : manImg}
           transactionHash={hash}
-          collectionName={"Collection1"}
+          collectionName={collection?.name}
           shareUrl={`${nft?.lnft?.invitation_code}`}
           // handleNext={handleProceedPayment}
         />

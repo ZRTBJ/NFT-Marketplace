@@ -1228,10 +1228,12 @@ const Profile = () => {
           show={nftErrorModal}
         />
       )}
-      <CreateNFTModal
-        show={ShowCreateNFT}
-        handleClose={() => setShowCreateNFT(false)}
-      />
+      {ShowCreateNFT && (
+        <CreateNFTModal
+          show={ShowCreateNFT}
+          handleClose={() => setShowCreateNFT(false)}
+        />
+      )}
     </>
   );
 };

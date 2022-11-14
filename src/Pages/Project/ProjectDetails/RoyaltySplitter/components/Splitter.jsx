@@ -322,23 +322,31 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
           show={showRoyalityErrorModal}
         />
       )}
-      <PublishCollectionModal
-        show={showPublishRoyaltySpliterConfirmModal}
-        handleClose={() => setShowPublishRoyaltySpliterConfirmModal(false)}
-        publishProject={handlePublishRoyaltySplitter}
-        type="Royalty Splitter"
-      />
-      <PublishRoyaltyModal
-        isVisible={showPublishRoyaltySpliterModal}
-        isLoading={isPublishingRoyaltySplitter}
-        status={publishRoyaltySplitterStatus}
-        onRequestClose={() => setShowPublishRoyaltySpliterModal(false)}
-      />
-      <ErrorModal
-        show={showPublishRoyaltySpliterErrorModal}
-        title="Failed to publish royalty percentage!"
-        handleClose={() => setShowPublishRoyaltySpliterErrorModal(false)}
-      />
+      {showPublishRoyaltySpliterConfirmModal && (
+        <PublishCollectionModal
+          show={showPublishRoyaltySpliterConfirmModal}
+          handleClose={() => setShowPublishRoyaltySpliterConfirmModal(false)}
+          publishProject={handlePublishRoyaltySplitter}
+          type="Royalty Splitter"
+        />
+      )}
+
+      {showPublishRoyaltySpliterModal && (
+        <PublishRoyaltyModal
+          isVisible={showPublishRoyaltySpliterModal}
+          isLoading={isPublishingRoyaltySplitter}
+          status={publishRoyaltySplitterStatus}
+          onRequestClose={() => setShowPublishRoyaltySpliterModal(false)}
+        />
+      )}
+      {showPublishRoyaltySpliterErrorModal && (
+        <ErrorModal
+          show={showPublishRoyaltySpliterErrorModal}
+          title="Failed to publish royalty percentage!"
+          handleClose={() => setShowPublishRoyaltySpliterErrorModal(false)}
+        />
+      )}
+
       {!loading && (
         <div className="bg-[#F8FCFE] rounded-[12px] p-5 mt-5">
           <div className="flex items-start md:items-center justify-between pb-7 ">

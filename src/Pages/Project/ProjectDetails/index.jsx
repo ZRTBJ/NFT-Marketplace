@@ -769,7 +769,7 @@ export default function ProjectDetails(props) {
                       membershipCollectionList.length > 0 &&
                       membershipCollectionList.map((collection, index) => {
                         let image = collection?.assets?.find(
-                          (asset) => asset.asset_purpose === "logo"
+                          (asset) => asset.asset_purpose === "cover"
                         );
                         return (
                           <div
@@ -858,7 +858,7 @@ export default function ProjectDetails(props) {
                     productCollectionList.length > 0 &&
                     productCollectionList.map((collection, index) => {
                       let image = collection?.assets?.find(
-                        (asset) => asset.asset_purpose === "logo"
+                        (asset) => asset.asset_purpose === "cover"
                       );
                       return (
                         <div

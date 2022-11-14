@@ -139,22 +139,26 @@ export default function MembershipNFT() {
     const nftFile = oldNfts[index].assets;
     try {
       const file = event.currentTarget.files[0];
+      const usedSize = userinfo["storage_usage"];
+      let totalSize = 0;
       // const usedSize = 4000;
       // let totalSize = 0;
-      if (file) {
-        // console.log(file.size / 1024);
-        //   nftFile.file = file;
-        //   nftFile.path = URL.createObjectURL(file);
-        //   nftFile.isFileError = false;
-        // }
-        // totalSize = (usedSize + file.size) / 1024 / 1024;
-        // if (totalSize > 102) {
-        //   nftFile.limitExceeded = true;
-        //   event.currentTarget.value = "";
-        //
-        const size = file.size / 1024;
-        if (size > 100000) {
-          nftFile.limitExceeded = true;
+      if (usedSize && file) {
+        totalSize = (usedSize + file.size) / 1024 / 1024;
+        if (file.size / 1024 / 1024 > 100) {
+          setErrorTitle("Maximum file size limit exceeded");
+          setErrorMessage(`You can add your assets up to 100MB.`);
+          setShowErrorModal(true);
+          event.currentTarget.value = "";
+        } else if (totalSize > 1024) {
+          setErrorTitle("Maximum file size limit exceeded");
+          setErrorMessage(
+            `You can add your assets up to 1GB. you have a remaining of ${(
+              1024 -
+              usedSize / 1024 / 1024
+            ).toFixed(2)} MB storage`
+          );
+          setShowErrorModal(true);
           event.currentTarget.value = "";
         } else {
           nftFile.file = file;
@@ -1070,77 +1074,78 @@ export default function MembershipNFT() {
           )}
         </div>
       </div>
-      <Modal
-        show={showPropertyModal}
-        handleClose={() => setShowPropertyModal(false)}
-        height={"auto"}
-        width={"564"}
-      >
-        <h1 className="font-black text-[24px] md:text-[42px] mb-4">
-          Add your Properties
-        </h1>
-        <div className="md:w-10/12">
-          <p className="mb-4 break-normal">
-            Add the properties, with value , you can add more than 5 properties
-          </p>
-          <p className="text-color-ass-9 text-sm">Add Properties</p>
-          {isListUpdate && (
-            <div className="text-center mt-3">
-              <i className="fa-solid fa-loader fa-spin text-primary-900"></i>
-            </div>
-          )}
-          {!isListUpdate &&
-            propertyList &&
-            propertyList.map((property, index) => (
-              <div key={index}>
-                <div className="flex items-center mt-3">
-                  <input
-                    name={`type-${index}`}
-                    type={"text"}
-                    className="w-32"
-                    defaultValue={property.key}
-                    onChange={(e) => handleOnChangePropertyType(e, index)}
-                  />
-
-                  <input
-                    name={`name-${index}`}
-                    type={"text"}
-                    className="ml-3 w-32"
-                    defaultValue={property.value}
-                    onChange={(e) => handleOnChangePropertyName(e, index)}
-                  />
-
-                  {propertyList.length > 1 && (
-                    <i
-                      className="cursor-pointer fa-solid fa-trash text-danger-1/[0.7] ml-3"
-                      onClick={() => removeProperty(index)}
-                    ></i>
-                  )}
-                </div>
+      {showPropertyModal && (
+        <Modal
+          show={showPropertyModal}
+          handleClose={() => setShowPropertyModal(false)}
+          height={"auto"}
+          width={"564"}
+        >
+          <p className="font-black  mb-4">Add your Properties</p>
+          <div className="md:w-10/12">
+            <p className="mb-4 break-normal">
+              Add the properties, with value , you can add more than 5
+              properties
+            </p>
+            <p className="text-color-ass-9 text-sm">Add Properties</p>
+            {isListUpdate && (
+              <div className="text-center mt-3">
+                <i className="fa-solid fa-loader fa-spin text-primary-900"></i>
               </div>
-            ))}
+            )}
+            {!isListUpdate &&
+              propertyList &&
+              propertyList.map((property, index) => (
+                <div key={index}>
+                  <div className="flex items-center mt-3">
+                    <input
+                      name={`type-${index}`}
+                      type={"text"}
+                      className="w-32"
+                      defaultValue={property.key}
+                      onChange={(e) => handleOnChangePropertyType(e, index)}
+                    />
 
-          <div className="mt-5">
-            <button
-              type="button"
-              className="h-[43px] mb-4 mr-4 px-6 py-2 bg-primary-900/[.20] font-black  rounded text-primary-900"
-              onClick={() => addProperty()}
-            >
-              Add more +
-            </button>
-          </div>
+                    <input
+                      name={`name-${index}`}
+                      type={"text"}
+                      className="ml-3 w-32"
+                      defaultValue={property.value}
+                      onChange={(e) => handleOnChangePropertyName(e, index)}
+                    />
 
-          <div className="mt-5">
-            <button
-              type="button"
-              className="w-[140px] !text-[16px] h-[44px] contained-button"
-              onClick={onSavePropertiesChange}
-            >
-              SAVE
-            </button>
+                    {propertyList.length > 1 && (
+                      <i
+                        className="cursor-pointer fa-solid fa-trash text-danger-1/[0.7] ml-3"
+                        onClick={() => removeProperty(index)}
+                      ></i>
+                    )}
+                  </div>
+                </div>
+              ))}
+
+            <div className="mt-5">
+              <button
+                type="button"
+                className="h-[38px] mb-4 mr-4 px-6 py-2 bg-primary-900/[.20] font-black  rounded text-primary-900"
+                onClick={() => addProperty()}
+              >
+                Add more +
+              </button>
+            </div>
+
+            <div className="mt-5">
+              <button
+                type="button"
+                className="w-[120px] !text-[16px] h-[38px] contained-button"
+                onClick={onSavePropertiesChange}
+              >
+                SAVE
+              </button>
+            </div>
           </div>
-        </div>
-      </Modal>
+        </Modal>
+      )}
       {showSuccessModal && (
         <SuccessModal
           message={`You successfully ${updateMode ? "update" : "create"}
@@ -1166,15 +1171,17 @@ export default function MembershipNFT() {
       )}
       {showDataUploadingModal && (
         <Modal
-          width={800}
+          width={400}
           show={showDataUploadingModal}
           showCloseIcon={false}
           handleClose={() => setShowDataUploadingModal(false)}
         >
-          <div className="text-center md:my-6 md:mx-16">
-            <h1>Do not close the Tab</h1>
-            <h1>Your Assets is uploading</h1>
-            <div className="overflow-hidden rounded-full h-4 w-full mt-4 md:mt-12 mb-8 relative animated fadeIn">
+          <div className="text-center ">
+            <p className="font-black text-[18px]">
+              Please,do not close the Tab
+            </p>
+            <p>Your Assets is uploading</p>
+            <div className="overflow-hidden rounded-full h-4 w-full mt-4 md:mt-6 mb-8 relative animated fadeIn">
               <div className="animated-process-bar"></div>
             </div>
           </div>

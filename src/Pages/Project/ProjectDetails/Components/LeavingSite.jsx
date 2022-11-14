@@ -13,15 +13,10 @@ const LeavingSite = ({ handleClose, show, treasuryAddress, network }) => {
     }
   }
   return (
-    <Modal
-      height={480}
-      width={800}
-      show={show}
-      handleClose={() => handleClose(false)}
-    >
+    <Modal width={400} show={show} handleClose={() => handleClose(false)}>
       <div className="text-center">
         <img className="block mx-auto" src={publishModalSvg} alt="" />
-        <p className="my-4 text-xl font-bold txtblack">
+        <p className="my-4 text-[18px] font-bold txtblack">
           You will be leaving the platform
         </p>
         <p className="my-4 break-normal text-textSubtle md:mx-auto md:max-w-[500px]">

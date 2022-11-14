@@ -329,41 +329,29 @@ const abi = [
       {
         components: [
           {
-            internalType: "bool",
-            name: "isRoyalty",
-            type: "bool",
+            internalType: "address[]",
+            name: "receivers",
+            type: "address[]",
           },
           {
-            components: [
-              {
-                internalType: "address[]",
-                name: "receivers",
-                type: "address[]",
-              },
-              {
-                internalType: "uint256[]",
-                name: "shares",
-                type: "uint256[]",
-              },
-              {
-                internalType: "address payable",
-                name: "collection",
-                type: "address",
-              },
-              {
-                internalType: "address",
-                name: "masterCopy",
-                type: "address",
-              },
-              {
-                internalType: "address",
-                name: "creator",
-                type: "address",
-              },
-            ],
-            internalType: "struct Config.PaymentSplitter",
-            name: "royalty",
-            type: "tuple",
+            internalType: "uint256[]",
+            name: "shares",
+            type: "uint256[]",
+          },
+          {
+            internalType: "address payable",
+            name: "collection",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "masterCopy",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "creator",
+            type: "address",
           },
           {
             internalType: "address",
@@ -371,7 +359,7 @@ const abi = [
             type: "address",
           },
         ],
-        internalType: "struct Config.RoyaltyProxy",
+        internalType: "struct Config.PaymentSplitter",
         name: "_config",
         type: "tuple",
       },

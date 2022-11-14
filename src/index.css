@@ -178,3 +178,17 @@ p {
     width: 100% !important;
   }
 }
+.modal-main::-webkit-scrollbar-track {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.modal-main::-webkit-scrollbar-thumb {
+  background-color: #9f9f9f;
+  border: 4px solid transparent;
+  border-radius: 8px;
+  background-clip: padding-box;
+}
+
+.modal-main::-webkit-scrollbar {
+  width: 15px;
+}

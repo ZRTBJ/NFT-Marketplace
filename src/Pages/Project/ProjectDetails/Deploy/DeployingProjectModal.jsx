@@ -147,7 +147,7 @@ const DeployingProjectModal = ({
 
   return (
     <Modal
-      width={800}
+      width={600}
       show={show}
       showCloseIcon={false}
       handleClose={() => handleClose(false)}
@@ -155,7 +155,7 @@ const DeployingProjectModal = ({
       <div className={`text-center md:my-6 ${isLoading ? "loading" : ""}`}>
         {step === 1 && (
           <div className="md:mx-16">
-            <h1>Please wait we’re publishing your DAO</h1>
+            <h5>Please wait we’re publishing your DAO</h5>
             <div className="overflow-hidden rounded-full h-4 w-full mt-12 mb-8 relative animated fadeIn">
               <div className="animated-process-bar"></div>
             </div>
@@ -177,7 +177,7 @@ const DeployingProjectModal = ({
               alt=""
             />
             <div className="md:mx-16">
-              <h1>Your DAO is published successfully!</h1>
+              <h5>Your DAO is published successfully!</h5>
               <p className="text-[#9499AE] mt-[12px]">
                 Now you can publish your collection!
               </p>

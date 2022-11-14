@@ -755,7 +755,7 @@ const CollectionDetail = () => {
                     {index < 5 && (
                       <img
                         key={`member-img-${index}`}
-                        className="rounded-full w-9 h-9 -ml-1 border-2 border-white"
+                        className="rounded-full h-[35px] w-[38px] -ml-1 border-2 object-cover  border-white"
                         src={img?.avatar ? img.avatar : avatar}
                         alt=""
                       />
@@ -1142,23 +1142,31 @@ const CollectionDetail = () => {
           membershipNFTId={membershipNFTId}
         />
       )}
-      <PublishCollectionModal
-        show={showPublishRoyaltySpliterConfirmModal}
-        handleClose={() => setShowPublishRoyaltySpliterConfirmModal(false)}
-        publishProject={handlePublishRoyaltySplitter}
-        type="Royalty Splitter"
-      />
-      <PublishRoyaltyModal
-        isVisible={showPublishRoyaltySpliterModal}
-        isLoading={isPublishingRoyaltySplitter}
-        status={publishRoyaltySplitterStatus}
-        onRequestClose={() => setShowPublishRoyaltySpliterModal(false)}
-      />
-      <ErrorModal
-        show={showPublishRoyaltySpliterErrorModal}
-        title="Failed to publish royalty percentage!"
-        handleClose={() => setShowPublishRoyaltySpliterErrorModal(false)}
-      />
+      {showPublishRoyaltySpliterConfirmModal && (
+        <PublishCollectionModal
+          show={showPublishRoyaltySpliterConfirmModal}
+          handleClose={() => setShowPublishRoyaltySpliterConfirmModal(false)}
+          publishProject={handlePublishRoyaltySplitter}
+          type="Royalty Splitter"
+        />
+      )}
+
+      {showPublishRoyaltySpliterModal && (
+        <PublishRoyaltyModal
+          isVisible={showPublishRoyaltySpliterModal}
+          isLoading={isPublishingRoyaltySplitter}
+          status={publishRoyaltySplitterStatus}
+          onRequestClose={() => setShowPublishRoyaltySpliterModal(false)}
+        />
+      )}
+
+      {showPublishRoyaltySpliterErrorModal && (
+        <ErrorModal
+          show={showPublishRoyaltySpliterErrorModal}
+          title="Failed to publish royalty percentage!"
+          handleClose={() => setShowPublishRoyaltySpliterErrorModal(false)}
+        />
+      )}
     </div>
   );
 };
