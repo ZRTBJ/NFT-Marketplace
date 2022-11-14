@@ -1089,7 +1089,8 @@ const CollectionDetail = () => {
                         disabled={
                           !canPublishRoyaltySplitter ||
                           isPublishingRoyaltySplitter ||
-                          !royalityMembers.length
+                          !royalityMembers.length ||
+                          !Collection?.royalty_splitter?.id
                         }
                       >
                         {isPublishingRoyaltySplitter

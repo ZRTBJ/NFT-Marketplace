@@ -137,6 +137,37 @@ const abi = [
     inputs: [
       {
         indexed: false,
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+      {
+        components: [
+          {
+            internalType: "address payable",
+            name: "account",
+            type: "address",
+          },
+          {
+            internalType: "uint96",
+            name: "value",
+            type: "uint96",
+          },
+        ],
+        indexed: false,
+        internalType: "struct LibPart.Part[]",
+        name: "royalties",
+        type: "tuple[]",
+      },
+    ],
+    name: "RoyaltiesSet",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
         internalType: "address",
         name: "royaltiesSplitter",
         type: "address",
@@ -323,6 +354,37 @@ const abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "id",
+        type: "uint256",
+      },
+    ],
+    name: "getRaribleV2Royalties",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "address payable",
+            name: "account",
+            type: "address",
+          },
+          {
+            internalType: "uint96",
+            name: "value",
+            type: "uint96",
+          },
+        ],
+        internalType: "struct LibPart.Part[]",
+        name: "",
+        type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "getSalesRevenue",
     outputs: [
@@ -330,6 +392,25 @@ const abi = [
         internalType: "uint256",
         name: "",
         type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_creatorDAO",
+        type: "address",
+      },
+    ],
+    name: "getTreasury",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -511,6 +592,35 @@ const abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "royalties",
+    outputs: [
+      {
+        internalType: "address payable",
+        name: "account",
+        type: "address",
+      },
+      {
+        internalType: "uint96",
+        name: "value",
+        type: "uint96",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "royaltiesAddress",
     outputs: [
@@ -656,6 +766,29 @@ const abi = [
       },
     ],
     name: "setPrimaryMintPrice",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_tokenId",
+        type: "uint256",
+      },
+      {
+        internalType: "address payable",
+        name: "_royaltiesReceipientAddress",
+        type: "address",
+      },
+      {
+        internalType: "uint96",
+        name: "_percentageBasisPoints",
+        type: "uint96",
+      },
+    ],
+    name: "setRoyalties",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

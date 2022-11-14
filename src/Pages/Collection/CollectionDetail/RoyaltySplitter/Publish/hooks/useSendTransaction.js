@@ -145,14 +145,20 @@ export default function useSendTransaction() {
   };
 
   const sendToRelayer = async ({ request, signature }) => {
-    let chainId = ls_GetChainID()
+    let chainId = ls_GetChainID();
     let webhook = NETWORKS[chainId]?.webhook;
     const response = await axios.post(webhook, {
       request,
       signature,
     });
-    const transaction = JSON.parse(response.result);
-    return transaction;
+
+    if (response.status === "success") {
+      const transaction = JSON.parse(response.result);
+
+      return transaction;
+    } else {
+      throw new Error(response.message);
+    }
   };
 
   const waitTransactionResult = async (transaction) => {

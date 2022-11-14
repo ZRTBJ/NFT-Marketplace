@@ -17,8 +17,8 @@ export const address = {
   MinimalForwarderMumbai: "0x4565BbCA3b265C42Fc547B15a81CADB2159Ae96D",
   CreatorDAOMasterCopyMumbai: "0x01dFa5AFC212B1195E7B2b4B9467520ab2a10418",
   CreateCollectionMasterCopyMumbai:
-    "0xfC246263A1F0907309dE9E5E4732D8bEea2ac2a4",
+    "0x6dD832032057F54Db1fCD146d110138aCb80041A",
   CreateMembershipCollectionMasterCopyMumbai:
-    "0x1805E44A4b0310d2535BeD94DeDa4BFFc5C4A4ac",
+    "0x3AB2046275f4A8F12b24Af507e51ebF6fBbf67a5",
   RoyaltySplitterMasterCopyMumbai: "0xF65055721a061A77c7a46ABb1CF7283361b8fd2e",
 };

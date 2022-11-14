@@ -425,7 +425,8 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
                 disabled={
                   !canPublishRoyaltySplitter ||
                   isPublishingRoyaltySplitter ||
-                  !royalityMembers.length
+                  !royalityMembers.length ||
+                  !royalitySplitterId
                 }
               >
                 {isPublishingRoyaltySplitter
