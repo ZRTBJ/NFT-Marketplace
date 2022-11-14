@@ -8,11 +8,11 @@ const abi = [
       {
         internalType: "contract MinimalForwarderUpgradeable",
         name: "_minimalForwarder",
-        type: "address",
-      },
+        type: "address"
+      }
     ],
     stateMutability: "nonpayable",
-    type: "constructor",
+    type: "constructor"
   },
   {
     anonymous: false,
@@ -21,11 +21,11 @@ const abi = [
         indexed: false,
         internalType: "uint8",
         name: "version",
-        type: "uint8",
-      },
+        type: "uint8"
+      }
     ],
     name: "Initialized",
-    type: "event",
+    type: "event"
   },
   {
     anonymous: false,
@@ -34,11 +34,11 @@ const abi = [
         indexed: false,
         internalType: "address",
         name: "newProxy",
-        type: "address",
-      },
+        type: "address"
+      }
     ],
     name: "ProxyCreated",
-    type: "event",
+    type: "event"
   },
   {
     inputs: [
@@ -47,7 +47,7 @@ const abi = [
           {
             internalType: "bool",
             name: "isCollection",
-            type: "bool",
+            type: "bool"
           },
           {
             components: [
@@ -56,95 +56,95 @@ const abi = [
                   {
                     internalType: "string",
                     name: "name",
-                    type: "string",
+                    type: "string"
                   },
                   {
                     internalType: "string",
                     name: "symbol",
-                    type: "string",
+                    type: "string"
                   },
                   {
                     internalType: "address",
                     name: "owner",
-                    type: "address",
+                    type: "address"
                   },
                   {
                     internalType: "bool",
                     name: "tokensBurnable",
-                    type: "bool",
+                    type: "bool"
                   },
                   {
                     internalType: "address",
                     name: "masterCopy",
-                    type: "address",
-                  },
+                    type: "address"
+                  }
                 ],
                 internalType: "struct Config.Deployment",
                 name: "deployConfig",
-                type: "tuple",
+                type: "tuple"
               },
               {
                 components: [
                   {
                     internalType: "string",
                     name: "baseURI",
-                    type: "string",
+                    type: "string"
                   },
                   {
                     internalType: "bool",
                     name: "metadataUpdatable",
-                    type: "bool",
+                    type: "bool"
                   },
                   {
                     internalType: "bool",
                     name: "tokensTransferable",
-                    type: "bool",
+                    type: "bool"
                   },
                   {
                     internalType: "bool",
                     name: "isRoyaltiesEnabled",
-                    type: "bool",
+                    type: "bool"
                   },
                   {
                     internalType: "uint256",
                     name: "royaltiesBps",
-                    type: "uint256",
+                    type: "uint256"
                   },
                   {
                     internalType: "address",
                     name: "royaltyAddress",
-                    type: "address",
+                    type: "address"
                   },
                   {
                     internalType: "address",
                     name: "creatorDAO",
-                    type: "address",
-                  },
+                    type: "address"
+                  }
                 ],
                 internalType: "struct Config.Runtime",
                 name: "runConfig",
-                type: "tuple",
-              },
+                type: "tuple"
+              }
             ],
             internalType: "struct Config.CollectionConfiguration",
             name: "collection",
-            type: "tuple",
+            type: "tuple"
           },
           {
             internalType: "address",
             name: "forwarder",
-            type: "address",
-          },
+            type: "address"
+          }
         ],
         internalType: "struct Config.CollectionProxy",
         name: "_config",
-        type: "tuple",
-      },
+        type: "tuple"
+      }
     ],
     name: "createCollectionProxy",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
+    type: "function"
   },
   {
     inputs: [
@@ -153,70 +153,70 @@ const abi = [
           {
             internalType: "bool",
             name: "isDAO",
-            type: "bool",
+            type: "bool"
           },
           {
             components: [
               {
                 internalType: "address",
                 name: "masterCopy",
-                type: "address",
+                type: "address"
               },
               {
                 internalType: "address",
                 name: "safeFactory",
-                type: "address",
+                type: "address"
               },
               {
                 internalType: "address",
                 name: "singleton",
-                type: "address",
+                type: "address"
               },
               {
                 internalType: "bytes",
                 name: "setupData",
-                type: "bytes",
+                type: "bytes"
               },
               {
                 internalType: "uint256",
                 name: "nonce",
-                type: "uint256",
+                type: "uint256"
               },
               {
                 internalType: "bool",
                 name: "hasTreasury",
-                type: "bool",
+                type: "bool"
               },
               {
                 internalType: "address",
                 name: "safeProxy",
-                type: "address",
+                type: "address"
               },
               {
                 internalType: "address",
                 name: "creator",
-                type: "address",
-              },
+                type: "address"
+              }
             ],
             internalType: "struct Config.DAOConfig",
             name: "dao",
-            type: "tuple",
+            type: "tuple"
           },
           {
             internalType: "address",
             name: "forwarder",
-            type: "address",
-          },
+            type: "address"
+          }
         ],
         internalType: "struct Config.DaoProxy",
         name: "_config",
-        type: "tuple",
-      },
+        type: "tuple"
+      }
     ],
     name: "createDAOProxy",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
+    type: "function"
   },
   {
     inputs: [
@@ -225,7 +225,7 @@ const abi = [
           {
             internalType: "bool",
             name: "isCollection",
-            type: "bool",
+            type: "bool"
           },
           {
             components: [
@@ -234,172 +234,160 @@ const abi = [
                   {
                     internalType: "string",
                     name: "name",
-                    type: "string",
+                    type: "string"
                   },
                   {
                     internalType: "string",
                     name: "symbol",
-                    type: "string",
+                    type: "string"
                   },
                   {
                     internalType: "address",
                     name: "owner",
-                    type: "address",
+                    type: "address"
                   },
                   {
                     internalType: "bool",
                     name: "tokensBurnable",
-                    type: "bool",
+                    type: "bool"
                   },
                   {
                     internalType: "address",
                     name: "masterCopy",
-                    type: "address",
-                  },
+                    type: "address"
+                  }
                 ],
                 internalType: "struct Config.Deployment",
                 name: "deployConfig",
-                type: "tuple",
+                type: "tuple"
               },
               {
                 components: [
                   {
                     internalType: "string",
                     name: "baseURI",
-                    type: "string",
+                    type: "string"
                   },
                   {
                     internalType: "bool",
                     name: "metadataUpdatable",
-                    type: "bool",
+                    type: "bool"
                   },
                   {
                     internalType: "bool",
                     name: "tokensTransferable",
-                    type: "bool",
+                    type: "bool"
                   },
                   {
                     internalType: "bool",
                     name: "isRoyaltiesEnabled",
-                    type: "bool",
+                    type: "bool"
                   },
                   {
                     internalType: "uint256",
                     name: "royaltiesBps",
-                    type: "uint256",
+                    type: "uint256"
                   },
                   {
                     internalType: "address",
                     name: "royaltyAddress",
-                    type: "address",
+                    type: "address"
                   },
                   {
                     internalType: "address",
                     name: "creatorDAO",
-                    type: "address",
-                  },
+                    type: "address"
+                  }
                 ],
                 internalType: "struct Config.Runtime",
                 name: "runConfig",
-                type: "tuple",
-              },
+                type: "tuple"
+              }
             ],
             internalType: "struct Config.CollectionConfiguration",
             name: "collection",
-            type: "tuple",
+            type: "tuple"
           },
           {
             internalType: "address",
             name: "forwarder",
-            type: "address",
-          },
+            type: "address"
+          }
         ],
         internalType: "struct Config.CollectionProxy",
         name: "_config",
-        type: "tuple",
-      },
+        type: "tuple"
+      }
     ],
     name: "createMembershipProxy",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
+    type: "function"
   },
   {
     inputs: [
       {
         components: [
           {
-            internalType: "bool",
-            name: "isRoyalty",
-            type: "bool",
+            internalType: "address[]",
+            name: "receivers",
+            type: "address[]"
           },
           {
-            components: [
-              {
-                internalType: "address[]",
-                name: "receivers",
-                type: "address[]",
-              },
-              {
-                internalType: "uint256[]",
-                name: "shares",
-                type: "uint256[]",
-              },
-              {
-                internalType: "address payable",
-                name: "collection",
-                type: "address",
-              },
-              {
-                internalType: "address",
-                name: "masterCopy",
-                type: "address",
-              },
-              {
-                internalType: "address",
-                name: "creator",
-                type: "address",
-              },
-            ],
-            internalType: "struct Config.PaymentSplitter",
-            name: "royalty",
-            type: "tuple",
+            internalType: "uint256[]",
+            name: "shares",
+            type: "uint256[]"
+          },
+          {
+            internalType: "address payable",
+            name: "collection",
+            type: "address"
+          },
+          {
+            internalType: "address",
+            name: "masterCopy",
+            type: "address"
+          },
+          {
+            internalType: "address",
+            name: "creator",
+            type: "address"
           },
           {
             internalType: "address",
             name: "forwarder",
-            type: "address",
-          },
+            type: "address"
+          }
         ],
-        internalType: "struct Config.RoyaltyProxy",
+        internalType: "struct Config.PaymentSplitter",
         name: "_config",
-        type: "tuple",
-      },
+        type: "tuple"
+      }
     ],
     name: "createRoyaltyProxy",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
+    type: "function"
   },
   {
     inputs: [
       {
         internalType: "address",
         name: "forwarder",
-        type: "address",
-      },
+        type: "address"
+      }
     ],
     name: "isTrustedForwarder",
     outputs: [
       {
         internalType: "bool",
         name: "",
-        type: "bool",
-      },
+        type: "bool"
+      }
     ],
     stateMutability: "view",
-    type: "function",
-  },
+    type: "function"
+  }
 ];
 
 export function createInstance(provider) {
