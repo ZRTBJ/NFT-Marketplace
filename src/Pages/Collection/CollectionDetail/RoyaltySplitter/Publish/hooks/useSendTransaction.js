@@ -156,7 +156,7 @@ export default function useSendTransaction() {
       const transaction = JSON.parse(response.result);
       return transaction;
     } else {
-      throw new Error(response.message);
+      throw new Error("Error publishing splitter: " + response.message);
     }
   };
 

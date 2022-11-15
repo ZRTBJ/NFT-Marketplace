@@ -7,7 +7,7 @@ import { NETWORKS } from "config/networks";
 import { ls_GetChainID } from "util/ApplicationStorage";
 
 export default function usePublishRoyaltySplitter(payload = {}) {
-  const { collection, splitters, onUpdateStatus = () => {} } = payload;
+  const { collection, splitters, onUpdateStatus = () => { } } = payload;
 
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState(1);
@@ -16,7 +16,6 @@ export default function usePublishRoyaltySplitter(payload = {}) {
   const transaction = useRef();
   // Transaction result states
   const txReceipt = useRef();
-  const royaltySplitterContractAddress = useRef();
   const listener = useRef();
   const { sendTransaction, waitTransactionResult } = useSendTransaction();
 
@@ -56,42 +55,10 @@ export default function usePublishRoyaltySplitter(payload = {}) {
     return await collectionService.publishRoyaltySplitter(royaltySplitterId);
   };
 
-  const subscribeOnChainEvent = async () => {
-    return new Promise((resolve, reject) => {
-      const timeout = setTimeout(reject, 60000);
-
-      listener.current = async (...args) => {
-        try {
-          if (transaction.current == null) {
-            return;
-          }
-
-          const eventTransaction = args[args.length - 1];
-
-          if (eventTransaction.transactionHash !== transaction.current.txHash) {
-            return;
-          }
-
-          royaltySplitterContractAddress.current = args[0];
-          clearTimeout(timeout);
-          resolve();
-        } catch (err) {
-          reject(err);
-        }
-      };
-
-      contract.current.on(
-        contract.current.filters.ProxyCreated(),
-        listener.current
-      );
-    });
-  };
-
   const updateOffChainData = async () => {
     const royaltySplitterId = collection.royalty_splitter.id;
     const payload = new FormData();
     payload.append("transaction_hash", txReceipt.current.transactionHash);
-    payload.append("contract_address", royaltySplitterContractAddress.current);
     payload.append("block_number", txReceipt.current.blockNumber);
     return collectionService.publishRoyaltySplitter(royaltySplitterId, payload);
   };
@@ -132,13 +99,11 @@ export default function usePublishRoyaltySplitter(payload = {}) {
 
       setIsLoading(true);
       const publishData = await callPublishApi();
-      const subscribeEventPromise = subscribeOnChainEvent();
       transaction.current = await sendOnChainTransaction(publishData);
       txReceipt.current = await waitTransactionResult(transaction.current);
-      await subscribeEventPromise;
       const publishResponse = await updateOffChainData();
       if (publishResponse.function.status === "failed") {
-        throw new Error("Transaction failed");
+        throw new Error("Transaction failed. " + publishResponse.function.message);
       }
 
       setStatus(2);
