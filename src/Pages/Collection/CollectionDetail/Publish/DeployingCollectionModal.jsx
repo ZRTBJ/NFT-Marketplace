@@ -9,8 +9,6 @@ import deploySuccessSvg from "assets/images/modal/deploySuccessSvg.svg";
 import { createProvider } from "util/smartcontract/provider";
 import { createInstance } from "config/ABI/genericProxyFactory";
 import { createCollection } from "Pages/Collection/CollectionDetail/Publish/deploy-collection";
-import { NETWORKS } from "config/networks";
-import { ls_GetChainID } from "util/ApplicationStorage";
 
 const DeployingCollectiontModal = ({
   handleClose,
@@ -24,22 +22,20 @@ const DeployingCollectiontModal = ({
   collectionType,
   publishStep,
 }) => {
-  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [statusStep, setStatusStep] = useState(1);
   const [funcId, setFuncId] = useState("");
   const [step, setStep] = useState(publishStep ? publishStep : 1);
 
-  const [contractAdd, setContractAdd] = useState("");
   const [txnData, setTxnData] = useState();
   const provider = createProvider();
   const collectionContract = createInstance(provider);
 
   useEffect(() => {
-    if (contractAdd && txnData) {
+    if (txnData) {
       publishThisCollection(txnData);
     }
-  }, [contractAdd, txnData]);
+  }, [txnData]);
 
   useEffect(() => {
     if (step === 1) {
@@ -47,30 +43,11 @@ const DeployingCollectiontModal = ({
     }
   }, []);
 
-  useEffect(() => {
-    const filter = collectionContract?.filters?.ProxyCreated();
-    const listener = (args) => {
-      setContractAdd(args);
-    };
-
-    const subscribe = async () => {
-      const captured = await collectionContract.queryFilter(filter);
-
-      collectionContract.on(filter, listener);
-    };
-    subscribe();
-    return () => {
-      collectionContract.removeAllListeners();
-    };
-  }, []);
-
   function publishThisCollection(data) {
     setIsLoading(true);
     let payload = new FormData();
     if (data) {
       payload.append("transaction_hash", data.transactionHash);
-      payload.append("contract_address", contractAdd);
-      payload.append("block_number", data.block_number);
     }
 
     publishCollection(collectionId, txnData ? payload : null)
@@ -83,7 +60,6 @@ const DeployingCollectiontModal = ({
             if (res?.function?.status === "success") {
               setStep(2);
             } else if (res?.function?.status === "failed") {
-              setContractAdd("");
               setTxnData();
               errorClose(res?.function?.message);
             }
