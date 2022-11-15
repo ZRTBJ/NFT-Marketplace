@@ -15,10 +15,10 @@ export const address = {
   //Mumbai Testnet
   GenericProxyFactoryMumbai: "0x3dB777ce33E290312E4FE1Ec80A2AdE0a249d127",
   MinimalForwarderMumbai: "0x4565BbCA3b265C42Fc547B15a81CADB2159Ae96D",
-  CreatorDAOMasterCopyMumbai: "0x01dFa5AFC212B1195E7B2b4B9467520ab2a10418",
+  CreatorDAOMasterCopyMumbai: "0x4D9a154BF176F4c228B89D3Db38603df07eBA761",
   CreateCollectionMasterCopyMumbai:
-    "0x6dD832032057F54Db1fCD146d110138aCb80041A",
+    "0xC38247326a6F9861d5cF4b0dB627d2496c3EEdAd",
   CreateMembershipCollectionMasterCopyMumbai:
-    "0x3AB2046275f4A8F12b24Af507e51ebF6fBbf67a5",
-  RoyaltySplitterMasterCopyMumbai: "0xF65055721a061A77c7a46ABb1CF7283361b8fd2e",
+    "0x41E6FbA5A356f2312f90A918c00913976059829B",
+  RoyaltySplitterMasterCopyMumbai: "0x4584AD64B9fdd94f69405913CeBD40f8C7Dfc036",
 };

@@ -187,8 +187,8 @@ const CollectionDetail = () => {
       .catch((err) => console.log(err));
   };
 
-  const getSplittedContributors = (id) => {
-    getSplitterDetails(id).then((data) => {
+  const getSplittedContributors = (id, type) => {
+    getSplitterDetails(id, type).then((data) => {
       if (data.code === 0) {
         setRoyalityMembers(data?.members);
       }
@@ -364,6 +364,7 @@ const CollectionDetail = () => {
             setIsEdit(null);
             setShowRoyalityErrorModal(false);
             setShowRoyalityErrorMessage("");
+            getSplittedContributors(royalitySplitterId);
           } else {
             setIsAutoFillLoading(false);
             setRoyaltyUpdatedSuccessfully(false);
@@ -531,7 +532,8 @@ const CollectionDetail = () => {
           handleClose={() => {
             setShowImportWallet(false);
             getSplittedContributors(
-              royalitySplitterId ? royalitySplitterId : Collection?.id
+              royalitySplitterId ? royalitySplitterId : Collection.id,
+              royalitySplitterId ? "splitter_id" : "collection_id"
             );
           }}
           projectId={projectID}

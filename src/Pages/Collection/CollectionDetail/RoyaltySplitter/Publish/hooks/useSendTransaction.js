@@ -154,7 +154,6 @@ export default function useSendTransaction() {
 
     if (response.status === "success") {
       const transaction = JSON.parse(response.result);
-
       return transaction;
     } else {
       throw new Error(response.message);
