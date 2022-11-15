@@ -168,8 +168,9 @@ export default function DetailsNFT(props) {
     setTransactionWaitingModal(true);
     let formData = new FormData();
 
-    formData.append("transaction_hash", response.hash);
-    formData.append("block_number", response.blockNumber);
+    response.hash && formData.append("transaction_hash", response.hash);
+    response.blockNumber &&
+      formData.append("block_number", response.blockNumber);
     const payload = {
       id: nft?.lnft?.id,
       data: formData,

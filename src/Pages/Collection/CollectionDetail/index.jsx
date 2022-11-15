@@ -365,6 +365,7 @@ const CollectionDetail = () => {
             setShowRoyalityErrorModal(false);
             setShowRoyalityErrorMessage("");
             getSplittedContributors(royalitySplitterId);
+            getCollectionDetail();
           } else {
             setIsAutoFillLoading(false);
             setRoyaltyUpdatedSuccessfully(false);
@@ -434,7 +435,15 @@ const CollectionDetail = () => {
   const handlePublishSpliter = async () => {
     let networkId = await getCurrentNetworkId();
     if (Number(projectNetwork) === networkId) {
-      setShowPublishRoyaltySpliterConfirmModal(true);
+      let totalPercent = royalityMembers.reduce(
+        (arr, val) => arr + val.royalty_percent,
+        0
+      );
+      if (totalPercent === 100) {
+        setShowPublishRoyaltySpliterConfirmModal(true);
+      } else {
+        toast.error("Total royalty percent should be 100 %");
+      }
     } else {
       setShowNetworkHandler(true);
     }
@@ -1081,8 +1090,6 @@ const CollectionDetail = () => {
                     handleAutoFill={handleAutoFill}
                     isOwner={Collection?.is_owner}
                   />
-                  {/* {CollectionDetail.is_owner &&
-                CollectionDetail.status !== "published" ? ( */}
                   <div className="w-full">
                     {!hasPublishedRoyaltySplitter && (
                       <button
@@ -1092,7 +1099,7 @@ const CollectionDetail = () => {
                           !canPublishRoyaltySplitter ||
                           isPublishingRoyaltySplitter ||
                           !royalityMembers.length ||
-                          !Collection?.royalty_splitter?.id
+                          !royalitySplitterId
                         }
                       >
                         {isPublishingRoyaltySplitter
@@ -1103,7 +1110,6 @@ const CollectionDetail = () => {
                       </button>
                     )}
                   </div>
-                  {/* ) : null} */}
                 </div>
                 <div className="bg-white rounded-[12px] p-5 mt-6 shadow-main">
                   <NFTSales items={nftSales} />

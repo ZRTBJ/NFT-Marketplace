@@ -242,7 +242,15 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
   const handlePublishSpliter = async () => {
     let networkId = await getCurrentNetworkId();
     if (Number(projectNetwork) === networkId) {
-      setShowPublishRoyaltySpliterConfirmModal(true);
+      let totalPercent = royalityMembers.reduce(
+        (arr, val) => arr + val.royalty_percent,
+        0
+      );
+      if (totalPercent === 100) {
+        setShowPublishRoyaltySpliterConfirmModal(true);
+      } else {
+        toast.error("Total royalty percent should be 100 %");
+      }
     } else {
       setShowNetworkHandler(true);
     }
