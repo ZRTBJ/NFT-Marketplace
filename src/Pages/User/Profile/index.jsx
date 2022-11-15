@@ -21,15 +21,11 @@ import SuccessModal from "components/Modals/SuccessModal";
 import { getUserCollections } from "services/collection/collectionService";
 import thumbIcon from "assets/images/cover-default.svg";
 import ErrorModal from "components/Modals/ErrorModal";
-import { useDispatch, useSelector } from "react-redux";
 import { walletAddressTruncate } from "util/WalletUtils";
 import { getMintedNftListByUserId } from "services/nft/nftService";
 import NFTListCard from "components/Cards/NFTListCard";
-import { refreshNFT } from "services/nft/nftService";
 import { royaltyClaim } from "Pages/User/Profile/royalty-claim";
-import { updateMetadata } from "Pages/User/Profile/update-metadata";
 import { createProvider } from "util/smartcontract/provider";
-import { createMintInstance } from "config/ABI/mint-nft";
 import { toast } from "react-toastify";
 import ReactPaginate from "react-paginate";
 import Spinner from "components/Commons/Spinner";
@@ -72,30 +68,18 @@ const Profile = () => {
   const [collectionList, setCollectionList] = useState([]);
   // collection end
   // Royalties start
-  const [setRoyaltiesListSortBy] = useState("default");
+
   const [royaltiesList, setRoyaltiesList] = useState([]);
-  const [royaltyId, setRoyaltyId] = useState("");
   const [errorModal, setErrorModal] = useState(false);
   const [totalRoyality, setTotalRoyality] = useState(0);
   const [royaltyErrormessage, setRoyaltyErrormessage] = useState("");
   const [daoNetwork, setDAONetwork] = useState("");
-  async function onRoyaltiesListSort(e) {
-    setRoyaltiesListSortBy(e.target.value);
-    let oldRoyalties = [...royaltiesList];
-    const sorted = oldRoyalties.reverse();
-    setRoyaltiesList(sorted);
-  }
 
   // Royalties End
 
   const [isLoading, setIsLoading] = useState(true);
   const [walletAddress, setWalletAddress] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const notificationsList = useSelector((state) =>
-    state?.notifications?.notificationData
-      ? state?.notifications?.notificationData
-      : []
-  );
   const settings = {
     320: {
       slidesPerView: 2,
@@ -249,9 +233,6 @@ const Profile = () => {
       .reduce((prev, curr) => prev + curr, 0);
     setTotalRoyality(sum);
   }
-  async function claimAllRoyalty() {
-    setShowSuccessModal(true);
-  }
   async function getCollectionList() {
     const payload = {
       id: id,
@@ -373,24 +354,7 @@ const Profile = () => {
       });
     setNftLoading(false);
   }
-  function setNftData(nft, type) {
-    let nftList = [...mintedNftList];
-    const nftIndex = nftList.findIndex(
-      (item) => item.id === nft.id && item.token_id === nft.token_id
-    );
-    const nftLocal = { ...nft };
-    if (type === "loadingTrue") {
-      nftLocal.loading = true;
-    } else if (type === "loadingFalse") {
-      nftLocal.loading = false;
-    } else if (type === "hideRefreshButton") {
-      nftLocal.refresh_status = "notRequired";
-    } else if (type === "showRefreshButton") {
-      nftLocal.refresh_status = "failed";
-    }
-    nftList[nftIndex] = nftLocal;
-    setMintedNftList(nftList);
-  }
+
   function setRoyaltyData(royalty, type) {
     let royaltyList = [...royaltiesList];
     const royaltyIndex = royaltyList.findIndex(
@@ -405,97 +369,6 @@ const Profile = () => {
     }
     royaltyList[royaltyIndex] = royaltyLocal;
     setRoyaltiesList(royaltyList);
-  }
-
-  async function refreshNFTWithtnx(payload) {
-    return await refreshNFT(payload);
-  }
-
-  async function onRefreshNft(nft) {
-    // hide the refresh button start
-    setNftData(nft, "hideRefreshButton");
-    // hide the refresh end
-
-    // 1. set Loading true start
-    setNftData(nft, "loadingTrue");
-    // 1. set loading true end
-
-    // 2. call refresh api for getting config object
-    const payload = {
-      id: nft.id,
-      tokenId: nft.token_id,
-    };
-    let config = {};
-    let hasConfigForNft = false;
-
-    await refreshNFT(payload)
-      .then((res) => {
-        if (res.code === 0) {
-          config = res.config;
-          hasConfigForNft = true;
-        } else {
-          setNftErrorModalMessage(res.message);
-          setNftErrorModal(true);
-          setNftData(nft, "loadingFalse");
-          setNftData(nft, "sowRefreshButton");
-        }
-      })
-      .catch((error) => {
-        setNftErrorModalMessage(
-          "Can not refresh right now,please Try Again later"
-        );
-        setNftErrorModal(true);
-        setNftData(nft, "loadingFalse");
-        setNftData(nft, "sowRefreshButton");
-      });
-    if (hasConfigForNft) {
-      try {
-        const erc721CollectionContract = createMintInstance(
-          config.collection_contract_address,
-          provider
-        );
-        const result = await updateMetadata(
-          erc721CollectionContract,
-          provider,
-          config
-        );
-        if (result) {
-          console.log(result);
-          const data = {
-            id: nft.id,
-            tokenId: nft.token_id,
-            tnxHash: result,
-          };
-          await refreshNFTWithtnx(data)
-            .then((res) => {
-              if (res.code === 0) {
-                if (res.function.status === "success") {
-                  setNftData(nft, "loadingFalse");
-                  setNftData(nft, "hideRefreshButton");
-                  toast.success(`Successfully refreshed ${nft.name} NFT`);
-                }
-                if (res.function.status === "failed") {
-                  setNftData(nft, "loadingFalse");
-                  setNftData(nft, "sowRefreshButton");
-                  toast.error(`Unexpected error, Please try again`);
-                }
-              }
-            })
-            .catch((err) => {
-              setNftErrorModalMessage(err);
-              setNftErrorModal(true);
-              setNftData(nft, "loadingFalse");
-            });
-        } else {
-          setNftData(nft, "loadingFalse");
-        }
-      } catch (error) {
-        console.log(error);
-        setNftData(nft, "loadingFalse");
-        setNftData(nft, "sowRefreshButton");
-        toast.error(`Unexpected error or cancelled, Please try again`);
-      }
-    }
   }
 
   useEffect(() => {
@@ -1157,12 +1030,7 @@ const Profile = () => {
                             className={styles.nftCard}
                             key={`${nft.id}-${nft.token_id}`}
                           >
-                            <NFTListCard
-                              nft={nft}
-                              projectWork="ethereum"
-                              refresh={onRefreshNft}
-                              loading={nft.loading}
-                            />
+                            <NFTListCard nft={nft} />
                           </SwiperSlide>
                         ))}
                       </div>

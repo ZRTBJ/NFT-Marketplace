@@ -9,7 +9,7 @@ export default function CollectionCard({ collection }) {
   };
 
   return (
-    <div className="md:min-h-[390px]   w-[156px]  md:w-[276px] rounded-x">
+    <div className="md:min-h-[390px]  rounded-x">
       <Link
         to={
           collection.type === "right_attach"
@@ -18,7 +18,7 @@ export default function CollectionCard({ collection }) {
         }
       >
         <img
-          className="w-[156px] md:w-[276px] h-[156px] rounded-xl md:h-[276px] object-cover"
+          className="w-full h-[156px] rounded-xl md:h-[276px] object-cover"
           src={
             collection && collection.assets && collection.assets[0]
               ? collection.assets[0].path

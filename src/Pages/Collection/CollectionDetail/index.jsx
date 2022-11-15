@@ -895,18 +895,18 @@ const CollectionDetail = () => {
           </div>
           <div id="myTabContent">
             {selectedTab === 1 && (
-              <div className="flex flex-wrap mt-4 mb-[60px]">
+              <div className=" mt-4 grid gap-6  grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                 {NFTs?.length ? (
                   NFTs.map((nft) => {
                     return (
                       <div
                         key={nft?.id}
-                        className="min-h-auto md:min-h-[390px] rounded-xl mr-2 md:mr-4 mb-4 bg-white p-4"
+                        className="min-h-auto md:min-h-[390px] rounded-xl  bg-white"
                       >
                         <Link to={`/nft-details/${nft?.nft_type}/${nft.id}`}>
                           {imageRegex.test(nft?.asset?.asset_type) && (
                             <img
-                              className="rounded-xl h-[176px] md:h-[276px] w-[150px] md:w-[276px] object-cover"
+                              className="rounded-xl h-[176px] md:h-[276px] w-full object-cover"
                               src={nft?.asset?.path}
                               alt=""
                             />
@@ -914,7 +914,7 @@ const CollectionDetail = () => {
                           {nft?.asset?.asset_type === "movie" ||
                           nft?.asset?.asset_type === "video/mp4" ? (
                             <video
-                              className="h-[176px] md:h-[276px] w-[150px] md:w-[276px]"
+                              className="h-[176px] md:h-[276px] w-full"
                               controls
                             >
                               <source src={nft?.asset?.path} type="video/mp4" />
@@ -927,7 +927,7 @@ const CollectionDetail = () => {
                               src={nft?.asset?.path}
                               controls
                               autoPlay={false}
-                              className="h-[176px] md:h-[276px] w-[150px] md:w-[276px]"
+                              className="h-[176px] md:h-[276px] w-full"
                             />
                           ) : null}
                         </Link>
