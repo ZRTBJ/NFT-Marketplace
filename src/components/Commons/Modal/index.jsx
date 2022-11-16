@@ -21,9 +21,8 @@ const Modal = ({
       data-toggle="modal"
       data-backdrop="static"
       data-keyboard="false"
-      className={`${
-        show ? "modal display-block" : "modal display-none"
-      } z-[99] `}
+      className={`${show ? "modal display-block" : "modal display-none"
+        } z-[99] `}
     >
       <section
         ref={ref}
@@ -34,11 +33,11 @@ const Modal = ({
       >
         {showCloseIcon && (
           <i
-            className="fa fa-xmark cursor-pointer text-xl absolute top-10 right-8 text-black"
+            className="fa fa-xmark cursor-pointer text-xl absolute top-8 right-8 text-black"
             onClick={handleClose}
           ></i>
         )}
-        <div className="mt-10">{children}</div>
+        <div className="mt-0">{children}</div>
       </section>
     </div>
   );
