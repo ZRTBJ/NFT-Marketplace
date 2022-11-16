@@ -63,7 +63,6 @@ export default function DetailsNFT(props) {
   const [collection, setCollection] = useState({});
 
   const handleContract = async (config) => {
-    console.log(config);
     try {
       const mintContract = createMintInstance(config.contract, provider);
       const membershipMintContract = createMembsrshipMintInstance(

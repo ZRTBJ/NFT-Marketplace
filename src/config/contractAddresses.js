@@ -21,4 +21,15 @@ export const address = {
   CreateMembershipCollectionMasterCopyMumbai:
     "0x0fBDffCcA3D98862300735eBFF41D40AD135c966",
   RoyaltySplitterMasterCopyMumbai: "0x4584AD64B9fdd94f69405913CeBD40f8C7Dfc036",
+
+  //Polygon Mainnet
+  GenericProxyFactoryPolygon: "0xFa29642b53e792c0fBD5FAA588D43C0Ca1024A49",
+  MinimalForwarderPolygon: "0x799ebB1Cde3Ead0Ccf1baed6A69067DF29c7bf0B",
+  CreatorDAOMasterCopyPolygon: "0x37E0C51a5b867F1ea9C834cFC4EBee61dCED157b",
+  CreateCollectionMasterCopyPolygon:
+    "0xbaccbA7d4c9386F5B328D3Aa5B54a8eE85ac1169",
+  CreateMembershipCollectionMasterCopyPolygon:
+    "0xC8232fA78288E499E70a31F840356fA96a878664",
+  RoyaltySplitterMasterCopyPolygon:
+    "0x9ae2d8c11Fd8d1560638024a3adD42d37A0907E3",
 };

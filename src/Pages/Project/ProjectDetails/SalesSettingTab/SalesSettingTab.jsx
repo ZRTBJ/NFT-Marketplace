@@ -117,7 +117,6 @@ const SalesSettingsTab = ({ projectNetwork }) => {
     }
   }
   function openSalesModal(collectionSales) {
-    console.log(collectionSales);
     setCollection(collectionSales);
     setShowSalesModal(true);
   }

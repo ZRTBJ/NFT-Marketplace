@@ -32,7 +32,6 @@ const InviteModal = ({
 
   useEffect(() => {
     const mintDataStatus = inviteData.find((x) => x.function_uuid === funcId);
-    console.log(mintDataStatus);
     if (mintDataStatus && mintDataStatus.data) {
       const data = JSON.parse(mintDataStatus.data);
       if (data?.fn_status === "success") {
