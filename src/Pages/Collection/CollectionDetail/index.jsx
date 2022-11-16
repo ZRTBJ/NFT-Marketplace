@@ -96,7 +96,7 @@ const CollectionDetail = () => {
   const [showNetworkHandler, setShowNetworkHandler] = useState(false);
   const [collectionNotUpdatableModal, setCollectionNotUpdatableModal] =
     useState(false);
-
+  const [setSalesError, setSetSalesError] = useState(false);
   // Publish royalty splitter
   const [showPublishRoyaltySpliterModal, setShowPublishRoyaltySpliterModal] =
     useState(false);
@@ -322,12 +322,16 @@ const CollectionDetail = () => {
   function salesPageModal(e, type, id, supply) {
     e.stopPropagation();
     e.preventDefault();
-    setShowOptions(null);
-    if (type === "membership") {
-      setNftId(id);
-      setNftMemSupply(supply);
+    if (Collection?.status === "published") {
+      setShowOptions(null);
+      if (type === "membership") {
+        setNftId(id);
+        setNftMemSupply(supply);
+      }
+      setShowSalesPageModal(true);
+    } else {
+      setSetSalesError(true);
     }
-    setShowSalesPageModal(true);
   }
 
   const handlePublish = () => {
@@ -484,6 +488,16 @@ const CollectionDetail = () => {
             setAutoAssign(false);
           }}
           show={showRoyalityErrorModal}
+        />
+      )}
+      {setSalesError && (
+        <ErrorModal
+          title={"Collection not published yet!"}
+          // message={`${showRoyalityErrorMessage}`}
+          handleClose={() => {
+            setSetSalesError(false);
+          }}
+          show={setSalesError}
         />
       )}
       {AutoAssign && (
@@ -803,16 +817,14 @@ const CollectionDetail = () => {
               {/* <a className='inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>
                 Sales Setting
               </a> */}
-              {Collection?.type === "product" &&
-                Collection?.is_owner &&
-                Collection?.status === "published" && (
-                  <div
-                    onClick={(e) => salesPageModal(e, "product")}
-                    className="outlined-button ml-0 md:ml-4 font-satoshi-bold"
-                  >
-                    <span>Sales Setting</span>
-                  </div>
-                )}
+              {Collection?.type === "product" && Collection?.is_owner && (
+                <div
+                  onClick={(e) => salesPageModal(e, "product")}
+                  className="outlined-button ml-0 md:ml-4 font-satoshi-bold"
+                >
+                  <span>Sales Setting</span>
+                </div>
+              )}
               {Collection?.is_owner && (
                 <Link
                   to={`/collection-create/?id=${collectionId}`}
@@ -972,7 +984,7 @@ const CollectionDetail = () => {
                                       <li className="border">
                                         <div
                                           onClick={(e) => handleEditNFT(e, nft)}
-                                          className="py-3 pl-3 block hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
+                                          className="py-3 pl-3 block hover:bg-gray-100 cursor-pointer"
                                         >
                                           Edit NFT
                                         </div>
