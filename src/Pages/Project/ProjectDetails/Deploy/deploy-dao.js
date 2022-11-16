@@ -13,7 +13,6 @@ async function sendMetaTx(
   treasuryAddress,
   chainId
 ) {
-  console.log(`Sending register meta-tx to set name=${name}`);
 
   const forwarder = createInstance(provider);
   const from = await signer.getAddress();

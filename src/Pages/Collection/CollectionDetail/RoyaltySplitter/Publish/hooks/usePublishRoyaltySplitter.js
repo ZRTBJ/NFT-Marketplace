@@ -64,7 +64,6 @@ export default function usePublishRoyaltySplitter(payload = {}) {
   };
 
   const sendOnChainTransaction = async (data) => {
-    console.log(data);
     const creator = await provider.current.getSigner().getAddress();
     let chainId = ls_GetChainID();
     let minimalForwarder = NETWORKS?.[chainId]?.forwarder;
@@ -81,7 +80,6 @@ export default function usePublishRoyaltySplitter(payload = {}) {
         forwarder: minimalForwarder,
       },
     ];
-    console.log(functionPayload);
     return sendTransaction({
       contract: contract.current,
       functionName: "createRoyaltyProxy",

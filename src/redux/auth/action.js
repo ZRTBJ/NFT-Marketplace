@@ -37,7 +37,6 @@ export const loginUser = (loginPayload) => async (dispatch) => {
       return data;
     } else {
       dispatch(loginError(data.errors[0]));
-      console.log(data.errors[0]);
     }
   } catch (err) {
     dispatch(loginError(err));

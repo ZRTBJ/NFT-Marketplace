@@ -59,10 +59,8 @@ export async function royaltyClaim(provider, config) {
           tnxHash = JSON.parse(response.result);
         });
         if (tnxHash !== "") {
-          // console.log(tnxHash);
           const txReceipt = await provider.waitForTransaction(tnxHash.txHash);
           output = tnxHash.txHash;
-          console.log(txReceipt);
           resolve(output);
         } else {
           reject("Could not found the Transaction Hash");
