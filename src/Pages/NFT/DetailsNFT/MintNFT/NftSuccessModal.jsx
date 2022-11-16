@@ -2,6 +2,7 @@ import Modal from "components/Commons/Modal";
 import FB from "assets/images/facebook.svg";
 import twitter from "assets/images/twitter.svg";
 import reddit from "assets/images/reddit.svg";
+import { NETWORKS } from "config/networks";
 import {
   FacebookShareButton,
   TwitterShareButton,
@@ -17,6 +18,9 @@ const NftSuccessModal = ({
   transactionHash,
   shareUrl,
   handleNext,
+  mintData,
+  nftId,
+  tokenId,
 }) => {
   const copyToClipboardShare = (text) => {
     navigator.clipboard.writeText(text);
@@ -53,8 +57,17 @@ const NftSuccessModal = ({
           </div>
           <div className="md:flex flex-wrap items-center">
             <p className="font-black text-[14px]">Transaction Hash</p>
-            <p className="ml-auto text-[14px] relative min-w-[200px] text-right">
-              {walletAddressTruncate(transactionHash)}{" "}
+            <div className="ml-auto text-[14px] relative min-w-[200px] text-right">
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                className="no-underline"
+                href={`${
+                  NETWORKS[mintData?.config.blockchain]?.viewTxUrl
+                }${transactionHash}`}
+              >
+                {walletAddressTruncate(transactionHash)}
+              </a>
               <i
                 className="fa fa-copy text-md cursor-pointer text-primary-900 ml-2"
                 onClick={() => copyToClipboardShare(transactionHash)}
@@ -65,32 +78,30 @@ const NftSuccessModal = ({
               >
                 Copied Successfully!
               </p>
-            </p>
+            </div>
           </div>
         </div>
 
-        {shareUrl && (
-          <div className="mt-2 mb-1 text-center">
-            <p className="mb-2">Share on</p>
-            <div className="flex items-center justify-center">
-              <FacebookShareButton url={`${origin}/${shareUrl}`} quote={"NFT"}>
-                <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[34px] w-[34px] flex items-center justify-center mr-2">
-                  <img src={FB} alt="facebook" />
-                </div>
-              </FacebookShareButton>
-              <TwitterShareButton title="NFT" url={`${origin}/${shareUrl}`}>
-                <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[34px] w-[34px] flex items-center justify-center mr-2">
-                  <img src={twitter} alt="twitter" />
-                </div>
-              </TwitterShareButton>
-              <RedditShareButton title="NFT" url={`${origin}/${shareUrl}`}>
-                <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[34px] w-[34px] flex items-center justify-center">
-                  <img src={reddit} alt="reddit" />
-                </div>
-              </RedditShareButton>
-            </div>
+        <div className="mt-2 mb-1 text-center">
+          <p className="mb-2">Share on</p>
+          <div className="flex items-center justify-center">
+            <FacebookShareButton url={`${origin}/${nftId}/${tokenId}`}>
+              <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[34px] w-[34px] flex items-center justify-center mr-2">
+                <img src={FB} alt="facebook" />
+              </div>
+            </FacebookShareButton>
+            <TwitterShareButton url={`${origin}/${nftId}/${tokenId}`}>
+              <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[34px] w-[34px] flex items-center justify-center mr-2">
+                <img src={twitter} alt="twitter" />
+              </div>
+            </TwitterShareButton>
+            <RedditShareButton url={`${origin}/${nftId}/${tokenId}`}>
+              <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[34px] w-[34px] flex items-center justify-center">
+                <img src={reddit} alt="reddit" />
+              </div>
+            </RedditShareButton>
           </div>
-        )}
+        </div>
         <button
           className="w-[200px]  mx-auto block font-bold mt-4 text-[16px] h-[44px] bg-primary-50 text-primary-900 "
           onClick={handleClose}

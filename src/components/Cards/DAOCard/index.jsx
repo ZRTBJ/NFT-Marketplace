@@ -50,7 +50,7 @@ const DAOCard = ({ item }) => {
             : thumbIcon
         }
         alt={item.name}
-        className="rounded-full h-16 w-16 md:w-24 md:h-24  absolute top-14 md:top-20 left-1/2 z-10 -ml-[32px] md:-ml-12 object-cover "
+        className="rounded-full h-16 w-16 md:w-24 md:h-24 border-solid border-[3px] border-white absolute top-14 md:top-20 left-1/2 z-10 -ml-[32px] md:-ml-12 object-cover "
       />
 
       <h3

@@ -32,6 +32,7 @@ const TESTNET = {
     raribleNFTDetailsUrl: raribleNFTDetailsUrl,
     openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/goerli/`,
     viewContractAddressUrl: `https://goerli.etherscan.io/address/`,
+    viewTxUrl: `https://goerli.etherscan.io/tx/`,
   },
   80001: {
     networkName: "Polygon Testnet Mumbai",
@@ -53,6 +54,7 @@ const TESTNET = {
     raribleNFTDetailsUrl: raribleNFTDetailsUrl,
     openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/mumbai/`,
     viewContractAddressUrl: `https://mumbai.polygonscan.com/address/`,
+    viewTxUrl: `https://mumbai.polygonscan.com/tx/`,
   },
 };
 
@@ -81,6 +83,7 @@ const MAINNET = {
     raribleNFTDetailsUrl: raribleNFTDetailsUrl,
     openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/ethereum/`,
     viewContractAddressUrl: `https://etherscan.io/address/`,
+    viewTxUrl: "https://etherscan.io/tx/",
   },
   137: {
     networkName: "Polygon Mainnet",
@@ -105,6 +108,7 @@ const MAINNET = {
     raribleNFTDetailsUrl: raribleNFTDetailsUrl,
     openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/matic/`,
     viewContractAddressUrl: `https://polygonscan.com/address/`,
+    viewTxUrl: "https://polygonscan.com/tx/",
   },
 };
 

@@ -40,6 +40,7 @@ import daoCreate from "assets/images/profile/daoCreate.svg";
 import CreateNFTModal from "Pages/Project/CreateDAOandNFT/components/CreateNFTModal.jsx";
 import emptyStateCommon from "assets/images/profile/emptyStateCommon.svg";
 import emptyStateRoyalty from "assets/images/profile/emptyStateRoyalty.png";
+import curvVector from "assets/images/profile/curv1.png";
 const Profile = () => {
   const provider = createProvider();
   SwiperCore.use([Autoplay]);
@@ -504,7 +505,12 @@ const Profile = () => {
                   </div>
                 </div>
               </div>
-              <div className="md:flex-[30%]  mt-[30px] px-6 rounded-lg mx-3 p-[13px] md:p-[20px] text-white-shade-900 shadow-lg gradient-background rounded-lg">
+              <div className="md:flex-[30%]  mt-[30px] relative px-6 rounded-lg mx-3 p-[13px] md:p-[20px] text-white-shade-900 shadow-lg gradient-background rounded-lg">
+                <img
+                  src={curvVector}
+                  className="absolute top-0 right-0  h-full"
+                  alt=""
+                />
                 <div className=" md:mt-[24px] text-[18px] font-black ">
                   Total Earned Amount
                 </div>
@@ -523,19 +529,23 @@ const Profile = () => {
               </div>
             </div>
 
-            <div className="mx-3 my-6 flex flex-wrap items-center">
+            <div className="mx-3 my-6 grid gap-4 grid-cols-2 md:grid-cols-4 lg:grid-cols-5 ">
               <div
                 onClick={() => setShowCreateNFT(true)}
-                className="w-full cursor-pointer md:mr-4 mb-4 md:mb-0 p-3 md:max-w-[252px] rounded h-[72px] bg-primary-900/[0.10] border border-primary-900"
+                className=" cursor-pointer  p-3  rounded min-h-[72px] bg-primary-900/[0.10] border border-primary-900"
               >
-                <img src={nftSvg} className="mb-1 h-[24px] w-[24px]" alt="" />
+                <img
+                  src={nftSvg}
+                  className="mb-1 min-h-[24px] w-[24px]"
+                  alt=""
+                />
                 <span className="text-primary-900 font-black">
                   Create New NFT
                 </span>
               </div>
               <div
                 onClick={() => history.push("/project-create")}
-                className=" cursor-pointer h-[72px] p-3 w-full md:max-w-[252px] rounded  bg-secondary-900/[0.10] border border-secondary-900"
+                className=" cursor-pointer min-h-[72px] p-3   rounded  bg-secondary-900/[0.10] border border-secondary-900"
               >
                 <img
                   src={daoCreate}
