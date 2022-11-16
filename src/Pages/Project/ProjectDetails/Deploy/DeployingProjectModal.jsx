@@ -35,7 +35,6 @@ const DeployingProjectModal = ({
   });
   const provider = createProvider();
   const dao = createInstance(provider);
-  const [contractAdd, setContractAdd] = useState("");
   const [txnData, setTxnData] = useState();
 
   useEffect(() => {
@@ -45,35 +44,17 @@ const DeployingProjectModal = ({
   }, []);
 
   useEffect(() => {
-    if (contractAdd && txnData) {
+    if (txnData) {
       publishThisProject(txnData);
     }
-  }, [contractAdd, txnData]);
+  }, [txnData]);
 
-  useEffect(() => {
-    const filter = dao?.filters?.ProxyCreated();
-
-    const listener = (args) => {
-      setContractAdd(args);
-    };
-
-    const subscribe = async () => {
-      const captured = await dao.queryFilter(filter);
-      dao.on(filter, listener);
-    };
-    subscribe();
-    return () => {
-      dao.removeAllListeners();
-    };
-  }, []);
 
   function publishThisProject(transactionData) {
     setIsLoading(true);
     let payload = new FormData();
     if (transactionData) {
       payload.append("transaction_hash", transactionData.transactionHash);
-      payload.append("contract_address", contractAdd);
-      payload.append("block_number", transactionData.block_number);
     }
 
     publishProject(projectId, transactionData ? payload : null)
@@ -91,13 +72,11 @@ const DeployingProjectModal = ({
             if (res?.function?.status === "success") {
               setStep(2);
             } else if (res?.function?.status === "failed") {
-              setContractAdd("");
               setTxnData();
               errorClose(res?.function?.message);
             }
 
             dispatch(getNotificationData(deployData));
-            setContractAdd("");
             setTxnData();
           } else {
             handleSmartContract(
@@ -108,7 +87,6 @@ const DeployingProjectModal = ({
           }
         } else {
           setIsLoading(false);
-          setContractAdd("");
           setTxnData();
           errorClose(res.message);
         }

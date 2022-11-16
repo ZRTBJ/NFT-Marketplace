@@ -371,7 +371,6 @@ export default function MembershipNFT() {
         };
         localStorage.setItem(`${response["job_id"]}`, JSON.stringify(data));
         jobIds.push(response["job_id"]);
-        console.log("add", jobIds);
         const notificationData = {
           projectId: daoId,
           etherscan: "",
@@ -488,7 +487,6 @@ export default function MembershipNFT() {
           document.getElementById(`nft-${element.indexId}`).scrollIntoView({
             behavior: "smooth",
           });
-          console.log(element.indexId);
         });
       }
     }
@@ -547,7 +545,6 @@ export default function MembershipNFT() {
       .then((resp) => {
         if (resp.code === 0) {
           const nft = resp.lnft;
-          console.log(resp);
           setUpdateMode(true);
           setNft(nft);
           onTextfieldChange(0, "tierName", nft.name);

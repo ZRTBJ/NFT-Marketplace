@@ -170,7 +170,6 @@ export async function fundTransfer(payload) {
 }
 
 export async function publishProject(projectId, payload) {
-  console.log(payload);
   let request = payload
     ? client("POST", `/project/${projectId}/publish`, payload, "formdata")
     : client("POST", `/project/${projectId}/publish`, "formdata");

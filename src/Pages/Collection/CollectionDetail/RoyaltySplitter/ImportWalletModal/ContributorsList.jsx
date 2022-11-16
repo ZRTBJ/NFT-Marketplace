@@ -18,6 +18,18 @@ const ContributorsList = ({
   const [isEdit, setIsEdit] = useState(null);
   const ownerWallet = ls_GetWalletAddress();
 
+  const handleEditNull = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setIsEdit(null);
+  };
+
+  const handelEditAddress = (e, value) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setIsEdit(value);
+  };
+
   return (
     <div className="overflow-x-auto relative">
       {showPercentError ? (
@@ -113,19 +125,17 @@ const ContributorsList = ({
                         <div>
                           <i
                             class="fa-solid fa-check bg-green-400 rounded-[4px] text-white flex items-center justify-center h-[24px] w-[24px] text-[20px] cursor-pointer"
-                            onClick={() => setIsEdit(null)}
+                            onClick={handleEditNull}
                           ></i>
-                          {/* <i
-                          class="fa-solid fa-xmark bg-red-400 rounded-[4px] text-white flex items-center justify-center h-[24px] w-[24px] text-[20px] cursor-pointer"
-                          onClick={() => setIsEdit(null)}
-                        ></i> */}
                         </div>
                       ) : (
                         <img
                           src={Edit}
                           alt="edit"
                           className="cursor-pointer"
-                          onClick={() => setIsEdit(r.wallet_address)}
+                          onClick={(e) =>
+                            handelEditAddress(e, r.wallet_address)
+                          }
                         />
                       )}
                     </>

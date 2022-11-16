@@ -63,7 +63,6 @@ export default function DetailsNFT(props) {
   const [collection, setCollection] = useState({});
 
   const handleContract = async (config) => {
-    console.log(config);
     try {
       const mintContract = createMintInstance(config.contract, provider);
       const membershipMintContract = createMembsrshipMintInstance(
@@ -114,7 +113,7 @@ export default function DetailsNFT(props) {
     await cryptoConvert(formUnit).then((res) => {
       if (res) {
         const usdValue = res.USD * price;
-        setUsdValue(usdValue.toFixed(2));
+        setUsdValue(usdValue);
       }
     });
   }
@@ -168,8 +167,9 @@ export default function DetailsNFT(props) {
     setTransactionWaitingModal(true);
     let formData = new FormData();
 
-    formData.append("transaction_hash", response.hash);
-    formData.append("block_number", response.blockNumber);
+    response.hash && formData.append("transaction_hash", response.hash);
+    response.blockNumber &&
+      formData.append("block_number", response.blockNumber);
     const payload = {
       id: nft?.lnft?.id,
       data: formData,
@@ -226,6 +226,10 @@ export default function DetailsNFT(props) {
     if (userinfo.eoa) {
       if (!nft.more_info.currency) {
         setErrorMsg("This NFT is not for sale yet, please try again later");
+        return;
+      }
+      if (nft?.lnft?.minted_amount >= nft?.lnft?.supply) {
+        setErrorMsg("This NFT can not buy, Maximum minted amount exceed!");
         return;
       }
       let nftNetwork = await getCurrentNftNetwork();
@@ -299,7 +303,9 @@ export default function DetailsNFT(props) {
           assetUrl={nft?.lnft?.asset?.path ? nft?.lnft?.asset?.path : manImg}
           transactionHash={hash}
           collectionName={collection?.name}
-          shareUrl={`${nft?.lnft?.invitation_code}`}
+          mintData={mintData}
+          nftId={nft?.lnft?.id}
+          tokenId={2}
           // handleNext={handleProceedPayment}
         />
       )}
@@ -431,8 +437,8 @@ export default function DetailsNFT(props) {
             </div>
 
             <div className="my-4 border border-primary-border shadow rounded-xl w-full   md:max-w-[564px] p-3">
-              <div className="mt-2 ml-4 ">
-                <p>Price</p>
+              <div className="p-4 rounded-xl gray-linear-gradient-background">
+                <p className="ml-2">Price</p>
                 <div className="flex flex-wrap items-center mt-2">
                   <div>
                     {info?.currency ? (
@@ -443,7 +449,7 @@ export default function DetailsNFT(props) {
                       />
                     ) : null}
                   </div>
-                  <span className="uppercase text-[18px] font-black text-txtblack">
+                  <span className="uppercase text-[18px] ml-2 font-black text-txtblack">
                     {info?.price} {""}
                     {info?.currency}
                   </span>
@@ -451,11 +457,31 @@ export default function DetailsNFT(props) {
                     (${usdValue})
                   </span>
                 </div>
+                <p className="text-sm	text-right">
+                  Powered by{" "}
+                  <a
+                    href="https://www.coingecko.com/"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="ml-1 font-bold"
+                  >
+                    CoinGecko
+                  </a>
+                </p>
               </div>
               <div className="mt-6">
                 <button
-                  disabled={nft?.lnft?.minted_amount > nft?.lnft?.supply}
-                  className=" w-[264px] !text-[16px] h-[44px] contained-button "
+                  disabled={
+                    nft?.lnft?.minted_amount >= nft?.lnft?.supply ||
+                    !nft?.more_info.currency
+                  }
+                  className={`w-[264px] !text-[16px] h-[44px]   ${
+                    nft?.lnft?.minted_amount >= nft?.lnft?.supply
+                      ? "bg-color-asss-3 text-white"
+                      : !nft.more_info.currency
+                      ? "bg-color-asss-3 text-white"
+                      : "contained-button"
+                  }`}
                   onClick={handlePublishModal}
                 >
                   BUY NOW

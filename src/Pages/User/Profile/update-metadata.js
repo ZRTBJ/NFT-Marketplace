@@ -20,7 +20,6 @@ async function sendMetaTx(contract, provider, signer, nftInfo) {
       from,
       data,
     });
-    console.log(request);
 
     let chainId = ls_GetChainID()
     let webhook = NETWORKS[chainId]?.webhook;

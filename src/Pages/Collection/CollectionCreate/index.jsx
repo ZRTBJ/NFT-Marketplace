@@ -393,7 +393,7 @@ export default function CollectionCreate() {
         setCoverPhotoUrl(cover ? cover : "");
         try {
           setWebLinks(JSON.parse(response.links));
-        } catch (e) {}
+        } catch (e) { }
         setProjectCategory(response.category_id);
         setIsTokenTransferable(response.token_transferable);
         setIsMetaDataFreezed(response.updatable);
@@ -487,7 +487,6 @@ export default function CollectionCreate() {
           royaltyPercentage: royaltyPercentage,
           projectCategoryName: projectCategoryName,
         };
-        console.log(payload);
         const categoryName = projectCategoryList.find(
           (x) => x.id === parseInt(projectCategory)
         );

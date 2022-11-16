@@ -582,7 +582,7 @@ export default function ProjectDetails(props) {
                     <div className="flex items-center mb-1">
                       <p className=" text-textSubtle mt-1">Collections</p>
                       <div className="ml-auto">
-                        <p className="text-black mr-3 text-black font-black text-[16px] md:text-[20px]">
+                        <p className="text-black mr-2 text-black font-black text-[16px] md:text-[20px]">
                           {collection?.total}
                         </p>
                       </div>
@@ -592,20 +592,22 @@ export default function ProjectDetails(props) {
                       <div className="ml-auto">
                         <img
                           src={NETWORKS[Number(project?.blockchain)].icon}
-                          className="ml-2 h-[24px] w-[24px] object-cover rounded-full"
+                          className=" h-[24px] w-[24px] object-cover rounded-full"
                           alt=""
                         />
                       </div>
                     </div>
-                    <div className="text-right mt-2">
+                    <div className="text-right mt-2 mr-2">
                       <p className="text-sm	 mt-1">
                         Powered by{" "}
-                        <Link
+                        <a
+                          target="_blank"
+                          rel="noreferrer"
                           className="ml-1 font-bold"
-                          to="https://www.coingecko.com/"
+                          href="https://www.coingecko.com/"
                         >
                           CoinGecko
-                        </Link>
+                        </a>
                       </p>
                     </div>
                   </div>

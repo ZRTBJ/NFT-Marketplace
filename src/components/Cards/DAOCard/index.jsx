@@ -31,7 +31,7 @@ const DAOCard = ({ item }) => {
 
   return (
     <div
-      className="cursor-pointer  bg-white-shade-900 text-center w-[173px] md:w-[340px] h-[280px] md:h-[325px] rounded-[12px] mb-5 mx-2 relative flex flex-col shadow-main"
+      className="cursor-pointer  bg-white-shade-900 text-center w-full h-[280px] md:h-[325px] rounded-[12px]  relative flex flex-col shadow-main"
       onClick={() => gotToDetailPage(item.id)}
     >
       <img
@@ -50,7 +50,7 @@ const DAOCard = ({ item }) => {
             : thumbIcon
         }
         alt={item.name}
-        className="rounded-full h-16 w-16 md:w-24 md:h-24  absolute top-14 md:top-20 left-1/2 z-10 -ml-[32px] md:-ml-12 object-cover "
+        className="rounded-full h-16 w-16 md:w-24 md:h-24 border-solid border-[3px] border-white absolute top-14 md:top-20 left-1/2 z-10 -ml-[32px] md:-ml-12 object-cover "
       />
 
       <h3
@@ -74,7 +74,7 @@ const DAOCard = ({ item }) => {
               key={member.id}
               src={member.avatar ? member.avatar : avatar}
               alt={member.id}
-              className="rounded-full object-cover h-[35px] w-[35px] ml-2 border-2 border-white"
+              className="rounded-full object-cover h-[35px] w-[35px]  border-2 border-white"
             />
           ))}
         {item.members && item.members.length > 3 && (
