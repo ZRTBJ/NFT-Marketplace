@@ -1,5 +1,6 @@
 import "./index.css";
-import { useDetectClickOutside } from "react-detect-click-outside";
+// temporarily disable the hide modal on  outside click function
+// import { useDetectClickOutside } from "react-detect-click-outside";
 const Modal = ({
   handleClose,
   show,
@@ -15,17 +16,18 @@ const Modal = ({
     overflow: overflow ? overflow : "hidden",
   };
 
-  const ref = useDetectClickOutside({ onTriggered: handleClose });
+  // const ref = useDetectClickOutside({ onTriggered: handleClose });
+  // ref = { ref };
   return (
     <div
       data-toggle="modal"
       data-backdrop="static"
       data-keyboard="false"
-      className={`${show ? "modal display-block" : "modal display-none"
-        } z-[99] `}
+      className={`${
+        show ? "modal display-block" : "modal display-none"
+      } z-[99] `}
     >
       <section
-        ref={ref}
         style={styleObj}
         className={
           " modal-main bg-white rounded-3xl relative txtblack px-4 py-6"

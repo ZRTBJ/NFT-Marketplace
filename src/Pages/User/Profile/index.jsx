@@ -512,18 +512,17 @@ const Profile = () => {
                   alt=""
                 />
                 <div className=" md:mt-[24px] text-[18px] font-black ">
-                  Total Earned Amount
+                  Total Earned Token
                 </div>
                 <div className="font-black text-[28px]  md:mt-[8px]">
-                  $ {royaltyEarned.total_earn_usd?.toFixed(3)}
+                  {royaltyEarned?.total_earn}
                 </div>
                 <div className=" md:mt-[8px] flex flex-wrap align-center">
                   <div className="bg-success-1 h-[26px] w-[26px]  rounded-full">
                     <i className="fa-solid fa-up text-[#FFFF] ml-1.5  mt-[3px] text-[20px]"></i>
                   </div>
                   <div className="text-[14px] ml-2">
-                    Last month earned ${" "}
-                    {royaltyEarned.last_month_earn_usd?.toFixed(3)}
+                    Last month earned : {royaltyEarned?.last_month_earn}
                   </div>
                 </div>
               </div>
@@ -563,17 +562,14 @@ const Profile = () => {
                 <div className="text-[24px] text-txtblack font-black ">
                   Royalties
                 </div>
-                <div className="ml-auto  text-[18px]">
+                {/* <div className="ml-auto  text-[18px]">
                   <span className="text-txtblack mr-2 hidden  md:inline-block">
                     Total Royalties:
                   </span>
                   <span className="text-txtblack font-black">
-                    $
-                    {royaltiesList?.length > 0
-                      ? totalRoyality?.toFixed(3)
-                      : `0`}
+                    {royaltiesList?.length > 0 ? totalRoyality : `0`}
                   </span>
-                </div>
+                </div> */}
               </div>
               {/* table for desktop */}
               {royaltyLoading ? (
@@ -606,7 +602,7 @@ const Profile = () => {
                                   Role
                                 </th>
                                 <th scope="col" className="px-5">
-                                  Earnable Amount
+                                  Earnable Token
                                 </th>
                                 <th scope="col" className="px-5">
                                   Action
@@ -659,7 +655,7 @@ const Profile = () => {
                                     {r.is_owner ? "Owner" : "Member"}
                                   </td>
                                   <td className="py-4 px-5">
-                                    ${r.earnable_amount?.toFixed(3)}
+                                    {r.earnable_amount}
                                   </td>
                                   <td className="py-4 px-5">
                                     {r.isLoading ? (
@@ -798,9 +794,9 @@ const Profile = () => {
                                 </div>
                               </div>
                               <div>
-                                <div>Earnable Amount</div>
+                                <div>Earnable Token</div>
                                 <div className="text-center">
-                                  ${r.earnable_amount?.toFixed(3)}
+                                  {r.earnable_amount}
                                 </div>
                               </div>
                             </div>
