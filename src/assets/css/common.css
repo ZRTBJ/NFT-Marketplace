@@ -381,7 +381,14 @@ table > thead > tr > th {
     ),
     linear-gradient(111.76deg, #59cdff 22.23%, #c071ff 100%);
 }
-
+.gray-linear-gradient-background {
+  background: linear-gradient(
+      0deg,
+      rgba(18, 36, 120, 0.02),
+      rgba(18, 36, 120, 0.02)
+    ),
+    #ffffff;
+}
 /**
 * ======================================================
 * Rsuite Dropdown

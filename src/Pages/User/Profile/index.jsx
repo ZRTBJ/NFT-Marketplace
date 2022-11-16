@@ -21,15 +21,11 @@ import SuccessModal from "components/Modals/SuccessModal";
 import { getUserCollections } from "services/collection/collectionService";
 import thumbIcon from "assets/images/cover-default.svg";
 import ErrorModal from "components/Modals/ErrorModal";
-import { useDispatch, useSelector } from "react-redux";
 import { walletAddressTruncate } from "util/WalletUtils";
 import { getMintedNftListByUserId } from "services/nft/nftService";
 import NFTListCard from "components/Cards/NFTListCard";
-import { refreshNFT } from "services/nft/nftService";
 import { royaltyClaim } from "Pages/User/Profile/royalty-claim";
-import { updateMetadata } from "Pages/User/Profile/update-metadata";
 import { createProvider } from "util/smartcontract/provider";
-import { createMintInstance } from "config/ABI/mint-nft";
 import { toast } from "react-toastify";
 import ReactPaginate from "react-paginate";
 import Spinner from "components/Commons/Spinner";
@@ -44,6 +40,7 @@ import daoCreate from "assets/images/profile/daoCreate.svg";
 import CreateNFTModal from "Pages/Project/CreateDAOandNFT/components/CreateNFTModal.jsx";
 import emptyStateCommon from "assets/images/profile/emptyStateCommon.svg";
 import emptyStateRoyalty from "assets/images/profile/emptyStateRoyalty.png";
+import curvVector from "assets/images/profile/curv1.png";
 const Profile = () => {
   const provider = createProvider();
   SwiperCore.use([Autoplay]);
@@ -72,30 +69,18 @@ const Profile = () => {
   const [collectionList, setCollectionList] = useState([]);
   // collection end
   // Royalties start
-  const [setRoyaltiesListSortBy] = useState("default");
+
   const [royaltiesList, setRoyaltiesList] = useState([]);
-  const [royaltyId, setRoyaltyId] = useState("");
   const [errorModal, setErrorModal] = useState(false);
   const [totalRoyality, setTotalRoyality] = useState(0);
   const [royaltyErrormessage, setRoyaltyErrormessage] = useState("");
   const [daoNetwork, setDAONetwork] = useState("");
-  async function onRoyaltiesListSort(e) {
-    setRoyaltiesListSortBy(e.target.value);
-    let oldRoyalties = [...royaltiesList];
-    const sorted = oldRoyalties.reverse();
-    setRoyaltiesList(sorted);
-  }
 
   // Royalties End
 
   const [isLoading, setIsLoading] = useState(true);
   const [walletAddress, setWalletAddress] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const notificationsList = useSelector((state) =>
-    state?.notifications?.notificationData
-      ? state?.notifications?.notificationData
-      : []
-  );
   const settings = {
     320: {
       slidesPerView: 2,
@@ -249,9 +234,6 @@ const Profile = () => {
       .reduce((prev, curr) => prev + curr, 0);
     setTotalRoyality(sum);
   }
-  async function claimAllRoyalty() {
-    setShowSuccessModal(true);
-  }
   async function getCollectionList() {
     const payload = {
       id: id,
@@ -373,24 +355,7 @@ const Profile = () => {
       });
     setNftLoading(false);
   }
-  function setNftData(nft, type) {
-    let nftList = [...mintedNftList];
-    const nftIndex = nftList.findIndex(
-      (item) => item.id === nft.id && item.token_id === nft.token_id
-    );
-    const nftLocal = { ...nft };
-    if (type === "loadingTrue") {
-      nftLocal.loading = true;
-    } else if (type === "loadingFalse") {
-      nftLocal.loading = false;
-    } else if (type === "hideRefreshButton") {
-      nftLocal.refresh_status = "notRequired";
-    } else if (type === "showRefreshButton") {
-      nftLocal.refresh_status = "failed";
-    }
-    nftList[nftIndex] = nftLocal;
-    setMintedNftList(nftList);
-  }
+
   function setRoyaltyData(royalty, type) {
     let royaltyList = [...royaltiesList];
     const royaltyIndex = royaltyList.findIndex(
@@ -405,97 +370,6 @@ const Profile = () => {
     }
     royaltyList[royaltyIndex] = royaltyLocal;
     setRoyaltiesList(royaltyList);
-  }
-
-  async function refreshNFTWithtnx(payload) {
-    return await refreshNFT(payload);
-  }
-
-  async function onRefreshNft(nft) {
-    // hide the refresh button start
-    setNftData(nft, "hideRefreshButton");
-    // hide the refresh end
-
-    // 1. set Loading true start
-    setNftData(nft, "loadingTrue");
-    // 1. set loading true end
-
-    // 2. call refresh api for getting config object
-    const payload = {
-      id: nft.id,
-      tokenId: nft.token_id,
-    };
-    let config = {};
-    let hasConfigForNft = false;
-
-    await refreshNFT(payload)
-      .then((res) => {
-        if (res.code === 0) {
-          config = res.config;
-          hasConfigForNft = true;
-        } else {
-          setNftErrorModalMessage(res.message);
-          setNftErrorModal(true);
-          setNftData(nft, "loadingFalse");
-          setNftData(nft, "sowRefreshButton");
-        }
-      })
-      .catch((error) => {
-        setNftErrorModalMessage(
-          "Can not refresh right now,please Try Again later"
-        );
-        setNftErrorModal(true);
-        setNftData(nft, "loadingFalse");
-        setNftData(nft, "sowRefreshButton");
-      });
-    if (hasConfigForNft) {
-      try {
-        const erc721CollectionContract = createMintInstance(
-          config.collection_contract_address,
-          provider
-        );
-        const result = await updateMetadata(
-          erc721CollectionContract,
-          provider,
-          config
-        );
-        if (result) {
-          console.log(result);
-          const data = {
-            id: nft.id,
-            tokenId: nft.token_id,
-            tnxHash: result,
-          };
-          await refreshNFTWithtnx(data)
-            .then((res) => {
-              if (res.code === 0) {
-                if (res.function.status === "success") {
-                  setNftData(nft, "loadingFalse");
-                  setNftData(nft, "hideRefreshButton");
-                  toast.success(`Successfully refreshed ${nft.name} NFT`);
-                }
-                if (res.function.status === "failed") {
-                  setNftData(nft, "loadingFalse");
-                  setNftData(nft, "sowRefreshButton");
-                  toast.error(`Unexpected error, Please try again`);
-                }
-              }
-            })
-            .catch((err) => {
-              setNftErrorModalMessage(err);
-              setNftErrorModal(true);
-              setNftData(nft, "loadingFalse");
-            });
-        } else {
-          setNftData(nft, "loadingFalse");
-        }
-      } catch (error) {
-        console.log(error);
-        setNftData(nft, "loadingFalse");
-        setNftData(nft, "sowRefreshButton");
-        toast.error(`Unexpected error or cancelled, Please try again`);
-      }
-    }
   }
 
   useEffect(() => {
@@ -631,38 +505,46 @@ const Profile = () => {
                   </div>
                 </div>
               </div>
-              <div className="md:flex-[30%]  mt-[30px] px-6 rounded-lg mx-3 p-[13px] md:p-[20px] text-white-shade-900 shadow-lg gradient-background rounded-lg">
+              <div className="md:flex-[30%]  mt-[30px] relative px-6 rounded-lg mx-3 p-[13px] md:p-[20px] text-white-shade-900 shadow-lg gradient-background rounded-lg">
+                <img
+                  src={curvVector}
+                  className="absolute top-0 right-0  h-full"
+                  alt=""
+                />
                 <div className=" md:mt-[24px] text-[18px] font-black ">
-                  Total Earned Amount
+                  Total Earned Token
                 </div>
                 <div className="font-black text-[28px]  md:mt-[8px]">
-                  $ {royaltyEarned.total_earn_usd?.toFixed(3)}
+                  {royaltyEarned?.total_earn}
                 </div>
                 <div className=" md:mt-[8px] flex flex-wrap align-center">
                   <div className="bg-success-1 h-[26px] w-[26px]  rounded-full">
                     <i className="fa-solid fa-up text-[#FFFF] ml-1.5  mt-[3px] text-[20px]"></i>
                   </div>
                   <div className="text-[14px] ml-2">
-                    Last month earned ${" "}
-                    {royaltyEarned.last_month_earn_usd?.toFixed(3)}
+                    Last month earned : {royaltyEarned?.last_month_earn}
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="mx-3 my-6 flex flex-wrap items-center">
+            <div className="mx-3 my-6 grid gap-4 grid-cols-2 md:grid-cols-4 lg:grid-cols-5 ">
               <div
                 onClick={() => setShowCreateNFT(true)}
-                className="w-full cursor-pointer md:mr-4 mb-4 md:mb-0 p-3 md:max-w-[252px] rounded h-[72px] bg-primary-900/[0.10] border border-primary-900"
+                className=" cursor-pointer  p-3  rounded min-h-[72px] bg-primary-900/[0.10] border border-primary-900"
               >
-                <img src={nftSvg} className="mb-1 h-[24px] w-[24px]" alt="" />
+                <img
+                  src={nftSvg}
+                  className="mb-1 min-h-[24px] w-[24px]"
+                  alt=""
+                />
                 <span className="text-primary-900 font-black">
                   Create New NFT
                 </span>
               </div>
               <div
                 onClick={() => history.push("/project-create")}
-                className=" cursor-pointer h-[72px] p-3 w-full md:max-w-[252px] rounded  bg-secondary-900/[0.10] border border-secondary-900"
+                className=" cursor-pointer min-h-[72px] p-3   rounded  bg-secondary-900/[0.10] border border-secondary-900"
               >
                 <img
                   src={daoCreate}
@@ -680,17 +562,14 @@ const Profile = () => {
                 <div className="text-[24px] text-txtblack font-black ">
                   Royalties
                 </div>
-                <div className="ml-auto  text-[18px]">
+                {/* <div className="ml-auto  text-[18px]">
                   <span className="text-txtblack mr-2 hidden  md:inline-block">
                     Total Royalties:
                   </span>
                   <span className="text-txtblack font-black">
-                    $
-                    {royaltiesList?.length > 0
-                      ? totalRoyality?.toFixed(3)
-                      : `0`}
+                    {royaltiesList?.length > 0 ? totalRoyality : `0`}
                   </span>
-                </div>
+                </div> */}
               </div>
               {/* table for desktop */}
               {royaltyLoading ? (
@@ -723,7 +602,7 @@ const Profile = () => {
                                   Role
                                 </th>
                                 <th scope="col" className="px-5">
-                                  Earnable Amount
+                                  Earnable Token
                                 </th>
                                 <th scope="col" className="px-5">
                                   Action
@@ -776,7 +655,7 @@ const Profile = () => {
                                     {r.is_owner ? "Owner" : "Member"}
                                   </td>
                                   <td className="py-4 px-5">
-                                    ${r.earnable_amount?.toFixed(3)}
+                                    {r.earnable_amount}
                                   </td>
                                   <td className="py-4 px-5">
                                     {r.isLoading ? (
@@ -915,9 +794,9 @@ const Profile = () => {
                                 </div>
                               </div>
                               <div>
-                                <div>Earnable Amount</div>
+                                <div>Earnable Token</div>
                                 <div className="text-center">
-                                  ${r.earnable_amount?.toFixed(3)}
+                                  {r.earnable_amount}
                                 </div>
                               </div>
                             </div>
@@ -1157,12 +1036,7 @@ const Profile = () => {
                             className={styles.nftCard}
                             key={`${nft.id}-${nft.token_id}`}
                           >
-                            <NFTListCard
-                              nft={nft}
-                              projectWork="ethereum"
-                              refresh={onRefreshNft}
-                              loading={nft.loading}
-                            />
+                            <NFTListCard nft={nft} />
                           </SwiperSlide>
                         ))}
                       </div>
