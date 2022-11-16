@@ -7,9 +7,9 @@ export const address = {
   GenericProxyFactoryGoerli: "0xE05832476AbFD7833F089dA7F217ef6c73A71C32",
   MinimalForwarderGoerli: "0x5782544b27210363F7fFA9b15aea3459179c246c",
   CreatorDAOMasterCopy: "0xc6D51Bb5D032283F65b19110e6aD0D331CA247F8",
-  CreateCollectionMasterCopy: "0x4f45311493BD5fC2AD37D7A68E31dE7b1a4370EB",
+  CreateCollectionMasterCopy: "0xbE4A1718c496D9B0C8CbE9b86D56e43f782CD64F",
   CreateMembershipCollectionMasterCopy:
-    "0xcE044F09aee5804f91d7061CFb630b4157B0cAaF",
+    "0xA1F3991a13282357061d13Fbedb5fF665a9f46b7",
   RoyaltySplitterMasterCopy: "0x9Be0Dce287bcac25a76AF9e0488da9D26C127b75",
 
   //Mumbai Testnet
@@ -17,9 +17,9 @@ export const address = {
   MinimalForwarderMumbai: "0x4565BbCA3b265C42Fc547B15a81CADB2159Ae96D",
   CreatorDAOMasterCopyMumbai: "0x4D9a154BF176F4c228B89D3Db38603df07eBA761",
   CreateCollectionMasterCopyMumbai:
-    "0xC38247326a6F9861d5cF4b0dB627d2496c3EEdAd",
+    "0x0520a62B84CD68Cf5b5254059E6542feD6714819",
   CreateMembershipCollectionMasterCopyMumbai:
-    "0x0fBDffCcA3D98862300735eBFF41D40AD135c966",
+    "0x5038FC8E80c938222f88d76002bDa8Fce189eb07",
   RoyaltySplitterMasterCopyMumbai: "0x4584AD64B9fdd94f69405913CeBD40f8C7Dfc036",
 
   //Polygon Mainnet
