@@ -13,7 +13,7 @@ export const address = {
   RoyaltySplitterMasterCopy: "0x9Be0Dce287bcac25a76AF9e0488da9D26C127b75",
 
   //Mumbai Testnet
-  GenericProxyFactoryMumbai: "0xE2a4f63d0346e9FED7C4c91Ca5C94515c2b08682",
+  GenericProxyFactoryMumbai: "0x3590D421F401C1E6460c440F1E4B2b889F98c8e4",
   MinimalForwarderMumbai: "0x4565BbCA3b265C42Fc547B15a81CADB2159Ae96D",
   CreatorDAOMasterCopyMumbai: "0x4D9a154BF176F4c228B89D3Db38603df07eBA761",
   CreateCollectionMasterCopyMumbai:
