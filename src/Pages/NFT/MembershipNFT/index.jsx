@@ -1058,7 +1058,7 @@ export default function MembershipNFT() {
                   onClick={addMoreTier}
                   className="h-[43px] mb-4 mr-4 px-3  md:px-6 py-2 bg-primary-900/[.20] font-black  rounded text-primary-900   "
                 >
-                  Add More Tier
+                  Add more tier
                 </button>
               )}
               <button
@@ -1078,10 +1078,10 @@ export default function MembershipNFT() {
           height={"auto"}
           width={"564"}
         >
-          <p className="font-black  mb-4">Add your Properties</p>
+          <p className="font-black  mb-4">Add your properties</p>
           <div className="md:w-10/12">
             <p className="mb-4 break-normal">
-              Add the properties, with value , you can add more than 5
+              Add the properties, with value, you can add more than 5
               properties
             </p>
             <p className="text-color-ass-9 text-sm">Add Properties</p>
@@ -1175,9 +1175,9 @@ export default function MembershipNFT() {
         >
           <div className="text-center ">
             <p className="font-black text-[18px]">
-              Please,do not close the Tab
+              Please do not close the tab
             </p>
-            <p>Your Assets is uploading</p>
+            <p>Your assets are being uploaded</p>
             <div className="overflow-hidden rounded-full h-4 w-full mt-4 md:mt-6 mb-8 relative animated fadeIn">
               <div className="animated-process-bar"></div>
             </div>
