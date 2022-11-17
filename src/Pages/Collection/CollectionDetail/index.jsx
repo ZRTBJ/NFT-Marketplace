@@ -42,7 +42,7 @@ import { walletAddressTruncate } from "util/WalletUtils";
 import { getCurrentNetworkId } from "util/MetaMask";
 import NetworkHandlerModal from "components/Modals/NetworkHandlerModal";
 import tickSvg from "assets/images/icons/tick.svg";
-
+import emptyStateCommon from "assets/images/profile/emptyStateCommon.svg";
 const TABLE_HEADERS = [
   { id: 0, label: "Wallet Address" },
   // { id: 2, label: "Email" },
@@ -1044,7 +1044,12 @@ const CollectionDetail = () => {
                     })}
                   </div>
                 ) : (
-                  <div className="w-full">
+                  <div className="w-full mb-6">
+                    <img
+                      src={emptyStateCommon}
+                      className="h-[210px] w-[315px] m-auto"
+                      alt=""
+                    />
                     <p className="font-bold text-center">
                       You don't have any NFT's.
                       {Collection?.status === "draft"

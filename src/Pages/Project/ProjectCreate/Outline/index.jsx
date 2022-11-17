@@ -610,7 +610,6 @@ export default function Outline({
                 <input
                   type="number"
                   min="0"
-                  debounceTimeout={300}
                   onChange={(e) => onRoyaltyPercentageChange(e.target.value)}
                   className="debounceInput mt-1"
                   value={royaltyPercentage}

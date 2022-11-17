@@ -17,9 +17,12 @@ import {
 } from "services/collection/collectionService";
 import ErrorModal from "components/Modals/ErrorModal";
 import SuccessModal from "components/Modals/SuccessModal";
-import { getProjectCategory } from "services/project/projectService";
+import {
+  getProjectCategory,
+  createProject,
+} from "services/project/projectService";
 import { useLocation } from "react-router-dom";
-
+import { ls_GetChainID } from "util/ApplicationStorage";
 export default function CollectionCreate() {
   // logo start
   const [logoPhoto, setLogoPhoto] = useState([]);
@@ -268,6 +271,7 @@ export default function CollectionCreate() {
   const [projectCategoryList, setProjectCategoryList] = useState([]);
   const [dao_id, setDao_id] = useState(null);
   const [notOwner, setNotOwner] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   function handelClickBack() {
     let currentIndex = currentStep.pop();
@@ -285,11 +289,13 @@ export default function CollectionCreate() {
       } else {
         setDataIsLoading(true);
         const daoId = await daoCreate();
-        id = await createNewProject(daoId);
-        await updateExistingProject(id);
-        // await projectDetails(id);
+        if (daoId !== "") {
+          id = await createNewProject(daoId);
+          await updateExistingProject(id);
+          setShowSuccessModal(true);
+        }
         setDataIsLoading(false);
-        setShowSuccessModal(true);
+        // await projectDetails(id);
       }
     } catch (err) {
       setDataIsLoading(false);
@@ -346,9 +352,10 @@ export default function CollectionCreate() {
           let members = [{ wallet_address: userinfo?.eoa, royalty: 100 }];
           setProjectCreated(true);
           setProjectId(projectId);
-        } else if (res.code === 5001) {
+        } else {
           setDataIsLoading(false);
           setShowErrorModal(true);
+          setErrorMessage(res.message);
         }
       })
       .catch((err) => {
@@ -393,7 +400,7 @@ export default function CollectionCreate() {
         setCoverPhotoUrl(cover ? cover : "");
         try {
           setWebLinks(JSON.parse(response.links));
-        } catch (e) { }
+        } catch (e) {}
         setProjectCategory(response.category_id);
         setIsTokenTransferable(response.token_transferable);
         setIsMetaDataFreezed(response.updatable);
@@ -502,9 +509,19 @@ export default function CollectionCreate() {
 
   async function daoCreate() {
     let daoId = "";
-    await mockCreateProject().then((res) => {
-      daoId = res.project.id;
-      setDao_id(daoId);
+    let payload = {
+      // name: `DAO_${uuidv4()}`,
+      blockchain: ls_GetChainID(),
+    };
+    await createProject(payload).then((res) => {
+      if (res.code === 0) {
+        daoId = res.project.id;
+        setDao_id(daoId);
+      } else {
+        setShowErrorModal(true);
+        setErrorMessage(res.message);
+      }
+
       // const newUrl =
       //   window.location.protocol +
       //   "//" +
@@ -738,10 +755,13 @@ export default function CollectionCreate() {
       )}
       {showErrorModal && (
         <ErrorModal
-          handleClose={() => setShowErrorModal(false)}
+          handleClose={() => {
+            setShowErrorModal(false);
+            setErrorMessage(false);
+          }}
           show={showErrorModal}
+          message={errorMessage}
           buttomText="Try Again"
-          redirection={`/create`}
         />
       )}
     </>

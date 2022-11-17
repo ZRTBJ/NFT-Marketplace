@@ -22,6 +22,7 @@ const NftSuccessModal = ({
   nftId,
   tokenId,
 }) => {
+  const origin = window.location.origin;
   const copyToClipboardShare = (text) => {
     navigator.clipboard.writeText(text);
     const copyEl = document.getElementById("copied-share-message-success");
@@ -63,7 +64,7 @@ const NftSuccessModal = ({
                 rel="noopener noreferrer"
                 className="no-underline"
                 href={`${
-                  NETWORKS[mintData?.config.blockchain]?.viewTxUrl
+                  NETWORKS[mintData?.function?.blockchain]?.viewTxUrl
                 }${transactionHash}`}
               >
                 {walletAddressTruncate(transactionHash)}
@@ -85,17 +86,23 @@ const NftSuccessModal = ({
         <div className="mt-2 mb-1 text-center">
           <p className="mb-2">Share on</p>
           <div className="flex items-center justify-center">
-            <FacebookShareButton url={`${origin}/${nftId}/${tokenId}`}>
+            <FacebookShareButton
+              url={`${origin}/minted-nft-details/${nftId}/${tokenId}`}
+            >
               <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[34px] w-[34px] flex items-center justify-center mr-2">
                 <img src={FB} alt="facebook" />
               </div>
             </FacebookShareButton>
-            <TwitterShareButton url={`${origin}/${nftId}/${tokenId}`}>
+            <TwitterShareButton
+              url={`${origin}/minted-nft-details/${nftId}/${tokenId}`}
+            >
               <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[34px] w-[34px] flex items-center justify-center mr-2">
                 <img src={twitter} alt="twitter" />
               </div>
             </TwitterShareButton>
-            <RedditShareButton url={`${origin}/${nftId}/${tokenId}`}>
+            <RedditShareButton
+              url={`${origin}/minted-nft-details/${nftId}/${tokenId}`}
+            >
               <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[34px] w-[34px] flex items-center justify-center">
                 <img src={reddit} alt="reddit" />
               </div>
