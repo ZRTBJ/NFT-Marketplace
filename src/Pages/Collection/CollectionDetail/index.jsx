@@ -467,6 +467,7 @@ const CollectionDetail = () => {
           show={ShowPublishModal}
           handleClose={() => setShowPublishModal(false)}
           publishProject={handlePublish}
+          isRoyaltyPublished={Collection?.royalty_splitter?.contract_address}
           type="Collection"
         />
       )}
@@ -554,6 +555,7 @@ const CollectionDetail = () => {
           show={showImportWallet}
           handleClose={() => {
             setShowImportWallet(false);
+            getCollectionDetail();
             getSplittedContributors(
               royalitySplitterId ? royalitySplitterId : Collection.id,
               royalitySplitterId ? "splitter_id" : "collection_id"
@@ -910,7 +912,7 @@ const CollectionDetail = () => {
                     aria-controls="dashboard"
                     aria-selected="false"
                   >
-                    Dashboard
+                    Royalty Splitter
                   </button>
                 </li>
               )}
@@ -1176,7 +1178,9 @@ const CollectionDetail = () => {
       {showPublishRoyaltySpliterConfirmModal && (
         <PublishCollectionModal
           show={showPublishRoyaltySpliterConfirmModal}
-          handleClose={() => setShowPublishRoyaltySpliterConfirmModal(false)}
+          handleClose={() => {
+            setShowPublishRoyaltySpliterConfirmModal(false);
+          }}
           publishProject={handlePublishRoyaltySplitter}
           type="Royalty Splitter"
         />
@@ -1187,7 +1191,10 @@ const CollectionDetail = () => {
           isVisible={showPublishRoyaltySpliterModal}
           isLoading={isPublishingRoyaltySplitter}
           status={publishRoyaltySplitterStatus}
-          onRequestClose={() => setShowPublishRoyaltySpliterModal(false)}
+          onRequestClose={() => {
+            getCollectionDetail();
+            setShowPublishRoyaltySpliterModal(false);
+          }}
         />
       )}
 

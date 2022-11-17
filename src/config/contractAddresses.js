@@ -13,14 +13,14 @@ export const address = {
   RoyaltySplitterMasterCopy: "0x9Be0Dce287bcac25a76AF9e0488da9D26C127b75",
 
   //Mumbai Testnet
-  GenericProxyFactoryMumbai: "0x3590D421F401C1E6460c440F1E4B2b889F98c8e4",
+  GenericProxyFactoryMumbai: "0x3449F8AFb4E976f1F91260E0739C919Dd755BC73",
   MinimalForwarderMumbai: "0x4565BbCA3b265C42Fc547B15a81CADB2159Ae96D",
   CreatorDAOMasterCopyMumbai: "0x4D9a154BF176F4c228B89D3Db38603df07eBA761",
   CreateCollectionMasterCopyMumbai:
-    "0x0520a62B84CD68Cf5b5254059E6542feD6714819",
+    "0xE984A44279F88ae253C304ee2890837b3a68ceAE",
   CreateMembershipCollectionMasterCopyMumbai:
-    "0x5038FC8E80c938222f88d76002bDa8Fce189eb07",
-  RoyaltySplitterMasterCopyMumbai: "0x4584AD64B9fdd94f69405913CeBD40f8C7Dfc036",
+    "0x9e45Ca2a71C9E41F9380De5A14b52e7CA3ded5B5",
+  RoyaltySplitterMasterCopyMumbai: "0xE885Ab335E518c747D33Aa692fA64F307BaB2908",
 
   //Polygon Mainnet
   GenericProxyFactoryPolygon: "0xFa29642b53e792c0fBD5FAA588D43C0Ca1024A49",

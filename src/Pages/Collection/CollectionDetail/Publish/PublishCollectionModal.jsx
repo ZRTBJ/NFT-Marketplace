@@ -6,6 +6,7 @@ const PublishCollectionModal = ({
   show,
   publishProject,
   type,
+  isRoyaltyPublished = "",
 }) => {
   return (
     <Modal width={600} show={show} handleClose={() => handleClose(false)}>
@@ -17,7 +18,25 @@ const PublishCollectionModal = ({
         />
         <div className="md:mx-16">
           <div className="font-black text-[16px]">
-            You can’t change some fields once you publish this {type}
+            {type === "Collection" ? (
+              <>
+                {isRoyaltyPublished ? (
+                  <span>
+                    You can’t change some fields once you publish this
+                    Collection
+                  </span>
+                ) : (
+                  <span className="text-danger-900">
+                    <i class="fa-regular fa-triangle-exclamation"></i> Royalty
+                    Splitter is not published yet.
+                  </span>
+                )}
+              </>
+            ) : (
+              <span>
+                You can’t change some fields once you publish this {type}
+              </span>
+            )}
           </div>
           <div className="text-[#9499AE] mt-[12px]">
             Do you want to publish anyway?

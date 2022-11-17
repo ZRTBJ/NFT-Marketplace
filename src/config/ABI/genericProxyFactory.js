@@ -19,25 +19,6 @@ const abi = [
     inputs: [
       {
         indexed: false,
-        internalType: "address",
-        name: "collection",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "splitter",
-        type: "address",
-      },
-    ],
-    name: "CollectionCreated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
         internalType: "uint8",
         name: "version",
         type: "uint8",
@@ -142,28 +123,6 @@ const abi = [
                 ],
                 internalType: "struct Config.Runtime",
                 name: "runConfig",
-                type: "tuple",
-              },
-              {
-                components: [
-                  {
-                    internalType: "address[]",
-                    name: "receivers",
-                    type: "address[]",
-                  },
-                  {
-                    internalType: "uint256[]",
-                    name: "shares",
-                    type: "uint256[]",
-                  },
-                  {
-                    internalType: "address",
-                    name: "masterCopy",
-                    type: "address",
-                  },
-                ],
-                internalType: "struct Config.PaymentSplitter",
-                name: "splitterConfig",
                 type: "tuple",
               },
             ],
@@ -344,28 +303,6 @@ const abi = [
                 name: "runConfig",
                 type: "tuple",
               },
-              {
-                components: [
-                  {
-                    internalType: "address[]",
-                    name: "receivers",
-                    type: "address[]",
-                  },
-                  {
-                    internalType: "uint256[]",
-                    name: "shares",
-                    type: "uint256[]",
-                  },
-                  {
-                    internalType: "address",
-                    name: "masterCopy",
-                    type: "address",
-                  },
-                ],
-                internalType: "struct Config.PaymentSplitter",
-                name: "splitterConfig",
-                type: "tuple",
-              },
             ],
             internalType: "struct Config.CollectionConfiguration",
             name: "collection",
@@ -383,6 +320,46 @@ const abi = [
       },
     ],
     name: "createMembershipProxy",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "address[]",
+            name: "receivers",
+            type: "address[]",
+          },
+          {
+            internalType: "uint256[]",
+            name: "shares",
+            type: "uint256[]",
+          },
+          {
+            internalType: "address",
+            name: "masterCopy",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "creator",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "forwarder",
+            type: "address",
+          },
+        ],
+        internalType: "struct Config.PaymentSplitter",
+        name: "_config",
+        type: "tuple",
+      },
+    ],
+    name: "createRoyaltyProxy",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

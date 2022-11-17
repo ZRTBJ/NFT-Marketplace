@@ -7,7 +7,7 @@ import { NETWORKS } from "config/networks";
 import { ls_GetChainID } from "util/ApplicationStorage";
 
 export default function usePublishRoyaltySplitter(payload = {}) {
-  const { collection, splitters, onUpdateStatus = () => { } } = payload;
+  const { collection, splitters, onUpdateStatus = () => {} } = payload;
 
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState(1);
@@ -44,10 +44,7 @@ export default function usePublishRoyaltySplitter(payload = {}) {
       return false;
     }
 
-    return (
-      collection.status === "published" &&
-      collection.royalty_splitter.status !== "published"
-    );
+    return collection.royalty_splitter.status !== "published";
   }, [collection]);
 
   const callPublishApi = async () => {
@@ -103,7 +100,9 @@ export default function usePublishRoyaltySplitter(payload = {}) {
       txReceipt.current = await waitTransactionResult(transaction.current);
       const publishResponse = await updateOffChainData();
       if (publishResponse.function.status === "failed") {
-        throw new Error("Transaction failed. " + publishResponse.function.message);
+        throw new Error(
+          "Transaction failed. " + publishResponse.function.message
+        );
       }
 
       setStatus(2);

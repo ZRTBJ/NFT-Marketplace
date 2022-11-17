@@ -12,7 +12,7 @@ async function sendMetaTx(collection, provider, signer, config, type) {
   let masterCopyCollection = NETWORKS[chainId]?.masterCopyCollection;
   let masterMembershipCollection =
     NETWORKS[Number(chainId)]?.masterMembershipCollection;
-  let masterCopySplitter = NETWORKS[Number(chainId)]?.masterRoyaltySplitter;
+
   let webhook = NETWORKS[Number(chainId)]?.webhook;
   const args = {
     isCollection: true,
@@ -25,20 +25,12 @@ async function sendMetaTx(collection, provider, signer, config, type) {
           type === "membership"
             ? masterMembershipCollection
             : masterCopyCollection,
-        forwarder: minimalForwarder,
       },
       runConfig: {
         baseURI: config?.runtimeConfig?.baseURI,
         royaltiesBps: config?.runtimeConfig?.royaltiesBps,
         royaltyAddress: config?.runtimeConfig?.royaltiesAddress,
         creatorDAO: config?.runtimeConfig?.DAOContractAddress,
-      },
-      splitter: {
-        receivers: config?.receivers?.map((spliter) => spliter.user_eoa),
-        shares: config?.receivers?.map((splitter) =>
-          ethers.utils.parseUnits(splitter.royalty_percent.toString())
-        ),
-        masterCopy: masterCopySplitter,
       },
     },
     forwarder: minimalForwarder,
