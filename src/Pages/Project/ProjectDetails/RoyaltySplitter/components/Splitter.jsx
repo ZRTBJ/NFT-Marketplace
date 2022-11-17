@@ -293,6 +293,7 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
           show={showImportWallet}
           handleClose={() => {
             setShowImportWallet(false);
+            getCollectionDetail();
             getSplittedContributors(
               royalitySplitterId ? royalitySplitterId : Collection.id,
               royalitySplitterId ? "splitter_id" : "collection_id"

@@ -23,13 +23,13 @@ export const address = {
   RoyaltySplitterMasterCopyMumbai: "0xE885Ab335E518c747D33Aa692fA64F307BaB2908",
 
   //Polygon Mainnet
-  GenericProxyFactoryPolygon: "0xFa29642b53e792c0fBD5FAA588D43C0Ca1024A49",
-  MinimalForwarderPolygon: "0x799ebB1Cde3Ead0Ccf1baed6A69067DF29c7bf0B",
-  CreatorDAOMasterCopyPolygon: "0x37E0C51a5b867F1ea9C834cFC4EBee61dCED157b",
+  GenericProxyFactoryPolygon: "0xB02994d64b034E6ef02C20976f3f516B746Cd109",
+  MinimalForwarderPolygon: "0x09c075eCd101d8820F54152eAc4529Cb9534EB72",
+  CreatorDAOMasterCopyPolygon: "0x4fc4d7F90570fF7fad9b70D7ca9c8130603adebb",
   CreateCollectionMasterCopyPolygon:
-    "0xbaccbA7d4c9386F5B328D3Aa5B54a8eE85ac1169",
+    "0x372d2d35758d52Fc847fda509E6bE3E6934c158D",
   CreateMembershipCollectionMasterCopyPolygon:
-    "0xC8232fA78288E499E70a31F840356fA96a878664",
+    "0xec25df499913A67DEACb7828Fe6C4AD5cd5143CB",
   RoyaltySplitterMasterCopyPolygon:
-    "0x9ae2d8c11Fd8d1560638024a3adD42d37A0907E3",
+    "0xA3c5E059E0e7512aF442B2CbEEDF47E59Ae37878",
 };
