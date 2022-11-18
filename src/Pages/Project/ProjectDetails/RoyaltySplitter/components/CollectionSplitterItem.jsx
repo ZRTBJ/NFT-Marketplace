@@ -15,6 +15,7 @@ const CollectionSplitter = ({
   setOpenedCollection,
   date,
   projectNetwork,
+  getProjectCollections,
 }) => {
   return (
     <div className="mb-10">
@@ -28,7 +29,7 @@ const CollectionSplitter = ({
             className="md:h-[66px] object-cover md:w-[66px] h-[38px] w-[38px] rounded-lg mr-4"
             alt="Collection"
           />
-          <Link className="!no-underline" to={`/collection-details/${id}`}>
+          <Link className="!no-underline">
             <p className="text-[16px] font-black min-w-max">{name}</p>
           </Link>
         </div>
@@ -81,7 +82,11 @@ const CollectionSplitter = ({
       </div>
       {openedCollection === id ? (
         <div className="transition duration-150 ease-in-out">
-          <Splitter collectionId={id} projectNetwork={projectNetwork} />
+          <Splitter
+            collectionId={id}
+            projectNetwork={projectNetwork}
+            getProjectCollections={getProjectCollections}
+          />
         </div>
       ) : null}
     </div>

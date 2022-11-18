@@ -74,7 +74,7 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
             status: "published",
           },
         });
-        // getProjectCollections();
+        getProjectCollections();
       }
     }
   };
@@ -122,8 +122,8 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
     return totalItems < pageSize ? 1 : Math.ceil(totalItems / pageSize);
   };
 
-  const getSplittedContributors = (id) => {
-    getSplitterDetails(id).then((data) => {
+  const getSplittedContributors = (id, type) => {
+    getSplitterDetails(id, type).then((data) => {
       if (data.code === 0) {
         setRoyalityMembers(data?.members);
         if (data?.members?.length > 0) {
@@ -217,6 +217,7 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
             setIsEdit(null);
             setShowRoyalityErrorModal(false);
             setShowRoyalityErrorMessage("");
+            getCollectionDetail();
           } else {
             setIsAutoFillLoading(false);
             setRoyaltyUpdatedSuccessfully(false);
@@ -292,8 +293,10 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
           show={showImportWallet}
           handleClose={() => {
             setShowImportWallet(false);
+            getCollectionDetail();
             getSplittedContributors(
-              royalitySplitterId ? royalitySplitterId : Collection?.id
+              royalitySplitterId ? royalitySplitterId : Collection.id,
+              royalitySplitterId ? "splitter_id" : "collection_id"
             );
           }}
           projectId={projectID}
@@ -336,6 +339,7 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
           handleClose={() => setShowPublishRoyaltySpliterConfirmModal(false)}
           publishProject={handlePublishRoyaltySplitter}
           type="Royalty Splitter"
+          isRoyaltyPublished={Collection?.royalty_splitter?.contract_address}
         />
       )}
 
@@ -344,7 +348,10 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
           isVisible={showPublishRoyaltySpliterModal}
           isLoading={isPublishingRoyaltySplitter}
           status={publishRoyaltySplitterStatus}
-          onRequestClose={() => setShowPublishRoyaltySpliterModal(false)}
+          onRequestClose={() => {
+            getCollectionDetail();
+            setShowPublishRoyaltySpliterModal(false);
+          }}
         />
       )}
       {showPublishRoyaltySpliterErrorModal && (

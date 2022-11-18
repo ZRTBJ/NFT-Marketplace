@@ -6,6 +6,7 @@ const PublishCollectionModal = ({
   show,
   publishProject,
   type,
+  isRoyaltyPublished = "",
 }) => {
   return (
     <Modal width={600} show={show} handleClose={() => handleClose(false)}>
@@ -17,15 +18,38 @@ const PublishCollectionModal = ({
         />
         <div className="md:mx-16">
           <div className="font-black text-[16px]">
-            You can’t change some fields once you publish this {type}
+            {type === "Collection" ? (
+              <>
+                {isRoyaltyPublished ? (
+                  <span>
+                    You can’t change some fields once you publish this
+                    Collection
+                  </span>
+                ) : (
+                  <span className="text-danger-900">
+                    <i class="fa-regular fa-triangle-exclamation"></i> Royalty
+                    Splitter is not published yet.
+                  </span>
+                )}
+              </>
+            ) : (
+              <span>
+                You can’t change some fields once you publish this {type}
+              </span>
+            )}
           </div>
           <div className="text-[#9499AE] mt-[12px]">
             Do you want to publish anyway?
           </div>
-          {type !== "DAO" && (
+          {type === "Collection" && (
             <div className="message-info">
-              Once transaction has made, Collection and NFT data will not be
+              Once transaction has made, you can not add new NFT, collection and NFT data will not be
               changeable except benefits fields.
+            </div>
+          )}
+          {type == "Royalty Splitter" && (
+            <div className="message-info">
+              Once you publish, all contributors royalty percent will be locked and unchangable.
             </div>
           )}
           <div className="flex justify-center mt-[30px]">

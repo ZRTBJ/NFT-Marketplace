@@ -121,7 +121,7 @@ const SalesPageModal = ({
     getExchangeRate().then((resp) => {
       if (resp.code === 0) {
         let value = resp?.exchange_rate?.find(
-          (item) => item.coin_name === "eth"
+          (item) => item.coin_name === selectedCurrency?.value
         );
         if (watch("price")) {
           let usd = value.rate * watch("price");

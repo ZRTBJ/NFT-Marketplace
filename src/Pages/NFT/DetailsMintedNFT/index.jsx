@@ -427,19 +427,21 @@ export default function DetailsNFT(props) {
                 : "No description found"}
             </p>
             <h3 className="txtblack mb-4">Attribute</h3>
-            <div className="flex flex-wrap mb-6">
+            <div className="flex flex-wrap mb-6 md:max-w-[564px]">
               {nft?.lnft?.attributes?.length ? (
                 nft?.lnft?.attributes.map((item, index) => (
                   <div key={index}>
                     {item.key !== "" && (
                       <div
                         key={index}
-                        className="w-[138px] h-28  mr-3 mb-3 rounded-xl border border-primary-900 bg-primary-900 bg-opacity-10 flex items-center justify-center flex-col"
+                        className="min-w-[138px]  truncate p-3 min-h-28  mr-3 mb-3 rounded-xl border border-primary-900 bg-primary-900 bg-opacity-10 flex items-center justify-center flex-col"
                       >
-                        <p className="text-textSubtle text-sm mb-1">
+                        <p className="text-textSubtle mt-2 text-sm mb-1">
                           {item.key}
                         </p>
-                        <h5 className="text-primary-900 mb-1">{item.value}</h5>
+                        <p className="text-primary-900 font-bold mb-2 mx-2">
+                          {item.value}
+                        </p>
                       </div>
                     )}
                   </div>
