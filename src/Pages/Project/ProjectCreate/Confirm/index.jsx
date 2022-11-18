@@ -49,6 +49,8 @@ export default function Outline({
   isTokenTransferable,
   showRoyaltyPercentage,
   royaltyPercentage,
+  showSupplyData,
+  supply,
 }) {
   return (
     <>
@@ -170,10 +172,11 @@ export default function Outline({
             {webLinks.map((link, index) => (
               <div key={index} className="inline-flex items-center w-full my-2">
                 <i
-                  className={` ${link.title.startsWith("customLinks")
-                    ? `fa-solid fa-${link.icon}`
-                    : `fa-brands fa-${link.icon}`
-                    }  text-[24px] text-primary-900  mr-2`}
+                  className={` ${
+                    link.title.startsWith("customLinks")
+                      ? `fa-solid fa-${link.icon}`
+                      : `fa-brands fa-${link.icon}`
+                  }  text-[24px] text-primary-900  mr-2`}
                 ></i>
                 <p
                   className={`block w-full   text-[14px] text-textSubtle rounded  pl-3  outline-none`}
@@ -212,9 +215,7 @@ export default function Outline({
               Metadata Updatable
             </div>
           </div>
-          <p className="text-textSubtle">
-            {isMetaDaFreezed ? 'Yes' : 'No'}
-          </p>
+          <p className="text-textSubtle">{isMetaDaFreezed ? "Yes" : "No"}</p>
         </div>
       )}
       {showTokenTransferable && (
@@ -226,7 +227,7 @@ export default function Outline({
             </div>
           </div>
           <p className="text-textSubtle">
-            {isTokenTransferable ? 'Yes' : 'No'}
+            {isTokenTransferable ? "Yes" : "No"}
           </p>
         </div>
       )}
@@ -235,6 +236,14 @@ export default function Outline({
           <div className="mb-6">
             <div className="txtblack text-[14px]">Royalty Percentage</div>
             <p className="text-textSubtle">{royaltyPercentage}</p>
+          </div>
+        </div>
+      )}
+      {showSupplyData && (
+        <div className="mb-6">
+          <div className="mb-6">
+            <div className="txtblack text-[14px]">Supply</div>
+            <p className="text-textSubtle">{supply}</p>
           </div>
         </div>
       )}

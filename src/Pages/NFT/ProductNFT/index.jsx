@@ -272,7 +272,6 @@ export default function ProductNFT(props) {
       );
       request.append("name", watch("name"));
       request.append("asset_url", assetId);
-      request.append("supply", watch("supply"));
       request.append("description", watch("description"));
       request.append("external_link", watch("externalLink"));
       request.append("sensitive_content", watch("sensitiveContent"));
@@ -330,7 +329,6 @@ export default function ProductNFT(props) {
       const request = new FormData();
       request.append("name", watch("name"));
       request.append("asset_url", assetId);
-      request.append("supply", watch("supply"));
       request.append("description", watch("description"));
       request.append("external_link", watch("externalLink"));
       request.append("sensitive_content", watch("sensitiveContent"));
@@ -490,7 +488,6 @@ export default function ProductNFT(props) {
           setValue("externalLink", nft.external_url);
           setValue("description", nft.description);
           setValue("sensitiveContent", nft.sensitive_content);
-          setValue("supply", nft.supply);
           setPropertyList(nft.attributes);
           setIsNftLoading(false);
         } else {
@@ -768,7 +765,7 @@ export default function ProductNFT(props) {
                       onClick={() => setShowPropertyModal(true)}
                     ></i>
                   </div>
-                  <div className="flex py-3 border-b border-b-divider">
+                  <div className="flex py-3">
                     <p className="text-txtblack text-[18px] font-black">18+</p>
                     <div className="flex-1 px-3">
                       <p className="-mt-1">Sensitive Content</p>
@@ -831,7 +828,7 @@ export default function ProductNFT(props) {
                       ))}
                   </div>
                 </div>
-                <div className="mb-6 ">
+                {/* <div className="mb-6 ">
                   <div className="flex items-center mb-2">
                     <Tooltip></Tooltip>
                     <div className="txtblack text-[14px]">Supply</div>
@@ -866,7 +863,7 @@ export default function ProductNFT(props) {
                       </p>
                     )}
                   </>
-                </div>
+                </div> */}
 
                 {showConfirmation === false && (
                   <button

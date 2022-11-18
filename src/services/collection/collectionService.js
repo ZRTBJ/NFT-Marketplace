@@ -57,6 +57,7 @@ export async function updateCollection(payload) {
   bodyFormData.append("updatable", payload.isMetaDaFreezed);
   bodyFormData.append("token_transferable", payload.isTokenTransferable);
   bodyFormData.append("royalty_percent", payload.royaltyPercentage);
+  bodyFormData.append("total_supply", payload.total_supply);
 
   return await client("PUT", `/collection/${payload.id}`, bodyFormData);
 }
