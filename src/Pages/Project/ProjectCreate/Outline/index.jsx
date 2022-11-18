@@ -273,7 +273,7 @@ export default function Outline({
                   Create with
                 </p>
                 <a
-                  href="https://gnosis-safe.io/"
+                  href="https://app.safe.global/"
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -437,11 +437,10 @@ export default function Outline({
             {webLinks.map((link, index) => (
               <div key={index} className="inline-flex items-center w-full mb-4">
                 <i
-                  className={` ${
-                    link.title.startsWith("customLinks")
+                  className={` ${link.title.startsWith("customLinks")
                       ? `fa-solid fa-${link.icon}`
                       : `fa-brands fa-${link.icon}`
-                  }  text-[24px] text-primary-900  mr-2`}
+                    }  text-[24px] text-primary-900  mr-2`}
                 ></i>
                 <input
                   className={`block w-full border border-divider h-[48px] text-[14px] text-textSubtle rounded  pl-3  outline-none`}
