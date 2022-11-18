@@ -387,7 +387,7 @@ export default function DetailsNFT(props) {
                   </Link>
                 </div>
                 <div className="flex items-center mb-4">
-                  <h3 className="w-35  txtblack">Owner</h3>
+                  <h3 className="w-35  txtblack">Minted by</h3>
                   <span className="font-satoshi-bold font-black text-lg text-txtblack mx-3">
                     :
                   </span>
