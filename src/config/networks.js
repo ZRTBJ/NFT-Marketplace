@@ -2,7 +2,7 @@ import Eth from "assets/images/eth.svg";
 import Matic from "assets/images/polygon.svg";
 import { address } from "./contractAddresses.js";
 
-const gnosisFundTransferUrl = "https://gnosis-safe.io/app";
+const gnosisFundTransferUrl = "https://app.safe.global";
 const raribleNFTDetailsUrl =
   process.env.REACT_APP_ENV === "production"
     ? "https://rarible.com/token"
@@ -28,7 +28,7 @@ const TESTNET = {
     masterMembershipCollection: address.CreateMembershipCollectionMasterCopy,
     masterRoyaltySplitter: address.RoyaltySplitterMasterCopy,
     network: 5,
-    gnosis: `${gnosisFundTransferUrl}/gor/`,
+    gnosis: `${gnosisFundTransferUrl}/gor`,
     raribleNFTDetailsUrl: raribleNFTDetailsUrl,
     openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/goerli/`,
     viewContractAddressUrl: `https://goerli.etherscan.io/address/`,
@@ -50,7 +50,7 @@ const TESTNET = {
       address.CreateMembershipCollectionMasterCopyMumbai,
     masterRoyaltySplitter: address.RoyaltySplitterMasterCopyMumbai,
     network: 80001,
-    gnosis: `${gnosisFundTransferUrl}/matic/`,
+    gnosis: `${gnosisFundTransferUrl}/matic`,
     raribleNFTDetailsUrl: raribleNFTDetailsUrl,
     openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/mumbai/`,
     viewContractAddressUrl: `https://mumbai.polygonscan.com/address/`,
@@ -76,7 +76,7 @@ const MAINNET = {
       address.CreateMembershipCollectionMasterCopyMumbai,
     masterRoyaltySplitter: address.RoyaltySplitterMasterCopyMumbai,
     network: 1,
-    gnosis: `${gnosisFundTransferUrl}/eth/`,
+    gnosis: `${gnosisFundTransferUrl}/eth`,
     raribleNFTDetailsUrl: raribleNFTDetailsUrl,
     openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/ethereum/`,
     viewContractAddressUrl: `https://etherscan.io/address/`,
@@ -98,7 +98,7 @@ const MAINNET = {
       address.CreateMembershipCollectionMasterCopyPolygon,
     masterRoyaltySplitter: address.RoyaltySplitterMasterCopyPolygon,
     network: 137,
-    gnosis: `${gnosisFundTransferUrl}/matic/`,
+    gnosis: `${gnosisFundTransferUrl}/matic`,
     raribleNFTDetailsUrl: raribleNFTDetailsUrl,
     openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/matic/`,
     viewContractAddressUrl: `https://polygonscan.com/address/`,
