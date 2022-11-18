@@ -339,11 +339,6 @@ const abi = [
             type: "uint256[]",
           },
           {
-            internalType: "address payable",
-            name: "collection",
-            type: "address",
-          },
-          {
             internalType: "address",
             name: "masterCopy",
             type: "address",

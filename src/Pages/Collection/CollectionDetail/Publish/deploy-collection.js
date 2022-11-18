@@ -12,6 +12,7 @@ async function sendMetaTx(collection, provider, signer, config, type) {
   let masterCopyCollection = NETWORKS[chainId]?.masterCopyCollection;
   let masterMembershipCollection =
     NETWORKS[Number(chainId)]?.masterMembershipCollection;
+
   let webhook = NETWORKS[Number(chainId)]?.webhook;
   const args = {
     isCollection: true,
@@ -24,7 +25,6 @@ async function sendMetaTx(collection, provider, signer, config, type) {
           type === "membership"
             ? masterMembershipCollection
             : masterCopyCollection,
-        forwarder: minimalForwarder,
       },
       runConfig: {
         baseURI: config?.runtimeConfig?.baseURI,

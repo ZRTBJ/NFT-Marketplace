@@ -1,19 +1,25 @@
-import NotFound from "Pages/NotFound";
-import Profile from "Pages/User/Profile";
-import ProfileSettings from "Pages/User/ProfileSettings";
-import ProjectCreate from "Pages/Project/ProjectCreate";
-import CollectionCreate from "Pages/Collection/CollectionCreate";
-import projectDetails from "Pages/Project/ProjectDetails";
-import DetailsNFT from "Pages/NFT/DetailsNFT";
-import DetailsMintedNFT from "Pages/NFT/DetailsMintedNFT";
-import EmbedNFT from "Pages/NFT/Embed/EmbedNFT";
-import EmbedNFTPreview from "Pages/NFT/Embed/EmbedNFTPreview";
-import CreateDAOandNFT from "Pages/Project/CreateDAOandNFT";
-import MembershipNFT from "Pages/NFT/MembershipNFT";
-import CollectionDetail from "Pages/Collection/CollectionDetail";
-import ProductNFT from "Pages/NFT/ProductNFT";
-import Home from "Pages/Home/Homepage";
-import List from "Pages/List";
+import { lazy } from "react";
+const NotFound = lazy(() => import("Pages/NotFound"));
+const Profile = lazy(() => import("Pages/User/Profile"));
+const ProfileSettings = lazy(() => import("Pages/User/ProfileSettings"));
+const ProjectCreate = lazy(() => import("Pages/Project/ProjectCreate"));
+const CollectionCreate = lazy(() =>
+  import("Pages/Collection/CollectionCreate")
+);
+const projectDetails = lazy(() => import("Pages/Project/ProjectDetails"));
+const DetailsNFT = lazy(() => import("Pages/NFT/DetailsNFT"));
+const DetailsMintedNFT = lazy(() => import("Pages/NFT/DetailsMintedNFT"));
+const EmbedNFT = lazy(() => import("Pages/NFT/Embed/EmbedNFT"));
+const EmbedNFTPreview = lazy(() => import("Pages/NFT/Embed/EmbedNFTPreview"));
+const CreateDAOandNFT = lazy(() => import("Pages/Project/CreateDAOandNFT"));
+const MembershipNFT = lazy(() => import("Pages/NFT/MembershipNFT"));
+const CollectionDetail = lazy(() =>
+  import("Pages/Collection/CollectionDetail")
+);
+const ProductNFT = lazy(() => import("Pages/NFT/ProductNFT"));
+const Home = lazy(() => import("Pages/Home/Homepage"));
+const List = lazy(() => import("Pages/List"));
+
 const routes = [
   {
     path: "/profile/:id",

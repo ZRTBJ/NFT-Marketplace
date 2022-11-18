@@ -42,7 +42,7 @@ import { walletAddressTruncate } from "util/WalletUtils";
 import { getCurrentNetworkId } from "util/MetaMask";
 import NetworkHandlerModal from "components/Modals/NetworkHandlerModal";
 import tickSvg from "assets/images/icons/tick.svg";
-
+import emptyStateCommon from "assets/images/profile/emptyStateCommon.svg";
 const TABLE_HEADERS = [
   { id: 0, label: "Wallet Address" },
   // { id: 2, label: "Email" },
@@ -96,7 +96,7 @@ const CollectionDetail = () => {
   const [showNetworkHandler, setShowNetworkHandler] = useState(false);
   const [collectionNotUpdatableModal, setCollectionNotUpdatableModal] =
     useState(false);
-
+  const [setSalesError, setSetSalesError] = useState(false);
   // Publish royalty splitter
   const [showPublishRoyaltySpliterModal, setShowPublishRoyaltySpliterModal] =
     useState(false);
@@ -322,12 +322,16 @@ const CollectionDetail = () => {
   function salesPageModal(e, type, id, supply) {
     e.stopPropagation();
     e.preventDefault();
-    setShowOptions(null);
-    if (type === "membership") {
-      setNftId(id);
-      setNftMemSupply(supply);
+    if (Collection?.status === "published") {
+      setShowOptions(null);
+      if (type === "membership") {
+        setNftId(id);
+        setNftMemSupply(supply);
+      }
+      setShowSalesPageModal(true);
+    } else {
+      setSetSalesError(true);
     }
-    setShowSalesPageModal(true);
   }
 
   const handlePublish = () => {
@@ -463,6 +467,7 @@ const CollectionDetail = () => {
           show={ShowPublishModal}
           handleClose={() => setShowPublishModal(false)}
           publishProject={handlePublish}
+          isRoyaltyPublished={Collection?.royalty_splitter?.contract_address}
           type="Collection"
         />
       )}
@@ -484,6 +489,16 @@ const CollectionDetail = () => {
             setAutoAssign(false);
           }}
           show={showRoyalityErrorModal}
+        />
+      )}
+      {setSalesError && (
+        <ErrorModal
+          title={"Collection not published yet!"}
+          // message={`${showRoyalityErrorMessage}`}
+          handleClose={() => {
+            setSetSalesError(false);
+          }}
+          show={setSalesError}
         />
       )}
       {AutoAssign && (
@@ -540,6 +555,7 @@ const CollectionDetail = () => {
           show={showImportWallet}
           handleClose={() => {
             setShowImportWallet(false);
+            getCollectionDetail();
             getSplittedContributors(
               royalitySplitterId ? royalitySplitterId : Collection.id,
               royalitySplitterId ? "splitter_id" : "collection_id"
@@ -803,16 +819,14 @@ const CollectionDetail = () => {
               {/* <a className='inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>
                 Sales Setting
               </a> */}
-              {Collection?.type === "product" &&
-                Collection?.is_owner &&
-                Collection?.status === "published" && (
-                  <div
-                    onClick={(e) => salesPageModal(e, "product")}
-                    className="outlined-button ml-0 md:ml-4 font-satoshi-bold"
-                  >
-                    <span>Sales Setting</span>
-                  </div>
-                )}
+              {Collection?.type === "product" && Collection?.is_owner && (
+                <div
+                  onClick={(e) => salesPageModal(e, "product")}
+                  className="outlined-button ml-0 md:ml-4 font-satoshi-bold"
+                >
+                  <span>Sales Setting</span>
+                </div>
+              )}
               {Collection?.is_owner && (
                 <Link
                   to={`/collection-create/?id=${collectionId}`}
@@ -898,7 +912,7 @@ const CollectionDetail = () => {
                     aria-controls="dashboard"
                     aria-selected="false"
                   >
-                    Dashboard
+                    Royalty Splitter
                   </button>
                 </li>
               )}
@@ -972,7 +986,7 @@ const CollectionDetail = () => {
                                       <li className="border">
                                         <div
                                           onClick={(e) => handleEditNFT(e, nft)}
-                                          className="py-3 pl-3 block hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
+                                          className="py-3 pl-3 block hover:bg-gray-100 cursor-pointer"
                                         >
                                           Edit NFT
                                         </div>
@@ -1032,7 +1046,12 @@ const CollectionDetail = () => {
                     })}
                   </div>
                 ) : (
-                  <div className="w-full">
+                  <div className="w-full mb-6">
+                    <img
+                      src={emptyStateCommon}
+                      className="h-[210px] w-[315px] m-auto"
+                      alt=""
+                    />
                     <p className="font-bold text-center">
                       You don't have any NFT's.
                       {Collection?.status === "draft"
@@ -1159,7 +1178,9 @@ const CollectionDetail = () => {
       {showPublishRoyaltySpliterConfirmModal && (
         <PublishCollectionModal
           show={showPublishRoyaltySpliterConfirmModal}
-          handleClose={() => setShowPublishRoyaltySpliterConfirmModal(false)}
+          handleClose={() => {
+            setShowPublishRoyaltySpliterConfirmModal(false);
+          }}
           publishProject={handlePublishRoyaltySplitter}
           type="Royalty Splitter"
         />
@@ -1170,7 +1191,10 @@ const CollectionDetail = () => {
           isVisible={showPublishRoyaltySpliterModal}
           isLoading={isPublishingRoyaltySplitter}
           status={publishRoyaltySplitterStatus}
-          onRequestClose={() => setShowPublishRoyaltySpliterModal(false)}
+          onRequestClose={() => {
+            getCollectionDetail();
+            setShowPublishRoyaltySpliterModal(false);
+          }}
         />
       )}
 

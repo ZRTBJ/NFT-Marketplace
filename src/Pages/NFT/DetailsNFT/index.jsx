@@ -178,7 +178,6 @@ export default function DetailsNFT(props) {
     await mintProductOrMembershipNft(payload)
       .then((resp) => {
         if (resp.code === 0) {
-          console.log(resp);
           if (response.hash) {
             setFuncId(resp.function_uuid);
             setErrorMsg("");
@@ -255,7 +254,8 @@ export default function DetailsNFT(props) {
   let info = nft?.more_info;
 
   let benefits = info?.benefits && JSON.parse(nft.more_info.benefits);
-  let availableSupply = nft?.lnft?.supply - nft?.lnft?.minted_amount;
+  const minted_amount = nft?.lnft?.minted_amount ? nft?.lnft?.minted_amount : 0;
+  let availableSupply = nft?.lnft?.supply - minted_amount;
 
   return (
     <>
@@ -301,11 +301,11 @@ export default function DetailsNFT(props) {
           handleClose={() => setNftSuccessModal(false)}
           nftName={nft?.lnft?.name}
           assetUrl={nft?.lnft?.asset?.path ? nft?.lnft?.asset?.path : manImg}
-          transactionHash={hash}
+          transactionHash={mintData?.function?.response_data?.txn_hash}
           collectionName={collection?.name}
           mintData={mintData}
           nftId={nft?.lnft?.id}
-          tokenId={2}
+          tokenId={mintData?.function?.response_data?.token_id}
           // handleNext={handleProceedPayment}
         />
       )}
@@ -544,19 +544,21 @@ export default function DetailsNFT(props) {
                 : "No description found"}
             </p>
             <h3 className="txtblack mb-4">Attribute</h3>
-            <div className="flex flex-wrap mb-6">
+            <div className="flex flex-wrap mb-6 md:max-w-[564px]">
               {nft?.lnft?.attributes?.length ? (
                 nft?.lnft?.attributes.map((item, index) => (
                   <div key={index}>
                     {item.key !== "" && (
                       <div
                         key={index}
-                        className="w-[138px] h-28  mr-3 mb-3 rounded-xl border border-primary-900 bg-primary-900 bg-opacity-10 flex items-center justify-center flex-col"
+                        className="min-w-[138px]  truncate p-3 min-h-28  mr-3 mb-3 rounded-xl border border-primary-900 bg-primary-900 bg-opacity-10 flex items-center justify-center flex-col"
                       >
-                        <p className="text-textSubtle text-sm mb-1">
+                        <p className="text-textSubtle mt-2 text-sm mb-1">
                           {item.key}
                         </p>
-                        <h5 className="text-primary-900 mb-1">{item.value}</h5>
+                        <p className="text-primary-900 font-bold mb-2 mx-2">
+                          {item.value}
+                        </p>
                       </div>
                     )}
                   </div>
