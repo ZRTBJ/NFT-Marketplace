@@ -41,10 +41,15 @@ const PublishCollectionModal = ({
           <div className="text-[#9499AE] mt-[12px]">
             Do you want to publish anyway?
           </div>
-          {type !== "DAO" && (
+          {type === "Collection" && (
             <div className="message-info">
-              Once transaction has made, Collection and NFT data will not be
+              Once transaction has made, you can not add new NFT, collection and NFT data will not be
               changeable except benefits fields.
+            </div>
+          )}
+          {type == "Royalty Splitter" && (
+            <div className="message-info">
+              Once you publish, all contributors royalty percent will be locked and unchangable.
             </div>
           )}
           <div className="flex justify-center mt-[30px]">
