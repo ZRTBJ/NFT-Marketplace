@@ -184,13 +184,35 @@ export default function MembershipNFT() {
     setNfts(oldNfts);
   }
   function addMoreBenefits(index) {
-    let oldNfts = [...nfts];
-    oldNfts[index].benefits.push({ title: "" });
+    let oldNfts = nfts.map((nft, i) => {
+      if (i === index) {
+        return {
+          ...nft,
+          benefits: [...nft.benefits, { title: "" }],
+        };
+      }
+      return nft;
+    });
     setNfts(oldNfts);
   }
+
   function onBenefitChange(index, benefitIndex, value) {
-    let oldNfts = [...nfts];
-    oldNfts[index].benefits[benefitIndex].title = value;
+    let oldNfts = nfts.map((nft, i) => {
+      if (i === index) {
+        return {
+          ...nft,
+          benefits: nft?.benefits?.map((benefit, ind) => {
+            if (ind === benefitIndex) {
+              return {
+                title: value,
+              };
+            }
+            return benefit;
+          }),
+        };
+      }
+      return nft;
+    });
     setNfts(oldNfts);
   }
   function deleteBenefits(index, benefitIndex) {
@@ -368,15 +390,15 @@ export default function MembershipNFT() {
       .then((response) => {
         let data = {
           collection_uid: collection_id,
-          tier_name: nft.tierName,
-          supply: nft.supply,
-          blockchain: nft.blockchainCategory,
-          description: nft.description,
-          external_link: nft.externalLink,
-          sensitive_content: nft.sensitiveContent,
-          benefit_array: nft.benefits.filter((x) => x.title !== ""),
+          tier_name: nft?.tierName,
+          supply: nft?.supply,
+          blockchain: nft?.blockchainCategory,
+          description: nft?.description,
+          external_link: nft?.externalLink,
+          sensitive_content: nft?.sensitiveContent,
+          benefit_array: nft?.benefits.filter((x) => x?.title !== ""),
           job_id: response["job_id"],
-          properties: nft.properties,
+          properties: nft?.properties,
         };
         localStorage.setItem(`${response["job_id"]}`, JSON.stringify(data));
         jobIds.push(response["job_id"]);
@@ -408,16 +430,16 @@ export default function MembershipNFT() {
   }
   async function updateNFT(nft) {
     const request = new FormData();
-    request.append("tier_name", nft.tierName);
-    request.append("asset_uid", nftItem.asset.id);
-    request.append("external_link", nft.externalLink);
-    request.append("description", nft.description);
-    const benefit_array = nft.benefits.filter((x) => x.title !== "");
+    request.append("tier_name", nft?.tierName);
+    request.append("asset_uid", nftItem?.asset?.id);
+    request.append("external_link", nft?.externalLink);
+    request.append("description", nft?.description);
+    const benefit_array = nft?.benefits?.filter((x) => x?.title !== "");
     request.append("benefit_array", JSON.stringify(benefit_array));
-    request.append("attributes", JSON.stringify(nft.properties));
-    request.append("sensitive_content", nft.sensitiveContent);
-    request.append("supply", nft.supply);
-    await updateMembershipNFT(nftItem.id, request)
+    request.append("attributes", JSON.stringify(nft?.properties));
+    request.append("sensitive_content", nft?.sensitiveContent);
+    request.append("supply", nft?.supply);
+    await updateMembershipNFT(nftItem?.id, request)
       .then((res) => {
         setShowDataUploadingModal(false);
         setShowSuccessModal(true);
@@ -441,7 +463,7 @@ export default function MembershipNFT() {
       } else {
         const daoId = await daoCreate();
         const collection_id = await collectionCreate(daoId);
-        localStorage.setItem("upload_number", validateNfts.length);
+        localStorage.setItem("upload_number", validateNfts?.length);
         for (const iterator of validateNfts) {
           const key = await genUploadKey(daoId, collection_id, iterator);
           if (key !== "") {
@@ -465,12 +487,12 @@ export default function MembershipNFT() {
   async function nextHandle() {
     const validateNfts = nfts.filter(
       (element) =>
-        element.tierName !== "" &&
-        element.assets.file !== null &&
-        element.assets.isFileError === false &&
-        element.assets.limitExceeded === false &&
-        element.nftName !== "" &&
-        element.supply !== ""
+        element?.tierName !== "" &&
+        element?.assets?.file !== null &&
+        element?.assets?.isFileError === false &&
+        element?.assets?.limitExceeded === false &&
+        element?.nftName !== "" &&
+        element?.supply !== ""
     );
 
     if (isPreview) {

@@ -92,9 +92,9 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
             </span>
           </h4>
 
-          <a className="btn-fund" href="#">
+          {/* <a className="btn-fund" href="#">
             <span>Add Funds</span>
-          </a>
+          </a> */}
         </div>
         <div className="pl-10 pr-3 py-3">
           <div
