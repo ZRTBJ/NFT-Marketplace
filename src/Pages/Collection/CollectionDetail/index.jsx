@@ -43,6 +43,7 @@ import { getCurrentNetworkId } from "util/MetaMask";
 import NetworkHandlerModal from "components/Modals/NetworkHandlerModal";
 import tickSvg from "assets/images/icons/tick.svg";
 import emptyStateCommon from "assets/images/profile/emptyStateCommon.svg";
+import ReactReadMoreReadLess from "react-read-more-read-less";
 const TABLE_HEADERS = [
   { id: 0, label: "Wallet Address" },
   // { id: 2, label: "Email" },
@@ -766,9 +767,15 @@ const CollectionDetail = () => {
             <h3>About</h3>
             <div className="text-textLight text-sm">
               {Collection?.description ? (
-                <p className="whitespace-pre-line text-textLight break-all text-sm">
-                  {Collection.description}
-                </p>
+                <div className="whitespace-pre-line text-textLight break-all text-sm">
+                  <ReactReadMoreReadLess
+                    charLimit={300}
+                    readMoreText={"Read more ▼"}
+                    readLessText={"Read less ▲"}
+                  >
+                    {Collection.description}
+                  </ReactReadMoreReadLess>
+                </div>
               ) : (
                 "Please add description to show here"
               )}

@@ -5,7 +5,7 @@ import avatar from "assets/images/dummy-img.svg";
 import SocialLink from "components/Commons/SocialLink";
 import { Link } from "react-router-dom";
 import { NETWORKS } from "config/networks";
-
+import ReactReadMoreReadLess from "react-read-more-read-less";
 const InfoCard = ({
   coverImages,
   project,
@@ -95,9 +95,15 @@ const InfoCard = ({
       <div className="mt-2">
         <h3>About</h3>
         {project.overview ? (
-          <p className="whitespace-pre-line text-textLight text-sm break-all">
-            {project.overview}
-          </p>
+          <div className="whitespace-pre-line text-textLight text-sm break-all">
+            <ReactReadMoreReadLess
+              charLimit={300}
+              readMoreText={"Read more ▼"}
+              readLessText={"...Read less ▲"}
+            >
+              {project.overview}
+            </ReactReadMoreReadLess>
+          </div>
         ) : (
           <p className="text-textLight text-sm">
             Please add description to show here
