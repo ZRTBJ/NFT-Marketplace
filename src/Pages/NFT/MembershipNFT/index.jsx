@@ -143,30 +143,39 @@ export default function MembershipNFT() {
       let totalSize = 0;
       // const usedSize = 4000;
       // let totalSize = 0;
-      if (usedSize && file) {
-        totalSize = (usedSize + file.size) / 1024 / 1024;
-        if (file.size / 1024 / 1024 > 100) {
-          setErrorTitle("Maximum file size limit exceeded");
-          setErrorMessage(`You can add your assets up to 100MB.`);
-          setShowErrorModal(true);
-          event.currentTarget.value = "";
-        } else if (totalSize > 1024) {
-          setErrorTitle("Maximum file size limit exceeded");
-          setErrorMessage(
-            `You can add your assets up to 1GB. you have a remaining of ${(
-              1024 -
-              usedSize / 1024 / 1024
-            ).toFixed(2)} MB storage`
-          );
-          setShowErrorModal(true);
-          event.currentTarget.value = "";
-        } else {
-          nftFile.file = file;
-          nftFile.path = URL.createObjectURL(file);
-          nftFile.isFileError = false;
-          if (updateMode) {
-            setAsseteRemoveInUpdateMode(true);
+      if (usedSize) {
+        if (usedSize && file) {
+          totalSize = (usedSize + file.size) / 1024 / 1024;
+          if (file.size / 1024 / 1024 > 100) {
+            setErrorTitle("Maximum file size limit exceeded");
+            setErrorMessage(`You can add your assets up to 100MB.`);
+            setShowErrorModal(true);
+            event.currentTarget.value = "";
+          } else if (totalSize > 1024) {
+            setErrorTitle("Maximum file size limit exceeded");
+            setErrorMessage(
+              `You can add your assets up to 1GB. you have a remaining of ${(
+                1024 -
+                usedSize / 1024 / 1024
+              ).toFixed(2)} MB storage`
+            );
+            setShowErrorModal(true);
+            event.currentTarget.value = "";
+          } else {
+            nftFile.file = file;
+            nftFile.path = URL.createObjectURL(file);
+            nftFile.isFileError = false;
+            if (updateMode) {
+              setAsseteRemoveInUpdateMode(true);
+            }
           }
+        }
+      } else if (!usedSize) {
+        nftFile.file = file;
+        nftFile.path = URL.createObjectURL(file);
+        nftFile.isFileError = false;
+        if (updateMode) {
+          setAsseteRemoveInUpdateMode(true);
         }
       }
     } catch {
@@ -1081,8 +1090,7 @@ export default function MembershipNFT() {
           <p className="font-black  mb-4">Add your properties</p>
           <div className="md:w-10/12">
             <p className="mb-4 break-normal">
-              Add the properties, with value, you can add more than 5
-              properties
+              Add the properties, with value, you can add more than 5 properties
             </p>
             <p className="text-color-ass-9 text-sm">Add Properties</p>
             {isListUpdate && (
