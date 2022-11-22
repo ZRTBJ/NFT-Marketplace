@@ -138,30 +138,38 @@ export default function ProductNFT(props) {
       // setnftFile({ file: file, path: URL.createObjectURL(file) });
       const usedSize = userinfo["storage_usage"];
       let totalSize = 0;
-      if (usedSize && file) {
-        totalSize = (usedSize + file.size) / 1024 / 1024;
-        if (file.size / 1024 / 1024 > 100) {
-          setErrorTitle("Maximum file size limit exceeded");
-          setErrorMessage(`You can add your assets up to 100MB.`);
-          setShowErrorModal(true);
-          event.currentTarget.value = "";
-        } else if (totalSize > 1024) {
-          setErrorTitle("Maximum file size limit exceeded");
-          setErrorMessage(
-            `You can add your assets up to 1GB. you have a remaining of ${(
-              1024 -
-              usedSize / 1024 / 1024
-            ).toFixed(2)} MB storage`
-          );
-          setShowErrorModal(true);
-          event.currentTarget.value = "";
-        } else {
-          setnftFile({ file: file, path: URL.createObjectURL(file) });
-          if (updateMode) {
-            setAsseteRemoveInUpdateMode(true);
+      if (usedSize) {
+        if (usedSize && file) {
+          totalSize = (usedSize + file.size) / 1024 / 1024;
+          if (file.size / 1024 / 1024 > 100) {
+            setErrorTitle("Maximum file size limit exceeded");
+            setErrorMessage(`You can add your assets up to 100MB.`);
+            setShowErrorModal(true);
+            event.currentTarget.value = "";
+          } else if (totalSize > 1024) {
+            setErrorTitle("Maximum file size limit exceeded");
+            setErrorMessage(
+              `You can add your assets up to 1GB. you have a remaining of ${(
+                1024 -
+                usedSize / 1024 / 1024
+              ).toFixed(2)} MB storage`
+            );
+            setShowErrorModal(true);
+            event.currentTarget.value = "";
+          } else {
+            setnftFile({ file: file, path: URL.createObjectURL(file) });
+            if (updateMode) {
+              setAsseteRemoveInUpdateMode(true);
+            }
+            setFileError(false);
           }
-          setFileError(false);
         }
+      } else if (!usedSize) {
+        setnftFile({ file: file, path: URL.createObjectURL(file) });
+        if (updateMode) {
+          setAsseteRemoveInUpdateMode(true);
+        }
+        setFileError(false);
       }
     } catch {
       setFileError(true);

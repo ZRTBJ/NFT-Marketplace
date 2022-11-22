@@ -41,6 +41,7 @@ import CreateNFTModal from "Pages/Project/CreateDAOandNFT/components/CreateNFTMo
 import emptyStateCommon from "assets/images/profile/emptyStateCommon.svg";
 import emptyStateRoyalty from "assets/images/profile/emptyStateRoyalty.png";
 import curvVector from "assets/images/profile/curv1.png";
+import Modal from "components/Commons/Modal";
 const Profile = () => {
   const provider = createProvider();
   SwiperCore.use([Autoplay]);
@@ -136,6 +137,7 @@ const Profile = () => {
 
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [ShowCreateNFT, setShowCreateNFT] = useState(false);
+  const [profileModal, setProfileModal] = useState(false);
   // function start
   const calculatePageCount = (pageSize, totalItems) => {
     return totalItems < pageSize ? 1 : Math.ceil(totalItems / pageSize);
@@ -416,10 +418,11 @@ const Profile = () => {
               <div className="mt-[30px] md:flex-[70%] mx-3  bg-white-shade-900 rounded-lg p-[13px] md:p-[25px] shadow-lg md:flex">
                 <div className="flex">
                   <img
+                    onClick={() => setProfileModal(true)}
                     src={
                       user?.avatar === "" ? DefaultProfilePicture : user?.avatar
                     }
-                    className="rounded-lg w-[102px] object-cover h-[102px]"
+                    className="rounded-lg w-[102px] object-cover h-[102px] cursor-pointer"
                     alt={"profile"}
                   />
                   <div className="pl-[20px]">
@@ -559,7 +562,7 @@ const Profile = () => {
             {/* Royalties Table */}
             <div className=" mt-[20px] mx-3 mb-[36px] pt-[30px]  px-4  pb-[35px] bg-white-shade-900 rounded-xl">
               <div className="flex  items-center mb-[24px]">
-                <div className="text-[24px] text-txtblack font-black ">
+                <div className="text-[24px] text-txtblack font-black">
                   Royalties
                 </div>
                 {/* <div className="ml-auto  text-[18px]">
@@ -839,7 +842,9 @@ const Profile = () => {
             {/* Dao */}
             <div className="mb-[50px]">
               <div className="mb-5 flex px-4 flex-wrap">
-                <h1>Your DAO</h1>
+                <div className="text-[24px] text-txtblack font-black">
+                  Your DAO
+                </div>
                 <Link
                   to={`/list/?type=dao&user=${id}`}
                   className="contained-button  py-1 px-3 rounded ml-auto"
@@ -891,7 +896,9 @@ const Profile = () => {
             {/* collection */}
             <div className="mb-[50px]">
               <div className="mb-5 flex px-4 flex-wrap">
-                <h1>Your Collection</h1>
+                <div className="text-[24px] text-txtblack font-black">
+                  Your Collection
+                </div>
                 <Link
                   to={`/list/?type=collection&user=true`}
                   className="contained-button  py-1 px-3 rounded ml-auto"
@@ -1008,7 +1015,9 @@ const Profile = () => {
             {/* Nft */}
             <div className="mb-[50px]">
               <div className="mb-5 flex px-4 flex-wrap">
-                <h1>Minted NFT</h1>
+                <div className="text-[24px] text-txtblack font-black">
+                  Minted NFT
+                </div>
                 <Link
                   to={`/list/?type=nft&user=${id}`}
                   className="contained-button  py-1 px-3 rounded ml-auto"
@@ -1107,6 +1116,21 @@ const Profile = () => {
           show={ShowCreateNFT}
           handleClose={() => setShowCreateNFT(false)}
         />
+      )}
+      {profileModal && (
+        <Modal
+          width={320}
+          show={profileModal}
+          handleClose={() => setProfileModal(false)}
+          showCloseIcon={true}
+        >
+          <img
+            onClick={() => setProfileModal(true)}
+            src={user?.avatar === "" ? DefaultProfilePicture : user?.avatar}
+            className="rounded-lg mt-[40px]  w-full h-full max-w-[270px] max-h-[270px] mx-auto block object-cover  cursor-pointer"
+            alt={"profile"}
+          />
+        </Modal>
       )}
     </>
   );

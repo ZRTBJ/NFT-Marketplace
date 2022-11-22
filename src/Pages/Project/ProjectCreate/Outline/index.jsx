@@ -321,7 +321,7 @@ export default function Outline({
             Upload Gallery Picture
           </div>
           <div className="text-textSubtle text-[13px] mb-4">
-            PNG, GIF, WEBP, MP4 or MP3. Max 100mb.
+            PNG, GIF, JPG, SVG, JPEG. Max 28 MB.
           </div>
           <div className="md:flex md:flex-wrap mb-6">
             <div className="w-full md:w-[165px] mr-3 mb-2">
@@ -569,14 +569,14 @@ export default function Outline({
           <p className="text-txtSubtle text-[14px]">Metadata update</p>
           {freezeMetadataDisabled ? (
             <label
-              htmlFor="checked-toggle"
+              htmlFor="metadata-update"
               className="inline-flex relative items-center cursor-pointer ml-auto"
             >
               <input
                 disabled
                 type="checkbox"
                 value={isMetadataFreezed}
-                id="checked-toggle"
+                id="metadata-update"
                 checked={isMetadataFreezed}
                 className="sr-only peer outline-none"
                 onChange={(e) => onMetadataFreezeChange(isMetadataFreezed)}
@@ -585,13 +585,13 @@ export default function Outline({
             </label>
           ) : (
             <label
-              htmlFor="checked-toggle"
+              htmlFor="metadata-update"
               className="inline-flex relative items-center cursor-pointer ml-auto"
             >
               <input
                 type="checkbox"
                 value={isMetadataFreezed}
-                id="checked-toggle"
+                id="metadata-update"
                 checked={isMetadataFreezed}
                 className="sr-only peer outline-none"
                 onChange={(e) => onMetadataFreezeChange(isMetadataFreezed)}

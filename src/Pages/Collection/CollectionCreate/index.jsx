@@ -220,7 +220,7 @@ export default function CollectionCreate() {
   }
   // Freeze MetaData end
   // Token Transferable start
-  const [isTokenTransferable, setIsTokenTransferable] = useState(false);
+  const [isTokenTransferable, setIsTokenTransferable] = useState(true);
   const [showTokenTransferable, setShowTokenTransferable] = useState(true);
   const [tokenTransferableDisabled, setTokenTransferableDisabled] =
     useState(false);
@@ -533,9 +533,9 @@ export default function CollectionCreate() {
   }, [dao_id]);
   useEffect(() => {
     setCollectionType(collectionType);
-    if (collectionType === "membership" || collectionType === "product") {
-      setTokenTransferableDisabled(true);
-      setIsTokenTransferable(true);
+    if (collectionType === "membership") {
+      setIsMetaDataFreezed(false);
+      // setIsTokenTransferable(true);
     }
   }, [collectionType]);
 
@@ -644,9 +644,7 @@ export default function CollectionCreate() {
                     showFreezeMetadata={
                       collectionType === "membership" ? false : true
                     }
-                    isMetadataFreezed={
-                      collectionType === "membership" ? false : true
-                    }
+                    isMetadataFreezed={isMetaDaFreezed}
                     onMetadataFreezeChange={onMetadataFreezeChange}
                     freezeMetadataDisabled={freezeMetadataDisabled}
                     // Token Transferable

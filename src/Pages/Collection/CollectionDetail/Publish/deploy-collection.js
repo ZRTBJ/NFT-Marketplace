@@ -31,6 +31,7 @@ async function sendMetaTx(collection, provider, signer, config, type) {
         royaltiesBps: config?.runtimeConfig?.royaltiesBps,
         royaltyAddress: config?.runtimeConfig?.royaltiesAddress,
         creatorDAO: config?.runtimeConfig?.DAOContractAddress,
+        maxSupply: type === "product" ? config?.runtimeConfig?.totalSupply : 0,
       },
     },
     forwarder: minimalForwarder,

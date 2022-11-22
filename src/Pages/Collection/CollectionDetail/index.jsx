@@ -43,6 +43,7 @@ import { getCurrentNetworkId } from "util/MetaMask";
 import NetworkHandlerModal from "components/Modals/NetworkHandlerModal";
 import tickSvg from "assets/images/icons/tick.svg";
 import emptyStateCommon from "assets/images/profile/emptyStateCommon.svg";
+import ReactReadMoreReadLess from "react-read-more-read-less";
 const TABLE_HEADERS = [
   { id: 0, label: "Wallet Address" },
   // { id: 2, label: "Email" },
@@ -453,6 +454,7 @@ const CollectionDetail = () => {
     }
   };
 
+  let isSupplyOver = Collection?.total_supply <= NFTs?.length;
   return (
     <div className="mx-4 md:mx-0">
       {showNetworkHandler && (
@@ -766,9 +768,17 @@ const CollectionDetail = () => {
             <h3>About</h3>
             <div className="text-textLight text-sm">
               {Collection?.description ? (
-                <p className="whitespace-pre-line text-textLight break-all text-sm">
-                  {Collection.description}
-                </p>
+                <div className="whitespace-pre-line text-textLight break-all text-sm">
+                  <ReactReadMoreReadLess
+                    charLimit={300}
+                    readMoreText={"Read more ▼"}
+                    readLessText={"Read less ▲"}
+                    readMoreClassName="font-bold"
+                    readLessClassName="font-bold"
+                  >
+                    {Collection.description}
+                  </ReactReadMoreReadLess>
+                </div>
               ) : (
                 "Please add description to show here"
               )}
@@ -850,16 +860,21 @@ const CollectionDetail = () => {
       <section>
         {Collection?.is_owner && Collection.status !== "published" ? (
           <div
-            onClick={() =>
-              history.push(
-                `${
-                  Collection?.type === "product"
-                    ? `/product-nft?collectionId=${collectionId}`
-                    : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}`
-                }`
-              )
+            onClick={
+              Collection.type === "product" && isSupplyOver
+                ? null
+                : () =>
+                    history.push(
+                      `${
+                        Collection?.type === "product"
+                          ? `/product-nft?collectionId=${collectionId}`
+                          : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}`
+                      }`
+                    )
             }
-            className="mint-button mt-3 text-center font-satoshi-bold w-full md:w-fit"
+            className={`mint-button mt-3 text-center font-satoshi-bold w-full md:w-fit ${
+              Collection.type === "product" && isSupplyOver ? "grayscale" : ""
+            }`}
           >
             <span> Create NFT</span>
           </div>
@@ -893,7 +908,7 @@ const CollectionDetail = () => {
                   NFT
                 </button>
               </li>
-              {Collection?.is_owner && (
+              {/* {Collection?.is_owner && (
                 <li
                   className="mr-2"
                   role="presentation"
@@ -915,7 +930,7 @@ const CollectionDetail = () => {
                     Royalty Splitter
                   </button>
                 </li>
-              )}
+              )} */}
             </ul>
           </div>
           <div id="myTabContent">

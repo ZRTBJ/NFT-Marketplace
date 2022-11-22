@@ -13,6 +13,17 @@ const abi = [
     type: "constructor",
   },
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "operator",
+        type: "address",
+      },
+    ],
+    name: "OperatorNotAllowed",
+    type: "error",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -60,6 +71,25 @@ const abi = [
       },
     ],
     name: "ApprovalForAll",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "newRoyaltyRecipient",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "newRoyaltyBps",
+        type: "uint256",
+      },
+    ],
+    name: "DefaultRoyalty",
     type: "event",
   },
   {
@@ -180,6 +210,31 @@ const abi = [
     anonymous: false,
     inputs: [
       {
+        indexed: true,
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "royaltyRecipient",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "royaltyBps",
+        type: "uint256",
+      },
+    ],
+    name: "RoyaltyForToken",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: false,
         internalType: "uint256",
         name: "tokenId",
@@ -224,7 +279,7 @@ const abi = [
     inputs: [
       {
         internalType: "address",
-        name: "to",
+        name: "operator",
         type: "address",
       },
       {
@@ -271,35 +326,16 @@ const abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_tokenId",
-        type: "uint256",
-      },
-    ],
-    name: "burn",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32[]",
-        name: "_merkleProof",
-        type: "bytes32[]",
-      },
-    ],
-    name: "checkValidity",
+    inputs: [],
+    name: "contractType",
     outputs: [
       {
-        internalType: "bool",
+        internalType: "bytes32",
         name: "",
-        type: "bool",
+        type: "bytes32",
       },
     ],
-    stateMutability: "view",
+    stateMutability: "pure",
     type: "function",
   },
   {
@@ -313,6 +349,19 @@ const abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "contractVersion",
+    outputs: [
+      {
+        internalType: "uint8",
+        name: "",
+        type: "uint8",
+      },
+    ],
+    stateMutability: "pure",
     type: "function",
   },
   {
@@ -354,6 +403,24 @@ const abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "getDefaultRoyaltyInfo",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+      {
+        internalType: "uint16",
+        name: "",
+        type: "uint16",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
@@ -379,6 +446,30 @@ const abi = [
         internalType: "struct LibPart.Part[]",
         name: "",
         type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_tokenId",
+        type: "uint256",
+      },
+    ],
+    name: "getRoyaltyInfoForToken",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+      {
+        internalType: "uint16",
+        name: "",
+        type: "uint16",
       },
     ],
     stateMutability: "view",
@@ -439,19 +530,24 @@ const abi = [
         type: "string",
       },
       {
-        internalType: "uint256",
-        name: "_royaltyBips",
-        type: "uint256",
+        internalType: "uint128",
+        name: "_royaltyBps",
+        type: "uint128",
       },
       {
         internalType: "address",
-        name: "_royaltyReceiver",
+        name: "_royaltyRecipient",
         type: "address",
       },
       {
         internalType: "address",
         name: "_creatorDAO",
         type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_maxSupply",
+        type: "uint256",
       },
     ],
     name: "initialize",
@@ -622,38 +718,25 @@ const abi = [
   },
   {
     inputs: [],
-    name: "royaltiesAddress",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "royaltiesBasisPoints",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "royaltiesEnabled",
     outputs: [
       {
         internalType: "bool",
         name: "",
         type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "royaltyBps",
+    outputs: [
+      {
+        internalType: "uint128",
+        name: "",
+        type: "uint128",
       },
     ],
     stateMutability: "view",
@@ -676,13 +759,26 @@ const abi = [
     outputs: [
       {
         internalType: "address",
-        name: "",
+        name: "receiver",
         type: "address",
       },
       {
         internalType: "uint256",
-        name: "",
+        name: "royaltyAmount",
         type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "royaltyRecipient",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -760,6 +856,24 @@ const abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "_royaltyRecipient",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_royaltyBps",
+        type: "uint256",
+      },
+    ],
+    name: "setDefaultRoyaltyInfo",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "uint256",
         name: "_primaryMintPrice",
         type: "uint256",
@@ -796,12 +910,22 @@ const abi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "_tokenId",
+        type: "uint256",
+      },
+      {
         internalType: "address",
-        name: "_royaltyReceiver",
+        name: "_recipient",
         type: "address",
       },
+      {
+        internalType: "uint256",
+        name: "_bps",
+        type: "uint256",
+      },
     ],
-    name: "setRoyaltyAddress",
+    name: "setRoyaltyInfoForToken",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -874,24 +998,6 @@ const abi = [
     inputs: [
       {
         internalType: "address",
-        name: "_to",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "_tokenId",
-        type: "uint256",
-      },
-    ],
-    name: "transferByOwner",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
         name: "from",
         type: "address",
       },
@@ -920,19 +1026,6 @@ const abi = [
       },
     ],
     name: "transferOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_merkleRoot",
-        type: "bytes32",
-      },
-    ],
-    name: "updateMerkleRoot",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

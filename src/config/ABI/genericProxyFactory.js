@@ -120,6 +120,11 @@ const abi = [
                     name: "creatorDAO",
                     type: "address",
                   },
+                  {
+                    internalType: "uint256",
+                    name: "maxSupply",
+                    type: "uint256",
+                  },
                 ],
                 internalType: "struct Config.Runtime",
                 name: "runConfig",
@@ -297,6 +302,11 @@ const abi = [
                     internalType: "address",
                     name: "creatorDAO",
                     type: "address",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "maxSupply",
+                    type: "uint256",
                   },
                 ],
                 internalType: "struct Config.Runtime",
