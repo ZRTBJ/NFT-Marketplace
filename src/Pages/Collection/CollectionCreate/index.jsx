@@ -220,7 +220,7 @@ export default function CollectionCreate() {
   }
   // Freeze MetaData end
   // Token Transferable start
-  const [isTokenTransferable, setIsTokenTransferable] = useState(false);
+  const [isTokenTransferable, setIsTokenTransferable] = useState(true);
   const [showTokenTransferable, setShowTokenTransferable] = useState(true);
   const [tokenTransferableDisabled, setTokenTransferableDisabled] =
     useState(false);
@@ -256,6 +256,20 @@ export default function CollectionCreate() {
   }
 
   // Royalty Percentage end
+
+  //Supply
+  const [supply, setSupply] = useState(0);
+  const [supplyDisable, setSupplyDisable] = useState(false);
+  const [isSupplyValid, setIsSupplyValid] = useState(true);
+
+  const handleSupplyValue = (e) => {
+    if (e.target.value <= 0) {
+      setIsSupplyValid(false);
+    } else {
+      setIsSupplyValid(true);
+    }
+    setSupply(e.target.value);
+  };
 
   const [outlineKey, setoutlineKey] = useState(0);
   let query = useQuery();
@@ -349,7 +363,6 @@ export default function CollectionCreate() {
       .then((res) => {
         if (res.code === 0) {
           projectId = res.collection.id;
-          let members = [{ wallet_address: userinfo?.eoa, royalty: 100 }];
           setProjectCreated(true);
           setProjectId(projectId);
         } else {
@@ -379,6 +392,7 @@ export default function CollectionCreate() {
       isTokenTransferable: isTokenTransferable,
       royaltyPercentage: royaltyPercentage,
       collectionSymbol: daoSymbol,
+      total_supply: supply,
       id: id,
     };
     await updateCollection(updatePayload);
@@ -405,6 +419,7 @@ export default function CollectionCreate() {
         setIsTokenTransferable(response.token_transferable);
         setIsMetaDataFreezed(response.updatable);
         setRoyaltyPercentage(response.royalty_percent);
+        setSupply(response.total_supply);
         setCollectionType(response.type);
         setDataIsLoading(false);
         setProjectInfo(response);
@@ -427,6 +442,7 @@ export default function CollectionCreate() {
           setFreezeMetadataDisabled(true);
           setTokenTransferableDisabled(true);
           setRoyaltyPercentageDisable(true);
+          setSupplyDisable(true);
         }
         if (!response.is_owner) {
           setNotOwner(true);
@@ -435,23 +451,6 @@ export default function CollectionCreate() {
         setDataIsLoading(false);
         showErrorModal(true);
       }
-
-      // setProjectInfo(e.project);
-      // setProjectStatus(response.project_status);
-      // let cover = response.assets.find((x) => x.asset_purpose === "cover");
-      // setCoverPhotoUrl(cover ? cover : "");
-      // let photosInfoData = response.assets.filter(
-      //   (x) => x.asset_purpose === "subphoto"
-      // );
-
-      // let constPhotosName = ["img1", "img2", "img3", "img4"];
-      // let photosname = [];
-      // photosname = photosInfoData.map((e) => {
-      //   return e.name;
-      // });
-      // let remainingPhotosName = constPhotosName.filter(function (v) {
-      //   return !photosname.includes(v);
-      // });
     });
   }
   function handelClickNext() {
@@ -468,6 +467,9 @@ export default function CollectionCreate() {
       if (collectionType === "") {
         setEmptyCollectionType(true);
       }
+      if (!supply) {
+        setIsSupplyValid(false);
+      }
       if (projectCategory === "") {
         setEmptyProjectCategory(true);
       } else if (
@@ -478,27 +480,21 @@ export default function CollectionCreate() {
         alreadyTakenDaoSymbol === false &&
         isRoyaltyPercentageValid
       ) {
-        const payload = {
-          logo: logoPhoto.length > 0 ? logoPhoto[0] : null,
-          name: projectName,
-          overview: overview,
-          cover: coverPhoto.length > 0 ? coverPhoto[0] : null,
-          // primaryRoyalties: primaryRoyalties,
-          // secondaryRoyalties: secondaryRoyalties,
-          collectionType: collectionType,
-          webLinks: JSON.stringify(webLinks),
-          category_id: projectCategory,
-          blockchainCategory: blockchainCategory,
-          isMetaDaFreezed: isMetaDaFreezed,
-          isTokenTransferable: isTokenTransferable,
-          royaltyPercentage: royaltyPercentage,
-          projectCategoryName: projectCategoryName,
-        };
-        const categoryName = projectCategoryList.find(
-          (x) => x.id === parseInt(projectCategory)
-        );
-        setProjectCategoryName(categoryName ? categoryName.name : "");
-        setcurrentStep([1, 2]);
+        if (collectionType === "product") {
+          if (supply && isSupplyValid) {
+            const categoryName = projectCategoryList.find(
+              (x) => x.id === parseInt(projectCategory)
+            );
+            setProjectCategoryName(categoryName ? categoryName.name : "");
+            setcurrentStep([1, 2]);
+          }
+        } else {
+          const categoryName = projectCategoryList.find(
+            (x) => x.id === parseInt(projectCategory)
+          );
+          setProjectCategoryName(categoryName ? categoryName.name : "");
+          setcurrentStep([1, 2]);
+        }
       }
     }
   }
@@ -537,9 +533,9 @@ export default function CollectionCreate() {
   }, [dao_id]);
   useEffect(() => {
     setCollectionType(collectionType);
-    if (collectionType === "membership" || collectionType === "product") {
-      setTokenTransferableDisabled(true);
-      setIsTokenTransferable(true);
+    if (collectionType === "membership") {
+      setIsMetaDataFreezed(false);
+      // setIsTokenTransferable(true);
     }
   }, [collectionType]);
 
@@ -648,9 +644,7 @@ export default function CollectionCreate() {
                     showFreezeMetadata={
                       collectionType === "membership" ? false : true
                     }
-                    isMetadataFreezed={
-                      collectionType === "membership" ? false : true
-                    }
+                    isMetadataFreezed={isMetaDaFreezed}
                     onMetadataFreezeChange={onMetadataFreezeChange}
                     freezeMetadataDisabled={freezeMetadataDisabled}
                     // Token Transferable
@@ -664,6 +658,12 @@ export default function CollectionCreate() {
                     royaltyPercentage={royaltyPercentage}
                     onRoyaltyPercentageChange={onRoyaltyPercentageChange}
                     isRoyaltyPercentageValid={isRoyaltyPercentageValid}
+                    //Supply
+                    showSupply={collectionType === "product" ? true : false}
+                    supply={supply}
+                    handleSupplyValue={handleSupplyValue}
+                    supplyDisable={supplyDisable}
+                    isSupplyValid={isSupplyValid}
                   />
                 </div>
               )}
@@ -710,6 +710,8 @@ export default function CollectionCreate() {
                   isTokenTransferable={isTokenTransferable}
                   showRoyaltyPercentage={showRoyalties}
                   royaltyPercentage={royaltyPercentage}
+                  showSupplyData={collectionType === "product" ? true : false}
+                  supply={supply}
                 />
               )}
             </div>

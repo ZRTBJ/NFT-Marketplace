@@ -201,12 +201,10 @@ const ProfileSettingsForm = () => {
 
           {/* photo */}
           <div>
-            <div className="text-xl font-bold mb-4">
-              Set your profile Picture
-            </div>
+            <div className="text-xl font-bold mb-4">Set your profile</div>
             <div className="label">Profile Picture</div>
             <div className="label-grey">
-              Add your profile picture, yoiu can image you want like NFT or real
+              Add your profile picture, you can image you want like NFT or real
               picture. and let user identify yourself
             </div>
             <div className="md:flex flex-wrap mb-6">

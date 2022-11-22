@@ -102,6 +102,13 @@ export default function Outline({
   royaltyPercentage,
   onRoyaltyPercentageChange,
   isRoyaltyPercentageValid,
+
+  //Supply
+  showSupply,
+  supply,
+  supplyDisable,
+  isSupplyValid,
+  handleSupplyValue,
 }) {
   const [projectCategoryList, setProjectCategoryList] = useState([]);
   useEffect(() => {
@@ -314,7 +321,7 @@ export default function Outline({
             Upload Gallery Picture
           </div>
           <div className="text-textSubtle text-[13px] mb-4">
-            PNG, GIF, WEBP, MP4 or MP3. Max 100mb.
+            PNG, GIF, JPG, SVG, JPEG. Max 28 MB.
           </div>
           <div className="md:flex md:flex-wrap mb-6">
             <div className="w-full md:w-[165px] mr-3 mb-2">
@@ -437,10 +444,11 @@ export default function Outline({
             {webLinks.map((link, index) => (
               <div key={index} className="inline-flex items-center w-full mb-4">
                 <i
-                  className={` ${link.title.startsWith("customLinks")
+                  className={` ${
+                    link.title.startsWith("customLinks")
                       ? `fa-solid fa-${link.icon}`
                       : `fa-brands fa-${link.icon}`
-                    }  text-[24px] text-primary-900  mr-2`}
+                  }  text-[24px] text-primary-900  mr-2`}
                 ></i>
                 <input
                   className={`block w-full border border-divider h-[48px] text-[14px] text-textSubtle rounded  pl-3  outline-none`}
@@ -561,14 +569,14 @@ export default function Outline({
           <p className="text-txtSubtle text-[14px]">Metadata update</p>
           {freezeMetadataDisabled ? (
             <label
-              htmlFor="checked-toggle"
+              htmlFor="metadata-update"
               className="inline-flex relative items-center cursor-pointer ml-auto"
             >
               <input
                 disabled
                 type="checkbox"
                 value={isMetadataFreezed}
-                id="checked-toggle"
+                id="metadata-update"
                 checked={isMetadataFreezed}
                 className="sr-only peer outline-none"
                 onChange={(e) => onMetadataFreezeChange(isMetadataFreezed)}
@@ -577,13 +585,13 @@ export default function Outline({
             </label>
           ) : (
             <label
-              htmlFor="checked-toggle"
+              htmlFor="metadata-update"
               className="inline-flex relative items-center cursor-pointer ml-auto"
             >
               <input
                 type="checkbox"
                 value={isMetadataFreezed}
-                id="checked-toggle"
+                id="metadata-update"
                 checked={isMetadataFreezed}
                 className="sr-only peer outline-none"
                 onChange={(e) => onMetadataFreezeChange(isMetadataFreezed)}
@@ -623,6 +631,33 @@ export default function Outline({
             {royaltyPercentageDisable && (
               <h3 className="text-textSubtle">{royaltyPercentage} %</h3>
             )}
+          </div>
+        </div>
+      )}
+      {showSupply && (
+        <div>
+          <div className="mb-6">
+            <div className="flex flex-wrap items-center mb-4">
+              <Tooltip></Tooltip>
+              <div className="txtblack text-[14px]">Supply</div>
+            </div>
+            {!supplyDisable && (
+              <>
+                <input
+                  type="number"
+                  min="0"
+                  onChange={handleSupplyValue}
+                  className="debounceInput mt-1"
+                  value={supply}
+                />
+                {!isSupplyValid && (
+                  <div className="validationTag">
+                    Supply must be a number and greater than 0.
+                  </div>
+                )}
+              </>
+            )}
+            {supplyDisable && <h3 className="text-textSubtle">{supply}</h3>}
           </div>
         </div>
       )}
