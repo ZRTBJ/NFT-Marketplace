@@ -454,6 +454,7 @@ const CollectionDetail = () => {
     }
   };
 
+  let isSupplyOver = Collection?.total_supply <= NFTs?.length;
   return (
     <div className="mx-4 md:mx-0">
       {showNetworkHandler && (
@@ -859,16 +860,21 @@ const CollectionDetail = () => {
       <section>
         {Collection?.is_owner && Collection.status !== "published" ? (
           <div
-            onClick={() =>
-              history.push(
-                `${
-                  Collection?.type === "product"
-                    ? `/product-nft?collectionId=${collectionId}`
-                    : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}`
-                }`
-              )
+            onClick={
+              Collection.type === "product" && isSupplyOver
+                ? null
+                : () =>
+                    history.push(
+                      `${
+                        Collection?.type === "product"
+                          ? `/product-nft?collectionId=${collectionId}`
+                          : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}`
+                      }`
+                    )
             }
-            className="mint-button mt-3 text-center font-satoshi-bold w-full md:w-fit"
+            className={`mint-button mt-3 text-center font-satoshi-bold w-full md:w-fit ${
+              Collection.type === "product" && isSupplyOver ? "grayscale" : ""
+            }`}
           >
             <span> Create NFT</span>
           </div>
