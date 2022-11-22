@@ -321,7 +321,7 @@ export default function Outline({
             Upload Gallery Picture
           </div>
           <div className="text-textSubtle text-[13px] mb-4">
-            PNG, GIF, WEBP, MP4 or MP3. Max 100mb.
+            PNG, GIF, JPG, SVG, JPEG. Max 28 MB.
           </div>
           <div className="md:flex md:flex-wrap mb-6">
             <div className="w-full md:w-[165px] mr-3 mb-2">

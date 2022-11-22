@@ -772,6 +772,8 @@ const CollectionDetail = () => {
                     charLimit={300}
                     readMoreText={"Read more ▼"}
                     readLessText={"Read less ▲"}
+                    readMoreClassName="font-bold"
+                    readLessClassName="font-bold"
                   >
                     {Collection.description}
                   </ReactReadMoreReadLess>

@@ -94,116 +94,112 @@ const InfoCard = ({
       </div>
       <div className="mt-2">
         <h3>About</h3>
-        {project.overview ? (
-          <div className="whitespace-pre-line text-textLight text-sm break-all">
+        <div className="lg:flex">
+          <div className="whitespace-pre-line  text-textLight text-sm break-normal w-full md:max-w-[800px] md:flex md:flex-col justify-between">
             <ReactReadMoreReadLess
-              charLimit={300}
+              className="dao-details-read-less-more"
+              charLimit={400}
               readMoreText={"Read more ▼"}
-              readLessText={"...Read less ▲"}
+              readLessText={"Read less ▲"}
+              readMoreClassName="font-bold"
+              readLessClassName="font-bold"
             >
-              {project.overview}
+              {project?.overview
+                ? project.overview
+                : "Please add description to show here"}
             </ReactReadMoreReadLess>
-          </div>
-        ) : (
-          <p className="text-textLight text-sm">
-            Please add description to show here
-          </p>
-        )}
-      </div>
-
-      <div className="md:flex items-end">
-        <div className="md:flex-1 ">
-          <div className={`flex mt-4 mb-4 md:mb-0 `}>
-            {project?.is_owner && (
-              <>
-                {project?.project_status === "published" ? (
-                  <>
-                    <button
-                      onClick={() => setShowTransferFundModal(true)}
-                      className="contained-button w-[120px] text-center !px-0 mr-4 cursor-pointer font-satoshi-bold cursor-pointer"
-                    >
-                      Transfer Funds
-                    </button>
-                    <Link to={`/project-create?id=${project?.id}`}>
-                      <button className="outlined-button w-[120px] text-center !px-0 mr-4 cursor-pointer font-satoshi-bold cursor-pointer">
-                        <span className="gradient-text">Edit</span>
+            <div className={`flex mt-4 mb-4 md:mb-0`}>
+              {project?.is_owner && (
+                <>
+                  {project?.project_status === "published" ? (
+                    <>
+                      <button
+                        onClick={() => setShowTransferFundModal(true)}
+                        className="contained-button w-[120px] text-center !px-0 mr-4 cursor-pointer font-satoshi-bold cursor-pointer"
+                      >
+                        Transfer Funds
                       </button>
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      onClick={handlePublishModal}
-                      className="contained-button w-[120px] text-center !px-0 mr-4 cursor-pointer font-satoshi-bold cursor-pointer"
-                    >
-                      Publish
-                    </button>
-                    <Link to={`/project-create?id=${project?.id}`}>
-                      <button className="outlined-button w-[120px] text-center !px-0 mr-4 cursor-pointer font-satoshi-bold cursor-pointer">
-                        <span className="gradient-text">Edit</span>
+                      <Link to={`/project-create?id=${project?.id}`}>
+                        <button className="outlined-button w-[120px] text-center !px-0 mr-4 cursor-pointer font-satoshi-bold cursor-pointer">
+                          <span className="gradient-text">Edit</span>
+                        </button>
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={handlePublishModal}
+                        className="contained-button w-[120px] text-center !px-0 mr-4 cursor-pointer font-satoshi-bold cursor-pointer"
+                      >
+                        Publish
                       </button>
-                    </Link>
-                  </>
-                )}
-              </>
-            )}
-          </div>
-        </div>
-        <div className="md:flex md:items-center pb-4 md:pb-0 md:justify-center md:self-end md:flex-wrap mt-3 md:justify-end  md:mt-0">
-          {project?.project_status === "published" ? (
-            <div className="bg-[#122478]/[0.05]  md:mt-4 md:ml-3  rounded-md py-4 px-4 relative w-full md:min-w-[260px]">
-              <div className="flex">
-                <p className=" text-textSubtle mt-1">
-                  Net Worth{" "}
-                  <i
-                    onClick={getProjectNetWorth}
-                    className={`fa-regular fa-arrows-rotate text-textSubtle text-sm ${
-                      balanceLoading ? "fa-spin" : ""
-                    } cursor-pointer`}
-                  ></i>
-                </p>
-                <div className="ml-auto">
-                  <p className="pb-0 text-black font-black text-[16px] md:text-[20px] ">
-                    {newWorth?.balance} {newWorth?.currency?.toUpperCase()}
-                  </p>
-                  <p className="text-sm  mt-0 text-textSubtle">
-                    (${newWorth.balanceUSD.toFixed(2)})
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center mb-1">
-                <p className=" text-textSubtle mt-1">Collections</p>
-                <div className="ml-auto">
-                  <p className="text-black mr-2 text-black font-black text-[16px] md:text-[20px]">
-                    {collection?.total}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center">
-                <p className=" text-textSubtle mt-1">BlockChain</p>
-                <div className="ml-auto">
-                  <img
-                    src={NETWORKS[Number(project?.blockchain)].icon}
-                    className=" h-[24px] w-[24px] object-cover rounded-full"
-                    alt=""
-                  />
-                </div>
-              </div>
-              <div className="text-right mt-2 mr-2">
-                <p className="text-sm	 mt-1">
-                  Powered by{" "}
-                  <a
-                    target="_blank"
-                    rel="noreferrer"
-                    className="ml-1 font-bold"
-                    href="https://www.coingecko.com/"
-                  >
-                    CoinGecko
-                  </a>
-                </p>
-              </div>
+                      <Link to={`/project-create?id=${project?.id}`}>
+                        <button className="outlined-button w-[120px] text-center !px-0 mr-4 cursor-pointer font-satoshi-bold cursor-pointer">
+                          <span className="gradient-text">Edit</span>
+                        </button>
+                      </Link>
+                    </>
+                  )}
+                </>
+              )}
             </div>
-          ) : null}
+          </div>
+          <div className="md:flex md:items-center pb-4 md:pb-0  md:ml-auto md:flex-wrap   md:mt-0">
+            {project?.project_status === "published" ? (
+              <div className="bg-[#122478]/[0.05]    rounded-md py-4 px-4 relative w-full md:min-w-[260px]">
+                <div className="flex">
+                  <p className=" text-textSubtle mt-1">
+                    Net Worth{" "}
+                    <i
+                      onClick={getProjectNetWorth}
+                      className={`fa-regular fa-arrows-rotate text-textSubtle text-sm ${
+                        balanceLoading ? "fa-spin" : ""
+                      } cursor-pointer`}
+                    ></i>
+                  </p>
+                  <div className="ml-auto">
+                    <p className="pb-0 text-black font-black text-[16px] md:text-[20px] ">
+                      {newWorth?.balance} {newWorth?.currency?.toUpperCase()}
+                    </p>
+                    <p className="text-sm  mt-0 text-textSubtle">
+                      (${newWorth?.balanceUSD?.toFixed(2)})
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center mb-1">
+                  <p className=" text-textSubtle mt-1">Collections</p>
+                  <div className="ml-auto">
+                    <p className="text-black mr-2 text-black font-black text-[16px] md:text-[20px]">
+                      {collection?.total}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <p className=" text-textSubtle mt-1">BlockChain</p>
+                  <div className="ml-auto">
+                    <img
+                      src={NETWORKS[Number(project?.blockchain)].icon}
+                      className=" h-[24px] w-[24px] object-cover rounded-full"
+                      alt=""
+                    />
+                  </div>
+                </div>
+                <div className="text-right mt-2 mr-2">
+                  <p className="text-sm	 mt-1">
+                    Powered by{" "}
+                    <a
+                      target="_blank"
+                      rel="noreferrer"
+                      className="ml-1 font-bold"
+                      href="https://www.coingecko.com/"
+                    >
+                      CoinGecko
+                    </a>
+                  </p>
+                </div>
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
     </div>
