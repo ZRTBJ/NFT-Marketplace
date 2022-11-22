@@ -908,7 +908,7 @@ const CollectionDetail = () => {
                   NFT
                 </button>
               </li>
-              {Collection?.is_owner && (
+              {/* {Collection?.is_owner && (
                 <li
                   className="mr-2"
                   role="presentation"
@@ -930,7 +930,7 @@ const CollectionDetail = () => {
                     Royalty Splitter
                   </button>
                 </li>
-              )}
+              )} */}
             </ul>
           </div>
           <div id="myTabContent">
