@@ -520,7 +520,15 @@ const CollectionDetail = () => {
             setShowErrorModal(false);
             setErrorMsg(null);
           }}
+          redirection={
+            errorMsg === `DAO is not published yet `
+              ? `/project-details/${Collection?.project_uid}`
+              : false
+          }
           show={showErrorModal}
+          buttomText={
+            errorMsg === `DAO is not published yet ` ? "View DAO" : "Close"
+          }
         />
       )}
       {showDeployModal && (
