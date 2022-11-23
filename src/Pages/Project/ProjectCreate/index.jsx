@@ -109,15 +109,18 @@ export default function ProjectCreate() {
   const [photos, setPhotos] = useState([]);
   const [photosUrl, setPhotosUrl] = useState([]);
   const onPhotosSelect = useCallback((params, photos) => {
-    if (photosLengthFromResponse + params.length > 4) {
-      alert("Maximum 4 photos");
+    if (photosLengthFromResponse + params.length > 7) {
+      setShowErrorModal(true);
+      setErrorMessage("Maximum 7 picture can be upload");
     } else {
       let totalSize = 0;
       params.forEach((element) => {
         totalSize = totalSize + element.size;
       });
-      if (totalSize > 16000000) {
-        alert("Size Exceed");
+
+      if (totalSize > 29360128) {
+        setShowErrorModal(true);
+        setErrorMessage("Maximum 28 MB can be upload");
       } else {
         let objectUrl = [];
         params.forEach((element) => {
@@ -139,35 +142,52 @@ export default function ProjectCreate() {
         assetsId: i.id,
       };
       setDataIsLoading(true);
-      await deleteAssetsOfProject(payload).then((e) => {
-        setUpPhotos();
-        setDataIsLoading(false);
-      });
+      await deleteAssetsOfProject(payload)
+        .then((e) => {
+          setUpPhotos();
+        })
+        .catch(() => {
+          setDataIsLoading(false);
+        });
     } else {
       setPhotosUrl(photosUrl.filter((x) => x.name !== i.name));
+      setPhotos(photos.filter((x) => x.name !== i.name));
     }
   }
   async function setUpPhotos() {
     let payload = {
       id: projectId,
     };
-    await getProjectDetailsById(payload).then((e) => {
-      let response = e.project;
-      let photosInfoData = response.assets.filter(
-        (x) => x.asset_purpose === "subphoto"
-      );
-      setPhotosLengthFromResponse(photosInfoData.length);
-      setPhotosUrl(photosInfoData);
-      let constPhotosName = ["img1", "img2", "img3", "img4"];
-      let photosname = [];
-      photosname = photosInfoData.map((e) => {
-        return e.name;
+    await getProjectDetailsById(payload)
+      .then((e) => {
+        let response = e.project;
+        let photosInfoData = response?.assets?.filter(
+          (x) => x.asset_purpose === "subphoto"
+        );
+        setPhotosLengthFromResponse(photosInfoData.length);
+        setPhotosUrl(photosInfoData);
+        let constPhotosName = [
+          "img1",
+          "img2",
+          "img3",
+          "img4",
+          "img5",
+          "img6",
+          "img7",
+        ];
+        let photosname = [];
+        photosname = photosInfoData.map((e) => {
+          return e.name;
+        });
+        let remainingPhotosName = constPhotosName.filter(function (v) {
+          return !photosname.includes(v);
+        });
+        setRemainingPhotosName(remainingPhotosName);
+        setDataIsLoading(false);
+      })
+      .catch(() => {
+        setDataIsLoading(false);
       });
-      let remainingPhotosName = constPhotosName.filter(function (v) {
-        return !photosname.includes(v);
-      });
-      setRemainingPhotosName(remainingPhotosName);
-    });
   }
   // Photos End
 
@@ -217,6 +237,7 @@ export default function ProjectCreate() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [projectCategoryList, setProjectCategoryList] = useState([]);
   const [notOwner, setNotOwner] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   function handelClickBack() {
     let currentIndex = currentStep.pop();
@@ -331,26 +352,34 @@ export default function ProjectCreate() {
       } else {
         // console.log(response);
 
-        setBlockchaainCategory(response.blockchain.toString());
-        setProjectCategory(response.category_id);
-        setProjectName(response.name);
-        setDaoWallet(response.treasury_wallet);
+        setBlockchaainCategory(response?.blockchain?.toString());
+        setProjectCategory(response?.category_id);
+        setProjectName(response?.name);
+        setDaoWallet(response?.treasury_wallet);
         setProjectCreated(true);
         setProjectId(id);
-        setOverview(response.overview);
+        setOverview(response?.overview);
         try {
-          setWebLinks(JSON.parse(response.urls));
+          setWebLinks(JSON.parse(response?.urls));
         } catch (error) {
           console.log(error);
         }
-        const logo = response.assets.find((x) => x.asset_purpose === "cover");
+        const logo = response?.assets?.find((x) => x.asset_purpose === "cover");
         setLogoPhotoUrl(logo ? logo : "");
-        let photosInfoData = response.assets.filter(
+        let photosInfoData = response?.assets?.filter(
           (x) => x.asset_purpose === "subphoto"
         );
         setPhotosLengthFromResponse(photosInfoData.length);
         setPhotosUrl(photosInfoData);
-        let constPhotosName = ["img1", "img2", "img3", "img4"];
+        let constPhotosName = [
+          "img1",
+          "img2",
+          "img3",
+          "img4",
+          "img5",
+          "img6",
+          "img7",
+        ];
         let photosname = [];
         photosname = photosInfoData.map((e) => {
           return e.name;
@@ -359,11 +388,11 @@ export default function ProjectCreate() {
           return !photosname.includes(v);
         });
         setRemainingPhotosName(remainingPhotosName);
-        if (response.project_status === "published") {
+        if (response?.project_status === "published") {
           setProjectNameDisabled(true);
           setDaoWalletDisable(true);
         }
-        if (!response.is_owner) {
+        if (!response?.is_owner) {
           setNotOwner(true);
         }
         setDataIsLoading(false);
@@ -384,6 +413,10 @@ export default function ProjectCreate() {
 
       if (projectCategory === "") {
         setEmptyProjectCategory(true);
+      }
+      if (photos.length + photosLengthFromResponse > 7) {
+        setShowErrorModal(true);
+        setErrorMessage("Maximum 7 picture can be upload");
       } else if (
         projectName !== "" &&
         // daoSymbol !== "" &&
@@ -588,8 +621,12 @@ export default function ProjectCreate() {
       )}
       {showErrorModal && (
         <ErrorModal
-          handleClose={() => setShowErrorModal(false)}
+          handleClose={() => {
+            setShowErrorModal(false);
+            setErrorMessage("");
+          }}
           show={showErrorModal}
+          message={errorMessage}
           redirection={"/project-create"}
         />
       )}

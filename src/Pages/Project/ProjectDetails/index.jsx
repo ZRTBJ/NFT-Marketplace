@@ -211,6 +211,7 @@ export default function ProjectDetails(props) {
                       className="mr-2"
                       role="presentation"
                       onClick={() => setSelectedTab(tab.id)}
+                      key={tab.id}
                     >
                       <button
                         className={`inline-block py-2 md:p-4 md:text-lg rounded-t-lg ${

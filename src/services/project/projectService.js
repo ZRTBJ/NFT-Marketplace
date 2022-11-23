@@ -81,14 +81,12 @@ export async function updateProject(payload) {
           photoIndex = photoIndex + 1;
         });
       } else {
-        if (payload.photos.length === payload.remainingPhotosName.length) {
-          for (let index = 0; index < payload.photos.length; index++) {
-            const element = payload.photos[index];
-            bodyFormData.append(
-              `image_${payload.remainingPhotosName[index][3]}`,
-              element
-            );
-          }
+        for (let index = 0; index < payload.photos.length; index++) {
+          const element = payload.photos[index];
+          bodyFormData.append(
+            `image_${payload.remainingPhotosName[index][3]}`,
+            element
+          );
         }
       }
     }
