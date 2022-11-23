@@ -166,7 +166,7 @@ const SalesSettingsTab = ({ projectNetwork }) => {
                 <li onClick={() => handleSortType("newer")}>
                   <div
                     className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${
-                      payload.order_by === "newer"
+                      payload?.order_by === "newer"
                         ? "text-primary-900"
                         : "text-txtblack"
                     } hover:bg-slate-50 transition duration-150 ease-in-out`}
@@ -177,7 +177,7 @@ const SalesSettingsTab = ({ projectNetwork }) => {
                 <li onClick={() => handleSortType("older")}>
                   <div
                     className={`cursor-pointer dropdown-item py-2 px-4 block whitespace-nowrap ${
-                      payload.order_by === "older"
+                      payload?.order_by === "older"
                         ? "text-primary-900"
                         : "text-txtblack"
                     } hover:bg-slate-50 transition duration-150 ease-in-out`}

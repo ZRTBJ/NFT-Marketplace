@@ -88,12 +88,14 @@ export default function ProjectDetails(props) {
       .then((res) => {
         if (res.code === 0) {
           setProject(res.project);
-          if (res?.project?.assets && res?.project?.assets.length > 0) {
+          if (res?.project?.assets && res?.project?.assets?.length > 0) {
             setCoverImages(
-              res.project.assets.find((img) => img["asset_purpose"] === "cover")
+              res.project?.assets?.find(
+                (img) => img["asset_purpose"] === "cover"
+              )
             );
           }
-          if (res.project.urls) {
+          if (res.project?.urls) {
             const urls = JSON.parse(res.project.urls);
             if (urls.length) setLinks(urls);
           }
@@ -107,7 +109,7 @@ export default function ProjectDetails(props) {
 
   async function intiProjectPublish() {
     setShowPublishModal(false);
-    if (project.project_status === "publishing") {
+    if (project?.project_status === "publishing") {
       setPublishStep(1);
       setShowDeployModal(true);
     } else {
@@ -209,6 +211,7 @@ export default function ProjectDetails(props) {
                       className="mr-2"
                       role="presentation"
                       onClick={() => setSelectedTab(tab.id)}
+                      key={tab.id}
                     >
                       <button
                         className={`inline-block py-2 md:p-4 md:text-lg rounded-t-lg ${
@@ -280,7 +283,7 @@ export default function ProjectDetails(props) {
                 projectDetails(projectId);
               }}
               projectId={projectId}
-              projectName={project.name}
+              projectName={project?.name}
               publishStep={publishStep}
             />
           )}
@@ -311,8 +314,8 @@ export default function ProjectDetails(props) {
           )}
           {showTransferFundModal && (
             <LeavingSite
-              network={project.blockchain}
-              treasuryAddress={project.treasury_wallet}
+              network={project?.blockchain}
+              treasuryAddress={project?.treasury_wallet}
               show={showTransferFundModal}
               handleClose={() => setShowTransferFundModal(false)}
             />

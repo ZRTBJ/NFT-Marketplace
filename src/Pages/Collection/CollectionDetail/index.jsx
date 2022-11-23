@@ -216,7 +216,7 @@ const CollectionDetail = () => {
           }
           setCollection(resp.collection);
           setCollectionType(resp.collection.type);
-          if (resp?.collection?.assets && resp?.collection?.assets.length > 0) {
+          if (resp?.collection?.assets && resp.collection.assets.length > 0) {
             setCoverImages(
               resp.collection.assets.find(
                 (img) => img["asset_purpose"] === "cover"
@@ -231,7 +231,7 @@ const CollectionDetail = () => {
           if (resp?.collection?.links) {
             const webLinks = [];
             try {
-              const urls = JSON.parse(resp?.collection.links);
+              const urls = JSON.parse(resp.collection.links);
               for (let url of urls) {
                 webLinks.push({
                   title: Object.values(url)[0],
@@ -294,7 +294,7 @@ const CollectionDetail = () => {
         `${
           Collection?.type === "product"
             ? `/product-nft?collectionId=${collectionId}&nftId=${nft.id}`
-            : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}&nftId=${nft.id}`
+            : `/membershipNFT?dao_id=${Collection?.project_uid}&collection_id=${collectionId}&nftId=${nft.id}`
         }`
       );
     } else if (Collection?.status === "published") {
@@ -908,7 +908,7 @@ const CollectionDetail = () => {
                   NFT
                 </button>
               </li>
-              {/* {Collection?.is_owner && (
+              {Collection?.is_owner && (
                 <li
                   className="mr-2"
                   role="presentation"
@@ -930,7 +930,7 @@ const CollectionDetail = () => {
                     Royalty Splitter
                   </button>
                 </li>
-              )} */}
+              )}
             </ul>
           </div>
           <div id="myTabContent">
@@ -1047,7 +1047,7 @@ const CollectionDetail = () => {
                                 {nft?.price ? nft?.price : "Price not set"}{" "}
                                 {nft?.currency?.toUpperCase()}
                               </p>
-                              {nft.currency ? (
+                              {nft?.currency ? (
                                 <img
                                   className="ml-auto"
                                   src={nft.currency === "eth" ? Eth : Polygon}
