@@ -40,6 +40,7 @@ import { toast } from "react-toastify";
 import { cryptoConvert } from "services/chainlinkService";
 import tickIcon from "assets/images/tick.svg";
 import { getCollectionDetailsById } from "services/collection/collectionService";
+import { Helmet } from "react-helmet";
 
 export default function DetailsNFT(props) {
   const userinfo = useSelector((state) => state.user.userinfo);
@@ -259,6 +260,11 @@ export default function DetailsNFT(props) {
 
   return (
     <>
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>{`${nft?.lnft?.name} | Decir`}</title>
+        <link rel="canonical" href={window.location.href} />
+      </Helmet>
       {showNetworkHandler && (
         <NetworkHandlerModal
           show={showNetworkHandler}
