@@ -263,12 +263,26 @@ export default function DetailsNFT(props) {
       <Helmet>
         <meta charSet="utf-8" />
         <title>{`${nft?.lnft?.name} | Decir`}</title>
+        <meta name="robots" content="noodp" />
         <meta property="og:url" content={window.location.href} />
         <meta property="og:title" content={nft?.lnft?.name} />
+        <meta name="description" content={""} />
+        <meta
+          property="image"
+          content={nft?.lnft?.asset?.path ? nft.lnft.asset.path : ""}
+        />
+        <meta property="og:type" content="website" />
+        <meta content="image/*" property="og:image:type" />
+        <meta property="og:site_name" content="Decir" />
         <meta
           property="og:image"
           content={nft?.lnft?.asset?.path ? nft.lnft.asset.path : ""}
         />
+        <meta
+          property="og:image:secure_url"
+          content={nft?.lnft?.asset?.path ? nft.lnft.asset.path : ""}
+        ></meta>
+        <meta property="og:description" content={""} />
       </Helmet>
       {showNetworkHandler && (
         <NetworkHandlerModal
