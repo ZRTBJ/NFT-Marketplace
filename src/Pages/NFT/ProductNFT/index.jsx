@@ -545,11 +545,17 @@ export default function ProductNFT(props) {
           <div className="max-w-[600px] mx-4 md:mx-auto md:mt-[40px]">
             <div className="mb-[24px]">
               <h1 className="text-[28px] font-black mb-[6px]">
-                {updateMode ? "Update " : "Create "}
+                {showConfirmation
+                  ? "Preview "
+                  : updateMode
+                  ? "Update "
+                  : "Create "}
                 Product NFT
               </h1>
               <p className="text-[14px] text-textSubtle ">
-                Please fill this require data for setup your NFT
+                {showConfirmation
+                  ? "Preview the NFT"
+                  : "Please fill this require data for setup your NFT"}
               </p>
             </div>
             <div>
