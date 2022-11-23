@@ -1004,7 +1004,7 @@ const CollectionDetail = () => {
                                   </>
                                 )}
                                 {ShowOptions === nft.id && (
-                                  <div className="z-10 w-48 bg-white   rounded-md  absolute left-0 top-8 mb-6 block">
+                                  <div className="z-10 w-40 md:w-48 bg-white   rounded-md  absolute right-0 md:left-0 top-8 mb-6 block">
                                     <ul className="text-sm mb-0">
                                       <li className="border">
                                         <div
