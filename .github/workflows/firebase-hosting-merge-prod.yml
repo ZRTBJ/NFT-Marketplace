@@ -5,7 +5,6 @@ name: Manually deploy to Firebase Hosting on merge
 
 on: [workflow_dispatch]
 
-
 env:
   REACT_APP_ENV: ${{secrets.REACT_APP_ENV_PROD}}
   REACT_APP_API_ENDPOINT: ${{secrets.REACT_APP_API_ENDPOINT_PROD}}
@@ -15,6 +14,7 @@ env:
   REACT_APP_WEBHOOK_URL_POLYGON: ${{secrets.REACT_APP_WEBHOOK_URL_POLYGON_PROD}}
   REACT_APP_ETHEREUM_QUICKNODE_URL: ${{secrets.REACT_APP_ETHEREUM_QUICKNODE_URL_PROD}}
   REACT_APP_POLYGON_QUICKNODE_URL: ${{secrets.REACT_APP_POLYGON_QUICKNODE_URL_PROD}}
+  REACT_APP_SENTRY_DSN: ${{secrets.REACT_APP_SENTRY_DSN}}
 
 jobs:
   build_and_deploy:
