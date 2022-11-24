@@ -58,7 +58,6 @@ const TESTNET = {
   },
 };
 
-//TODO: Update as per mainnet
 const MAINNET = {
   1: {
     networkName: "Ethereum Mainnet",
@@ -67,14 +66,14 @@ const MAINNET = {
     value: "eth",
     label: "ETH",
     icon: Eth,
-    forwarder: process.env.REACT_APP_MINIMAL_FORWARDER_GOERLI,
+    forwarder: address.MinimalForwarderEthereum,
     webhook: process.env.REACT_APP_WEBHOOK_URL_ETHEREUM,
-    genericProxyFacotory: address.GenericProxyFactoryMumbai,
-    masterCopyDAO: address.CreatorDAOMasterCopyMumbai,
-    masterCopyCollection: address.CreateCollectionMasterCopyMumbai,
+    genericProxyFacotory: address.GenericProxyFactoryEthereum,
+    masterCopyDAO: address.CreatorDAOMasterCopyEthereum,
+    masterCopyCollection: address.CreateCollectionMasterCopyEthereum,
     masterMembershipCollection:
-      address.CreateMembershipCollectionMasterCopyMumbai,
-    masterRoyaltySplitter: address.RoyaltySplitterMasterCopyMumbai,
+      address.CreateMembershipCollectionMasterCopyEthereum,
+    masterRoyaltySplitter: address.RoyaltySplitterMasterCopyEthereum,
     network: 1,
     gnosis: `${gnosisFundTransferUrl}/eth`,
     raribleNFTDetailsUrl: raribleNFTDetailsUrl,
