@@ -5,7 +5,7 @@ import { address } from "./contractAddresses.js";
 const gnosisFundTransferUrl = "https://app.safe.global";
 const raribleNFTDetailsUrl =
   process.env.REACT_APP_ENV === "production"
-    ? "https://rarible.com/token"
+    ? "https://rarible.com/token/"
     : "https://testnet.rarible.com/token/";
 const openSeaNFTDetailsUrl =
   process.env.REACT_APP_ENV === "production"
