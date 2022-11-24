@@ -401,12 +401,7 @@ export default function DetailsNFT(props) {
               </div>
               <p className="my-3">Share on social media</p>
               <div className="flex items-center">
-                <FacebookShareButton
-                  url={
-                    "https://enlear.academy/simple-form-with-react-hook-form-and-react-kawaii-d5acb9f31f6b?source=rss-288453d8d4e8------2"
-                  }
-                  quote={"NFT"}
-                >
+                <FacebookShareButton url={window.location.href} quote={"NFT"}>
                   <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[35px] w-[35px] flex items-center justify-center mr-2">
                     <img src={FB} alt="facebook" />
                   </div>
