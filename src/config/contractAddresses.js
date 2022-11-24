@@ -23,13 +23,13 @@ export const address = {
   RoyaltySplitterMasterCopyMumbai: "0xE885Ab335E518c747D33Aa692fA64F307BaB2908",
 
   //Polygon Mainnet
-  GenericProxyFactoryPolygon: "0xB02994d64b034E6ef02C20976f3f516B746Cd109",
+  GenericProxyFactoryPolygon: "0xFc1331F9Bf73f20c89049bbaeD2186Db1C789e77",
   MinimalForwarderPolygon: "0x09c075eCd101d8820F54152eAc4529Cb9534EB72",
   CreatorDAOMasterCopyPolygon: "0x4fc4d7F90570fF7fad9b70D7ca9c8130603adebb",
   CreateCollectionMasterCopyPolygon:
-    "0x372d2d35758d52Fc847fda509E6bE3E6934c158D",
+    "0x2Ea0bc639959743612354629456dfA2faE4D9044",
   CreateMembershipCollectionMasterCopyPolygon:
-    "0xec25df499913A67DEACb7828Fe6C4AD5cd5143CB",
+    "0xFEBb80cf5aFDba20b1e807D86c1a80e3Ca35F92E",
   RoyaltySplitterMasterCopyPolygon:
-    "0xA3c5E059E0e7512aF442B2CbEEDF47E59Ae37878",
+    "0x710AE56AFC511Fa494656140fB545c9868A7AfE8",
 };
