@@ -32,4 +32,15 @@ export const address = {
     "0xFEBb80cf5aFDba20b1e807D86c1a80e3Ca35F92E",
   RoyaltySplitterMasterCopyPolygon:
     "0x710AE56AFC511Fa494656140fB545c9868A7AfE8",
+
+  //Ethereum Mainnet
+  GenericProxyFactoryEthereum: "0xFc1331F9Bf73f20c89049bbaeD2186Db1C789e77",
+  MinimalForwarderEthereum: "0x09c075eCd101d8820F54152eAc4529Cb9534EB72",
+  CreatorDAOMasterCopyEthereum: "0x4fc4d7F90570fF7fad9b70D7ca9c8130603adebb",
+  CreateCollectionMasterCopyEthereum:
+    "0x2Ea0bc639959743612354629456dfA2faE4D9044",
+  CreateMembershipCollectionMasterCopyEthereum:
+    "0xFEBb80cf5aFDba20b1e807D86c1a80e3Ca35F92E",
+  RoyaltySplitterMasterCopyEthereum:
+    "0x710AE56AFC511Fa494656140fB545c9868A7AfE8",
 };

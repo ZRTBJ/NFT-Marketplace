@@ -40,7 +40,6 @@ import { toast } from "react-toastify";
 import { cryptoConvert } from "services/chainlinkService";
 import tickIcon from "assets/images/tick.svg";
 import { getCollectionDetailsById } from "services/collection/collectionService";
-import { Helmet } from "react-helmet";
 
 export default function DetailsNFT(props) {
   const userinfo = useSelector((state) => state.user.userinfo);
@@ -260,30 +259,6 @@ export default function DetailsNFT(props) {
 
   return (
     <>
-      <Helmet>
-        <meta charSet="utf-8" />
-        <title>{`${nft?.lnft?.name} | Decir`}</title>
-        <meta name="robots" content="noodp" />
-        <meta property="og:url" content={window.location.href} />
-        <meta property="og:title" content={nft?.lnft?.name} />
-        <meta name="description" content={""} />
-        <meta
-          property="image"
-          content={nft?.lnft?.asset?.path ? nft.lnft.asset.path : ""}
-        />
-        <meta property="og:type" content="website" />
-        <meta content="image/*" property="og:image:type" />
-        <meta property="og:site_name" content="Decir" />
-        <meta
-          property="og:image"
-          content={nft?.lnft?.asset?.path ? nft.lnft.asset.path : ""}
-        />
-        <meta
-          property="og:image:secure_url"
-          content={nft?.lnft?.asset?.path ? nft.lnft.asset.path : ""}
-        ></meta>
-        <meta property="og:description" content={""} />
-      </Helmet>
       {showNetworkHandler && (
         <NetworkHandlerModal
           show={showNetworkHandler}
@@ -426,7 +401,12 @@ export default function DetailsNFT(props) {
               </div>
               <p className="my-3">Share on social media</p>
               <div className="flex items-center">
-                <FacebookShareButton url={window.location.href} quote={"NFT"}>
+                <FacebookShareButton
+                  url={
+                    "https://enlear.academy/simple-form-with-react-hook-form-and-react-kawaii-d5acb9f31f6b?source=rss-288453d8d4e8------2"
+                  }
+                  quote={"NFT"}
+                >
                   <div className="cursor-pointer rounded-[4px] bg-primary-50 h-[35px] w-[35px] flex items-center justify-center mr-2">
                     <img src={FB} alt="facebook" />
                   </div>
