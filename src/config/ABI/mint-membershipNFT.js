@@ -13,6 +13,17 @@ const abi = [
     type: "constructor",
   },
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "operator",
+        type: "address",
+      },
+    ],
+    name: "OperatorNotAllowed",
+    type: "error",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -275,7 +286,7 @@ const abi = [
     inputs: [
       {
         internalType: "address",
-        name: "to",
+        name: "operator",
         type: "address",
       },
       {
@@ -858,19 +869,6 @@ const abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "_royaltyReceiver",
-        type: "address",
-      },
-    ],
-    name: "setRoyaltyAddress",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         components: [
           {
             internalType: "string",
@@ -1055,19 +1053,6 @@ const abi = [
       },
     ],
     name: "transferOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_merkleRoot",
-        type: "bytes32",
-      },
-    ],
-    name: "updateMerkleRoot",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
