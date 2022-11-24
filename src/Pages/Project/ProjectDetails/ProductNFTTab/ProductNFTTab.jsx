@@ -4,7 +4,7 @@ import thumbIcon from "assets/images/profile/card.svg";
 
 const ProductNFTTab = ({ project, projectId, productCollectionList }) => {
   const truncateArray = (members) => {
-    let slicedItems = members.slice(0, 3);
+    let slicedItems = members?.slice(0, 3);
     return { slicedItems, restSize: members.length - slicedItems.length };
   };
   return (
@@ -33,7 +33,8 @@ const ProductNFTTab = ({ project, projectId, productCollectionList }) => {
         productCollectionList.map((collection, index) => {
           let image = collection?.assets?.find(
             (asset) =>
-              asset.asset_purpose === "cover" || asset.asset_purpose === "logo"
+              asset?.asset_purpose === "cover" ||
+              asset?.asset_purpose === "logo"
           );
           return (
             <div
@@ -50,7 +51,7 @@ const ProductNFTTab = ({ project, projectId, productCollectionList }) => {
               <div className="py-5">
                 <div className="flex">
                   <h2 className="pb-2 text-txtblack break-all md:truncate flex-1 mr-3 m-w-0">
-                    {collection.name}
+                    {collection?.name}
                   </h2>
                   <div className="relative">
                     {/* Hide dropdown menu <button

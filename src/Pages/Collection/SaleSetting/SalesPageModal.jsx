@@ -52,7 +52,23 @@ const Control = ({ children, ...props }) => {
     </components.Control>
   );
 };
-
+const predefinedBottomRanges = [
+  {
+    label: "7 Days",
+    closeOverlay: false,
+    value: [new Date(), addDays(new Date(), 6)],
+  },
+  {
+    label: "2 Weeks",
+    closeOverlay: false,
+    value: [new Date(), addDays(new Date(), 13)],
+  },
+  {
+    label: "1 Month",
+    closeOverlay: false,
+    value: [new Date(), addDays(new Date(), 29)],
+  },
+];
 const SalesPageModal = ({
   projectView,
   projectId,
@@ -346,7 +362,7 @@ const SalesPageModal = ({
             <section
               onClick={(e) => modalBodyClicked(e)}
               className={
-                " modal-main w-[550px] bg-white rounded-[12px] relative txtblack p-11"
+                " modal-main !max-h-full w-[550px] bg-white rounded-[12px] relative txtblack p-11"
               }
             >
               <i
@@ -474,6 +490,7 @@ const SalesPageModal = ({
                       placement="auto"
                       showMeridian={true}
                       className="date-range-picker"
+                      ranges={predefinedBottomRanges}
                     />
                   </div>
                   {/* <div className="mb-6 ">

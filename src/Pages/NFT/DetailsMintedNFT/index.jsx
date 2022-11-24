@@ -22,6 +22,7 @@ import { createProvider } from "util/smartcontract/provider";
 import { createMintInstance } from "config/ABI/mint-nft";
 import { getCollectionDetailsById } from "services/collection/collectionService";
 import tickIcon from "assets/images/tick.svg";
+import Config from "config/config";
 export default function DetailsNFT(props) {
   const provider = createProvider();
   const history = useHistory();
@@ -47,11 +48,8 @@ export default function DetailsNFT(props) {
     await getMintedNftDetails(nftId, tokenId)
       .then((resp) => {
         if (resp.code === 0) {
-          if (resp.lnft.metadata_url) {
-            resp.lnft.ipfsUrl = resp.lnft.metadata_url.replace(
-              "ipfs://",
-              "https://ipfs.io/ipfs/"
-            );
+          if (resp?.lnft?.metadata_url) {
+            resp.lnft.ipfsUrl = `${Config.PINATA_URL}${resp?.lnft?.metadata_url}`;
           }
           if (resp?.mint_info?.refresh_status === "required") {
             setShowRefreshButton(true);

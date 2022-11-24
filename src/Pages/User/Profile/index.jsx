@@ -152,32 +152,36 @@ const Profile = () => {
         setShowLoginModal(true);
       }
     } else {
-      await getUserInfo(id)
-        .then((response) => {
-          setUser(response.user);
-          setRoyaltyEarned(response.royalty_earned);
-          setWalletAddress(response.user.eao);
-          if (response.user["web"]) {
-            try {
-              const webs = JSON.parse(response.user["web"]);
-              const weblist = [...webs].map((e) => ({
-                title: Object.keys(e)[0],
-                url: Object.values(e)[0],
-              }));
-              const sociallinks = JSON.parse(response.user["social"]);
-              const sncs = [...sociallinks].map((e) => ({
-                title: Object.keys(e)[0],
-                url: Object.values(e)[0],
-              }));
-              setsncList(sncs.concat(weblist));
-            } catch {
-              setsncList([]);
+      if (id !== ls_GetUserID()) {
+        history.replace(`/page-not-found`);
+      } else {
+        await getUserInfo(id)
+          .then((response) => {
+            setUser(response?.user);
+            setRoyaltyEarned(response?.royalty_earned);
+            setWalletAddress(response?.user.eao);
+            if (response?.user["web"]) {
+              try {
+                const webs = JSON.parse(response.user["web"]);
+                const weblist = [...webs].map((e) => ({
+                  title: Object.keys(e)[0],
+                  url: Object.values(e)[0],
+                }));
+                const sociallinks = JSON.parse(response.user["social"]);
+                const sncs = [...sociallinks].map((e) => ({
+                  title: Object.keys(e)[0],
+                  url: Object.values(e)[0],
+                }));
+                setsncList(sncs.concat(weblist));
+              } catch {
+                setsncList([]);
+              }
             }
-          }
-        })
-        .catch(() => {
-          setIsLoading(false);
-        });
+          })
+          .catch(() => {
+            setIsLoading(false);
+          });
+      }
     }
   }
 

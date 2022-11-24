@@ -677,14 +677,14 @@ export default function MembershipNFT() {
         <div className="mb-[24px]">
           <h1 className="text-[28px] font-black mb-[6px]">
             {isPreview
-              ? "Review Membership NFT"
+              ? "Preview Membership NFT"
               : updateMode
               ? "Update Membership NFT"
               : "Create Membership NFT"}
           </h1>
           <p className="text-[14px] text-textSubtle ">
             {isPreview
-              ? " Review the NFT"
+              ? " Preview the NFT"
               : " Please fill this require data for setup your NFT"}
           </p>
         </div>

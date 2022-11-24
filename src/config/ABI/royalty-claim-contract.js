@@ -160,6 +160,30 @@ const abi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "value",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "fee",
+        type: "uint256",
+      },
+    ],
+    name: "calculateFee",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "pure",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "uint256[]",
         name: "shares_",
         type: "uint256[]",
@@ -375,13 +399,7 @@ const abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "contract IERC20Upgradeable",
-        name: "token",
-        type: "address",
-      },
-    ],
+    inputs: [],
     name: "totalReleased",
     outputs: [
       {
@@ -394,8 +412,14 @@ const abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "totalReleased",
+    inputs: [
+      {
+        internalType: "contract IERC20Upgradeable",
+        name: "token",
+        type: "address",
+      },
+    ],
+    name: "totalReleasedToken",
     outputs: [
       {
         internalType: "uint256",
@@ -428,19 +452,6 @@ const abi = [
       },
     ],
     name: "transferOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "membershipToken_",
-        type: "address",
-      },
-    ],
-    name: "updateMembershipToken",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

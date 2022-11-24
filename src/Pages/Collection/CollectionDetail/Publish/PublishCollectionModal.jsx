@@ -27,8 +27,8 @@ const PublishCollectionModal = ({
                   </span>
                 ) : (
                   <span className="text-danger-900">
-                    <i class="fa-regular fa-triangle-exclamation"></i> Royalty
-                    Splitter is not published yet.
+                    <i className="fa-regular fa-triangle-exclamation"></i>{" "}
+                    Royalty Splitter is not published yet.
                   </span>
                 )}
               </>
@@ -43,13 +43,14 @@ const PublishCollectionModal = ({
           </div>
           {type === "Collection" && (
             <div className="message-info">
-              Once transaction has made, you can not add new NFT, collection and NFT data will not be
-              changeable except benefits fields.
+              Once transaction has made, you can not add new NFT, collection and
+              NFT data will not be changeable except benefits fields.
             </div>
           )}
           {type == "Royalty Splitter" && (
             <div className="message-info">
-              Once you publish, all contributors royalty percent will be locked and unchangable.
+              Once you publish, all contributors royalty percent will be locked
+              and unchangable.
             </div>
           )}
           <div className="flex justify-center mt-[30px]">

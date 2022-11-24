@@ -191,7 +191,7 @@ const WalletConnectModal = ({
                 <div className="text-left ml-[8px] font-medium text-sm">
                   I read and accept{" "}
                   <a
-                    href="https://www.decir.io/terms"
+                    href="https://www.decir.io/termsandcondition"
                     target="_blank"
                     className="text-primary-900"
                     rel="noreferrer"
@@ -200,7 +200,7 @@ const WalletConnectModal = ({
                   </a>{" "}
                   and
                   <a
-                    href="https://www.decir.io/conditions"
+                    href="https://www.decir.io/policyandprivacy"
                     target="_blank"
                     className="text-primary-900"
                     rel="noreferrer"

@@ -321,17 +321,17 @@ export default function Outline({
             Upload Gallery Picture
           </div>
           <div className="text-textSubtle text-[13px] mb-4">
-            PNG, GIF, JPG, SVG, JPEG. Max 28 MB.
+            PNG, GIF, JPG, SVG, JPEG. Max 7 pictures of total 28 MB.
           </div>
           <div className="md:flex md:flex-wrap mb-6">
             <div className="w-full md:w-[165px] mr-3 mb-2">
               <FileDragAndDrop
-                maxFiles={4}
+                maxFiles={7}
                 height="158px"
                 width="100%"
                 onDrop={(e) => onPhotosSelect(e, photosUrl)}
                 sizePlaceholder="Total upto 16MB"
-                disabled={photosUrl.length > 3 ? true : false}
+                disabled={photosUrl.length > 6 ? true : false}
               />
             </div>
             <div className="photoPreviewContainer md:flex flex-wrap">

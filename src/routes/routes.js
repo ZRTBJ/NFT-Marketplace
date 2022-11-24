@@ -17,10 +17,15 @@ const CollectionDetail = lazy(() =>
   import("Pages/Collection/CollectionDetail")
 );
 const ProductNFT = lazy(() => import("Pages/NFT/ProductNFT"));
-const Home = lazy(() => import("Pages/Home/Homepage"));
+// const Home = lazy(() => import("Pages/Home/Homepage"));
 const List = lazy(() => import("Pages/List"));
 
 const routes = [
+  // {
+  //   path: "/",
+  //   component: Home,
+  //   isPrivate: false,
+  // },
   {
     path: "/profile/:id",
     component: Profile,
@@ -89,11 +94,6 @@ const routes = [
   {
     path: "/list/",
     component: List,
-    isPrivate: false,
-  },
-  {
-    path: "/:invite",
-    component: Home,
     isPrivate: false,
   },
   {
