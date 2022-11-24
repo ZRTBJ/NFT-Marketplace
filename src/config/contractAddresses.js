@@ -4,13 +4,13 @@ export const address = {
   SafeProxyAddress: "0x76E2cFc1F5Fa8F6a5b3fC4c8F4788F0116861F9B",
 
   //Goerli Testnet
-  GenericProxyFactoryGoerli: "0x907f9b97E3B4361427741746eDCCc33eF3f8b360",
+  GenericProxyFactoryGoerli: "0xF26EC5A26622E9d3596130C58aa7014E7c318e93",
   MinimalForwarderGoerli: "0x5782544b27210363F7fFA9b15aea3459179c246c",
   CreatorDAOMasterCopy: "0xc6D51Bb5D032283F65b19110e6aD0D331CA247F8",
-  CreateCollectionMasterCopy: "0x2b6144Ab5767bAdE5c07D8FCAcE094b95d9Ef7eE",
+  CreateCollectionMasterCopy: "0xEB2713b3b6c535569579737f9B9Dfe6D8B2BEA5A",
   CreateMembershipCollectionMasterCopy:
-    "0xC9187a7d56E43C1B9c4DCd6893587e1783807CFe",
-  RoyaltySplitterMasterCopy: "0x48cd0C79B6e69e22F674EB01bc55F6d208975E82",
+    "0xc4d4F5d5fA24D450f67D18d7695a9Ed80eaEdc7f",
+  RoyaltySplitterMasterCopy: "0x1abe29fafa6670C39a88f7B21Bb30a897444Dabd",
 
   //Mumbai Testnet
   GenericProxyFactoryMumbai: "0x17a5b2D35d19A13b267D573B368f5a7BfA8FD392",
@@ -31,5 +31,16 @@ export const address = {
   CreateMembershipCollectionMasterCopyPolygon:
     "0xFEBb80cf5aFDba20b1e807D86c1a80e3Ca35F92E",
   RoyaltySplitterMasterCopyPolygon:
+    "0x710AE56AFC511Fa494656140fB545c9868A7AfE8",
+
+  //Ethereum Mainnet
+  GenericProxyFactoryEthereum: "0xFc1331F9Bf73f20c89049bbaeD2186Db1C789e77",
+  MinimalForwarderEthereum: "0x09c075eCd101d8820F54152eAc4529Cb9534EB72",
+  CreatorDAOMasterCopyEthereum: "0x4fc4d7F90570fF7fad9b70D7ca9c8130603adebb",
+  CreateCollectionMasterCopyEthereum:
+    "0x2Ea0bc639959743612354629456dfA2faE4D9044",
+  CreateMembershipCollectionMasterCopyEthereum:
+    "0xFEBb80cf5aFDba20b1e807D86c1a80e3Ca35F92E",
+  RoyaltySplitterMasterCopyEthereum:
     "0x710AE56AFC511Fa494656140fB545c9868A7AfE8",
 };
