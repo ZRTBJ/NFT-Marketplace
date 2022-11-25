@@ -526,8 +526,15 @@ const SalesPageModal = ({
                       onChange={(e) => setAgree(e.target.checked)}
                     />
                     <p className="text-[14px] text-[#303548] ml-2">
-                      I Agree with <a href="#">terms and conditions</a> about
-                      sales.
+                      I Agree with{" "}
+                      <a
+                        href="https://www.decir.io/termsandcondition"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        terms and conditions
+                      </a>{" "}
+                      about sales.
                     </p>
                   </label>
                   {isSubmitted && !agree && (

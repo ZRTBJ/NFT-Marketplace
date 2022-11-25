@@ -44,6 +44,7 @@ import NetworkHandlerModal from "components/Modals/NetworkHandlerModal";
 import tickSvg from "assets/images/icons/tick.svg";
 import emptyStateCommon from "assets/images/profile/emptyStateCommon.svg";
 import ReactReadMoreReadLess from "react-read-more-read-less";
+import PublishRoyaltyConfirmModal from "./Publish/PublishRoyaltyConfirmModal";
 const TABLE_HEADERS = [
   { id: 0, label: "Wallet Address" },
   // { id: 2, label: "Email" },
@@ -1198,14 +1199,14 @@ const CollectionDetail = () => {
           membershipNFTId={membershipNFTId}
         />
       )}
+
       {showPublishRoyaltySpliterConfirmModal && (
-        <PublishCollectionModal
+        <PublishRoyaltyConfirmModal
           show={showPublishRoyaltySpliterConfirmModal}
           handleClose={() => {
             setShowPublishRoyaltySpliterConfirmModal(false);
           }}
           publishProject={handlePublishRoyaltySplitter}
-          type="Royalty Splitter"
         />
       )}
 
