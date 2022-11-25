@@ -19,6 +19,7 @@ import Spinner from "components/Commons/Spinner";
 import ReactPaginate from "react-paginate";
 import { getCurrentNetworkId } from "util/MetaMask";
 import NetworkHandlerModal from "components/Modals/NetworkHandlerModal";
+import PublishRoyaltyConfirmModal from "Pages/Collection/CollectionDetail/Publish/PublishRoyaltyConfirmModal";
 
 const TABLE_HEADERS = [
   { id: 0, label: "Wallet Address" },
@@ -342,7 +343,15 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
           isRoyaltyPublished={Collection?.royalty_splitter?.contract_address}
         />
       )}
-
+      {showPublishRoyaltySpliterConfirmModal && (
+        <PublishRoyaltyConfirmModal
+          show={showPublishRoyaltySpliterConfirmModal}
+          handleClose={() => {
+            setShowPublishRoyaltySpliterConfirmModal(false);
+          }}
+          publishProject={handlePublishRoyaltySplitter}
+        />
+      )}
       {showPublishRoyaltySpliterModal && (
         <PublishRoyaltyModal
           isVisible={showPublishRoyaltySpliterModal}
