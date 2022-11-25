@@ -37,7 +37,7 @@ const NFTSales = ({ items }) => {
     <div>
       <div className="flex items-start md:items-center pb-7 border-b-[1px] mb-6 border-[#E3DEEA]">
         <h3 className="text-[18px] font-black mr-10">NFT Sale's</h3>
-        <div className="bg-primary-100 rounded-[6px] p-2 ">
+        {/* <div className="bg-primary-100 rounded-[6px] p-2 ">
           {time.map((item, index) => (
             <button
               key={index}
@@ -49,7 +49,7 @@ const NFTSales = ({ items }) => {
               {item}
             </button>
           ))}
-        </div>
+        </div> */}
       </div>
       <div className="relative hidden md:block">
         {items.length ? (
