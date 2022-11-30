@@ -1,0 +1,7 @@
+.walletInfo {
+  background: rgba(70, 166, 255, 0.2);
+  border-radius: 0.5rem;
+  height: 40px;
+  width: 190px;
+  padding: 20px;
+}
