@@ -2,6 +2,7 @@ import IconSuccess from 'assets/images/modal/success/success_modal_img.svg';
 import Modal from '../Commons/Modal';
 import NewSuccess from 'assets/images/new-success.svg';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 
 const SuccessModal = ({
   handleClose,
@@ -24,7 +25,7 @@ const SuccessModal = ({
       showCloseIcon={showCloseIcon}
     >
       <div className='text-center mt-2'>
-        <img className='block mx-auto h-[200px]' src={NewSuccess} alt='' />
+        <Image className='block mx-auto h-[200px]' src={NewSuccess} alt='' />
         <div className='mb-2 text-[16px]  font-black txtblack md:w-[350px] mx-auto'>
           {bodyMsg}
         </div>

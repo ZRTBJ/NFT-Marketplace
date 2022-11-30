@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import styles from './index.module.css';
 import { useState, useEffect, useRef } from 'react';
-// import WalletDropDownMenu from './WalletDropdownMenu';
+import WalletDropDownMenu from './WalletDropdownMenu';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
-// import WalletConnectModal from 'components/Login/WalletConnectModal';
+import WalletConnectModal from 'components/Login/WalletConnectModal';
 import useWebSocket from 'react-use-websocket';
 import config from 'config/config';
 import { getProjectListBySearch } from 'services/project/projectService';
@@ -19,8 +19,8 @@ import bellImage from 'assets/images/bell.svg';
 import walletImage from 'assets/images/wallet.svg';
 import searchImage from 'assets/images/search.svg';
 import Logo from 'assets/images/header/logo.svg';
-// import AccountChangedModal from './Account/AccountChangedModal';
-// import NetworkChangedModal from './Account/NetworkChangedModal';
+import AccountChangedModal from './Account/AccountChangedModal';
+import NetworkChangedModal from './Account/NetworkChangedModal';
 import { walletAddressTruncate } from 'util/WalletUtils';
 import {
   ls_GetUserToken,
@@ -32,7 +32,7 @@ import { toast } from 'react-toastify';
 import { NETWORKS } from 'config/networks';
 import { logout } from 'redux/auth';
 import Image from 'next/image';
-// import { getWalletAccount } from 'util/MetaMask';
+import { getWalletAccount } from 'util/MetaMask';
 
 const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const router = useRouter();
@@ -95,33 +95,33 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
 
   /** Here if unsupport network is found, logout automatically */
   let localChainId = ls_GetChainID();
-  // useEffect(() => {
-  //   if (!networkChangeDetected && networkId && localChainId) {
-  //     if (Number(networkId) !== Number(localChainId)) {
-  //       logout(dispatch);
-  //       router.push('/');
-  //       window.location.reload();
-  //     }
-  //   }
-  // }, [networkId, localChainId]);
+  useEffect(() => {
+    if (!networkChangeDetected && networkId && localChainId) {
+      if (Number(networkId) !== Number(localChainId)) {
+        logout(dispatch);
+        router.push('/');
+        window.location.reload();
+      }
+    }
+  }, [networkId, localChainId]);
 
   /** Detect account whenever user come back to site */
   let localAccountAddress = ls_GetWalletAddress();
 
-  // useEffect(() => {
-  //   const handleAccountDifference = async () => {
-  //     if (window?.ethereum) {
-  //       const account = await getWalletAccount();
+  useEffect(() => {
+    const handleAccountDifference = async () => {
+      if (window?.ethereum) {
+        const account = await getWalletAccount();
 
-  //       if (localAccountAddress && account) {
-  //         if (localAccountAddress !== account) {
-  //           setShowAccountChanged(true);
-  //         }
-  //       }
-  //     }
-  //   };
-  //   handleAccountDifference();
-  // }, []);
+        if (localAccountAddress && account) {
+          if (localAccountAddress !== account) {
+            setShowAccountChanged(true);
+          }
+        }
+      }
+    };
+    handleAccountDifference();
+  }, []);
 
   /** Metamask account change detection. It will show logout popup if user signin with new address
    * In case if user re-login, if same account with wallet address, nothing will happen
@@ -327,7 +327,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
 
   return (
     <header className='bg-light1'>
-      {/* <AccountChangedModal
+      <AccountChangedModal
         show={showAccountChanged}
         handleClose={() => setShowAccountChanged(false)}
       />
@@ -335,7 +335,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
         show={showNetworkChanged}
         handleClose={() => setShowNetworkChanged(false)}
         networkId={networkId}
-      /> */}
+      />
       <div id='notificationDropdown' className='hidden'>
         {showNotificationPopup && (
           <NotificatioMenu
@@ -348,14 +348,14 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
 
       {/* wallet popup */}
       <div id='userDropDownWallet' className='hidden'>
-        {/* {userLoadingStatus === 'idle' && showWalletpopup ? (
+        {userLoadingStatus === 'idle' && showWalletpopup ? (
           <WalletDropDownMenu
             handleWalletDropDownClose={showHideUserPopupWallet}
             networkId={networkId}
           />
         ) : (
           <></>
-        )} */}
+        )}
       </div>
       <nav className='pl-5 pr-7 hidden md:block lg:pl-10 lg:pr-12'>
         <div className='flex justify-between items-center min-h-[71px]'>
@@ -578,7 +578,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                 onClick={handleShowMobileSearch}
               ></i>
             ) : (
-              <img
+              <Image
                 src={searchImage}
                 alt="Search"
                 className="mr-3"
@@ -652,7 +652,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
             )}
         </form> */}
       </nav>
-      {/* <WalletConnectModal showModal={showModal} closeModal={hideModal} /> */}
+      <WalletConnectModal showModal={showModal} closeModal={hideModal} />
     </header>
   );
 };

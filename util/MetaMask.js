@@ -1,47 +1,57 @@
-import MetaMaskOnboarding from "@metamask/onboarding";
-import Web3 from "web3";
-import { ethers } from "ethers";
+import dynamic from 'next/dynamic';
+import MetaMaskOnboarding from '@metamask/onboarding';
+import { ethers } from 'ethers';
 
-const currentUrl = new URL(window.location.href);
+const Web3 = dynamic(() => import('web3'), {
+  suspense: true,
+});
+
+const currentUrl =
+  typeof window !== 'undefined' && new URL(window.location.href);
 const forwarderOrigin =
-  currentUrl.hostname === "localhost" ? "http://localhost:3000" : undefined;
-let onboarding = new MetaMaskOnboarding({ forwarderOrigin });
+  currentUrl?.hostname === 'localhost' ? 'http://localhost:3000' : undefined;
+let onboarding =
+  typeof window !== 'undefined' && new MetaMaskOnboarding({ forwarderOrigin });
 
 export async function getWalletAccount() {
   // Check if MetaMask is installed
   // MetaMask injects the global API into window.ethereum
-  if (window.ethereum) {
-    try {
-      // check if the chain to connect to is installed
-      const accounts = await window.ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      const account = accounts[0];
-      return account;
-    } catch (error) {
-      console.log(error.message);
+  if (typeof window !== 'undefined') {
+    if (window.ethereum) {
+      try {
+        // check if the chain to connect to is installed
+        const accounts = await window.ethereum.request({
+          method: 'eth_requestAccounts',
+        });
+        const account = accounts[0];
+        return account;
+      } catch (error) {
+        console.log(error.message);
+        return;
+      }
+    } else {
+      onBoardBrowserPlugin();
       return;
     }
-  } else {
-    onBoardBrowserPlugin();
-    return;
   }
 }
 
 export async function isWalletConnected() {
   // Check if MetaMask is installed
   // MetaMask injects the global API into window.ethereum
-  if (window.ethereum) {
-    try {
-      // check if the chain to connect to is installed
-      const isConnected = await window.ethereum.isConnected();
-      return isConnected;
-    } catch (error) {
-      console.error(error);
+  if (typeof window !== 'undefined') {
+    if (window.ethereum) {
+      try {
+        // check if the chain to connect to is installed
+        const isConnected = await window.ethereum.isConnected();
+        return isConnected;
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      onBoardBrowserPlugin();
+      return false;
     }
-  } else {
-    onBoardBrowserPlugin();
-    return false;
   }
 }
 
@@ -49,28 +59,30 @@ export async function isWalletConnected() {
 export async function getPersonalSign() {
   // Check if MetaMask is installed
   // MetaMask injects the global API into window.ethereum
-  if (window.ethereum) {
-    let signedResult = "";
-    try {
-      signedResult = await window.ethereum.request({
-        method: "personal_sign",
-        params: [
-          "You're signing to the decir.io",
-          window.ethereum.selectedAddress,
-        ],
-      });
-    } catch (error) {
-      if (error.code === 4001) {
-        // EIP-1193 userRejectedRequest error
-        window.alert("Please connect to MetaMask.");
-      } else {
-        console.error(error.message);
+  if (typeof window !== 'undefined') {
+    if (window.ethereum) {
+      let signedResult = '';
+      try {
+        signedResult = await window.ethereum.request({
+          method: 'personal_sign',
+          params: [
+            "You're signing to the decir.io",
+            window.ethereum.selectedAddress,
+          ],
+        });
+      } catch (error) {
+        if (error.code === 4001) {
+          // EIP-1193 userRejectedRequest error
+          window.alert('Please connect to MetaMask.');
+        } else {
+          console.error(error.message);
+        }
       }
+      return signedResult;
+    } else {
+      onBoardBrowserPlugin();
+      return;
     }
-    return signedResult;
-  } else {
-    onBoardBrowserPlugin();
-    return;
   }
 }
 
@@ -88,48 +100,54 @@ function onBoardBrowserPlugin() {
 
 //To get current Metamask wallet network ID
 export const getCurrentNetworkId = async () => {
-  if (window.ethereum) {
-    let network = window.ethereum?.networkVersion;
-    return Number(network);
-  } else {
-    onBoardBrowserPlugin();
-    return;
+  if (typeof window !== 'undefined') {
+    if (window.ethereum) {
+      let network = window.ethereum?.networkVersion;
+      return Number(network);
+    } else {
+      onBoardBrowserPlugin();
+      return;
+    }
   }
 };
 
 //To Switch network
 export const handleSwitchNetwork = async (projectNetwork) => {
-  if (window.ethereum) {
-    try {
-      await window.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: Web3.utils.toHex(projectNetwork) }],
-      });
-    } catch (error) {
-      console.log(error);
+  if (typeof window !== 'undefined') {
+    if (window.ethereum) {
+      try {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: Web3.utils.toHex(projectNetwork) }],
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      onBoardBrowserPlugin();
+      return;
     }
-  } else {
-    onBoardBrowserPlugin();
-    return;
   }
 };
 
 //To get balance
 export const getAccountBalance = async () => {
-  if (window.ethereum) {
-    try {
-      let accountAddress = await getWalletAccount();
-      let balance = await window.ethereum.request({
-        method: "eth_getBalance",
-        params: [accountAddress, "latest"],
-      });
-      return ethers.utils.formatEther(balance);
-    } catch (error) {
-      console.log(error.message);
+  if (typeof window !== 'undefined') {
+    if (window.ethereum) {
+      try {
+        let accountAddress = await getWalletAccount();
+        let balance = await window.ethereum.request({
+          method: 'eth_getBalance',
+          params: [accountAddress, 'latest'],
+        });
+        return ethers.utils.formatEther(balance);
+      } catch (error) {
+        console.log(error.message);
+        return;
+      }
+    } else {
+      onBoardBrowserPlugin();
       return;
     }
-  } else {
-    onBoardBrowserPlugin();
-    return;
   }
 };

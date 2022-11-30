@@ -11,7 +11,7 @@ const AccountChangedModal = ({ show, handleClose }) => {
     dispatch(logout());
     router.push('/');
     handleClose();
-    window.location.reload();
+    window?.location.reload();
   }
 
   return (

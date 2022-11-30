@@ -3,10 +3,15 @@ import { logout } from 'redux/auth';
 import { useRouter } from 'next/router';
 import { useSelector, useDispatch } from 'react-redux';
 import metamaskIcon from 'assets/images/modal/metamask.png';
-import Web3 from 'web3';
 import { useEffect, useState } from 'react';
 import { useDetectClickOutside } from 'react-detect-click-outside';
 import { NETWORKS } from 'config/networks';
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
+
+const Web3 = dynamic(() => import('web3'), {
+  suspense: true,
+});
 
 const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
   let router = useRouter();
@@ -68,7 +73,7 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
         <div className='pl-10 pr-3 py-3 border-b border-slate-300'>
           <h3 className='txtblack text-sm  mb-6 '>Wallet</h3>
           <p className='txtblack flex content-center mb-2'>
-            <img
+            <Image
               src={metamaskIcon}
               alt='mask'
               width={21}

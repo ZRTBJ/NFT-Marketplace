@@ -2,6 +2,7 @@ import thumbIcon from 'assets/images/profile/card.svg';
 import defaultImage from 'assets/images/defaultImage.svg';
 import { useRouter } from 'next/router';
 import avatar from 'assets/images/dummy-img.svg';
+import Image from 'next/image';
 
 const DAOCard = ({ item }) => {
   const router = useRouter();
@@ -34,7 +35,7 @@ const DAOCard = ({ item }) => {
       className='cursor-pointer  bg-white-shade-900 text-center w-full h-[280px] md:h-[325px] rounded-[12px]  relative flex flex-col shadow-main'
       onClick={() => gotToDetailPage(item.id)}
     >
-      <img
+      <Image
         src={
           item.assets?.find((pic) => pic.name === 'img1')
             ? item.assets?.find((pic) => pic.name === 'img1').path
@@ -43,7 +44,7 @@ const DAOCard = ({ item }) => {
         alt={item.name}
         className='rounded-t-xl h-24 md:h-36 object-cover w-full'
       />
-      <img
+      <Image
         src={
           item.assets?.find((pic) => pic.name === 'cover')
             ? item.assets?.find((pic) => pic.name === 'cover').path
@@ -70,7 +71,7 @@ const DAOCard = ({ item }) => {
         {item.members &&
           item.members.length > 0 &&
           truncateArray(item.members).slicedItems.map((member) => (
-            <img
+            <Image
               key={member.id}
               src={member.avatar ? member.avatar : avatar}
               alt={member.id}

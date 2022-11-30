@@ -32,10 +32,10 @@ import { toast } from 'react-toastify';
 import ReactPaginate from 'react-paginate';
 import Spinner from 'components/Commons/Spinner';
 import { NETWORKS } from 'config/networks';
-// import WalletConnectModal from '../Login/WalletConnectModal';
+import WalletConnectModal from '../Login/WalletConnectModal';
 import { ls_GetUserID } from 'util/ApplicationStorage';
-// import { getCurrentNetworkId } from 'util/MetaMask';
-// import NetworkHandlerModal from 'components/Modals/NetworkHandlerModal';
+import { getCurrentNetworkId } from 'util/MetaMask';
+import NetworkHandlerModal from 'components/Modals/NetworkHandlerModal';
 import Image from 'next/image';
 
 import nftSvg from 'assets/images/profile/nftSvg.svg';
@@ -45,6 +45,7 @@ import emptyStateCommon from 'assets/images/profile/emptyStateCommon.svg';
 import emptyStateRoyalty from 'assets/images/profile/emptyStateRoyalty.png';
 import curvVector from 'assets/images/profile/curv1.png';
 import Modal from 'components/Commons/Modal';
+
 const Profile = ({ id }) => {
   const provider = createProvider();
   SwiperCore.use([Autoplay]);
@@ -147,44 +148,44 @@ const Profile = ({ id }) => {
 
   async function userInfo() {
     if (id === 'login') {
-      if (ls_GetUserID()) {
+      if (typeof window !== 'undefined' && ls_GetUserID()) {
         router.push(`/profile/${ls_GetUserID()}`);
-        window.location.reload();
+        // window?.location.reload();
       } else {
         setShowLoginModal(true);
       }
     } else {
-      if (id !== ls_GetUserID()) {
-        router.push(`/page-not-found`);
-      } else {
-        await getUserInfo(id)
-          .then((response) => {
-            setUser(response?.user);
-            setRoyaltyEarned(response?.royalty_earned);
-            setWalletAddress(response?.user.eao);
-            if (response?.user['web']) {
-              try {
-                const webs = JSON.parse(response.user['web']);
-                const weblist = [...webs].map((e) => ({
-                  title: Object.keys(e)[0],
-                  url: Object.values(e)[0],
-                }));
-                const sociallinks = JSON.parse(response.user['social']);
-                const sncs = [...sociallinks].map((e) => ({
-                  title: Object.keys(e)[0],
-                  url: Object.values(e)[0],
-                }));
-                setsncList(sncs.concat(weblist));
-              } catch {
-                setsncList([]);
-              }
+      // if (id !== ls_GetUserID()) {
+      //   router.push(`/page-not-found`);
+      // } else {
+      await getUserInfo(id)
+        .then((response) => {
+          setUser(response?.user);
+          setRoyaltyEarned(response?.royalty_earned);
+          setWalletAddress(response?.user.eao);
+          if (response?.user['web']) {
+            try {
+              const webs = JSON.parse(response.user['web']);
+              const weblist = [...webs].map((e) => ({
+                title: Object.keys(e)[0],
+                url: Object.values(e)[0],
+              }));
+              const sociallinks = JSON.parse(response.user['social']);
+              const sncs = [...sociallinks].map((e) => ({
+                title: Object.keys(e)[0],
+                url: Object.values(e)[0],
+              }));
+              setsncList(sncs.concat(weblist));
+            } catch {
+              setsncList([]);
             }
-          })
-          .catch(() => {
-            setIsLoading(false);
-          });
-      }
+          }
+        })
+        .catch(() => {
+          setIsLoading(false);
+        });
     }
+    // }
   }
 
   async function getUserRoyaltiesInfo(pageNumber) {
@@ -367,7 +368,7 @@ const Profile = ({ id }) => {
   function setRoyaltyData(royalty, type) {
     let royaltyList = [...royaltiesList];
     const royaltyIndex = royaltyList.findIndex(
-      (item) => item.royalty_id === royalty.royalty_id
+      (item) => item.royalty_id === royalty?.royalty_id
     );
     const royaltyLocal = { ...royalty };
     if (type === 'loadingTrue') {
@@ -380,12 +381,12 @@ const Profile = ({ id }) => {
     setRoyaltiesList(royaltyList);
   }
 
-  // useEffect(() => {
-  //   userInfo();
-  // }, []);
+  useEffect(() => {
+    userInfo();
+  }, [id]);
   useEffect(() => {
     setUser(user);
-    setWalletAddress(user.eao);
+    setWalletAddress(user?.eao);
   }, [user]);
   useEffect(() => {
     getUserRoyaltiesInfo(1);
@@ -411,13 +412,13 @@ const Profile = ({ id }) => {
     <>
       {!showLoginModal && (
         <>
-          {/* {showNetworkHandler && (
+          {showNetworkHandler && (
             <NetworkHandlerModal
               show={showNetworkHandler}
               handleClose={() => setShowNetworkHandler(false)}
               projectNetwork={daoNetwork}
             />
-          )} */}
+          )}
           <div className='container mx-auto'>
             {/* profile information section */}
             <div className='lg:flex items-center'>
@@ -429,6 +430,8 @@ const Profile = ({ id }) => {
                       src={user.avatar}
                       className='rounded-lg w-[102px] object-cover h-[102px] cursor-pointer'
                       alt={'profile'}
+                      width={102}
+                      height={102}
                     />
                   ) : (
                     <Image
@@ -436,6 +439,8 @@ const Profile = ({ id }) => {
                       src={DefaultProfilePicture}
                       className='rounded-lg w-[102px] object-cover h-[102px] cursor-pointer'
                       alt={'profile'}
+                      width={102}
+                      height={102}
                     />
                   )}
                   <div className='pl-[20px]'>
@@ -552,6 +557,8 @@ const Profile = ({ id }) => {
                 <Image
                   src={nftSvg}
                   className='mb-1 min-h-[24px] w-[24px]'
+                  width={24}
+                  height={24}
                   alt=''
                 />
                 <span className='text-primary-900 font-black'>
@@ -565,6 +572,8 @@ const Profile = ({ id }) => {
                 <Image
                   src={daoCreate}
                   className='mb-1 h-[24px] w-[24px]'
+                  width={24}
+                  height={24}
                   alt=''
                 />
                 <span className='text-secondary-900 font-black'>
@@ -640,6 +649,8 @@ const Profile = ({ id }) => {
                                       src={NETWORKS[Number(r.blockchain)].icon}
                                       className='h-[30px] w-[30px]  rounded-full'
                                       alt={DefaultProjectLogo}
+                                      width={30}
+                                      height={30}
                                     />
                                   </td>
                                   <td className='py-4 px-5 font-black '>
@@ -721,6 +732,8 @@ const Profile = ({ id }) => {
                           src={emptyStateRoyalty}
                           className='h-[249px] w-[373px] m-auto object-cover'
                           alt=''
+                          width={373}
+                          height={249}
                         />
                         <p className='text-subtitle font-bold'>
                           You don't have any Royalty yet
@@ -745,6 +758,8 @@ const Profile = ({ id }) => {
                                   src={NETWORKS[Number(r.blockchain)].icon}
                                   className='h-[34px] w-[34px] object-cover rounded-full'
                                   alt={DefaultProjectLogo}
+                                  width={34}
+                                  height={34}
                                 />
                                 <div className='mx-4 font-black '>
                                   <Link
@@ -825,6 +840,8 @@ const Profile = ({ id }) => {
                           src={emptyStateRoyalty}
                           className='h-[210px] w-[315px] m-auto'
                           alt=''
+                          height={210}
+                          width={35}
                         />
                         <p className='text-subtitle font-bold'>
                           You don't have any Royalty yet
@@ -897,6 +914,8 @@ const Profile = ({ id }) => {
                         src={emptyStateCommon}
                         className='h-[210px] w-[315px] m-auto'
                         alt=''
+                        width={315}
+                        height={210}
                       />
                       <p className='text-subtitle font-bold'>
                         You have no DAO Created
@@ -950,17 +969,21 @@ const Profile = ({ id }) => {
                                       : `/collection-details/${collection.id}`
                                   }
                                 >
-                                  <Image
-                                    className='rounded-xl h-[211px] md:h-[276px] object-cover w-full'
-                                    src={
-                                      collection &&
-                                      collection.assets &&
-                                      collection.assets[0]
-                                        ? collection.assets[0].path
-                                        : thumbIcon
-                                    }
-                                    alt=''
-                                  />
+                                  <div className='h-[211px] md:h-[276px]'>
+                                    <Image
+                                      className='rounded-xl object-cover w-full'
+                                      src={
+                                        collection &&
+                                        collection.assets &&
+                                        collection.assets[0]
+                                          ? collection.assets[0].path
+                                          : thumbIcon
+                                      }
+                                      alt=''
+                                      width={276}
+                                      height={278}
+                                    />
+                                  </div>
                                 </Link>
 
                                 <div className='p-5'>
@@ -983,12 +1006,17 @@ const Profile = ({ id }) => {
                                       truncateArray(
                                         collection.members
                                       ).slicedItems.map((member) => (
-                                        <Image
+                                        <div
+                                          className='w-9 h-9'
                                           key={member.id}
-                                          src={member.avatar}
-                                          alt={member.id}
-                                          className='rounded-full w-9 h-9 -ml-2 border-2 border-white'
-                                        />
+                                        >
+                                          <Image
+                                            src={member.avatar}
+                                            alt={member.id}
+                                            layout='responsive'
+                                            className='rounded-full -ml-2 border-2 border-white'
+                                          />
+                                        </div>
                                       ))}
                                     {collection.members &&
                                       collection.members.length > 3 && (
@@ -1016,6 +1044,8 @@ const Profile = ({ id }) => {
                         src={emptyStateCommon}
                         className='h-[210px] w-[315px] m-auto'
                         alt=''
+                        width={315}
+                        height={210}
                       />
                       <p className='text-subtitle font-bold'>
                         You have no Collection Created
@@ -1069,6 +1099,8 @@ const Profile = ({ id }) => {
                         src={emptyStateCommon}
                         className='h-[210px] w-[315px] m-auto'
                         alt=''
+                        height={210}
+                        width={315}
                       />
                       <p className='text-subtitle font-bold'>
                         You have no NFT minted
@@ -1081,7 +1113,7 @@ const Profile = ({ id }) => {
           </div>
         </>
       )}
-      {/* {showLoginModal && (
+      {showLoginModal && (
         <>
           <WalletConnectModal
             showModal={showLoginModal}
@@ -1090,7 +1122,7 @@ const Profile = ({ id }) => {
             noRedirection={false}
           />
         </>
-      )} */}
+      )}
       {showSuccessModal && (
         <SuccessModal
           show={showSuccessModal}
@@ -1137,12 +1169,15 @@ const Profile = ({ id }) => {
           handleClose={() => setProfileModal(false)}
           showCloseIcon={true}
         >
-          <Image
-            onClick={() => setProfileModal(true)}
-            src={user?.avatar === '' ? DefaultProfilePicture : user?.avatar}
-            className='rounded-lg mt-[40px]  w-full h-full max-w-[270px] max-h-[270px] mx-auto block object-cover  cursor-pointer'
-            alt={'profile'}
-          />
+          <div className=' w-full h-full max-w-[270px] max-h-[270px]'>
+            <Image
+              onClick={() => setProfileModal(true)}
+              src={user?.avatar === '' ? DefaultProfilePicture : user?.avatar}
+              className='rounded-lg mt-[40px]  w-full h-full max-w-[270px] max-h-[270px] mx-auto block object-cover  cursor-pointer'
+              alt={'profile'}
+              layout='responsive'
+            />
+          </div>
         </Modal>
       )}
     </>

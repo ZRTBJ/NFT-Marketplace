@@ -12,7 +12,7 @@ const NetworkChangedModal = ({ show, handleClose, networkId }) => {
     dispatch(logout());
     router.push('/');
     handleClose();
-    window.location.reload();
+    window?.location.reload();
   }
 
   const handleOk = () => {

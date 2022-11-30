@@ -14,12 +14,12 @@ import { setUserInfo, setUserLoading } from 'redux/user';
 import {
   ls_GetUserID,
   ls_SetChainID,
-  ls_SetUserID,
   ls_SetWalletAddress,
 } from 'util/ApplicationStorage';
 import { NETWORKS } from 'config/networks';
 import WrongNetwork from './components/WrongNetwork';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 
 const WalletConnectModal = ({
   showModal,
@@ -72,9 +72,9 @@ const WalletConnectModal = ({
           setMetamaskAccount(account);
           getPersonalSign()
             .then((signature) => {
-              if (userinfo && !userinfo['display_name']) {
-                userLogin(account, signature, 'metamask');
-              }
+              // if (userinfo && !userinfo['display_name']) {
+              userLogin(account, signature, 'metamask');
+              // }
             })
             .catch((error) => {
               alert(error.message);
@@ -224,7 +224,7 @@ const WalletConnectModal = ({
             >
               <div className='flex items-center  pt-[10px]'>
                 <div className='flex items-center'>
-                  <img
+                  <Image
                     className='h-8 w-8'
                     src={metamaskIcon}
                     alt='metamask wallet login button'

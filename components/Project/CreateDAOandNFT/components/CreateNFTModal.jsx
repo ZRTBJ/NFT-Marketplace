@@ -4,6 +4,7 @@ import Product from 'assets/images/createDAO/product.svg';
 import Tooltip from 'components/Commons/Tooltip';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 
 const CreateNFTModal = ({ handleClose, show }) => {
   const router = useRouter();
@@ -15,7 +16,7 @@ const CreateNFTModal = ({ handleClose, show }) => {
         </h3>
         <div className='cursor-pointer flex bg-[#F9FCFF] border-[1px] border-[#C7CEE5] rounded-[12px] p-6 mb-6'>
           <div className='mr-6 h-[40px] md:h-[74px] w-[40px] md:w-[74px] bg-secondary-50 flex items-center justify-center rounded-[8px]'>
-            <img src={Users} alt='Users' />
+            <Image src={Users} alt='Users' />
           </div>
           <div onClick={() => history.push('/membershipNFT')}>
             <h3 className='text-[20px] md:text-[24px] font-bold text-[#303548]'>
@@ -29,7 +30,7 @@ const CreateNFTModal = ({ handleClose, show }) => {
         </div>
         <div className='cursor-pointer flex bg-[#F9FCFF] border-[1px] border-[#C7CEE5] rounded-[12px] p-6 mb-6'>
           <div className='mr-6 h-[40px] md:h-[74px] w-[40px] md:w-[74px] bg-primary-50 flex items-center justify-center rounded-[8px]'>
-            <img src={Product} alt='Product' />
+            <Image src={Product} alt='Product' />
           </div>
           <div onClick={() => router.push('/product-nft')}>
             <h3 className='text-[20px] md:text-[24px] font-bold text-[#303548]'>

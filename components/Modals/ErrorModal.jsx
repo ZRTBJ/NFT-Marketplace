@@ -1,6 +1,7 @@
 import IconError from 'assets/images/modal/error/error_modal_img.svg';
 import Link from 'next/link';
 import Modal from '../Commons/Modal';
+import Image from 'next/image';
 
 const ErrorModal = ({
   handleClose,
@@ -16,7 +17,7 @@ const ErrorModal = ({
   return (
     <Modal width={400} show={show} handleClose={() => handleClose(false)}>
       <div className='text-center'>
-        <img className='block mx-auto max-h-60	' src={IconError} alt='' />
+        <Image className='block mx-auto max-h-60	' src={IconError} alt='' />
         <div className='mb-4 text-[16px] font-bold txtblack'>{titleMsg}</div>
         <div className='my-4 font-bold text-[14px] txtblack'>{bodyMsg}</div>
         <div className='flex justify-center mb-4'>

@@ -2,12 +2,13 @@ import React from 'react';
 import Link from 'next/link';
 import Eth from 'assets/images/network/eth.svg';
 import Polygon from 'assets/images/network/polygon.svg';
+import Image from 'next/image';
 export default function NFTListCard({ nft }) {
   return (
     <>
       <div key={nft?.id} className='  bg-white'>
         <Link href={`/minted-nft-details/${nft?.id}/${nft?.token_id}`}>
-          <img
+          <Image
             className='h-[176px] rounded-xl md:h-[276px]  object-cover w-full '
             src={nft?.asset?.path}
             alt=''
@@ -33,7 +34,7 @@ export default function NFTListCard({ nft }) {
                 <span className='text-[14px] font-bold'>
                   {nft?.price ? nft?.price : ''}
                 </span>
-                <img
+                <Image
                   src={nft.currency === 'eth' ? Eth : Polygon}
                   alt='currency logo'
                 />
