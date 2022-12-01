@@ -343,7 +343,7 @@ select {
 
 .bg-light {
   /* background-color: #f9fcff; */
-  background-color: #fff;
+  background-color: #fff !important;
 }
 
 .embed-nft-modal input {

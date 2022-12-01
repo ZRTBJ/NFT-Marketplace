@@ -12,6 +12,8 @@ export default function NFTListCard({ nft }) {
             className='h-[176px] rounded-xl md:h-[276px]  object-cover w-full '
             src={nft?.asset?.path}
             alt=''
+            width={276}
+            height={276}
           />
         </Link>
         <div className='py-2 md:py-5 h-[156px] '>
@@ -35,6 +37,8 @@ export default function NFTListCard({ nft }) {
                   {nft?.price ? nft?.price : ''}
                 </span>
                 <Image
+                  width={24}
+                  height={24}
                   src={nft.currency === 'eth' ? Eth : Polygon}
                   alt='currency logo'
                 />

@@ -3,7 +3,7 @@ import tickSvg from 'assets/images/icons/tick.svg';
 import { walletAddressTruncate } from 'util/WalletUtils';
 import avatar from 'assets/images/dummy-img.svg';
 import SocialLink from 'components/Commons/SocialLink';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { NETWORKS } from 'config/networks';
 import ReactReadMoreReadLess from 'react-read-more-read-less';
 import Image from 'next/image';
@@ -121,7 +121,7 @@ const InfoCard = ({
                       >
                         Transfer Funds
                       </button>
-                      <Link to={`/project-create?id=${project?.id}`}>
+                      <Link href={`/project-create?id=${project?.id}`}>
                         <button className='outlined-button w-[120px] text-center !px-0 mr-4 cursor-pointer font-satoshi-bold cursor-pointer'>
                           <span className='gradient-text'>Edit</span>
                         </button>
@@ -135,7 +135,7 @@ const InfoCard = ({
                       >
                         Publish
                       </button>
-                      <Link to={`/project-create?id=${project?.id}`}>
+                      <Link href={`/project-create?id=${project?.id}`}>
                         <button className='outlined-button w-[120px] text-center !px-0 mr-4 cursor-pointer font-satoshi-bold cursor-pointer'>
                           <span className='gradient-text'>Edit</span>
                         </button>
@@ -183,6 +183,8 @@ const InfoCard = ({
                       src={NETWORKS[Number(project?.blockchain)].icon}
                       className=' h-[24px] w-[24px] object-cover rounded-full'
                       alt=''
+                      height={24}
+                      width={24}
                     />
                   </div>
                 </div>

@@ -39,6 +39,8 @@ const NFTCard = ({ item }) => {
       <Image
         src={item.assets && item.assets[0] ? item.assets[0].path : NFTSample}
         alt={item.name}
+        width={276}
+        height={276}
         className='md:w-[276px] md:h-[276px] h-[180px] w-[180px]  rounded-[10px] object-cover'
       />
       <h3 className='text-[18px] md:text-[24px] font-bold'>
@@ -64,7 +66,9 @@ const NFTCard = ({ item }) => {
                 key={index}
                 src={nft?.asset?.path ? nft.asset.path : ProfileImage}
                 alt={nft?.asset?.name}
-                className=' rounded-[50px] w-[24px] h-[24px] -ml-3 object-cover'
+                width={24}
+                height={24}
+                className='rounded-[50px] w-[24px] h-[24px] -ml-3 object-cover'
               />
             ))
           : null}

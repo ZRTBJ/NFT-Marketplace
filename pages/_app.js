@@ -7,6 +7,7 @@ import { Provider } from 'react-redux';
 import { DAppProvider } from '@usedapp/core';
 import Sidebar from 'components/Commons/Sidebar';
 import '../styles/globals.css';
+import Script from 'next/script';
 // import 'tw-elements';
 
 function MyApp({ Component, pageProps }) {
@@ -18,6 +19,10 @@ function MyApp({ Component, pageProps }) {
   };
   return (
     <>
+      <Script
+        src='https://kit.fontawesome.com/6ebe0998e8.js'
+        crossorigin='anonymous'
+      ></Script>
       <Provider store={store}>
         <DAppProvider config={{}}>
           <div className='bg-light'>

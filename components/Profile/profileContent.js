@@ -393,13 +393,13 @@ const Profile = ({ id }) => {
   }, []);
   useEffect(() => {
     getProjectList();
-  }, []);
+  }, [id]);
   useEffect(() => {
     getCollectionList();
   }, []);
   useEffect(() => {
     getNftList();
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     calculateTotalRoyalties();
@@ -877,7 +877,7 @@ const Profile = ({ id }) => {
                 </div>
                 <Link
                   href={`/list/?type=dao&user=${id}`}
-                  className='contained-button  py-1 px-3 rounded ml-auto'
+                  className='contained-button rounded ml-auto'
                 >
                   View All
                 </Link>
@@ -933,7 +933,7 @@ const Profile = ({ id }) => {
                 </div>
                 <Link
                   href={`/list/?type=collection&user=true`}
-                  className='contained-button  py-1 px-3 rounded ml-auto'
+                  className='contained-button rounded ml-auto'
                 >
                   View All
                 </Link>
@@ -1063,7 +1063,7 @@ const Profile = ({ id }) => {
                 </div>
                 <Link
                   href={`/list/?type=nft&user=${id}`}
-                  className='contained-button  py-1 px-3 rounded ml-auto'
+                  className='contained-button rounded ml-auto'
                 >
                   View All
                 </Link>

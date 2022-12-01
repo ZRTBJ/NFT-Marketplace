@@ -43,6 +43,8 @@ const DAOCard = ({ item }) => {
         }
         alt={item.name}
         className='rounded-t-xl h-24 md:h-36 object-cover w-full'
+        width={347}
+        height={325}
       />
       <Image
         src={
@@ -50,6 +52,8 @@ const DAOCard = ({ item }) => {
             ? item.assets?.find((pic) => pic.name === 'cover').path
             : thumbIcon
         }
+        width={347}
+        height={325}
         alt={item.name}
         className='rounded-full h-16 w-16 md:w-24 md:h-24 border-solid border-[3px] border-white absolute top-14 md:top-20 left-1/2 z-10 -ml-[32px] md:-ml-12 object-cover '
       />
@@ -75,6 +79,8 @@ const DAOCard = ({ item }) => {
               key={member.id}
               src={member.avatar ? member.avatar : avatar}
               alt={member.id}
+              width={35}
+              height={35}
               className='rounded-full object-cover h-[35px] w-[35px]  border-2 border-white'
             />
           ))}
