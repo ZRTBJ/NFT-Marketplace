@@ -1,5 +1,7 @@
+import ProfileSettingsForm from 'components/Profile/ProfileSettingsForm';
+
 const ProfileSettings = () => {
-  return <div>Profile Settings</div>;
+  return <ProfileSettingsForm />;
 };
 
 export default ProfileSettings;

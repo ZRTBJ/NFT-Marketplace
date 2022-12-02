@@ -45,7 +45,9 @@ export default function FileDragAndDrop({
   const { isFocused, isDragAccept, isDragReject, getRootProps, getInputProps } =
     useDropzone({
       onDrop,
-      accept: "image/*",
+      accept: {
+        "image/*": [".jpeg", ".png", ".jpg", ".svg"],
+      },
       maxFiles: maxFiles,
       noClick: false,
       maxSize: maxSize,

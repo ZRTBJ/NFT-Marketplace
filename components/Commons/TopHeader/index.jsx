@@ -611,6 +611,20 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                   : () => setShowModal(true)
               }
             />
+            {userinfo?.id && (
+              <div
+                className='flex ml-4 place-items-center'
+                onClick={() => router.push(`/profile-settings`)}
+              >
+                <Image
+                  className='rounded-full border w-[25px] h-[25px] border-gray-100 shadow-sm mr-2 object-cover'
+                  src={userinfo['avatar'] ? userinfo['avatar'] : userImg}
+                  height={25}
+                  width={25}
+                  alt='user icon'
+                />
+              </div>
+            )}
           </div>
         </div>
         {/* <form
