@@ -1,7 +1,9 @@
-import { round } from "lodash";
-import { useEffect, useState, useMemo } from "react";
-import { useHistory, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable react/no-unescaped-entities */
+import { round } from 'lodash';
+import { useEffect, useState, useMemo } from 'react';
+import { useRouter } from 'next/router';
+import { toast } from 'react-toastify';
 import {
   getCollectionNFTs,
   getCollectionDetailsById,
@@ -9,66 +11,69 @@ import {
   updateRoyaltySplitter,
   getCollectionSales,
   getNetWorth,
-} from "services/collection/collectionService";
-import Cover from "assets/images/cover-default.svg";
-import manImg from "assets/images/image-default.svg";
-import avatar from "assets/images/dummy-img.svg";
-import { Link } from "react-router-dom";
-import PublishCollectionModal from "./Publish/PublishCollectionModal";
-import SalesPageModal from "Pages/Collection/SaleSetting/SalesPageModal";
-import SuccessModal from "components/Modals/SuccessModal";
-import DeployingCollectiontModal from "Pages/Collection/CollectionDetail/Publish/DeployingCollectionModal";
-import ErrorModal from "components/Modals/ErrorModal";
-import Facebook from "assets/images/facebook.svg";
-import Instagram from "assets/images/instagram.svg";
-import Twitter from "assets/images/twitter.svg";
-import Github from "assets/images/github.svg";
-import Reddit from "assets/images/reddit.svg";
-import ExternalLink from "assets/images/link.svg";
-import TransferNFT from "Pages/NFT/TransferNFT/TransferNFT";
-import { getProjectDetailsById } from "services/project/projectService";
-import Eth from "assets/images/network/eth.svg";
-import Polygon from "assets/images/network/polygon.svg";
-import MemberListTable from "./RoyaltySplitter/MemberListTable";
-import PlusIcon from "assets/images/icons/plus-circle.svg";
-import NFTSales from "./NFTSale";
-import ConfirmationModal from "components/Modals/ConfirmationModal";
-import ImportWalletModal from "Pages/Collection/CollectionDetail/RoyaltySplitter/ImportWalletModal/ImportWalletModal";
-import usePublishRoyaltySplitter from "Pages/Collection/CollectionDetail/RoyaltySplitter/Publish/hooks/usePublishRoyaltySplitter";
-import PublishRoyaltyModal from "Pages/Collection/CollectionDetail/RoyaltySplitter/Publish/PublishRoyaltyModal";
-import SalesSuccessModal from "Pages/Collection/SaleSetting/SalesSuccessModal";
-import defaultCover from "assets/images/image-default.svg";
-import { walletAddressTruncate } from "util/WalletUtils";
-import { getCurrentNetworkId } from "util/MetaMask";
-import NetworkHandlerModal from "components/Modals/NetworkHandlerModal";
-import tickSvg from "assets/images/icons/tick.svg";
-import emptyStateCommon from "assets/images/profile/emptyStateCommon.svg";
-import ReactReadMoreReadLess from "react-read-more-read-less";
-import PublishRoyaltyConfirmModal from "./Publish/PublishRoyaltyConfirmModal";
-const TABLE_HEADERS = [
-  { id: 0, label: "Wallet Address" },
-  // { id: 2, label: "Email" },
-  { id: 1, label: "Percentage" },
-  { id: 2, label: "Name" },
-  // { id: 4, label: "Token ID" },
-  { id: 3, label: "Role" },
-  { id: 4, label: "Action" },
-];
-const imageRegex = new RegExp("image");
+  getProductNFTCollectionSalesSetupInformation,
+} from 'services/collection/collectionService';
+import Cover from 'assets/images/cover-default.svg';
+import manImg from 'assets/images/image-default.svg';
+import avatar from 'assets/images/dummy-img.svg';
+import Link from 'next/link';
+import PublishCollectionModal from './Publish/PublishCollectionModal';
+import SalesPageModal from './SaleSetting/SalesPageModal';
+import SuccessModal from 'components/Modals/SuccessModal';
+import DeployingCollectiontModal from './Publish/DeployingCollectionModal';
+import ErrorModal from 'components/Modals/ErrorModal';
+import Facebook from 'assets/images/facebook.svg';
+import Instagram from 'assets/images/instagram.svg';
+import Twitter from 'assets/images/twitter.svg';
+import Github from 'assets/images/github.svg';
+import Reddit from 'assets/images/reddit.svg';
+import ExternalLink from 'assets/images/link.svg';
+import TransferNFT from 'components/NFT/TransferNFT/TransferNFT';
+import { getProjectDetailsById } from 'services/project/projectService';
+import Eth from 'assets/images/network/eth.svg';
+import Polygon from 'assets/images/network/polygon.svg';
+import MemberListTable from './RoyaltySplitter/MemberListTable';
+import PlusIcon from 'assets/images/icons/plus-circle.svg';
+import NFTSales from './NFTSale';
+import ConfirmationModal from 'components/Modals/ConfirmationModal';
+import ImportWalletModal from './RoyaltySplitter/ImportWalletModal/ImportWalletModal';
+import usePublishRoyaltySplitter from './RoyaltySplitter/Publish/hooks/usePublishRoyaltySplitter';
+import PublishRoyaltyModal from './RoyaltySplitter/Publish/PublishRoyaltyModal';
+import SalesSuccessModal from './SaleSetting/SalesSuccessModal';
+import defaultCover from 'assets/images/image-default.svg';
+import { walletAddressTruncate } from 'util/WalletUtils';
+import { getCurrentNetworkId } from 'util/MetaMask';
+import NetworkHandlerModal from 'components/Modals/NetworkHandlerModal';
+import tickSvg from 'assets/images/icons/tick.svg';
+import emptyStateCommon from 'assets/images/profile/emptyStateCommon.svg';
+import ReactReadMoreReadLess from 'react-read-more-read-less';
+import { getNftDetails } from 'services/nft/nftService';
+import PublishRoyaltyConfirmModal from './Publish/PublishRoyaltyConfirmModal';
+import Image from 'next/image';
 
-const CollectionDetail = () => {
-  const history = useHistory();
+const TABLE_HEADERS = [
+  { id: 0, label: 'Wallet Address' },
+  // { id: 2, label: "Email" },
+  { id: 1, label: 'Percentage' },
+  { id: 2, label: 'Name' },
+  // { id: 4, label: "Token ID" },
+  { id: 3, label: 'Role' },
+  { id: 4, label: 'Action' },
+];
+const imageRegex = new RegExp('image');
+
+const CollectionContent = ({ collectionId }) => {
+  const router = useRouter();
   const [Collection, setCollection] = useState();
   const [CoverImages, setCoverImages] = useState({});
   const [NFTs, setNFTs] = useState([]);
   const [Links, setLinks] = useState([]);
   const [ShowPublishModal, setShowPublishModal] = useState(false);
   const [ShowOptions, setShowOptions] = useState(null);
-  const { collectionId } = useParams();
   const [showSalesPageModal, setShowSalesPageModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [collectionType, setCollectionType] = useState("");
-  const [nftId, setNftId] = useState("");
+  const [collectionType, setCollectionType] = useState('');
+  const [nftId, setNftId] = useState('');
   const [showDeployModal, setShowDeployModal] = useState(false);
   const [publishStep, setPublishStep] = useState(1);
   const [tnxData, setTnxData] = useState({});
@@ -76,29 +81,31 @@ const CollectionDetail = () => {
   const [errorMsg, setErrorMsg] = useState(null);
   const [Logo, setLogo] = useState({});
   const [showTransferNFT, setShowTransferNFT] = useState(false);
-  const [projectNetwork, setProjectNetwork] = useState("");
+  const [projectNetwork, setProjectNetwork] = useState('');
   const [selectedTab, setSelectedTab] = useState(1);
   const [isEdit, setIsEdit] = useState(null);
   const [AutoAssign, setAutoAssign] = useState(false);
-  const [royalitySplitterId, setRoyalitySpliterId] = useState("");
+  const [royalitySplitterId, setRoyalitySpliterId] = useState('');
   const [royalityMembers, setRoyalityMembers] = useState([]);
   const [IsAutoFillLoading, setIsAutoFillLoading] = useState(false);
   const [RoyaltyUpdatedSuccessfully, setRoyaltyUpdatedSuccessfully] =
     useState(false);
   const [ShowPercentError, setShowPercentError] = useState(false);
   const [showRoyalityErrorModal, setShowRoyalityErrorModal] = useState(false);
-  const [showRoyalityErrorMessage, setShowRoyalityErrorMessage] = useState("");
+  const [showRoyalityErrorMessage, setShowRoyalityErrorMessage] = useState('');
   const [showImportWallet, setShowImportWallet] = useState(false);
-  const [projectID, setProjectID] = useState("");
+  const [projectID, setProjectID] = useState('');
   const [nftSales, setNFTSales] = useState([]);
   const [nftMemSupply, setNftMemSupply] = useState(0);
   const [daoInfo, setDaoInfo] = useState({});
-  const [nftShareURL, setNFTShareURL] = useState("");
-  const [membershipNFTId, setMembershipNFTId] = useState("");
+  const [nftShareURL, setNFTShareURL] = useState('');
+  const [membershipNFTId, setMembershipNFTId] = useState('');
   const [showNetworkHandler, setShowNetworkHandler] = useState(false);
   const [collectionNotUpdatableModal, setCollectionNotUpdatableModal] =
     useState(false);
   const [setSalesError, setSetSalesError] = useState(false);
+  const [salesSetupInfo, setSalesSetupInfo] = useState({});
+  const [dataLoading, setDataLoading] = useState(false);
   // Publish royalty splitter
   const [showPublishRoyaltySpliterModal, setShowPublishRoyaltySpliterModal] =
     useState(false);
@@ -111,18 +118,18 @@ const CollectionDetail = () => {
     setShowPublishRoyaltySpliterErrorModal,
   ] = useState(false);
   const hasPublishedRoyaltySplitter = useMemo(
-    () => Collection?.royalty_splitter?.status === "published",
+    () => Collection?.royalty_splitter?.status === 'published',
     [Collection]
   );
 
   const hanldeUpdatePublishStatus = (status) => {
-    if (status === "success") {
-      if (Collection.royalty_splitter.status !== "published") {
+    if (status === 'success') {
+      if (Collection.royalty_splitter.status !== 'published') {
         setCollection({
           ...Collection,
           royalty_splitter: {
             ...Collection.royalty_splitter,
-            status: "published",
+            status: 'published',
           },
         });
       }
@@ -143,7 +150,7 @@ const CollectionDetail = () => {
   const [balanceLoading, setBalanceLoading] = useState(false);
   const [newWorth, setNetWorth] = useState({
     balance: 0,
-    currency: "",
+    currency: '',
     balanceUSD: 0,
   });
 
@@ -154,7 +161,7 @@ const CollectionDetail = () => {
       getCollectionSalesData();
       getCollectionNewWorth();
     }
-  }, []);
+  }, [collectionId]);
 
   const getCollectionSalesData = () => {
     getCollectionSales(collectionId).then((data) =>
@@ -174,7 +181,7 @@ const CollectionDetail = () => {
         });
       } else {
         setBalanceLoading(false);
-        setNetWorth({ balance: 0, currency: "", balanceUSD: 0 });
+        setNetWorth({ balance: 0, currency: '', balanceUSD: 0 });
       }
     });
   };
@@ -220,12 +227,12 @@ const CollectionDetail = () => {
           if (resp?.collection?.assets && resp.collection.assets.length > 0) {
             setCoverImages(
               resp.collection.assets.find(
-                (img) => img["asset_purpose"] === "cover"
+                (img) => img['asset_purpose'] === 'cover'
               )
             );
             setLogo(
               resp.collection.assets.find(
-                (img) => img["asset_purpose"] === "logo"
+                (img) => img['asset_purpose'] === 'logo'
               )
             );
           }
@@ -242,6 +249,11 @@ const CollectionDetail = () => {
             } catch {}
             setLinks(webLinks);
           }
+          if (resp?.collection?.status === 'published') {
+            if (resp?.collection?.type === 'product') {
+              getSalesSetupInfo('product', resp?.collection?.id);
+            }
+          }
         }
       })
       .catch((err) => console.log(err));
@@ -249,10 +261,10 @@ const CollectionDetail = () => {
 
   function copyToClipboard(text) {
     navigator.clipboard.writeText(text);
-    const copyEl = document.getElementById("copied-message");
-    copyEl.classList.toggle("hidden");
+    const copyEl = document.getElementById('copied-message');
+    copyEl.classList.toggle('hidden');
     setTimeout(() => {
-      copyEl.classList.toggle("hidden");
+      copyEl.classList.toggle('hidden');
     }, 2000);
   }
 
@@ -290,22 +302,22 @@ const CollectionDetail = () => {
     e.preventDefault();
     setShowOptions(null);
 
-    if (Collection?.status === "draft") {
-      history.push(
+    if (Collection?.status === 'draft') {
+      router.push(
         `${
-          Collection?.type === "product"
+          Collection?.type === 'product'
             ? `/product-nft?collectionId=${collectionId}&nftId=${nft.id}`
             : `/membershipNFT?dao_id=${Collection?.project_uid}&collection_id=${collectionId}&nftId=${nft.id}`
         }`
       );
-    } else if (Collection?.status === "published") {
-      if (Collection?.type === "membership") {
-        history.push(
+    } else if (Collection?.status === 'published') {
+      if (Collection?.type === 'membership') {
+        router.push(
           `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}&nftId=${nft.id}`
         );
-      } else if (Collection.type === "product") {
+      } else if (Collection.type === 'product') {
         if (Collection?.updatable && !nft.freeze_metadata) {
-          history.push(
+          router.push(
             `/product-nft?collectionId=${collectionId}&nftId=${nft.id}`
           );
         } else {
@@ -321,14 +333,15 @@ const CollectionDetail = () => {
     setShowOptions(null);
   };
 
-  function salesPageModal(e, type, id, supply) {
+  async function salesPageModal(e, type, id, supply) {
     e.stopPropagation();
     e.preventDefault();
-    if (Collection?.status === "published") {
+    if (Collection?.status === 'published') {
       setShowOptions(null);
-      if (type === "membership") {
+      if (type === 'membership') {
         setNftId(id);
         setNftMemSupply(supply);
+        await getSalesSetupInfo('membership', id);
       }
       setShowSalesPageModal(true);
     } else {
@@ -338,7 +351,7 @@ const CollectionDetail = () => {
 
   const handlePublish = () => {
     setShowPublishModal(false);
-    if (Collection.status === "publishing") {
+    if (Collection.status === 'publishing') {
       setPublishStep(1);
       setShowDeployModal(true);
     } else {
@@ -354,22 +367,22 @@ const CollectionDetail = () => {
       };
     });
     let formData = new FormData();
-    formData.append("royalty_data", JSON.stringify(members));
+    formData.append('royalty_data', JSON.stringify(members));
     royalitySplitterId
-      ? formData.append("splitter_uid", royalitySplitterId)
-      : formData.append("collection_uid", Collection.id);
+      ? formData.append('splitter_uid', royalitySplitterId)
+      : formData.append('collection_uid', Collection.id);
     if (!ShowPercentError) {
       setIsAutoFillLoading(true);
       updateRoyaltySplitter(formData)
         .then((resp) => {
           if (resp.code === 0) {
-            toast.success("Royalty Percentage Updated Successfully");
+            toast.success('Royalty Percentage Updated Successfully');
 
             setIsAutoFillLoading(false);
             setAutoAssign(false);
             setIsEdit(null);
             setShowRoyalityErrorModal(false);
-            setShowRoyalityErrorMessage("");
+            setShowRoyalityErrorMessage('');
             getSplittedContributors(royalitySplitterId);
             getCollectionDetail();
           } else {
@@ -448,16 +461,45 @@ const CollectionDetail = () => {
       if (totalPercent === 100) {
         setShowPublishRoyaltySpliterConfirmModal(true);
       } else {
-        toast.error("Total royalty percent should be 100 %");
+        toast.error('Total royalty percent should be 100 %');
       }
     } else {
       setShowNetworkHandler(true);
     }
   };
 
+  const getSalesSetupInfo = async (type, id) => {
+    if (type === 'product') {
+      await getProductNFTCollectionSalesSetupInformation(id)
+        .then((res) => {
+          if (res.code === 0) {
+            setSalesSetupInfo(res?.more_info);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else if (type === 'membership') {
+      // calling membership nft details api because sales setup info can found in the response
+      setDataLoading(true);
+      await getNftDetails('membership', id)
+        .then((resp) => {
+          if (resp.code === 0) {
+            setSalesSetupInfo(resp?.more_info);
+          }
+          setDataLoading(false);
+        })
+        .catch((e) => {
+          console.log(e);
+          setDataLoading(false);
+        });
+    }
+  };
+
   let isSupplyOver = Collection?.total_supply <= NFTs?.length;
   return (
-    <div className="mx-4 md:mx-0">
+    <div className='mx-4 md:mx-0'>
+      {dataLoading && <div className='loading'></div>}
       {showNetworkHandler && (
         <NetworkHandlerModal
           show={showNetworkHandler}
@@ -471,20 +513,20 @@ const CollectionDetail = () => {
           handleClose={() => setShowPublishModal(false)}
           publishProject={handlePublish}
           isRoyaltyPublished={Collection?.royalty_splitter?.contract_address}
-          type="Collection"
+          type='Collection'
         />
       )}
       {RoyaltyUpdatedSuccessfully && (
         <SuccessModal
           show={RoyaltyUpdatedSuccessfully}
           handleClose={setRoyaltyUpdatedSuccessfully}
-          message="Royalty Percentage Updated Successfully"
-          btnText="Done"
+          message='Royalty Percentage Updated Successfully'
+          btnText='Done'
         />
       )}
       {showRoyalityErrorModal && (
         <ErrorModal
-          title={"Failed to apply royalty percentage!"}
+          title={'Failed to apply royalty percentage!'}
           message={`${showRoyalityErrorMessage}`}
           handleClose={() => {
             setShowRoyalityErrorModal(false);
@@ -496,7 +538,7 @@ const CollectionDetail = () => {
       )}
       {setSalesError && (
         <ErrorModal
-          title={"Collection not published yet!"}
+          title={'Collection not published yet!'}
           // message={`${showRoyalityErrorMessage}`}
           handleClose={() => {
             setSetSalesError(false);
@@ -509,13 +551,13 @@ const CollectionDetail = () => {
           show={AutoAssign}
           handleClose={setAutoAssign}
           handleApply={handleAutoFill}
-          message="This will apply royalty percentage to all the members equally. Are you
-          sure, you want to proceed?"
+          message='This will apply royalty percentage to all the members equally. Are you
+          sure, you want to proceed?'
         />
       )}
       {showErrorModal && (
         <ErrorModal
-          title={"Collection Publish failed !"}
+          title={'Collection Publish failed !'}
           message={`${errorMsg}`}
           handleClose={() => {
             setShowErrorModal(false);
@@ -528,7 +570,7 @@ const CollectionDetail = () => {
           }
           show={showErrorModal}
           buttomText={
-            errorMsg === `DAO is not published yet ` ? "View DAO" : "Close"
+            errorMsg === `DAO is not published yet ` ? 'View DAO' : 'Close'
           }
         />
       )}
@@ -569,7 +611,7 @@ const CollectionDetail = () => {
             getCollectionDetail();
             getSplittedContributors(
               royalitySplitterId ? royalitySplitterId : Collection.id,
-              royalitySplitterId ? "splitter_id" : "collection_id"
+              royalitySplitterId ? 'splitter_id' : 'collection_id'
             );
           }}
           projectId={projectID}
@@ -589,7 +631,7 @@ const CollectionDetail = () => {
       {collectionNotUpdatableModal && (
         <ErrorModal
           title={
-            "NFT is not updatable once its collection is published or its metadata was freezed"
+            'NFT is not updatable once its collection is published or its metadata was freezed'
           }
           message={`  `}
           handleClose={() => {
@@ -598,71 +640,82 @@ const CollectionDetail = () => {
           show={collectionNotUpdatableModal}
         />
       )}
-      <section className="mt-6">
-        <div className="row-span-2 col-span-2">
-          <img
-            className="rounded-xl object-cover h-[124px] md:h-[260px] w-full"
+      <section className='mt-6'>
+        <div className='row-span-2 col-span-2'>
+          <Image
+            className='rounded-xl object-cover h-[124px] md:h-[260px] w-full'
             src={CoverImages?.path ? CoverImages?.path : Cover}
-            alt=""
+            alt=''
+            height={260}
           />
         </div>
       </section>
       <section className={`bg-[#fff] rounded-b-xl mt-4 p-6 shadow-main`}>
-        <div className="flex flex-col md:flex-row">
-          <div className="md:w-2/3">
-            <div className="flex">
-              <img
+        <div className='flex flex-col md:flex-row'>
+          <div className='md:w-2/3'>
+            <div className='flex'>
+              <Image
                 src={Logo?.path ? Logo?.path : manImg}
-                className="rounded-full self-start w-14 h-14 md:w-[98px] object-cover md:h-[98px] bg-color-ass-6"
-                alt="User profile"
+                className='rounded-full self-start w-14 h-14 md:w-[98px] object-cover md:h-[98px] bg-color-ass-6'
+                alt='User profile'
+                width={98}
+                height={98}
               />
-              <div className="flex-1 min-w-0  px-4">
-                <div className="flex items-center mb-1 md:mb-2">
-                  <h2 className="truncate">{Collection?.name}</h2>
-                  {Collection?.status === "published" && (
-                    <img className="ml-1 mt-1" src={tickSvg} alt="" />
+              <div className='flex-1 min-w-0  px-4'>
+                <div className='flex items-center mb-1 md:mb-2'>
+                  <h2 className='truncate'>{Collection?.name}</h2>
+                  {Collection?.status === 'published' && (
+                    <Image
+                      className='ml-1 mt-1'
+                      src={tickSvg}
+                      alt=''
+                      height={17}
+                      width={17}
+                    />
                   )}
                 </div>
 
-                <p className="text-textLight text-sm">
+                <p className='text-textLight text-sm'>
                   {Collection?.contract_address
                     ? walletAddressTruncate(Collection.contract_address)
-                    : "Smart Contract not released"}
+                    : 'Smart Contract not released'}
                   <i
                     className={`fa-solid fa-copy ml-2 ${
                       Collection?.contract_address
-                        ? "cursor-pointer"
-                        : "cursor-not-allowed"
+                        ? 'cursor-pointer'
+                        : 'cursor-not-allowed'
                     }`}
                     disabled={!Collection?.contract_address}
                     onClick={() =>
                       copyToClipboard(Collection?.contract_address)
                     }
                   ></i>
-                  <span id="copied-message" className="hidden ml-2">
+                  <span id='copied-message' className='hidden ml-2'>
                     Copied !
                   </span>
                 </p>
-                <p className="my-2 text-textLight md:text-sm text:xs md:flex items-center">
+                <p className='my-2 text-textLight md:text-sm text:xs md:flex items-center'>
                   Connected With :
                   <Link
-                    className="md:ml-2 mt-1 md:mt-0 font-bold flex items-center !no-underline"
-                    to={`/project-details/${daoInfo?.id}`}
+                    className='md:ml-2 mt-1 md:mt-0 font-bold flex items-center !no-underline'
+                    href={`/project-details/${daoInfo?.id}`}
                   >
-                    <img
-                      className="h-[24px] w-[24px] rounded-full mr-1"
+                    <Image
+                      className='h-[24px] w-[24px] rounded-full mr-1'
                       src={
                         daoInfo?.assets?.length > 0
                           ? daoInfo.assets.find(
-                              (img) => img["asset_purpose"] === "cover"
+                              (img) => img['asset_purpose'] === 'cover'
                             )
                             ? daoInfo.assets.find(
-                                (img) => img["asset_purpose"] === "cover"
+                                (img) => img['asset_purpose'] === 'cover'
                               ).path
                             : defaultCover
                           : defaultCover
                       }
-                      alt="collection cover"
+                      width={24}
+                      height={24}
+                      alt='collection cover'
                     />
                     {daoInfo?.name}
                   </Link>
@@ -672,138 +725,155 @@ const CollectionDetail = () => {
           </div>
 
           <div
-            className="flex flex-wrap mt-3 items-start md:justify-end md:w-1/3 md:mt-0"
-            role="group"
+            className='flex flex-wrap mt-3 items-start md:justify-end md:w-1/3 md:mt-0'
+            role='group'
           >
-            {Links.find((link) => link.title === "linkFacebook") &&
-              Links.find((link) => link.title === "linkFacebook").value
+            {Links.find((link) => link.title === 'linkFacebook') &&
+              Links.find((link) => link.title === 'linkFacebook').value
                 ?.length > 0 && (
-                <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300">
+                <div className='social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300'>
                   <a
                     href={`${
-                      Links.find((link) => link.title === "linkFacebook").value
+                      Links.find((link) => link.title === 'linkFacebook').value
                     }`}
-                    target="_blank"
-                    rel="noreferrer"
+                    target='_blank'
+                    rel='noreferrer'
                   >
-                    <img src={Facebook} alt="Facebook" />
+                    <Image
+                      src={Facebook}
+                      alt='Facebook'
+                      width={16}
+                      height={16}
+                    />
                   </a>
                 </div>
               )}
 
-            {Links.find((link) => link.title === "linkInsta") &&
-              Links.find((link) => link.title === "linkInsta").value?.length >
+            {Links.find((link) => link.title === 'linkInsta') &&
+              Links.find((link) => link.title === 'linkInsta').value?.length >
                 0 && (
-                <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
+                <div className='social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4'>
                   <a
                     href={`${
-                      Links.find((link) => link.title === "linkInsta").value
+                      Links.find((link) => link.title === 'linkInsta').value
                     }`}
-                    target="_blank"
-                    rel="noreferrer"
+                    target='_blank'
+                    rel='noreferrer'
                   >
-                    <img src={Instagram} alt="Instagram" />
+                    <Image
+                      src={Instagram}
+                      alt='Instagram'
+                      width={16}
+                      height={16}
+                    />
                   </a>
                 </div>
               )}
 
-            {Links.find((link) => link.title === "linkTwitter") &&
-              Links.find((link) => link.title === "linkTwitter").value?.length >
+            {Links.find((link) => link.title === 'linkTwitter') &&
+              Links.find((link) => link.title === 'linkTwitter').value?.length >
                 0 && (
-                <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4">
+                <div className='social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4'>
                   <a
                     href={`${
-                      Links.find((link) => link.title === "linkTwitter").value
+                      Links.find((link) => link.title === 'linkTwitter').value
                     }`}
-                    target="_blank"
-                    rel="noreferrer"
+                    target='_blank'
+                    rel='noreferrer'
                   >
-                    <img src={Twitter} alt="Twitter" />
+                    <Image src={Twitter} alt='Twitter' width={16} height={16} />
                   </a>
                 </div>
               )}
 
-            {Links.find((link) => link.title === "linkGitub") &&
-              Links.find((link) => link.title === "linkGitub").value?.length >
+            {Links.find((link) => link.title === 'linkGitub') &&
+              Links.find((link) => link.title === 'linkGitub').value?.length >
                 0 && (
-                <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 ">
+                <div className='social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 '>
                   <a
                     href={`${
-                      Links.find((link) => link.title === "linkGitub").value
+                      Links.find((link) => link.title === 'linkGitub').value
                     }`}
-                    target="_blank"
-                    rel="noreferrer"
+                    target='_blank'
+                    rel='noreferrer'
                   >
-                    <img src={Github} alt="Github" />
+                    <Image src={Github} alt='Github' width={16} height={16} />
                   </a>
                 </div>
               )}
-            {Links.find((link) => link.title === "linkReddit") &&
-              Links.find((link) => link.title === "linkReddit").value?.length >
+            {Links.find((link) => link.title === 'linkReddit') &&
+              Links.find((link) => link.title === 'linkReddit').value?.length >
                 0 && (
-                <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 ">
+                <div className='social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 '>
                   <a
                     href={`${
-                      Links.find((link) => link.title === "linkReddit").value
+                      Links.find((link) => link.title === 'linkReddit').value
                     }`}
-                    target="_blank"
-                    rel="noreferrer"
+                    target='_blank'
+                    rel='noreferrer'
                   >
-                    <img src={Reddit} alt="Reddit" />
+                    <Image src={Reddit} alt='Reddit' width={16} height={16} />
                   </a>
                 </div>
               )}
 
-            {Links.find((link) => link.title === "customLinks1") &&
-              Links.find((link) => link.title === "customLinks1").value
+            {Links.find((link) => link.title === 'customLinks1') &&
+              Links.find((link) => link.title === 'customLinks1').value
                 ?.length > 0 && (
-                <div className="social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 ">
+                <div className='social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 '>
                   <a
                     href={`${
-                      Links.find((link) => link.title === "customLinks1").value
+                      Links.find((link) => link.title === 'customLinks1').value
                     }`}
-                    target="_blank"
-                    rel="noreferrer"
+                    target='_blank'
+                    rel='noreferrer'
                   >
-                    <img src={ExternalLink} alt="Github" />
+                    <Image
+                      src={ExternalLink}
+                      alt='Github'
+                      width={16}
+                      height={16}
+                    />
                   </a>
                 </div>
               )}
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row pt-5">
-          <div className="md:w-2/3">
+        <div className='flex flex-col md:flex-row pt-5'>
+          <div className='md:w-2/3'>
             <h3>About</h3>
-            <div className="text-textLight text-sm">
+            <div className='text-textLight text-sm'>
               {Collection?.description ? (
-                <div className="whitespace-pre-line text-textLight break-all text-sm">
+                <div className='whitespace-pre-line text-textLight break-all text-sm'>
                   <ReactReadMoreReadLess
                     charLimit={300}
-                    readMoreText={"Read more ▼"}
-                    readLessText={"Read less ▲"}
-                    readMoreClassName="font-bold"
-                    readLessClassName="font-bold"
+                    readMoreText={'Read more ▼'}
+                    readLessText={'Read less ▲'}
+                    readMoreClassName='font-bold'
+                    readLessClassName='font-bold'
                   >
                     {Collection.description}
                   </ReactReadMoreReadLess>
                 </div>
               ) : (
-                "Please add description to show here"
+                'Please add description to show here'
               )}
             </div>
-            <div className="flex items-center mt-3">
+            <div className='flex items-center mt-3'>
               {Collection &&
                 Collection.members &&
                 Collection.members.length > 0 &&
                 Collection.members.map((img, index) => (
                   <div key={index}>
                     {index < 5 && (
-                      <img
+                      <Image
                         key={`member-img-${index}`}
-                        className="rounded-full h-[35px] w-[38px] -ml-1 border-2 object-cover  border-white"
+                        className='rounded-full h-[35px] w-[38px] -ml-1 border-2 object-cover  border-white'
                         src={img?.avatar ? img.avatar : avatar}
-                        alt=""
+                        alt=''
+                        width={38}
+                        height={35}
                       />
                     )}
                   </div>
@@ -811,53 +881,53 @@ const CollectionDetail = () => {
               {Collection &&
                 Collection.members &&
                 Collection.members.length > 5 && (
-                  <span className="ml-2 bg-primary-900 bg-opacity-5  text-primary-900 rounded p-1 text-xs  ">
+                  <span className='ml-2 bg-primary-900 bg-opacity-5  text-primary-900 rounded p-1 text-xs  '>
                     +{Collection.members.length - 5}
                   </span>
                 )}
             </div>
           </div>
 
-          <div className="flex items-start md:items-end flex-col mt-3 justify-center md:justify-end md:w-1/3  md:mt-0">
-            <div className="bg-[#E8F5FB] ml-0 md:ml-3 rounded-md p-3 px-5 relative w-56">
+          <div className='flex items-start md:items-end flex-col mt-3 justify-center md:justify-end md:w-1/3  md:mt-0'>
+            <div className='bg-[#E8F5FB] ml-0 md:ml-3 rounded-md p-3 px-5 relative w-56'>
               <i
                 onClick={getCollectionNewWorth}
                 className={`cursor-pointer fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3 ${
-                  balanceLoading ? "fa-spin" : ""
+                  balanceLoading ? 'fa-spin' : ''
                 }'}`}
               ></i>
-              <p className=" text-sm text-textSubtle ">Net Worth</p>
+              <p className=' text-sm text-textSubtle '>Net Worth</p>
               <h4>
                 {newWorth?.balance} {newWorth?.currency?.toUpperCase()}
               </h4>
-              <p className="text-sm text-textSubtle">
+              <p className='text-sm text-textSubtle'>
                 $ {newWorth.balanceUSD?.toFixed(2)}
               </p>
             </div>
-            <div className="mt-6 flex items-center">
+            <div className='mt-6 flex items-center'>
               {/* <a className='inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>
                 Sales Setting
               </a> */}
-              {Collection?.type === "product" && Collection?.is_owner && (
+              {Collection?.type === 'product' && Collection?.is_owner && (
                 <div
-                  onClick={(e) => salesPageModal(e, "product")}
-                  className="outlined-button ml-0 md:ml-4 font-satoshi-bold"
+                  onClick={(e) => salesPageModal(e, 'product')}
+                  className='outlined-button ml-0 md:ml-4 font-satoshi-bold'
                 >
                   <span>Sales Setting</span>
                 </div>
               )}
               {Collection?.is_owner && (
                 <Link
-                  to={`/collection-create/?id=${collectionId}`}
-                  className="outlined-button ml-4 font-satoshi-bold"
+                  href={`/collection-create/?id=${collectionId}`}
+                  className='outlined-button ml-4 font-satoshi-bold'
                 >
                   <span>Edit Collection</span>
                 </Link>
               )}
-              {Collection?.status !== "published" && Collection?.is_owner && (
+              {Collection?.status !== 'published' && Collection?.is_owner && (
                 <a
                   onClick={handlePublishModal}
-                  className="contained-button ml-4 font-satoshi-bold"
+                  className='contained-button ml-4 font-satoshi-bold'
                 >
                   Publish
                 </a>
@@ -867,74 +937,74 @@ const CollectionDetail = () => {
         </div>
       </section>
       <section>
-        {Collection?.is_owner && Collection.status !== "published" ? (
+        {Collection?.is_owner && Collection.status !== 'published' ? (
           <div
             onClick={
-              Collection.type === "product" && isSupplyOver
+              Collection.type === 'product' && isSupplyOver
                 ? null
                 : () =>
-                    history.push(
+                    router.push(
                       `${
-                        Collection?.type === "product"
+                        Collection?.type === 'product'
                           ? `/product-nft?collectionId=${collectionId}`
                           : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}`
                       }`
                     )
             }
             className={`mint-button mt-3 text-center font-satoshi-bold w-full md:w-fit ${
-              Collection.type === "product" && isSupplyOver ? "grayscale" : ""
+              Collection.type === 'product' && isSupplyOver ? 'grayscale' : ''
             }`}
           >
             <span> Create NFT</span>
           </div>
         ) : null}
         <section>
-          <div className="mb-4">
+          <div className='mb-4'>
             <ul
-              className="flex flex-wrap -mb-px text-sm font-medium text-center"
-              id="myTab"
-              data-tabs-toggle="#myTabContent"
-              role="tablist"
+              className='flex flex-wrap -mb-px text-sm font-medium text-center'
+              id='myTab'
+              data-tabs-toggle='#myTabContent'
+              role='tablist'
             >
               <li
-                className="mr-2"
-                role="presentation"
+                className='mr-2'
+                role='presentation'
                 onClick={() => setSelectedTab(1)}
               >
                 <button
                   className={`inline-block p-4 text-lg rounded-t-lg ${
                     selectedTab === 1
-                      ? "border-b-2 border-primary-900 text-primary-900"
-                      : "border-transparent text-textSubtle"
+                      ? 'border-b-2 border-primary-900 text-primary-900'
+                      : 'border-transparent text-textSubtle'
                   } hover:text-primary-600`}
-                  id="nft"
-                  data-tabs-target="#nft"
-                  type="button"
-                  role="tab"
-                  aria-controls="nft"
-                  aria-selected="true"
+                  id='nft'
+                  data-tabs-target='#nft'
+                  type='button'
+                  role='tab'
+                  aria-controls='nft'
+                  aria-selected='true'
                 >
                   NFT
                 </button>
               </li>
               {Collection?.is_owner && (
                 <li
-                  className="mr-2"
-                  role="presentation"
+                  className='mr-2'
+                  role='presentation'
                   onClick={() => setSelectedTab(2)}
                 >
                   <button
                     className={`inline-block p-4 text-lg rounded-t-lg ${
                       selectedTab === 2
-                        ? "border-b-2 border-primary-900 text-primary-900"
-                        : "border-transparent text-textSubtle"
+                        ? 'border-b-2 border-primary-900 text-primary-900'
+                        : 'border-transparent text-textSubtle'
                     } hover:text-primary-900`}
-                    id="dashboard"
-                    data-tabs-target="#dashboard"
-                    type="button"
-                    role="tab"
-                    aria-controls="dashboard"
-                    aria-selected="false"
+                    id='dashboard'
+                    data-tabs-target='#dashboard'
+                    type='button'
+                    role='tab'
+                    aria-controls='dashboard'
+                    aria-selected='false'
                   >
                     Royalty Splitter
                   </button>
@@ -942,80 +1012,84 @@ const CollectionDetail = () => {
               )}
             </ul>
           </div>
-          <div id="myTabContent">
+          <div id='myTabContent'>
             {selectedTab === 1 && (
-              <div className="mt-6">
+              <div className='mt-6'>
                 {NFTs?.length ? (
-                  <div className="grid gap-6  grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+                  <div className='grid gap-6  grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'>
                     {NFTs.map((nft) => {
                       return (
                         <div
                           key={nft?.id}
-                          className="min-h-auto md:min-h-[390px] rounded-xl  bg-white"
+                          className='min-h-auto md:min-h-[390px] rounded-xl  bg-white'
                         >
-                          <Link to={`/nft-details/${nft?.nft_type}/${nft.id}`}>
+                          <Link
+                            href={`/nft-details/${nft?.nft_type}/${nft.id}`}
+                          >
                             {imageRegex.test(nft?.asset?.asset_type) && (
-                              <img
-                                className="rounded-xl h-[176px] md:h-[276px] w-full object-cover"
+                              <Image
+                                className='rounded-xl h-[176px] md:h-[276px] w-full object-cover'
                                 src={nft?.asset?.path}
-                                alt=""
+                                alt=''
+                                width={276}
+                                height={276}
                               />
                             )}
-                            {nft?.asset?.asset_type === "movie" ||
-                            nft?.asset?.asset_type === "video/mp4" ? (
+                            {nft?.asset?.asset_type === 'movie' ||
+                            nft?.asset?.asset_type === 'video/mp4' ? (
                               <video
-                                className="h-[176px] md:h-[276px] w-full"
+                                className='h-[176px] md:h-[276px] w-full'
                                 controls
                               >
                                 <source
                                   src={nft?.asset?.path}
-                                  type="video/mp4"
+                                  type='video/mp4'
                                 />
                                 Your browser does not support the video tag.
                               </video>
                             ) : null}
-                            {nft?.asset?.asset_type === "audio" ||
-                            nft?.asset?.asset_type === "audio/mpeg" ? (
+                            {nft?.asset?.asset_type === 'audio' ||
+                            nft?.asset?.asset_type === 'audio/mpeg' ? (
                               <audio
                                 src={nft?.asset?.path}
                                 controls
                                 autoPlay={false}
-                                className="h-[176px] md:h-[276px] w-full"
+                                className='h-[176px] md:h-[276px] w-full'
                               />
                             ) : null}
                           </Link>
-                          <div className="py-2 md:py-5">
-                            <div className="flex ">
-                              <h3 className="mb-2 text-txtblack truncate flex-1 mr-3 m-w-0 text-[24px]">
+                          <div className='py-2 md:py-5'>
+                            <div className='flex '>
+                              <h3 className='mb-2 text-txtblack truncate flex-1 mr-3 m-w-0 text-[24px]'>
                                 {nft?.name}
                               </h3>
-                              <div className="relative">
+                              <div className='relative'>
                                 {/* Dropdown menu  */}
                                 {Collection?.is_owner && (
                                   <>
                                     <button
-                                      type="button"
-                                      className="w-[20px]"
+                                      type='button'
+                                      className='w-[20px]'
                                       onClick={(e) =>
                                         handleShowOptions(e, nft.id)
                                       }
                                     >
-                                      <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
+                                      <i className='fa-regular fa-ellipsis-vertical text-textSubtle'></i>
                                     </button>
                                   </>
                                 )}
                                 {ShowOptions === nft.id && (
-                                  <div className="z-10 w-40 md:w-48 bg-white   rounded-md  absolute right-0 md:left-0 top-8 mb-6 block">
-                                    <ul className="text-sm mb-0">
-                                      <li className="border">
+                                  <div className='z-10 w-40 md:w-48 bg-white   rounded-md  absolute right-0 md:left-0 top-8 mb-6 block'>
+                                    <ul className='text-sm mb-0'>
+                                      <li className='border'>
                                         <div
                                           onClick={(e) => handleEditNFT(e, nft)}
-                                          className="py-3 pl-3 block hover:bg-gray-100 cursor-pointer"
+                                          className='py-3 pl-3 block hover:bg-gray-100 cursor-pointer'
                                         >
                                           Edit NFT
                                         </div>
                                       </li>
-                                      {Collection?.type === "membership" && (
+                                      {Collection?.type === 'membership' && (
                                         <>
                                           {/* <li className="border">
                                           <div
@@ -1028,17 +1102,17 @@ const CollectionDetail = () => {
                                             Transfer NFT
                                           </div>
                                         </li> */}
-                                          <li className="border">
+                                          <li className='border'>
                                             <div
                                               onClick={(e) =>
                                                 salesPageModal(
                                                   e,
-                                                  "membership",
+                                                  'membership',
                                                   nft.id,
                                                   nft.supply
                                                 )
                                               }
-                                              className="block p-4 hover:bg-gray-100 cursor-pointer"
+                                              className='block p-4 hover:bg-gray-100 cursor-pointer'
                                             >
                                               Sales Settings
                                             </div>
@@ -1051,16 +1125,18 @@ const CollectionDetail = () => {
                               </div>
                             </div>
 
-                            <div className="flex  ">
-                              <p className="text-[13px]">
-                                {nft?.price ? nft?.price : "Price not set"}{" "}
+                            <div className='flex  '>
+                              <p className='text-[13px]'>
+                                {nft?.price ? nft?.price : 'Price not set'}{' '}
                                 {nft?.currency?.toUpperCase()}
                               </p>
                               {nft?.currency ? (
-                                <img
-                                  className="ml-auto"
-                                  src={nft.currency === "eth" ? Eth : Polygon}
+                                <Image
+                                  className='ml-auto'
+                                  src={nft.currency === 'eth' ? Eth : Polygon}
                                   alt={projectNetwork}
+                                  width={24}
+                                  height={24}
                                 />
                               ) : null}
                             </div>
@@ -1070,15 +1146,17 @@ const CollectionDetail = () => {
                     })}
                   </div>
                 ) : (
-                  <div className="w-full mb-6">
-                    <img
+                  <div className='w-full mb-6'>
+                    <Image
                       src={emptyStateCommon}
-                      className="h-[210px] w-[315px] m-auto"
-                      alt=""
+                      className='h-[210px] w-[315px] m-auto'
+                      alt=''
+                      width={315}
+                      height={210}
                     />
-                    <p className="font-bold text-center">
+                    <p className='font-bold text-center'>
                       You don't have any NFT's.
-                      {Collection?.status === "draft"
+                      {Collection?.status === 'draft'
                         ? ` Start minting NFT's to display here`
                         : ``}
                     </p>
@@ -1087,44 +1165,49 @@ const CollectionDetail = () => {
               </div>
             )}
             {selectedTab === 2 && (
-              <div className="mb-6">
-                <div className="bg-white rounded-[12px] p-5 shadow-main">
-                  <div className="flex items-start md:items-center justify-between pb-7 border-b-[1px] mb-6 border-[#E3DEEA]">
-                    <h3 className="text-[18px] font-black">Contributor</h3>
+              <div className='mb-6'>
+                <div className='bg-white rounded-[12px] p-5 shadow-main'>
+                  <div className='flex items-start md:items-center justify-between pb-7 border-b-[1px] mb-6 border-[#E3DEEA]'>
+                    <h3 className='text-[18px] font-black'>Contributor</h3>
                     {ShowPercentError ? (
-                      <p className="text-red-400 text-[14px] mt-1">
+                      <p className='text-red-400 text-[14px] mt-1'>
                         Total percent of contributors should equal to or lesser
                         than 100%
                       </p>
                     ) : null}
                     {/* {CollectionDetail?.is_owner && data?.members?.length ? ( */}
-                    <div className="flex items-center justify-center flex-col md:flex-row">
+                    <div className='flex items-center justify-center flex-col md:flex-row'>
                       {!hasPublishedRoyaltySplitter && (
                         <>
-                          <div className="form-check form-switch flex items-center">
-                            <p className="text-[#303548] text-[12px] mr-3">
+                          <div className='form-check form-switch flex items-center'>
+                            <p className='text-[#303548] text-[12px] mr-3'>
                               Split Evenly
                             </p>
                             <input
-                              className="form-check-input appearance-none w-9 rounded-full h-5 align-top bg-white bg-no-repeat bg-contain bg-gray-300 focus:outline-none cursor-pointer shadow-sm"
-                              type="checkbox"
+                              className='form-check-input appearance-none w-9 rounded-full h-5 align-top bg-white bg-no-repeat bg-contain bg-gray-300 focus:outline-none cursor-pointer shadow-sm'
+                              type='checkbox'
                               checked={AutoAssign}
-                              role="switch"
+                              role='switch'
                               onChange={handleAutoAssign}
                             />
                           </div>
                           <div
-                            className="mint-button mt-4 md:mt-0 ml-4 text-center font-satoshi-bold w-full text-[12px] md:w-fit flex"
+                            className='mint-button mt-4 md:mt-0 ml-4 text-center font-satoshi-bold w-full text-[12px] md:w-fit flex'
                             onClick={() => setShowImportWallet(true)}
                           >
-                            <img src={PlusIcon} alt="add" />
-                            <span className="ml-1">Import Contributor</span>
+                            <Image
+                              src={PlusIcon}
+                              alt='add'
+                              width={14}
+                              height={14}
+                            />
+                            <span className='ml-1'>Import Contributor</span>
                           </div>
                         </>
                       )}
                     </div>
                     {/* ) : null} */}
-                  </div>{" "}
+                  </div>{' '}
                   <MemberListTable
                     collection={Collection}
                     list={royalityMembers}
@@ -1138,10 +1221,10 @@ const CollectionDetail = () => {
                     handleAutoFill={handleAutoFill}
                     isOwner={Collection?.is_owner}
                   />
-                  <div className="w-full">
+                  <div className='w-full'>
                     {!hasPublishedRoyaltySplitter && (
                       <button
-                        className="block ml-auto bg-primary-100 text-primary-900 p-3 font-black text-[14px]"
+                        className='block ml-auto bg-primary-100 text-primary-900 p-3 font-black text-[14px]'
                         onClick={handlePublishSpliter}
                         disabled={
                           !canPublishRoyaltySplitter ||
@@ -1152,14 +1235,14 @@ const CollectionDetail = () => {
                       >
                         {isPublishingRoyaltySplitter
                           ? publishRoyaltySplitterStatus === 1
-                            ? "Creating contract"
-                            : "Publishing"
-                          : "Lock Percentage"}
+                            ? 'Creating contract'
+                            : 'Publishing'
+                          : 'Lock Percentage'}
                       </button>
                     )}
                   </div>
                 </div>
-                <div className="bg-white rounded-[12px] p-5 mt-6 shadow-main">
+                <div className='bg-white rounded-[12px] p-5 mt-6 shadow-main'>
                   <NFTSales items={nftSales} />
                 </div>
               </div>
@@ -1185,6 +1268,7 @@ const CollectionDetail = () => {
           projectNetwork={projectNetwork}
           setNFTShareURL={setNFTShareURL}
           setMembershipNFTId={setMembershipNFTId}
+          salesSetupInfo={salesSetupInfo}
         />
       )}
       {showSuccessModal && (
@@ -1225,7 +1309,7 @@ const CollectionDetail = () => {
       {showPublishRoyaltySpliterErrorModal && (
         <ErrorModal
           show={showPublishRoyaltySpliterErrorModal}
-          title="Failed to publish royalty percentage!"
+          title='Failed to publish royalty percentage!'
           handleClose={() => setShowPublishRoyaltySpliterErrorModal(false)}
         />
       )}
@@ -1233,4 +1317,4 @@ const CollectionDetail = () => {
   );
 };
 
-export default CollectionDetail;
+export default CollectionContent;

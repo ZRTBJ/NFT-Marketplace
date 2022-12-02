@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import PlusIcon from 'assets/images/icons/plus-circle.svg';
 import { round } from 'lodash';
-import MemberListTable from 'components/Collection/CollectionDetail/RoyaltySplitter/MemberListTable';
-import usePublishRoyaltySplitter from 'components/Collection/CollectionDetail/RoyaltySplitter/Publish/hooks/usePublishRoyaltySplitter';
+import MemberListTable from 'components/Collection/RoyaltySplitter/MemberListTable';
+import usePublishRoyaltySplitter from 'components/Collection/RoyaltySplitter/Publish/hooks/usePublishRoyaltySplitter';
 import {
   getCollectionDetailsById,
   getSplitterDetails,
@@ -10,16 +10,16 @@ import {
 } from 'services/collection/collectionService';
 import SuccessModal from 'components/Modals/SuccessModal';
 import ConfirmationModal from 'components/Modals/ConfirmationModal';
-import ImportWalletModal from 'components/Collection/CollectionDetail/RoyaltySplitter/ImportWalletModal/ImportWalletModal';
+import ImportWalletModal from 'components/Collection/RoyaltySplitter/ImportWalletModal/ImportWalletModal';
 import ErrorModal from 'components/Modals/ErrorModal';
 import { toast } from 'react-toastify';
-import PublishRoyaltyModal from 'components/Collection/CollectionDetail/RoyaltySplitter/Publish/PublishRoyaltyModal';
-import PublishCollectionModal from 'components/Collection/CollectionDetail/Publish/PublishCollectionModal';
+import PublishRoyaltyModal from 'components/Collection/RoyaltySplitter/Publish/PublishRoyaltyModal';
+import PublishCollectionModal from 'components/Collection/Publish/PublishCollectionModal';
 import Spinner from 'components/Commons/Spinner';
 import ReactPaginate from 'react-paginate';
 import { getCurrentNetworkId } from 'util/MetaMask';
 import NetworkHandlerModal from 'components/Modals/NetworkHandlerModal';
-import PublishRoyaltyConfirmModal from 'components/Collection/CollectionDetail/Publish/PublishRoyaltyConfirmModal';
+import PublishRoyaltyConfirmModal from 'components/Collection/Publish/PublishRoyaltyConfirmModal';
 import Image from 'next/image';
 
 const TABLE_HEADERS = [
