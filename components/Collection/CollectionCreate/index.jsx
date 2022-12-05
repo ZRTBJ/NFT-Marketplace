@@ -1,32 +1,30 @@
-import React from "react";
-import { useState, useCallback, useEffect } from "react";
-import "./index.css";
-import { useSelector } from "react-redux";
+import React from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import {
   checkUniqueCollectionName,
   checkUniqueCollectionSymbol,
-} from "services/collection/collectionService";
-import Outline from "Pages/Project/ProjectCreate/Outline";
-import Confirmation from "Pages/Project/ProjectCreate/Confirm";
-import { mockCreateProject } from "services/project/projectService";
+} from 'services/collection/collectionService';
 import {
   createCollection,
   updateCollection,
   getCollectionDetailsById,
   deleteAssetsOfCollection,
-} from "services/collection/collectionService";
-import ErrorModal from "components/Modals/ErrorModal";
-import SuccessModal from "components/Modals/SuccessModal";
+} from 'services/collection/collectionService';
+import ErrorModal from 'components/Modals/ErrorModal';
+import SuccessModal from 'components/Modals/SuccessModal';
 import {
   getProjectCategory,
   createProject,
-} from "services/project/projectService";
-import { useLocation } from "react-router-dom";
-import { ls_GetChainID } from "util/ApplicationStorage";
-export default function CollectionCreate() {
+} from 'services/project/projectService';
+import { ls_GetChainID } from 'util/ApplicationStorage';
+import Outline from 'components/FormUtility/Outline';
+import Confirmation from 'components/FormUtility/Confirmation';
+
+export default function CollectionCreate({ query }) {
   // logo start
   const [logoPhoto, setLogoPhoto] = useState([]);
-  const [logoPhotoUrl, setLogoPhotoUrl] = useState("");
+  const [logoPhotoUrl, setLogoPhotoUrl] = useState('');
   const userinfo = useSelector((state) => state.user.userinfo);
   const onLogoPhotoSelect = useCallback((acceptedFiles) => {
     if (acceptedFiles.length === 1) {
@@ -48,18 +46,18 @@ export default function CollectionCreate() {
       setDataIsLoading(true);
       await deleteAssetsOfCollection(payload).then((e) => {
         setLogoPhoto([]);
-        setLogoPhotoUrl("");
+        setLogoPhotoUrl('');
         setDataIsLoading(false);
       });
     } else {
       setLogoPhoto([]);
-      setLogoPhotoUrl("");
+      setLogoPhotoUrl('');
     }
   }
   // Logo End
 
   // collection Type start
-  const [collectionType, setCollectionType] = useState("");
+  const [collectionType, setCollectionType] = useState('');
   const [showCollectionType, setShowCollectionType] = useState(true);
   const [emptyCollectionType, setEmptyCollectionType] = useState(false);
   function onCollectionTypeSelect(e) {
@@ -71,7 +69,7 @@ export default function CollectionCreate() {
   // cover start
   const [showCover, setShowCover] = useState(true);
   const [coverPhoto, setCoverPhoto] = useState([]);
-  const [coverPhotoUrl, setCoverPhotoUrl] = useState("");
+  const [coverPhotoUrl, setCoverPhotoUrl] = useState('');
   const onCoverPhotoSelect = useCallback((acceptedFiles) => {
     if (acceptedFiles.length === 1) {
       setCoverPhoto(acceptedFiles);
@@ -92,18 +90,18 @@ export default function CollectionCreate() {
       setDataIsLoading(true);
       await deleteAssetsOfCollection(payload).then((e) => {
         setCoverPhoto([]);
-        setCoverPhotoUrl("");
+        setCoverPhotoUrl('');
         setDataIsLoading(false);
       });
     } else {
       setCoverPhoto([]);
-      setCoverPhotoUrl("");
+      setCoverPhotoUrl('');
     }
   }
   // cover End
 
   // Project Name start
-  const [projectName, setProjectName] = useState("");
+  const [projectName, setProjectName] = useState('');
   const [emptyProjectName, setemptyProjectName] = useState(false);
   const [alreadyTakenProjectName, setAlreadyTakenProjectName] = useState(false);
   const [projectNameDisabled, setProjectNameDisabled] = useState(false);
@@ -131,7 +129,7 @@ export default function CollectionCreate() {
 
   // Dao symbol start
   // dao symbol is collection symbol
-  const [daoSymbol, setDaoSymbol] = useState("");
+  const [daoSymbol, setDaoSymbol] = useState('');
   const [emptyDaoSymbol, setEmptyDaoSymbol] = useState(false);
   const [daoSymbolDisable, setDaoSymbolDisable] = useState(false);
   const [alreadyTakenDaoSymbol, setAlreadyTakenDaoSymbol] = useState(false);
@@ -158,7 +156,7 @@ export default function CollectionCreate() {
   // Dao symbol End
 
   // overview start
-  const [overview, setOverview] = useState("");
+  const [overview, setOverview] = useState('');
   function onOverviewChange(e) {
     setOverview(e.target.value);
   }
@@ -178,11 +176,11 @@ export default function CollectionCreate() {
 
   // webLinks start
   const links = [
-    { title: "linkInsta", icon: "instagram", value: "" },
-    { title: "linkReddit", icon: "reddit", value: "" },
-    { title: "linkTwitter", icon: "twitter", value: "" },
-    { title: "linkFacebook", icon: "facebook", value: "" },
-    { title: "customLinks1", icon: "link", value: "" },
+    { title: 'linkInsta', icon: 'instagram', value: '' },
+    { title: 'linkReddit', icon: 'reddit', value: '' },
+    { title: 'linkTwitter', icon: 'twitter', value: '' },
+    { title: 'linkFacebook', icon: 'facebook', value: '' },
+    { title: 'customLinks1', icon: 'link', value: '' },
   ];
   const [showWebLinks, setShowWebLinks] = useState(true);
   const [webLinks, setWebLinks] = useState(links);
@@ -194,9 +192,9 @@ export default function CollectionCreate() {
   // webLinks end
 
   // category start
-  const [projectCategory, setProjectCategory] = useState("");
+  const [projectCategory, setProjectCategory] = useState('');
   const [emptyProjeCtCategory, setEmptyProjectCategory] = useState(false);
-  const [projectCategoryName, setProjectCategoryName] = useState("");
+  const [projectCategoryName, setProjectCategoryName] = useState('');
   function onProjectCategoryChange(event) {
     setProjectCategory(event.target.value);
     setEmptyProjectCategory(false);
@@ -204,12 +202,12 @@ export default function CollectionCreate() {
       (x) => x.id === parseInt(event.target.value)
     );
 
-    setProjectCategoryName(categoryName ? categoryName.name : "");
+    setProjectCategoryName(categoryName ? categoryName.name : '');
   }
   // category end
 
   // Blockchain start
-  const [blockchainCategory, setBlockchaainCategory] = useState("polygon");
+  const [blockchainCategory, setBlockchaainCategory] = useState('polygon');
   // Blockchain end
 
   // Freeze MetaData start
@@ -239,7 +237,7 @@ export default function CollectionCreate() {
 
   function onRoyaltyPercentageChange(royalties) {
     setRoyaltyPercentage(royalties);
-    if (royalties === "") {
+    if (royalties === '') {
       setIsRoyaltyPercentageValid(false);
     } else {
       if (!isNaN(royalties)) {
@@ -270,14 +268,11 @@ export default function CollectionCreate() {
     }
     setSupply(e.target.value);
   };
-
   const [outlineKey, setoutlineKey] = useState(0);
-  let query = useQuery();
-
   const [currentStep, setcurrentStep] = useState([1]);
   const [projectCreated, setProjectCreated] = useState(false);
-  const [projectId, setProjectId] = useState("");
-  const [projectStatus, setProjectStatus] = useState("");
+  const [projectId, setProjectId] = useState('');
+  const [projectStatus, setProjectStatus] = useState('');
   const [isDataLoading, setDataIsLoading] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -285,7 +280,7 @@ export default function CollectionCreate() {
   const [projectCategoryList, setProjectCategoryList] = useState([]);
   const [dao_id, setDao_id] = useState(null);
   const [notOwner, setNotOwner] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
 
   function handelClickBack() {
     let currentIndex = currentStep.pop();
@@ -303,7 +298,7 @@ export default function CollectionCreate() {
       } else {
         setDataIsLoading(true);
         const daoId = await daoCreate();
-        if (daoId !== "") {
+        if (daoId !== '') {
           id = await createNewProject(daoId);
           await updateExistingProject(id);
           setShowSuccessModal(true);
@@ -335,17 +330,17 @@ export default function CollectionCreate() {
     // outline
     if (currentStep.length === 2) {
       if (
-        projectName !== "" &&
-        projectCategory !== "" &&
+        projectName !== '' &&
+        projectCategory !== '' &&
         alreadyTakenProjectName === false &&
-        daoSymbol !== "" &&
+        daoSymbol !== '' &&
         alreadyTakenDaoSymbol === false &&
         isRoyaltyPercentageValid
       ) {
-        let id = "";
+        let id = '';
         if (!projectCreated) {
           await createBlock(id);
-        } else if (projectCreated && projectId !== "") {
+        } else if (projectCreated && projectId !== '') {
           await updateBlock(projectId);
         }
       }
@@ -358,7 +353,7 @@ export default function CollectionCreate() {
       collection_type: collectionType,
     };
 
-    let projectId = "";
+    let projectId = '';
     await createCollection(createPayload)
       .then((res) => {
         if (res.code === 0) {
@@ -405,28 +400,30 @@ export default function CollectionCreate() {
     await getCollectionDetailsById(payload).then((e) => {
       if (e.code === 0) {
         const response = e.collection;
-        const logo = response.assets.find((x) => x.asset_purpose === "logo");
-        setLogoPhotoUrl(logo ? logo : "");
-        setProjectName(response.name);
-        setDaoSymbol(response.collection_symbol);
-        setOverview(response.description);
-        const cover = response.assets.find((x) => x.asset_purpose === "cover");
-        setCoverPhotoUrl(cover ? cover : "");
+        const logo = response?.assets?.find((x) => x?.asset_purpose === 'logo');
+        setLogoPhotoUrl(logo ? logo : '');
+        setProjectName(response?.name);
+        setDaoSymbol(response?.collection_symbol);
+        setOverview(response?.description);
+        const cover = response?.assets?.find(
+          (x) => x?.asset_purpose === 'cover'
+        );
+        setCoverPhotoUrl(cover ? cover : '');
         try {
           setWebLinks(JSON.parse(response.links));
         } catch (e) {}
-        setProjectCategory(response.category_id);
-        setIsTokenTransferable(response.token_transferable);
-        setIsMetaDataFreezed(response.updatable);
-        setRoyaltyPercentage(response.royalty_percent);
-        setSupply(response.total_supply);
-        setCollectionType(response.type);
+        setProjectCategory(response?.category_id);
+        setIsTokenTransferable(response?.token_transferable);
+        setIsMetaDataFreezed(response?.updatable);
+        setRoyaltyPercentage(response?.royalty_percent);
+        setSupply(response?.total_supply);
+        setCollectionType(response?.type);
         setDataIsLoading(false);
         setProjectInfo(response);
-        setProjectStatus(response.status);
+        setProjectStatus(response?.status);
         setProjectCreated(true);
         setProjectId(response.id);
-        if (response.type === "right_attach") {
+        if (response.type === 'right_attach') {
           setTokenTransferableDisabled(true);
           setIsMetaDataFreezed(true);
           setFreezeMetadataDisabled(true);
@@ -436,7 +433,7 @@ export default function CollectionCreate() {
           setShowWebLinks(false);
         }
 
-        if (response.status === "published") {
+        if (response.status === 'published') {
           setProjectNameDisabled(true);
           setDaoSymbolDisable(true);
           setFreezeMetadataDisabled(true);
@@ -456,55 +453,50 @@ export default function CollectionCreate() {
   function handelClickNext() {
     // outline
     if (currentStep.length === 1) {
-      if (projectName === "") {
+      if (projectName === '') {
         setemptyProjectName(true);
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-      if (daoSymbol === "") {
+      if (daoSymbol === '') {
         setEmptyDaoSymbol(true);
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-      if (collectionType === "") {
+      if (collectionType === '') {
         setEmptyCollectionType(true);
       }
       if (!supply) {
         setIsSupplyValid(false);
       }
-      if (projectCategory === "") {
+      if (projectCategory === '') {
         setEmptyProjectCategory(true);
       } else if (
-        projectName !== "" &&
-        projectCategory !== "" &&
+        projectName !== '' &&
+        projectCategory !== '' &&
         alreadyTakenProjectName === false &&
-        daoSymbol !== "" &&
+        daoSymbol !== '' &&
         alreadyTakenDaoSymbol === false &&
         isRoyaltyPercentageValid
       ) {
-        if (collectionType === "product") {
+        if (collectionType === 'product') {
           if (supply && isSupplyValid) {
             const categoryName = projectCategoryList.find(
               (x) => x.id === parseInt(projectCategory)
             );
-            setProjectCategoryName(categoryName ? categoryName.name : "");
+            setProjectCategoryName(categoryName ? categoryName.name : '');
             setcurrentStep([1, 2]);
           }
         } else {
           const categoryName = projectCategoryList.find(
             (x) => x.id === parseInt(projectCategory)
           );
-          setProjectCategoryName(categoryName ? categoryName.name : "");
+          setProjectCategoryName(categoryName ? categoryName.name : '');
           setcurrentStep([1, 2]);
         }
       }
     }
   }
-  function useQuery() {
-    const { search } = useLocation();
-    return React.useMemo(() => new URLSearchParams(search), [search]);
-  }
-
   async function daoCreate() {
-    let daoId = "";
+    let daoId = '';
     let payload = {
       // name: `DAO_${uuidv4()}`,
       blockchain: ls_GetChainID(),
@@ -517,14 +509,6 @@ export default function CollectionCreate() {
         setShowErrorModal(true);
         setErrorMessage(res.message);
       }
-
-      // const newUrl =
-      //   window.location.protocol +
-      //   "//" +
-      //   window.location.host +
-      //   window.location.pathname +
-      //   `?dao_id=${daoId}`;
-      // window.history.pushState({ path: newUrl }, "", newUrl);
     });
     return daoId;
   }
@@ -533,59 +517,52 @@ export default function CollectionCreate() {
   }, [dao_id]);
   useEffect(() => {
     setCollectionType(collectionType);
-    if (collectionType === "membership") {
+    if (collectionType === 'membership') {
       setIsMetaDataFreezed(false);
-      // setIsTokenTransferable(true);
     }
   }, [collectionType]);
 
   useEffect(() => {
-    if (query.get("dao_id")) {
-      setDao_id(query.get("dao_id"));
-    }
-    if (query.get("type")) {
-      setCollectionType(query.get("type"));
+    if (query?.id) {
+      projectDetails(query?.id);
       setShowCollectionType(false);
     }
-  }, []);
-  useEffect(() => {
-    if (query.get("id")) {
-      projectDetails(query.get("id"));
+    if (query?.dao_id) {
+      setDao_id(query?.dao_id);
+    }
+    if (query?.type) {
+      setCollectionType(query?.type);
       setShowCollectionType(false);
     }
-  }, []);
-
-  useEffect(() => {
     getProjectCategory().then((e) => {
       setProjectCategoryList(e.categories);
     });
   }, []);
-
   return (
     <>
-      {isDataLoading && <div className="loading"></div>}
-      <div className="txtblack max-w-[600px] pt-4 md:pt-0 mx-4 md:mx-auto md:mt-[40px]">
+      {isDataLoading && <div className='loading'></div>}
+      <div className='txtblack max-w-[600px] pt-4 md:pt-0 mx-4 md:mx-auto md:mt-[40px]'>
         {notOwner ? (
-          <h3 className="text-center mt-6">
+          <h3 className='text-center mt-6'>
             You are not owner of this Collection <br />
             You can not edit this Collection
           </h3>
         ) : (
           <>
-            <div className="create-collection-container">
+            <div className='create-collection-container'>
               {currentStep.length === 1 && (
                 <div>
-                  <h1 className="txtblack text-[28px] font-black mb-[6px]">
-                    {projectCreated ? "Update" : "Create New"} Collection
+                  <h1 className='txtblack text-[28px] font-black mb-[6px]'>
+                    {projectCreated ? 'Update' : 'Create New'} Collection
                   </h1>
-                  <p className="txtblack text-[14px] text-textSubtle mb-[24px]">
-                    Fill the require form to{" "}
-                    {!projectCreated ? "create " : "Update"} collection
+                  <p className='txtblack text-[14px] text-textSubtle mb-[24px]'>
+                    Fill the require form to{' '}
+                    {!projectCreated ? 'create ' : 'Update'} collection
                   </p>
                   <Outline
                     key={outlineKey}
                     // logo
-                    logoLabel="Collection Logo"
+                    logoLabel='Collection Logo'
                     coverPhotoUrl={coverPhotoUrl}
                     onCoverPhotoSelect={onCoverPhotoSelect}
                     onCoverPhotoRemove={onCoverPhotoRemove}
@@ -595,14 +572,14 @@ export default function CollectionCreate() {
                     emptyCollectionType={emptyCollectionType}
                     onCollectionTypeSelect={onCollectionTypeSelect}
                     // name
-                    nameLabel="Collection Name"
+                    nameLabel='Collection Name'
                     projectName={projectName}
                     emptyProjectName={emptyProjectName}
                     alreadyTakenProjectName={alreadyTakenProjectName}
                     projectNameDisabled={projectNameDisabled}
                     onProjectNameChange={onProjectNameChange}
                     // Dao symbol
-                    symbolTitle="Collection Symbol"
+                    symbolTitle='Collection Symbol'
                     showDaoSymbol={true}
                     daoSymbol={daoSymbol}
                     emptyDaoSymbol={emptyDaoSymbol}
@@ -634,7 +611,7 @@ export default function CollectionCreate() {
                     onSocialLinkChange={onSocialLinkChange}
                     // category
                     showProjectCategory={
-                      collectionType === "right_attach" ? false : true
+                      collectionType === 'right_attach' ? false : true
                     }
                     projectCategory={projectCategory}
                     emptyProjeCtCategory={emptyProjeCtCategory}
@@ -642,7 +619,7 @@ export default function CollectionCreate() {
                     // blockchainCategory={blockchainCategory}
                     // Freeze metadata
                     showFreezeMetadata={
-                      collectionType === "membership" ? false : true
+                      collectionType === 'membership' ? false : true
                     }
                     isMetadataFreezed={isMetaDaFreezed}
                     onMetadataFreezeChange={onMetadataFreezeChange}
@@ -659,7 +636,7 @@ export default function CollectionCreate() {
                     onRoyaltyPercentageChange={onRoyaltyPercentageChange}
                     isRoyaltyPercentageValid={isRoyaltyPercentageValid}
                     //Supply
-                    showSupply={collectionType === "product" ? true : false}
+                    showSupply={collectionType === 'product' ? true : false}
                     supply={supply}
                     handleSupplyValue={handleSupplyValue}
                     supplyDisable={supplyDisable}
@@ -671,13 +648,13 @@ export default function CollectionCreate() {
                 <Confirmation
                   key={outlineKey}
                   // logo
-                  logoLabel="Collection Logo"
+                  logoLabel='Collection Logo'
                   logoPhotoUrl={logoPhotoUrl}
                   // name
-                  nameLabel="Collection Name"
+                  nameLabel='Collection Name'
                   projectName={projectName}
                   // Dao symbol
-                  symbolTitle="Collection Symbol"
+                  symbolTitle='Collection Symbol'
                   showDaoSymbol={true}
                   daoSymbol={daoSymbol}
                   // Dao Wallet
@@ -699,44 +676,44 @@ export default function CollectionCreate() {
                   secondaryRoyalties={secondaryRoyalties}
                   // category
                   showProjectCategory={
-                    collectionType === "right_attach" ? false : true
+                    collectionType === 'right_attach' ? false : true
                   }
                   projectCategoryName={projectCategoryName}
                   showFreezeMetadata={
-                    collectionType === "membership" ? false : true
+                    collectionType === 'membership' ? false : true
                   }
                   isMetaDaFreezed={isMetaDaFreezed}
                   showTokenTransferable={showTokenTransferable}
                   isTokenTransferable={isTokenTransferable}
                   showRoyaltyPercentage={showRoyalties}
                   royaltyPercentage={royaltyPercentage}
-                  showSupplyData={collectionType === "product" ? true : false}
+                  showSupplyData={collectionType === 'product' ? true : false}
                   supply={supply}
                 />
               )}
             </div>
-            <div className="py-4">
-              <div className="flex">
+            <div className='py-4'>
+              <div className='flex'>
                 <>
                   {currentStep.length > 1 && (
                     <button
-                      className="bg-primary-900/[0.10] text-primary-900 px-3 font-black w-[140px] !text-[16px] h-[44px]"
+                      className='bg-primary-900/[0.10] text-primary-900 px-3 font-black w-[140px] !text-[16px] h-[44px]'
                       onClick={() => handelClickBack()}
                     >
-                      <i className="fa-regular fa-angle-left"></i> Back
+                      <i className='fa-regular fa-angle-left'></i> Back
                     </button>
                   )}
                   {currentStep.length === 1 && (
                     <button
-                      className=" w-[140px] !text-[16px] h-[44px] contained-button "
+                      className=' w-[140px] !text-[16px] h-[44px] contained-button '
                       onClick={() => handelClickNext()}
                     >
-                      Next <i className="fa-regular fa-angle-right ml-1"></i>
+                      Next <i className='fa-regular fa-angle-right ml-1'></i>
                     </button>
                   )}
                   {currentStep.length > 1 && (
                     <button
-                      onClick={() => saveDraft("public")}
+                      onClick={() => saveDraft('public')}
                       className={`w-[140px] !text-[16px] h-[44px] contained-button  ml-auto`}
                     >
                       Submit
@@ -763,7 +740,7 @@ export default function CollectionCreate() {
           }}
           show={showErrorModal}
           message={errorMessage}
-          buttomText="Try Again"
+          buttomText='Try Again'
         />
       )}
     </>

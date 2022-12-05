@@ -50,7 +50,7 @@ export async function createProject(payload) {
     bodyFormData.append("blockchain", payload.blockchain);
   }
 
-  return await client("POST", `/project`, payload ? bodyFormData : null);
+  return await client("POST", `/project`, payload ? bodyFormData : null,"formdata");
 }
 export async function updateProject(payload) {
   const bodyFormData = new FormData();
