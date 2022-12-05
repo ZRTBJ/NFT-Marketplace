@@ -3,7 +3,7 @@ import TooltipIcon from 'assets/images/createDAO/tooltip.svg';
 import ReactTooltip from 'react-tooltip';
 import Image from 'next/image';
 
-export default function Tooltip({
+function Tooltip({
   message = 'This field will not be changeable after publishing on the blockchain.',
 }) {
   return (
@@ -18,3 +18,5 @@ export default function Tooltip({
     </div>
   );
 }
+
+export default Tooltip;
