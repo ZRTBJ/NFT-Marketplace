@@ -1,6 +1,6 @@
 import React from 'react';
 import thumbIcon from 'assets/images/profile/card.svg';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import Image from 'next/image';
 
 export default function CollectionCard({ collection }) {
@@ -12,7 +12,7 @@ export default function CollectionCard({ collection }) {
   return (
     <div className='md:min-h-[390px]  rounded-x'>
       <Link
-        to={
+        href={
           collection.type === 'right_attach'
             ? `/royality-management/${collection.id}`
             : `/collection-details/${collection.id}`
@@ -26,6 +26,8 @@ export default function CollectionCard({ collection }) {
               : thumbIcon
           }
           alt=''
+          width={400}
+          height={276}
         />
       </Link>
 
@@ -49,6 +51,8 @@ export default function CollectionCard({ collection }) {
                   src={member.avatar}
                   alt={member.id}
                   className='rounded-full w-9 h-9 -ml-2 border-2 border-white'
+                  width={20}
+                  height={20}
                 />
               )
             )}
