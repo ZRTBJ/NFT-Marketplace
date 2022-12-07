@@ -1,14 +1,17 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from 'react';
 
 function EmbedNFTPreview(props) {
   const [height, setHeight] = useState(350);
   const [width, setWidth] = useState(350);
-  const [iframeContent, setIframeContent] = useState("");
+  const [iframeContent, setIframeContent] = useState('');
   const [isTextCopied, setIsTextCopied] = useState(false);
   const copyRef = useRef(null);
   const nftId = props.match.params.id;
 
-  let host = window.location.origin;
+  let host =
+    typeof window !== 'undefined' && window.location.origin
+      ? window.location.origin
+      : '';
 
   useEffect(() => {
     setIframeContent(
@@ -18,7 +21,7 @@ function EmbedNFTPreview(props) {
 
   const copyToClipboard = (e) => {
     copyRef.current.select();
-    document.execCommand("copy");
+    document.execCommand('copy');
     e.target.focus();
     setIsTextCopied(true);
     setTimeout(() => {
@@ -27,80 +30,80 @@ function EmbedNFTPreview(props) {
   };
 
   return (
-    <div className="block md:flex w-full mt-8">
-      <div className="w-4/4 md:w-1/4 mr-0 md:mr-10">
-        <h2 className="txtblack dark:text-white mb-6">Configure the view</h2>
-        <div className="mb-6">
+    <div className='block md:flex w-full mt-8'>
+      <div className='w-4/4 md:w-1/4 mr-0 md:mr-10'>
+        <h2 className='txtblack dark:text-white mb-6'>Configure the view</h2>
+        <div className='mb-6'>
           <label
-            className="block text-sm font-bold font-satoshi-bold txtblack dark:text-white"
-            htmlFor="height"
+            className='block text-sm font-bold font-satoshi-bold txtblack dark:text-white'
+            htmlFor='height'
           >
             Set Height
           </label>
-          <div className="relative">
+          <div className='relative'>
             <input
-              className="block mb-3"
-              id="name"
-              name="height"
-              type="number"
+              className='block mb-3'
+              id='name'
+              name='height'
+              type='number'
               value={height}
               onChange={(e) => setHeight(e.target.value)}
             />
-            <p className="text-[#9499ae] text-md absolute right-2 top-2">px</p>
+            <p className='text-[#9499ae] text-md absolute right-2 top-2'>px</p>
           </div>
         </div>
-        <div className="mb-6">
+        <div className='mb-6'>
           <label
-            className="block text-sm font-bold font-satoshi-bold txtblack dark:text-white"
-            htmlFor="width"
+            className='block text-sm font-bold font-satoshi-bold txtblack dark:text-white'
+            htmlFor='width'
           >
             Set Width
           </label>
-          <div className="relative">
+          <div className='relative'>
             <input
-              className="block mb-3"
-              id="width"
-              name="width"
-              type="number"
+              className='block mb-3'
+              id='width'
+              name='width'
+              type='number'
               value={width}
               onChange={(e) => setWidth(e.target.value)}
             />
-            <p className="text-[#9499ae] text-md absolute right-2 top-2">px</p>
+            <p className='text-[#9499ae] text-md absolute right-2 top-2'>px</p>
           </div>
         </div>
         <div>
-          <p className="txtblack dark:text-white mb-2">
+          <p className='txtblack dark:text-white mb-2'>
             Embed this HTML code to your page
           </p>
-          <div className="relative">
+          <div className='relative'>
             <input
-              className="block mb-3 py-[10px] pl-[15px] pr-[40px] bg-[#232032] border-[#232032] text-[#9499ae] w-full rounded border-[1px]"
-              id="iframe"
-              name="iframe"
+              className='block mb-3 py-[10px] pl-[15px] pr-[40px] bg-[#232032] border-[#232032] text-[#9499ae] w-full rounded border-[1px]'
+              id='iframe'
+              name='iframe'
               value={iframeContent}
               ref={copyRef}
             />
-            <div className="text-[#9499ae] absolute top-2 right-2">
+            <div className='text-[#9499ae] absolute top-2 right-2'>
               <i
-                className="fa-regular fa-copy text-lg cursor-pointer"
+                className='fa-regular fa-copy text-lg cursor-pointer'
                 onClick={copyToClipboard}
               ></i>
             </div>
           </div>
           {isTextCopied && (
-            <p className="txtblack dark:text-white text-center text-xs">
+            <p className='txtblack dark:text-white text-center text-xs'>
               Copied Successfully!
             </p>
           )}
         </div>
       </div>
-      <div className="w-4/4 md:w-3/4 mt-10 md:mt-0 ml-0 md:ml-10">
-        <h2 className="txtblack dark:text-white mb-6">Preview</h2>
+      <div className='w-4/4 md:w-3/4 mt-10 md:mt-0 ml-0 md:ml-10'>
+        <h2 className='txtblack dark:text-white mb-6'>Preview</h2>
         <iframe
           src={`http://localhost:3000/embed/${nftId}`}
           width={`${width}px`}
           height={`${height}px`}
-          title="NFT"
+          title='NFT'
         ></iframe>
       </div>
     </div>

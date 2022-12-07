@@ -8,6 +8,8 @@ import { DAppProvider } from '@usedapp/core';
 import Sidebar from 'components/Commons/Sidebar';
 import '../styles/globals.css';
 import Script from 'next/script';
+import { ToastContainer, Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 // import 'tw-elements';
 
 function MyApp({ Component, pageProps }) {
@@ -51,6 +53,17 @@ function MyApp({ Component, pageProps }) {
                 </div>
                 <div className='w-full min-w-[calc(100vw-300px)]'>
                   <Component {...pageProps} />
+                  <ToastContainer
+                    className='impct-toast'
+                    position='top-right'
+                    autoClose={3000}
+                    newestOnTop
+                    closeOnClick
+                    rtl={false}
+                    pauseOnVisibilityChange
+                    draggable={false}
+                    transition={Slide}
+                  />
                 </div>
               </div>
             </main>
