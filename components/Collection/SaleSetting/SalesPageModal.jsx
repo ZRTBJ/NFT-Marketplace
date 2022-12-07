@@ -24,6 +24,7 @@ import { ethers } from 'ethers';
 import Delete from 'assets/images/trash.svg';
 import { getCurrentNetworkId } from 'util/MetaMask';
 import NetworkHandlerModal from 'components/Modals/NetworkHandlerModal';
+import Image from 'next/image';
 
 //TODO: in the future, 1 network can support multiple currency, please fix this
 const CURRENCY = [
@@ -40,10 +41,12 @@ const Control = ({ children, ...props }) => {
     <components.Control {...props}>
       <div className='flex items-center w-full h-[42px]'>
         <div className='user-menu-dropdown'>
-          <img
+          <Image
             src={selectedValue?.icon}
             alt={selectedValue?.label}
             className='w-[18px] h-[18px]'
+            height={18}
+            width={18}
           />
         </div>
         {children}
@@ -398,9 +401,12 @@ const SalesPageModal = ({
                       {selectedTiers.length ? (
                         <div className='mt-1'>
                           {selectedTiers.map((tier) => (
-                            <div className='flex items-center justify-between mb-2'>
+                            <div
+                              className='flex items-center justify-between mb-2'
+                              key={tier.id}
+                            >
                               <p className='text-[16px]'>{tier.name}</p>
-                              <img
+                              <Image
                                 src={Delete}
                                 alt='delete'
                                 className='mr-1 cursor-pointer'
@@ -542,7 +548,7 @@ const SalesPageModal = ({
                   )}
                   <button
                     type='submit'
-                    className='!w-full mt-5 px-6 py-2 text-[14px] contained-button rounded-[4px] font-black text-white-shade-900'
+                    className='!w-full mt-5 contained-button font-black text-white-shade-900'
                   >
                     Create Sales Page
                   </button>

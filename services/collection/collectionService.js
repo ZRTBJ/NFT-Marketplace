@@ -24,7 +24,7 @@ export async function createCollection(payload) {
   bodyFormData.append('project_id', payload.dao_id);
   bodyFormData.append('collection_type', payload.collection_type);
 
-  return await client('POST', `/collection`, bodyFormData,"formdata");
+  return await client('POST', `/collection`, bodyFormData, 'formdata');
 }
 export async function mockCreateCollection(payload) {
   const bodyFormData = new FormData();
@@ -32,7 +32,7 @@ export async function mockCreateCollection(payload) {
   bodyFormData.append('project_id', payload.dao_id);
   bodyFormData.append('collection_type', payload.collection_type);
 
-  return await client('POST', `/collection`, bodyFormData);
+  return await client('POST', `/collection`, bodyFormData, 'formdata');
 }
 export async function updateCollection(payload) {
   const bodyFormData = new FormData();
@@ -59,7 +59,12 @@ export async function updateCollection(payload) {
   bodyFormData.append('royalty_percent', payload.royaltyPercentage);
   bodyFormData.append('total_supply', payload.total_supply);
 
-  return await client('PUT', `/collection/${payload.id}`, bodyFormData,"formdata");
+  return await client(
+    'PUT',
+    `/collection/${payload.id}`,
+    bodyFormData,
+    'formdata'
+  );
 }
 
 export async function getCollectionDetailsById(payload) {
@@ -122,7 +127,7 @@ export async function getCollectionSales(id) {
 }
 
 export async function publishRoyaltySplitter(id, payload) {
-  return await client('POST', `/royalty/${id}/publish`, payload);
+  return await client('POST', `/royalty/${id}/publish`, payload, 'formdata');
 }
 
 export async function getNetWorth(id) {

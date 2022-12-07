@@ -1,16 +1,15 @@
 import { useEffect, useState } from 'react';
 import WalletConnectModal from 'components/Login/WalletConnectModal';
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
 import {
   getNftDetails,
   mintProductOrMembershipNft,
 } from 'services/nft/nftService';
-import { createMintNFT } from 'Pages/NFT/DetailsNFT/MintNFT/deploy-mintnft';
+import { createMintNFT } from 'components/NFT/DetailsNFT/MintNFT/deploy-mintnft';
 import { createProvider } from 'util/smartcontract/provider';
 import { createMintInstance } from 'config/ABI/mint-nft';
 import { createMembsrshipMintInstance } from 'config/ABI/mint-membershipNFT';
-import { createMembershipMintNFT } from 'Pages/NFT/DetailsNFT/MintNFT/deploy-membershipNFTMint';
+import { createMembershipMintNFT } from 'components/NFT/DetailsNFT/MintNFT/deploy-membershipNFTMint';
 import {
   handleSwitchNetwork,
   getCurrentNetworkId,
@@ -18,15 +17,16 @@ import {
 } from 'util/MetaMask';
 import { NETWORKS } from 'config/networks';
 import Image from 'next/image';
+
 const imageRegex = new RegExp('image');
-function EmbedNFT(props) {
+
+function EmbedNFT({ type, id }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isMinting, setIsMinting] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [success, setSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [nft, setNft] = useState({});
-  const { type, id } = useParams();
   const userinfo = useSelector((state) => state.user.userinfo);
   const provider = createProvider();
   useEffect(() => {

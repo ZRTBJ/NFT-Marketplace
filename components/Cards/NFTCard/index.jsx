@@ -2,7 +2,7 @@ import NFTSample from 'assets/images/createDAO/nft-sample.svg';
 import { getCollectionNFTs } from 'services/collection/collectionService';
 import { useState, useEffect } from 'react';
 import ProfileImage from 'assets/images/createDAO/user.svg';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import Image from 'next/image';
 
 const NFTCard = ({ item }) => {
@@ -29,7 +29,7 @@ const NFTCard = ({ item }) => {
 
   return (
     <Link
-      to={
+      href={
         item.type === 'right_attach'
           ? `/royality-management/${item.id}`
           : `/collection-details/${item.id}`

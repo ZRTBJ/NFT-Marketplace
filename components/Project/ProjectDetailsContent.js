@@ -271,7 +271,7 @@ function ProjectDetailsContent({ id }) {
               )}
             </div>
           </section>
-          {showDeployModal && (
+          {showDeployModal ? (
             <DeployingProjectModal
               show={showDeployModal}
               handleClose={(status) => {
@@ -288,7 +288,7 @@ function ProjectDetailsContent({ id }) {
               projectName={project?.name}
               publishStep={publishStep}
             />
-          )}
+          ) : null}
           {showSuccessModal && (
             <SuccessModal
               handleClose={() => setShowSuccessModal(false)}

@@ -1,9 +1,9 @@
-import { ethers } from "ethers";
-import { createInstance } from "config/ABI/forwarder";
-import { signMetaTxRequest } from "util/smartcontract/signer";
-import { addressGnosisSetup } from "services/project/projectService";
-import { NETWORKS } from "config/networks";
-import { address } from "config/contractAddresses";
+import { ethers } from 'ethers';
+import { createInstance } from 'config/ABI/forwarder';
+import { signMetaTxRequest } from 'util/smartcontract/signer';
+import { addressGnosisSetup } from 'services/project/projectService';
+import { NETWORKS } from 'config/networks';
+import { address } from 'config/contractAddresses';
 
 async function sendMetaTx(
   dao,
@@ -13,12 +13,11 @@ async function sendMetaTx(
   treasuryAddress,
   chainId
 ) {
-
   const forwarder = createInstance(provider);
   const from = await signer.getAddress();
   let formData = new FormData();
-  formData.append("addresses", from);
-  formData.append("blockchain", chainId);
+  formData.append('addresses', from);
+  formData.append('blockchain', chainId);
   const setupData = await addressGnosisSetup(formData);
   let minimalForwarder = NETWORKS?.[Number(chainId)]?.forwarder;
   let masterCopy = NETWORKS?.[Number(chainId)]?.masterCopyDAO;
@@ -40,7 +39,7 @@ async function sendMetaTx(
     forwarder: minimalForwarder,
   };
 
-  const data = dao.interface.encodeFunctionData("createDAOProxy", [config]);
+  const data = dao.interface.encodeFunctionData('createDAOProxy', [config]);
   const to = dao.address;
 
   const request = await signMetaTxRequest(signer.provider, forwarder, {
@@ -50,21 +49,18 @@ async function sendMetaTx(
   });
 
   return fetch(webhook, {
-    method: "POST",
+    method: 'POST',
     body: JSON.stringify(request),
-    headers: { "Content-Type": "application/json" },
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
 export async function createDAO(dao, provider, name, treasuryAddress, chainId) {
-  if (!name) throw new Error(`Name cannot be empty`);
   if (!window.ethereum) throw new Error(`User wallet not found`);
 
   await window.ethereum.enable();
   const userProvider = new ethers.providers.Web3Provider(window.ethereum);
-
   const signer = userProvider.getSigner();
-
   let output;
   const result = await sendMetaTx(
     dao,
@@ -76,7 +72,7 @@ export async function createDAO(dao, provider, name, treasuryAddress, chainId) {
   );
 
   await result.json().then(async (response) => {
-    if (response.status === "success") {
+    if (response.status === 'success') {
       const tx = JSON.parse(response.result);
       const txReceipt = await provider.waitForTransaction(tx.txHash);
       output = { txReceipt };

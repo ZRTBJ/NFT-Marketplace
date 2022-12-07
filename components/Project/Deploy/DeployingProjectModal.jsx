@@ -1,12 +1,11 @@
 import Modal from 'components/Commons/Modal';
 import { useEffect, useState } from 'react';
 import { publishProject } from 'services/project/projectService';
-import { useDispatch, useSelector } from 'react-redux';
-import { getNotificationData } from 'redux/notification';
 import deploySuccessSvg from 'assets/images/modal/deploySuccessSvg.svg';
 import { createDAO } from './deploy-dao';
 import { createProvider } from 'util/smartcontract/provider';
 import { createInstance } from 'config/ABI/genericProxyFactory';
+import Image from 'next/image';
 
 const DeployingProjectModal = ({
   handleClose,
@@ -15,39 +14,19 @@ const DeployingProjectModal = ({
   publishStep,
   errorClose,
 }) => {
-  const dispatch = useDispatch();
   const [step, setStep] = useState(publishStep ? publishStep : 0);
   const [statusStep, setStatusStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const projectDeploy = useSelector((state) =>
-    state?.notifications?.notificationData
-      ? state?.notifications?.notificationData
-      : []
-  );
-  const [deployStatus, setDeployStatus] = useState({
-    projectId: '',
-    etherscan: '',
-    function_uuid: '',
-    fn_name: '',
-    fn_status: '',
-    message: '',
-    step: 1,
-  });
+
   const provider = createProvider();
   const dao = createInstance(provider);
-  const [txnData, setTxnData] = useState();
 
   useEffect(() => {
     if (publishStep >= 1) {
+      console.log(publishStep);
       publishThisProject();
     }
-  }, []);
-
-  useEffect(() => {
-    if (txnData) {
-      publishThisProject(txnData);
-    }
-  }, [txnData]);
+  }, [publishStep]);
 
   function publishThisProject(transactionData) {
     setIsLoading(true);
@@ -71,12 +50,8 @@ const DeployingProjectModal = ({
             if (res?.function?.status === 'success') {
               setStep(2);
             } else if (res?.function?.status === 'failed') {
-              setTxnData();
               errorClose(res?.function?.message);
             }
-
-            dispatch(getNotificationData(deployData));
-            setTxnData();
           } else {
             handleSmartContract(
               res?.config?.name,
@@ -86,7 +61,6 @@ const DeployingProjectModal = ({
           }
         } else {
           setIsLoading(false);
-          setTxnData();
           errorClose(res.message);
         }
       })
@@ -113,7 +87,7 @@ const DeployingProjectModal = ({
           transactionHash: hash.transactionHash,
           block_number: hash.blockNumber,
         };
-        setTxnData(data);
+        publishThisProject(data);
       } else {
         errorClose(response);
       }
@@ -148,7 +122,7 @@ const DeployingProjectModal = ({
         )}
         {step === 2 && (
           <>
-            <img
+            <Image
               className='h-[200px] md:w-[300px] mx-auto'
               src={deploySuccessSvg}
               alt=''

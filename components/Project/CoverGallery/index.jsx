@@ -35,6 +35,8 @@ const CoverGallery = ({ assets }) => {
                 className='rounded-xl object-cover  h-full w-full'
                 src={img ? img.path : manImg}
                 alt='dao cover'
+                height={index === 0 ? 260 : 122}
+                width={index === 0 ? 548 : 266}
               />
             </div>
           ))}
@@ -62,6 +64,8 @@ const CoverGallery = ({ assets }) => {
                   className='rounded-xl object-cover h-[124px] w-full'
                   src={img ? img.path : manImg}
                   alt='dao cover'
+                  height={124}
+                  width={266}
                 />
               </SwiperSlide>
             </div>

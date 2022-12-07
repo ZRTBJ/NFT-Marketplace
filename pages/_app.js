@@ -1,4 +1,5 @@
 import '../styles/common.css';
+import dynamic from 'next/dynamic';
 import 'rsuite/dist/rsuite.min.css';
 import Header from 'components/Commons/TopHeader';
 import { useState } from 'react';
@@ -10,7 +11,7 @@ import '../styles/globals.css';
 import Script from 'next/script';
 import { ToastContainer, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
-// import 'tw-elements';
+dynamic(() => import('tw-elements'), { ssr: false });
 
 function MyApp({ Component, pageProps }) {
   const [showSideBar, setShowSideBar] = useState(false);
@@ -19,6 +20,12 @@ function MyApp({ Component, pageProps }) {
   const handleToggleSideBar = () => {
     setShowSideBar(!showSideBar);
   };
+
+  let path = typeof window !== 'undefined' && window?.location?.pathname;
+  let pathItems = path && path.split('/');
+  let isEmbedView =
+    pathItems && pathItems.length ? pathItems.includes('embed-nft') : false;
+
   return (
     <>
       <Script
@@ -28,29 +35,35 @@ function MyApp({ Component, pageProps }) {
       <Provider store={store}>
         <DAppProvider config={{}}>
           <div className='bg-light'>
-            <Header
-              handleSidebar={handleToggleSideBar}
-              setShowModal={setShowModal}
-              showModal={showModal}
-            />
+            {!isEmbedView && (
+              <Header
+                handleSidebar={handleToggleSideBar}
+                setShowModal={setShowModal}
+                showModal={showModal}
+              />
+            )}
             <main className='container min-h-[calc(100vh-71px)]'>
               <div className='flex flex-row'>
-                <div className='hidden md:block mr-4 '>
-                  <Sidebar
-                    setShowModal={setShowModal}
-                    handleToggleSideBar={handleToggleSideBar}
-                  />
-                </div>
-                <div
-                  className={`${
-                    showSideBar ? 'translate-x-0' : '-translate-x-full'
-                  } block md:hidden mr-4 absolute z-[100] ease-in-out duration-300`}
-                >
-                  <Sidebar
-                    setShowModal={setShowModal}
-                    handleToggleSideBar={handleToggleSideBar}
-                  />
-                </div>
+                {!isEmbedView && (
+                  <div className='hidden md:block mr-4 '>
+                    <Sidebar
+                      setShowModal={setShowModal}
+                      handleToggleSideBar={handleToggleSideBar}
+                    />
+                  </div>
+                )}
+                {!isEmbedView && (
+                  <div
+                    className={`${
+                      showSideBar ? 'translate-x-0' : '-translate-x-full'
+                    } block md:hidden mr-4 absolute z-[100] ease-in-out duration-300`}
+                  >
+                    <Sidebar
+                      setShowModal={setShowModal}
+                      handleToggleSideBar={handleToggleSideBar}
+                    />
+                  </div>
+                )}
                 <div className='w-full min-w-[calc(100vw-300px)]'>
                   <Component {...pageProps} />
                   <ToastContainer

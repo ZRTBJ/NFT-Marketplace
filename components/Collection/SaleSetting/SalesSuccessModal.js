@@ -11,6 +11,7 @@ import Lottie from 'react-lottie';
 import lottieJson from 'assets/lottieFiles/sales-setting-success';
 import { useRouter } from 'next/router';
 import { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 
 const SalesSuccessModal = ({
   handleClose,
@@ -137,17 +138,17 @@ const SalesSuccessModal = ({
             <div className='flex items-center justify-center'>
               <FacebookShareButton url={`${nftShareURL}`} quote={'NFT'}>
                 <div className='cursor-pointer rounded-[4px] bg-primary-50 h-[34px] w-[34px] flex items-center justify-center mr-2'>
-                  <img src={FB} alt='facebook' />
+                  <Image src={FB} alt='facebook' />
                 </div>
               </FacebookShareButton>
               <TwitterShareButton title='NFT' url={`${nftShareURL}`}>
                 <div className='cursor-pointer rounded-[4px] bg-primary-50 h-[34px] w-[34px] flex items-center justify-center mr-2'>
-                  <img src={twitter} alt='twitter' />
+                  <Image src={twitter} alt='twitter' />
                 </div>
               </TwitterShareButton>
               <RedditShareButton title='NFT' url={`${nftShareURL}`}>
                 <div className='cursor-pointer rounded-[4px] bg-primary-50 h-[34px] w-[34px] flex items-center justify-center'>
-                  <img src={reddit} alt='reddit' />
+                  <Image src={reddit} alt='reddit' />
                 </div>
               </RedditShareButton>
             </div>

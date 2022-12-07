@@ -123,6 +123,7 @@ const CollectionContent = ({ collectionId }) => {
   );
 
   const hanldeUpdatePublishStatus = (status) => {
+    console.log(status);
     if (status === 'success') {
       if (Collection.royalty_splitter.status !== 'published') {
         setCollection({
@@ -647,6 +648,7 @@ const CollectionContent = ({ collectionId }) => {
             src={CoverImages?.path ? CoverImages?.path : Cover}
             alt=''
             height={260}
+            width={100}
           />
         </div>
       </section>
@@ -911,7 +913,7 @@ const CollectionContent = ({ collectionId }) => {
               {Collection?.type === 'product' && Collection?.is_owner && (
                 <div
                   onClick={(e) => salesPageModal(e, 'product')}
-                  className='outlined-button ml-0 md:ml-4 font-satoshi-bold'
+                  className='outlined-button ml-0 md:ml-4 font-satoshi-bold cursor-pointer'
                 >
                   <span>Sales Setting</span>
                 </div>

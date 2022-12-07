@@ -12,10 +12,9 @@ import {
 import ErrorModal from 'components/Modals/ErrorModal';
 import SuccessModal from 'components/Modals/SuccessModal';
 import { getProjectCategory } from 'services/project/projectService';
-import { useRouter } from 'next/router';
 import { ls_GetChainID } from 'util/ApplicationStorage';
 
-function ProjectCreateContent() {
+function ProjectCreateContent({ search }) {
   // Logo start
   // logo is the cover photo
   const [logoPhoto, setLogoPhoto] = useState([]);
@@ -454,8 +453,6 @@ function ProjectCreateContent() {
     }
   }
   function useQuery() {
-    const router = useRouter();
-    const { search } = router.query;
     return React.useMemo(() => new URLSearchParams(search), [search]);
   }
   useEffect(() => {

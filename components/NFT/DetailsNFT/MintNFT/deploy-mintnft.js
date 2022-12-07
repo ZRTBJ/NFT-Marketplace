@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { ethers } from 'ethers';
 
 export async function createMintNFT(mintContract, url, price, provider) {
   if (!window.ethereum) throw new Error(`User wallet not found`);

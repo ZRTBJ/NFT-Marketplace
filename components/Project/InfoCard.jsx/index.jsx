@@ -36,6 +36,8 @@ const InfoCard = ({
               src={coverImages?.path ? coverImages.path : bigImg}
               className='rounded-full self-start w-14 h-14 md:w-[98px] object-cover md:h-[98px] bg-color-ass-6'
               alt='User profile'
+              width={98}
+              height={98}
             />
             <div className='flex-1 min-w-0  px-4'>
               <div className='flex items-center mb-1 md:mb-2'>

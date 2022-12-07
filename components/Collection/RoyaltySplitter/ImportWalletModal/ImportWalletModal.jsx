@@ -1,16 +1,17 @@
-import Modal from "components/Commons/Modal";
+import Modal from 'components/Commons/Modal';
 import {
   getCollections,
   getSplitterDetails,
   updateRoyaltySplitter,
-} from "services/collection/collectionService";
-import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import manImg from "assets/images/image-default.svg";
-import fileUpload from "assets/images/file-upload.svg";
-import Papa from "papaparse";
-import ContributorsList from "./ContributorsList";
-import csvFile from "assets/csv/contributor-import-template.csv";
+} from 'services/collection/collectionService';
+import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import manImg from 'assets/images/image-default.svg';
+import fileUpload from 'assets/images/file-upload.svg';
+import Papa from 'papaparse';
+import ContributorsList from './ContributorsList';
+import csvFile from 'assets/csv/contributor-import-template.csv';
+import Image from 'next/image';
 
 const ImportWalletModal = ({
   show,
@@ -30,11 +31,11 @@ const ImportWalletModal = ({
   const [showPercentError, setShowPercentError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showContributors, setShowContributors] = useState(false);
-  const [csvError, setCSVError] = useState("");
+  const [csvError, setCSVError] = useState('');
   const userinfo = useSelector((state) => state.user.userinfo);
 
   useEffect(() => {
-    getCollections("project", projectId)
+    getCollections('project', projectId)
       .then((resp) => {
         if (resp.code === 0) {
           const items = resp?.data.filter((item) => item.id !== collectionId);
@@ -65,8 +66,8 @@ const ImportWalletModal = ({
           const headers = results.data.find((data, index) => index === 0);
           if (
             headers.length === 2 &&
-            headers[0] === "Wallet Address" &&
-            headers[1] === "Percentage"
+            headers[0] === 'Wallet Address' &&
+            headers[1] === 'Percentage'
           ) {
             const data = results.data.filter((data, index) => index !== 0);
             let dataValues = data.map((col) => ({
@@ -96,20 +97,20 @@ const ImportWalletModal = ({
                 setShowContributors(true);
                 let values = [owner, ...result];
                 setContributors(values);
-                setCSVError("");
+                setCSVError('');
               } else {
                 setCSVError(
-                  "Your CSV file has duplicate wallet addressess. Please check and remove it"
+                  'Your CSV file has duplicate wallet addressess. Please check and remove it'
                 );
               }
             } else {
               setCSVError(
-                "Please make sure both Wallet Address and Percentage fields are filled properly"
+                'Please make sure both Wallet Address and Percentage fields are filled properly'
               );
             }
           } else {
             setCSVError(
-              "CSV file should contain only two columns, Wallet Address and Percentage"
+              'CSV file should contain only two columns, Wallet Address and Percentage'
             );
           }
         },
@@ -143,7 +144,7 @@ const ImportWalletModal = ({
 
   const handleCollectionContributor = (id) => {
     if (id) {
-      getSplitterDetails(id, "collection_id").then((data) => {
+      getSplitterDetails(id, 'collection_id').then((data) => {
         if (data.code === 0) {
           const result = data.members.map((item) => ({
             wallet_address: item.user_eoa,
@@ -189,10 +190,10 @@ const ImportWalletModal = ({
       };
     });
     let formData = new FormData();
-    formData.append("royalty_data", JSON.stringify(members));
+    formData.append('royalty_data', JSON.stringify(members));
     royalitySplitterId
-      ? formData.append("splitter_uid", royalitySplitterId)
-      : formData.append("collection_uid", collectionId);
+      ? formData.append('splitter_uid', royalitySplitterId)
+      : formData.append('collection_uid', collectionId);
     setIsLoading(true);
     updateRoyaltySplitter(formData)
       .then((resp) => {
@@ -200,7 +201,7 @@ const ImportWalletModal = ({
           setIsLoading(false);
           setRoyaltyUpdatedSuccessfully(true);
           setShowRoyalityErrorModal(false);
-          setShowRoyalityErrorMessage("");
+          setShowRoyalityErrorMessage('');
           handleClose();
         } else {
           setIsLoading(false);
@@ -219,24 +220,24 @@ const ImportWalletModal = ({
 
   return (
     <Modal show={show} handleClose={handleClose} width={638}>
-      <h3 className="text-[16px] font-black">Import Wallet</h3>
-      <p className="text-[12px]">
+      <h3 className='text-[16px] font-black'>Import Wallet</h3>
+      <p className='text-[12px]'>
         Choose Collection to add member for {collectionName} Contributors
       </p>
-      <p className="text-[12px] text-danger-900 w-[380px] leading-[18px] mt-0">
+      <p className='text-[12px] text-danger-900 w-[380px] leading-[18px] mt-0'>
         Note : If you already have a list and importing new new list. The old
         list that you have will be deleted
       </p>
-      <div className="mt-8">
+      <div className='mt-8'>
         <ul
-          className="flex flex-wrap -mb-px text-sm font-medium text-center"
-          id="myTab"
-          data-tabs-toggle="#myTabContent"
-          role="tablist"
+          className='flex flex-wrap -mb-px text-sm font-medium text-center'
+          id='myTab'
+          data-tabs-toggle='#myTabContent'
+          role='tablist'
         >
           <li
-            className="mr-2"
-            role="presentation"
+            className='mr-2'
+            role='presentation'
             onClick={() => {
               setSelectedTab(1);
               setContributors();
@@ -246,22 +247,22 @@ const ImportWalletModal = ({
             <button
               className={`inline-block font-bold p-4 text-[16px] rounded-t-lg ${
                 selectedTab === 1
-                  ? "border-b-2 border-primary-900 text-primary-900"
-                  : "border-transparent text-textSubtle"
+                  ? 'border-b-2 border-primary-900 text-primary-900'
+                  : 'border-transparent text-textSubtle'
               } hover:text-primary-600`}
-              id="nft"
-              data-tabs-target="#nft"
-              type="button"
-              role="tab"
-              aria-controls="nft"
-              aria-selected="true"
+              id='nft'
+              data-tabs-target='#nft'
+              type='button'
+              role='tab'
+              aria-controls='nft'
+              aria-selected='true'
             >
               Collection
             </button>
           </li>
           <li
-            className="mr-2"
-            role="presentation"
+            className='mr-2'
+            role='presentation'
             onClick={() => {
               setSelectedTab(2);
               setContributors();
@@ -271,23 +272,23 @@ const ImportWalletModal = ({
             <button
               className={`inline-block p-4 font-bold text-[16px] rounded-t-lg ${
                 selectedTab === 2
-                  ? "border-b-2 border-primary-900 text-primary-900"
-                  : "border-transparent text-textSubtle"
+                  ? 'border-b-2 border-primary-900 text-primary-900'
+                  : 'border-transparent text-textSubtle'
               } hover:text-primary-900`}
-              id="dashboard"
-              data-tabs-target="#dashboard"
-              type="button"
-              role="tab"
-              aria-controls="dashboard"
-              aria-selected="false"
+              id='dashboard'
+              data-tabs-target='#dashboard'
+              type='button'
+              role='tab'
+              aria-controls='dashboard'
+              aria-selected='false'
             >
               Upload CSV
             </button>
           </li>
         </ul>
-        <div id="myTabContent">
+        <div id='myTabContent'>
           {selectedTab === 1 && (
-            <div className="mt-8">
+            <div className='mt-8'>
               {showContributors ? (
                 <ContributorsList
                   contributors={contributors}
@@ -304,21 +305,24 @@ const ImportWalletModal = ({
                   {collections?.length ? (
                     collections.map((collection) => {
                       let image = collection?.assets?.find(
-                        (img) => img["asset_purpose"] === "logo"
+                        (img) => img['asset_purpose'] === 'logo'
                       );
                       return (
                         <div
-                          className="flex items-center mb-6 cursor-pointer"
+                          key={collection.id}
+                          className='flex items-center mb-6 cursor-pointer'
                           onClick={() =>
                             handleCollectionContributor(collection.id)
                           }
                         >
-                          <img
+                          <Image
                             src={image ? image.path : manImg}
-                            className="w-[56px] h-[56px] rounded-[6px]"
-                            alt="Collection"
+                            className='w-[56px] h-[56px] rounded-[6px]'
+                            alt='Collection'
+                            width={56}
+                            height={56}
                           />
-                          <p className="text-[14px] font-bold ml-4">
+                          <p className='text-[14px] font-bold ml-4'>
                             {collection.name}
                           </p>
                         </div>
@@ -332,7 +336,7 @@ const ImportWalletModal = ({
             </div>
           )}
           {selectedTab === 2 && (
-            <div className="mt-8">
+            <div className='mt-8'>
               {showContributors ? (
                 <ContributorsList
                   handleAddWallet={handleAddWallet}
@@ -347,27 +351,29 @@ const ImportWalletModal = ({
               ) : (
                 <div>
                   {csvError ? (
-                    <p className="text-red-400 text-[14px] mb-3">{csvError}</p>
+                    <p className='text-red-400 text-[14px] mb-3'>{csvError}</p>
                   ) : null}
-                  <p className="text-[14px] mb-2">
+                  <p className='text-[14px] mb-2'>
                     Get CSV template <a href={csvFile}>here</a>.
                   </p>
                   <input
-                    id="csv-upload"
-                    type="file"
-                    className="hidden"
+                    id='csv-upload'
+                    type='file'
+                    className='hidden'
                     onChange={handleCSV}
-                    accept=".csv"
+                    accept='.csv'
                   />
-                  <label htmlFor={"csv-upload"}>
-                    <div className="bg-primary-100 border-[1px] border-primary-900 rounded-[12px] h-[230px] flex items-center justify-center cursor-pointer">
-                      <div className="text-center">
-                        <img
+                  <label htmlFor={'csv-upload'}>
+                    <div className='bg-primary-100 border-[1px] border-primary-900 rounded-[12px] h-[230px] flex items-center justify-center cursor-pointer'>
+                      <div className='text-center'>
+                        <Image
                           src={fileUpload}
-                          alt="file upload"
-                          className="w-[28px] h-[28px] mx-auto"
+                          alt='file upload'
+                          className='w-[28px] h-[28px] mx-auto'
+                          width={28}
+                          height={28}
                         />
-                        <p className="text-[14px] font-black text-primary-900">
+                        <p className='text-[14px] font-black text-primary-900'>
                           Drag or click to Upload .CSV Files
                         </p>
                       </div>

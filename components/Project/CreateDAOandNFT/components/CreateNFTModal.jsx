@@ -18,7 +18,7 @@ const CreateNFTModal = ({ handleClose, show }) => {
           <div className='mr-6 h-[40px] md:h-[74px] w-[40px] md:w-[74px] bg-secondary-50 flex items-center justify-center rounded-[8px]'>
             <Image src={Users} alt='Users' />
           </div>
-          <div onClick={() => history.push('/membershipNFT')}>
+          <div onClick={() => router.push('/membershipNFT')}>
             <h3 className='text-[20px] md:text-[24px] font-bold text-[#303548]'>
               Membership NFT
             </h3>

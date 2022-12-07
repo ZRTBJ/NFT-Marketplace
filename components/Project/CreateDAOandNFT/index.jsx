@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import ProfileImage from 'assets/images/createDAO/user.svg';
-import CoverImage from 'assets/images/createDAO/cover.svg';
 import CirclePlus from 'assets/images/createDAO/circle-plus.svg';
 import DAOCard from 'components/Cards/DAOCard';
 import NFTCard from 'components/Cards/NFTCard';
@@ -8,13 +6,16 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper';
 import styles from './style.module.css';
 import CreateNFTModal from './components/CreateNFTModal';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { getUserProjectListById } from 'services/project/projectService';
 import { useEffect } from 'react';
 import { getCollections } from 'services/collection/collectionService';
 import Plus from 'assets/images/icons/plus.svg';
 import { ls_GetUserID } from 'util/ApplicationStorage';
 import Image from 'next/image';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
 
 const CreateDAOandNFT = () => {
   const [ShowCreateNFT, setShowCreateNFT] = useState(false);
@@ -85,7 +86,7 @@ const CreateDAOandNFT = () => {
           web3 environment.
         </p>
         {DAOs?.length ? (
-          <Link to='/project-create' className='w-fit block no-underline'>
+          <Link href='/project-create' className='w-fit block no-underline'>
             <div className='flex mint-button mt-3 text-center font-satoshi-bold w-full md:w-fit'>
               <Image src={Plus} alt='add' />
               <span className='ml-2 text-[17px]'> Create New</span>
@@ -94,7 +95,7 @@ const CreateDAOandNFT = () => {
         ) : null}
         <div className='flex mt-6'>
           {!DAOs?.length ? (
-            <Link to='/project-create'>
+            <Link href='/project-create'>
               <div className='gradient-border cursor-pointer w-[276px] h-[276px] mr-6 flex flex-col items-center justify-center rounded-[12px]'>
                 <Image src={CirclePlus} alt='add' />
                 <p className='text-[#D66EFB] gradient-text font-black mt-3'>
