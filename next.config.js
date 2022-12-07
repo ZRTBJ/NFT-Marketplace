@@ -2,7 +2,11 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['storage.googleapis.com', 'crastonic.mypinata.cloud'],
+    domains: [
+      'storage.googleapis.com',
+      'crastonic.mypinata.cloud',
+      'decir.mypinata.cloud',
+    ],
   },
   webpack: (config, options) => {
     config.module.rules.push({
