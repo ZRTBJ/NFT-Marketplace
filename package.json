@@ -53,7 +53,7 @@
     "rsuite": "^5.23.0",
     "swiper": "^8.4.5",
     "tw-elements": "^1.0.0-alpha12",
-    "web3": "^1.8.1"
+    "web3": "^1.7.4"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.13",

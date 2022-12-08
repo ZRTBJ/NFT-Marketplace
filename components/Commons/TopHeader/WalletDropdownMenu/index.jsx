@@ -43,7 +43,7 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
   function handleLogout() {
     dispatch(logout());
     // showHideUserPopup();
-    router.push('/');
+    router.push('/profile/login');
     window.location.reload();
   }
 
@@ -51,13 +51,15 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
     setWallet(userWallet ? userWallet : '');
     try {
       setIsLoadingBalance(true);
-      //TODO: it might be wrong if user is login in different metamask chain (but same account)
-      const web3 = new Web3(window?.ethereum);
-      if (web3 && selectedWallet && selectedWallet.length > 5) {
-        web3.eth.getBalance(selectedWallet).then((res) => {
-          setBalance(res / 10 ** 18);
-          setIsLoadingBalance(false);
-        });
+      if (typeof window !== 'undefined') {
+        //TODO: it might be wrong if user is login in different metamask chain (but same account)
+        const web3 = new Web3(window?.ethereum);
+        if (web3 && selectedWallet && selectedWallet.length > 5) {
+          web3.eth.getBalance(selectedWallet).then((res) => {
+            setBalance(res / 10 ** 18);
+            setIsLoadingBalance(false);
+          });
+        }
       }
     } catch {
       setIsLoadingBalance(false);

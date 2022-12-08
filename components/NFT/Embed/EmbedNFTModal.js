@@ -19,7 +19,7 @@ const EmbedNFTModal = ({ show, type, handleClose, nftId }) => {
 
   const copyToClipboard = (e) => {
     copyRef.current.select();
-    document.execCommand('copy');
+    document?.execCommand('copy');
     e.target.focus();
     setIsTextCopied(true);
     setTimeout(() => {

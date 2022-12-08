@@ -28,7 +28,6 @@ export const loginUser = (loginPayload) => async (dispatch) => {
     };
     let response = await fetch(`${ROOT_URL}/auth/login`, requestOptions);
     let data = await response.json();
-    console.log(response);
     if (data?.token) {
       dispatch(loginSuccess(data));
       ls_SetUserToken(data.token);

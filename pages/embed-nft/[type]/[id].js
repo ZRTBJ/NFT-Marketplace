@@ -1,9 +1,9 @@
 import React from 'react';
 import EmbedNFT from 'components/NFT/Embed/EmbedNFT';
-export async function getServerSideProps(context) {
-  const query = context.query;
-  return { props: { query } };
-}
-export default function NFTDetails(query) {
-  return <EmbedNFT type={query?.query?.type} id={query?.query?.id} />;
+import { useRouter } from 'next/router';
+
+export default function NFTDetails() {
+  const router = useRouter();
+  const { id, type } = router.query;
+  return <EmbedNFT type={type} id={id} />;
 }

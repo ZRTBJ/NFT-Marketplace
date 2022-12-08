@@ -2,7 +2,7 @@ import '../styles/common.css';
 import dynamic from 'next/dynamic';
 import 'rsuite/dist/rsuite.min.css';
 import Header from 'components/Commons/TopHeader';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import store from 'redux/store';
 import { Provider } from 'react-redux';
 import { DAppProvider } from '@usedapp/core';
@@ -11,20 +11,26 @@ import '../styles/globals.css';
 import Script from 'next/script';
 import { ToastContainer, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
+import { router } from 'next/router';
+
 dynamic(() => import('tw-elements'), { ssr: false });
 
 function MyApp({ Component, pageProps }) {
   const [showSideBar, setShowSideBar] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [isEmbedView, setIsEmbedView] = useState(false);
 
   const handleToggleSideBar = () => {
     setShowSideBar(!showSideBar);
   };
 
-  let path = typeof window !== 'undefined' && window?.location?.pathname;
-  let pathItems = path && path.split('/');
-  let isEmbedView =
-    pathItems && pathItems.length ? pathItems.includes('embed-nft') : false;
+  useEffect(() => {
+    let path = typeof window !== 'undefined' && router?.asPath;
+    let pathItems = path && path.split('/');
+    let view =
+      pathItems && pathItems.length ? pathItems.includes('embed-nft') : false;
+    setIsEmbedView(view);
+  }, [router?.asPath]);
 
   return (
     <>
