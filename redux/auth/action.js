@@ -7,6 +7,8 @@ import {
   ls_SetWalletType,
 } from 'util/ApplicationStorage';
 import { authSlice } from './slice';
+import { persistor } from '../../pages/_app';
+
 const { loadingLogin, loginSuccess, loginError, logginOut } = authSlice.actions;
 
 const ROOT_URL = Config.API_ENDPOINT;
@@ -29,7 +31,7 @@ export const loginUser = (loginPayload) => async (dispatch) => {
     let response = await fetch(`${ROOT_URL}/auth/login`, requestOptions);
     let data = await response.json();
     if (data?.token) {
-      dispatch(loginSuccess(data));
+      dispatch(loginSuccess({ data, walletAddress: loginPayload.address }));
       ls_SetUserToken(data.token);
       ls_SetUserID(data.user_id);
       ls_SetUserRefreshToken(data.refresh_token);
@@ -47,4 +49,8 @@ export const loginUser = (loginPayload) => async (dispatch) => {
 export const logout = () => async (dispatch) => {
   dispatch(logginOut());
   ls_ClearLocalStorage();
+  persistor.pause();
+  persistor.flush().then(() => {
+    return persistor.purge();
+  });
 };

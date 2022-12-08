@@ -151,8 +151,6 @@ function ProjectDetailsContent({ id }) {
     }
   };
 
-  console.log(project);
-
   return (
     <>
       {isLoading && <div className='loading'></div>}

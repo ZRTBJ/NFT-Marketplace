@@ -12,7 +12,6 @@ const WrongNetwork = ({ show, handleClose }) => {
     // showHideUserPopup();
     router.push('/');
     handleClose();
-    window.location.reload();
   }
 
   const handleOk = () => {

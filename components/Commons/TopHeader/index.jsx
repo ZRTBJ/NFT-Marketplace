@@ -38,10 +38,9 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const inputRef = useRef(null);
-  const { user, walletAddress } = useSelector((state) => state.auth);
+  const { user, walletAddress, token } = useSelector((state) => state.auth);
   const [userId, setUserId] = useState(user ? user : '');
   const userinfo = useSelector((state) => state.user.userinfo);
-  const loggedIn = useSelector((state) => state.user.loggedIn);
   const [messageHistory, setMessageHistory] = useState([]);
   const userLoadingStatus = useSelector((state) => state.user.status);
   const [showWalletpopup, setShowWalletpopup] = useState(false);
@@ -54,9 +53,6 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const [notificationList, setNotificationList] = useState([]);
   const [isNotificationLoading, setIsNotificationLoading] = useState(false);
   const [notificationCount, setnotificationCount] = useState(0);
-  const [selectedWallet, setSelectedWallet] = useState(
-    walletAddress ? walletAddress : ''
-  );
   const [showAccountChanged, setShowAccountChanged] = useState(false);
   const [showNetworkChanged, setShowNetworkChanged] = useState(false);
   const [networkChangeDetected, setNetworkChangeDetected] = useState(false);
@@ -98,9 +94,9 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   useEffect(() => {
     if (!networkChangeDetected && networkId && localChainId) {
       if (Number(networkId) !== Number(localChainId)) {
-        logout(dispatch);
+        dispatch(logout());
         router.push('/');
-        window.location.reload();
+        window?.location.reload();
       }
     }
   }, [networkId, localChainId]);
@@ -455,17 +451,14 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                         showHideUserPopupWallet();
                       }}
                     >
-                      {selectedWallet && selectedWallet.length > 5 && (
+                      {walletAddress && walletAddress.length > 5 && (
                         <div
                           className={`flex place-items-center ${styles.walletInfo}`}
                         >
                           <i className='fa-solid fa-wallet gradient-text'></i>
 
                           <div className='mx-2 font-semibold text-base gradient-text'>
-                            {/* {selectedWallet.substring(0, 6)}... */}
-                            {selectedWallet
-                              ? walletAddressTruncate(selectedWallet)
-                              : null}
+                            {walletAddressTruncate(walletAddress)}
                           </div>
                           <i className='fa-solid fa-angle-down'></i>
                         </div>

@@ -1,10 +1,6 @@
-import dynamic from 'next/dynamic';
 import MetaMaskOnboarding from '@metamask/onboarding';
 import { ethers } from 'ethers';
-
-const Web3 = dynamic(() => import('web3'), {
-  suspense: true,
-});
+import Web3 from 'web3';
 
 const currentUrl =
   typeof window !== 'undefined' && new URL(window.location.href);
@@ -114,11 +110,12 @@ export const getCurrentNetworkId = async () => {
 //To Switch network
 export const handleSwitchNetwork = async (projectNetwork) => {
   if (typeof window !== 'undefined') {
-    if (window.ethereum) {
+    if (window?.ethereum) {
       try {
+        Web3?.utils?.toHex;
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
-          params: [{ chainId: Web3.utils.toHex(projectNetwork) }],
+          params: [{ chainId: Web3?.utils?.toHex(projectNetwork) }],
         });
       } catch (error) {
         console.log(error);

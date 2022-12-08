@@ -3,8 +3,8 @@ import {
   ls_GetUserToken,
   ls_GetWalletAddress,
   ls_GetWalletType,
-} from "util/ApplicationStorage";
-import { createSlice } from "@reduxjs/toolkit";
+} from 'util/ApplicationStorage';
+import { createSlice } from '@reduxjs/toolkit';
 
 let user = ls_GetUserID();
 let token = ls_GetUserToken();
@@ -12,16 +12,16 @@ let wallet = ls_GetWalletType();
 let walletAddress = ls_GetWalletAddress();
 
 const initialState = {
-  user: "" || user,
-  token: "" || token,
+  user: '' || user,
+  token: '' || token,
   loading: false,
   errorMessage: null,
-  wallet: wallet ? wallet : "",
-  walletAddress: walletAddress ? walletAddress : "",
+  wallet: wallet ? wallet : '',
+  walletAddress: walletAddress ? walletAddress : '',
 };
 
 export const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState,
   reducers: {
     loadingLogin(state, action) {
@@ -29,16 +29,17 @@ export const authSlice = createSlice({
     },
     loginSuccess(state, action) {
       state.loading = false;
-      state.user = action.payload.user_id;
-      state.token = action.payload.token;
+      state.user = action.payload.data.user_id;
+      state.token = action.payload.data.token;
+      state.walletAddress = action.payload.walletAddress;
     },
     loginError(state, action) {
       state.loading = false;
       state.errorMessage = action.message;
     },
     logginOut(state, action) {
-      state.user = "";
-      state.token = "";
+      state.user = '';
+      state.token = '';
     },
   },
 });

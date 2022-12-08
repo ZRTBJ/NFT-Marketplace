@@ -6,12 +6,8 @@ import metamaskIcon from 'assets/images/modal/metamask.png';
 import { useEffect, useState } from 'react';
 import { useDetectClickOutside } from 'react-detect-click-outside';
 import { NETWORKS } from 'config/networks';
-import dynamic from 'next/dynamic';
 import Image from 'next/image';
-
-const Web3 = dynamic(() => import('web3'), {
-  suspense: true,
-});
+import { getAccountBalance } from 'util/MetaMask';
 
 const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
   let router = useRouter();
@@ -22,9 +18,7 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
   const loadingStatus = useSelector((state) => state.user.status);
   const userinfo = useSelector((state) => state.user.userinfo);
   const [showWallet, setShowWallet] = useState(false);
-  const [selectedWallet, setSelectedWallet] = useState(
-    walletAddress ? walletAddress : ''
-  );
+
   const [wallet, setWallet] = useState(userWallet ? userWallet : '');
   const [balance, setBalance] = useState(0);
   const userLoadingStatus = useSelector((state) => state.user.status);
@@ -43,28 +37,27 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
   function handleLogout() {
     dispatch(logout());
     // showHideUserPopup();
-    router.push('/profile/login');
-    window.location.reload();
+    router.push('/');
+    window?.location.reload();
   }
 
   useEffect(() => {
     setWallet(userWallet ? userWallet : '');
+    getBalance();
+  }, [userLoadingStatus]);
+
+  const getBalance = async () => {
     try {
       setIsLoadingBalance(true);
-      if (typeof window !== 'undefined') {
-        //TODO: it might be wrong if user is login in different metamask chain (but same account)
-        const web3 = new Web3(window?.ethereum);
-        if (web3 && selectedWallet && selectedWallet.length > 5) {
-          web3.eth.getBalance(selectedWallet).then((res) => {
-            setBalance(res / 10 ** 18);
-            setIsLoadingBalance(false);
-          });
-        }
+      if (walletAddress && walletAddress.length > 5) {
+        const accountBalance = await getAccountBalance();
+        setBalance(accountBalance);
+        setIsLoadingBalance(false);
       }
     } catch {
       setIsLoadingBalance(false);
     }
-  }, [userLoadingStatus]);
+  };
 
   return (
     <>
@@ -94,7 +87,7 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
               <i className='fa fa-spinner fa-pulse fa-fw'></i>
             )}
             <span>
-              {balance ? balance.toFixed(4) : 0}{' '}
+              {balance && Number(balance)?.toFixed(4)}{' '}
               {NETWORKS[networkId] ? NETWORKS[networkId].cryto : ''}
             </span>
           </h4>

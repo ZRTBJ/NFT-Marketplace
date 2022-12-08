@@ -29,8 +29,6 @@ const DeployingCollectiontModal = ({
   const [step, setStep] = useState(publishStep ? publishStep : 1);
 
   const [txnData, setTxnData] = useState();
-  const provider = createProvider();
-  const collectionContract = createInstance(provider);
 
   useEffect(() => {
     if (txnData) {
@@ -110,6 +108,8 @@ const DeployingCollectiontModal = ({
   const handleSmartContract = async (config) => {
     setStatusStep(1);
     try {
+      const provider = createProvider();
+      const collectionContract = createInstance(provider);
       const response = await createCollection(
         collectionContract,
         provider,

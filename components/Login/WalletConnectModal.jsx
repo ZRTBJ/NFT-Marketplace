@@ -26,10 +26,10 @@ const WalletConnectModal = ({
   closeModal,
   navigateToPage,
   noRedirection,
+  showCloseMenu = true,
 }) => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const userinfo = useSelector((state) => state.user.userinfo);
   const [modalKey, setModalKey] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [isTermsAndConditionsChecked, setIsTermsAndConditionsChecked] =
@@ -38,14 +38,6 @@ const WalletConnectModal = ({
   const [metamaskConnectAttempt, setMetamaskConnectAttempt] = useState(0);
   const [metamaskAccount, setMetamaskAccount] = useState('');
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
-
-  const { user } = useSelector((state) => state.auth);
-  const [userId, setUserId] = useState(user ? user : '');
-  useEffect(() => {
-    if (userId && !userinfo?.display_name) {
-      getUserDetails(userId, false);
-    }
-  }, []);
 
   /** Connection to wallet
    * Login mechanism: We let user to login using metamask, then will login to our server to get JWT token.
@@ -72,16 +64,14 @@ const WalletConnectModal = ({
           setMetamaskAccount(account);
           getPersonalSign()
             .then((signature) => {
-              // if (userinfo && !userinfo['display_name']) {
               userLogin(account, signature, 'metamask');
-              // }
             })
             .catch((error) => {
               alert(error.message);
             });
         } else {
           if (!isConnected && !account) {
-            window.location.reload();
+            window?.location.reload();
           }
         }
       } else {
@@ -102,12 +92,12 @@ const WalletConnectModal = ({
     try {
       setIsLoading(true);
       let response = await dispatch(loginUser(request));
+
       const userProvider = new ethers.providers.Web3Provider(window.ethereum);
       const userNetwork = await userProvider.getNetwork();
       ls_SetWalletAddress(address);
       ls_SetChainID(userNetwork.chainId);
-      setUserId(response['user_id']);
-      getUserDetails(response['user_id'], true);
+      getUserDetails(response['user_id']);
     } catch (error) {
       setIsLoading(false);
       console.log(error);
@@ -115,7 +105,7 @@ const WalletConnectModal = ({
   }
 
   /** Get user info and save it to redux store */
-  async function getUserDetails(userID, isNavigate) {
+  async function getUserDetails(userID) {
     dispatch(setUserLoading('loading'));
     const response = await getUserInfo(userID);
     let userinfoResponse;
@@ -127,23 +117,19 @@ const WalletConnectModal = ({
     dispatch(setUserInfo(userinfoResponse));
     setIsLoading(false);
     if (!noRedirection) {
-      if (isNavigate === true) {
-        //We might navigate to specific page after login, or go to profile, if user hasn't create any profile (display name)
-        if (
-          userinfoResponse &&
-          userinfoResponse['display_name'] &&
-          userinfoResponse['display_name'].length > 0
-        ) {
-          if (navigateToPage) {
-            router.push(`/${navigateToPage}`);
-          } else {
-            router.push(`/profile/${ls_GetUserID()}`);
-            window.location.reload();
-          }
+      //We might navigate to specific page after login, or go to profile, if user hasn't create any profile (display name)
+      if (
+        userinfoResponse &&
+        userinfoResponse['display_name'] &&
+        userinfoResponse['display_name'].length > 0
+      ) {
+        if (navigateToPage) {
+          router.push(`/${navigateToPage}`);
         } else {
-          router.push('/profile-settings');
-          window.location.reload();
+          router.push(`/profile/${userID}`);
         }
+      } else {
+        router.push('/profile-settings');
       }
     }
     closeModal();
@@ -162,6 +148,7 @@ const WalletConnectModal = ({
         width={500}
         show={showModal}
         handleClose={() => closeModal()}
+        showCloseIcon={showCloseMenu}
       >
         {isWrongNetwork && (
           <WrongNetwork
