@@ -55,27 +55,33 @@ const WalletConnectModal = ({
       }, 1000);
       const isConnected = await isWalletConnected();
       const account = await getWalletAccount();
-      const userProvider = new ethers.providers.Web3Provider(window.ethereum);
-      const userNetwork = await userProvider.getNetwork();
-      if (NETWORKS?.[userNetwork.chainId]) {
-        setIsWrongNetwork(false);
-        if (isConnected && account && account.length > 5) {
-          setMetamaskConnectAttempt(0);
-          setMetamaskAccount(account);
-          getPersonalSign()
-            .then((signature) => {
-              userLogin(account, signature, 'metamask');
-            })
-            .catch((error) => {
-              alert(error.message);
-            });
-        } else {
-          if (!isConnected && !account) {
-            window?.location.reload();
+      if (typeof window !== 'undefined') {
+        if (window.ethereum) {
+          const userProvider = new ethers.providers.Web3Provider(
+            window?.ethereum
+          );
+          const userNetwork = await userProvider.getNetwork();
+          if (NETWORKS?.[userNetwork.chainId]) {
+            setIsWrongNetwork(false);
+            if (isConnected && account && account.length > 5) {
+              setMetamaskConnectAttempt(0);
+              setMetamaskAccount(account);
+              getPersonalSign()
+                .then((signature) => {
+                  userLogin(account, signature, 'metamask');
+                })
+                .catch((error) => {
+                  alert(error.message);
+                });
+            } else {
+              if (!isConnected && !account) {
+                window?.location.reload();
+              }
+            }
+          } else {
+            setIsWrongNetwork(true);
           }
         }
-      } else {
-        setIsWrongNetwork(true);
       }
     } else {
       setshowMessage(true);
