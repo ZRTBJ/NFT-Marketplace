@@ -83,6 +83,8 @@ const InfoCard = ({
                       className='rounded-full object-cover w-9 h-9 mr-2 border-2 border-white'
                       src={img.avatar ? img.avatar : avatar}
                       alt=''
+                      width={36}
+                      height={36}
                     />
                   )}
                 </div>

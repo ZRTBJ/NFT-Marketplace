@@ -128,7 +128,7 @@ const DeployingCollectiontModal = ({
         errorClose(response);
       }
     } catch (err) {
-      errorClose(err);
+      errorClose(err.message);
     }
   };
 
