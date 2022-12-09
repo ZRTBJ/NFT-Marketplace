@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import WalletConnectModal from 'components/Login/WalletConnectModal';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
+import MetaHead from 'components/Commons/MetaHead/MetaHead';
 
 export default function Home() {
   const userinfo = useSelector((state) => state.user.userinfo);
@@ -13,16 +14,19 @@ export default function Home() {
     }
   }, [userinfo?.id]);
   return (
-    <div className={styles.container}>
-      <>
-        <WalletConnectModal
-          showModal={true}
-          showCloseMenu={false}
-          closeModal={() => null}
-          noRedirection={false}
-          navigateToPage={false}
-        />
-      </>
-    </div>
+    <>
+      <MetaHead />
+      <div className={styles.container}>
+        <>
+          <WalletConnectModal
+            showModal={true}
+            showCloseMenu={false}
+            closeModal={() => null}
+            noRedirection={false}
+            navigateToPage={false}
+          />
+        </>
+      </div>
+    </>
   );
 }

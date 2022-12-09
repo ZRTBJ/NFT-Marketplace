@@ -13,6 +13,7 @@ import ErrorModal from 'components/Modals/ErrorModal';
 import SuccessModal from 'components/Modals/SuccessModal';
 import { getProjectCategory } from 'services/project/projectService';
 import { ls_GetChainID } from 'util/ApplicationStorage';
+import MetaHead from 'components/Commons/MetaHead/MetaHead';
 
 function ProjectCreateContent({ search }) {
   // Logo start
@@ -471,6 +472,7 @@ function ProjectCreateContent({ search }) {
 
   return (
     <>
+      <MetaHead />
       {isDataLoading && <div className='loading'></div>}
       <div className='txtblack max-w-[600px] mx-4 pt-4 md:pt-0 md:mx-auto md:mt-[40px]'>
         {notOwner ? (

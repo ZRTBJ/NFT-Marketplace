@@ -18,6 +18,8 @@ import ReactPaginate from 'react-paginate';
 import { getMintedNftListByUserId } from 'services/nft/nftService';
 import emptyStateCommon from 'assets/images/profile/emptyStateCommon.svg';
 import Image from 'next/image';
+import MetaHead from 'components/Commons/MetaHead/MetaHead';
+
 function List({ query }) {
   SwiperCore.use([Autoplay]);
   const [searchKeyword, setSearchKeyword] = useState([]);
@@ -177,6 +179,7 @@ function List({ query }) {
 
   return (
     <>
+      <MetaHead />
       {isLoading && <div className='loading'></div>}
       <div className='text-txtblack'>
         <h1 className='my-6 pl-4'>

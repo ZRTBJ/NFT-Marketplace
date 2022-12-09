@@ -45,6 +45,7 @@ import emptyStateCommon from 'assets/images/profile/emptyStateCommon.svg';
 import emptyStateRoyalty from 'assets/images/profile/emptyStateRoyalty.png';
 import curvVector from 'assets/images/profile/curv1.png';
 import Modal from 'components/Commons/Modal';
+import MetaHead from 'components/Commons/MetaHead/MetaHead';
 
 const Profile = ({ id }) => {
   const provider = createProvider();
@@ -398,6 +399,7 @@ const Profile = ({ id }) => {
 
   return (
     <>
+      <MetaHead />
       <>
         {showNetworkHandler && (
           <NetworkHandlerModal

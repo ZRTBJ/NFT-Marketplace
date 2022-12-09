@@ -24,6 +24,8 @@ import { getCollectionDetailsById } from 'services/collection/collectionService'
 import tickIcon from 'assets/images/tick.svg';
 import Config from 'config/config';
 import Image from 'next/image';
+import MetaHead from 'components/Commons/MetaHead/MetaHead';
+
 export default function DetailsNFT({ nftId, tokenId }) {
   const provider = createProvider();
   const [isLoading, setIsLoading] = useState(true);
@@ -215,6 +217,11 @@ export default function DetailsNFT({ nftId, tokenId }) {
 
   return (
     <>
+      <MetaHead
+        title={nft?.lnft?.name}
+        description={nft?.lnft?.description}
+        image={nft?.lnft?.asset?.path}
+      />
       {isLoading && <div className='loading'></div>}
       {!isLoading && (
         <section className='flex flex-col lg:flex-row py-5'>

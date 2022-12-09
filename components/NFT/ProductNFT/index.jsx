@@ -25,6 +25,7 @@ import {
 } from 'services/collection/collectionService';
 import { ls_GetChainID } from 'util/ApplicationStorage';
 import Image from 'next/image';
+import MetaHead from 'components/Commons/MetaHead/MetaHead';
 
 export default function ProductNFT({ query }) {
   const audioRef = useRef();
@@ -518,6 +519,7 @@ export default function ProductNFT({ query }) {
 
   return (
     <>
+      <MetaHead />
       {isNftLoading && <div className='loading'></div>}
       <>
         <form onSubmit={handleSubmit(onSubmit)}>

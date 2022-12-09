@@ -42,6 +42,7 @@ import { cryptoConvert } from 'services/chainlinkService';
 import tickIcon from 'assets/images/tick.svg';
 import { getCollectionDetailsById } from 'services/collection/collectionService';
 import Image from 'next/image';
+import MetaHead from 'components/Commons/MetaHead/MetaHead';
 
 export default function DetailsNFT({ type, id }) {
   const userinfo = useSelector((state) => state.user.userinfo);
@@ -266,6 +267,11 @@ export default function DetailsNFT({ type, id }) {
 
   return (
     <>
+      <MetaHead
+        title={nft?.lnft?.name}
+        description={nft?.lnft?.description}
+        image={nft?.lnft?.asset?.path}
+      />
       {showNetworkHandler && (
         <NetworkHandlerModal
           show={showNetworkHandler}
