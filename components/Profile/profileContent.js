@@ -46,7 +46,7 @@ import emptyStateRoyalty from 'assets/images/profile/emptyStateRoyalty.png';
 import curvVector from 'assets/images/profile/curv1.png';
 import Modal from 'components/Commons/Modal';
 import MetaHead from 'components/Commons/MetaHead/MetaHead';
-
+import CollectionCard from 'components/Cards/CollectionCard';
 const Profile = ({ id }) => {
   const provider = createProvider();
   SwiperCore.use([Autoplay]);
@@ -942,76 +942,10 @@ const Profile = ({ id }) => {
                             key={collection.id}
                             className={styles.nftCard}
                           >
-                            <div
-                              className='min-h-[390px] rounded-x'
-                              key={`best-collection-${index}`}
-                            >
-                              <Link
-                                href={
-                                  collection.type === 'right_attach'
-                                    ? `/royality-management/${collection.id}`
-                                    : `/collection-details/${collection.id}`
-                                }
-                              >
-                                <div className='h-[211px] md:h-[276px]'>
-                                  <Image
-                                    className='rounded-xl object-cover w-full'
-                                    src={
-                                      collection &&
-                                      collection.assets &&
-                                      collection.assets[0]
-                                        ? collection.assets[0].path
-                                        : thumbIcon
-                                    }
-                                    alt=''
-                                    width={276}
-                                    height={278}
-                                  />
-                                </div>
-                              </Link>
-
-                              <div className='p-5'>
-                                <div className='pb-2 text-[14px] font-black md:text-[18px] text-txtblack truncate'>
-                                  {collection.name}
-                                </div>
-                                <p className='mb-3 text-textSubtle text-[13px]'>
-                                  {collection.description &&
-                                  collection.description.length > 70
-                                    ? collection.description.substring(0, 67) +
-                                      '...'
-                                    : collection.description}
-                                </p>
-
-                                <div className='flex items-center'>
-                                  {collection.members &&
-                                    collection.members.length > 0 &&
-                                    truncateArray(
-                                      collection.members
-                                    ).slicedItems.map((member) => (
-                                      <div className='w-9 h-9' key={member.id}>
-                                        <Image
-                                          src={member.avatar}
-                                          alt={member.id}
-                                          layout='responsive'
-                                          className='rounded-full -ml-2 border-2 border-white'
-                                        />
-                                      </div>
-                                    ))}
-                                  {collection.members &&
-                                    collection.members.length > 3 && (
-                                      <div className='flex items-center mt-[6px] justify-center rounded-1 ml-[10px] bg-[#9A5AFF] bg-opacity-[0.1] w-[26px] h-[26px]'>
-                                        <p className='text-[12px] text-[#9A5AFF]'>
-                                          +
-                                          {
-                                            truncateArray(collection.members)
-                                              .restSize
-                                          }
-                                        </p>
-                                      </div>
-                                    )}
-                                </div>
-                              </div>
-                            </div>
+                            <CollectionCard
+                              key={index}
+                              collection={collection}
+                            ></CollectionCard>
                           </SwiperSlide>
                         </div>
                       ))}

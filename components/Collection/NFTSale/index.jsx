@@ -1,42 +1,43 @@
-import styles from "./style.module.css";
-import Polygon from "assets/images/network/eth.svg";
-import manImg from "assets/images/image-default.svg";
-import { useState } from "react";
-import NFTSalesMobile from "./NFTSalesMobile";
-import dayjs from "dayjs";
+import styles from './style.module.css';
+import Polygon from 'assets/images/network/eth.svg';
+import manImg from 'assets/images/image-default.svg';
+import { useState } from 'react';
+import NFTSalesMobile from './NFTSalesMobile';
+import dayjs from 'dayjs';
+import Image from 'next/image';
 
 const headers = [
   {
     id: 0,
-    label: "Items",
+    label: 'Items',
   },
   {
     id: 1,
-    label: "Price",
+    label: 'Price',
   },
   {
     id: 2,
-    label: "Qty",
+    label: 'Qty',
   },
   {
     id: 3,
-    label: "Buyer",
+    label: 'Buyer',
   },
   {
     id: 4,
-    label: "Date",
+    label: 'Date',
   },
 ];
 
-const time = ["Day", "Week", "Month"];
+const time = ['Day', 'Week', 'Month'];
 
 const NFTSales = ({ items }) => {
-  const [selectedTime, setSelectedTime] = useState("Day");
+  const [selectedTime, setSelectedTime] = useState('Day');
 
   return (
     <div>
-      <div className="flex items-start md:items-center pb-7 border-b-[1px] mb-6 border-[#E3DEEA]">
-        <h3 className="text-[18px] font-black mr-10">NFT Sale's</h3>
+      <div className='flex items-start md:items-center pb-7 border-b-[1px] mb-6 border-[#E3DEEA]'>
+        <h3 className='text-[18px] font-black mr-10'>NFT Sale's</h3>
         {/* <div className="bg-primary-100 rounded-[6px] p-2 ">
           {time.map((item, index) => (
             <button
@@ -51,14 +52,14 @@ const NFTSales = ({ items }) => {
           ))}
         </div> */}
       </div>
-      <div className="relative hidden md:block">
+      <div className='relative hidden md:block'>
         {items.length ? (
-          <table className="w-full text-left">
+          <table className='w-full text-left'>
             <thead>
-              <tr className="text-textSubtle text-[12px] ">
+              <tr className='text-textSubtle text-[12px] '>
                 {headers.map((item, index) => (
                   <th
-                    scope="col"
+                    scope='col'
                     className={`px-5 text-[14px] text-[#303548] ${styles.tableHeader}`}
                     key={index}
                   >
@@ -72,33 +73,41 @@ const NFTSales = ({ items }) => {
                 <tr
                   key={index}
                   className={`${
-                    index < items.length - 1 ? "border-b" : ""
+                    index < items.length - 1 ? 'border-b' : ''
                   } text-left text-[13px]`}
                 >
-                  <td className="py-4 px-5">
-                    <div className="flex items-center">
-                      <img
+                  <td className='py-4 px-5'>
+                    <div className='flex items-center'>
+                      <Image
                         src={r?.nft_asset_path ? r.nft_asset_path : manImg}
-                        alt="nft"
-                        className="h-[33px] w-[33px]"
-                      />{" "}
-                      <span className="ml-2">{r.nft_name}</span>
+                        alt='nft'
+                        className='h-[33px] w-[33px] rounded'
+                        height={33}
+                        width={33}
+                        unoptimized
+                      />{' '}
+                      <span className='ml-2'>{r.nft_name}</span>
                     </div>
                   </td>
-                  <td className="py-4 px-5">
-                    <div className="flex items-center">
-                      <span> {r.nft_price ? r.nft_price : "-"}</span>
-                      <img src={Polygon} alt="network" className="ml-2" />
+                  <td className='py-4 px-5'>
+                    <div className='flex items-center'>
+                      <span> {r.nft_price ? r.nft_price : '-'}</span>
+                      <Image
+                        src={Polygon}
+                        alt='network'
+                        style={{ height: 'auto', width: 'auto' }}
+                        className='ml-2'
+                      />
                     </div>
                   </td>
-                  <td className="py-4 px-5">1</td>
+                  <td className='py-4 px-5'>1</td>
                   <td className={`py-4 px-5`}>
-                    {r.user_eoa ? r.user_eoa : "-"}
+                    {r.user_eoa ? r.user_eoa : '-'}
                   </td>
-                  <td className="py-4 px-5">
+                  <td className='py-4 px-5'>
                     <span>
                       {dayjs(r.purchase_time * 1000).format(
-                        "DD/MM/YYYY - HH:mm"
+                        'DD/MM/YYYY - HH:mm'
                       )}
                     </span>
                   </td>
@@ -107,10 +116,10 @@ const NFTSales = ({ items }) => {
             </tbody>
           </table>
         ) : (
-          <p className="text-center">You don't have any sales to display</p>
+          <p className='text-center'>You don't have any sales to display</p>
         )}
       </div>
-      <div className="block md:hidden">
+      <div className='block md:hidden'>
         <NFTSalesMobile items={items} />
       </div>
     </div>

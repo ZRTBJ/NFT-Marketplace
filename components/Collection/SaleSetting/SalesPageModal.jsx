@@ -535,8 +535,9 @@ const SalesPageModal = ({
                         href='https://www.decir.io/termsandcondition'
                         target='_blank'
                         rel='noreferrer'
+                        className='text-color-blue'
                       >
-                        terms and conditions
+                        Terms and Conditions
                       </a>{' '}
                       about sales.
                     </p>

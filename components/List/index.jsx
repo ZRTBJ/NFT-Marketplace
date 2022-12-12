@@ -225,7 +225,7 @@ function List({ query }) {
             >
               <span className='hidden md:block'> Sort Of</span>
               <i className='fa-solid fa-angle-down hidden md:block'></i>
-              <img src={Sort} alt='sort' className='block md:hidden' />
+              <image src={Sort} alt='sort' className='block md:hidden' />
             </button>
 
             <ul
@@ -277,10 +277,12 @@ function List({ query }) {
           {isSearching && searchList.length === 0 ? (
             <div className='p-5 text-center min-h-[100px] text-primary-700'>
               <div className='text-center mt-6 text-textSubtle'>
-                <img
+                <Image
                   src={emptyStateCommon}
                   className='h-[210px] w-[315px] m-auto'
                   alt=''
+                  height={210}
+                  width={315}
                 />
                 <p className='text-subtitle font-bold'>Nothing Found</p>
               </div>

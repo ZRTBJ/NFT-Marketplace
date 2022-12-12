@@ -1,8 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import styles from './index.module.css';
 import { checkUniqueProjectName } from 'services/project/projectService';
-import Outline from './Outline';
-import Confirmation from './Confirm';
+import Outline from 'components/FormUtility/Outline';
+import Confirmation from 'components/FormUtility/Confirmation';
 import {
   createProject,
   updateProject,

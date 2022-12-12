@@ -913,12 +913,12 @@ const CollectionContent = ({ collectionId }) => {
                     balanceLoading ? 'fa-spin' : ''
                   }'}`}
                 ></i>
-                <p className=' text-sm text-textSubtle '>Net Worth</p>
-                <h4>
+                <p className=' text-sm text-textSubtle mb-2'>Net Worth</p>
+                <h4 className='font-black text-[22px]'>
                   {newWorth?.balance} {newWorth?.currency?.toUpperCase()}
                 </h4>
-                <p className='text-sm text-textSubtle'>
-                  $ {newWorth.balanceUSD?.toFixed(2)}
+                <p className='text-sm text-textSubtle mt-2'>
+                  $ {newWorth?.balanceUSD?.toFixed(2)}
                 </p>
               </div>
               <div className='mt-6 flex items-center'>

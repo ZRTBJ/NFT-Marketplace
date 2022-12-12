@@ -155,7 +155,7 @@ const SalesSuccessModal = ({
           </div>
         )}
         <button
-          className='w-[200px] mx-auto block contained-button font-bold mt-2 text-[16px] h-[44px] bg-primary-50 text-primary-900 '
+          className='w-[200px] mx-auto block contained-button font-bold mt-2 text-[16px] h-[44px]'
           onClick={handleNavigatetoDao}
         >
           Close

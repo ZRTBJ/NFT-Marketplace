@@ -280,7 +280,7 @@ export default function Outline({
                   rel='noreferrer'
                 >
                   <div className='w-[100px] md:w-[140px] h-[47px] bg-black-shade-800 bg-opacity-[0.3] rounded-[4px] flex items-center justify-center'>
-                    <img src={Safe} alt='Gnosis safe' />
+                    <Image src={Safe} alt='Gnosis safe' />
                   </div>
                 </a>
               </div>
@@ -335,7 +335,7 @@ export default function Outline({
                   key={`project-image-${index}`}
                   className='relative upload-file w-full md:w-[158px] h-[158px] mr-3  mb-2'
                 >
-                  <image
+                  <Image
                     alt='gallery photos'
                     className='object-cover rounded-xl w-full md:w-[158px] h-[158px] '
                     src={image.path}
