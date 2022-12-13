@@ -50,7 +50,6 @@ import ReactReadMoreReadLess from 'react-read-more-read-less';
 import { getNftDetails } from 'services/nft/nftService';
 import PublishRoyaltyConfirmModal from './Publish/PublishRoyaltyConfirmModal';
 import Image from 'next/image';
-import MetaHead from 'components/Commons/MetaHead/MetaHead';
 
 const TABLE_HEADERS = [
   { id: 0, label: 'Wallet Address' },
@@ -501,12 +500,6 @@ const CollectionContent = ({ collectionId }) => {
   let isSupplyOver = Collection?.total_supply <= NFTs?.length;
   return (
     <>
-      {' '}
-      <MetaHead
-        title={Collection?.name}
-        description={Collection?.description}
-        image={Logo?.path}
-      />
       <div className='mx-4 md:mx-0'>
         {dataLoading && <div className='loading'></div>}
         {showNetworkHandler && (

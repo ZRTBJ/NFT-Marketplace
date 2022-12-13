@@ -18,7 +18,6 @@ import CoverGallery from './CoverGallery';
 import InfoCard from './InfoCard.jsx';
 import MembershipNFTTab from './MembershipNFTTab/MembershipNFTTab';
 import ProductNFTTab from './ProductNFTTab/ProductNFTTab';
-import MetaHead from 'components/Commons/MetaHead/MetaHead';
 
 const TABS = [
   { id: 1, label: 'Membership NFT' },
@@ -154,11 +153,6 @@ function ProjectDetailsContent({ id }) {
 
   return (
     <>
-      <MetaHead
-        title={project.name}
-        description={project?.overview}
-        image={coverImages?.path}
-      />
       {isLoading && <div className='loading'></div>}
       {showNetworkHandler && (
         <NetworkHandlerModal

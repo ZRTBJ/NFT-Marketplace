@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import styles from './style.module.css';
 import Eth from 'assets/images/network/eth.svg';
 import Polygon from 'assets/images/network/polygon.svg';

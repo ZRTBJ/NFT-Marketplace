@@ -10,7 +10,6 @@ import deleteIcon from 'assets/images/projectCreate/ico_delete01.svg';
 import SuccessModal from 'components/Modals/SuccessModal';
 import ErrorModal from 'components/Modals/ErrorModal';
 import Image from 'next/image';
-import MetaHead from 'components/Commons/MetaHead/MetaHead';
 
 const ProfileSettingsForm = () => {
   const dispatch = useDispatch();
@@ -189,7 +188,6 @@ const ProfileSettingsForm = () => {
   return (
     /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
     <>
-      <MetaHead />
       {isLoading && <div className='loading'></div>}
       {!isLoading && (
         <>

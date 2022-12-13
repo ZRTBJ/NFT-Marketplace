@@ -16,7 +16,6 @@ import Image from 'next/image';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
-import MetaHead from 'components/Commons/MetaHead/MetaHead';
 
 const CreateDAOandNFT = () => {
   const [ShowCreateNFT, setShowCreateNFT] = useState(false);
@@ -75,7 +74,6 @@ const CreateDAOandNFT = () => {
   return (
     <>
       {' '}
-      <MetaHead />
       <div className={`bg-white mt-4 py-6 pl-6 ${IsLoading ? 'loading' : ''}`}>
         {ShowCreateNFT && (
           <CreateNFTModal

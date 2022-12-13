@@ -25,7 +25,6 @@ import Config from 'config/config';
 import { getNotificationData } from 'redux/notification';
 import ErrorModal from 'components/Modals/ErrorModal';
 import Image from 'next/image';
-import MetaHead from 'components/Commons/MetaHead/MetaHead';
 
 export default function MembershipNFT({ query }) {
   const fileUploadNotification = useSelector((state) =>
@@ -684,7 +683,6 @@ export default function MembershipNFT({ query }) {
 
   return (
     <>
-      <MetaHead />
       {isNftLoading && <div className='loading'></div>}
       <div className='max-w-[600px] md:mx-auto pt-6 md:pt-0 md:mt-[40px] mx-4  '>
         <div className='mb-[24px]'>

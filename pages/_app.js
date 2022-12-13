@@ -15,6 +15,7 @@ import Auth from 'components/Auth/Auth';
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistStore } from 'redux-persist';
 import store from '../redux';
+import MetaHead from 'components/Commons/MetaHead/MetaHead';
 
 dynamic(() => import('tw-elements'), { ssr: false });
 
@@ -29,6 +30,8 @@ function MyApp({ Component, pageProps }) {
     setShowSideBar(!showSideBar);
   };
 
+  const { data } = pageProps;
+
   useEffect(() => {
     let path = typeof window !== 'undefined' && router?.asPath;
     let pathItems = path && path.split('/');
@@ -39,6 +42,11 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <>
+      <MetaHead
+        title={data?.title}
+        description={data?.description}
+        image={data?.path}
+      />
       <Script
         src='https://kit.fontawesome.com/6ebe0998e8.js'
         crossorigin='anonymous'

@@ -20,7 +20,6 @@ import {
 import { ls_GetChainID } from 'util/ApplicationStorage';
 import Outline from 'components/FormUtility/Outline';
 import Confirmation from 'components/FormUtility/Confirmation';
-import MetaHead from 'components/Commons/MetaHead/MetaHead';
 
 export default function CollectionCreate({ query }) {
   // logo start
@@ -541,7 +540,6 @@ export default function CollectionCreate({ query }) {
   }, []);
   return (
     <>
-      <MetaHead />
       {isDataLoading && <div className='loading'></div>}
       <div className='txtblack max-w-[600px] pt-4 md:pt-0 mx-4 md:mx-auto md:mt-[40px]'>
         {notOwner ? (

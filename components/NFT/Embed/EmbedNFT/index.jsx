@@ -17,7 +17,6 @@ import {
 } from 'util/MetaMask';
 import { NETWORKS } from 'config/networks';
 import Image from 'next/image';
-import MetaHead from 'components/Commons/MetaHead/MetaHead';
 
 const imageRegex = new RegExp('image');
 
@@ -174,7 +173,6 @@ function EmbedNFT({ type, id }) {
   }
   return (
     <>
-      <MetaHead />
       {isLoading ? (
         <div className='loading'></div>
       ) : (
