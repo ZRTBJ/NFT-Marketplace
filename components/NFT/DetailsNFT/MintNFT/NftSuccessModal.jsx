@@ -94,21 +94,21 @@ const NftSuccessModal = ({
               url={`${origin}/minted-nft-details/${nftId}/${tokenId}`}
             >
               <div className='cursor-pointer rounded-[4px] bg-primary-50 h-[34px] w-[34px] flex items-center justify-center mr-2'>
-                <Image height={34} width={34} src={FB} alt='facebook' />
+                <Image height={20} width={20} src={FB} alt='facebook' />
               </div>
             </FacebookShareButton>
             <TwitterShareButton
               url={`${origin}/minted-nft-details/${nftId}/${tokenId}`}
             >
               <div className='cursor-pointer rounded-[4px] bg-primary-50 h-[34px] w-[34px] flex items-center justify-center mr-2'>
-                <Image height={34} width={34} src={twitter} alt='twitter' />
+                <Image height={20} width={20} src={twitter} alt='twitter' />
               </div>
             </TwitterShareButton>
             <RedditShareButton
               url={`${origin}/minted-nft-details/${nftId}/${tokenId}`}
             >
               <div className='cursor-pointer rounded-[4px] bg-primary-50 h-[34px] w-[34px] flex items-center justify-center'>
-                <Image height={34} width={34} src={reddit} alt='reddit' />
+                <Image height={20} width={20} src={reddit} alt='reddit' />
               </div>
             </RedditShareButton>
           </div>
