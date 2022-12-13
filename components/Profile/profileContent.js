@@ -1077,7 +1077,8 @@ const Profile = ({ id }) => {
               src={user?.avatar === '' ? DefaultProfilePicture : user?.avatar}
               className='rounded-lg mt-[40px]  w-full h-full max-w-[270px] max-h-[270px] mx-auto block object-cover  cursor-pointer'
               alt={'profile'}
-              layout='responsive'
+              height={270}
+              width={270}
             />
           </div>
         </Modal>
