@@ -1,5 +1,6 @@
 import styles from './style.module.css';
-import Polygon from 'assets/images/network/eth.svg';
+import Eth from 'assets/images/network/eth.svg';
+import Polygon from 'assets/images/network/polygon.svg';
 import manImg from 'assets/images/image-default.svg';
 import { useState } from 'react';
 import NFTSalesMobile from './NFTSalesMobile';
@@ -92,12 +93,15 @@ const NFTSales = ({ items }) => {
                   <td className='py-4 px-5'>
                     <div className='flex items-center'>
                       <span> {r.nft_price ? r.nft_price : '-'}</span>
-                      <Image
-                        src={Polygon}
-                        alt='network'
-                        style={{ height: 'auto', width: 'auto' }}
-                        className='ml-2'
-                      />
+                      {r?.nft_currency && (
+                        <Image
+                          src={r?.nft_currency === 'eth' ? Eth : Polygon}
+                          alt='network'
+                          width={20}
+                          height={20}
+                          className='ml-2'
+                        />
+                      )}
                     </div>
                   </td>
                   <td className='py-4 px-5'>1</td>

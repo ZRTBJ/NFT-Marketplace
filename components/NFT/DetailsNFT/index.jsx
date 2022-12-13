@@ -504,7 +504,7 @@ export default function DetailsNFT({ type, id }) {
                   }`}
                   onClick={handlePublishModal}
                 >
-                  BUY NOW
+                  {availableSupply > 0 ? 'BUY NOW' : 'SOLD OUT'}
                 </button>
               </div>
             </div>

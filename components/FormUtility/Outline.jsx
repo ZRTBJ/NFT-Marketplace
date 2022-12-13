@@ -343,9 +343,9 @@ export default function Outline({
                     width={158}
                   />
 
-                  <div className='upload-photo absolute w-full h-full rounded-xl cursor-pointer  items-center justify-center left-0 top-0'>
+                  <div className='absolute  h-full rounded-xl cursor-pointer right-1 top-1'>
                     <i
-                      className='fa-solid fa-trash'
+                      className='fa-solid fa-trash text-primary-900'
                       onClick={() => onPhotosRemove(image)}
                     ></i>
                   </div>

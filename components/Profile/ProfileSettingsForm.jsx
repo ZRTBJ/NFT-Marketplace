@@ -267,6 +267,7 @@ const ProfileSettingsForm = () => {
                           width={230}
                           height={230}
                           unoptimized={true}
+                          style={{ maxWidth: '100%', height: 'auto' }}
                         />
                         <Image
                           alt='cross icon'
