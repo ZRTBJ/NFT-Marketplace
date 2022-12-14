@@ -14,7 +14,7 @@ export async function getServerSideProps(context) {
   let data = {
     title: output?.collection?.name,
     description: output?.collection?.description,
-    image: image ? image : '',
+    image: image?.path ? image.path : '',
   };
   return { props: { query, data } };
 }

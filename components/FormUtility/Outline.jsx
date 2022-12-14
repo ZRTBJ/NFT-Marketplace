@@ -511,7 +511,7 @@ export default function Outline({
               className='h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3'
             >
               <option value={blockchainCategory} defaultValue>
-                {NETWORKS?.[Number(blockchainCategory)].networkName}
+                {NETWORKS?.[Number(blockchainCategory)]?.networkName}
               </option>
               {/* {blockchainCategoryList.map((e) => (
             <option key={e.id} value={e.id}>
