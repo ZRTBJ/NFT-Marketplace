@@ -16,7 +16,8 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { persistStore } from 'redux-persist';
 import store from '../redux';
 import MetaHead from 'components/Commons/MetaHead/MetaHead';
-
+import Head from 'next/head';
+import Favicon from 'components/Commons/Favicon';
 dynamic(() => import('tw-elements'), { ssr: false });
 
 export const persistor = persistStore(store);
@@ -42,6 +43,9 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <>
+      <Head>
+        <Favicon></Favicon>
+      </Head>
       <MetaHead
         title={data?.title}
         description={data?.description}

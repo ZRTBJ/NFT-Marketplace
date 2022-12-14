@@ -1,4 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import style from './formUtility.module.css';
+
 import FileDragAndDrop from 'components/FormUtility/FileDragAndDrop';
 import { useState, useEffect } from 'react';
 import { DebounceInput } from 'react-debounce-input';
@@ -148,6 +150,7 @@ export default function Outline({
                 alt='Logo'
                 height={85}
                 width={85}
+                unoptimized
               />
               <i
                 onClick={onLogoPhotoRemove}
@@ -333,7 +336,7 @@ export default function Outline({
               {photosUrl.map((image, index) => (
                 <div
                   key={`project-image-${index}`}
-                  className='relative upload-file w-full md:w-[158px] h-[158px] mr-3  mb-2'
+                  className={`relative ${style.uploadFile} w-full md:w-[158px] h-[158px] mr-3  mb-2`}
                 >
                   <Image
                     alt='gallery photos'
@@ -343,9 +346,11 @@ export default function Outline({
                     width={158}
                   />
 
-                  <div className='absolute  h-full rounded-xl cursor-pointer right-1 top-1'>
+                  <div
+                    className={` ${style.uploadPhoto} absolute w-full h-full rounded-xl cursor-pointer  items-center justify-center left-0 top-0`}
+                  >
                     <i
-                      className='fa-solid fa-trash text-primary-900'
+                      className='fa-solid fa-trash'
                       onClick={() => onPhotosRemove(image)}
                     ></i>
                   </div>
@@ -380,6 +385,7 @@ export default function Outline({
                 alt='coverPreview'
                 height={180}
                 width={180}
+                unoptimized
               />
               <i
                 onClick={onCoverPhotoRemove}
