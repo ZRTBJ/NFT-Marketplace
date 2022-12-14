@@ -6,42 +6,44 @@ const MetaHead = ({
   image = 'https://decir.mypinata.cloud/ipfs/QmbuYopyxYAnAkNGDeLKAK58HvUZw29bnT5FjU6FFmre64',
 }) => {
   return (
-    <NextSeo
-      title={title}
-      description={description}
-      openGraph={{
-        title: title,
-        description: description,
-        images: [
+    <>
+      <NextSeo
+        title={title}
+        description={description}
+        openGraph={{
+          title: title,
+          description: description,
+          images: [
+            {
+              url: image,
+              alt: title,
+            },
+          ],
+          type: 'website',
+          siteName: 'DeCir',
+        }}
+        facebook={{
+          appId: '907286643569007',
+        }}
+        twitter={{
+          cardType: 'summary_large_image',
+        }}
+        additionalMetaTags={[
           {
-            url: image,
-            alt: title,
+            property: 'twitter:title',
+            content: title,
           },
-        ],
-        type: 'website',
-        siteName: 'DeCir',
-      }}
-      facebook={{
-        appId: '907286643569007',
-      }}
-      twitter={{
-        cardType: 'summary_large_image',
-      }}
-      additionalMetaTags={[
-        {
-          property: 'twitter:title',
-          content: title,
-        },
-        {
-          name: 'twitter:description',
-          content: description,
-        },
-        {
-          name: 'twitter:image',
-          content: image,
-        },
-      ]}
-    />
+          {
+            name: 'twitter:description',
+            content: description,
+          },
+          {
+            name: 'twitter:image',
+            content: image,
+          },
+        ]}
+      />
+    </>
   );
 };
 
