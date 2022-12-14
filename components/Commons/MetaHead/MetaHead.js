@@ -1,8 +1,8 @@
 import { NextSeo } from 'next-seo';
 
 const MetaHead = ({
-  title = 'DeCir',
-  description = 'Empowering every individual to create their  own DAO and not just the techies',
+  title = 'DeCir - Decentralized Circle',
+  description = 'Empowering every individual to create their own DAO and not just the techies',
   image = 'https://storage.googleapis.com/apollo_creabo_prod/decir/ogp_img.jpg',
 }) => {
   return (
@@ -20,7 +20,7 @@ const MetaHead = ({
             },
           ],
           type: 'website',
-          siteName: 'DeCir',
+          siteName: 'DeCir - Decentralized Circle',
         }}
         facebook={{
           appId: '907286643569007',

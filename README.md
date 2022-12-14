@@ -13,7 +13,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ### Run by docker
 > docker build -t nextjs-docker .      
-> npm docker run -p 3000:3000 nextjs-docker
+> docker run -p 3000:3000 gcr.io/apollo-creabo-dev/decir-webapp:latest
 
 ## Deploy on cloudrun (which is being used)
 ### prepare gcloud
