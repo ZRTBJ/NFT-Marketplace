@@ -9,7 +9,7 @@ const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
   const dispatch = useDispatch();
   const userinfo = useSelector((state) => state.user.userinfo);
   useEffect(() => {
-    if (userinfo.id) {
+    if (userinfo?.id) {
       getUserDetails(userinfo.id);
     }
   }, []);

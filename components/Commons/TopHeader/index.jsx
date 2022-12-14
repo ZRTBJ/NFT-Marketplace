@@ -190,13 +190,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   }
 
   //--------------------------------- web socket implementation
-  let host = 'ws:';
-  try {
-    const loc = window.location;
-    if (loc.protocol === 'https:') {
-      host = 'wss:';
-    }
-  } catch {}
+  let host = 'wss:';
   const socketUrl = `${host}//${config.WEB_SOKET}/ws`;
 
   const {

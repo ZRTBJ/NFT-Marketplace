@@ -8,19 +8,18 @@ export async function getServerSideProps(context) {
 
   let output = await resp.json();
 
-  let image = output.project?.assets?.find(
+  let image = output?.project?.assets?.find(
     (img) => img['asset_purpose'] === 'cover'
   );
   let data = {
     title: output?.project?.name,
     description: output?.project?.overview,
-    image: image,
+    image: image ? image : '',
   };
   return { props: { query, data } };
 }
 
 const ProjectDetails = (query) => {
-  console.log(query);
   return <ProjectDetailsContent id={query?.query?.id} />;
 };
 

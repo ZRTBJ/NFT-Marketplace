@@ -179,7 +179,7 @@ const SalesPageModal = ({
     if (Number(projectNetwork) === networkId) {
       setIsSubmitted(true);
       let type = collectionType ? collectionType : currentCollection.type;
-      if (agree && date.length === 2) {
+      if (agree && date?.length === 2) {
         const payload = {
           price: data?.['price'],
           startTime: getUnixTime(date?.[0]),

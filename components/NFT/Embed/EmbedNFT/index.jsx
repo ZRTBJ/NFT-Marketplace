@@ -71,7 +71,8 @@ function EmbedNFT({ type, id }) {
                 membershipMintContract,
                 config.metadataUrl,
                 id,
-                provider
+                provider,
+                config.price
               )
             : await createMintNFT(
                 mintContract,
