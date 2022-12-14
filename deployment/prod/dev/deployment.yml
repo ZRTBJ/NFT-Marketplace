@@ -19,7 +19,7 @@ spec:
     spec:
       terminationGracePeriodSeconds: 30                               
       containers:
-        - name: web2-frontend
+        - name: decir-webapp
           image: gcr.io/apollo-creabo-prod/decir-webapp:latest
           imagePullPolicy: "Always"
           envFrom:
