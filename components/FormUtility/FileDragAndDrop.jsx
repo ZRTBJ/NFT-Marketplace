@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import { useDropzone } from "react-dropzone";
+import { useMemo } from 'react';
+import { useDropzone } from 'react-dropzone';
 
 export default function FileDragAndDrop({
   height,
@@ -14,39 +14,39 @@ export default function FileDragAndDrop({
 }) {
   const baseStyle = {
     flex: 1,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
     height: height,
     width: width,
     borderWidth: 1,
-    borderRadius: rounded ? "50% " : 12,
-    borderColor: "#E6E8EE",
-    borderStyle: "solid",
-    backgroundColor: "#E6E8EE",
-    color: "#bdbdbd",
-    outline: "none",
-    transition: "border .24s ease-in-out",
+    borderRadius: rounded ? '50% ' : 12,
+    borderColor: '#E6E8EE',
+    borderStyle: 'solid',
+    backgroundColor: '#E6E8EE',
+    color: '#bdbdbd',
+    outline: 'none',
+    transition: 'border .24s ease-in-out',
   };
 
   const focusedStyle = {
-    borderColor: "#0ab4af",
+    borderColor: '#0ab4af',
   };
 
   const acceptStyle = {
-    borderColor: "#0ab4af",
+    borderColor: '#0ab4af',
   };
 
   const rejectStyle = {
-    borderColor: "#ff1744",
+    borderColor: '#ff1744',
   };
 
   const { isFocused, isDragAccept, isDragReject, getRootProps, getInputProps } =
     useDropzone({
       onDrop,
       accept: {
-        "image/*": [".jpeg", ".png", ".jpg", ".svg"],
+        'image/*': ['.jpeg', '.png', '.jpg', '.svg'],
       },
       maxFiles: maxFiles,
       noClick: false,
@@ -65,19 +65,19 @@ export default function FileDragAndDrop({
   );
   return (
     <div>
-      <div className="Filecontainer">
-        <div {...getRootProps({ style })}>
+      <div className='Filecontainer'>
+        <div className='cursor-pointer' {...getRootProps({ style })}>
           <input {...getInputProps()} />
 
-          {type === "logo" ? (
-            <i className="fa-regular fa-image text-[25px] "></i>
+          {type === 'logo' ? (
+            <i className='fa-regular fa-image text-[25px] '></i>
           ) : (
             <>
-              <i className="fa-regular fa-image text-[25px] "></i>
-              <p className="text-[#646A80] text-[15px]  font-bold ">
+              <i className='fa-regular fa-image text-[25px] '></i>
+              <p className='text-[#646A80] text-[15px]  font-bold '>
                 Add Image/Drag from
               </p>
-              <div className=" text-primary-900 text-[13px] font-bold">
+              <div className=' text-primary-900 text-[13px] font-bold'>
                 Computer
               </div>
             </>
