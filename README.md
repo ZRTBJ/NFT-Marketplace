@@ -20,7 +20,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 > gcloud auth login
 > gcloud config set project apollo-creabo-dev
 
-### Build and deploy
+### Build and deploy to cloudrun
 > docker build -t gcr.io/apollo-creabo-dev/decir-webapp:latest . --platform linux/amd64 
 > docker push gcr.io/apollo-creabo-dev/decir-webapp:latest
 > gcloud run deploy decir-webapp --region=us-central1 --image gcr.io/apollo-creabo-dev/decir-webapp:latest --min-instances=1 --port=3000 --no-use-http2
+### Build and deploy to kubernetes
