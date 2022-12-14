@@ -730,6 +730,8 @@ export default function CollectionCreate({ query }) {
           handleClose={() => setShowSuccessModal(false)}
           show={showSuccessModal}
           redirection={`/collection-details/${projectId}`}
+          subMessage={"Let's explore the Collection"}
+          buttonText='View Collection'
         />
       )}
       {showErrorModal && (
