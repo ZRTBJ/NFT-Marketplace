@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: web2-fe-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: web2-frontend-ip
+    networking.gke.io/managed-certificates: managed-cert-web2-fe
+    kubernetes.io/ingress.class: "gce"  
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: web2-fe
+            port: 
+              number: 3030
