@@ -45,7 +45,7 @@ function MyApp({ Component, pageProps }) {
       <MetaHead
         title={data?.title}
         description={data?.description}
-        image={data?.path}
+        image={data?.image}
       />
       <Script
         src='https://kit.fontawesome.com/6ebe0998e8.js'
