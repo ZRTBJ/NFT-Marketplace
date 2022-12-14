@@ -3,7 +3,7 @@ import { NextSeo } from 'next-seo';
 const MetaHead = ({
   title = 'DeCir',
   description = 'Empowering every individual to create their  own DAO and not just the techies',
-  image = 'https://decir.mypinata.cloud/ipfs/QmbuYopyxYAnAkNGDeLKAK58HvUZw29bnT5FjU6FFmre64',
+  image = 'https://storage.googleapis.com/apollo_creabo_prod/decir/ogp_img.jpg',
 }) => {
   return (
     <NextSeo
