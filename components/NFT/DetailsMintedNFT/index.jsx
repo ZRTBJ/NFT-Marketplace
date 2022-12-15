@@ -423,10 +423,7 @@ export default function DetailsNFT({ nftId, tokenId }) {
                   <span className='font-satoshi-bold font-black text-lg text-txtblack mx-3'>
                     :
                   </span>
-                  <Link
-                    href={`/profile/${owner?.id}`}
-                    className='break-all !no-underline'
-                  >
+                  <Link href={`/dashboard`} className='break-all !no-underline'>
                     {owner?.display_name ? owner?.display_name : 'View profile'}
                   </Link>
                 </div>

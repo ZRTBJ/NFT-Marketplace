@@ -49,7 +49,7 @@ const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
           <div className='pl-6 pr-10 flex-0 flex flex-col'>
             <Link
               onClick={accessCheck}
-              href={`/profile/${userinfo?.id}`}
+              href={`/dashboard`}
               className='flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-4 font-bold   ease-in-out duration-300 hover:text-[#199BD8] last:mt-auto text-textSubtle cursor-pointer hover:border-[#199BD8] hover:border-r-4'
             >
               <i className='fa-solid fa-gauge'></i>

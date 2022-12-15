@@ -1029,7 +1029,7 @@ const Profile = ({ id }) => {
           message='Successfully claimed royalty'
           subMessage=''
           buttonText='Close'
-          redirection={`/profile/${id}`}
+          redirection={`/dashboard`}
           showCloseIcon={true}
           handleClose={() => setShowSuccessModal(false)}
         />

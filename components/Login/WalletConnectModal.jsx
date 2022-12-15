@@ -132,7 +132,7 @@ const WalletConnectModal = ({
         if (navigateToPage) {
           router.push(`/${navigateToPage}`);
         } else {
-          router.push(`/profile/${userID}`);
+          router.push(`/dashboard`);
         }
       } else {
         router.push('/profile-settings');

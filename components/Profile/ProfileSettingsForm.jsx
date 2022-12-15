@@ -519,7 +519,7 @@ const ProfileSettingsForm = () => {
                 <SuccessModal
                   handleClose={setShowSuccessModal}
                   show={showSuccessModal}
-                  redirection={`/profile/${userId}`}
+                  redirection={`/dashboard`}
                 />
               )}
               {showErrorModal && (

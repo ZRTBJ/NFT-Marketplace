@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 const PrivateRoutes = [
-  'profile',
+  'dashboard',
   'create',
   'collection-create',
   'profile-settings',

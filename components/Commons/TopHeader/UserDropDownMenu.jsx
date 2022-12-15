@@ -15,7 +15,7 @@ const UserDropDownMenu = ({ handleUserDropdownClose }) => {
         className='w-screen md:w-52 h-screen md:h-auto md:border border-slate-300  bg-light rounded-xl absolute top-11 right-[-44px] md:right-0 z-20 mt-3'
       >
         <Link
-          href={`/profile/${userId}`}
+          href={`/dashboard`}
           activeClassName='notActive'
           onClick={handleUserDropdownClose}
         >

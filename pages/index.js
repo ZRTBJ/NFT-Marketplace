@@ -9,7 +9,7 @@ export default function Home() {
   const router = useRouter();
   useEffect(() => {
     if (userinfo?.id) {
-      router.push(`/profile/${userinfo.id}`);
+      router.push(`/dashboard`);
     }
   }, [userinfo?.id]);
   return (
