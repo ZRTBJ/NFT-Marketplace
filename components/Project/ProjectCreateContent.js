@@ -612,7 +612,7 @@ function ProjectCreateContent({ search }) {
       </div>
       {showSuccessModal && (
         <SuccessModal
-          redirection={`/project-details/${projectId}`}
+          redirection={`/dao/${projectId}`}
           show={showSuccessModal}
           message={'DAO successfully  saved'}
           subMessage={"Let's explore the DAO"}

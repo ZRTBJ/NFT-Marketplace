@@ -13,14 +13,14 @@ const DAOCard = ({ item }) => {
       }
     } else {
       if (item.project_status === 'draft' || item.status === 'draft') {
-        router.push(`/project-details/${projectId}`);
+        router.push(`/dao/${projectId}`);
       } else if (
         item.project_status === 'publishing' ||
         item.status === 'publishing'
       ) {
-        router.push(`/project-details/${projectId}`);
+        router.push(`/dao/${projectId}`);
       } else {
-        router.push(`/project-details/${projectId}`);
+        router.push(`/dao/${projectId}`);
       }
     }
   }

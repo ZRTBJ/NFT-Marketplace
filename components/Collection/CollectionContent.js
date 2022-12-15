@@ -567,7 +567,7 @@ const CollectionContent = ({ collectionId }) => {
             }}
             redirection={
               errorMsg === `DAO is not published yet `
-                ? `/project-details/${Collection?.project_uid}`
+                ? `/dao/${Collection?.project_uid}`
                 : false
             }
             show={showErrorModal}
@@ -701,7 +701,7 @@ const CollectionContent = ({ collectionId }) => {
                     Connected With :
                     <Link
                       className='md:ml-2 mt-1 md:mt-0 font-bold flex items-center !no-underline'
-                      href={`/project-details/${daoInfo?.id}`}
+                      href={`/dao/${daoInfo?.id}`}
                     >
                       <Image
                         className='h-[24px] w-[24px] rounded-full mr-1'

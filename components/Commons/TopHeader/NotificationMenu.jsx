@@ -16,7 +16,7 @@ const NotificatioMenu = ({
         .then((res) => {})
         .catch(() => {});
       router.push(
-        `/project-details/${
+        `/dao/${
           notification?.data?.project_uid ? notification.data.project_uid : ''
         }`
       );

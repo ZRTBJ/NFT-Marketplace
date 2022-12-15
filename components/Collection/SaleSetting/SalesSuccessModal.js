@@ -52,7 +52,7 @@ const SalesSuccessModal = ({
   };
 
   const handleNavigatetoDao = () => {
-    router.push(`/project-details/${projectId}`);
+    router.push(`/dao/${projectId}`);
     handleClose();
   };
 

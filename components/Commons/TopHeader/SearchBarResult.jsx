@@ -17,11 +17,11 @@ const SearchBarResult = ({ isLoading, projectList, handleSearchClose }) => {
               key={`search-project-${index}`}
               className='cursor-pointer'
               onClick={() => {
-                router.push(`/project-details/${project.id}`);
+                router.push(`/dao/${project.id}`);
                 handleSearchClose();
               }}
               onTouchStart={() => {
-                router.push(`/project-details/${project.id}`);
+                router.push(`/dao/${project.id}`);
                 handleSearchClose();
               }}
             >

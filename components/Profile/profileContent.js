@@ -642,7 +642,7 @@ const Profile = ({ id }) => {
                                 </td>
                                 <td className='py-4 px-5 font-black '>
                                   <Link
-                                    href={`/project-details/${r.project_id}`}
+                                    href={`/dao/${r.project_id}`}
                                     className='!no-underline'
                                   >
                                     {r.project_name}
@@ -750,7 +750,7 @@ const Profile = ({ id }) => {
                               />
                               <div className='mx-4 font-black '>
                                 <Link
-                                  href={`/project-details/${r.project_id}`}
+                                  href={`/dao/${r.project_id}`}
                                   className='!no-underline'
                                 >
                                   {r.project_name}
