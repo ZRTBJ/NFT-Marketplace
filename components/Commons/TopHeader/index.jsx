@@ -468,7 +468,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                     <div className='relative w-16 h-12 pt-2 cursor-pointer'>
                       <div
                         className='flex place-items-center'
-                        onClick={() => router.push(`/profile-settings`)}
+                        onClick={() => router.push(`/profile/settings`)}
                       >
                         <Image
                           className='rounded-full border w-[35px] h-[35px] border-gray-100 shadow-sm mr-2'
@@ -601,7 +601,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
             {userinfo?.id && (
               <div
                 className='flex ml-4 place-items-center'
-                onClick={() => router.push(`/profile-settings`)}
+                onClick={() => router.push(`/profile/settings`)}
               >
                 <Image
                   className='rounded-full border w-[25px] h-[25px] border-gray-100 shadow-sm mr-2 object-cover'

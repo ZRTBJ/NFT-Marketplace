@@ -25,7 +25,7 @@ const UserDropDownMenu = ({ handleUserDropdownClose }) => {
           </div>
         </Link>
         <Link
-          href={'/profile-settings'}
+          href={'/profile/settings'}
           activeClassName='notActive'
           onClick={handleUserDropdownClose}
         >

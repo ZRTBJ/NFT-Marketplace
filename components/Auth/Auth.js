@@ -6,8 +6,8 @@ const PrivateRoutes = [
   'dashboard',
   'create',
   'dao/create',
+  'settings',
   'collection-create',
-  'profile-settings',
 ];
 
 const Auth = ({ children }) => {

@@ -504,7 +504,7 @@ const Profile = ({ id }) => {
                     ))}
                 </div>
                 <div className='ml-auto'>
-                  <Link href='/profile-settings'>
+                  <Link href='/profile/settings'>
                     <button className='rounded  social-icon-button text-primary-900 px-4 py-2'>
                       <span>Edit</span>{' '}
                       <i className='fa-solid  fa-pen-to-square ml-2'></i>

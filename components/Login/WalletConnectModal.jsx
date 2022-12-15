@@ -135,7 +135,7 @@ const WalletConnectModal = ({
           router.push(`/dashboard`);
         }
       } else {
-        router.push('/profile-settings');
+        router.push('/profile/settings');
       }
     }
     closeModal();
