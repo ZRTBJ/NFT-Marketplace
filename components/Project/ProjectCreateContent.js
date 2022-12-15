@@ -628,7 +628,7 @@ function ProjectCreateContent({ search }) {
           }}
           show={showErrorModal}
           message={errorMessage}
-          redirection={'/project-create'}
+          redirection={'/dao/create'}
         />
       )}
     </>

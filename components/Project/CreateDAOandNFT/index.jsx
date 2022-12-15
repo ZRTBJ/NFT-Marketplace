@@ -88,7 +88,7 @@ const CreateDAOandNFT = () => {
             in web3 environment.
           </p>
           {DAOs?.length ? (
-            <Link href='/project-create' className='w-fit block no-underline'>
+            <Link href='/dao/create' className='w-fit block no-underline'>
               <div className='flex mint-button mt-3 text-center font-satoshi-bold w-full md:w-fit'>
                 <Image src={Plus} alt='add' />
                 <span className='ml-2 text-[17px]'> Create New</span>
@@ -97,7 +97,7 @@ const CreateDAOandNFT = () => {
           ) : null}
           <div className='flex mt-6'>
             {!DAOs?.length ? (
-              <Link href='/project-create'>
+              <Link href='/dao/create'>
                 <div className='gradient-border cursor-pointer w-[276px] h-[276px] mr-6 flex flex-col items-center justify-center rounded-[12px]'>
                   <Image src={CirclePlus} alt='add' />
                   <p className='text-[#D66EFB] gradient-text font-black mt-3'>

@@ -125,7 +125,7 @@ const InfoCard = ({
                       >
                         Transfer Funds
                       </button>
-                      <Link href={`/project-create?id=${project?.id}`}>
+                      <Link href={`/dao/create?id=${project?.id}`}>
                         <button className='outlined-button w-[120px] text-center !px-0 mr-4 cursor-pointer font-satoshi-bold cursor-pointer'>
                           <span className='gradient-text'>Edit</span>
                         </button>
@@ -139,7 +139,7 @@ const InfoCard = ({
                       >
                         Publish
                       </button>
-                      <Link href={`/project-create?id=${project?.id}`}>
+                      <Link href={`/dao/create?id=${project?.id}`}>
                         <button className='outlined-button w-[120px] text-center !px-0 mr-4 cursor-pointer font-satoshi-bold cursor-pointer'>
                           <span className='gradient-text'>Edit</span>
                         </button>

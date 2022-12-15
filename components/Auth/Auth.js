@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 const PrivateRoutes = [
   'dashboard',
   'create',
+  'dao/create',
   'collection-create',
   'profile-settings',
 ];

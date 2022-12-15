@@ -553,7 +553,7 @@ const Profile = ({ id }) => {
               </span>
             </div>
             <div
-              onClick={() => router.push('/project-create')}
+              onClick={() => router.push('/dao/create')}
               className=' cursor-pointer min-h-[72px] p-3   rounded  bg-secondary-900/[0.10] border border-secondary-900'
             >
               <Image
