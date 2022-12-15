@@ -307,19 +307,19 @@ const CollectionContent = ({ collectionId }) => {
       router.push(
         `${
           Collection?.type === 'product'
-            ? `/product-nft?collectionId=${collectionId}&nftId=${nft.id}`
-            : `/membershipNFT?dao_id=${Collection?.project_uid}&collection_id=${collectionId}&nftId=${nft.id}`
+            ? `/nft/product/create?collectionId=${collectionId}&nftId=${nft.id}`
+            : `/nft/membership/create?dao_id=${Collection?.project_uid}&collection_id=${collectionId}&nftId=${nft.id}`
         }`
       );
     } else if (Collection?.status === 'published') {
       if (Collection?.type === 'membership') {
         router.push(
-          `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}&nftId=${nft.id}`
+          `/nft/membership/create?dao_id=${Collection.project_uid}&collection_id=${collectionId}&nftId=${nft.id}`
         );
       } else if (Collection.type === 'product') {
         if (Collection?.updatable && !nft.freeze_metadata) {
           router.push(
-            `/product-nft?collectionId=${collectionId}&nftId=${nft.id}`
+            `/nft/product/create?collectionId=${collectionId}&nftId=${nft.id}`
           );
         } else {
           setCollectionNotUpdatableModal(true);
@@ -956,8 +956,8 @@ const CollectionContent = ({ collectionId }) => {
                       router.push(
                         `${
                           Collection?.type === 'product'
-                            ? `/product-nft?collectionId=${collectionId}`
-                            : `/membershipNFT?dao_id=${Collection.project_uid}&collection_id=${collectionId}`
+                            ? `/nft/product/create?collectionId=${collectionId}`
+                            : `/nft/membership/create?dao_id=${Collection.project_uid}&collection_id=${collectionId}`
                         }`
                       )
               }
@@ -1033,9 +1033,7 @@ const CollectionContent = ({ collectionId }) => {
                             key={nft?.id}
                             className='min-h-auto md:min-h-[390px] rounded-xl  bg-white'
                           >
-                            <Link
-                              href={`/nft-details/${nft?.nft_type}/${nft.id}`}
-                            >
+                            <Link href={`/nft/${nft?.nft_type}/${nft.id}`}>
                               {imageRegex.test(nft?.asset?.asset_type) && (
                                 <Image
                                   className='rounded-xl h-[176px] md:h-[276px] w-full object-cover'

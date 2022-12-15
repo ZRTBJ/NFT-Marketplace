@@ -7,7 +7,7 @@ export default function NFTListCard({ nft }) {
   return (
     <>
       <div key={nft?.id} className='  bg-white'>
-        <Link href={`/minted-nft-details/${nft?.id}/${nft?.token_id}`}>
+        <Link href={`/minted-nft/${nft?.id}/${nft?.token_id}`}>
           <Image
             className='h-[176px] rounded-xl md:h-[276px]  object-cover w-full '
             src={nft?.asset?.path}

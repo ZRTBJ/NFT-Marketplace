@@ -587,7 +587,7 @@ export default function DetailsNFT({ type, id }) {
                   <h3 className='txtblack'>Benefit</h3>
                   {nft?.lnft?.is_owner && (
                     <Link
-                      href={`/membershipNFT?dao_id=${nft?.lnft?.project_uuid}&collection_id=${nft?.lnft?.collection_uuid}&nftId=${nft?.lnft?.id}`}
+                      href={`/nft/membership/create?dao_id=${nft?.lnft?.project_uuid}&collection_id=${nft?.lnft?.collection_uuid}&nftId=${nft?.lnft?.id}`}
                       className='!no-underline txtblack text-primary-900 ml-auto mr-2 md:mr-0 font-black'
                     >
                       Edit Benefit

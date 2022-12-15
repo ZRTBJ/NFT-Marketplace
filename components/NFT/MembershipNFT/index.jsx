@@ -383,6 +383,7 @@ export default function MembershipNFT({ query }) {
     };
     let formdata = new FormData();
     formdata.append('file', nft.assets.file);
+    console.log('2upload file');
     await axios({
       method: 'POST',
       url: Config.FILE_SERVER_URL,
@@ -419,6 +420,7 @@ export default function MembershipNFT({ query }) {
       });
   }
   async function genUploadKey() {
+    console.log('1gen upload key');
     let key = '';
     const request = new FormData();
     await generateUploadkey(request)

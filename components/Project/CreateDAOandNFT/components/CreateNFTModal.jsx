@@ -18,7 +18,7 @@ const CreateNFTModal = ({ handleClose, show }) => {
           <div className='mr-6 h-[40px] md:h-[74px] w-[40px] md:w-[74px] bg-secondary-50 flex items-center justify-center rounded-[8px]'>
             <Image src={Users} alt='Users' />
           </div>
-          <div onClick={() => router.push('/membershipNFT')}>
+          <div onClick={() => router.push('/nft/membership/create')}>
             <h3 className='text-[20px] md:text-[24px] font-bold text-[#303548]'>
               Membership NFT
             </h3>
@@ -32,7 +32,7 @@ const CreateNFTModal = ({ handleClose, show }) => {
           <div className='mr-6 h-[40px] md:h-[74px] w-[40px] md:w-[74px] bg-primary-50 flex items-center justify-center rounded-[8px]'>
             <Image src={Product} alt='Product' />
           </div>
-          <div onClick={() => router.push('/product-nft')}>
+          <div onClick={() => router.push('/nft/product/create')}>
             <h3 className='text-[20px] md:text-[24px] font-bold text-[#303548]'>
               Product NFT
             </h3>
