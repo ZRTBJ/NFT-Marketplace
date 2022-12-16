@@ -24,7 +24,7 @@ spec:
           imagePullPolicy: "Always"
           envFrom:
             - secretRef:
-                name: dev-web2-frontend-secrets
+                name: web2-frontend-secrets
           ports:
             - containerPort: 3000
             
