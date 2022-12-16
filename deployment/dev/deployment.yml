@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web2-frontend
+  labels:
+    client: internal
+    environtment: dev
+  annotations:
+      description: web2-frontend Deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web2-frontend
+  template:
+    metadata:
+      labels:
+        app: web2-frontend
+    spec:
+      terminationGracePeriodSeconds: 30                               
+      containers:
+        - name: decir-webapp
+          image: gcr.io/apollo-creabo-dev/decir-webapp:latest
+          imagePullPolicy: "Always"
+          ports:
+            - containerPort: 3000
+            

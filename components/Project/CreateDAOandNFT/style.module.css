@@ -1,0 +1,28 @@
+.daoCard {
+  width: 347px !important;
+  height: 100% !important;
+  margin-right: 10px !important;
+}
+
+.nftCard {
+  width: 276px !important;
+  margin-right: 24px;
+}
+
+.createSwiper {
+  margin-left: 1px !important;
+  padding: 10px;
+}
+
+@media (max-width: 767px) {
+  .daoCard {
+    width: 173px !important;
+    margin-right: 0px !important;
+    margin-left: 10px !important;
+  }
+  .nftCard {
+    width: 211px !important;
+    margin-right: 0px !important;
+    margin-left: 10px !important;
+  }
+}
