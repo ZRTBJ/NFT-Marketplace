@@ -286,7 +286,7 @@ const SalesPageModal = ({
           setIsSubmitted(false);
           successClose();
           if (type === 'product') {
-            setNFTShareURL(`${host}/collection-details/${selectedCollection}`);
+            setNFTShareURL(`${host}/collection/${selectedCollection}`);
           } else {
             setNFTShareURL(`${host}/nft/membership/${nftId}`);
             setMembershipNFTId(nftId);

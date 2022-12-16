@@ -16,7 +16,7 @@ const PublishingProductNFT = ({
 }) => {
   const router = useRouter();
   const handleNavigation = () => {
-    router.push(`/collection-details/${collectionId}`);
+    router.push(`/collection/${collectionId}`);
     handleShowStepClose();
   };
   return (

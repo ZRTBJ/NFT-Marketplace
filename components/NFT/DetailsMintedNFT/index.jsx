@@ -413,7 +413,7 @@ export default function DetailsNFT({ nftId, tokenId }) {
                   </span>
                   <Link
                     className='!no-underline'
-                    href={`/collection-details/${collection?.id}`}
+                    href={`/collection/${collection?.id}`}
                   >
                     {collection?.name}
                   </Link>

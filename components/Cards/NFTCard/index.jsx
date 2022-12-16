@@ -32,7 +32,7 @@ const NFTCard = ({ item }) => {
       href={
         item.type === 'right_attach'
           ? `/royality-management/${item.id}`
-          : `/collection-details/${item.id}`
+          : `/collection/${item.id}`
       }
       className='rounded-[12px] relative flex flex-col cursor-pointer hover:no-underline text-black hover:text-black'
     >

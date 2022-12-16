@@ -19,7 +19,7 @@ const MembershipNFTTab = ({ project, projectId, membershipCollectionList }) => {
         {project?.is_owner && (
           <div className='h-[156px] w-[140px] md:h-[276px]  md:w-[276px] mb-4 mx-2'>
             <Link
-              href={`/collection-create/?dao_id=${projectId}&type=membership`}
+              href={`/collection/create/?dao_id=${projectId}&type=membership`}
             >
               <div className='h-full rounded-xl gradient-border bg-opacity-20 flex flex-col items-center justify-center'>
                 <i className='fa-solid fa-circle-plus gradient-text text-2xl mb-2'></i>
@@ -46,7 +46,7 @@ const MembershipNFTTab = ({ project, projectId, membershipCollectionList }) => {
                 className='md:min-h-[390px] mx-2 md:mr-4 w-[140px]  md:w-[276px]  rounded-x'
                 key={`nft-collection-membership-${index}`}
               >
-                <Link href={`/collection-details/${collection?.id}`}>
+                <Link href={`/collection/${collection?.id}`}>
                   <Image
                     className='rounded-xl h-[156px] w-[140px] md:h-[276px] md:w-[276px] object-cover '
                     src={image?.path ? image.path : thumbIcon}

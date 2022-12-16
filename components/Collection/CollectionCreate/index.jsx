@@ -729,7 +729,7 @@ export default function CollectionCreate({ query }) {
         <SuccessModal
           handleClose={() => setShowSuccessModal(false)}
           show={showSuccessModal}
-          redirection={`/collection-details/${projectId}`}
+          redirection={`/collection/${projectId}`}
           subMessage={"Let's explore the Collection"}
           buttonText='View Collection'
         />

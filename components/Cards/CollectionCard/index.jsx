@@ -15,7 +15,7 @@ export default function CollectionCard({ collection }) {
         href={
           collection.type === 'right_attach'
             ? `/royality-management/${collection?.id}`
-            : `/collection-details/${collection?.id}`
+            : `/collection/${collection?.id}`
         }
       >
         <Image

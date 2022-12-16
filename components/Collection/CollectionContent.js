@@ -928,7 +928,7 @@ const CollectionContent = ({ collectionId }) => {
                 )}
                 {Collection?.is_owner && (
                   <Link
-                    href={`/collection-create/?id=${collectionId}`}
+                    href={`/collection/create/?id=${collectionId}`}
                     className='outlined-button ml-4 font-satoshi-bold'
                   >
                     <span>Edit Collection</span>

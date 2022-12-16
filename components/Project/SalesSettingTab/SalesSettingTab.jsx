@@ -276,7 +276,7 @@ const SalesSettingsTab = ({ projectNetwork }) => {
                           />
                           <Link
                             className='!no-underline'
-                            href={`/collection-details/${element.id}`}
+                            href={`/collection/${element.id}`}
                           >
                             <h4 className='text-[16px] pr-[40px] md:pr-0'>
                               {element.name}

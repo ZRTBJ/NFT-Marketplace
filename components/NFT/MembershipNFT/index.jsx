@@ -1193,7 +1193,7 @@ export default function MembershipNFT({ query }) {
                     a Membership NFT!`}
           subMessage="Let's explore the NFT"
           buttonText='View NFT'
-          redirection={`/collection-details/${collection_id}`}
+          redirection={`/collection/${collection_id}`}
           handleClose={() => setShowSuccessModal(false)}
           show={showSuccessModal}
         />

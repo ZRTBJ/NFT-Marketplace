@@ -943,7 +943,7 @@ export default function ProductNFT({ query }) {
             message={'Your NFT has been saved successfully'}
             subMessage={'go to the collection page and see your collection.'}
             buttonText={'Ok'}
-            redirection={`/collection-details/${collectionId}`}
+            redirection={`/collection/${collectionId}`}
             handleClose={() => {
               setShowSuccessModal(false);
             }}

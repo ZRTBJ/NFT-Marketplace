@@ -80,7 +80,7 @@ const CollectionTab = (props) => {
     setPayload(newPayload);
   };
   const viewDetails = (id) => {
-    router.push(`/collection-details/${id}/`);
+    router.push(`/collection/${id}/`);
   };
 
   async function getCollectionList() {
@@ -135,7 +135,7 @@ const CollectionTab = (props) => {
           <div className='flex flex-wrap mb-[40px]  items-center'>
             <div className=' mr-4'>
               {props.projectOwner && (
-                <Link href={`/collection-create/?dao_id=${id}`}>
+                <Link href={`/collection/create/?dao_id=${id}`}>
                   <button className='contained-button h-[45px]'>
                     + Create New Collection
                   </button>
@@ -262,7 +262,7 @@ const CollectionTab = (props) => {
                           />
                           <Link
                             className='!no-underline'
-                            href={`/collection-details/${element.id}`}
+                            href={`/collection/${element.id}`}
                           >
                             <h4 className='text-[16px] !no-underline'>
                               {element.name}

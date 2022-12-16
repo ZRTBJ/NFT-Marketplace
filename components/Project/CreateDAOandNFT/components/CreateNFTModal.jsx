@@ -43,7 +43,7 @@ const CreateNFTModal = ({ handleClose, show }) => {
         </div>
         <div className='flex items-center justify-end'>
           <Tooltip message='Click to create a new collection' />
-          <Link href='/collection-create'>
+          <Link href='/collection/create'>
             <button className='rounded-[12px] py-3 px-4 bg-[#E8F5FB] text-[#199BD8] text-[14px] font-black'>
               Create Collection
             </button>

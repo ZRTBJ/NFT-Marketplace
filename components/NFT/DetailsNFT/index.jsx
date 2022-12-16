@@ -444,7 +444,7 @@ export default function DetailsNFT({ type, id }) {
             <div>
               <Link
                 className='!no-underline text-txtblack'
-                href={`/collection-details/${collection?.id}`}
+                href={`/collection/${collection?.id}`}
               >
                 {collection?.name}
               </Link>

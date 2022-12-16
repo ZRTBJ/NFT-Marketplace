@@ -18,7 +18,7 @@ const ProductNFTTab = ({ project, projectId, productCollectionList }) => {
       {/* Create New */}
       {project?.is_owner && (
         <div className='h-[156px] w-[140px] md:h-[276px]  md:w-[276px] mb-4 mx-2'>
-          <Link href={`/collection-create/?dao_id=${projectId}&type=product`}>
+          <Link href={`/collection/create/?dao_id=${projectId}&type=product`}>
             <div className='h-full rounded-xl gradient-border bg-opacity-20 flex flex-col items-center justify-center'>
               <i className='fa-solid fa-circle-plus gradient-text text-2xl mb-2'></i>
               <p className='gradient-text text-lg font-black font-satoshi-bold'>
@@ -42,7 +42,7 @@ const ProductNFTTab = ({ project, projectId, productCollectionList }) => {
               className='md:min-h-[390px] mx-2 md:mr-4 w-[140px]  md:w-[276px]  rounded-x'
               key={`nft-collection-membership-${index}`}
             >
-              <Link href={`/collection-details/${collection?.id}`}>
+              <Link href={`/collection/${collection?.id}`}>
                 <Image
                   className='rounded-xl h-[156px] w-[140px] md:h-[276px] md:w-[276px] object-cover '
                   src={image?.path ? image.path : thumbIcon}
@@ -91,7 +91,7 @@ const ProductNFTTab = ({ project, projectId, productCollectionList }) => {
                           </li>
                           <li className="border-b border-divide">
                             <Link
-                              to={`/collection-create/?id=${collection?.id}`}
+                              to={`/collection/create/?id=${collection?.id}`}
                               className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
                             >
                               Edit Collections

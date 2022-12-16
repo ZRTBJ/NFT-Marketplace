@@ -26,7 +26,7 @@ export default function NFTListCard({ nft }) {
             <p>
               <Link
                 className='text-[13px] pr-2 !no-underline font-black text-textSubtle'
-                href={`/collection-details/${nft?.collection_uuid}`}
+                href={`/collection/${nft?.collection_uuid}`}
               >
                 {nft?.collection_name}
               </Link>
