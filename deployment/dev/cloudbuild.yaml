@@ -16,7 +16,7 @@ steps:
   - name: gcr.io/cloud-builders/kubectl
     env:
       - CLOUDSDK_COMPUTE_ZONE=us-central1-c
-      - CLOUDSDK_CONTAINER_CLUSTER=web-backend2
+      - CLOUDSDK_CONTAINER_CLUSTER=web2-frontend
     args:
       - apply
       - '-f'
@@ -24,7 +24,7 @@ steps:
   - name: gcr.io/cloud-builders/kubectl
     env:
       - CLOUDSDK_COMPUTE_ZONE=us-central1-c
-      - CLOUDSDK_CONTAINER_CLUSTER=web-backend2
+      - CLOUDSDK_CONTAINER_CLUSTER=web2-frontend
     args:
       - set
       - image
