@@ -19,7 +19,6 @@ import MetaHead from 'components/Commons/MetaHead/MetaHead';
 import Head from 'next/head';
 import Favicon from 'components/Commons/Favicon';
 dynamic(() => import('tw-elements'), { ssr: false });
-import { NETWORKS } from "config/networks";
 
 export const persistor = persistStore(store);
 
@@ -41,13 +40,6 @@ function MyApp({ Component, pageProps }) {
       pathItems && pathItems.length ? pathItems.includes('embed-nft') : false;
     setIsEmbedView(view);
   }, [router?.asPath]);
-
-  useEffect(() => {
-    //Build testing
-    console.log(NETWORKS);
-    console.log(process.env.NEXT_PUBLIC_ENV);
-    console.log(process.env.NEXT_PUBLIC_API_ENDPOINT);
-  });
 
 
   return (
