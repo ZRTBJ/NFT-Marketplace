@@ -1,7 +1,7 @@
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
-  name: managed-cert-web2-fe
+  name: managed-cert-web2-fe-prod-3
 spec:
   domains:
     - app.decir.io
