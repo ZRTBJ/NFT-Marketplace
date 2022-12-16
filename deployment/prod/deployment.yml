@@ -22,9 +22,6 @@ spec:
         - name: decir-webapp
           image: gcr.io/apollo-creabo-prod/decir-webapp:latest
           imagePullPolicy: "Always"
-          envFrom:
-            - secretRef:
-                name: dev-web2-frontend-secrets
           ports:
             - containerPort: 3000
             

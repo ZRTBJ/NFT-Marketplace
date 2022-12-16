@@ -22,10 +22,6 @@ spec:
         - name: decir-webapp
           image: gcr.io/apollo-creabo-dev/decir-webapp:latest
           imagePullPolicy: "Always"
-          # Env must be created while doing docker build
-          # envFrom:
-          #   - secretRef:
-          #       name: dev-web2-frontend-secrets
           ports:
             - containerPort: 3000
             
