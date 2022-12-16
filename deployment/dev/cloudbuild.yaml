@@ -1,0 +1,45 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - '-t'
+      - '$_GCR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA'
+      - .
+      - '-f'
+      - Dockerfile
+    id: Build
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - '$_GCR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA'
+    id: Push
+  - name: gcr.io/cloud-builders/kubectl
+    env:
+      - CLOUDSDK_COMPUTE_ZONE=us-central1-c
+      - CLOUDSDK_CONTAINER_CLUSTER=web-backend2
+    args:
+      - apply
+      - '-f'
+      - deployment/dev/deployment.yml
+  - name: gcr.io/cloud-builders/kubectl
+    env:
+      - CLOUDSDK_COMPUTE_ZONE=us-central1-c
+      - CLOUDSDK_CONTAINER_CLUSTER=web-backend2
+    args:
+      - set
+      - image
+      - deployment/web2-frontend
+      - 'decir-webapp=$_GCR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA'
+images:
+  - '$_GCR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA'
+options:
+  substitutionOption: ALLOW_LOOSE
+substitutions:
+  _TRIGGER_ID: 55ab0f5a-731d-49f8-bd37-86e01b29b856
+  _SERVICE_NAME: decir-webapp
+  _DEPLOY_REGION: us-central1-c
+  _GCR_HOSTNAME: gcr.io
+  _PLATFORM: managed
+  _LABELS: gcp-trigger-id=55ab0f5a-731d-49f8-bd37-86e01b29b856
+tags:
+  - creabo-web2-frontend
