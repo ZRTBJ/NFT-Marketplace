@@ -41,6 +41,7 @@ function MyApp({ Component, pageProps }) {
     setIsEmbedView(view);
   }, [router?.asPath]);
 
+
   return (
     <>
       <Head>
