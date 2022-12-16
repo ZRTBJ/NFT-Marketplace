@@ -4,4 +4,4 @@ metadata:
   name: managed-cert-web2-fe
 spec:
   domains:
-    - testnet.decir.io
+    - app.decir.io
