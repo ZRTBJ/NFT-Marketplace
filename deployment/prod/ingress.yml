@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   name: web2-fe-ingress
   annotations:
-    kubernetes.io/ingress.global-static-ip-name: web2-frontend-ip
+    kubernetes.io/ingress.global-static-ip-name: web2-frontend-prod-ip
     networking.gke.io/managed-certificates: managed-cert-web2-fe
     kubernetes.io/ingress.class: "gce"  
 spec:
