@@ -41,7 +41,7 @@ const InfoCard = ({
             />
             <div className='flex-1 min-w-0  px-4'>
               <div className='flex items-center mb-1 md:mb-2'>
-                <h2 className='truncate'>{project.name}</h2>
+                <h2 className='truncate pb-1'>{project.name}</h2>
                 {project?.project_status === 'published' && (
                   <Image className='ml-1 mt-1' src={tickSvg} alt='' />
                 )}

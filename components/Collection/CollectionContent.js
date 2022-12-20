@@ -1087,8 +1087,8 @@ const CollectionContent = ({ collectionId }) => {
                                     </>
                                   )}
                                   {ShowOptions === nft.id && (
-                                    <div className='z-10 w-40 md:w-48 bg-white   rounded-md  absolute right-0 md:left-0 top-8 mb-6 block'>
-                                      <ul className='text-sm mb-0'>
+                                    <div className='z-10 w-40 md:w-48 bg-white   rounded-md  absolute right-0 md:left-0 top-8 mb-9 block'>
+                                      <ul className='text-sm mb-2'>
                                         <li className='border'>
                                           <div
                                             onClick={(e) =>
