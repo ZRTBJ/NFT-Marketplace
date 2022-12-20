@@ -52,6 +52,7 @@ export default function Outline({
   royaltyPercentage,
   showSupplyData,
   supply,
+  network,
 }) {
   return (
     <>
@@ -235,6 +236,17 @@ export default function Outline({
           </div>
           <p className='text-textSubtle'>
             {isTokenTransferable ? 'Yes' : 'No'}
+          </p>
+        </div>
+      )}
+      {network && (
+        <div className='mb-6'>
+          <div className='flex flex-wrap items-center'>
+            {/* <Tooltip></Tooltip> */}
+            <div className='txtblack text-[14px] mb-[6px]'>Blockchain</div>
+          </div>
+          <p className='text-textSubtle'>
+            {NETWORKS[Number(network)].networkName}
           </p>
         </div>
       )}

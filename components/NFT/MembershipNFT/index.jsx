@@ -5,7 +5,6 @@ import { DebounceInput } from 'react-debounce-input';
 import Tooltip from 'components/Commons/Tooltip';
 import Modal from 'components/Commons/Modal';
 import SuccessModal from 'components/Modals/SuccessModal';
-import { createProject } from 'services/project/projectService';
 import { createCollection } from 'services/collection/collectionService';
 import {
   generateUploadkey,
@@ -71,10 +70,8 @@ export default function MembershipNFT({ query }) {
   const [indexOfNfts, setIndexOfNfts] = useState('');
   const [isPreview, setIsPreview] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [dao_id, setDao_id] = useState(null);
   const [collection_id, setCollection_id] = useState(null);
   const [projectCreated, setProjectCreated] = useState(false);
-  const [projectId, setProjectId] = useState('');
   const [projectInfo, setProjectInfo] = useState({});
   const [showErrorModal, setShowErrorModal] = useState(false);
   const jobIds = [];
@@ -272,22 +269,12 @@ export default function MembershipNFT({ query }) {
       setIsListUpdate(false);
     }, 50);
   }
-  async function daoCreate() {
-    let daoId = '';
-    let payload = {
-      blockchain: ls_GetChainID(),
-    };
-    await createProject(payload).then((res) => {
-      daoId = res.project.id;
-      setDao_id(daoId);
-    });
-    return daoId;
-  }
-  async function collectionCreate(dao_id) {
+
+  async function collectionCreate() {
     let collection_id = '';
     let payload = {
-      dao_id: dao_id,
       collection_type: 'membership',
+      blockchain: ls_GetChainID(),
     };
     await createCollection(payload).then((res) => {
       collection_id = res.collection.id;
@@ -374,7 +361,7 @@ export default function MembershipNFT({ query }) {
         });
     }
   }
-  async function uploadAFile(uploadKey, daoId, nft) {
+  async function uploadAFile(uploadKey, nft) {
     let headers;
     headers = {
       'Content-Type': 'multipart/form-data',
@@ -408,7 +395,6 @@ export default function MembershipNFT({ query }) {
         }
         jobIds.push(response['job_id']);
         const notificationData = {
-          projectId: daoId,
           etherscan: '',
           function_uuid: response['job_id'],
           data: '',
@@ -464,20 +450,20 @@ export default function MembershipNFT({ query }) {
         for (const iterator of validateNfts) {
           const key = await genUploadKey();
           if (key !== '') {
-            await uploadAFile(key, dao_id, iterator);
+            await uploadAFile(key, iterator);
           }
         }
         // recheckStatus();
       } else {
-        const daoId = await daoCreate();
-        const collection_id = await collectionCreate(daoId);
+        // const daoId = await daoCreate();
+        const collection_id = await collectionCreate();
         if (typeof window !== 'undefined') {
           localStorage.setItem('upload_number', validateNfts?.length);
         }
         for (const iterator of validateNfts) {
-          const key = await genUploadKey(daoId, collection_id, iterator);
+          const key = await genUploadKey();
           if (key !== '') {
-            await uploadAFile(key, daoId, iterator);
+            await uploadAFile(key, iterator);
           }
         }
         // recheckStatus();
@@ -491,7 +477,7 @@ export default function MembershipNFT({ query }) {
       } else if (asseteRemoveInUpdateMode) {
         const uploadKey = await genUploadKey();
         if (uploadKey !== '') {
-          await uploadAFile(uploadKey, dao_id, validateNfts[0]);
+          await uploadAFile(uploadKey, validateNfts[0]);
         }
       }
     }
@@ -570,7 +556,6 @@ export default function MembershipNFT({ query }) {
               } else if (res.code === 5001) {
                 setTimeout(function () {
                   const notificationData = {
-                    projectId: projectDeployStatus.projectId,
                     etherscan: '',
                     function_uuid: projectDeployStatus.function_uuid,
                     data: '',
@@ -651,15 +636,9 @@ export default function MembershipNFT({ query }) {
     setCollection_id(collection_id);
   }, [collection_id]);
   useEffect(() => {
-    setDao_id(dao_id);
-  }, [dao_id]);
-  useEffect(() => {
     if (query?.collection_id) {
       setCollection_id(query?.collection_id);
       getCollectionDetail(query?.collection_id);
-    }
-    if (query?.dao_id) {
-      setDao_id(query?.collection_id);
     }
   }, []);
   useEffect(() => {

@@ -110,6 +110,10 @@ export default function Outline({
   supplyDisable,
   isSupplyValid,
   handleSupplyValue,
+
+  //network
+  disableNetwork,
+  collectionNetwork,
 }) {
   const [projectCategoryList, setProjectCategoryList] = useState([]);
   useEffect(() => {
@@ -117,6 +121,8 @@ export default function Outline({
       setProjectCategoryList(e.categories);
     });
   }, []);
+
+  let networkName = NETWORKS?.[Number(collectionNetwork)]?.networkName;
   return (
     <>
       {/* Logo */}
@@ -606,6 +612,35 @@ export default function Outline({
           )}
         </div>
       )}
+
+      {/*Network */}
+      <div className='mb-6'>
+        <div className='flex flex-wrap items-center mb-4'>
+          <Tooltip message='This field will not be changeable after publishing on the blockchain.'></Tooltip>
+          <div className='txtblack text-[14px]'>Blockchain</div>
+        </div>
+        <div className='select-wrapper'>
+          <select
+            value={collectionNetwork}
+            onChange={onBlockchainCategoryChange}
+            disabled
+            className='h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3'
+          >
+            <option
+              value={blockchainCategory}
+              defaultValue
+              suppressHydrationWarning
+            >
+              {networkName}
+            </option>
+            {/* {blockchainCategoryList.map((e) => (
+            <option key={e.id} value={e.id}>
+              {e.name}
+            </option>
+          ))} */}
+          </select>
+        </div>
+      </div>
 
       {/* Royalties */}
       {showRoyaltyPercentage && (

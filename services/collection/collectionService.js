@@ -21,19 +21,13 @@ export async function checkUniqueCollectionSymbol(payload) {
 export async function createCollection(payload) {
   const bodyFormData = new FormData();
   payload?.name && bodyFormData.append('name', payload?.name);
-  bodyFormData.append('project_id', payload.dao_id);
+  payload?.dao_id && bodyFormData.append('project_id', payload.dao_id);
+  payload?.blockchain && bodyFormData.append('blockchain', payload.blockchain);
   bodyFormData.append('collection_type', payload.collection_type);
 
   return await client('POST', `/collection`, bodyFormData, 'formdata');
 }
-export async function mockCreateCollection(payload) {
-  const bodyFormData = new FormData();
-  payload?.name && bodyFormData.append('name', payload?.name);
-  bodyFormData.append('project_id', payload.dao_id);
-  bodyFormData.append('collection_type', payload.collection_type);
 
-  return await client('POST', `/collection`, bodyFormData, 'formdata');
-}
 export async function updateCollection(payload) {
   const bodyFormData = new FormData();
   if (payload.cover !== null) {
@@ -44,7 +38,7 @@ export async function updateCollection(payload) {
   bodyFormData.append('description', payload.overview);
   bodyFormData.append('links', payload.webLinks);
   bodyFormData.append('category_id', payload.category_id);
-  bodyFormData.append('blockchain', payload.blockchainCategory);
+  bodyFormData.append('blockchain', payload.blockchain);
   // bodyFormData.append("primary_royalty", payload.primaryRoyalties);
   // bodyFormData.append("secondary_royalty", payload.secondaryRoyalties);
   if (payload.collectionSymbol) {

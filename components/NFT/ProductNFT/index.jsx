@@ -16,7 +16,6 @@ import {
 } from 'services/nft/nftService';
 import { getNotificationData } from 'redux/notification';
 import SuccessModal from 'components/Modals/SuccessModal';
-import { createProject } from 'services/project/projectService';
 import { createCollection } from 'services/collection/collectionService';
 import PublishingProductNFT from './PublishingProductNFT';
 import {
@@ -51,7 +50,6 @@ export default function ProductNFT({ query }) {
   const [isNFTSaved, setIsNFTSaved] = useState(false);
   const [savingNFT, setSavingNFT] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [projectId, setProjectId] = useState('');
   const [collectionId, setCollectionId] = useState('');
   const [isListUpdate, setIsListUpdate] = useState(false);
   const [fileSize, setFileSize] = useState(0);
@@ -362,7 +360,6 @@ export default function ProductNFT({ query }) {
             } else {
               setJobId(res['function_uuid']);
               const notificationData = {
-                projectId: projectId,
                 etherscan: '',
                 function_uuid: res['function_uuid'],
                 data: '',
@@ -417,27 +414,12 @@ export default function ProductNFT({ query }) {
   }
 
   function createNewProject() {
-    let payload = {
-      // name: `DAO_${uuidv4()}`,
-      blockchain: ls_GetChainID(),
-    };
-    createProject(payload)
-      .then((res) => {
-        if (res.code === 0) {
-          setProjectId(res.project.id);
-          createNewCollection(res.project.id);
-        } else {
-          handleErrorState(res.message);
-        }
-      })
-      .catch((err) => {
-        handleErrorState('Please try again later');
-      });
+    createNewCollection();
   }
 
-  function createNewCollection(dao_id) {
+  function createNewCollection() {
     let createPayload = {
-      dao_id: dao_id,
+      blockchain: ls_GetChainID(),
       collection_type: 'product',
     };
 

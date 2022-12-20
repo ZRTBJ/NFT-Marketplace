@@ -206,10 +206,6 @@ export default function CollectionCreate({ query }) {
   }
   // category end
 
-  // Blockchain start
-  const [blockchainCategory, setBlockchaainCategory] = useState('polygon');
-  // Blockchain end
-
   // Freeze MetaData start
   const [isMetaDaFreezed, setIsMetaDataFreezed] = useState(true);
   const [freezeMetadataDisabled, setFreezeMetadataDisabled] = useState(false);
@@ -254,7 +250,7 @@ export default function CollectionCreate({ query }) {
   }
 
   // Royalty Percentage end
-
+  let chainId = ls_GetChainID();
   //Supply
   const [supply, setSupply] = useState(0);
   const [supplyDisable, setSupplyDisable] = useState(false);
@@ -281,6 +277,8 @@ export default function CollectionCreate({ query }) {
   const [dao_id, setDao_id] = useState(null);
   const [notOwner, setNotOwner] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [network, setNetwork] = useState(chainId?.toString());
+  const [disableNetwork, setDisableNetwork] = useState(false);
 
   function handelClickBack() {
     let currentIndex = currentStep.pop();
@@ -288,24 +286,13 @@ export default function CollectionCreate({ query }) {
   }
   async function createBlock(id) {
     try {
-      if (dao_id) {
-        setDataIsLoading(true);
-        id = await createNewProject(dao_id);
-        await updateExistingProject(id);
-        // await projectDetails(id);
-        setDataIsLoading(false);
-        setShowSuccessModal(true);
-      } else {
-        setDataIsLoading(true);
-        const daoId = await daoCreate();
-        if (daoId !== '') {
-          id = await createNewProject(daoId);
-          await updateExistingProject(id);
-          setShowSuccessModal(true);
-        }
-        setDataIsLoading(false);
-        // await projectDetails(id);
-      }
+      setDataIsLoading(true);
+      id = await createNewProject();
+      await updateExistingProject(id);
+      setShowSuccessModal(true);
+
+      setDataIsLoading(false);
+      // await projectDetails(id);
     } catch (err) {
       setDataIsLoading(false);
       setShowSuccessModal(false);
@@ -346,11 +333,12 @@ export default function CollectionCreate({ query }) {
       }
     }
   }
-  async function createNewProject(dao_id) {
+  async function createNewProject() {
     let createPayload = {
       name: projectName,
-      dao_id: dao_id,
       collection_type: collectionType,
+      blockchain: network,
+      ...(dao_id && { dao_id: dao_id }),
     };
 
     let projectId = '';
@@ -382,7 +370,7 @@ export default function CollectionCreate({ query }) {
       // secondaryRoyalties: secondaryRoyalties,
       webLinks: JSON.stringify(webLinks),
       category_id: projectCategory,
-      blockchainCategory: blockchainCategory,
+      blockchain: network,
       isMetaDaFreezed: isMetaDaFreezed,
       isTokenTransferable: isTokenTransferable,
       royaltyPercentage: royaltyPercentage,
@@ -403,6 +391,7 @@ export default function CollectionCreate({ query }) {
         const logo = response?.assets?.find((x) => x?.asset_purpose === 'logo');
         setLogoPhotoUrl(logo ? logo : '');
         setProjectName(response?.name);
+        setNetwork(response?.blockchain);
         setDaoSymbol(response?.collection_symbol);
         setOverview(response?.description);
         const cover = response?.assets?.find(
@@ -440,6 +429,7 @@ export default function CollectionCreate({ query }) {
           setTokenTransferableDisabled(true);
           setRoyaltyPercentageDisable(true);
           setSupplyDisable(true);
+          setDisableNetwork(true);
         }
         if (!response.is_owner) {
           setNotOwner(true);
@@ -495,23 +485,23 @@ export default function CollectionCreate({ query }) {
       }
     }
   }
-  async function daoCreate() {
-    let daoId = '';
-    let payload = {
-      // name: `DAO_${uuidv4()}`,
-      blockchain: ls_GetChainID(),
-    };
-    await createProject(payload).then((res) => {
-      if (res.code === 0) {
-        daoId = res.project.id;
-        setDao_id(daoId);
-      } else {
-        setShowErrorModal(true);
-        setErrorMessage(res.message);
-      }
-    });
-    return daoId;
-  }
+  // async function daoCreate() {
+  //   let daoId = '';
+  //   let payload = {
+  //     // name: `DAO_${uuidv4()}`,
+  //     blockchain: ls_GetChainID(),
+  //   };
+  //   await createProject(payload).then((res) => {
+  //     if (res.code === 0) {
+  //       daoId = res.project.id;
+  //       setDao_id(daoId);
+  //     } else {
+  //       setShowErrorModal(true);
+  //       setErrorMessage(res.message);
+  //     }
+  //   });
+  //   return daoId;
+  // }
   useEffect(() => {
     setDao_id(dao_id);
   }, [dao_id]);
@@ -640,6 +630,8 @@ export default function CollectionCreate({ query }) {
                     supply={supply}
                     handleSupplyValue={handleSupplyValue}
                     supplyDisable={supplyDisable}
+                    collectionNetwork={network}
+                    disableNetwork={disableNetwork}
                     isSupplyValid={isSupplyValid}
                   />
                 </div>
@@ -689,6 +681,7 @@ export default function CollectionCreate({ query }) {
                   royaltyPercentage={royaltyPercentage}
                   showSupplyData={collectionType === 'product' ? true : false}
                   supply={supply}
+                  network={network}
                 />
               )}
             </div>
