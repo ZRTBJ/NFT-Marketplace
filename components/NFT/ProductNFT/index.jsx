@@ -21,9 +21,12 @@ import PublishingProductNFT from './PublishingProductNFT';
 import {
   getCollectionDetailsById,
   updateRoyaltySplitter,
+  getUserCollections,
 } from 'services/collection/collectionService';
 import { ls_GetChainID } from 'util/ApplicationStorage';
 import Image from 'next/image';
+import Select from 'react-select';
+import { uniqBy } from 'lodash';
 
 export default function ProductNFT({ query }) {
   const audioRef = useRef();
@@ -60,7 +63,17 @@ export default function ProductNFT({ query }) {
   const [isNftLoading, setIsNftLoading] = useState(false);
   const [asseteRemoveInUpdateMode, setAsseteRemoveInUpdateMode] =
     useState(false);
+  const [hasNextPageData, setHasNextPageData] = useState(true);
+  const [payload, setPayload] = useState({
+    page: 1,
+    perPage: 10,
+    keyword: '',
+    order_by: 'newer',
+  });
+
   const [collection, setCollection] = useState({});
+  const [options, setOptions] = useState([]);
+
   const {
     register,
     handleSubmit,
@@ -68,6 +81,70 @@ export default function ProductNFT({ query }) {
     watch,
     formState: { errors },
   } = useForm();
+
+  const useDebounceCallback = (delay = 100, cleaning = true) => {
+    // or: delayed debounce callback
+    const ref = React.useRef();
+    React.useEffect(() => {
+      if (cleaning) {
+        // cleaning uncalled delayed callback with component destroying
+        return () => {
+          if (ref.current) clearTimeout(ref.current);
+        };
+      }
+    }, []);
+    return (callback) => {
+      if (ref.current) clearTimeout(ref.current);
+      ref.current = setTimeout(callback, delay);
+    };
+  };
+  const delayCallback = useDebounceCallback(500);
+  async function onDaoSearch(keyword) {
+    delayCallback(() => {
+      let oldPayload = { ...payload };
+      oldPayload.keyword = keyword;
+      setPayload(oldPayload);
+    });
+  }
+
+  useEffect(() => {
+    if (hasNextPageData) {
+      collectionFetch();
+    }
+  }, [payload]);
+
+  function scrolledBottom() {
+    let oldPayload = { ...payload };
+    oldPayload.page = oldPayload.page + 1;
+    setPayload(oldPayload);
+  }
+
+  async function collectionFetch() {
+    setIsLoading(true);
+    await getUserCollections(payload)
+      .then((res) => {
+        if (res?.code === 0) {
+          // const matchedBlockchainDao = res?.data?.filter(
+          //   (dao) => dao?.blockchain === collection?.blockchain
+          // );
+          const daoList = [...options];
+          const mergedDaoList = [...daoList, ...res?.data];
+          const uniqDaoList = uniqBy(mergedDaoList, function (e) {
+            return e.id;
+          });
+          let filtered = uniqDaoList.filter((list) => list.type === 'product');
+          setOptions(filtered);
+          setIsLoading(false);
+          if (res?.data?.length === 0) {
+            setHasNextPageData(false);
+          }
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }
 
   useEffect(() => {
     // file upload web socket
@@ -498,6 +575,10 @@ export default function ProductNFT({ query }) {
     } catch {}
   }, []);
 
+  let curCollection = collectionId
+    ? options.find((item) => item.id === collectionId)
+    : null;
+
   return (
     <>
       {isNftLoading && <div className='loading'></div>}
@@ -723,6 +804,37 @@ export default function ProductNFT({ query }) {
                     </p>
                   )}
                 </div>
+                {typeof window !== 'undefined' && (
+                  <div className='mb-6'>
+                    <div className='flex items-center mb-2'>
+                      <Tooltip message='If you selecting a Collection, it will generate automatically'></Tooltip>
+                      <p className='txtblack text-[14px]'>Connect Collection</p>
+                    </div>
+                    <Select
+                      // defaultValue={curCollection}
+                      value={curCollection}
+                      onChange={(data) => setCollectionId(data?.id)}
+                      onKeyDown={(event) => onDaoSearch(event.target.value)}
+                      options={options}
+                      styles={{
+                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                      }}
+                      isDisabled={query?.collectionId}
+                      menuPortalTarget={document.body}
+                      placeholder='Choose Collection'
+                      isLoading={isLoading}
+                      noOptionsMessage={() => 'No Collection Found'}
+                      loadingMessage={() => 'Loading,please wait...'}
+                      getOptionLabel={(option) => `${option.name}`}
+                      getOptionValue={(option) => option.id}
+                      classNamePrefix='collection-connect'
+                      isClearable
+                      isSearchable
+                      menuShouldScrollIntoView
+                      onMenuScrollToBottom={() => scrolledBottom()}
+                    />
+                  </div>
+                )}
                 <div className='mb-6'>
                   <div className='text-txtblack font-bold '>Properties</div>
                   <div className='text-textSubtle text-[14px] mb-[16px]'>

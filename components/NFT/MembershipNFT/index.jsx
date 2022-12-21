@@ -16,8 +16,11 @@ import {
 import {
   updateRoyaltySplitter,
   getCollectionDetailsById,
+  getUserCollections,
 } from 'services/collection/collectionService';
 import { ls_GetChainID } from 'util/ApplicationStorage';
+import Select from 'react-select';
+import { uniqBy } from 'lodash';
 
 import axios from 'axios';
 import Config from 'config/config';
@@ -74,6 +77,7 @@ export default function MembershipNFT({ query }) {
   const [projectCreated, setProjectCreated] = useState(false);
   const [projectInfo, setProjectInfo] = useState({});
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [options, setOptions] = useState([]);
   const jobIds = [];
   const [calledIds, setCalledIds] = useState([]);
   const [showDataUploadingModal, setShowDataUploadingModal] = useState(false);
@@ -82,12 +86,87 @@ export default function MembershipNFT({ query }) {
   const [errorTitle, setErrorTitle] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [isNftLoading, setIsNftLoading] = useState(false);
+  const [hasNextPageData, setHasNextPageData] = useState(true);
   const [asseteRemoveInUpdateMode, setAsseteRemoveInUpdateMode] =
     useState(false);
   const [collection, setCollection] = useState({});
+  const [payload, setPayload] = useState({
+    page: 1,
+    perPage: 10,
+    keyword: '',
+    order_by: 'newer',
+  });
+  const [isLoading, setIsLoading] = useState(false);
   function onTextfieldChange(index, fieldName, value) {
     setValue(index, fieldName, value);
   }
+
+  const useDebounceCallback = (delay = 100, cleaning = true) => {
+    // or: delayed debounce callback
+    const ref = React.useRef();
+    React.useEffect(() => {
+      if (cleaning) {
+        // cleaning uncalled delayed callback with component destroying
+        return () => {
+          if (ref.current) clearTimeout(ref.current);
+        };
+      }
+    }, []);
+    return (callback) => {
+      if (ref.current) clearTimeout(ref.current);
+      ref.current = setTimeout(callback, delay);
+    };
+  };
+  const delayCallback = useDebounceCallback(500);
+  async function onDaoSearch(keyword) {
+    delayCallback(() => {
+      let oldPayload = { ...payload };
+      oldPayload.keyword = keyword;
+      setPayload(oldPayload);
+    });
+  }
+
+  useEffect(() => {
+    if (hasNextPageData) {
+      collectionFetch();
+    }
+  }, [payload]);
+
+  function scrolledBottom() {
+    let oldPayload = { ...payload };
+    oldPayload.page = oldPayload.page + 1;
+    setPayload(oldPayload);
+  }
+
+  async function collectionFetch() {
+    setIsLoading(true);
+    await getUserCollections(payload)
+      .then((res) => {
+        if (res?.code === 0) {
+          // const matchedBlockchainDao = res?.data?.filter(
+          //   (dao) => dao?.blockchain === collection?.blockchain
+          // );
+          const daoList = [...options];
+          const mergedDaoList = [...daoList, ...res?.data];
+          const uniqDaoList = uniqBy(mergedDaoList, function (e) {
+            return e.id;
+          });
+          let filtered = uniqDaoList.filter(
+            (list) => list.type === 'membership'
+          );
+          setOptions(filtered);
+          setIsLoading(false);
+          if (res?.data?.length === 0) {
+            setHasNextPageData(false);
+          }
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }
+
   function setValue(index, fieldName, value) {
     let oldNfts = [...nfts];
     oldNfts[index][fieldName] = value;
@@ -406,7 +485,6 @@ export default function MembershipNFT({ query }) {
       });
   }
   async function genUploadKey() {
-    console.log('1gen upload key');
     let key = '';
     const request = new FormData();
     await generateUploadkey(request)
@@ -443,7 +521,7 @@ export default function MembershipNFT({ query }) {
   async function createBlock(validateNfts) {
     setShowDataUploadingModal(true);
     if (!updateMode) {
-      if (query?.collection_id) {
+      if (query?.collection_id || collection_id) {
         if (typeof window !== 'undefined') {
           localStorage.setItem('upload_number', validateNfts.length);
         }
@@ -641,6 +719,7 @@ export default function MembershipNFT({ query }) {
       getCollectionDetail(query?.collection_id);
     }
   }, []);
+
   useEffect(() => {
     try {
       const nftId = query?.nftId;
@@ -661,7 +740,10 @@ export default function MembershipNFT({ query }) {
       setIsListUpdate(false);
     }, 50);
   }
-
+  let curCollection = collection_id
+    ? options.find((item) => item.id === collection_id)
+    : null;
+  console.log(curCollection);
   return (
     <>
       {isNftLoading && <div className='loading'></div>}
@@ -884,6 +966,37 @@ export default function MembershipNFT({ query }) {
                   disabled={isPreview || collection.status === 'published'}
                 ></textarea>
               </div>
+              {typeof window !== 'undefined' && (
+                <div className='mb-6'>
+                  <div className='flex items-center mb-2'>
+                    <Tooltip message='If you selecting a Collection, it will generate automatically'></Tooltip>
+                    <p className='txtblack text-[14px]'>Connect Collection</p>
+                  </div>
+                  <Select
+                    // defaultValue={curCollection}
+                    value={curCollection}
+                    onChange={(data) => setCollection_id(data?.id)}
+                    onKeyDown={(event) => onDaoSearch(event.target.value)}
+                    options={options}
+                    styles={{
+                      menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                    }}
+                    isDisabled={query?.collection_id}
+                    menuPortalTarget={document.body}
+                    placeholder='Choose Collection'
+                    isLoading={isLoading}
+                    noOptionsMessage={() => 'No Collection Found'}
+                    loadingMessage={() => 'Loading,please wait...'}
+                    getOptionLabel={(option) => `${option.name}`}
+                    getOptionValue={(option) => option.id}
+                    classNamePrefix='collection-connect'
+                    isClearable
+                    isSearchable
+                    menuShouldScrollIntoView
+                    onMenuScrollToBottom={() => scrolledBottom()}
+                  />
+                </div>
+              )}
               <div className='mb-6'>
                 <p className='txtblack text-[14px]'>Benefit</p>
                 {nft.benefits.map((benefit, benefitIndex) => (
