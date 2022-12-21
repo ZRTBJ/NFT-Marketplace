@@ -215,12 +215,14 @@ const CollectionContent = ({ collectionId, userId }) => {
       .then((resp) => {
         if (resp.code === 0) {
           setProjectID(resp?.collection?.project_uid);
-          getProjectDetailsById({ id: resp?.collection?.project_uid }).then(
-            (resp) => {
-              setProjectNetwork(resp?.project?.blockchain);
-              setDaoInfo(resp?.project);
-            }
-          );
+          if (resp?.collection?.project_uid) {
+            getProjectDetailsById({ id: resp?.collection?.project_uid }).then(
+              (resp) => {
+                setProjectNetwork(resp?.project?.blockchain);
+                setDaoInfo(resp?.project);
+              }
+            );
+          }
           if (resp?.collection?.royalty_splitter?.id) {
             setRoyalitySpliterId(resp.collection.royalty_splitter.id);
             getSplittedContributors(resp.collection.royalty_splitter.id);
@@ -651,6 +653,7 @@ const CollectionContent = ({ collectionId, userId }) => {
             userId={userId}
             collection={Collection}
             dao={daoInfo}
+            onSuccessFullyConnect={() => getCollectionDetail()}
           />
         )}
         <section className='mt-6'>
