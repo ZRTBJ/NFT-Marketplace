@@ -60,6 +60,18 @@ export async function updateCollection(payload) {
     'formdata'
   );
 }
+export async function connectCollectionToDAO(payload) {
+  const bodyFormData = new FormData();
+  for (const key in payload) {
+    bodyFormData.append(`${key}`, payload[key]);
+  }
+  return await client(
+    'PUT',
+    `/collection/${payload.id}`,
+    bodyFormData,
+    'formdata'
+  );
+}
 
 export async function getCollectionDetailsById(payload) {
   return await client('GET', `/collection/${payload.id}`);

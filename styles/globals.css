@@ -192,3 +192,7 @@ p {
 .modal-main::-webkit-scrollbar {
   width: 15px;
 }
+.dao-connect__option {
+  background-color: white !important;
+  color: #7d849d !important;
+}

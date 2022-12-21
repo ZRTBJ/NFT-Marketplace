@@ -50,6 +50,7 @@ import ReactReadMoreReadLess from 'react-read-more-read-less';
 import { getNftDetails } from 'services/nft/nftService';
 import PublishRoyaltyConfirmModal from './Publish/PublishRoyaltyConfirmModal';
 import Image from 'next/image';
+import DaoConnectModal from 'components/Collection/DaoConnectModal/DaoConnectModal';
 
 const TABLE_HEADERS = [
   { id: 0, label: 'Wallet Address' },
@@ -62,7 +63,7 @@ const TABLE_HEADERS = [
 ];
 const imageRegex = new RegExp('image');
 
-const CollectionContent = ({ collectionId }) => {
+const CollectionContent = ({ collectionId, userId }) => {
   const router = useRouter();
   const [Collection, setCollection] = useState();
   const [CoverImages, setCoverImages] = useState({});
@@ -106,6 +107,7 @@ const CollectionContent = ({ collectionId }) => {
   const [setSalesError, setSetSalesError] = useState(false);
   const [salesSetupInfo, setSalesSetupInfo] = useState({});
   const [dataLoading, setDataLoading] = useState(false);
+  const [showDaoConnectModal, setShowDaoConnectModal] = useState(false);
   // Publish royalty splitter
   const [showPublishRoyaltySpliterModal, setShowPublishRoyaltySpliterModal] =
     useState(false);
@@ -642,6 +644,15 @@ const CollectionContent = ({ collectionId }) => {
             show={collectionNotUpdatableModal}
           />
         )}
+        {showDaoConnectModal && (
+          <DaoConnectModal
+            show={showDaoConnectModal}
+            handleClose={() => setShowDaoConnectModal(false)}
+            userId={userId}
+            collection={Collection}
+            dao={daoInfo}
+          />
+        )}
         <section className='mt-6'>
           <div className='row-span-2 col-span-2'>
             <Image
@@ -650,6 +661,7 @@ const CollectionContent = ({ collectionId }) => {
               alt=''
               height={260}
               width={100}
+              unoptimized
             />
           </div>
         </section>
@@ -663,6 +675,7 @@ const CollectionContent = ({ collectionId }) => {
                   alt='User profile'
                   width={98}
                   height={98}
+                  unoptimized
                 />
                 <div className='flex-1 min-w-0  px-4'>
                   <div className='flex items-center mb-1 md:mb-2'>
@@ -697,32 +710,58 @@ const CollectionContent = ({ collectionId }) => {
                       Copied !
                     </span>
                   </p>
-                  <p className='my-2 text-textLight md:text-sm text:xs md:flex items-center'>
-                    Connected With :
-                    <Link
-                      className='md:ml-2 mt-1 md:mt-0 font-bold flex items-center !no-underline'
-                      href={`/dao/${daoInfo?.id}`}
-                    >
-                      <Image
-                        className='h-[24px] w-[24px] rounded-full mr-1'
-                        src={
-                          daoInfo?.assets?.length > 0
-                            ? daoInfo.assets.find(
-                                (img) => img['asset_purpose'] === 'cover'
-                              )
-                              ? daoInfo.assets.find(
-                                  (img) => img['asset_purpose'] === 'cover'
-                                ).path
-                              : defaultCover
-                            : defaultCover
-                        }
-                        width={24}
-                        height={24}
-                        alt='collection cover'
-                      />
-                      {daoInfo?.name}
-                    </Link>
-                  </p>
+
+                  {userId && Collection?.is_owner && (
+                    <>
+                      <div>
+                        {Collection?.project_uid ? (
+                          <>
+                            <p className='my-2 text-textLight md:text-sm text:xs md:flex items-center'>
+                              Connected With :
+                              <Link
+                                className='md:ml-2 mt-1 md:mt-0 font-bold flex items-center !no-underline'
+                                href={`/dao/${daoInfo?.id}`}
+                              >
+                                <Image
+                                  className='h-[24px] w-[24px] rounded-full mr-1'
+                                  src={
+                                    daoInfo?.assets?.length > 0
+                                      ? daoInfo.assets.find(
+                                          (img) =>
+                                            img['asset_purpose'] === 'cover'
+                                        )
+                                        ? daoInfo.assets.find(
+                                            (img) =>
+                                              img['asset_purpose'] === 'cover'
+                                          ).path
+                                        : defaultCover
+                                      : defaultCover
+                                  }
+                                  width={24}
+                                  height={24}
+                                  alt='collection cover'
+                                />
+                                {daoInfo?.name}
+                              </Link>
+                            </p>
+                            <p
+                              className='bg-primary-900/[0.08] text-sm w-fit  text-primary-900 font-bold cursor-pointer p-2'
+                              onClick={() => setShowDaoConnectModal(true)}
+                            >
+                              Change DAO
+                            </p>
+                          </>
+                        ) : (
+                          <p
+                            className='bg-primary-900/[0.08] text-sm w-fit  text-primary-900 font-bold cursor-pointer p-2'
+                            onClick={() => setShowDaoConnectModal(true)}
+                          >
+                            Connect DAO
+                          </p>
+                        )}
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
