@@ -51,6 +51,7 @@ import { getNftDetails } from 'services/nft/nftService';
 import PublishRoyaltyConfirmModal from './Publish/PublishRoyaltyConfirmModal';
 import Image from 'next/image';
 import DaoConnectModal from 'components/Collection/DaoConnectModal/DaoConnectModal';
+import WithdrawModal from './WithdrawModal';
 
 const TABLE_HEADERS = [
   { id: 0, label: 'Wallet Address' },
@@ -111,6 +112,7 @@ const CollectionContent = ({ collectionId, userId }) => {
   // Publish royalty splitter
   const [showPublishRoyaltySpliterModal, setShowPublishRoyaltySpliterModal] =
     useState(false);
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [
     showPublishRoyaltySpliterConfirmModal,
     setShowPublishRoyaltySpliterConfirmModal,
@@ -511,6 +513,12 @@ const CollectionContent = ({ collectionId, userId }) => {
             show={showNetworkHandler}
             handleClose={() => setShowNetworkHandler(false)}
             projectNetwork={projectNetwork}
+          />
+        )}
+        {showWithdrawModal && (
+          <WithdrawModal
+            show={showWithdrawModal}
+            handleClose={() => setShowWithdrawModal(false)}
           />
         )}
         {ShowPublishModal && (
@@ -955,6 +963,13 @@ const CollectionContent = ({ collectionId, userId }) => {
                 <p className='text-sm text-textSubtle mt-2'>
                   $ {newWorth?.balanceUSD?.toFixed(2)}
                 </p>
+
+                <button
+                  onClick={() => setShowWithdrawModal(true)}
+                  className='mt-2 border-[1px] rounded-[4px] border-primary-900 py-1 px-2 bg-primary-900/[0.08] w-fit text-[12px] text-primary-900 font-bold'
+                >
+                  Withdraw Funds
+                </button>
               </div>
               <div className='mt-6 flex items-center'>
                 {/* <a className='inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>

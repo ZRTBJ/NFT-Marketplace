@@ -27,6 +27,7 @@ import { ls_GetChainID } from 'util/ApplicationStorage';
 import Image from 'next/image';
 import Select from 'react-select';
 import { uniqBy } from 'lodash';
+import { NETWORKS } from 'config/networks';
 
 export default function ProductNFT({ query }) {
   const audioRef = useRef();
@@ -579,6 +580,10 @@ export default function ProductNFT({ query }) {
     ? options.find((item) => item.id === collectionId)
     : null;
 
+  let networkName = curCollection?.blockchain
+    ? NETWORKS?.[Number(curCollection?.blockchain)]?.networkName
+    : null;
+
   return (
     <>
       {isNftLoading && <div className='loading'></div>}
@@ -818,6 +823,12 @@ export default function ProductNFT({ query }) {
                       options={options}
                       styles={{
                         menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                        control: (base) => ({
+                          ...base,
+                          border: showConfirmation
+                            ? 'none'
+                            : '1px solid hsl(0, 0%, 80%)',
+                        }),
                       }}
                       isDisabled={query?.collectionId}
                       menuPortalTarget={document.body}
@@ -833,6 +844,21 @@ export default function ProductNFT({ query }) {
                       menuShouldScrollIntoView
                       onMenuScrollToBottom={() => scrolledBottom()}
                     />
+                  </div>
+                )}
+                {networkName && (
+                  <div className='mb-6 '>
+                    <p className='txtblack text-[14px]'>Blockchain</p>
+                    <>
+                      <input
+                        className={`debounceInput mt-1 ${
+                          showConfirmation ? ' !border-none bg-transparent' : ''
+                        } `}
+                        disabled
+                        value={networkName}
+                        type='text'
+                      />
+                    </>
                   </div>
                 )}
                 <div className='mb-6'>

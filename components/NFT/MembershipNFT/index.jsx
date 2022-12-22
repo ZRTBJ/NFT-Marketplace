@@ -27,6 +27,7 @@ import Config from 'config/config';
 import { getNotificationData } from 'redux/notification';
 import ErrorModal from 'components/Modals/ErrorModal';
 import Image from 'next/image';
+import { NETWORKS } from 'config/networks';
 
 export default function MembershipNFT({ query }) {
   const fileUploadNotification = useSelector((state) =>
@@ -743,7 +744,11 @@ export default function MembershipNFT({ query }) {
   let curCollection = collection_id
     ? options.find((item) => item.id === collection_id)
     : null;
-  console.log(curCollection);
+
+  let networkName = curCollection?.blockchain
+    ? NETWORKS?.[Number(curCollection?.blockchain)]?.networkName
+    : null;
+
   return (
     <>
       {isNftLoading && <div className='loading'></div>}
@@ -980,8 +985,14 @@ export default function MembershipNFT({ query }) {
                     options={options}
                     styles={{
                       menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                      control: (base) => ({
+                        ...base,
+                        border: isPreview
+                          ? 'none'
+                          : '1px solid hsl(0, 0%, 80%)',
+                      }),
                     }}
-                    isDisabled={query?.collection_id}
+                    isDisabled={query?.collection_id || isPreview}
                     menuPortalTarget={document.body}
                     placeholder='Choose Collection'
                     isLoading={isLoading}
@@ -995,6 +1006,22 @@ export default function MembershipNFT({ query }) {
                     menuShouldScrollIntoView
                     onMenuScrollToBottom={() => scrolledBottom()}
                   />
+                </div>
+              )}
+              {networkName && (
+                <div className='mb-6 '>
+                  <p className='txtblack text-[14px]'>Blockchain</p>
+                  <>
+                    <DebounceInput
+                      debounceTimeout={0}
+                      className={`debounceInput mt-1 ${
+                        isPreview ? ' !border-none bg-transparent' : ''
+                      } `}
+                      disabled
+                      value={networkName}
+                      type='text'
+                    />
+                  </>
                 </div>
               )}
               <div className='mb-6'>
