@@ -49,7 +49,12 @@ export async function createProject(payload) {
       bodyFormData.append('category_id', payload.category_id);
     bodyFormData.append('blockchain', payload.blockchain);
   }
-  return await client("POST", `/project`, payload ? bodyFormData : null,"formdata");
+  return await client(
+    'POST',
+    `/project`,
+    payload ? bodyFormData : null,
+    'formdata'
+  );
 }
 export async function updateProject(payload) {
   const bodyFormData = new FormData();
@@ -238,4 +243,7 @@ export async function transferFundApi(payload) {
 
 export async function getNewWorth(id) {
   return await client('GET', `/project/${id}/balance`);
+}
+export async function deleteDraftDao(id) {
+  return await client('DELETE', `/project/${id}`);
 }

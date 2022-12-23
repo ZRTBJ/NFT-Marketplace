@@ -10,6 +10,7 @@ import {
   updateCollection,
   getCollectionDetailsById,
   deleteAssetsOfCollection,
+  deleteDraftCollection,
 } from 'services/collection/collectionService';
 import ErrorModal from 'components/Modals/ErrorModal';
 import SuccessModal from 'components/Modals/SuccessModal';
@@ -20,7 +21,7 @@ import {
 import { ls_GetChainID } from 'util/ApplicationStorage';
 import Outline from 'components/FormUtility/Outline';
 import Confirmation from 'components/FormUtility/Confirmation';
-
+import ConfirmationModal from 'components/Modals/ConfirmationModal';
 export default function CollectionCreate({ query }) {
   // logo start
   const [logoPhoto, setLogoPhoto] = useState([]);
@@ -279,6 +280,9 @@ export default function CollectionCreate({ query }) {
   const [errorMessage, setErrorMessage] = useState('');
   const [network, setNetwork] = useState(chainId?.toString());
   const [disableNetwork, setDisableNetwork] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [collectionPublished, setCollectionPublished] = useState(false);
+  const [collectionDeleted, setCollectionDeleted] = useState(false);
 
   function handelClickBack() {
     let currentIndex = currentStep.pop();
@@ -430,6 +434,7 @@ export default function CollectionCreate({ query }) {
           setRoyaltyPercentageDisable(true);
           setSupplyDisable(true);
           setDisableNetwork(true);
+          setCollectionPublished(true);
         }
         if (!response.is_owner) {
           setNotOwner(true);
@@ -437,6 +442,7 @@ export default function CollectionCreate({ query }) {
       } else {
         setDataIsLoading(false);
         showErrorModal(true);
+        setErrorMessage(e?.message);
       }
     });
   }
@@ -484,6 +490,26 @@ export default function CollectionCreate({ query }) {
         }
       }
     }
+  }
+  async function deleteCollection() {
+    setDataIsLoading(true);
+    await deleteDraftCollection(projectId)
+      .then((res) => {
+        if (res.code === 0) {
+          setCollectionDeleted(true);
+          setShowDeleteModal(false);
+          setShowSuccessModal(true);
+          setDataIsLoading(false);
+        } else {
+          setShowErrorModal(true);
+          setErrorMessage(res.message);
+          setDataIsLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setDataIsLoading(false);
+      });
   }
   // async function daoCreate() {
   //   let daoId = '';
@@ -542,13 +568,26 @@ export default function CollectionCreate({ query }) {
             <div className='create-collection-container'>
               {currentStep.length === 1 && (
                 <div>
-                  <h1 className='txtblack text-[28px] font-black mb-[6px]'>
-                    {projectCreated ? 'Update' : 'Create New'} Collection
-                  </h1>
-                  <p className='txtblack text-[14px] text-textSubtle mb-[24px]'>
-                    Fill the require form to{' '}
-                    {!projectCreated ? 'create ' : 'Update'} collection
-                  </p>
+                  <div className='flex flex-wrap items-center mb-[24px]'>
+                    <div>
+                      <h1 className='txtblack text-[28px] font-black mb-[6px]'>
+                        {projectCreated ? 'Update' : 'Create New'} Collection
+                      </h1>
+                      <p className='txtblack text-[14px] text-textSubtle'>
+                        Fill the require form to{' '}
+                        {!projectCreated ? 'create ' : 'Update'} collection
+                      </p>
+                    </div>
+                    {query?.id && !notOwner && !collectionPublished && (
+                      <button
+                        onClick={() => setShowDeleteModal(true)}
+                        className='px-4 py-2 text-white bg-danger-1 ml-auto rounded'
+                      >
+                        <i className='fa-solid fa-trash mr-1'></i>
+                        <span>Delete</span>
+                      </button>
+                    )}
+                  </div>
                   <Outline
                     key={outlineKey}
                     // logo
@@ -722,9 +761,14 @@ export default function CollectionCreate({ query }) {
         <SuccessModal
           handleClose={() => setShowSuccessModal(false)}
           show={showSuccessModal}
-          redirection={`/collection/${projectId}`}
-          subMessage={"Let's explore the Collection"}
-          buttonText='View Collection'
+          redirection={
+            !collectionDeleted ? `/collection/${projectId}` : `/dashboard`
+          }
+          message={`Collection successfully ${
+            !collectionDeleted ? 'saved' : 'deleted'
+          }`}
+          subMessage={!collectionDeleted ? "Let's explore the Collection" : ''}
+          buttonText={!collectionDeleted ? 'VIEW Collection' : 'Close'}
         />
       )}
       {showErrorModal && (
@@ -736,6 +780,14 @@ export default function CollectionCreate({ query }) {
           show={showErrorModal}
           message={errorMessage}
           buttomText='Try Again'
+        />
+      )}
+      {showDeleteModal && (
+        <ConfirmationModal
+          show={showDeleteModal}
+          handleClose={() => setShowDeleteModal(false)}
+          handleApply={deleteCollection}
+          message='Are you sure  to delete this Collection?'
         />
       )}
     </>

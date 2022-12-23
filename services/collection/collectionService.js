@@ -159,3 +159,6 @@ export async function getProductNFTCollectionSalesSetupInformation(
 `
   );
 }
+export async function deleteDraftCollection(id) {
+  return await client('DELETE', `/collection/${id}`);
+}

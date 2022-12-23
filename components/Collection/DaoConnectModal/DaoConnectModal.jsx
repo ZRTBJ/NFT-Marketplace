@@ -94,12 +94,10 @@ export default function DaoConnectModal({
   }
   async function connectDao() {
     setDaoConnecting(true);
-    const payload = {
-      id: collection?.id,
-      project_uid: selectedOption?.id,
-      total_supply: collection?.total_supply,
-      blockchain: collection?.blockchain,
-    };
+    let payload = { ...collection };
+    payload.project_uid = selectedOption?.id;
+    delete payload?.assets;
+    delete payload?.royalty_splitter;
     await connectCollectionToDAO(payload)
       .then((res) => {
         setDaoConnecting(false);

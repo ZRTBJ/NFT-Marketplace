@@ -725,7 +725,7 @@ const CollectionContent = ({ collectionId, userId }) => {
                   {userId && Collection?.is_owner && (
                     <>
                       <div>
-                        {Collection?.project_uid ? (
+                        {daoInfo?.id ? (
                           <>
                             <p className='my-2 text-textLight md:text-sm text:xs md:flex items-center'>
                               Connected With :
