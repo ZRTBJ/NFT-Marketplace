@@ -730,7 +730,7 @@ const CollectionContent = ({ collectionId, userId }) => {
                             <p className='my-2 text-textLight md:text-sm text:xs md:flex items-center'>
                               Connected With :
                               <Link
-                                className='md:ml-2 mt-1 md:mt-0 font-bold flex items-center !no-underline'
+                                className='md:ml-2 mt-1 mb-2 md:mb-0 md:mt-0 font-bold flex items-center !no-underline'
                                 href={`/dao/${daoInfo?.id}`}
                               >
                                 <Image
@@ -754,19 +754,22 @@ const CollectionContent = ({ collectionId, userId }) => {
                                 />
                                 {daoInfo?.name}
                               </Link>
-                            </p>
-                            <p
-                              className='bg-primary-900/[0.08] text-sm w-fit  text-primary-900 font-bold cursor-pointer p-2'
-                              onClick={() => setShowDaoConnectModal(true)}
-                            >
-                              Change DAO
+                              {Collection?.status === 'draft' && (
+                                <span
+                                  onClick={() => setShowDaoConnectModal(true)}
+                                  className='rounded cursor-pointer social-icon-button text-primary-900  md:ml-2 px-2'
+                                >
+                                  <i className='fa-solid  fa-pen-to-square '></i>
+                                </span>
+                              )}
                             </p>
                           </>
                         ) : (
                           <p
-                            className='bg-primary-900/[0.08] text-sm w-fit  text-primary-900 font-bold cursor-pointer p-2'
+                            className='bg-primary-900/[0.08] rounded mt-1 text-sm w-fit  text-primary-900 font-bold cursor-pointer p-2'
                             onClick={() => setShowDaoConnectModal(true)}
                           >
+                            <i class='fa-solid fa-link mr-2'></i>
                             Connect DAO
                           </p>
                         )}
@@ -1088,7 +1091,7 @@ const CollectionContent = ({ collectionId, userId }) => {
                         return (
                           <div
                             key={nft?.id}
-                            className='min-h-auto md:min-h-[390px] rounded-xl  bg-white'
+                            className='min-h-auto md:min-h-[400px] rounded-xl  bg-white'
                           >
                             <Link href={`/nft/${nft?.nft_type}/${nft.id}`}>
                               {imageRegex.test(nft?.asset?.asset_type) && (
@@ -1144,14 +1147,14 @@ const CollectionContent = ({ collectionId, userId }) => {
                                     </>
                                   )}
                                   {ShowOptions === nft.id && (
-                                    <div className='z-10 w-40 md:w-48 bg-white   rounded-md  absolute right-0 md:left-0 top-8 mb-9 block'>
-                                      <ul className='text-sm mb-2'>
+                                    <div className='z-10 w-[115px]  bg-white   rounded-md  absolute right-0  top-6 mb-9 block'>
+                                      <ul className='text-sm'>
                                         <li className='border'>
                                           <div
                                             onClick={(e) =>
                                               handleEditNFT(e, nft)
                                             }
-                                            className='py-3 pl-3 block hover:bg-gray-100 cursor-pointer'
+                                            className='py-2 pl-3 block hover:bg-gray-100 cursor-pointer'
                                           >
                                             Edit NFT
                                           </div>
@@ -1179,7 +1182,7 @@ const CollectionContent = ({ collectionId, userId }) => {
                                                     nft.supply
                                                   )
                                                 }
-                                                className='block p-4 hover:bg-gray-100 cursor-pointer'
+                                                className='block py-2 pl-3 hover:bg-gray-100 cursor-pointer'
                                               >
                                                 Sales Settings
                                               </div>

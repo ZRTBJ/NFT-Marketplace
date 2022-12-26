@@ -71,6 +71,7 @@ export default function Outline({
                 alt='coverPreview'
                 height={85}
                 width={85}
+                unoptimized
               />
             </div>
           )}
@@ -128,6 +129,7 @@ export default function Outline({
               alt='coverPreview'
               width={108}
               height={108}
+              unoptimized
             />
           )}
         </div>
@@ -163,6 +165,7 @@ export default function Outline({
                         src={image.path}
                         width={158}
                         height={158}
+                        unoptimized
                       />
                     </div>
                   ))}

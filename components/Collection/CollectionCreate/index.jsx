@@ -415,8 +415,8 @@ export default function CollectionCreate({ query }) {
         setProjectInfo(response);
         setProjectStatus(response?.status);
         setProjectCreated(true);
-        setProjectId(response.id);
-        if (response.type === 'right_attach') {
+        setProjectId(response?.id);
+        if (response?.type === 'right_attach') {
           setTokenTransferableDisabled(true);
           setIsMetaDataFreezed(true);
           setFreezeMetadataDisabled(true);
@@ -426,7 +426,7 @@ export default function CollectionCreate({ query }) {
           setShowWebLinks(false);
         }
 
-        if (response.status === 'published') {
+        if (response?.status === 'published') {
           setProjectNameDisabled(true);
           setDaoSymbolDisable(true);
           setFreezeMetadataDisabled(true);
@@ -436,7 +436,7 @@ export default function CollectionCreate({ query }) {
           setDisableNetwork(true);
           setCollectionPublished(true);
         }
-        if (!response.is_owner) {
+        if (!response?.is_owner) {
           setNotOwner(true);
         }
       } else {

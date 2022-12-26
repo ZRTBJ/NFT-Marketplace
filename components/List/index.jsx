@@ -223,7 +223,7 @@ function List({ query }) {
             >
               <span className='hidden md:block'> Sort Of</span>
               <i className='fa-solid fa-angle-down hidden md:block'></i>
-              <image src={Sort} alt='sort' className='block md:hidden' />
+              <Image src={Sort} alt='sort' className='block md:hidden' />
             </button>
 
             <ul

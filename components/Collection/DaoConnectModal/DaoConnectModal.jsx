@@ -124,7 +124,7 @@ export default function DaoConnectModal({
     <>
       {step === 1 && (
         <Modal
-          width={400}
+          width={450}
           show={show}
           handleClose={() => handleClose(false)}
           showCloseIcon={true}
@@ -138,10 +138,10 @@ export default function DaoConnectModal({
               alt='dao connect svg'
               className='max-w-[200px] max-h-[200px] rounded block mx-auto mb-2'
             />
-            <h3 className='text-center text-txtblack mb-3 !text-[18px]'>
+            <h3 className='text-center text-txtblack mb-4 !text-[22px]'>
               Connect Your Dao
             </h3>
-            <p className='text-sm break-normal px-4 mb-2'>
+            <p className='text-sm break-normal px-4 mb-6 md:max-w-[400px] text-center mx-auto'>
               Connect your Collection with Existing DAO or create the new one.
               its easy with only few steps.
             </p>
@@ -182,7 +182,7 @@ export default function DaoConnectModal({
                   onMenuScrollToBottom={() => scrolledBottom()}
                 />
               )}
-              <p className='text-[14px] mb-4'>
+              <p className='text-[14px] mt-2 mb-6'>
                 Don't have DAO?{' '}
                 <Link className='text-primary-900' href='/dao/create'>
                   {' '}
@@ -192,7 +192,7 @@ export default function DaoConnectModal({
               <button
                 onClick={() => connectDao()}
                 disabled={!selectedOption || daoConnecting}
-                className={`block mx-auto w-[200px]  ${
+                className={`block mx-auto w-full mt-4 ${
                   !selectedOption
                     ? 'bg-color-asss-3 py-2 text-white rounded'
                     : 'contained-button'

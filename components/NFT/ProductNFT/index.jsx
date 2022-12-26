@@ -13,6 +13,7 @@ import {
   getNftDetails,
   saveProductNFT,
   updateProductNFT,
+  deleteDraftNFT,
 } from 'services/nft/nftService';
 import { getNotificationData } from 'redux/notification';
 import SuccessModal from 'components/Modals/SuccessModal';
@@ -28,7 +29,7 @@ import Image from 'next/image';
 import Select from 'react-select';
 import { uniqBy } from 'lodash';
 import { NETWORKS } from 'config/networks';
-
+import ConfirmationModal from 'components/Modals/ConfirmationModal';
 export default function ProductNFT({ query }) {
   const audioRef = useRef();
   const dispatch = useDispatch();
@@ -74,6 +75,8 @@ export default function ProductNFT({ query }) {
 
   const [collection, setCollection] = useState({});
   const [options, setOptions] = useState([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDeleteSuccessModal, setShowDeleteSuccessModal] = useState(false);
 
   const {
     register,
@@ -321,7 +324,7 @@ export default function ProductNFT({ query }) {
     setIsLoading(false);
     setShowConfirmation(false);
     setShowSteps(false);
-    setErrorTitle('Create Product NFT Failed');
+    setErrorTitle('Saving Product NFT Failed');
     setErrorMessage(msg);
     setShowSuccessModal(false);
     setShowErrorModal(true);
@@ -451,9 +454,7 @@ export default function ProductNFT({ query }) {
             setIsLoading(false);
             setShowSuccessModal(true);
           } else {
-            handleErrorState(
-              'Failed to update product NFT. Please try again later'
-            );
+            handleErrorState(res?.message);
           }
         })
         .catch((err) => {
@@ -562,6 +563,27 @@ export default function ProductNFT({ query }) {
       })
       .catch((err) => console.log(err));
   };
+  const deleteProductNFT = async () => {
+    setIsNftLoading(true);
+    await deleteDraftNFT(nft?.id)
+      .then((res) => {
+        if (res.code === 0) {
+          setShowDeleteModal(false);
+          setShowDeleteSuccessModal(true);
+          setIsNftLoading(false);
+        } else {
+          setShowErrorModal(true);
+          setErrorTitle('Opps, something went wrong');
+          setErrorMessage(res?.message);
+          setIsNftLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsNftLoading(false);
+      });
+  };
+
   useEffect(() => {
     if (query?.collectionId) {
       getCollectionDetail(query?.collectionId);
@@ -590,20 +612,37 @@ export default function ProductNFT({ query }) {
       <>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className='max-w-[600px] mx-4 md:mx-auto md:mt-[40px]'>
-            <div className='mb-[24px]'>
-              <h1 className='text-[28px] font-black mb-[6px]'>
-                {showConfirmation
-                  ? 'Preview '
-                  : updateMode
-                  ? 'Update '
-                  : 'Create '}
-                Product NFT
-              </h1>
-              <p className='text-[14px] text-textSubtle '>
-                {showConfirmation
-                  ? 'Preview the NFT'
-                  : 'Please fill this require data for setup your NFT'}
-              </p>
+            <div className='mb-[24px] flex flex-wrap items-center'>
+              <div>
+                <h1 className='text-[28px] font-black mb-[6px]'>
+                  {showConfirmation
+                    ? 'Preview '
+                    : updateMode
+                    ? 'Update '
+                    : 'Create '}
+                  Product NFT
+                </h1>
+                <p className='text-[14px] text-textSubtle '>
+                  {showConfirmation
+                    ? 'Preview the NFT'
+                    : 'Please fill this require data for setup your NFT'}
+                </p>
+              </div>
+              <div className='ml-auto'>
+                {updateMode &&
+                  nft?.is_owner &&
+                  collection?.status === 'draft' &&
+                  !showConfirmation && (
+                    <button
+                      type='button'
+                      onClick={() => setShowDeleteModal(true)}
+                      className='px-4 py-2 text-white bg-danger-1  rounded'
+                    >
+                      <i className='fa-solid fa-trash mr-1'></i>
+                      <span>Delete</span>
+                    </button>
+                  )}
+              </div>
             </div>
             <div>
               <div className='bg-white mb-6 rounded-[12px]  border border-divider  p-4'>
@@ -1080,6 +1119,24 @@ export default function ProductNFT({ query }) {
             sizeUploaded={uploadingSize}
             uploadedPercent={uploadedPercent}
             mode={updateMode ? 'update' : 'create'}
+          />
+        )}
+        {showDeleteModal && (
+          <ConfirmationModal
+            show={showDeleteModal}
+            handleClose={() => setShowDeleteModal(false)}
+            handleApply={deleteProductNFT}
+            message='Are you sure to delete this NFT?'
+          />
+        )}
+        {showDeleteSuccessModal && (
+          <SuccessModal
+            message={`You have successfully deleted the NFT!`}
+            subMessage=''
+            buttonText='Close'
+            redirection={`/collection/${collectionId}`}
+            show={showDeleteSuccessModal}
+            handleClose={() => setShowDeleteSuccessModal(false)}
           />
         )}
       </>

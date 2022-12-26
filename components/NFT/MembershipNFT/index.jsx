@@ -12,6 +12,7 @@ import {
   getassetDetails,
   getNftDetails,
   updateMembershipNFT,
+  deleteDraftNFT,
 } from 'services/nft/nftService';
 import {
   updateRoyaltySplitter,
@@ -21,14 +22,13 @@ import {
 import { ls_GetChainID } from 'util/ApplicationStorage';
 import Select from 'react-select';
 import { uniqBy } from 'lodash';
-
 import axios from 'axios';
 import Config from 'config/config';
 import { getNotificationData } from 'redux/notification';
 import ErrorModal from 'components/Modals/ErrorModal';
 import Image from 'next/image';
 import { NETWORKS } from 'config/networks';
-
+import ConfirmationModal from 'components/Modals/ConfirmationModal';
 export default function MembershipNFT({ query }) {
   const fileUploadNotification = useSelector((state) =>
     state?.notifications?.notificationData
@@ -98,10 +98,11 @@ export default function MembershipNFT({ query }) {
     order_by: 'newer',
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDeleteSuccessModal, setShowDeleteSuccessModal] = useState(false);
   function onTextfieldChange(index, fieldName, value) {
     setValue(index, fieldName, value);
   }
-
   const useDebounceCallback = (delay = 100, cleaning = true) => {
     // or: delayed debounce callback
     const ref = React.useRef();
@@ -126,19 +127,11 @@ export default function MembershipNFT({ query }) {
       setPayload(oldPayload);
     });
   }
-
-  useEffect(() => {
-    if (hasNextPageData) {
-      collectionFetch();
-    }
-  }, [payload]);
-
   function scrolledBottom() {
     let oldPayload = { ...payload };
     oldPayload.page = oldPayload.page + 1;
     setPayload(oldPayload);
   }
-
   async function collectionFetch() {
     setIsLoading(true);
     await getUserCollections(payload)
@@ -167,7 +160,6 @@ export default function MembershipNFT({ query }) {
         setIsLoading(false);
       });
   }
-
   function setValue(index, fieldName, value) {
     let oldNfts = [...nfts];
     oldNfts[index][fieldName] = value;
@@ -269,7 +261,6 @@ export default function MembershipNFT({ query }) {
     });
     setNfts(oldNfts);
   }
-
   function onBenefitChange(index, benefitIndex, value) {
     let oldNfts = nfts.map((nft, i) => {
       if (i === index) {
@@ -349,7 +340,6 @@ export default function MembershipNFT({ query }) {
       setIsListUpdate(false);
     }, 50);
   }
-
   async function collectionCreate() {
     let collection_id = '';
     let payload = {
@@ -367,7 +357,6 @@ export default function MembershipNFT({ query }) {
     });
     return collection_id;
   }
-
   const handleErrorState = (msg, jobId) => {
     if (typeof window !== 'undefined') {
       jobId && localStorage.removeItem(`${jobId}`);
@@ -410,7 +399,6 @@ export default function MembershipNFT({ query }) {
               if (index > -1) {
                 jobIds.splice(index, 1); // 2nd parameter means remove one item only
               }
-              console.log('remove', jobIds.length);
               const upload_number = localStorage.getItem('upload_number');
               const update_upload_number = parseInt(upload_number) - 1;
               localStorage.setItem('upload_number', update_upload_number);
@@ -450,7 +438,6 @@ export default function MembershipNFT({ query }) {
     };
     let formdata = new FormData();
     formdata.append('file', nft.assets.file);
-    console.log('2upload file');
     await axios({
       method: 'POST',
       url: Config.FILE_SERVER_URL,
@@ -689,7 +676,6 @@ export default function MembershipNFT({ query }) {
         setIsNftLoading(false);
       });
   }
-
   const getCollectionDetail = async (collectionId) => {
     let payload = {
       id: collectionId,
@@ -699,6 +685,37 @@ export default function MembershipNFT({ query }) {
         setCollection(resp.collection);
       }
     });
+  };
+  function removePropertyOfTier(nft, index) {
+    setIsListUpdate(true);
+    let tempProperty = [...nft.properties];
+    tempProperty = tempProperty.filter((prop) => prop !== tempProperty[index]);
+    let oldNfts = [...nfts];
+    oldNfts[indexOfNfts].properties = tempProperty;
+    setNfts(oldNfts);
+    setTimeout(() => {
+      setIsListUpdate(false);
+    }, 50);
+  }
+  const deleteMembershipNFT = async () => {
+    setIsNftLoading(true);
+    await deleteDraftNFT(nftItem?.id)
+      .then((res) => {
+        if (res.code === 0) {
+          setShowDeleteModal(false);
+          setShowDeleteSuccessModal(true);
+          setIsNftLoading(false);
+        } else {
+          setShowErrorModal(true);
+          setErrorTitle('Opps, something went wrong');
+          setErrorMessage(res.message);
+          setIsNftLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsNftLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -720,7 +737,6 @@ export default function MembershipNFT({ query }) {
       getCollectionDetail(query?.collection_id);
     }
   }, []);
-
   useEffect(() => {
     try {
       const nftId = query?.nftId;
@@ -729,18 +745,12 @@ export default function MembershipNFT({ query }) {
       }
     } catch {}
   }, []);
+  useEffect(() => {
+    if (hasNextPageData) {
+      collectionFetch();
+    }
+  }, [payload]);
 
-  function removePropertyOfTier(nft, index) {
-    setIsListUpdate(true);
-    let tempProperty = [...nft.properties];
-    tempProperty = tempProperty.filter((prop) => prop !== tempProperty[index]);
-    let oldNfts = [...nfts];
-    oldNfts[indexOfNfts].properties = tempProperty;
-    setNfts(oldNfts);
-    setTimeout(() => {
-      setIsListUpdate(false);
-    }, 50);
-  }
   let curCollection = collection_id
     ? options.find((item) => item.id === collection_id)
     : null;
@@ -748,24 +758,39 @@ export default function MembershipNFT({ query }) {
   let networkName = curCollection?.blockchain
     ? NETWORKS?.[Number(curCollection?.blockchain)]?.networkName
     : null;
-
   return (
     <>
       {isNftLoading && <div className='loading'></div>}
       <div className='max-w-[600px] md:mx-auto pt-6 md:pt-0 md:mt-[40px] mx-4  '>
-        <div className='mb-[24px]'>
-          <h1 className='text-[28px] font-black mb-[6px]'>
-            {isPreview
-              ? 'Preview Membership NFT'
-              : updateMode
-              ? 'Update Membership NFT'
-              : 'Create Membership NFT'}
-          </h1>
-          <p className='text-[14px] text-textSubtle '>
-            {isPreview
-              ? ' Preview the NFT'
-              : ' Please fill this require data for setup your NFT'}
-          </p>
+        <div className='mb-[24px] flex flex-wrap items-center'>
+          <div>
+            <h1 className='text-[28px] font-black mb-[6px]'>
+              {isPreview
+                ? 'Preview Membership NFT'
+                : updateMode
+                ? 'Update Membership NFT'
+                : 'Create Membership NFT'}
+            </h1>
+            <p className='text-[14px] text-textSubtle '>
+              {isPreview
+                ? ' Preview the NFT'
+                : ' Please fill this require data for setup your NFT'}
+            </p>
+          </div>
+          <div className='ml-auto'>
+            {updateMode &&
+              nftItem?.is_owner &&
+              !isPreview &&
+              collection?.status === 'draft' && (
+                <button
+                  onClick={() => setShowDeleteModal(true)}
+                  className='px-4 py-2 text-white bg-danger-1  rounded'
+                >
+                  <i className='fa-solid fa-trash mr-1'></i>
+                  <span>Delete</span>
+                </button>
+              )}
+          </div>
         </div>
         <div>
           {nfts.map((nft, index) => (
@@ -791,7 +816,7 @@ export default function MembershipNFT({ query }) {
                     className={`debounceInput mt-1 ${
                       isPreview ? ' !border-none bg-transparent' : ''
                     } `}
-                    disabled={isPreview || collection.status === 'published'}
+                    disabled={isPreview || collection?.status === 'published'}
                     value={nft.tierName}
                     onChange={(e) =>
                       onTextfieldChange(index, 'tierName', e.target.value)
@@ -913,7 +938,7 @@ export default function MembershipNFT({ query }) {
                     </div>
 
                     <input
-                      disabled={isPreview || collection.status === 'published'}
+                      disabled={isPreview || collection?.status === 'published'}
                       key={index}
                       id={`dropzone-file${index}`}
                       type='file'
@@ -944,7 +969,7 @@ export default function MembershipNFT({ query }) {
                     className={`debounceInput mt-1 ${
                       isPreview ? ' !border-none bg-transparent' : ''
                     } `}
-                    disabled={isPreview || collection.status === 'published'}
+                    disabled={isPreview || collection?.status === 'published'}
                     value={nft.externalLink}
                     onChange={(e) =>
                       onTextfieldChange(index, 'externalLink', e.target.value)
@@ -968,7 +993,7 @@ export default function MembershipNFT({ query }) {
                   className={`mt-1 p-4 ${
                     isPreview ? ' !border-none bg-transparent' : ''
                   } `}
-                  disabled={isPreview || collection.status === 'published'}
+                  disabled={isPreview || collection?.status === 'published'}
                 ></textarea>
               </div>
               {typeof window !== 'undefined' && (
@@ -1077,7 +1102,7 @@ export default function MembershipNFT({ query }) {
                       Add NFT properties
                     </small>
                   </div>
-                  {collection.status !== 'published' && (
+                  {collection?.status !== 'published' && (
                     <>
                       {!isPreview && (
                         <i
@@ -1096,7 +1121,7 @@ export default function MembershipNFT({ query }) {
                       Defined properties on your NFT
                     </small>
                   </div>
-                  {isPreview || collection.status === 'published' ? (
+                  {isPreview || collection?.status === 'published' ? (
                     <p className='text-[14px] text-textSubtle'>
                       {nft.sensitiveContent.toString().toLocaleUpperCase()}
                     </p>
@@ -1153,7 +1178,7 @@ export default function MembershipNFT({ query }) {
                                 disabled={true}
                               />
 
-                              {collection.status !== 'published' && (
+                              {collection?.status !== 'published' && (
                                 <>
                                   {!isPreview && (
                                     <i
@@ -1185,7 +1210,7 @@ export default function MembershipNFT({ query }) {
                     className={`debounceInput mt-1 ${
                       isPreview ? ' !border-none bg-transparent' : ''
                     } `}
-                    disabled={isPreview || collection.status === 'published'}
+                    disabled={isPreview || collection?.status === 'published'}
                     value={nft.supply}
                     type='number'
                     onChange={(e) =>
@@ -1346,6 +1371,24 @@ export default function MembershipNFT({ query }) {
             </div>
           </div>
         </Modal>
+      )}
+      {showDeleteModal && (
+        <ConfirmationModal
+          show={showDeleteModal}
+          handleClose={() => setShowDeleteModal(false)}
+          handleApply={deleteMembershipNFT}
+          message='Are you sure to delete this NFT?'
+        />
+      )}
+      {showDeleteSuccessModal && (
+        <SuccessModal
+          message={`You have successfully deleted the NFT!`}
+          subMessage=''
+          buttonText='Close'
+          redirection={`/collection/${collection_id}`}
+          show={showDeleteSuccessModal}
+          handleClose={() => setShowDeleteSuccessModal(false)}
+        />
       )}
     </>
   );

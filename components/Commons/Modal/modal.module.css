@@ -32,7 +32,7 @@
 }
 @media (max-width: 767px) {
   .modalMain {
-    max-height: 60%;
+    max-height: 95%;
   }
 }
 @media (min-width: 767px) {
