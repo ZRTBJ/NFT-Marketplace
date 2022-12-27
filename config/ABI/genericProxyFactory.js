@@ -91,21 +91,6 @@ const abi = [
                     type: 'string',
                   },
                   {
-                    internalType: 'bool',
-                    name: 'metadataUpdatable',
-                    type: 'bool',
-                  },
-                  {
-                    internalType: 'bool',
-                    name: 'tokensTransferable',
-                    type: 'bool',
-                  },
-                  {
-                    internalType: 'bool',
-                    name: 'isRoyaltiesEnabled',
-                    type: 'bool',
-                  },
-                  {
                     internalType: 'uint256',
                     name: 'royaltiesBps',
                     type: 'uint256',
@@ -117,12 +102,17 @@ const abi = [
                   },
                   {
                     internalType: 'address',
-                    name: 'creatorDAO',
+                    name: 'decirContract',
                     type: 'address',
                   },
                   {
                     internalType: 'uint256',
                     name: 'maxSupply',
+                    type: 'uint256',
+                  },
+                  {
+                    internalType: 'uint256',
+                    name: 'floorPrice',
                     type: 'uint256',
                   },
                 ],
@@ -274,21 +264,6 @@ const abi = [
                     type: 'string',
                   },
                   {
-                    internalType: 'bool',
-                    name: 'metadataUpdatable',
-                    type: 'bool',
-                  },
-                  {
-                    internalType: 'bool',
-                    name: 'tokensTransferable',
-                    type: 'bool',
-                  },
-                  {
-                    internalType: 'bool',
-                    name: 'isRoyaltiesEnabled',
-                    type: 'bool',
-                  },
-                  {
                     internalType: 'uint256',
                     name: 'royaltiesBps',
                     type: 'uint256',
@@ -300,12 +275,17 @@ const abi = [
                   },
                   {
                     internalType: 'address',
-                    name: 'creatorDAO',
+                    name: 'decirContract',
                     type: 'address',
                   },
                   {
                     internalType: 'uint256',
                     name: 'maxSupply',
+                    type: 'uint256',
+                  },
+                  {
+                    internalType: 'uint256',
+                    name: 'floorPrice',
                     type: 'uint256',
                   },
                 ],
@@ -370,7 +350,13 @@ const abi = [
       },
     ],
     name: 'createRoyaltyProxy',
-    outputs: [],
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
     stateMutability: 'nonpayable',
     type: 'function',
   },
