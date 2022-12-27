@@ -119,6 +119,7 @@ const CollectionContent = ({ collectionId, userId }) => {
     showPublishRoyaltySpliterConfirmModal,
     setShowPublishRoyaltySpliterConfirmModal,
   ] = useState();
+  const [isSalesPrice, setIsSalesPrice] = useState(false);
   const [
     showPublishRoyaltySpliterErrorModal,
     setShowPublishRoyaltySpliterErrorModal,
@@ -129,7 +130,6 @@ const CollectionContent = ({ collectionId, userId }) => {
   );
 
   const hanldeUpdatePublishStatus = (status) => {
-    console.log(status);
     if (status === 'success') {
       if (Collection.royalty_splitter.status !== 'published') {
         setCollection({
@@ -142,7 +142,6 @@ const CollectionContent = ({ collectionId, userId }) => {
       }
     }
   };
-
   const {
     isLoading: isPublishingRoyaltySplitter,
     status: publishRoyaltySplitterStatus,
@@ -456,7 +455,16 @@ const CollectionContent = ({ collectionId, userId }) => {
   const handlePublishModal = async () => {
     let networkId = await getCurrentNetworkId();
     if (Number(collectionNetwork) === networkId) {
-      setShowPublishModal(true);
+      if (Collection?.type === 'product') {
+        if (salesSetupInfo?.price) {
+          setShowPublishModal(true);
+          setIsSalesPrice(false);
+        } else {
+          setIsSalesPrice(true);
+        }
+      } else {
+        setShowPublishModal(true);
+      }
     } else {
       setShowNetworkHandler(true);
     }
@@ -506,7 +514,7 @@ const CollectionContent = ({ collectionId, userId }) => {
         });
     }
   };
-  console.log(salesSetupInfo);
+  console.log(Collection);
   let isSupplyOver = Collection?.total_supply <= NFTs?.length;
   return (
     <>
@@ -564,6 +572,16 @@ const CollectionContent = ({ collectionId, userId }) => {
               setSetSalesError(false);
             }}
             show={setSalesError}
+          />
+        )}
+        {isSalesPrice && (
+          <ErrorModal
+            title={'Please set the sales price to publish the collection!'}
+            // message={`${showRoyalityErrorMessage}`}
+            handleClose={() => {
+              setIsSalesPrice(false);
+            }}
+            show={isSalesPrice}
           />
         )}
         {AutoAssign && (
@@ -1063,7 +1081,7 @@ const CollectionContent = ({ collectionId, userId }) => {
           </div>
         </section>
         <section>
-          {Collection?.is_owner && Collection.status !== 'published' ? (
+          {Collection?.is_owner ? (
             <div
               onClick={
                 Collection.type === 'product' && isSupplyOver

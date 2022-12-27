@@ -758,6 +758,8 @@ export default function MembershipNFT({ query }) {
   let networkName = curCollection?.blockchain
     ? NETWORKS?.[Number(curCollection?.blockchain)]?.networkName
     : null;
+
+  console.log(collection_id, options);
   return (
     <>
       {isNftLoading && <div className='loading'></div>}
@@ -816,7 +818,7 @@ export default function MembershipNFT({ query }) {
                     className={`debounceInput mt-1 ${
                       isPreview ? ' !border-none bg-transparent' : ''
                     } `}
-                    disabled={isPreview || collection?.status === 'published'}
+                    disabled={isPreview}
                     value={nft.tierName}
                     onChange={(e) =>
                       onTextfieldChange(index, 'tierName', e.target.value)
@@ -938,7 +940,7 @@ export default function MembershipNFT({ query }) {
                     </div>
 
                     <input
-                      disabled={isPreview || collection?.status === 'published'}
+                      disabled={isPreview}
                       key={index}
                       id={`dropzone-file${index}`}
                       type='file'
@@ -969,7 +971,7 @@ export default function MembershipNFT({ query }) {
                     className={`debounceInput mt-1 ${
                       isPreview ? ' !border-none bg-transparent' : ''
                     } `}
-                    disabled={isPreview || collection?.status === 'published'}
+                    disabled={isPreview}
                     value={nft.externalLink}
                     onChange={(e) =>
                       onTextfieldChange(index, 'externalLink', e.target.value)
@@ -993,7 +995,7 @@ export default function MembershipNFT({ query }) {
                   className={`mt-1 p-4 ${
                     isPreview ? ' !border-none bg-transparent' : ''
                   } `}
-                  disabled={isPreview || collection?.status === 'published'}
+                  disabled={isPreview}
                 ></textarea>
               </div>
               {typeof window !== 'undefined' && (
@@ -1102,16 +1104,14 @@ export default function MembershipNFT({ query }) {
                       Add NFT properties
                     </small>
                   </div>
-                  {collection?.status !== 'published' && (
-                    <>
-                      {!isPreview && (
-                        <i
-                          className='fa-regular fa-square-plus text-2xl text-primary-900 cursor-pointer'
-                          onClick={() => openPropertyModal(index)}
-                        ></i>
-                      )}
-                    </>
-                  )}
+                  <>
+                    {!isPreview && (
+                      <i
+                        className='fa-regular fa-square-plus text-2xl text-primary-900 cursor-pointer'
+                        onClick={() => openPropertyModal(index)}
+                      ></i>
+                    )}
+                  </>
                 </div>
                 <div className='flex py-3 border-b border-b-divider'>
                   <p className='text-txtblack text-[18px] font-black'>18+</p>
@@ -1121,7 +1121,7 @@ export default function MembershipNFT({ query }) {
                       Defined properties on your NFT
                     </small>
                   </div>
-                  {isPreview || collection?.status === 'published' ? (
+                  {isPreview ? (
                     <p className='text-[14px] text-textSubtle'>
                       {nft.sensitiveContent.toString().toLocaleUpperCase()}
                     </p>
@@ -1178,18 +1178,16 @@ export default function MembershipNFT({ query }) {
                                 disabled={true}
                               />
 
-                              {collection?.status !== 'published' && (
-                                <>
-                                  {!isPreview && (
-                                    <i
-                                      className='cursor-pointer fa-solid fa-trash text-danger-1/[0.7] ml-3'
-                                      onClick={() => {
-                                        removePropertyOfTier(nft, i);
-                                      }}
-                                    ></i>
-                                  )}
-                                </>
-                              )}
+                              <>
+                                {!isPreview && (
+                                  <i
+                                    className='cursor-pointer fa-solid fa-trash text-danger-1/[0.7] ml-3'
+                                    onClick={() => {
+                                      removePropertyOfTier(nft, i);
+                                    }}
+                                  ></i>
+                                )}
+                              </>
                             </div>
                           </div>
                         )}
@@ -1210,7 +1208,7 @@ export default function MembershipNFT({ query }) {
                     className={`debounceInput mt-1 ${
                       isPreview ? ' !border-none bg-transparent' : ''
                     } `}
-                    disabled={isPreview || collection?.status === 'published'}
+                    disabled={isPreview}
                     value={nft.supply}
                     type='number'
                     onChange={(e) =>

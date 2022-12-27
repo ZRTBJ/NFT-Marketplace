@@ -21,6 +21,7 @@ async function sendMetaTx(
     NETWORKS[Number(chainId)]?.masterMembershipCollection;
 
   let webhook = NETWORKS[Number(chainId)]?.webhook;
+
   const args = {
     isCollection: true,
     collection: {

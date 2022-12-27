@@ -69,11 +69,6 @@ const abi = [
                     type: 'address',
                   },
                   {
-                    internalType: 'bool',
-                    name: 'tokensBurnable',
-                    type: 'bool',
-                  },
-                  {
                     internalType: 'address',
                     name: 'masterCopy',
                     type: 'address',
@@ -98,11 +93,6 @@ const abi = [
                   {
                     internalType: 'address',
                     name: 'royaltyAddress',
-                    type: 'address',
-                  },
-                  {
-                    internalType: 'address',
-                    name: 'decirContract',
                     type: 'address',
                   },
                   {
@@ -242,11 +232,6 @@ const abi = [
                     type: 'address',
                   },
                   {
-                    internalType: 'bool',
-                    name: 'tokensBurnable',
-                    type: 'bool',
-                  },
-                  {
                     internalType: 'address',
                     name: 'masterCopy',
                     type: 'address',
@@ -271,11 +256,6 @@ const abi = [
                   {
                     internalType: 'address',
                     name: 'royaltyAddress',
-                    type: 'address',
-                  },
-                  {
-                    internalType: 'address',
-                    name: 'decirContract',
                     type: 'address',
                   },
                   {

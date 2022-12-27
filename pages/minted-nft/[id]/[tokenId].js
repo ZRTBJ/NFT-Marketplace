@@ -9,9 +9,9 @@ export async function getServerSideProps(context) {
 
   let output = await resp.json();
   let data = {
-    title: output?.lnft?.name,
-    description: output?.lnft?.description,
-    image: output?.lnft?.asset?.path,
+    title: output?.lnft?.name ? output.lnft.name : '',
+    description: output?.lnft?.description ? output.lnft.description : '',
+    image: output?.lnft?.asset?.path ? output.lnft.asset.path : '',
   };
   return { props: { query, data } };
 }

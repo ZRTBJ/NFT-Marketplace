@@ -4,20 +4,20 @@ export const address = {
   SafeProxyAddress: '0x76E2cFc1F5Fa8F6a5b3fC4c8F4788F0116861F9B',
 
   //Goerli Testnet
-  GenericProxyFactoryGoerli: '0xF26EC5A26622E9d3596130C58aa7014E7c318e93',
-  MinimalForwarderGoerli: '0x5782544b27210363F7fFA9b15aea3459179c246c',
+  GenericProxyFactoryGoerli: '0x592943a944E3A31139DB862dA0B330B29cbcEf5a',
+  MinimalForwarderGoerli: '0xc6D51Bb5D032283F65b19110e6aD0D331CA247F8',
   CreatorDAOMasterCopy: '0xc6D51Bb5D032283F65b19110e6aD0D331CA247F8',
-  CreateCollectionMasterCopy: '0xEB2713b3b6c535569579737f9B9Dfe6D8B2BEA5A',
+  CreateCollectionMasterCopy: '0xF91F2bDd7F8F3B672b715234DF169E3F5D52144A',
   CreateMembershipCollectionMasterCopy:
     '0xc4d4F5d5fA24D450f67D18d7695a9Ed80eaEdc7f',
   RoyaltySplitterMasterCopy: '0x1abe29fafa6670C39a88f7B21Bb30a897444Dabd',
 
   //Mumbai Testnet
-  GenericProxyFactoryMumbai: '0x644eBEaA348Ad1eaddC76539e806997b9A35522c',
+  GenericProxyFactoryMumbai: '0x9a966804194b487cE8b384AaaAf9Ba0cC6BcA00b',
   MinimalForwarderMumbai: '0x4565BbCA3b265C42Fc547B15a81CADB2159Ae96D',
   CreatorDAOMasterCopyMumbai: '0x4D9a154BF176F4c228B89D3Db38603df07eBA761',
   CreateCollectionMasterCopyMumbai:
-    '0x919Fb1664AA3CBe9eFF8e397CeF9F61616C9194D',
+    '0x20A2E93afa2ed3a0559a768eF17Aea047448cF4B',
   CreateMembershipCollectionMasterCopyMumbai:
     '0xD0f273Ec00372F5e14713F6Ae8206023011647B6',
   RoyaltySplitterMasterCopyMumbai: '0xE885Ab335E518c747D33Aa692fA64F307BaB2908',
