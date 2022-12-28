@@ -5,7 +5,7 @@ export const address = {
 
   //Goerli Testnet
   GenericProxyFactoryGoerli: '0x592943a944E3A31139DB862dA0B330B29cbcEf5a',
-  MinimalForwarderGoerli: '0xc6D51Bb5D032283F65b19110e6aD0D331CA247F8',
+  MinimalForwarderGoerli: '0x5782544b27210363F7fFA9b15aea3459179c246c',
   CreatorDAOMasterCopy: '0xc6D51Bb5D032283F65b19110e6aD0D331CA247F8',
   CreateCollectionMasterCopy: '0xF91F2bDd7F8F3B672b715234DF169E3F5D52144A',
   CreateMembershipCollectionMasterCopy:
