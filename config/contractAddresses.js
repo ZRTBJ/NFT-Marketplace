@@ -4,13 +4,13 @@ export const address = {
   SafeProxyAddress: '0x76E2cFc1F5Fa8F6a5b3fC4c8F4788F0116861F9B',
 
   //Goerli Testnet
-  GenericProxyFactoryGoerli: '0x592943a944E3A31139DB862dA0B330B29cbcEf5a',
+  GenericProxyFactoryGoerli: '0x50397b497B3C176b073787Ef58e5f3caD039F930',
   MinimalForwarderGoerli: '0x5782544b27210363F7fFA9b15aea3459179c246c',
   CreatorDAOMasterCopy: '0xc6D51Bb5D032283F65b19110e6aD0D331CA247F8',
-  CreateCollectionMasterCopy: '0xF91F2bDd7F8F3B672b715234DF169E3F5D52144A',
+  CreateCollectionMasterCopy: '0x8013D71979b497Bb0869a1ACf3Cf8c3A673c91a5',
   CreateMembershipCollectionMasterCopy:
-    '0xc4d4F5d5fA24D450f67D18d7695a9Ed80eaEdc7f',
-  RoyaltySplitterMasterCopy: '0x1abe29fafa6670C39a88f7B21Bb30a897444Dabd',
+    '0xaec5048F74e28aF30B43C2eBa8bECc791bC2cC67',
+  RoyaltySplitterMasterCopy: '0x28D4e196bB1C120F64340Cfcf9711f13D57FE7E2',
 
   //Mumbai Testnet
   GenericProxyFactoryMumbai: '0x9a966804194b487cE8b384AaaAf9Ba0cC6BcA00b',

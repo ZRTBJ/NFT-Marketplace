@@ -38,10 +38,11 @@ async function sendMetaTx(
         baseURI: config?.runtimeConfig?.baseURI,
         royaltiesBps: config?.runtimeConfig?.royaltiesBps,
         royaltyAddress: config?.runtimeConfig?.royaltiesAddress,
-        ...(type === 'product' && {
-          maxSupply: config?.runtimeConfig?.totalSupply,
-          floorPrice: ethers.utils.parseUnits(productPrice.toString(), 'ether'),
-        }),
+        maxSupply: type === 'product' ? config?.runtimeConfig?.totalSupply : 0,
+        floorPrice: ethers.utils.parseUnits(
+          type === 'product' ? productPrice.toString() : '0',
+          'ether'
+        ),
       },
     },
     forwarder: minimalForwarder,

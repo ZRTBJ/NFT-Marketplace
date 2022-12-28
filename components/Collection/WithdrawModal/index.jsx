@@ -3,10 +3,30 @@ import Eth from 'assets/images/network/eth.svg';
 import Polygon from 'assets/images/network/polygon.svg';
 import { NETWORKS } from 'config/networks';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { getExchangeRate } from 'services/collection/collectionService';
 
 const WithdrawModal = ({ handleClose, show, network, price }) => {
   const [address, setAddress] = useState('');
+  const [dollarValue, setDollarValue] = useState('');
+  const [value, setValue] = useState(0);
+  const { walletAddress } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    getExchangeRate().then((resp) => {
+      if (resp.code === 0) {
+        let rate = resp?.exchange_rate?.find(
+          (item) => item.coin_name === NETWORKS?.[Number(network)]?.value
+        );
+        if (value) {
+          let usd = rate?.rate * value;
+          setDollarValue(Number(usd));
+        }
+      }
+    });
+  }, [value]);
+
   return (
     <Modal show={show} handleClose={handleClose} width={537}>
       <div className='m-[26px]'>
@@ -57,16 +77,17 @@ const WithdrawModal = ({ handleClose, show, network, price }) => {
             <input
               id='price'
               name='price'
-              defaultValue={''}
+              value={value}
               step='0.000000001'
               className='rounded-[3px]'
+              onChange={(e) => setValue(e.target.value)}
               style={{ height: 42 }}
               type='number'
               placeholder='0'
             />
           </div>
           <div className='w-[18%] border-[1px] border-[#C7CEE6] min-h-[42px] rounded-[6px] flex items-center'>
-            <p className='text-[14px] ml-1'>$ 0</p>
+            <p className='text-[14px] ml-1 overflow-x-auto'>$ {dollarValue}</p>
           </div>
         </div>
         <div className='mt-4'>
@@ -79,10 +100,10 @@ const WithdrawModal = ({ handleClose, show, network, price }) => {
           <label className='text-[14px]'>Address</label>
           <input
             name='address'
-            values={address}
-            className='rounded-[3px] mt-1 border-[1px] border-[#C7CEE6] rounded-[6px] block w-full'
+            value={walletAddress ? walletAddress : ''}
+            className='rounded-[3px] pl-2 mt-1 border-[1px] border-[#C7CEE6] rounded-[6px] block w-full'
             style={{ height: 42 }}
-            onChange={(e) => setAddress(e.target.value)}
+            disabled
           />
         </div>
 

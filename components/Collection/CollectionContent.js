@@ -514,7 +514,7 @@ const CollectionContent = ({ collectionId, userId }) => {
         });
     }
   };
-  console.log(Collection);
+
   let isSupplyOver = Collection?.total_supply <= NFTs?.length;
   return (
     <>
