@@ -389,6 +389,16 @@ table > thead > tr > th {
     ),
     #ffffff;
 }
+
+.gray-linear-gradient-card-bg {
+  background: linear-gradient(
+      0deg,
+      rgba(18, 36, 120, 0.05),
+      rgba(18, 36, 120, 0.05)
+    ),
+    #ffffff;
+}
+
 /**
 * ======================================================
 * Rsuite Dropdown

@@ -94,7 +94,7 @@ export async function getCollections(
 export async function getUserCollections(payload) {
   return await client(
     'GET',
-    `/collection?list_type=user&page=${payload.page}&limit=${payload.limit}`
+    `/collection?list_type=user&page=${payload?.page}&limit=${payload?.limit}`
   );
 }
 
@@ -158,4 +158,7 @@ export async function getProductNFTCollectionSalesSetupInformation(
     `/product-nft/collection/${collectionId}/sale
 `
   );
+}
+export async function deleteDraftCollection(id) {
+  return await client('DELETE', `/collection/${id}`);
 }
