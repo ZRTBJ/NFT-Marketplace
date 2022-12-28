@@ -1222,9 +1222,9 @@ const CollectionContent = ({ collectionId, userId }) => {
                         height={210}
                       />
                       <p className='font-bold text-center'>
-                        You don't have any NFT's.
+                        You don't have any NFT.
                         {Collection?.status === 'draft'
-                          ? ` Start minting NFT's to display here`
+                          ? ` Start create NFT now`
                           : ``}
                       </p>
                     </div>
