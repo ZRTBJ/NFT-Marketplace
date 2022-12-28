@@ -1154,6 +1154,29 @@ const CollectionContent = ({ collectionId, userId }) => {
                     </button>
                   </li>
                 )}
+                {Collection?.is_owner && (
+                  <li
+                    className='mr-2'
+                    role='presentation'
+                    onClick={() => setSelectedTab(3)}
+                  >
+                    <button
+                      className={`inline-block p-4 text-lg rounded-t-lg ${
+                        selectedTab === 3
+                          ? 'border-b-2 border-primary-900 text-primary-900'
+                          : 'border-transparent text-textSubtle'
+                      } hover:text-primary-900`}
+                      id='nft-sale'
+                      data-tabs-target='#nft-sale'
+                      type='button'
+                      role='tab'
+                      aria-controls='nft-sale'
+                      aria-selected='false'
+                    >
+                      NFT Sale's
+                    </button>
+                  </li>
+                )}
               </ul>
             </div>
             <div id='myTabContent'>
@@ -1386,6 +1409,10 @@ const CollectionContent = ({ collectionId, userId }) => {
                       )}
                     </div>
                   </div>
+                </div>
+              )}
+              {selectedTab === 3 && (
+                <div className='mb-6'>
                   <div className='bg-white rounded-[12px] p-5 mt-6 shadow-main'>
                     <NFTSales items={nftSales} />
                   </div>

@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { NETWORKS } from 'config/networks';
 import ReactReadMoreReadLess from 'react-read-more-read-less';
 import Image from 'next/image';
-
+import { toast } from 'react-toastify';
 const InfoCard = ({
   coverImages,
   project,
@@ -21,12 +21,9 @@ const InfoCard = ({
 }) => {
   function copyToClipboard(text) {
     navigator.clipboard.writeText(text);
-    const copyEl = document.getElementById('copied-message');
-    copyEl.classList.toggle('hidden');
-    setTimeout(() => {
-      copyEl.classList.toggle('hidden');
-    }, 2000);
+    toast.success(`Copied Successfully`);
   }
+  function copyToClipboardTreasury(text) {}
   return (
     <div className='bg-[#122478]/[0.03]  rounded-xl mt-4 pt-4 px-4 md:py-8 md:px-6'>
       <div className='flex flex-col md:flex-row '>
@@ -60,9 +57,6 @@ const InfoCard = ({
                   disabled={!project?.contract_address}
                   onClick={() => copyToClipboard(project?.contract_address)}
                 ></i>
-                <span id='copied-message' className='hidden ml-2'>
-                  Copied !
-                </span>
               </p>
             </div>
           </div>
@@ -152,7 +146,7 @@ const InfoCard = ({
           </div>
           <div className='md:flex md:items-center pb-4 md:pb-0  md:ml-auto md:flex-wrap   md:mt-0'>
             {project?.project_status === 'published' ? (
-              <div className='bg-[#122478]/[0.05]    rounded-md py-4 px-4 relative w-full md:min-w-[260px]'>
+              <div className='bg-[#122478]/[0.05]    rounded-md py-4 px-4 relative w-full md:min-w-[280px]'>
                 <div className='flex'>
                   <p className=' text-textSubtle mt-1'>
                     Net Worth{' '}
@@ -169,6 +163,37 @@ const InfoCard = ({
                     </p>
                     <p className='text-sm  mt-0 text-textSubtle'>
                       (${newWorth?.balanceUSD?.toFixed(2)})
+                    </p>
+                  </div>
+                </div>
+                <div className='flex items-center mb-1 mt-2'>
+                  <p className=' text-textSubtle mt-1'>
+                    <a
+                      target='_blank'
+                      href={`${NETWORKS[project?.blockchain]?.gnosis}:${
+                        project?.treasury_wallet
+                      }/home`}
+                      rel='noreferrer'
+                    >
+                      DAO Treasury
+                    </a>
+                  </p>
+                  <div className='ml-auto'>
+                    <p className='text-textLight text-sm '>
+                      {project?.treasury_wallet
+                        ? walletAddressTruncate(project?.treasury_wallet)
+                        : 'Smart Contract not released'}
+                      <i
+                        className={`fa-solid fa-copy ml-2 ${
+                          project?.treasury_wallet
+                            ? 'cursor-pointer'
+                            : 'cursor-not-allowed'
+                        }`}
+                        disabled={!project?.treasury_wallet}
+                        onClick={() =>
+                          copyToClipboard(project?.treasury_wallet)
+                        }
+                      ></i>
                     </p>
                   </div>
                 </div>
