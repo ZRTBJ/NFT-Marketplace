@@ -1173,7 +1173,7 @@ const CollectionContent = ({ collectionId, userId }) => {
                       aria-controls='nft-sale'
                       aria-selected='false'
                     >
-                      NFT Sale's
+                      NFT Sales
                     </button>
                   </li>
                 )}
@@ -1181,7 +1181,7 @@ const CollectionContent = ({ collectionId, userId }) => {
             </div>
             <div id='myTabContent'>
               {selectedTab === 1 && (
-                <div className='mt-6'>
+                <div className='mt-6 mb-6 md:mb-[100px]'>
                   {NFTs?.length ? (
                     <div className='grid gap-6  grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'>
                       {NFTs.map((nft) => {
@@ -1332,7 +1332,7 @@ const CollectionContent = ({ collectionId, userId }) => {
                 </div>
               )}
               {selectedTab === 2 && (
-                <div className='mb-6'>
+                <div className='mb-6  mb-6 md:mb-[100px]'>
                   <div className='bg-white rounded-[12px] p-5 shadow-main'>
                     <div className='flex items-start md:items-center justify-between pb-7 border-b-[1px] mb-6 border-[#E3DEEA]'>
                       <h3 className='text-[18px] font-black'>Contributor</h3>
@@ -1412,7 +1412,7 @@ const CollectionContent = ({ collectionId, userId }) => {
                 </div>
               )}
               {selectedTab === 3 && (
-                <div className='mb-6'>
+                <div className='mb-6  mb-6 md:mb-[100px]'>
                   <div className='bg-white rounded-[12px] p-5 mt-6 shadow-main'>
                     <NFTSales items={nftSales} />
                   </div>

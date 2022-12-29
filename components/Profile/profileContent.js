@@ -5,7 +5,7 @@ import DefaultProfilePicture from 'assets/images/defaultProfile.svg';
 import DefaultProjectLogo from 'assets/images/profile/defaultProjectLogo.svg';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Autoplay } from 'swiper';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
@@ -46,7 +46,9 @@ import emptyStateRoyalty from 'assets/images/profile/emptyStateRoyalty.png';
 import curvVector from 'assets/images/profile/curv1.png';
 import Modal from 'components/Commons/Modal';
 import CollectionCard from 'components/Cards/CollectionCard';
+import { logout } from 'redux/auth';
 const Profile = ({ id }) => {
+  const dispatch = useDispatch();
   const provider = createProvider();
   SwiperCore.use([Autoplay]);
   const router = useRouter();
@@ -194,6 +196,9 @@ const Profile = ({ id }) => {
             }
             SetPagination(pageList);
           }
+        } else if (res?.code === 4032) {
+          dispatch(logout());
+          router.push('/');
         }
       })
       .catch(() => {
@@ -377,7 +382,9 @@ const Profile = ({ id }) => {
     setWalletAddress(user?.eao);
   }, [user]);
   useEffect(() => {
-    getUserRoyaltiesInfo(1);
+    if (id) {
+      getUserRoyaltiesInfo(1);
+    }
   }, []);
   useEffect(() => {
     getProjectList();
