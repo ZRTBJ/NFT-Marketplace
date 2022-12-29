@@ -6,12 +6,24 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { getExchangeRate } from 'services/collection/collectionService';
+import { createMintInstance } from 'config/ABI/mint-nft';
+import { createMembsrshipMintInstance } from 'config/ABI/mint-membershipNFT';
+import { createProvider } from 'util/smartcontract/provider';
+import { withdrawFund } from './publishWithdraw';
+import { withdrawMembershipFund } from './publishMembershipWithdraw';
 
-const WithdrawModal = ({ handleClose, show, network, price }) => {
-  const [address, setAddress] = useState('');
+const WithdrawModal = ({
+  handleClose,
+  show,
+  network,
+  price,
+  contractAddress,
+  type,
+}) => {
   const [dollarValue, setDollarValue] = useState('');
   const [value, setValue] = useState(0);
   const { walletAddress } = useSelector((state) => state.auth);
+  const provider = createProvider();
 
   useEffect(() => {
     getExchangeRate().then((resp) => {
@@ -26,6 +38,24 @@ const WithdrawModal = ({ handleClose, show, network, price }) => {
       }
     });
   }, [value]);
+
+  const handleWithDraw = async () => {
+    // handleClose();
+    try {
+      const withdrawContract = createMintInstance(contractAddress, provider);
+      const membershipwithdrawContract = createMembsrshipMintInstance(
+        contractAddress,
+        provider
+      );
+      const response =
+        type === 'membership'
+          ? await withdrawMembershipFund(membershipwithdrawContract, provider)
+          : await withdrawFund(withdrawContract, provider);
+      console.log(response);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <Modal show={show} handleClose={handleClose} width={537}>
@@ -108,7 +138,7 @@ const WithdrawModal = ({ handleClose, show, network, price }) => {
         </div>
 
         <button
-          onClick={handleClose}
+          onClick={handleWithDraw}
           className='contained-button font-satoshi-bold mt-8 w-full'
         >
           Wthdraw Funds

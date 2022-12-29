@@ -9,7 +9,7 @@ export const address = {
   CreatorDAOMasterCopy: '0xc6D51Bb5D032283F65b19110e6aD0D331CA247F8',
   CreateCollectionMasterCopy: '0x8013D71979b497Bb0869a1ACf3Cf8c3A673c91a5',
   CreateMembershipCollectionMasterCopy:
-    '0xaec5048F74e28aF30B43C2eBa8bECc791bC2cC67',
+    '0x4a76e74Fe3D833Fa1a9289DfBd4487B66Eb61E3B',
   RoyaltySplitterMasterCopy: '0x28D4e196bB1C120F64340Cfcf9711f13D57FE7E2',
 
   //Mumbai Testnet

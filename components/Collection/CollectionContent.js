@@ -533,6 +533,8 @@ const CollectionContent = ({ collectionId, userId }) => {
             handleClose={() => setShowWithdrawModal(false)}
             network={Collection?.blockchain}
             price={newWorth?.balance}
+            contractAddress={Collection?.contract_address}
+            type={Collection?.type}
           />
         )}
         {ShowPublishModal && (
