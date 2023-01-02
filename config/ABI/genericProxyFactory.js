@@ -117,6 +117,16 @@ const abi = [
           },
           {
             internalType: 'address',
+            name: 'decirTreasury',
+            type: 'address',
+          },
+          {
+            internalType: 'address',
+            name: 'discount',
+            type: 'address',
+          },
+          {
+            internalType: 'address',
             name: 'forwarder',
             type: 'address',
           },
@@ -280,6 +290,16 @@ const abi = [
           },
           {
             internalType: 'address',
+            name: 'decirTreasury',
+            type: 'address',
+          },
+          {
+            internalType: 'address',
+            name: 'discount',
+            type: 'address',
+          },
+          {
+            internalType: 'address',
             name: 'forwarder',
             type: 'address',
           },
@@ -316,6 +336,16 @@ const abi = [
           {
             internalType: 'address',
             name: 'creator',
+            type: 'address',
+          },
+          {
+            internalType: 'address',
+            name: 'decirContract',
+            type: 'address',
+          },
+          {
+            internalType: 'address',
+            name: 'discountContract',
             type: 'address',
           },
           {

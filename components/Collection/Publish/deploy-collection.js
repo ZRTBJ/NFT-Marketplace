@@ -3,6 +3,7 @@ import { createInstance } from 'config/ABI/forwarder';
 import { signMetaTxRequest } from 'util/smartcontract/signer';
 import { NETWORKS } from 'config/networks';
 import { ls_GetChainID } from 'util/ApplicationStorage';
+import { address } from 'config/contractAddresses';
 
 async function sendMetaTx(
   collection,
@@ -19,6 +20,8 @@ async function sendMetaTx(
   let masterCopyCollection = NETWORKS[chainId]?.masterCopyCollection;
   let masterMembershipCollection =
     NETWORKS[Number(chainId)]?.masterMembershipCollection;
+  let discount = NETWORKS[Number(chainId)]?.discount;
+  let treasury = NETWORKS[Number(chainId)]?.decirTreasury;
 
   let webhook = NETWORKS[Number(chainId)]?.webhook;
 
@@ -45,6 +48,8 @@ async function sendMetaTx(
         ),
       },
     },
+    decirTreasury: treasury,
+    discount: discount,
     forwarder: minimalForwarder,
   };
 

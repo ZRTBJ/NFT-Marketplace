@@ -127,7 +127,7 @@ const SalesPageModal = ({
       setSelectedCollection(collectionId);
     }
   }, [collectionId]);
-  console.log(collectionId, publishedCollections);
+
   useEffect(() => {
     if (nftId) {
       setSelectedTier(nftId);

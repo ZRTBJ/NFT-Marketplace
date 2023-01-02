@@ -162,3 +162,12 @@ export async function getProductNFTCollectionSalesSetupInformation(
 export async function deleteDraftCollection(id) {
   return await client('DELETE', `/collection/${id}`);
 }
+
+export async function setWithdrawalDetails(id, payload) {
+  return await client(
+    'POST',
+    `/collection/${id}/withdrawal`,
+    payload,
+    'formdata'
+  );
+}

@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { ethers } from "ethers";
-import * as collectionService from "services/collection/collectionService";
-import * as RoyaltySplitter from "config/ABI/genericProxyFactory";
-import useSendTransaction from "./useSendTransaction";
-import { NETWORKS } from "config/networks";
-import { ls_GetChainID } from "util/ApplicationStorage";
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { ethers } from 'ethers';
+import * as collectionService from 'services/collection/collectionService';
+import * as RoyaltySplitter from 'config/ABI/genericProxyFactory';
+import useSendTransaction from './useSendTransaction';
+import { NETWORKS } from 'config/networks';
+import { ls_GetChainID } from 'util/ApplicationStorage';
 
 export default function usePublishRoyaltySplitter(payload = {}) {
   const { collection, splitters, onUpdateStatus = () => {} } = payload;
@@ -44,7 +44,7 @@ export default function usePublishRoyaltySplitter(payload = {}) {
       return false;
     }
 
-    return collection.royalty_splitter.status !== "published";
+    return collection.royalty_splitter.status !== 'published';
   }, [collection]);
 
   const callPublishApi = async () => {
@@ -55,8 +55,8 @@ export default function usePublishRoyaltySplitter(payload = {}) {
   const updateOffChainData = async () => {
     const royaltySplitterId = collection.royalty_splitter.id;
     const payload = new FormData();
-    payload.append("transaction_hash", txReceipt.current.transactionHash);
-    payload.append("block_number", txReceipt.current.blockNumber);
+    payload.append('transaction_hash', txReceipt.current.transactionHash);
+    payload.append('block_number', txReceipt.current.blockNumber);
     return collectionService.publishRoyaltySplitter(royaltySplitterId, payload);
   };
 
@@ -65,6 +65,8 @@ export default function usePublishRoyaltySplitter(payload = {}) {
     let chainId = ls_GetChainID();
     let minimalForwarder = NETWORKS?.[chainId]?.forwarder;
     let masterRoyaltySplitter = NETWORKS?.[chainId]?.masterRoyaltySplitter;
+    let discount = NETWORKS[Number(chainId)]?.discount;
+    let treasury = NETWORKS[Number(chainId)]?.decirTreasury;
     const functionPayload = [
       {
         receivers: data?.config?.receivers?.map((spliter) => spliter.user_eoa),
@@ -74,18 +76,20 @@ export default function usePublishRoyaltySplitter(payload = {}) {
         collection: data?.config?.collection_address,
         masterCopy: masterRoyaltySplitter,
         creator,
+        decirContract: treasury,
+        discountContract: discount,
         forwarder: minimalForwarder,
       },
     ];
     return sendTransaction({
       contract: contract.current,
-      functionName: "createRoyaltyProxy",
+      functionName: 'createRoyaltyProxy',
       functionPayload,
     });
   };
 
   const cleanUp = () => {
-    contract.current.off("ProxyCreated", listener.current);
+    contract.current.off('ProxyCreated', listener.current);
   };
 
   const publish = async () => {
@@ -99,9 +103,9 @@ export default function usePublishRoyaltySplitter(payload = {}) {
       transaction.current = await sendOnChainTransaction(publishData);
       txReceipt.current = await waitTransactionResult(transaction.current);
       const publishResponse = await updateOffChainData();
-      if (publishResponse.function.status === "failed") {
+      if (publishResponse.function.status === 'failed') {
         throw new Error(
-          "Transaction failed. " + publishResponse.function.message
+          'Transaction failed. ' + publishResponse.function.message
         );
       }
 

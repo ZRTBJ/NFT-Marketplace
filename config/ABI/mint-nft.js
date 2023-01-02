@@ -8,16 +8,6 @@ const abi = [
         name: '_minimalForwarder',
         type: 'address',
       },
-      {
-        internalType: 'address',
-        name: '_platformDiscount',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: '_decirContract',
-        type: 'address',
-      },
     ],
     stateMutability: 'nonpayable',
     type: 'constructor',
@@ -151,19 +141,6 @@ const abi = [
       },
     ],
     name: 'PermanentURI',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'recipient',
-        type: 'address',
-      },
-    ],
-    name: 'PrimarySaleRecipientUpdated',
     type: 'event',
   },
   {
@@ -574,6 +551,11 @@ const abi = [
         type: 'string',
       },
       {
+        internalType: 'address',
+        name: '_creator',
+        type: 'address',
+      },
+      {
         internalType: 'string',
         name: '_tokenBaseURI',
         type: 'string',
@@ -597,6 +579,16 @@ const abi = [
         internalType: 'uint256',
         name: '_floorPrice',
         type: 'uint256',
+      },
+      {
+        internalType: 'address',
+        name: '_decirContract',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: '_platformDiscount',
+        type: 'address',
       },
     ],
     name: 'initialize',
@@ -727,19 +719,6 @@ const abi = [
     name: 'preSaleActive',
     outputs: [],
     stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'primarySaleRecipient',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -942,24 +921,6 @@ const abi = [
       },
     ],
     name: 'setDefaultRoyaltyInfo',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '_saleRecipient',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: '_sellPrice',
-        type: 'uint256',
-      },
-    ],
-    name: 'setPrimarySaleRecipient',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',

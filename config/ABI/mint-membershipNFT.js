@@ -8,16 +8,6 @@ const abi = [
         name: '_minimalForwarder',
         type: 'address',
       },
-      {
-        internalType: 'address',
-        name: '_platformDiscount',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: '_decirContract',
-        type: 'address',
-      },
     ],
     stateMutability: 'nonpayable',
     type: 'constructor',
@@ -524,6 +514,16 @@ const abi = [
       {
         internalType: 'address',
         name: '_royaltyReceiver',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: '_decirContract',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: '_platformDiscount',
         type: 'address',
       },
     ],

@@ -531,10 +531,12 @@ const CollectionContent = ({ collectionId, userId }) => {
           <WithdrawModal
             show={showWithdrawModal}
             handleClose={() => setShowWithdrawModal(false)}
+            id={Collection?.id}
             network={Collection?.blockchain}
             price={newWorth?.balance}
             contractAddress={Collection?.contract_address}
             type={Collection?.type}
+            getCollectionNewWorth={getCollectionNewWorth}
           />
         )}
         {ShowPublishModal && (
