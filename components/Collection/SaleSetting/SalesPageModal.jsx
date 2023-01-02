@@ -7,7 +7,7 @@ import { DateRangePicker } from 'rsuite';
 import { setSalesPage } from 'services/nft/nftService';
 import {
   getExchangeRate,
-  getCollections,
+  getUserCollections,
   getCollectionNFTs,
 } from 'services/collection/collectionService';
 import { setNFTPrice } from './deploy-nftPrice';
@@ -149,16 +149,17 @@ const SalesPageModal = ({
   }, [watch('price')]);
 
   useEffect(() => {
-    if (projectId)
-      getCollections('project', projectId).then((resp) => {
-        if (resp.code === 0) {
-          let collections = resp.data.filter(
-            (item) => item.status === 'published'
-          );
-          setPublishedCollections(collections);
-        }
-      });
-  }, [projectId]);
+    getUserCollections().then((resp) => {
+      if (resp.code === 0) {
+        let pubCollections = resp.data.filter(
+          (item) => item.status === 'published'
+        );
+        setPublishedCollections(
+          collectionType === 'membership' ? pubCollections : resp.data
+        );
+      }
+    });
+  }, []);
 
   useEffect(() => {
     if (selectedCollection) {
@@ -192,67 +193,77 @@ const SalesPageModal = ({
 
         setIsLoading(true);
         try {
-          const priceContract = createMintInstance(
-            address ? address : currentCollection.contract_address,
-            provider
-          );
-          const membershipPriceContract = createMembsrshipMintInstance(
-            address ? address : currentCollection.contract_address,
-            provider
-          );
+          if (type === 'membership') {
+            const priceContract = createMintInstance(
+              address ? address : currentCollection.contract_address,
+              provider
+            );
+            const membershipPriceContract = createMembsrshipMintInstance(
+              address ? address : currentCollection.contract_address,
+              provider
+            );
 
-          let tiers = [
-            {
-              tierId: nftId,
-              floorPrice: ethers.utils.parseEther(data['price'].toString()),
-              totalSupply: supply,
-            },
-          ];
+            let tiers = [
+              {
+                tierId: nftId,
+                floorPrice: ethers.utils.parseEther(data['price'].toString()),
+                totalSupply: supply,
+              },
+            ];
 
-          let allTiers = selectedTiers.map((value) => {
-            return {
-              tierId: value.id,
-              floorPrice: ethers.utils.parseEther(data['price'].toString()),
-              totalSupply: value.supply,
-            };
-          });
-          const response =
-            type === 'membership'
-              ? await setMemNFTPrice(
-                  membershipPriceContract,
-                  provider,
-                  nftId ? tiers : allTiers
-                )
-              : await setNFTPrice(priceContract, provider, data['price']);
-          if (response?.txReceipt) {
-            if (response.txReceipt?.status === 1) {
-              const request = new FormData();
-              request.append('price', data['price']);
-              request.append('start_time', payload.startTime);
-              request.append('end_time', payload.endTime);
-              request.append('currency', selectedCurrency.value);
-              request.append(
-                'transaction_hash',
-                response?.txReceipt?.transactionHash
-              );
-              if (allTiers.length && !nftId) {
-                allTiers.map((value) =>
-                  handleSalesAPICall(
-                    type,
-                    selectedCollection,
-                    request,
-                    value.tierId
+            let allTiers = selectedTiers.map((value) => {
+              return {
+                tierId: value.id,
+                floorPrice: ethers.utils.parseEther(data['price'].toString()),
+                totalSupply: value.supply,
+              };
+            });
+            const response =
+              type === 'membership'
+                ? await setMemNFTPrice(
+                    membershipPriceContract,
+                    provider,
+                    nftId ? tiers : allTiers
                   )
+                : await setNFTPrice(priceContract, provider, data['price']);
+            if (response?.txReceipt) {
+              if (response.txReceipt?.status === 1) {
+                const request = new FormData();
+                request.append('price', data['price']);
+                request.append('start_time', payload.startTime);
+                request.append('end_time', payload.endTime);
+                request.append('currency', selectedCurrency.value);
+                request.append(
+                  'transaction_hash',
+                  response?.txReceipt?.transactionHash
                 );
-              } else {
-                handleSalesAPICall(type, selectedCollection, request, nftId);
+                if (allTiers.length && !nftId) {
+                  allTiers.map((value) =>
+                    handleSalesAPICall(
+                      type,
+                      selectedCollection,
+                      request,
+                      value.tierId
+                    )
+                  );
+                } else {
+                  handleSalesAPICall(type, selectedCollection, request, nftId);
+                }
               }
+            } else {
+              setErrorMessage(response);
+              setIsLoading(false);
+              setIsSubmitted(false);
+              setShowErrorModal(true);
             }
           } else {
-            setErrorMessage(response);
-            setIsLoading(false);
-            setIsSubmitted(false);
-            setShowErrorModal(true);
+            const request = new FormData();
+            request.append('price', data['price']);
+            request.append('start_time', payload.startTime);
+            request.append('end_time', payload.endTime);
+            request.append('currency', selectedCurrency.value);
+            request.append('transaction_hash', '');
+            handleSalesAPICall(type, selectedCollection, request, nftId);
           }
         } catch (err) {
           if (err.message) {

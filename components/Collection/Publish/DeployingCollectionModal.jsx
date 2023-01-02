@@ -22,6 +22,7 @@ const DeployingCollectiontModal = ({
   collectionSymbol,
   collectionType,
   publishStep,
+  productPrice,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [statusStep, setStatusStep] = useState(1);
@@ -114,7 +115,8 @@ const DeployingCollectiontModal = ({
         collectionContract,
         provider,
         config,
-        collectionType
+        collectionType,
+        productPrice
       );
       let hash;
       if (response?.txReceipt) {

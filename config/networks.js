@@ -33,6 +33,8 @@ const TESTNET = {
     openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/goerli/`,
     viewContractAddressUrl: `https://goerli.etherscan.io/address/`,
     viewTxUrl: `https://goerli.etherscan.io/tx/`,
+    decirTreasury: address.decirTreasuryGoerli,
+    discount: address.discountGoerli,
   },
   80001: {
     networkName: 'Polygon Testnet Mumbai',
@@ -55,6 +57,8 @@ const TESTNET = {
     openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/mumbai/`,
     viewContractAddressUrl: `https://mumbai.polygonscan.com/address/`,
     viewTxUrl: `https://mumbai.polygonscan.com/tx/`,
+    decirTreasury: address.decirTreasuryMumbai,
+    discount: address.discountMumbai,
   },
 };
 
@@ -80,6 +84,8 @@ const MAINNET = {
     openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/ethereum/`,
     viewContractAddressUrl: `https://etherscan.io/address/`,
     viewTxUrl: 'https://etherscan.io/tx/',
+    decirTreasury: address.decirTreasuryEthereum,
+    discount: address.discountEthereum,
   },
   137: {
     networkName: 'Polygon Mainnet',
@@ -102,6 +108,8 @@ const MAINNET = {
     openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/matic/`,
     viewContractAddressUrl: `https://polygonscan.com/address/`,
     viewTxUrl: 'https://polygonscan.com/tx/',
+    decirTreasury: address.decirTreasuryPolygon,
+    discount: address.discountPolygon,
   },
 };
 

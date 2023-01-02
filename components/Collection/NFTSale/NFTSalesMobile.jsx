@@ -1,7 +1,9 @@
 /* eslint-disable react/no-unescaped-entities */
 import manImg from 'assets/images/image-default.svg';
+import Eth from 'assets/images/network/eth.svg';
 import Polygon from 'assets/images/network/polygon.svg';
 import dayjs from 'dayjs';
+import Image from 'next/image';
 import { walletAddressTruncate } from 'util/WalletUtils';
 
 const NFTSalesMobile = ({ items }) => {
@@ -22,10 +24,12 @@ const NFTSalesMobile = ({ items }) => {
                     Items
                   </span>
                   <div className='flex items-center'>
-                    <img
+                    <Image
                       src={item?.nft_asset_path ? item.nft_asset_path : manImg}
                       alt='nft'
                       className='h-[33px] w-[33px]'
+                      height={33}
+                      width={33}
                     />{' '}
                     <span className='ml-2'>{item.nft_name}</span>
                   </div>
@@ -36,7 +40,13 @@ const NFTSalesMobile = ({ items }) => {
                   </span>
                   <div className='flex items-center'>
                     <span> {item.nft_price ? item.nft_price : '-'}</span>
-                    <img src={Polygon} alt='network' className='ml-2' />
+                    <Image
+                      src={item?.nft_currency === 'eth' ? Eth : Polygon}
+                      alt='network'
+                      width={20}
+                      height={20}
+                      className='ml-2'
+                    />
                   </div>
                 </div>
                 <div>

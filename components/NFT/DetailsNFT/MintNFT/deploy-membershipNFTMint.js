@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { ethers } from 'ethers';
 
 export async function createMembershipMintNFT(
   mintContract,
@@ -12,7 +12,6 @@ export async function createMembershipMintNFT(
   const userProvider = new ethers.providers.Web3Provider(window.ethereum);
 
   const signer = userProvider.getSigner();
-
   const from = await signer.getAddress();
   const contract = mintContract.connect(signer);
   const result = await contract.mintToCaller(from, url, tier, {

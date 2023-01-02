@@ -1,5 +1,5 @@
 import CollectionContent from 'components/Collection/CollectionContent';
-
+import { useSelector } from 'react-redux';
 export async function getServerSideProps(context) {
   const query = context.query;
   let resp = await fetch(
@@ -12,15 +12,23 @@ export async function getServerSideProps(context) {
     (img) => img['asset_purpose'] === 'logo'
   );
   let data = {
-    title: output?.collection?.name,
-    description: output?.collection?.description,
+    title: output?.collection?.name ? output.collection.name : '',
+    description: output?.collection?.description
+      ? output.collection.description
+      : '',
     image: image?.path ? image.path : '',
   };
   return { props: { query, data } };
 }
 
 const CollectionDetails = (query) => {
-  return <CollectionContent collectionId={query?.query?.collectionId} />;
+  const userinfo = useSelector((state) => state.user.userinfo);
+  return (
+    <CollectionContent
+      collectionId={query?.query?.collectionId}
+      userId={userinfo?.id}
+    />
+  );
 };
 
 export default CollectionDetails;

@@ -69,11 +69,6 @@ const abi = [
                     type: 'address',
                   },
                   {
-                    internalType: 'bool',
-                    name: 'tokensBurnable',
-                    type: 'bool',
-                  },
-                  {
                     internalType: 'address',
                     name: 'masterCopy',
                     type: 'address',
@@ -91,21 +86,6 @@ const abi = [
                     type: 'string',
                   },
                   {
-                    internalType: 'bool',
-                    name: 'metadataUpdatable',
-                    type: 'bool',
-                  },
-                  {
-                    internalType: 'bool',
-                    name: 'tokensTransferable',
-                    type: 'bool',
-                  },
-                  {
-                    internalType: 'bool',
-                    name: 'isRoyaltiesEnabled',
-                    type: 'bool',
-                  },
-                  {
                     internalType: 'uint256',
                     name: 'royaltiesBps',
                     type: 'uint256',
@@ -116,13 +96,13 @@ const abi = [
                     type: 'address',
                   },
                   {
-                    internalType: 'address',
-                    name: 'creatorDAO',
-                    type: 'address',
+                    internalType: 'uint256',
+                    name: 'maxSupply',
+                    type: 'uint256',
                   },
                   {
                     internalType: 'uint256',
-                    name: 'maxSupply',
+                    name: 'floorPrice',
                     type: 'uint256',
                   },
                 ],
@@ -134,6 +114,16 @@ const abi = [
             internalType: 'struct Config.CollectionConfiguration',
             name: 'collection',
             type: 'tuple',
+          },
+          {
+            internalType: 'address',
+            name: 'decirTreasury',
+            type: 'address',
+          },
+          {
+            internalType: 'address',
+            name: 'discount',
+            type: 'address',
           },
           {
             internalType: 'address',
@@ -252,11 +242,6 @@ const abi = [
                     type: 'address',
                   },
                   {
-                    internalType: 'bool',
-                    name: 'tokensBurnable',
-                    type: 'bool',
-                  },
-                  {
                     internalType: 'address',
                     name: 'masterCopy',
                     type: 'address',
@@ -274,21 +259,6 @@ const abi = [
                     type: 'string',
                   },
                   {
-                    internalType: 'bool',
-                    name: 'metadataUpdatable',
-                    type: 'bool',
-                  },
-                  {
-                    internalType: 'bool',
-                    name: 'tokensTransferable',
-                    type: 'bool',
-                  },
-                  {
-                    internalType: 'bool',
-                    name: 'isRoyaltiesEnabled',
-                    type: 'bool',
-                  },
-                  {
                     internalType: 'uint256',
                     name: 'royaltiesBps',
                     type: 'uint256',
@@ -299,13 +269,13 @@ const abi = [
                     type: 'address',
                   },
                   {
-                    internalType: 'address',
-                    name: 'creatorDAO',
-                    type: 'address',
+                    internalType: 'uint256',
+                    name: 'maxSupply',
+                    type: 'uint256',
                   },
                   {
                     internalType: 'uint256',
-                    name: 'maxSupply',
+                    name: 'floorPrice',
                     type: 'uint256',
                   },
                 ],
@@ -317,6 +287,16 @@ const abi = [
             internalType: 'struct Config.CollectionConfiguration',
             name: 'collection',
             type: 'tuple',
+          },
+          {
+            internalType: 'address',
+            name: 'decirTreasury',
+            type: 'address',
+          },
+          {
+            internalType: 'address',
+            name: 'discount',
+            type: 'address',
           },
           {
             internalType: 'address',
@@ -360,6 +340,16 @@ const abi = [
           },
           {
             internalType: 'address',
+            name: 'decirContract',
+            type: 'address',
+          },
+          {
+            internalType: 'address',
+            name: 'discountContract',
+            type: 'address',
+          },
+          {
+            internalType: 'address',
             name: 'forwarder',
             type: 'address',
           },
@@ -370,7 +360,13 @@ const abi = [
       },
     ],
     name: 'createRoyaltyProxy',
-    outputs: [],
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
     stateMutability: 'nonpayable',
     type: 'function',
   },

@@ -52,6 +52,7 @@ export default function Outline({
   royaltyPercentage,
   showSupplyData,
   supply,
+  network,
 }) {
   return (
     <>
@@ -70,6 +71,7 @@ export default function Outline({
                 alt='coverPreview'
                 height={85}
                 width={85}
+                unoptimized
               />
             </div>
           )}
@@ -127,6 +129,7 @@ export default function Outline({
               alt='coverPreview'
               width={108}
               height={108}
+              unoptimized
             />
           )}
         </div>
@@ -162,6 +165,7 @@ export default function Outline({
                         src={image.path}
                         width={158}
                         height={158}
+                        unoptimized
                       />
                     </div>
                   ))}
@@ -235,6 +239,17 @@ export default function Outline({
           </div>
           <p className='text-textSubtle'>
             {isTokenTransferable ? 'Yes' : 'No'}
+          </p>
+        </div>
+      )}
+      {network && (
+        <div className='mb-6'>
+          <div className='flex flex-wrap items-center'>
+            {/* <Tooltip></Tooltip> */}
+            <div className='txtblack text-[14px] mb-[6px]'>Blockchain</div>
+          </div>
+          <p className='text-textSubtle'>
+            {NETWORKS[Number(network)].networkName}
           </p>
         </div>
       )}

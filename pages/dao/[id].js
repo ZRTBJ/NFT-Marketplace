@@ -12,8 +12,8 @@ export async function getServerSideProps(context) {
     (img) => img['asset_purpose'] === 'cover'
   );
   let data = {
-    title: output?.project?.name,
-    description: output?.project?.overview,
+    title: output?.project?.name ? output.project.name : '',
+    description: output?.project?.overview ? output.project.overview : '',
     image: image?.path ? image.path : '',
   };
   return { props: { query, data } };

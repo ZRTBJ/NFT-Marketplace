@@ -45,11 +45,14 @@ import { walletAddressTruncate } from 'util/WalletUtils';
 import { getCurrentNetworkId } from 'util/MetaMask';
 import NetworkHandlerModal from 'components/Modals/NetworkHandlerModal';
 import tickSvg from 'assets/images/icons/tick.svg';
+import editImage from 'assets/images/edit-white.svg';
 import emptyStateCommon from 'assets/images/profile/emptyStateCommon.svg';
 import ReactReadMoreReadLess from 'react-read-more-read-less';
 import { getNftDetails } from 'services/nft/nftService';
 import PublishRoyaltyConfirmModal from './Publish/PublishRoyaltyConfirmModal';
 import Image from 'next/image';
+import DaoConnectModal from 'components/Collection/DaoConnectModal/DaoConnectModal';
+import WithdrawModal from './WithdrawModal';
 
 const TABLE_HEADERS = [
   { id: 0, label: 'Wallet Address' },
@@ -62,7 +65,7 @@ const TABLE_HEADERS = [
 ];
 const imageRegex = new RegExp('image');
 
-const CollectionContent = ({ collectionId }) => {
+const CollectionContent = ({ collectionId, userId }) => {
   const router = useRouter();
   const [Collection, setCollection] = useState();
   const [CoverImages, setCoverImages] = useState({});
@@ -101,18 +104,22 @@ const CollectionContent = ({ collectionId }) => {
   const [nftShareURL, setNFTShareURL] = useState('');
   const [membershipNFTId, setMembershipNFTId] = useState('');
   const [showNetworkHandler, setShowNetworkHandler] = useState(false);
+  const [collectionNetwork, setCollectionNetwork] = useState();
   const [collectionNotUpdatableModal, setCollectionNotUpdatableModal] =
     useState(false);
   const [setSalesError, setSetSalesError] = useState(false);
   const [salesSetupInfo, setSalesSetupInfo] = useState({});
   const [dataLoading, setDataLoading] = useState(false);
+  const [showDaoConnectModal, setShowDaoConnectModal] = useState(false);
   // Publish royalty splitter
   const [showPublishRoyaltySpliterModal, setShowPublishRoyaltySpliterModal] =
     useState(false);
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [
     showPublishRoyaltySpliterConfirmModal,
     setShowPublishRoyaltySpliterConfirmModal,
   ] = useState();
+  const [isSalesPrice, setIsSalesPrice] = useState(false);
   const [
     showPublishRoyaltySpliterErrorModal,
     setShowPublishRoyaltySpliterErrorModal,
@@ -123,7 +130,6 @@ const CollectionContent = ({ collectionId }) => {
   );
 
   const hanldeUpdatePublishStatus = (status) => {
-    console.log(status);
     if (status === 'success') {
       if (Collection.royalty_splitter.status !== 'published') {
         setCollection({
@@ -136,7 +142,6 @@ const CollectionContent = ({ collectionId }) => {
       }
     }
   };
-
   const {
     isLoading: isPublishingRoyaltySplitter,
     status: publishRoyaltySplitterStatus,
@@ -213,12 +218,15 @@ const CollectionContent = ({ collectionId }) => {
       .then((resp) => {
         if (resp.code === 0) {
           setProjectID(resp?.collection?.project_uid);
-          getProjectDetailsById({ id: resp?.collection?.project_uid }).then(
-            (resp) => {
-              setProjectNetwork(resp?.project?.blockchain);
-              setDaoInfo(resp?.project);
-            }
-          );
+          setCollectionNetwork(resp?.collection?.blockchain);
+          if (resp?.collection?.project_uid) {
+            getProjectDetailsById({ id: resp?.collection?.project_uid }).then(
+              (resp) => {
+                setProjectNetwork(resp?.project?.blockchain);
+                setDaoInfo(resp?.project);
+              }
+            );
+          }
           if (resp?.collection?.royalty_splitter?.id) {
             setRoyalitySpliterId(resp.collection.royalty_splitter.id);
             getSplittedContributors(resp.collection.royalty_splitter.id);
@@ -250,10 +258,8 @@ const CollectionContent = ({ collectionId }) => {
             } catch {}
             setLinks(webLinks);
           }
-          if (resp?.collection?.status === 'published') {
-            if (resp?.collection?.type === 'product') {
-              getSalesSetupInfo('product', resp?.collection?.id);
-            }
+          if (resp?.collection?.type === 'product') {
+            getSalesSetupInfo('product', resp?.collection?.id);
           }
         }
       })
@@ -308,13 +314,13 @@ const CollectionContent = ({ collectionId }) => {
         `${
           Collection?.type === 'product'
             ? `/nft/product/create?collectionId=${collectionId}&nftId=${nft.id}`
-            : `/nft/membership/create?dao_id=${Collection?.project_uid}&collection_id=${collectionId}&nftId=${nft.id}`
+            : `/nft/membership/create?collection_id=${collectionId}&nftId=${nft.id}`
         }`
       );
     } else if (Collection?.status === 'published') {
       if (Collection?.type === 'membership') {
         router.push(
-          `/nft/membership/create?dao_id=${Collection.project_uid}&collection_id=${collectionId}&nftId=${nft.id}`
+          `/nft/membership/create?collection_id=${collectionId}&nftId=${nft.id}`
         );
       } else if (Collection.type === 'product') {
         if (Collection?.updatable && !nft.freeze_metadata) {
@@ -337,16 +343,19 @@ const CollectionContent = ({ collectionId }) => {
   async function salesPageModal(e, type, id, supply) {
     e.stopPropagation();
     e.preventDefault();
-    if (Collection?.status === 'published') {
+    if (type === 'product') {
       setShowOptions(null);
-      if (type === 'membership') {
+      setShowSalesPageModal(true);
+    } else {
+      if (Collection?.status === 'published') {
+        setShowOptions(null);
         setNftId(id);
         setNftMemSupply(supply);
         await getSalesSetupInfo('membership', id);
+        setShowSalesPageModal(true);
+      } else {
+        setSetSalesError(true);
       }
-      setShowSalesPageModal(true);
-    } else {
-      setSetSalesError(true);
     }
   }
 
@@ -445,8 +454,17 @@ const CollectionContent = ({ collectionId }) => {
 
   const handlePublishModal = async () => {
     let networkId = await getCurrentNetworkId();
-    if (Number(projectNetwork) === networkId) {
-      setShowPublishModal(true);
+    if (Number(collectionNetwork) === networkId) {
+      if (Collection?.type === 'product') {
+        if (salesSetupInfo?.price) {
+          setShowPublishModal(true);
+          setIsSalesPrice(false);
+        } else {
+          setIsSalesPrice(true);
+        }
+      } else {
+        setShowPublishModal(true);
+      }
     } else {
       setShowNetworkHandler(true);
     }
@@ -454,7 +472,7 @@ const CollectionContent = ({ collectionId }) => {
 
   const handlePublishSpliter = async () => {
     let networkId = await getCurrentNetworkId();
-    if (Number(projectNetwork) === networkId) {
+    if (Number(collectionNetwork) === networkId) {
       let totalPercent = royalityMembers.reduce(
         (arr, val) => arr + val.royalty_percent,
         0
@@ -506,7 +524,19 @@ const CollectionContent = ({ collectionId }) => {
           <NetworkHandlerModal
             show={showNetworkHandler}
             handleClose={() => setShowNetworkHandler(false)}
-            projectNetwork={projectNetwork}
+            projectNetwork={collectionNetwork}
+          />
+        )}
+        {showWithdrawModal && (
+          <WithdrawModal
+            show={showWithdrawModal}
+            handleClose={() => setShowWithdrawModal(false)}
+            id={Collection?.id}
+            network={Collection?.blockchain}
+            price={newWorth?.balance}
+            contractAddress={Collection?.contract_address}
+            type={Collection?.type}
+            getCollectionNewWorth={getCollectionNewWorth}
           />
         )}
         {ShowPublishModal && (
@@ -546,6 +576,16 @@ const CollectionContent = ({ collectionId }) => {
               setSetSalesError(false);
             }}
             show={setSalesError}
+          />
+        )}
+        {isSalesPrice && (
+          <ErrorModal
+            title={'Please set the sales price to publish the collection!'}
+            // message={`${showRoyalityErrorMessage}`}
+            handleClose={() => {
+              setIsSalesPrice(false);
+            }}
+            show={isSalesPrice}
           />
         )}
         {AutoAssign && (
@@ -597,6 +637,7 @@ const CollectionContent = ({ collectionId }) => {
             collectionSymbol={Collection?.symbol}
             collectionType={Collection?.type}
             publishStep={publishStep}
+            productPrice={salesSetupInfo?.price}
           />
         )}
         {showTransferNFT && (
@@ -642,6 +683,16 @@ const CollectionContent = ({ collectionId }) => {
             show={collectionNotUpdatableModal}
           />
         )}
+        {showDaoConnectModal && (
+          <DaoConnectModal
+            show={showDaoConnectModal}
+            handleClose={() => setShowDaoConnectModal(false)}
+            userId={userId}
+            collection={Collection}
+            dao={daoInfo}
+            onSuccessFullyConnect={() => getCollectionDetail()}
+          />
+        )}
         <section className='mt-6'>
           <div className='row-span-2 col-span-2'>
             <Image
@@ -650,10 +701,13 @@ const CollectionContent = ({ collectionId }) => {
               alt=''
               height={260}
               width={100}
+              unoptimized
             />
           </div>
         </section>
-        <section className={`bg-[#fff] rounded-b-xl mt-4 p-6 shadow-main`}>
+        <section
+          className={`gray-linear-gradient-background rounded-b-xl mt-4 p-6 shadow-main`}
+        >
           <div className='flex flex-col md:flex-row'>
             <div className='md:w-2/3'>
               <div className='flex'>
@@ -663,6 +717,7 @@ const CollectionContent = ({ collectionId }) => {
                   alt='User profile'
                   width={98}
                   height={98}
+                  unoptimized
                 />
                 <div className='flex-1 min-w-0  px-4'>
                   <div className='flex items-center mb-1 md:mb-2'>
@@ -678,51 +733,60 @@ const CollectionContent = ({ collectionId }) => {
                     )}
                   </div>
 
-                  <p className='text-textLight text-sm'>
-                    {Collection?.contract_address
-                      ? walletAddressTruncate(Collection.contract_address)
-                      : 'Smart Contract not released'}
-                    <i
-                      className={`fa-solid fa-copy ml-2 ${
-                        Collection?.contract_address
-                          ? 'cursor-pointer'
-                          : 'cursor-not-allowed'
-                      }`}
-                      disabled={!Collection?.contract_address}
-                      onClick={() =>
-                        copyToClipboard(Collection?.contract_address)
-                      }
-                    ></i>
-                    <span id='copied-message' className='hidden ml-2'>
-                      Copied !
-                    </span>
-                  </p>
-                  <p className='my-2 text-textLight md:text-sm text:xs md:flex items-center'>
-                    Connected With :
-                    <Link
-                      className='md:ml-2 mt-1 md:mt-0 font-bold flex items-center !no-underline'
-                      href={`/dao/${daoInfo?.id}`}
-                    >
-                      <Image
-                        className='h-[24px] w-[24px] rounded-full mr-1'
-                        src={
-                          daoInfo?.assets?.length > 0
-                            ? daoInfo.assets.find(
-                                (img) => img['asset_purpose'] === 'cover'
-                              )
-                              ? daoInfo.assets.find(
-                                  (img) => img['asset_purpose'] === 'cover'
-                                ).path
-                              : defaultCover
-                            : defaultCover
-                        }
-                        width={24}
-                        height={24}
-                        alt='collection cover'
-                      />
-                      {daoInfo?.name}
-                    </Link>
-                  </p>
+                  {userId && Collection?.is_owner && (
+                    <>
+                      <div>
+                        {daoInfo?.id ? (
+                          <>
+                            <p className='my-2 text-textLight md:text-sm text:xs md:flex items-center'>
+                              Connected With :
+                              <Link
+                                className='md:ml-2 mt-1 mb-2 md:mb-0 md:mt-0 font-bold flex items-center !no-underline'
+                                href={`/dao/${daoInfo?.id}`}
+                              >
+                                <Image
+                                  className='h-[24px] w-[24px] rounded-full mr-1'
+                                  src={
+                                    daoInfo?.assets?.length > 0
+                                      ? daoInfo.assets.find(
+                                          (img) =>
+                                            img['asset_purpose'] === 'cover'
+                                        )
+                                        ? daoInfo.assets.find(
+                                            (img) =>
+                                              img['asset_purpose'] === 'cover'
+                                          ).path
+                                        : defaultCover
+                                      : defaultCover
+                                  }
+                                  width={24}
+                                  height={24}
+                                  alt='collection cover'
+                                />
+                                {daoInfo?.name}
+                              </Link>
+                              {Collection?.status === 'draft' && (
+                                <span
+                                  onClick={() => setShowDaoConnectModal(true)}
+                                  className='rounded cursor-pointer social-icon-button text-primary-900  md:ml-2 px-2'
+                                >
+                                  <i className='fa-solid  fa-pen-to-square '></i>
+                                </span>
+                              )}
+                            </p>
+                          </>
+                        ) : (
+                          <p
+                            className='bg-primary-900/[0.08] rounded mt-1 text-sm w-fit  text-primary-900 font-bold cursor-pointer p-2'
+                            onClick={() => setShowDaoConnectModal(true)}
+                          >
+                            <i class='fa-solid fa-link mr-2'></i>
+                            Connect DAO
+                          </p>
+                        )}
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -847,12 +911,20 @@ const CollectionContent = ({ collectionId }) => {
                     </a>
                   </div>
                 )}
+              {Collection?.is_owner && (
+                <Link
+                  href={`/collection/create/?id=${collectionId}`}
+                  className='ml-4'
+                >
+                  <Image src={editImage} alt='edit' />
+                </Link>
+              )}
             </div>
           </div>
 
           <div className='flex flex-col md:flex-row pt-5'>
             <div className='md:w-2/3'>
-              <h3>About</h3>
+              <h3>About The Collection</h3>
               <div className='text-textLight text-sm'>
                 {Collection?.description ? (
                   <div className='whitespace-pre-line text-textLight break-all text-sm'>
@@ -868,6 +940,35 @@ const CollectionContent = ({ collectionId }) => {
                   </div>
                 ) : (
                   'Please add description to show here'
+                )}
+              </div>
+              <div className='mt-6 flex items-center'>
+                {/* <a className='inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>
+                Sales Setting
+              </a> */}
+                {Collection?.type === 'product' && Collection?.is_owner && (
+                  <div
+                    onClick={(e) => salesPageModal(e, 'product')}
+                    className='outlined-button ml-0 mr-4 font-satoshi-bold cursor-pointer'
+                  >
+                    <span>Sales Setting</span>
+                  </div>
+                )}
+                {/* {Collection?.is_owner && (
+                  <Link
+                    href={`/collection/create/?id=${collectionId}`}
+                    className='outlined-button ml-4 font-satoshi-bold'
+                  >
+                    <span>Edit Collection</span>
+                  </Link>
+                )} */}
+                {Collection?.status !== 'published' && Collection?.is_owner && (
+                  <a
+                    onClick={handlePublishModal}
+                    className='contained-button font-satoshi-bold'
+                  >
+                    Publish
+                  </a>
                 )}
               </div>
               <div className='flex items-center mt-3'>
@@ -899,55 +1000,92 @@ const CollectionContent = ({ collectionId }) => {
             </div>
 
             <div className='flex items-start md:items-end flex-col mt-3 justify-center md:justify-end md:w-1/3  md:mt-0'>
-              <div className='bg-[#E8F5FB] ml-0 md:ml-3 rounded-md p-3 px-5 relative w-56'>
-                <i
-                  onClick={getCollectionNewWorth}
-                  className={`cursor-pointer fa-regular fa-arrows-rotate text-textSubtle text-sm  absolute right-2 top-3 ${
-                    balanceLoading ? 'fa-spin' : ''
-                  }'}`}
-                ></i>
-                <p className=' text-sm text-textSubtle mb-2'>Net Worth</p>
-                <h4 className='font-black text-[22px]'>
-                  {newWorth?.balance} {newWorth?.currency?.toUpperCase()}
-                </h4>
-                <p className='text-sm text-textSubtle mt-2'>
-                  $ {newWorth?.balanceUSD?.toFixed(2)}
-                </p>
-              </div>
-              <div className='mt-6 flex items-center'>
-                {/* <a className='inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>
-                Sales Setting
-              </a> */}
-                {Collection?.type === 'product' && Collection?.is_owner && (
-                  <div
-                    onClick={(e) => salesPageModal(e, 'product')}
-                    className='outlined-button ml-0 md:ml-4 font-satoshi-bold cursor-pointer'
-                  >
-                    <span>Sales Setting</span>
+              {/* <div className='gray-linear-gradient-card-bg  ml-0 md:ml-3 rounded-md p-3 px-5 relative w-56'>
+
+                <button
+                  onClick={() => setShowWithdrawModal(true)}
+                  className='mt-2 border-[1px] rounded-[4px] border-primary-900 py-1 px-2 bg-primary-900/[0.08] w-fit text-[12px] text-primary-900 font-bold'
+                >
+                  Withdraw Funds
+                </button>
+              </div> */}
+              <div className='gray-linear-gradient-card-bg  ml-0 md:ml-3 rounded-md p-3 px-5 relative w-[330px]'>
+                <div className='flex'>
+                  <p className=' text-textSubtle mt-1 text-[14px]'>
+                    Net Worth{' '}
+                    <i
+                      onClick={getCollectionNewWorth}
+                      className={`fa-regular fa-arrows-rotate text-textSubtle text-sm ${
+                        balanceLoading ? 'fa-spin' : ''
+                      } cursor-pointer`}
+                    ></i>
+                  </p>
+                  <div className='ml-auto'>
+                    <p className='pb-0 text-black font-black text-[16px] md:text-[20px] '>
+                      {newWorth?.balance} {newWorth?.currency?.toUpperCase()}
+                    </p>
+                    <p className='text-sm  mt-0 text-textSubtle'>
+                      (${newWorth?.balanceUSD?.toFixed(2)})
+                    </p>
                   </div>
-                )}
-                {Collection?.is_owner && (
-                  <Link
-                    href={`/collection/create/?id=${collectionId}`}
-                    className='outlined-button ml-4 font-satoshi-bold'
+                </div>
+                <div className='flex flex-col items-end'>
+                  <button
+                    onClick={() => setShowWithdrawModal(true)}
+                    className='mt-2 border-[1px] rounded-[4px] border-primary-900 py-1 px-2 bg-primary-900/[0.08] w-fit text-[12px] text-primary-900 font-bold'
                   >
-                    <span>Edit Collection</span>
-                  </Link>
-                )}
-                {Collection?.status !== 'published' && Collection?.is_owner && (
-                  <a
-                    onClick={handlePublishModal}
-                    className='contained-button ml-4 font-satoshi-bold'
-                  >
-                    Publish
-                  </a>
-                )}
+                    Withdraw Funds
+                  </button>
+                  <div className='text-[12px] text-textSubtle'>
+                    Powered by{' '}
+                    <a
+                      href='https://www.coingecko.com/'
+                      target='_blank'
+                      rel='noreferrer'
+                      className='text-primary-900'
+                    >
+                      CoinGecko
+                    </a>
+                  </div>
+                </div>
+                <div className='flex items-center justify-between'>
+                  <p className=' text-textSubtle mt-1 text-[14px]'>Items </p>
+                  <p className=' text-textSubtle mt-1 text-[14px] font-black text-black'>
+                    {NFTs?.length ? NFTs.length : 0}
+                  </p>
+                </div>
+                <div className='flex items-center justify-between'>
+                  <p className=' text-textSubtle mt-1 text-[14px]'>
+                    Contract Address{' '}
+                  </p>
+                  <p className=' text-textSubtle mt-1 text-[14px] font-black text-black'>
+                    {Collection?.contract_address
+                      ? walletAddressTruncate(Collection.contract_address)
+                      : 'Not released'}
+                    {Collection?.contract_address ? (
+                      <i
+                        className={`fa-solid fa-copy ml-2 ${
+                          Collection?.contract_address
+                            ? 'cursor-pointer'
+                            : 'cursor-not-allowed'
+                        }`}
+                        disabled={!Collection?.contract_address}
+                        onClick={() =>
+                          copyToClipboard(Collection?.contract_address)
+                        }
+                      ></i>
+                    ) : null}
+                    <span id='copied-message' className='hidden ml-2'>
+                      Copied !
+                    </span>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </section>
         <section>
-          {Collection?.is_owner && Collection.status !== 'published' ? (
+          {Collection?.is_owner ? (
             <div
               onClick={
                 Collection.type === 'product' && isSupplyOver
@@ -957,7 +1095,7 @@ const CollectionContent = ({ collectionId }) => {
                         `${
                           Collection?.type === 'product'
                             ? `/nft/product/create?collectionId=${collectionId}`
-                            : `/nft/membership/create?dao_id=${Collection.project_uid}&collection_id=${collectionId}`
+                            : `/nft/membership/create?collection_id=${collectionId}`
                         }`
                       )
               }
@@ -1020,18 +1158,41 @@ const CollectionContent = ({ collectionId }) => {
                     </button>
                   </li>
                 )}
+                {Collection?.is_owner && (
+                  <li
+                    className='mr-2'
+                    role='presentation'
+                    onClick={() => setSelectedTab(3)}
+                  >
+                    <button
+                      className={`inline-block p-4 text-lg rounded-t-lg ${
+                        selectedTab === 3
+                          ? 'border-b-2 border-primary-900 text-primary-900'
+                          : 'border-transparent text-textSubtle'
+                      } hover:text-primary-900`}
+                      id='nft-sale'
+                      data-tabs-target='#nft-sale'
+                      type='button'
+                      role='tab'
+                      aria-controls='nft-sale'
+                      aria-selected='false'
+                    >
+                      NFT Sales
+                    </button>
+                  </li>
+                )}
               </ul>
             </div>
             <div id='myTabContent'>
               {selectedTab === 1 && (
-                <div className='mt-6'>
+                <div className='mt-6 mb-6 md:mb-[100px]'>
                   {NFTs?.length ? (
                     <div className='grid gap-6  grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'>
                       {NFTs.map((nft) => {
                         return (
                           <div
                             key={nft?.id}
-                            className='min-h-auto md:min-h-[390px] rounded-xl  bg-white'
+                            className='min-h-auto md:min-h-[400px] rounded-xl  bg-white'
                           >
                             <Link href={`/nft/${nft?.nft_type}/${nft.id}`}>
                               {imageRegex.test(nft?.asset?.asset_type) && (
@@ -1087,14 +1248,14 @@ const CollectionContent = ({ collectionId }) => {
                                     </>
                                   )}
                                   {ShowOptions === nft.id && (
-                                    <div className='z-10 w-40 md:w-48 bg-white   rounded-md  absolute right-0 md:left-0 top-8 mb-6 block'>
-                                      <ul className='text-sm mb-0'>
+                                    <div className='z-10 w-[115px]  bg-white   rounded-md  absolute right-0  top-6 mb-9 block'>
+                                      <ul className='text-sm'>
                                         <li className='border'>
                                           <div
                                             onClick={(e) =>
                                               handleEditNFT(e, nft)
                                             }
-                                            className='py-3 pl-3 block hover:bg-gray-100 cursor-pointer'
+                                            className='py-2 pl-3 block hover:bg-gray-100 cursor-pointer'
                                           >
                                             Edit NFT
                                           </div>
@@ -1122,7 +1283,7 @@ const CollectionContent = ({ collectionId }) => {
                                                     nft.supply
                                                   )
                                                 }
-                                                className='block p-4 hover:bg-gray-100 cursor-pointer'
+                                                className='block py-2 pl-3 hover:bg-gray-100 cursor-pointer'
                                               >
                                                 Sales Settings
                                               </div>
@@ -1144,7 +1305,7 @@ const CollectionContent = ({ collectionId }) => {
                                   <Image
                                     className='ml-auto'
                                     src={nft.currency === 'eth' ? Eth : Polygon}
-                                    alt={projectNetwork}
+                                    alt={collectionNetwork}
                                     width={24}
                                     height={24}
                                   />
@@ -1165,9 +1326,9 @@ const CollectionContent = ({ collectionId }) => {
                         height={210}
                       />
                       <p className='font-bold text-center'>
-                        You don't have any NFT's.
+                        You don't have any NFT.
                         {Collection?.status === 'draft'
-                          ? ` Start minting NFT's to display here`
+                          ? ` Start create NFT now`
                           : ``}
                       </p>
                     </div>
@@ -1175,7 +1336,7 @@ const CollectionContent = ({ collectionId }) => {
                 </div>
               )}
               {selectedTab === 2 && (
-                <div className='mb-6'>
+                <div className='mb-6  mb-6 md:mb-[100px]'>
                   <div className='bg-white rounded-[12px] p-5 shadow-main'>
                     <div className='flex items-start md:items-center justify-between pb-7 border-b-[1px] mb-6 border-[#E3DEEA]'>
                       <h3 className='text-[18px] font-black'>Contributor</h3>
@@ -1252,6 +1413,10 @@ const CollectionContent = ({ collectionId }) => {
                       )}
                     </div>
                   </div>
+                </div>
+              )}
+              {selectedTab === 3 && (
+                <div className='mb-6  mb-6 md:mb-[100px]'>
                   <div className='bg-white rounded-[12px] p-5 mt-6 shadow-main'>
                     <NFTSales items={nftSales} />
                   </div>
@@ -1275,7 +1440,7 @@ const CollectionContent = ({ collectionId }) => {
               setShowSuccessModal(true);
             }}
             supply={nftMemSupply}
-            projectNetwork={projectNetwork}
+            projectNetwork={collectionNetwork}
             setNFTShareURL={setNFTShareURL}
             setMembershipNFTId={setMembershipNFTId}
             salesSetupInfo={salesSetupInfo}

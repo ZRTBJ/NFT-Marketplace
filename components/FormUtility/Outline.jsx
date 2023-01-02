@@ -110,6 +110,10 @@ export default function Outline({
   supplyDisable,
   isSupplyValid,
   handleSupplyValue,
+
+  //network
+  disableNetwork,
+  collectionNetwork,
 }) {
   const [projectCategoryList, setProjectCategoryList] = useState([]);
   useEffect(() => {
@@ -117,6 +121,8 @@ export default function Outline({
       setProjectCategoryList(e.categories);
     });
   }, []);
+
+  let networkName = NETWORKS?.[Number(collectionNetwork)]?.networkName;
   return (
     <>
       {/* Logo */}
@@ -604,6 +610,37 @@ export default function Outline({
               <div className="w-11 outline-none h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-900"></div>
             </label>
           )}
+        </div>
+      )}
+
+      {/*Network */}
+      {networkName && (
+        <div className='mb-6'>
+          <div className='flex flex-wrap items-center mb-4'>
+            <Tooltip message='This field will not be changeable after publishing on the blockchain.'></Tooltip>
+            <div className='txtblack text-[14px]'>Blockchain</div>
+          </div>
+          <div className='select-wrapper'>
+            <select
+              value={collectionNetwork}
+              onChange={onBlockchainCategoryChange}
+              disabled
+              className='h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3'
+            >
+              <option
+                value={blockchainCategory}
+                defaultValue
+                suppressHydrationWarning
+              >
+                {networkName}
+              </option>
+              {/* {blockchainCategoryList.map((e) => (
+            <option key={e.id} value={e.id}>
+              {e.name}
+            </option>
+          ))} */}
+            </select>
+          </div>
         </div>
       )}
 
