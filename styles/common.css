@@ -475,3 +475,8 @@ table > thead > tr > th {
   padding: 20px 30px;
   border-radius: 10px;
 }
+.rs-btn-primary {
+  background-color: #3498ff !important;
+  border: none !important;
+  color: #fff !important;
+}

@@ -515,7 +515,18 @@ const CollectionContent = ({ collectionId, userId }) => {
     }
   };
 
+  const handleWithdrawModel = async (e) => {
+    e.preventDefault();
+    let networkId = await getCurrentNetworkId();
+    if (Number(collectionNetwork) === networkId) {
+      setShowWithdrawModal(true);
+    } else {
+      setShowNetworkHandler(true);
+    }
+  };
+
   let isSupplyOver = Collection?.total_supply <= NFTs?.length;
+  console.log(newWorth?.balance);
   return (
     <>
       <div className='mx-4 md:mx-0'>
@@ -1030,12 +1041,15 @@ const CollectionContent = ({ collectionId, userId }) => {
                   </div>
                 </div>
                 <div className='flex flex-col items-end'>
-                  <button
-                    onClick={() => setShowWithdrawModal(true)}
-                    className='mt-2 border-[1px] rounded-[4px] border-primary-900 py-1 px-2 bg-primary-900/[0.08] w-fit text-[12px] text-primary-900 font-bold'
-                  >
-                    Withdraw Funds
-                  </button>
+                  {Collection?.is_owner && (
+                    <button
+                      onClick={handleWithdrawModel}
+                      disabled={newWorth?.balance === 0}
+                      className='mt-2 border-[1px] rounded-[4px] border-primary-900 py-1 px-2 bg-primary-900/[0.08] w-fit text-[12px] text-primary-900 font-bold'
+                    >
+                      Withdraw Funds
+                    </button>
+                  )}
                   <div className='text-[12px] text-textSubtle'>
                     Powered by{' '}
                     <a
