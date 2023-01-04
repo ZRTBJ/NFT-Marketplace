@@ -959,7 +959,7 @@ const CollectionContent = ({ collectionId, userId }) => {
                 {/* <a className='inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>
                 Sales Setting
               </a> */}
-                {Collection?.type === 'product' && Collection?.is_owner && (
+                {Collection?.type === 'product' && Collection?.is_owner && Collection?.status != 'published' && (
                   <div
                     onClick={
                       Collection?.status === 'published'
@@ -967,11 +967,6 @@ const CollectionContent = ({ collectionId, userId }) => {
                         : (e) => salesPageModal(e, 'product')
                     }
                     className='outlined-button ml-0 mr-4 font-satoshi-bold cursor-pointer'
-                    style={
-                      Collection?.status === 'published'
-                        ? { filter: 'grayscale(0.5)' }
-                        : null
-                    }
                   >
                     <span>Sales Setting</span>
                   </div>
