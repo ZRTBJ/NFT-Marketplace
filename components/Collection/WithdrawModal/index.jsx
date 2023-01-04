@@ -151,10 +151,11 @@ const WithdrawModal = ({
             <p className='text-[14px] text-textSubtle'>
               Please make sure you taking the right amount.
             </p>
-            <div className='flex items-center justify-between mt-8'>
-              <div className='txtblack text-[14px]'>Amount</div>
+            <div className='flex items-center mt-8'>
+              <div className='txtblack text-[14px] w-[18%]'>Token</div>
+              <div className='txtblack text-[14px] ml-1'>Amount</div>
 
-              <div className='text-[12px] text-textSubtle'>
+              <div className='text-[12px] text-textSubtle ml-auto'>
                 Powered by{' '}
                 <a
                   href='https://www.coingecko.com/'
@@ -186,7 +187,7 @@ const WithdrawModal = ({
                   />
                 )}
 
-                <span className='text-[14px] text-uppercase'>
+                <span className='text-[14px] text-uppercase ml-1'>
                   {NETWORKS[network]?.label}
                 </span>
               </div>

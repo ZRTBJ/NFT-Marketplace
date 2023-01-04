@@ -19,6 +19,7 @@ const SalesSuccessModal = ({
   nftShareURL,
   projectId,
   membershipNFTId,
+  handlePublishModal,
 }) => {
   const [iframeContent, setIframeContent] = useState('');
   const [isTextCopied, setIsTextCopied] = useState(false);
@@ -154,12 +155,22 @@ const SalesSuccessModal = ({
             </div>
           </div>
         )}
-        <button
-          className='w-[200px] mx-auto block contained-button font-bold mt-2 text-[16px] h-[44px]'
-          onClick={handleNavigatetoDao}
-        >
-          Close
-        </button>
+        <div className='flex items-center justify-center'>
+          {!membershipNFTId ? (
+            <button
+              className='w-[200px] block contained-button mr-1 font-bold mt-2 text-[16px] h-[44px]'
+              onClick={handlePublishModal}
+            >
+              Publish Collection
+            </button>
+          ) : null}
+          <button
+            className='w-[200px] block outlined-button ml-1 font-bold mt-2 text-[16px] h-[44px]'
+            onClick={handleNavigatetoDao}
+          >
+            Close
+          </button>
+        </div>
       </div>
     </Modal>
   );

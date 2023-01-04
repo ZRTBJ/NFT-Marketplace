@@ -142,6 +142,7 @@ const CollectionContent = ({ collectionId, userId }) => {
       }
     }
   };
+
   const {
     isLoading: isPublishingRoyaltySplitter,
     status: publishRoyaltySplitterStatus,
@@ -454,6 +455,7 @@ const CollectionContent = ({ collectionId, userId }) => {
 
   const handlePublishModal = async () => {
     let networkId = await getCurrentNetworkId();
+    setShowSuccessModal(false);
     if (Number(collectionNetwork) === networkId) {
       if (Collection?.type === 'product') {
         if (salesSetupInfo?.price) {
@@ -526,7 +528,7 @@ const CollectionContent = ({ collectionId, userId }) => {
   };
 
   let isSupplyOver = Collection?.total_supply <= NFTs?.length;
-  console.log(newWorth?.balance);
+
   return (
     <>
       <div className='mx-4 md:mx-0'>
@@ -957,9 +959,13 @@ const CollectionContent = ({ collectionId, userId }) => {
                 {/* <a className='inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>
                 Sales Setting
               </a> */}
-                {Collection?.type === 'product' && Collection?.is_owner && (
+                {Collection?.type === 'product' && Collection?.is_owner && Collection?.status != 'published' && (
                   <div
-                    onClick={(e) => salesPageModal(e, 'product')}
+                    onClick={
+                      Collection?.status === 'published'
+                        ? null
+                        : (e) => salesPageModal(e, 'product')
+                    }
                     className='outlined-button ml-0 mr-4 font-satoshi-bold cursor-pointer'
                   >
                     <span>Sales Setting</span>
@@ -1040,8 +1046,22 @@ const CollectionContent = ({ collectionId, userId }) => {
                     </p>
                   </div>
                 </div>
-                <div className='flex flex-col items-end'>
-                  {Collection?.is_owner && (
+                <div className='text-[12px] text-textSubtle text-right'>
+                  Powered by{' '}
+                  <a
+                    href='https://www.coingecko.com/'
+                    target='_blank'
+                    rel='noreferrer'
+                    className='text-primary-900'
+                  >
+                    CoinGecko
+                  </a>
+                </div>
+                {Collection?.is_owner && (
+                  <div className='flex items-center justify-between'>
+                    <p className=' text-textSubtle mt-1 text-[14px]'>
+                      Withdrawal{' '}
+                    </p>
                     <button
                       onClick={handleWithdrawModel}
                       disabled={newWorth?.balance === 0}
@@ -1049,19 +1069,8 @@ const CollectionContent = ({ collectionId, userId }) => {
                     >
                       Withdraw Funds
                     </button>
-                  )}
-                  <div className='text-[12px] text-textSubtle'>
-                    Powered by{' '}
-                    <a
-                      href='https://www.coingecko.com/'
-                      target='_blank'
-                      rel='noreferrer'
-                      className='text-primary-900'
-                    >
-                      CoinGecko
-                    </a>
                   </div>
-                </div>
+                )}
                 <div className='flex items-center justify-between'>
                   <p className=' text-textSubtle mt-1 text-[14px]'>Items </p>
                   <p className=' text-textSubtle mt-1 text-[14px] font-black text-black'>
@@ -1452,6 +1461,7 @@ const CollectionContent = ({ collectionId, userId }) => {
             successClose={() => {
               setShowSalesPageModal(false);
               setShowSuccessModal(true);
+              getCollectionDetail();
             }}
             supply={nftMemSupply}
             projectNetwork={collectionNetwork}
@@ -1465,11 +1475,11 @@ const CollectionContent = ({ collectionId, userId }) => {
             show={showSuccessModal}
             handleClose={() => {
               setShowSuccessModal(false);
-              getCollectionDetail();
             }}
             projectId={projectID}
             nftShareURL={nftShareURL}
             membershipNFTId={membershipNFTId}
+            handlePublishModal={handlePublishModal}
           />
         )}
 
