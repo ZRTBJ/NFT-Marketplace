@@ -316,7 +316,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   };
 
   return (
-    <header className='bg-light1'>
+    <header className='bg-light1 border border-b-1'>
       <AccountChangedModal
         show={showAccountChanged}
         handleClose={() => setShowAccountChanged(false)}

@@ -2,7 +2,13 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-const PrivateRoutes = ['dashboard', 'create', 'dao/create', 'settings'];
+const PrivateRoutes = [
+  'dashboard',
+  'create',
+  'dao/create',
+  'settings',
+  'token-gated',
+];
 
 const Auth = ({ children }) => {
   const router = useRouter();

@@ -37,7 +37,7 @@ import { ls_GetUserID } from 'util/ApplicationStorage';
 import { getCurrentNetworkId } from 'util/MetaMask';
 import NetworkHandlerModal from 'components/Modals/NetworkHandlerModal';
 import Image from 'next/image';
-
+import tokenGatedCreateIcon from 'assets/images/token-gated/createIcon.svg';
 import nftSvg from 'assets/images/profile/nftSvg.svg';
 import daoCreate from 'assets/images/profile/daoCreate.svg';
 import CreateNFTModal from 'components/Project/CreateDAOandNFT/components/CreateNFTModal.jsx';
@@ -47,6 +47,7 @@ import curvVector from 'assets/images/profile/curv1.png';
 import Modal from 'components/Commons/Modal';
 import CollectionCard from 'components/Cards/CollectionCard';
 import { logout } from 'redux/auth';
+import { createTokenGatedProject } from 'services/tokenGated/tokenGatedService';
 const Profile = ({ id }) => {
   const dispatch = useDispatch();
   const provider = createProvider();
@@ -142,6 +143,7 @@ const Profile = ({ id }) => {
 
   const [ShowCreateNFT, setShowCreateNFT] = useState(false);
   const [profileModal, setProfileModal] = useState(false);
+  const [showOverlayLoading, setShowOverlayLoading] = useState(false);
 
   const userinfo = useSelector((state) => state.user.userinfo);
   // function start
@@ -373,6 +375,19 @@ const Profile = ({ id }) => {
     royaltyList[royaltyIndex] = royaltyLocal;
     setRoyaltiesList(royaltyList);
   }
+  const onCreateTokenGatedProject = async () => {
+    setShowOverlayLoading(true);
+    await createTokenGatedProject()
+      .then((res) => {
+        console.log(res);
+        setShowOverlayLoading(false);
+        router.push(`/token-gated/${res.id}`);
+      })
+      .catch((err) => {
+        console.log(err);
+        setShowOverlayLoading(false);
+      });
+  };
 
   useEffect(() => {
     userInfo();
@@ -572,6 +587,21 @@ const Profile = ({ id }) => {
               />
               <span className='text-secondary-900 font-black'>
                 Create New Dao
+              </span>
+            </div>
+            <div
+              onClick={() => onCreateTokenGatedProject()}
+              className=' cursor-pointer min-h-[72px] p-3   rounded  bg-danger-1/[0.10] border border-danger-1'
+            >
+              <Image
+                src={tokenGatedCreateIcon}
+                className='mb-1 h-[24px] w-[24px]'
+                width={24}
+                height={24}
+                alt=''
+              />
+              <span className='text-danger-1 font-black'>
+                Create Token Gated Project
               </span>
             </div>
           </div>
@@ -1088,6 +1118,7 @@ const Profile = ({ id }) => {
           </div>
         </Modal>
       )}
+      {showOverlayLoading && <div className='loading'></div>}
     </>
   );
 };

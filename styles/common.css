@@ -480,3 +480,8 @@ table > thead > tr > th {
   border: none !important;
   color: #fff !important;
 }
+.token-gated-dropdown:focus-within .token-gated-dropdown-menu {
+  opacity: 1;
+  transform: translate(0) scale(1);
+  visibility: visible;
+}
