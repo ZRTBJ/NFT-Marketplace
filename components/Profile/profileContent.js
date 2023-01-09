@@ -640,7 +640,7 @@ const Profile = ({ id }) => {
                               >
                                 <td className='py-4 px-5'>
                                   <Image
-                                    src={NETWORKS[Number(r.blockchain)].icon}
+                                    src={NETWORKS[Number(r.blockchain)]?.icon}
                                     className='h-[30px] w-[30px]  rounded-full'
                                     alt={DefaultProjectLogo}
                                     width={30}
@@ -749,7 +749,7 @@ const Profile = ({ id }) => {
                           <div className={`flex   items-center mb-8 `}>
                             <div className={'flex  items-center'}>
                               <Image
-                                src={NETWORKS[Number(r.blockchain)].icon}
+                                src={NETWORKS[Number(r.blockchain)]?.icon}
                                 className='h-[34px] w-[34px] object-cover rounded-full'
                                 alt={DefaultProjectLogo}
                                 width={34}
