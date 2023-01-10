@@ -5,5 +5,10 @@ export async function getServerSideProps(context) {
   return { props: { query } };
 }
 export default function TokenGated(query) {
-  return <TokenGatedContent query={query?.query} />;
+  return (
+    <TokenGatedContent
+      query={query?.query}
+      createMode={query?.query?.id === 'create' ? true : false}
+    />
+  );
 }
