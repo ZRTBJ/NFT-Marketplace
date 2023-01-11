@@ -485,3 +485,25 @@ table > thead > tr > th {
   transform: translate(0) scale(1);
   visibility: visible;
 }
+
+.content-accordian {
+  background: linear-gradient(
+      0deg,
+      rgba(18, 36, 120, 0.02),
+      rgba(18, 36, 120, 0.02)
+    ),
+    #ffffff;
+}
+
+.accordian-sub-button {
+  background: linear-gradient(
+      0deg,
+      rgba(18, 36, 120, 0.02),
+      rgba(18, 36, 120, 0.02)
+    ),
+    #ffffff !important;
+}
+
+.accordian-detail-content.show {
+  visibility: visible !important;
+}

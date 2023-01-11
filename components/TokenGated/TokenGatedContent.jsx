@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { getTokenGatedProject } from 'services/tokenGated/tokenGatedService';
+import Image from 'next/image';
+import thumbIcon from 'assets/images/profile/card.svg';
+import SocialLink from 'components/Commons/SocialLink';
+import SettingModal from 'components/TokenGated/Modal/Setting';
 import { useRouter } from 'next/router';
 import AddNewContentModal from 'components/TokenGated/Modal/AddNewContent';
 import UploadByLinkModal from 'components/TokenGated/Modal/UploadByLink';
