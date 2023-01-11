@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getTokenGatedProject } from 'services/tokenGated/tokenGatedService';
+import { useRouter } from 'next/router';
 import AddNewContentModal from 'components/TokenGated/Modal/AddNewContent';
 import UploadByLinkModal from 'components/TokenGated/Modal/UploadByLink';
 import DropdownCreabo from 'components/Commons/Dropdown';
@@ -11,27 +12,41 @@ const sortingOptions = [
   { id: 3, value: 'older', name: 'Older' },
 ];
 export default function TokenGatedContent({ query, createMode }) {
+  const router = useRouter();
   const [showOverLayLoading, setShowOverLayLoading] = useState(false);
-  const [project, setProject] = useState({ contents: [] });
+  const [project, setProject] = useState({});
   const [showAddNewContentModal, setShowAddNewContentModal] = useState(false);
   const [showUploadByLinkModal, setShowUploadByLinkModal] = useState(false);
   const [selectedSort, setSelectedSort] = useState('');
 
-  const onGetTokenGatedProject = async () => {
-    if (!createMode) {
-      setShowOverLayLoading(true);
-      await getTokenGatedProject(query?.id)
-        .then((res) => {
-          setShowOverLayLoading(false);
-          res?.contents?.forEach((element) => {
-            element.isChecked = false;
-          });
-          setProject(res);
-        })
-        .catch((err) => {
-          setShowOverLayLoading(false);
-        });
-    }
+  const onGetTokenGatedProject = async (id) => {
+    setShowOverLayLoading(true);
+    await getTokenGatedProject(id)
+      .then((res) => {
+        setShowOverLayLoading(false);
+        if (res.code === 0) {
+          let response = { ...res?.token_gate_project };
+          let photo = response?.assets?.find(
+            (x) => x?.asset_purpose === 'subphoto'
+          );
+          let cover = response?.assets?.find(
+            (x) => x?.asset_purpose === 'cover'
+          );
+          response.coverUrl = cover ? cover?.path : null;
+          response.photoUrl = photo ? photo?.path : null;
+          try {
+            const links = JSON.parse(response?.links);
+            response.links = links;
+          } catch (error) {
+            console.log(error);
+            response.links = [];
+          }
+          setProject(response);
+        }
+      })
+      .catch((err) => {
+        setShowOverLayLoading(false);
+      });
   };
   const onAddNewContentClick = async () => {
     setShowAddNewContentModal(true);
@@ -42,16 +57,28 @@ export default function TokenGatedContent({ query, createMode }) {
   const OnSorting = async (event) => {
     setSelectedSort(event.target.value);
   };
+  const onSettingSaved = async (id) => {
+    await onGetTokenGatedProject(id);
+    if (createMode) {
+      router.replace(`/token-gated/${id}`);
+    }
+  };
 
   useEffect(() => {
-    onGetTokenGatedProject();
+    if (!createMode) {
+      onGetTokenGatedProject(query?.id);
+    }
   }, [query?.id]);
 
   return (
     <>
       {showOverLayLoading && <div className='loading'></div>}
       <div className='py-4 px-4 md:px-0'>
-        <ProjectInfoCard project={project} createMode={createMode} />
+        <ProjectInfoCard
+          project={project}
+          createMode={createMode}
+          settingSaved={onSettingSaved}
+        />
         <div className='flex flex-wrap gap-4 items-start my-4 md:my-[50px]'>
           <div className='flex flex-wrap gap-4 items-start md:flex-1'>
             <button

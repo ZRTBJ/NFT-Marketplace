@@ -83,7 +83,14 @@ function List({ query }) {
       if (query?.user === 'true') {
         listType = 'user';
       }
-      projectResponse = await getTokenGatedProjectList(payload.page, 10);
+      let payloadData = {
+        id: query?.user,
+        page: payload.page,
+        limit: 10,
+        keyword: payload.keyword,
+        order_by: payload.order_by,
+      };
+      projectResponse = await getTokenGatedProjectList(payloadData);
     }
 
     if (categoriesRes?.categories && projectResponse?.data) {

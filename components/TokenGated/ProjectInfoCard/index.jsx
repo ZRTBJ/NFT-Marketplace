@@ -3,7 +3,7 @@ import Image from 'next/image';
 import thumbIcon from 'assets/images/profile/card.svg';
 import SocialLink from 'components/Commons/SocialLink';
 import SettingModal from 'components/TokenGated/Modal/Setting';
-export default function ProjectInfoCard({ project, createMode }) {
+export default function ProjectInfoCard({ project, createMode, settingSaved }) {
   const [showSettingModal, setShowSettingModal] = useState(false);
   const onSettingClick = async () => {
     setShowSettingModal(true);
@@ -15,7 +15,7 @@ export default function ProjectInfoCard({ project, createMode }) {
           <div>
             <Image
               className='h-[81px] w-[81px] rounded object-cover'
-              src={thumbIcon}
+              src={project?.coverUrl ? project?.coverUrl : thumbIcon}
               alt='token gated project logo'
               width={81}
               height={81}
@@ -23,7 +23,7 @@ export default function ProjectInfoCard({ project, createMode }) {
           </div>
           <div>
             <p className='text-[18px] text-txtblack font-black'>
-              {project?.name ? project?.name : 'Unnamed Project'}
+              {project?.title ? project?.title : 'Unnamed Project'}
             </p>
             <p className='text-textSubtle text-[12px] w-full md:max-w-[471px]'>
               {project?.description
@@ -51,6 +51,7 @@ export default function ProjectInfoCard({ project, createMode }) {
           handleClose={() => setShowSettingModal(false)}
           projectInfo={project}
           createMode={createMode}
+          settingSaved={settingSaved}
         />
       )}
     </>
