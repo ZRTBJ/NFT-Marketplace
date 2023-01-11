@@ -5,7 +5,7 @@ import thumbIcon from 'assets/images/profile/card.svg';
 import SocialLink from 'components/Commons/SocialLink';
 import SettingModal from 'components/TokenGated/Modal/Setting';
 import { useRouter } from 'next/router';
-import AddNewContentModal from 'components/TokenGated/Modal/AddNewContent';
+import AddNewContentModal from 'components/TokenGated/Modal/Content/AddNewContent';
 import UploadByLinkModal from 'components/TokenGated/Modal/UploadByLink';
 import DropdownCreabo from 'components/Commons/Dropdown';
 import ProjectInfoCard from 'components/TokenGated/ProjectInfoCard';
@@ -121,6 +121,7 @@ export default function TokenGatedContent({ query, createMode }) {
         <AddNewContentModal
           show={showAddNewContentModal}
           handleClose={() => setShowAddNewContentModal(false)}
+          tokenProjectId={query?.id}
         />
       )}
       {showUploadByLinkModal && (

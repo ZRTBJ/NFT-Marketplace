@@ -51,7 +51,7 @@ const IntegrateNewCollection = ({
   let mainImage =
     collectionDetail?.assets?.length &&
     collectionDetail.assets.find((img) => img['asset_purpose'] === 'logo');
-  console.log(collectionDetail);
+
   return (
     <div>
       {showPreview ? (
@@ -98,7 +98,7 @@ const IntegrateNewCollection = ({
                 {collectionDetail?.token_standard}
               </p>
             </div>
-            <div className='flex justify-between mt-6'>
+            <div className='flex justify-between items-center mt-6'>
               <div>
                 <h3 className='!text-[20px]'>Symbol</h3>
                 <p>
@@ -124,7 +124,12 @@ const IntegrateNewCollection = ({
                   target='_blank'
                   rel='noreferrer'
                 >
-                  Link
+                  <Image
+                    src={NETWORKS[collectionDetail?.blockchain]?.scan}
+                    alt='scan'
+                    height={40}
+                    width={40}
+                  />
                 </a>
               </div>
             </div>
@@ -132,7 +137,12 @@ const IntegrateNewCollection = ({
           <button
             className='px-6 py-2 contained-button rounded font-black text-white-shade-900 w-full mt-6'
             onClick={() =>
-              handleConfigurations(showAddCollection, collectionDetail?.id)
+              handleConfigurations(
+                showAddCollection,
+                collectionDetail?.contract_address,
+                collectionDetail?.name,
+                collectionDetail?.blockchain
+              )
             }
           >
             Finish

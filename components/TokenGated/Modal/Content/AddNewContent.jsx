@@ -1,13 +1,26 @@
 import React, { useState, useEffect } from 'react';
-
+import { useDispatch, useSelector } from 'react-redux';
 import Modal from 'components/Commons/Modal';
 import SettingContent from './components/SettingContent';
 import Configuration from './components/Configuration';
 import Review from './components/Review';
-import { getUserCollections } from 'services/collection/collectionService';
 import { uniqBy } from 'lodash';
 import IntegrateNewCollection from './components/IntegrateNewCollection';
-import { getCollectionDetailFromContract } from 'services/collection/collectionService';
+import {
+  getCollectionDetailFromContract,
+  getUserCollections,
+} from 'services/collection/collectionService';
+import {
+  createTokenGatedContent,
+  updateTokenGatedContent,
+  publishTokenGatedContent,
+} from 'services/tokenGated/tokenGatedService';
+import { generateUploadkey } from 'services/nft/nftService';
+import { getNotificationData } from 'redux/notification';
+import axios from 'axios';
+import Config from 'config/config';
+import SuccessModal from 'components/Modals/SuccessModal';
+import ErrorModal from 'components/Modals/ErrorModal';
 
 const STEPS = [
   { id: 1, label: 'Setting Content' },
@@ -15,7 +28,7 @@ const STEPS = [
   { id: 3, label: 'Review' },
 ];
 
-export default function AddNewContent({ show, handleClose }) {
+export default function AddNewContent({ show, handleClose, tokenProjectId }) {
   const [activeStep, setActiveStep] = useState(1);
   const [content, setContent] = useState({
     media: null,
@@ -38,6 +51,35 @@ export default function AddNewContent({ show, handleClose }) {
   const [showAddCollection, setShowAddCollection] = useState(null);
   const [smartContractAddress, setSmartContractAddress] = useState('');
   const [collectionDetail, setCollectionDetail] = useState();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [jobId, setJobId] = useState('');
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
+  const fileUploadNotification = useSelector((state) =>
+    state?.notifications?.notificationData
+      ? state?.notifications?.notificationData
+      : []
+  );
+  const [publishNow, setPublishNow] = useState(false);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // file upload web socket
+    const projectDeployStatus = fileUploadNotification.find(
+      (x) => x.function_uuid === jobId
+    );
+    if (projectDeployStatus && projectDeployStatus.data) {
+      const data = JSON.parse(projectDeployStatus.data);
+      if (data.Data['assetId'] && data.Data['assetId'].length > 0) {
+        handleCreateContent(data.Data['assetId']);
+      } else {
+        setIsLoading(false);
+        setShowError(true);
+      }
+    }
+  }, [fileUploadNotification]);
 
   const handleFieldChange = (e) => {
     setContent({
@@ -61,16 +103,26 @@ export default function AddNewContent({ show, handleClose }) {
 
   const handleStep = (e) => {
     e.preventDefault();
-    setHandledSteps([...handledSteps, activeStep]);
-    setActiveStep(activeStep + 1);
+    setIsSubmitted(true);
+    if (activeStep === 1) {
+      if (content?.title && content?.media?.file) {
+        setHandledSteps([...handledSteps, activeStep]);
+        setActiveStep(activeStep + 1);
+      }
+    } else {
+      setHandledSteps([...handledSteps, activeStep]);
+      setActiveStep(activeStep + 1);
+    }
   };
 
-  const handleConfigurations = (id, collectionID) => {
+  const handleConfigurations = (id, collectionID, name, blockchain) => {
     let items = configurations.map((item) => {
       if (item.id === id) {
         return {
           ...item,
-          collectionId: collectionID,
+          collectionAddress: collectionID,
+          name,
+          blockchain,
         };
       }
       return item;
@@ -181,7 +233,210 @@ export default function AddNewContent({ show, handleClose }) {
     setSmartContractAddress(e.target.value);
     getCollectionDetailFromContract(e.target.value);
   };
-  console.log(showAddCollection);
+
+  const handleCreateContent = (asset_id) => {
+    let payload = {
+      title: content?.title,
+      project_id: tokenProjectId,
+    };
+    if (content?.title) {
+      createTokenGatedContent(payload)
+        .then((resp) => {
+          if (resp.code === 0) {
+            let tokenId = resp?.token_gate_content?.id;
+            handleUpdateContent(tokenId, asset_id);
+          } else {
+            setIsLoading(false);
+            setShowError(true);
+            setPublishNow(false);
+          }
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          setPublishNow(false);
+          setShowError(true);
+        });
+    }
+  };
+
+  const handleUpdateContent = (id, asset_id) => {
+    let config = configurations.map((item) => {
+      return {
+        col_contract_address: item?.collectionAddress,
+        blockchain: item?.blockchain,
+        col_name: item?.name,
+        ...(item?.tokenId && { token_id: item?.tokenId }),
+        ...(item?.tokenMin && { token_min: item?.tokenMin }),
+        ...(item?.tokenMax && { token_max: item?.tokenMax }),
+      };
+    });
+    let payload = {
+      title: content?.title,
+      description: content?.description,
+      sensitive: content?.isExplicit,
+      data: asset_id, //TODO: asset id or url link
+      content_type: 'asset_id', //TODO: asset_id or url
+      file_type: content?.media?.file?.type,
+      ...((config.some((item) => item.col_contract_address) ||
+        content?.accessToAll) && {
+        configs: content?.accessToAll ? [] : JSON.stringify(config),
+      }),
+    };
+
+    updateTokenGatedContent(id, payload)
+      .then((resp) => {
+        if (resp.code === 0) {
+          if (publishNow) {
+            const data = {
+              is_publish: true,
+            };
+            publishTokenGatedContent(id, data)
+              .then((resp) => {
+                if (resp.code === 0) {
+                  setShowSuccess(true);
+                  setPublishNow(false);
+                  setIsLoading(false);
+                } else {
+                  setShowSuccess(false);
+                  setPublishNow(false);
+                  setIsLoading(false);
+                  setShowError(true);
+                }
+              })
+              .catch((err) => {
+                setShowSuccess(false);
+                setIsLoading(false);
+                setShowError(true);
+                setPublishNow(false);
+              });
+          } else {
+            setShowSuccess(true);
+            setIsLoading(false);
+          }
+        } else {
+          setShowSuccess(false);
+          setIsLoading(false);
+          setShowError(true);
+          setPublishNow(false);
+        }
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        setShowError(true);
+        setPublishNow(false);
+      });
+  };
+
+  async function genUploadKey() {
+    setIsSubmitted(true);
+    if (content?.title && content?.media?.file) {
+      setIsLoading(true);
+      const request = new FormData();
+      await generateUploadkey(request)
+        .then((res) => {
+          if (res.key) {
+            uploadAFile(res.key);
+          }
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          setShowError(true);
+          setPublishNow(false);
+        });
+    }
+  }
+
+  async function uploadAFile(uploadKey) {
+    let headers;
+    headers = {
+      'Content-Type': 'multipart/form-data',
+      'Access-Control-Allow-Origin': '*',
+      key: uploadKey,
+    };
+    let formdata = new FormData();
+    formdata.append('file', content?.media?.file);
+    await axios({
+      method: 'POST',
+      url: Config.FILE_SERVER_URL,
+      data: formdata,
+      headers: headers,
+    })
+      .then((resp) => {
+        const notificationData = {
+          etherscan: '',
+          function_uuid: resp?.job_id,
+          data: '',
+        };
+        setJobId(resp?.job_id);
+        dispatch(getNotificationData(notificationData));
+      })
+      .catch((err) => {
+        setShowError(true);
+        setIsLoading(false);
+      });
+  }
+
+  const handlePublish = (e) => {
+    e.preventDefault();
+    setIsPublishing(true);
+    setPublishNow(true);
+    genUploadKey();
+  };
+
+  if (isLoading) {
+    return (
+      <Modal
+        width={400}
+        show={isLoading}
+        showCloseIcon={false}
+        handleClose={() => setIsLoading(false)}
+      >
+        <div className='text-center '>
+          <p className='font-black text-[18px]'>Please do not close the tab</p>
+          <p>Your assets are being uploaded</p>
+          <div className='overflow-hidden rounded-full h-4 w-full mt-4 md:mt-6 mb-8 relative animated fadeIn'>
+            <div className='animated-process-bar'></div>
+          </div>
+        </div>
+      </Modal>
+    );
+  }
+
+  if (showSuccess) {
+    return (
+      <SuccessModal
+        show={showSuccess}
+        handleClose={() => {
+          handleClose();
+          setShowSuccess(false);
+          setIsPublishing(false);
+        }}
+        message={
+          isPublishing
+            ? `Content Published Successfully`
+            : `Content Saved Successfully`
+        }
+        btnText='Close'
+      />
+    );
+  }
+
+  if (showError) {
+    return (
+      <ErrorModal
+        handleClose={() => {
+          setShowError(false);
+          setIsPublishing(false);
+        }}
+        show={showError}
+        message={`Content failed to ${
+          isPublishing ? 'publish' : 'save'
+        }. Please try again later`}
+        buttomText='Try Again'
+      />
+    );
+  }
+
   return (
     <Modal
       width={600}
@@ -236,6 +491,7 @@ export default function AddNewContent({ show, handleClose }) {
                     content={content}
                     handleFieldChange={handleFieldChange}
                     handleMediaFile={handleMediaFile}
+                    isSubmitted={isSubmitted}
                   />
                 )}
                 {activeStep === 2 && (
@@ -262,7 +518,7 @@ export default function AddNewContent({ show, handleClose }) {
                 {activeStep === 3 ? (
                   <button
                     className='px-6 py-2 contained-button rounded font-black text-white-shade-900 w-full mt-6'
-                    onClick={handleStep}
+                    onClick={handlePublish}
                   >
                     Publish Content
                   </button>
@@ -275,7 +531,10 @@ export default function AddNewContent({ show, handleClose }) {
                   </button>
                 )}
                 {activeStep !== 3 && (
-                  <button className='px-6 py-2 rounded font-black text-textSubtle w-full mt-6'>
+                  <button
+                    className='px-6 py-2 rounded font-black text-textSubtle w-full mt-6'
+                    onClick={genUploadKey}
+                  >
                     Save as Draft
                   </button>
                 )}

@@ -6,6 +6,7 @@ const SettingContent = ({
   handleFieldChange,
   handleMediaFile,
   reviewScreen = false,
+  isSubmitted,
 }) => {
   let mediaType = content?.media?.file?.type?.split('/')[0]?.toLowerCase();
   return (
@@ -92,6 +93,9 @@ const SettingContent = ({
           />
         </label>
       </div>
+      {isSubmitted && !content?.media?.file && (
+        <p className='text-red-500 text-xs font-medium'>Media is required</p>
+      )}
       <div className='mt-6'>
         <div className='flex items-center mb-2'>
           <div className='txtblack text-[14px]'>Name</div>
@@ -107,6 +111,9 @@ const SettingContent = ({
             onChange={handleFieldChange}
           />
         </>
+        {isSubmitted && !content?.title && (
+          <p className='text-red-500 text-xs font-medium'>Name is required</p>
+        )}
       </div>
       <div className='mt-6'>
         <div className='txtblack text-[14px] mb-2'>Description</div>

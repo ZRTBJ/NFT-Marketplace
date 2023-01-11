@@ -87,7 +87,7 @@ const Configuration = ({
                       aria-expanded='true'
                       aria-controls={`configure-${item.id}`}
                     >
-                      Configuration {item.id + 1}
+                      Configuration {item.id}
                     </button>
                   </h2>
                   <div
@@ -97,13 +97,13 @@ const Configuration = ({
                     data-bs-parent='#content-configure'
                   >
                     <div className='accordion-body py-4 px-5'>
-                      {item?.collectionId ? (
+                      {item?.collectionAddress ? (
                         <div className='mb-2'>
                           <p className='txtblack text-[14px]'>
                             Selected Collection
                           </p>
                           <p className='text-[14px] border-[1px] border-[#ccc] px-2 py-2 text-textSubtle w-full font-bold rounded-[4px]'>
-                            {item?.collectionId}
+                            {item?.name}
                           </p>
                         </div>
                       ) : (
@@ -114,35 +114,39 @@ const Configuration = ({
                           Add Collection
                         </button>
                       )}
-                      {typeof window !== 'undefined' && item?.collectionId && (
-                        <div className='mb-2'>
-                          <div className='flex items-center mb-1'>
-                            <p className='txtblack text-[14px]'>
-                              Select Settings
-                            </p>
+                      {typeof window !== 'undefined' &&
+                        item?.collectionAddress && (
+                          <div className='mb-2'>
+                            <div className='flex items-center mb-1'>
+                              <p className='txtblack text-[14px]'>
+                                Select Settings
+                              </p>
+                            </div>
+                            <Select
+                              value={curSettings}
+                              onChange={(data) =>
+                                handleSettings(item?.id, data?.value)
+                              }
+                              isDisabled={reviewScreen}
+                              components={{
+                                IndicatorSeparator: () => null,
+                              }}
+                              options={SETTINGS}
+                              styles={{
+                                menuPortal: (base) => ({
+                                  ...base,
+                                  zIndex: 9999,
+                                }),
+                                control: (base) => ({
+                                  ...base,
+                                  border: '1px solid hsl(0, 0%, 80%)',
+                                }),
+                              }}
+                              placeholder='Select Settings'
+                              classNamePrefix='select-settings'
+                            />
                           </div>
-                          <Select
-                            value={curSettings}
-                            onChange={(data) =>
-                              handleSettings(item?.id, data?.value)
-                            }
-                            isDisabled={reviewScreen}
-                            components={{
-                              IndicatorSeparator: () => null,
-                            }}
-                            options={SETTINGS}
-                            styles={{
-                              menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                              control: (base) => ({
-                                ...base,
-                                border: '1px solid hsl(0, 0%, 80%)',
-                              }),
-                            }}
-                            placeholder='Select Settings'
-                            classNamePrefix='select-settings'
-                          />
-                        </div>
-                      )}
+                        )}
                       {item?.settings === 'Token Range' && (
                         <>
                           <div className='mb-2'>

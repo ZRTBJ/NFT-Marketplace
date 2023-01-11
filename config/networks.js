@@ -1,6 +1,8 @@
 import Eth from 'assets/images/eth.svg';
 import Matic from 'assets/images/polygon.svg';
 import { address } from './contractAddresses.js';
+import PolyScan from 'assets/images/poly-scan.png';
+import EthScan from 'assets/images/eth-scan.png';
 
 const gnosisFundTransferUrl = 'https://app.safe.global';
 const raribleNFTDetailsUrl =
@@ -35,6 +37,7 @@ const TESTNET = {
     viewTxUrl: `https://goerli.etherscan.io/tx/`,
     decirTreasury: address.decirTreasuryGoerli,
     discount: address.discountGoerli,
+    scan: EthScan,
   },
   80001: {
     networkName: 'Polygon Testnet Mumbai',
@@ -59,6 +62,7 @@ const TESTNET = {
     viewTxUrl: `https://mumbai.polygonscan.com/tx/`,
     decirTreasury: address.decirTreasuryMumbai,
     discount: address.discountMumbai,
+    scan: PolyScan,
   },
 };
 
@@ -86,6 +90,7 @@ const MAINNET = {
     viewTxUrl: 'https://etherscan.io/tx/',
     decirTreasury: address.decirTreasuryEthereum,
     discount: address.discountEthereum,
+    scan: EthScan,
   },
   137: {
     networkName: 'Polygon Mainnet',
@@ -110,6 +115,7 @@ const MAINNET = {
     viewTxUrl: 'https://polygonscan.com/tx/',
     decirTreasury: address.decirTreasuryPolygon,
     discount: address.discountPolygon,
+    scan: PolyScan,
   },
 };
 

@@ -27,3 +27,32 @@ export async function updateTokenGatedProject(payload) {
     'formdata'
   );
 }
+
+export async function createTokenGatedContent(data) {
+  const bodyFormData = new FormData();
+  for (const key in data) {
+    bodyFormData.append(`${key}`, data[key]);
+  }
+  return await client('POST', `/tkg-content`, bodyFormData, 'formdata');
+}
+
+export async function updateTokenGatedContent(id, data) {
+  const bodyFormData = new FormData();
+  for (const key in data) {
+    bodyFormData.append(`${key}`, data[key]);
+  }
+  return await client('PUT', `/tkg-content/${id}`, bodyFormData, 'formdata');
+}
+
+export async function publishTokenGatedContent(id, data) {
+  const bodyFormData = new FormData();
+  for (const key in data) {
+    bodyFormData.append(`${key}`, data[key]);
+  }
+  return await client(
+    'PUT',
+    `/tkg-content/${id}/publish`,
+    bodyFormData,
+    'formdata'
+  );
+}
