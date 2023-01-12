@@ -7,8 +7,14 @@ const SettingContent = ({
   handleMediaFile,
   reviewScreen = false,
   isSubmitted,
+  linkDetails,
 }) => {
-  let mediaType = content?.media?.file?.type?.split('/')[0]?.toLowerCase();
+  let mediaType = linkDetails?.link
+    ? linkDetails.type
+    : content?.media?.file?.type?.split('/')[0]?.toLowerCase();
+
+  let mediaPath = linkDetails?.link ? linkDetails.link : content?.media?.path;
+
   return (
     <div className='mt-6'>
       <p className='mb-2 text-[14px]'>Media</p>
@@ -25,12 +31,12 @@ const SettingContent = ({
           } rounded-xl  cursor-pointer`}
         >
           <div className='flex flex-col justify-center items-center pt-5 pb-6 relative'>
-            {content?.media?.file ? (
+            {content?.media?.file || mediaPath ? (
               <>
                 {mediaType === 'image' && (
                   <Image
                     unoptimized
-                    src={content.media.path}
+                    src={mediaPath}
                     alt='nft'
                     height={40}
                     width={40}
@@ -41,7 +47,7 @@ const SettingContent = ({
                   <>
                     <audio
                       ref={audioRef}
-                      src={content?.media.path}
+                      src={mediaPath}
                       controls
                       autoPlay={false}
                       className='ml-[8rem]'
@@ -51,7 +57,7 @@ const SettingContent = ({
                 {mediaType === 'video' || mediaType === 'movie' ? (
                   <>
                     <video width='650' height='400' controls>
-                      <source src={content?.media?.path} type='video/mp4' />
+                      <source src={mediaPath} type='video/mp4' />
                     </video>
                   </>
                 ) : null}

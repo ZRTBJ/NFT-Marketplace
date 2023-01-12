@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 import manImg from 'assets/images/image-default.svg';
 import { walletAddressTruncate } from 'util/WalletUtils';
 import { NETWORKS } from 'config/networks';
+import TickSuccess from 'assets/images/tick-success.svg';
 
 const IntegrateNewCollection = ({
   handleAddressChange,
@@ -21,6 +22,8 @@ const IntegrateNewCollection = ({
   setCollectionDetail,
   handleConfigurations,
   showAddCollection,
+  addressError,
+  addressValid,
 }) => {
   const [showExistingCollection, setShowExistingCollection] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -119,7 +122,7 @@ const IntegrateNewCollection = ({
                 <a
                   href={`${
                     NETWORKS[collectionDetail?.blockchain]
-                      .viewContractAddressUrl
+                      ?.viewContractAddressUrl
                   }${collectionDetail?.contract_address}`}
                   target='_blank'
                   rel='noreferrer'
@@ -170,12 +173,25 @@ const IntegrateNewCollection = ({
             <input
               id='smartContract'
               name='smartContract'
-              className={`debounceInput mt-3`}
+              className={`debounceInput mt-3 ${
+                addressError ? 'border-danger-800' : ''
+              } ${addressValid ? 'border-success-800' : ''}`}
               value={smartContractAddress}
               placeholder='Input smart contract address'
               onChange={handleAddressChange}
               disabled={showExistingCollection}
             />
+            {addressError && (
+              <p className='text-danger-800 text-sm mt-1'>
+                <strong>X</strong> Smart contract is wrong
+              </p>
+            )}
+            {addressValid && (
+              <p className='text-success-800 text-sm mt-1 flex'>
+                <Image src={TickSuccess} alt='success' className='mr-2' /> Your
+                smart contract is validated
+              </p>
+            )}
             <div
               className='flex items-center justify-between mt-6 cursor-pointer'
               onClick={() => setShowExistingCollection(!showExistingCollection)}

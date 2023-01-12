@@ -13,6 +13,8 @@ import UploadByLinkModal from 'components/TokenGated/Modal/UploadByLink';
 import DropdownCreabo from 'components/Commons/Dropdown';
 import ProjectInfoCard from 'components/TokenGated/ProjectInfoCard';
 import ContentListTable from 'components/TokenGated/ContentListTable';
+import { isValidURL } from 'util/functions';
+
 const sortingOptions = [
   { id: 1, value: '', name: 'Sort By' },
   { id: 2, value: 'newer', name: 'Newer' },
@@ -26,6 +28,29 @@ export default function TokenGatedContent({ query, createMode }) {
   const [showUploadByLinkModal, setShowUploadByLinkModal] = useState(false);
   const [selectedSort, setSelectedSort] = useState('');
   const [contentList, setContentList] = useState({});
+  const [linkDetails, setLinkDetails] = useState({ link: '', type: 'image' });
+  const [linkError, setLinkError] = useState(false);
+
+  const handleLinkDetails = (e) => {
+    if (e.target.value.length && e.target.name === 'link') {
+      if (isValidURL(e.target.value)) {
+        setLinkError(false);
+      } else {
+        setLinkError(true);
+      }
+    } else {
+      setLinkError(false);
+    }
+    setLinkDetails({ ...linkDetails, [e.target.name]: e.target.value });
+  };
+
+  const handleAddLink = (e) => {
+    e.preventDefault();
+    if (!linkError) {
+      setShowAddNewContentModal(true);
+      setShowUploadByLinkModal(false);
+    }
+  };
 
   const onGetTokenGatedProject = async (id) => {
     setShowOverLayLoading(true);
@@ -161,15 +186,23 @@ export default function TokenGatedContent({ query, createMode }) {
       {showAddNewContentModal && (
         <AddNewContentModal
           show={showAddNewContentModal}
-          handleClose={() => setShowAddNewContentModal(false)}
+          handleClose={() => {
+            setShowAddNewContentModal(false);
+            setLinkDetails({ link: '', type: 'image' });
+          }}
           tokenProjectId={query?.id}
           onContentAdded={() => onGetTokenGatedProject(query?.id)}
+          linkDetails={linkDetails}
         />
       )}
       {showUploadByLinkModal && (
         <UploadByLinkModal
           show={showUploadByLinkModal}
           handleClose={() => setShowUploadByLinkModal(false)}
+          handleLinkDetails={handleLinkDetails}
+          linkDetails={linkDetails}
+          handleAddLink={handleAddLink}
+          linkError={linkError}
         />
       )}
     </>

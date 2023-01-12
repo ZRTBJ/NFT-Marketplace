@@ -33,6 +33,7 @@ export default function AddNewContent({
   handleClose,
   tokenProjectId,
   onContentAdded,
+  linkDetails,
 }) {
   const [activeStep, setActiveStep] = useState(1);
   const [content, setContent] = useState({
@@ -68,6 +69,8 @@ export default function AddNewContent({
       : []
   );
   const [publishNow, setPublishNow] = useState(false);
+  const [addressError, setAddressError] = useState(false);
+  const [addressValid, setAddressValid] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -236,7 +239,31 @@ export default function AddNewContent({
 
   const handleAddressChange = (e) => {
     setSmartContractAddress(e.target.value);
-    getCollectionDetailFromContract(e.target.value);
+    getCollectionDetailFromContract(e.target.value)
+      .then((resp) => {
+        if (resp?.address) {
+          setCollectionDetail({
+            contract_address: resp?.address,
+            name: resp?.contractMetadata?.name,
+            blockchain: '80001',
+            collection_symbol: resp?.contractMetadata?.symbol,
+            total_supply: resp?.contractMetadata?.totalSupply,
+            token_standard: resp?.contractMetadata?.tokenType,
+          });
+          collectionDetail?.contract_address,
+            collectionDetail?.name,
+            collectionDetail?.blockchain;
+          setAddressError(false);
+          setAddressValid(true);
+        } else {
+          setAddressError(true);
+          setAddressValid(false);
+        }
+      })
+      .catch((err) => {
+        setAddressError(true);
+        setAddressValid(false);
+      });
   };
 
   const handleCreateContent = (asset_id) => {
@@ -275,13 +302,17 @@ export default function AddNewContent({
         ...(item?.tokenMax && { token_max: item?.tokenMax }),
       };
     });
+
+    let finalType = content.media?.file?.type
+      ? content.media.file.type.split('/')[0]
+      : '';
     let payload = {
       title: content?.title,
       description: content?.description,
       sensitive: content?.isExplicit,
-      data: asset_id, //TODO: asset id or url link
-      content_type: 'asset_id', //TODO: asset_id or url
-      file_type: content?.media?.file?.type,
+      data: linkDetails?.link ? linkDetails.link : asset_id,
+      content_type: linkDetails?.link ? 'url' : 'asset_id',
+      file_type: linkDetails?.link ? linkDetails.type : finalType,
       ...((config.some((item) => item.col_contract_address) ||
         content?.accessToAll) && {
         configs: content?.accessToAll ? [] : JSON.stringify(config),
@@ -385,7 +416,20 @@ export default function AddNewContent({
     e.preventDefault();
     setIsPublishing(true);
     setPublishNow(true);
-    genUploadKey();
+    if (linkDetails?.link) {
+      handleCreateContent();
+    } else {
+      genUploadKey();
+    }
+  };
+
+  const handleDraft = (e) => {
+    e.preventDefault();
+    if (linkDetails?.link) {
+      handleCreateContent();
+    } else {
+      genUploadKey();
+    }
   };
 
   if (isLoading) {
@@ -417,10 +461,20 @@ export default function AddNewContent({
           setIsPublishing(false);
           onContentAdded();
         }}
+        subMessage={
+          isPublishing
+            ? 'You can start sharing the content with token gated configs. Only verified users can see your content.'
+            : ''
+        }
         message={
           isPublishing
-            ? `Content Published Successfully`
+            ? `Your content is Published `
             : `Content Saved Successfully`
+        }
+        link={
+          window !== 'undefined' && isPublishing
+            ? `${window.location.origin}/token-gated/${tokenProjectId}`
+            : ''
         }
         btnText='Close'
       />
@@ -464,6 +518,8 @@ export default function AddNewContent({
             setCollectionDetail={setCollectionDetail}
             collectionDetail={collectionDetail}
             showAddCollection={showAddCollection}
+            addressError={addressError}
+            addressValid={addressValid}
           />
         ) : (
           <>
@@ -498,6 +554,7 @@ export default function AddNewContent({
                     handleFieldChange={handleFieldChange}
                     handleMediaFile={handleMediaFile}
                     isSubmitted={isSubmitted}
+                    linkDetails={linkDetails}
                   />
                 )}
                 {activeStep === 2 && (
@@ -539,7 +596,7 @@ export default function AddNewContent({
                 {activeStep !== 3 && (
                   <button
                     className='px-6 py-2 rounded font-black text-textSubtle w-full mt-6'
-                    onClick={genUploadKey}
+                    onClick={handleDraft}
                   >
                     Save as Draft
                   </button>

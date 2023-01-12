@@ -38,6 +38,7 @@ const TESTNET = {
     decirTreasury: address.decirTreasuryGoerli,
     discount: address.discountGoerli,
     scan: EthScan,
+    alchamey: process.env.NEXT_PUBLIC_GOERLI_NFT_ALCHEMY_URL,
   },
   80001: {
     networkName: 'Polygon Testnet Mumbai',
@@ -63,6 +64,7 @@ const TESTNET = {
     decirTreasury: address.decirTreasuryMumbai,
     discount: address.discountMumbai,
     scan: PolyScan,
+    alchamey: process.env.NEXT_PUBLIC_MUMBAI_NFT_ALCHEMY_URL,
   },
 };
 
@@ -91,6 +93,7 @@ const MAINNET = {
     decirTreasury: address.decirTreasuryEthereum,
     discount: address.discountEthereum,
     scan: EthScan,
+    alchamey: process.env.NEXT_PUBLIC_ETHEREUM_NFT_ALCHEMY_URL,
   },
   137: {
     networkName: 'Polygon Mainnet',
@@ -116,6 +119,7 @@ const MAINNET = {
     decirTreasury: address.decirTreasuryPolygon,
     discount: address.discountPolygon,
     scan: PolyScan,
+    alchamey: process.env.NEXT_PUBLIC_POLYGON_NFT_ALCHEMY_URL,
   },
 };
 
