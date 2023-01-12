@@ -6,7 +6,12 @@ import thumbIcon from 'assets/images/profile/card.svg';
 import PublishContentModal from 'components/TokenGated/Modal/PublishContent';
 import ConfigContentModal from 'components/TokenGated/Modal/ConfigContent';
 import DeleteContentModal from 'components/TokenGated/Modal/DeleteContent';
-export default function ContentListTable({ projectInfo }) {
+import dayjs from 'dayjs';
+export default function ContentListTable({
+  projectInfo,
+  onContentPublished,
+  onContentDelete,
+}) {
   const [project, setProject] = useState(projectInfo);
   const [selectedContents, setSelectedContents] = useState([]);
   const [isAllContentsChecked, setIsAllContentsChecked] = useState(false);
@@ -36,12 +41,12 @@ export default function ContentListTable({ projectInfo }) {
 
   const onContentActions = async (content, actionName) => {
     let list = [];
-    if (typeof content === 'object') {
+    if (!Array.isArray(content)) {
       list.push(content);
+      setLastSelectedContents(list);
     } else {
-      list = content;
+      setLastSelectedContents(content);
     }
-    setLastSelectedContents(list);
     if (actionName === 'publish') {
       setShowPublishContentModal(true);
     } else if (actionName === 'configure') {
@@ -160,7 +165,7 @@ export default function ContentListTable({ projectInfo }) {
                   Accessible
                 </th>
                 <th scope='col' className='py-3 px-6 !font-black'>
-                  Date Published
+                  Date Created
                 </th>
                 <th scope='col' className='py-3 px-6 !font-black'>
                   File Type
@@ -213,7 +218,7 @@ export default function ContentListTable({ projectInfo }) {
                         width={44}
                         alt='content logo'
                       />
-                      <div>{content?.name}</div>
+                      <div>{content?.title}</div>
                     </div>
                   </td>
                   <td className='py-4 px-6'>
@@ -228,8 +233,10 @@ export default function ContentListTable({ projectInfo }) {
                     )}
                   </td>
                   <td className='py-4 px-6'>{content?.accessible}</td>
-                  <td className='py-4 px-6'>{content?.publishedDate}</td>
-                  <td className='py-4 px-6'>{content?.fileType}</td>
+                  <td className='py-4 px-6'>
+                    {dayjs(content?.created_at).format('DD/MM/YYYY')}
+                  </td>
+                  <td className='py-4 px-6'>{content?.file_type}</td>
                   <td className='py-4 px-6'>
                     <div className='flex flex-wrap items-center gap-3'>
                       <button
@@ -261,6 +268,7 @@ export default function ContentListTable({ projectInfo }) {
           show={showPublishContentModal}
           handleClose={() => setShowPublishContentModal(false)}
           contents={lastSelectedContents}
+          onContentPublished={onContentPublished}
         />
       )}
       {showConfigContentModal && (
@@ -275,6 +283,7 @@ export default function ContentListTable({ projectInfo }) {
           show={showDeleteContentModal}
           handleClose={() => setShowDeleteContentModal(false)}
           contents={lastSelectedContents}
+          onContentDelete={onContentDelete}
         />
       )}
     </>

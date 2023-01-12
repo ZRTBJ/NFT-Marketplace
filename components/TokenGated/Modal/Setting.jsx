@@ -95,7 +95,7 @@ export default function Setting({
       title: data['title'],
       headline: data['headline'],
       description: data['description'],
-      image1: projectPhoto.image ? projectPhoto.image : null,
+      image_1: projectPhoto.image ? projectPhoto.image : null,
       cover: coverPhoto.image ? coverPhoto.image : null,
       links: JSON.stringify(project?.links),
     };
@@ -378,7 +378,7 @@ export default function Setting({
           )}
           {showErrorModal && (
             <ErrorModal
-              handleClose={() => {}}
+              handleClose={() => onError()}
               show={showErrorModal}
               message={errorMessage}
               buttomText='Try Again'

@@ -28,7 +28,12 @@ const STEPS = [
   { id: 3, label: 'Review' },
 ];
 
-export default function AddNewContent({ show, handleClose, tokenProjectId }) {
+export default function AddNewContent({
+  show,
+  handleClose,
+  tokenProjectId,
+  onContentAdded,
+}) {
   const [activeStep, setActiveStep] = useState(1);
   const [content, setContent] = useState({
     media: null,
@@ -410,6 +415,7 @@ export default function AddNewContent({ show, handleClose, tokenProjectId }) {
           handleClose();
           setShowSuccess(false);
           setIsPublishing(false);
+          onContentAdded();
         }}
         message={
           isPublishing

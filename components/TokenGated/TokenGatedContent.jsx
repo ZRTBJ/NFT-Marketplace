@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { getTokenGatedProject } from 'services/tokenGated/tokenGatedService';
+import {
+  getTokenGatedProject,
+  getContentList,
+} from 'services/tokenGated/tokenGatedService';
 import Image from 'next/image';
 import thumbIcon from 'assets/images/profile/card.svg';
 import SocialLink from 'components/Commons/SocialLink';
@@ -22,12 +25,13 @@ export default function TokenGatedContent({ query, createMode }) {
   const [showAddNewContentModal, setShowAddNewContentModal] = useState(false);
   const [showUploadByLinkModal, setShowUploadByLinkModal] = useState(false);
   const [selectedSort, setSelectedSort] = useState('');
+  const [contentList, setContentList] = useState({});
 
   const onGetTokenGatedProject = async (id) => {
     setShowOverLayLoading(true);
+    let projectInfo = '';
     await getTokenGatedProject(id)
       .then((res) => {
-        setShowOverLayLoading(false);
         if (res.code === 0) {
           let response = { ...res?.token_gate_project };
           let photo = response?.assets?.find(
@@ -42,15 +46,24 @@ export default function TokenGatedContent({ query, createMode }) {
             const links = JSON.parse(response?.links);
             response.links = links;
           } catch (error) {
-            console.log(error);
-            response.links = [];
+            response.links = [
+              { title: 'linkInsta', icon: 'instagram', value: '' },
+              { title: 'linkGithub', icon: 'github', value: '' },
+              { title: 'linkTwitter', icon: 'twitter', value: '' },
+              { title: 'linkFacebook', icon: 'facebook', value: '' },
+              { title: 'customLinks1', icon: 'link', value: '' },
+            ];
           }
           setProject(response);
+          projectInfo = response;
+        } else {
+          setShowOverLayLoading(false);
         }
       })
       .catch((err) => {
         setShowOverLayLoading(false);
       });
+    await onContentListGet(query?.id, projectInfo);
   };
   const onAddNewContentClick = async () => {
     setShowAddNewContentModal(true);
@@ -67,6 +80,30 @@ export default function TokenGatedContent({ query, createMode }) {
       router.replace(`/token-gated/${id}`);
     }
   };
+  const onContentListGet = async (projectId, projectInfo) => {
+    const payload = {
+      id: projectId,
+      page: 1,
+      orderBy: 'newer',
+    };
+    await getContentList(payload)
+      .then((res) => {
+        setShowOverLayLoading(false);
+        if (res.code === 0) {
+          if (res?.data?.length > 0) {
+            res?.data?.forEach((element) => {
+              element.isChecked = false;
+            });
+          }
+          const projectWithContent = { ...projectInfo, contents: res?.data };
+          setContentList(projectWithContent);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setShowOverLayLoading(false);
+      });
+  };
 
   useEffect(() => {
     if (!createMode) {
@@ -77,51 +114,56 @@ export default function TokenGatedContent({ query, createMode }) {
   return (
     <>
       {showOverLayLoading && <div className='loading'></div>}
-      <div className='py-4 px-4 md:px-0'>
-        <ProjectInfoCard
-          project={project}
-          createMode={createMode}
-          settingSaved={onSettingSaved}
-        />
-        <div className='flex flex-wrap gap-4 items-start my-4 md:my-[50px]'>
-          <div className='flex flex-wrap gap-4 items-start md:flex-1'>
-            <button
-              onClick={() => onAddNewContentClick()}
-              className='py-2 px-4 border   bg-primary-900/[0.10] text-primary-900 font-bold rounded'
-            >
-              <i className='fa-solid fa-square-plus mr-2'></i>
-              Add New Content
-            </button>
-            <button
-              onClick={() => onUploadByLinkClick()}
-              className='py-2 px-4 border  border-primary-900 text-primary-900 font-bold rounded'
-            >
-              <i className='fa-solid fa-upload mr-2'></i>
-              Upload By Link
-            </button>
+      {!showOverLayLoading && (
+        <div className='py-4 px-4 md:px-0'>
+          <ProjectInfoCard
+            project={project}
+            createMode={createMode}
+            settingSaved={onSettingSaved}
+          />
+          <div className='flex flex-wrap gap-4 items-start my-4 md:my-[50px]'>
+            <div className='flex flex-wrap gap-4 items-start md:flex-1'>
+              <button
+                onClick={() => onAddNewContentClick()}
+                className='py-2 px-4 border   bg-primary-900/[0.10] text-primary-900 font-bold rounded'
+              >
+                <i className='fa-solid fa-square-plus mr-2'></i>
+                Add New Content
+              </button>
+              <button
+                onClick={() => onUploadByLinkClick()}
+                className='py-2 px-4 border  border-primary-900 text-primary-900 font-bold rounded'
+              >
+                <i className='fa-solid fa-upload mr-2'></i>
+                Upload By Link
+              </button>
+            </div>
+            <div className='min-w-[100px]'>
+              <DropdownCreabo
+                label=''
+                value={selectedSort}
+                id='sort-token-gated-content'
+                defaultValue={'Sort By'}
+                handleChange={(e) => OnSorting(e)}
+                options={sortingOptions}
+                disabled={project?.contents?.length === 0}
+              />
+            </div>
           </div>
-          <div className='min-w-[100px]'>
-            <DropdownCreabo
-              label=''
-              value={selectedSort}
-              id='sort-token-gated-content'
-              defaultValue={'Sort By'}
-              handleChange={(e) => OnSorting(e)}
-              options={sortingOptions}
-              disabled={project?.contents?.length === 0}
-            />
-          </div>
+          <ContentListTable
+            projectInfo={contentList}
+            createMode={createMode}
+            onContentPublished={() => onGetTokenGatedProject(query?.id)}
+            onContentDelete={() => onGetTokenGatedProject(query?.id)}
+          ></ContentListTable>
         </div>
-        <ContentListTable
-          projectInfo={project}
-          createMode={createMode}
-        ></ContentListTable>
-      </div>
+      )}
       {showAddNewContentModal && (
         <AddNewContentModal
           show={showAddNewContentModal}
           handleClose={() => setShowAddNewContentModal(false)}
           tokenProjectId={query?.id}
+          onContentAdded={() => onGetTokenGatedProject(query?.id)}
         />
       )}
       {showUploadByLinkModal && (

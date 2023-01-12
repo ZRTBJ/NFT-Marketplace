@@ -56,3 +56,14 @@ export async function publishTokenGatedContent(id, data) {
     'formdata'
   );
 }
+
+export async function getContentList(payload) {
+  return await client(
+    'GET',
+    `/tokengate/${payload.id}/contents?page=${payload.page}&limit=10&order_by=${payload.orderBy}`
+  );
+}
+
+export async function deleteTokenGatedContent(id, data) {
+  return await client('DELETE', `/tkg-content/${id}`);
+}

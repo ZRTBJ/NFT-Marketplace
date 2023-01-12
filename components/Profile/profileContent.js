@@ -47,7 +47,10 @@ import curvVector from 'assets/images/profile/curv1.png';
 import Modal from 'components/Commons/Modal';
 import CollectionCard from 'components/Cards/CollectionCard';
 import { logout } from 'redux/auth';
-import { getTokenGatedProjectList } from 'services/tokenGated/tokenGatedService';
+import {
+  createTokenGatedProject,
+  getTokenGatedProjectList,
+} from 'services/tokenGated/tokenGatedService';
 import TokenGatedProjectCard from 'components/Cards/TokenGatedProjectCard';
 const Profile = ({ id }) => {
   const dispatch = useDispatch();
@@ -402,7 +405,21 @@ const Profile = ({ id }) => {
     setRoyaltiesList(royaltyList);
   }
   const onCreateTokenGatedProject = async () => {
-    router.push(`/token-gated/create`);
+    setShowOverlayLoading(true);
+    let title = `Unnamed Project ${new Date().toISOString()}`;
+    await createTokenGatedProject(title)
+      .then((res) => {
+        setShowOverlayLoading(false);
+        if (res.code === 0) {
+          router.push(`/token-gated/${res?.token_gate_project?.id}`);
+        } else {
+          toast.error(`Failed, ${res?.message}`);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setShowOverlayLoading(false);
+      });
   };
 
   useEffect(() => {
