@@ -24,6 +24,7 @@ import TransactionModal from 'components/NFT/DetailsNFT/MintNFT/TransactionModal
 import WaitingModal from 'components/NFT/DetailsNFT/MintNFT/WaitingModal';
 import NftSuccessModal from 'components/NFT/DetailsNFT/MintNFT/NftSuccessModal';
 import ErrorModal from 'components/Modals/ErrorModal';
+import MoonpayModal from 'components/Modals/MoonpayModal';
 import WalletConnectModal from 'components/Login/WalletConnectModal';
 import { createMintNFT } from 'components/NFT/DetailsNFT/MintNFT/deploy-mintnft';
 import { createProvider } from 'util/smartcontract/provider';
@@ -54,6 +55,7 @@ export default function DetailsNFT({ type, id }) {
   const [showNftSuccessModal, setNftSuccessModal] = useState(false);
   const [funcId, setFuncId] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const [showMoonpayModal, setShowMoonpayModal] = useState(false)
   const [mintData, setMintData] = useState();
   const [hash, setHash] = useState('');
   const [showEmbedNFT, setShowEmbedNFT] = useState(false);
@@ -98,7 +100,8 @@ export default function DetailsNFT({ type, id }) {
         }
       } else {
         setTransactionWaitingModal(false);
-        setErrorMsg("You don't have enough balance in your wallet to Mint NFT");
+        setShowMoonpayModal(true)
+        // setErrorMsg("You don't have enough balance in your wallet to Mint NFT");
       }
     } catch (err) {
       setTransactionWaitingModal(false);
@@ -324,6 +327,14 @@ export default function DetailsNFT({ type, id }) {
             setErrorMsg('');
           }}
           show={errorMsg}
+        />
+      )}
+      {showMoonpayModal && (
+        <MoonpayModal
+          handleClose={() => {
+            setShowMoonpayModal(false);
+          }}
+          show={showMoonpayModal}
         />
       )}
       {showModal && (

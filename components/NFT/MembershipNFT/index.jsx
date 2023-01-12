@@ -26,6 +26,7 @@ import axios from 'axios';
 import Config from 'config/config';
 import { getNotificationData } from 'redux/notification';
 import ErrorModal from 'components/Modals/ErrorModal';
+import MoonpayModal from 'components/Modals/MoonpayModal';
 import Image from 'next/image';
 import { NETWORKS } from 'config/networks';
 import ConfirmationModal from 'components/Modals/ConfirmationModal';
@@ -78,6 +79,7 @@ export default function MembershipNFT({ query }) {
   const [projectCreated, setProjectCreated] = useState(false);
   const [projectInfo, setProjectInfo] = useState({});
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [showMoonpayModal, setShowMoonpayModal] = useState(false);
   const [options, setOptions] = useState([]);
   const jobIds = [];
   const [calledIds, setCalledIds] = useState([]);
@@ -1350,6 +1352,14 @@ export default function MembershipNFT({ query }) {
           show={showErrorModal}
           title={errorTitle}
           message={errorMessage}
+        />
+      )}
+      {showMoonpayModal && (
+        <MoonpayModal
+          handleClose={() => {
+            setShowMoonpayModal(false);
+          }}
+          show={showMoonpayModal}
         />
       )}
       {showDataUploadingModal && (
