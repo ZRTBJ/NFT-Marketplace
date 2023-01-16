@@ -789,13 +789,17 @@ const CollectionContent = ({ collectionId, userId }) => {
                             </p>
                           </>
                         ) : (
-                          <p
-                            className='bg-primary-900/[0.08] rounded mt-1 text-sm w-fit  text-primary-900 font-bold cursor-pointer p-2'
-                            onClick={() => setShowDaoConnectModal(true)}
-                          >
-                            <i class='fa-solid fa-link mr-2'></i>
-                            Connect DAO
-                          </p>
+                          <>
+                            {Collection?.status === 'draft' && (
+                              <p
+                                className='bg-primary-900/[0.08] rounded mt-1 text-sm w-fit  text-primary-900 font-bold cursor-pointer p-2'
+                                onClick={() => setShowDaoConnectModal(true)}
+                              >
+                                <i className='fa-solid fa-link mr-2'></i>
+                                Connect DAO
+                              </p>
+                            )}
+                          </>
                         )}
                       </div>
                     </>
@@ -959,18 +963,20 @@ const CollectionContent = ({ collectionId, userId }) => {
                 {/* <a className='inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>
                 Sales Setting
               </a> */}
-                {Collection?.type === 'product' && Collection?.is_owner && Collection?.status != 'published' && (
-                  <div
-                    onClick={
-                      Collection?.status === 'published'
-                        ? null
-                        : (e) => salesPageModal(e, 'product')
-                    }
-                    className='outlined-button ml-0 mr-4 font-satoshi-bold cursor-pointer'
-                  >
-                    <span>Sales Setting</span>
-                  </div>
-                )}
+                {Collection?.type === 'product' &&
+                  Collection?.is_owner &&
+                  Collection?.status != 'published' && (
+                    <div
+                      onClick={
+                        Collection?.status === 'published'
+                          ? null
+                          : (e) => salesPageModal(e, 'product')
+                      }
+                      className='outlined-button ml-0 mr-4 font-satoshi-bold cursor-pointer'
+                    >
+                      <span>Sales Setting</span>
+                    </div>
+                  )}
                 {/* {Collection?.is_owner && (
                   <Link
                     href={`/collection/create/?id=${collectionId}`}
