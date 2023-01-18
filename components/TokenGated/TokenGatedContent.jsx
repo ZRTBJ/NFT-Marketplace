@@ -11,7 +11,7 @@ import { useRouter } from 'next/router';
 import AddNewContentModal from 'components/TokenGated/Modal/Content/AddNewContent';
 import UploadByLinkModal from 'components/TokenGated/Modal/UploadByLink';
 import DropdownCreabo from 'components/Commons/Dropdown';
-import ProjectInfoCard from 'components/TokenGated/ProjectInfoCard';
+import CreatorProjectInfoCard from 'components/TokenGated/ProjectInfoCard/Creator';
 import ContentListTable from 'components/TokenGated/ContentListTable';
 import { isValidURL } from 'util/functions';
 
@@ -141,7 +141,7 @@ export default function TokenGatedContent({ query, createMode }) {
       {showOverLayLoading && <div className='loading'></div>}
       {!showOverLayLoading && (
         <div className='py-4 px-4 md:px-0'>
-          <ProjectInfoCard
+          <CreatorProjectInfoCard
             project={project}
             createMode={createMode}
             settingSaved={onSettingSaved}

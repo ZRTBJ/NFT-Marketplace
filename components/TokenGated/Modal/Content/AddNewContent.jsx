@@ -306,6 +306,10 @@ export default function AddNewContent({
     let finalType = content.media?.file?.type
       ? content.media.file.type.split('/')[0]
       : '';
+    // video type is not working
+    if (finalType === 'video') {
+      finalType = 'movie';
+    }
     let payload = {
       title: content?.title,
       description: content?.description,

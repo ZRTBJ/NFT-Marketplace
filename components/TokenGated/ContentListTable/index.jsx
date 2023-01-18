@@ -232,7 +232,23 @@ export default function ContentListTable({
                       </div>
                     )}
                   </td>
-                  <td className='py-4 px-6'>{content?.accessible}</td>
+                  <td className='py-4 px-6'>
+                    {content?.config_names &&
+                      content?.config_names?.length > 0 && (
+                        <>
+                          {content?.config_names
+                            ?.slice(0, 2)
+                            .map((n, index) => {
+                              return <span key={index}> {n},</span>;
+                            })}
+                          {content?.config_names?.length > 3 && (
+                            <>
+                              <span className='ml-2'>...</span>
+                            </>
+                          )}
+                        </>
+                      )}
+                  </td>
                   <td className='py-4 px-6'>
                     {dayjs(content?.created_at).format('DD/MM/YYYY')}
                   </td>

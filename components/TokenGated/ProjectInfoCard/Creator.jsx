@@ -3,10 +3,23 @@ import Image from 'next/image';
 import thumbIcon from 'assets/images/profile/card.svg';
 import SocialLink from 'components/Commons/SocialLink';
 import SettingModal from 'components/TokenGated/Modal/Setting';
-export default function ProjectInfoCard({ project, createMode, settingSaved }) {
+import { toast } from 'react-toastify';
+export default function Creator({ project, createMode, settingSaved }) {
+  const origin =
+    typeof window !== 'undefined' && window.location.origin
+      ? window.location.origin
+      : '';
+  const hostURL = `${origin}`;
+  const publicDetailsLink = `${hostURL}/token-gated/public/${project?.id}`;
   const [showSettingModal, setShowSettingModal] = useState(false);
   const onSettingClick = async () => {
     setShowSettingModal(true);
+  };
+  const copyToClipboard = () => {
+    if (typeof window !== 'undefined') {
+      navigator.clipboard.writeText(publicDetailsLink);
+    }
+    toast.success(`Link successfully copied`);
   };
   return (
     <>
@@ -19,12 +32,31 @@ export default function ProjectInfoCard({ project, createMode, settingSaved }) {
               alt='token gated project logo'
               width={81}
               height={81}
+              unoptimized
             />
           </div>
           <div>
             <p className='text-[18px] text-txtblack font-black'>
               {project?.title ? project?.title : 'Unnamed Project'}
             </p>
+            <div className='my-2 md:flex align-items-center'>
+              <div className='w-[270px] md:w-[450px] truncate block'>
+                <span className='textSubtle font-bold'>Project Link: </span>
+                <span className='ml-2'>
+                  <a
+                    href={`${publicDetailsLink}`}
+                    target='_blank'
+                    rel='noreferrer'
+                  >
+                    {publicDetailsLink}
+                  </a>
+                </span>
+              </div>
+              <i
+                className='fa-regular fa-copy text-lg cursor-pointer text-primary-900 md:ml-2'
+                onClick={() => copyToClipboard()}
+              ></i>
+            </div>
             <p className='text-textSubtle text-[12px] w-full md:max-w-[471px]'>
               {project?.description
                 ? project?.description

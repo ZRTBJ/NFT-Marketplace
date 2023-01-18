@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 
 const SettingContent = ({
@@ -14,7 +14,7 @@ const SettingContent = ({
     : content?.media?.file?.type?.split('/')[0]?.toLowerCase();
 
   let mediaPath = linkDetails?.link ? linkDetails.link : content?.media?.path;
-
+  const [audioRef, setAudioref] = useState();
   return (
     <div className='mt-6'>
       <p className='mb-2 text-[14px]'>Media</p>

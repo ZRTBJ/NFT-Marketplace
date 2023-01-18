@@ -675,7 +675,7 @@ const Profile = ({ id }) => {
                                 Icon
                               </th>
                               <th scope='col' className='px-5'>
-                                Project Name
+                                DAO Name
                               </th>
                               <th scope='col' className='px-5'>
                                 Collection Name

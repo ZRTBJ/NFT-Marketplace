@@ -60,7 +60,9 @@ export async function publishTokenGatedContent(id, data) {
 export async function getContentList(payload) {
   return await client(
     'GET',
-    `/tokengate/${payload.id}/contents?page=${payload.page}&limit=10&order_by=${payload.orderBy}`
+    `/tokengate/${payload.id}/contents?page=${payload.page}&limit=10&order_by=${
+      payload.orderBy
+    }&file_type=${payload?.file_type ? payload?.file_type : ''}`
   );
 }
 
