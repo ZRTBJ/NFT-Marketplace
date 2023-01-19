@@ -15,12 +15,12 @@ import {
   updateTokenGatedContent,
   publishTokenGatedContent,
 } from 'services/tokenGated/tokenGatedService';
-import { generateUploadkey } from 'services/nft/nftService';
 import { getNotificationData } from 'redux/notification';
 import axios from 'axios';
 import Config from 'config/config';
 import SuccessModal from 'components/Modals/SuccessModal';
 import ErrorModal from 'components/Modals/ErrorModal';
+import { ls_GetUserToken } from 'util/ApplicationStorage';
 
 const STEPS = [
   { id: 1, label: 'Setting Content' },
@@ -71,6 +71,8 @@ export default function AddNewContent({
   const [publishNow, setPublishNow] = useState(false);
   const [addressError, setAddressError] = useState(false);
   const [addressValid, setAddressValid] = useState(false);
+  const [blockchain, setBlockchain] = useState('');
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -80,14 +82,14 @@ export default function AddNewContent({
     );
     if (projectDeployStatus && projectDeployStatus.data) {
       const data = JSON.parse(projectDeployStatus.data);
-      if (data.Data['assetId'] && data.Data['assetId'].length > 0) {
-        handleCreateContent(data.Data['assetId']);
+      if (data.Data['asset_uid'] && data.Data['asset_uid'].length > 0) {
+        handleCreateContent(data.Data['asset_uid']);
       } else {
         setIsLoading(false);
         setShowError(true);
       }
     }
-  }, [fileUploadNotification]);
+  }, [fileUploadNotification, jobId]);
 
   const handleFieldChange = (e) => {
     setContent({
@@ -245,7 +247,7 @@ export default function AddNewContent({
           setCollectionDetail({
             contract_address: resp?.address,
             name: resp?.contractMetadata?.name,
-            blockchain: '80001',
+            blockchain: blockchain,
             collection_symbol: resp?.contractMetadata?.symbol,
             total_supply: resp?.contractMetadata?.totalSupply,
             token_standard: resp?.contractMetadata?.tokenType,
@@ -367,37 +369,21 @@ export default function AddNewContent({
       });
   };
 
-  async function genUploadKey() {
+  async function uploadAFile() {
     setIsSubmitted(true);
-    if (content?.title && content?.media?.file) {
-      setIsLoading(true);
-      const request = new FormData();
-      await generateUploadkey(request)
-        .then((res) => {
-          if (res.key) {
-            uploadAFile(res.key);
-          }
-        })
-        .catch((err) => {
-          setIsLoading(false);
-          setShowError(true);
-          setPublishNow(false);
-        });
-    }
-  }
-
-  async function uploadAFile(uploadKey) {
     let headers;
+    let token = ls_GetUserToken();
     headers = {
       'Content-Type': 'multipart/form-data',
       'Access-Control-Allow-Origin': '*',
-      key: uploadKey,
+      Authorization: `Bearer ${token}`,
     };
+    setIsLoading(true);
     let formdata = new FormData();
     formdata.append('file', content?.media?.file);
     await axios({
       method: 'POST',
-      url: Config.FILE_SERVER_URL,
+      url: Config.TOKEN_GATE_FILE_SERVER_URL,
       data: formdata,
       headers: headers,
     })
@@ -423,7 +409,7 @@ export default function AddNewContent({
     if (linkDetails?.link) {
       handleCreateContent();
     } else {
-      genUploadKey();
+      uploadAFile();
     }
   };
 
@@ -432,7 +418,7 @@ export default function AddNewContent({
     if (linkDetails?.link) {
       handleCreateContent();
     } else {
-      genUploadKey();
+      uploadAFile();
     }
   };
 
@@ -524,6 +510,11 @@ export default function AddNewContent({
             showAddCollection={showAddCollection}
             addressError={addressError}
             addressValid={addressValid}
+            setBlockchain={setBlockchain}
+            blockchain={blockchain}
+            setAddressValid={setAddressValid}
+            setAddressError={setAddressError}
+            setShowAddCollection={setShowAddCollection}
           />
         ) : (
           <>

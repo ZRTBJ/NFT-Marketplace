@@ -24,6 +24,11 @@ const IntegrateNewCollection = ({
   showAddCollection,
   addressError,
   addressValid,
+  blockchain,
+  setBlockchain,
+  setAddressError,
+  setAddressValid,
+  setShowAddCollection,
 }) => {
   const [showExistingCollection, setShowExistingCollection] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -31,6 +36,9 @@ const IntegrateNewCollection = ({
   useEffect(() => {
     if (showExistingCollection) {
       setSmartContractAddress('');
+      setAddressValid(false);
+      setAddressError(false);
+      setBlockchain('');
     } else {
       setCollectionDetail('');
     }
@@ -55,11 +63,22 @@ const IntegrateNewCollection = ({
     collectionDetail?.assets?.length &&
     collectionDetail.assets.find((img) => img['asset_purpose'] === 'logo');
 
+  let validNetworks = NETWORKS ? Object.values(NETWORKS) : [];
+
   return (
     <div>
       {showPreview ? (
         <div>
-          <h2 className='text-[28px] text-black'>Import Preview</h2>
+          <div>
+            <p
+              className='absolute top-3 cursor-pointer'
+              onClick={() => setShowPreview(false)}
+            >
+              <i className='fa-regular mr-2 fa-arrow-left cursor-pointer text-xl text-black'></i>
+              <span>Back</span>
+            </p>
+            <h2 className='text-[28px] text-black mt-3'>Import Preview</h2>
+          </div>
           <div className='mt-8 rounded-[8px]'>
             <div className='flex'>
               <Image
@@ -121,14 +140,19 @@ const IntegrateNewCollection = ({
               <div className='!text-[20px]'>
                 <a
                   href={`${
-                    NETWORKS[collectionDetail?.blockchain]
-                      ?.viewContractAddressUrl
+                    NETWORKS[
+                      blockchain ? blockchain : collectionDetail?.blockchain
+                    ]?.viewContractAddressUrl
                   }${collectionDetail?.contract_address}`}
                   target='_blank'
                   rel='noreferrer'
                 >
                   <Image
-                    src={NETWORKS[collectionDetail?.blockchain]?.scan}
+                    src={
+                      NETWORKS[
+                        blockchain ? blockchain : collectionDetail?.blockchain
+                      ]?.scan
+                    }
                     alt='scan'
                     height={40}
                     width={40}
@@ -153,7 +177,10 @@ const IntegrateNewCollection = ({
         </div>
       ) : (
         <>
-          {' '}
+          <i
+            className='fa fa-xmark cursor-pointer text-xl absolute top-8 right-8 text-black'
+            onClick={() => setShowAddCollection(null)}
+          ></i>
           <h2 className='text-[28px] text-black'>Add New Collection</h2>
           <div className='mt-5 border-b-[1px] border-textSubtle pb-4'>
             <h3>Import Collection</h3>
@@ -192,6 +219,33 @@ const IntegrateNewCollection = ({
                 smart contract is validated
               </p>
             )}
+            <div className='mt-4'>
+              <div className='flex flex-wrap items-center mb-2'>
+                <div className='txtblack text-[14px]'>Select Blockchain</div>
+              </div>
+              <div className='select-wrapper'>
+                <select
+                  value={blockchain}
+                  onChange={(e) => setBlockchain(e.target.value)}
+                  disabled={showExistingCollection}
+                  className='h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3'
+                >
+                  <option value={''} defaultValue>
+                    Select Blockchain
+                  </option>
+                  {validNetworks.map((network) => (
+                    <option value={network?.network}>
+                      {network?.networkName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {addressValid && !blockchain && (
+                <p className='text-danger-800 text-sm mt-1'>
+                  Blockchain is required
+                </p>
+              )}
+            </div>
             <div
               className='flex items-center justify-between mt-6 cursor-pointer'
               onClick={() => setShowExistingCollection(!showExistingCollection)}

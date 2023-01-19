@@ -242,6 +242,12 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
               data: lastMessage.data,
             };
             dispatch(getNotificationData(notificationData));
+          } else if (data.type === 'fileUploadTokengatedNotification') {
+            const notificationData = {
+              function_uuid: data.Data.asset_uid,
+              data: lastMessage.data,
+            };
+            dispatch(getNotificationData(notificationData));
           }
         }
       } catch (err) {

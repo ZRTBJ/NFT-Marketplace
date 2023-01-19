@@ -55,7 +55,8 @@ export default function ContentListTable({
       setShowDeleteContentModal(true);
     }
   };
-
+  
+console.log(selectedContents)
   useEffect(() => {
     if (project && project?.contents?.length > 0) {
       let oldProject = { ...project };
