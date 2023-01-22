@@ -4,6 +4,7 @@ import { deleteTokenGatedContent } from 'services/tokenGated/tokenGatedService';
 import ConfirmationModal from 'components/Modals/ConfirmationModal';
 import SuccessModal from 'components/Modals/SuccessModal';
 import { useState } from 'react';
+import ErrorModal from 'components/Modals/ErrorModal';
 export default function PublishContentModal({
   show,
   handleClose,
@@ -14,17 +15,18 @@ export default function PublishContentModal({
   const [showConfirmModal, setShowConfirmModal] = useState(true);
   const [showLoading, setShowLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const deleteContent = async (id) => {
-    const data = {
-      is_publish: true,
-    };
-    await deleteTokenGatedContent(id, data)
+    await deleteTokenGatedContent(id)
       .then((resp) => {
         if (resp.code === 0) {
           // console.log(resp);
         } else {
-          console.log(error);
+          setShowLoading(false);
+          setShowErrorModal(true);
+          setErrorMessage(resp.message);
         }
       })
       .catch((err) => {});
@@ -39,7 +41,9 @@ export default function PublishContentModal({
       await deleteContent(iterator);
     }
     setShowLoading(false);
-    setShowSuccess(true);
+    if (!showErrorModal) {
+      setShowSuccess(true);
+    }
   };
   const onSuccess = () => {
     setStep(1);
@@ -82,14 +86,24 @@ export default function PublishContentModal({
             </Modal>
           )}
           {showSuccess && (
-            <>
-              <SuccessModal
-                show={showSuccess}
-                handleClose={() => onSuccess()}
-                message='Successfully Deleted'
-                btnText='Close'
-              />
-            </>
+            <SuccessModal
+              show={showSuccess}
+              handleClose={() => onSuccess()}
+              message='Successfully Deleted'
+              btnText='Close'
+            />
+          )}
+          {showErrorModal && (
+            <ErrorModal
+              title={'Failed to Delete Content'}
+              message={`${errorMessage}`}
+              handleClose={() => {
+                setShowErrorModal(false);
+                setErrorMessage('');
+                setStep(1);
+              }}
+              show={showErrorModal}
+            />
           )}
         </>
       )}

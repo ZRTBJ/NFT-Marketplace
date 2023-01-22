@@ -2,7 +2,13 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-const PrivateRoutes = ['dashboard', 'create', 'dao/create', 'settings'];
+const PrivateRoutes = [
+  'dashboard',
+  'create',
+  'dao/create',
+  'settings',
+  'token-gated',
+];
 
 const Auth = ({ children }) => {
   const router = useRouter();
@@ -14,8 +20,7 @@ const Auth = ({ children }) => {
       (!userinfo?.id &&
         PrivateRoutes.some((routes) => paths.includes(routes))) ||
       (!userinfo?.id && router?.pathname === '/nft/product/create') ||
-      (!userinfo?.id && router?.pathname === '/nft/membership/create') ||
-      (!userinfo?.id && router?.pathname === '/token-gated/[id]')
+      (!userinfo?.id && router?.pathname === '/nft/membership/create')
     ) {
       router.push('/');
     }

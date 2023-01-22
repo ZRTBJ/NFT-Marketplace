@@ -11,6 +11,7 @@ import Spinner from 'components/Commons/Spinner';
 import SuccessModal from 'components/Modals/SuccessModal';
 import ErrorModal from 'components/Modals/ErrorModal';
 import { NETWORKS } from 'config/networks';
+import { uniqBy } from 'lodash';
 export default function DaoConnectModal({
   handleClose,
   show,
@@ -46,7 +47,7 @@ export default function DaoConnectModal({
           // );
           const daoList = [...options];
           const mergedDaoList = [...daoList, ...res?.data];
-          const uniqDaoList = _.uniqBy(mergedDaoList, function (e) {
+          const uniqDaoList = uniqBy(mergedDaoList, function (e) {
             return e.id;
           });
           setOptions(uniqDaoList);

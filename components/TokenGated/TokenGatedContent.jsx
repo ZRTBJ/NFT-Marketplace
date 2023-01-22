@@ -110,6 +110,7 @@ export default function TokenGatedContent({ query, createMode }) {
       id: projectId,
       page: 1,
       orderBy: 'newer',
+      limit: 20,
     };
     await getContentList(payload)
       .then((res) => {

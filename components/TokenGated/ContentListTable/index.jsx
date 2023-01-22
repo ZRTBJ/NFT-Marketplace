@@ -55,8 +55,8 @@ export default function ContentListTable({
       setShowDeleteContentModal(true);
     }
   };
-  
-console.log(selectedContents)
+
+  console.log(selectedContents);
   useEffect(() => {
     if (project && project?.contents?.length > 0) {
       let oldProject = { ...project };
@@ -212,13 +212,20 @@ console.log(selectedContents)
                           )
                         }
                       />
-                      <Image
-                        className='rounded h-[44px] w-[44px] object-cover'
-                        src={thumbIcon}
-                        height={44}
-                        width={44}
-                        alt='content logo'
-                      />
+                      <div className='w-[40px]'>
+                        {content?.file_type === 'movie' && (
+                          <i className='fa-solid fa-circle-video text-[35px]'></i>
+                        )}
+                        {content?.file_type === 'audio' && (
+                          <i className='fa-solid fa-file-audio text-[35px]'></i>
+                        )}
+                        {content?.file_type === 'image' && (
+                          <i className='fa-solid fa-image text-[35px]'></i>
+                        )}
+                        {content?.file_type === 'other' && (
+                          <i className='fa-solid fa-file text-[35px]'></i>
+                        )}
+                      </div>
                       <div>{content?.title}</div>
                     </div>
                   </td>
@@ -258,10 +265,10 @@ console.log(selectedContents)
                     <div className='flex flex-wrap items-center gap-3'>
                       <button
                         onClick={() => onContentActions(content, 'publish')}
-                        className='py-2 px-4 border bg-primary-900/[0.10] text-primary-900 font-bold rounded'
+                        className='py-2 px-4 border bg-primary-900/[0.10] text-primary-900 font-bold rounded w-[121px]'
                       >
                         <i className='fa-solid fa-play mr-2'></i>
-                        Publish
+                        {content?.status === 'draft' ? 'Publish' : 'Un-Publish'}
                       </button>
                       <button
                         onClick={() => onContentActions(content, 'configure')}

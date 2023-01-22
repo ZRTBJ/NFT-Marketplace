@@ -8,7 +8,7 @@ export default function TokenGatedProjectCard({ tokenGatedProject }) {
     <div className='md:min-h-[390px] '>
       <Link href={`/token-gated/${tokenGatedProject?.id}`}>
         <Image
-          className='w-full h-[156px] rounded-xl md:h-[276px] object-cover'
+          className='w-full h-[156px] rounded md:h-[276px] object-cover'
           src={
             tokenGatedProject &&
             tokenGatedProject?.assets &&
@@ -22,19 +22,23 @@ export default function TokenGatedProjectCard({ tokenGatedProject }) {
         />
       </Link>
 
-      <div className='p-5'>
-        <div className='flex items-center justify-between'>
-          <h3 className='pb-2 text-txtblack truncate text-[18px] md:text-[24px]'>
+      <div className='pt-4 px-2'>
+        <div className=''>
+          <p className='text-txtblack font-black truncate text-[18px] '>
             {tokenGatedProject?.title}
-          </h3>
-          <i className='fa-solid fa-ellipsis-vertical cursor-pointer'></i>
+          </p>
+          <p className='text-txtSubtle text-[14px]'>
+            {tokenGatedProject?.total_content} Content
+          </p>
+          <Link href={`/token-gated/${tokenGatedProject?.id}`}>
+            <p className='cursor-pointer text-[#30A5DC] font-bold text-[14px]'>
+              See Detail
+              <span>
+                <i className='ml-2 fa-solid fa-right-long'></i>
+              </span>
+            </p>
+          </Link>
         </div>
-        <p className='mb-3 text-textSubtle text-[13px]'>
-          {tokenGatedProject?.description &&
-          tokenGatedProject?.description?.length > 70
-            ? tokenGatedProject?.description.substring(0, 67) + '...'
-            : tokenGatedProject?.description}
-        </p>
       </div>
     </div>
   );

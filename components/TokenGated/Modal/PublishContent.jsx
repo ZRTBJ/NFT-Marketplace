@@ -3,6 +3,7 @@ import Modal from 'components/Commons/Modal';
 import { publishTokenGatedContent } from 'services/tokenGated/tokenGatedService';
 import ConfirmationModal from 'components/Modals/ConfirmationModal';
 import SuccessModal from 'components/Modals/SuccessModal';
+import ErrorModal from 'components/Modals/ErrorModal';
 import { useState } from 'react';
 export default function PublishContentModal({
   show,
@@ -14,17 +15,22 @@ export default function PublishContentModal({
   const [showConfirmModal, setShowConfirmModal] = useState(true);
   const [showLoading, setShowLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const publish = async (id) => {
+  const publish = async (content) => {
     const data = {
-      is_publish: true,
+      is_publish:
+        contents.length > 1 ? true : content?.status === 'draft' ? true : false,
     };
-    await publishTokenGatedContent(id, data)
+    await publishTokenGatedContent(content.id, data)
       .then((resp) => {
         if (resp.code === 0) {
           // console.log(resp);
         } else {
-          console.log(error);
+          setShowLoading(false);
+          setShowErrorModal(true);
+          setErrorMessage(resp.message);
         }
       })
       .catch((err) => {});
@@ -32,14 +38,13 @@ export default function PublishContentModal({
   const publishContent = async () => {
     setStep(2);
     setShowLoading(true);
-    const ids = contents.map((c) => {
-      return c.id;
-    });
-    for (const iterator of ids) {
+    for (const iterator of contents) {
       await publish(iterator);
     }
     setShowLoading(false);
-    setShowSuccess(true);
+    if (!showErrorModal) {
+      setShowSuccess(true);
+    }
   };
   const onSuccess = () => {
     setStep(1);
@@ -88,10 +93,22 @@ export default function PublishContentModal({
               <SuccessModal
                 show={showSuccess}
                 handleClose={() => onSuccess()}
-                message='Successfully Published'
+                message='Successfully Updated'
                 btnText='Close'
               />
             </>
+          )}
+          {showErrorModal && (
+            <ErrorModal
+              title={'Failed to Publish'}
+              message={`${errorMessage}`}
+              handleClose={() => {
+                setShowErrorModal(false);
+                setErrorMessage('');
+                setStep(1);
+              }}
+              show={showErrorModal}
+            />
           )}
         </>
       )}

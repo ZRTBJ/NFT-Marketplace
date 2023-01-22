@@ -1,68 +1,60 @@
 import React, { useState } from 'react';
 import grayWeb from 'assets/images/token-gated/grayWeb.svg';
-import playIcon from 'assets/images/token-gated/audioPlay.png';
+import playIcon from 'assets/images/token-gated/audioPlay.svg';
 import Image from 'next/image';
-import dynamic from 'next/dynamic';
-
-const Waveform = dynamic(() => import('./Waveform'), { ssr: false });
+import { useRouter } from 'next/router';
+import { useSelector } from 'react-redux';
+// const Waveform = dynamic(() => import('./Waveform'), { ssr: false });
 export default function AudiCardHorizontal({ content }) {
-  const [showPoster, setShowPoster] = useState(true);
-  const [showPlayer, setShowPlayer] = useState(false);
-  const onPlayClick = () => {
-    setShowPoster(false);
-    setShowPlayer(true);
-  };
+  const userinfo = useSelector((state) => state.user.userinfo);
+  const router = useRouter();
+  const lockIcon = (
+    <i className='fa-solid fa-lock text-[34px] text-black-shade-900 cursor-pointer '></i>
+  );
+
   return (
     <div>
       <div className='flex items-center gap-4'>
         <div className='bg-[#D9D9D9] h-[200px] w-[180px] rounded'></div>
-        <div className='w-full flex-grow'>
+        <div
+          className='w-full flex-grow cursor-pointer '
+          onClick={() => router.push(`/token-gated/content/${content?.id}`)}
+        >
           <div className='flex items-center gap-2 '>
-            <Image
-              src={playIcon}
-              onClick={() => onPlayClick()}
-              height={50}
-              width={50}
-              className='h-[50px] w-[50px] cursor-pointer'
-              alt='play'
-              unoptimized
-            ></Image>
+            {content?.consumable_data ? (
+              <Image
+                src={playIcon}
+                height={44}
+                width={44}
+                className='h-[50px] w-[50px] cursor-pointer'
+                alt='play'
+                unoptimized
+              ></Image>
+            ) : (
+              lockIcon
+            )}
             <div className='font-bold text-[24px] text-txtblack'>
               {content?.title}
             </div>
           </div>
-          {showPoster && (
-            <Image
-              src={grayWeb}
-              height={100}
-              width={100}
-              className='w-full h-[100px] object-cover rounded mb-5'
-              alt='web'
-              unoptimized
-            ></Image>
-          )}
-          {showPlayer && (
-            <>
-              <div className=' h-[100px] rounded mb-8'>
-                <Waveform
-                  id={content?.id}
-                  url={
-                    'https://splitterdev.blob.core.windows.net/uploads/track/5e1daa790e7e7aa8ba5b7f56/audio/2020011434809836263/original.flac'
-                  }
-                />
-              </div>
-            </>
-          )}
+          <Image
+            src={grayWeb}
+            height={100}
+            width={100}
+            className='w-full h-[100px] object-cover rounded mb-5'
+            alt='web'
+            unoptimized
+          ></Image>
 
           <div className='flex flex-wrap items-center gap-2 px-2 pt-2 text-white text-[12px]'>
-            {content?.sensitive.toString() === 'true' && (
+            {content?.sensitive && (
               <div className='bg-danger-1 py-1 px-3 rounded'>18+</div>
             )}
             {content?.config_names && content?.config_names?.length > 0 && (
               <>
                 {content?.config_names.slice(0, 2)?.map((c, index) => (
                   <div key={index}>
-                    <div className='bg-textSubtle py-1 px-3 rounded w-[60px] truncate'>
+                    <div className='bg-textSubtle py-1 px-3 rounded truncate'>
                       {c}
                     </div>
                   </div>
