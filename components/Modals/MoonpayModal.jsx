@@ -36,7 +36,9 @@ const MoonpayModal = ({ handleClose, show }) => {
   }, [account, network]);
 
   const createSrcUrl = async () => {
-    let src = `https://buy-staging.moonpay.io?baseCurrencyCode=USD&apiKey=pk_test_AG2hCibtgtMgggMKhLh7ijwaNKw6Mwy&currencyCode=${
+    let src = `${Config.MOONPAY_URL}?baseCurrencyCode=USD&apiKey=${
+      Config.MOONPAY_KEY
+    }&currencyCode=${
       network && NETWORKS[network].value
     }&walletAddress=${account}`;
     console.log("Res SRC", src);
