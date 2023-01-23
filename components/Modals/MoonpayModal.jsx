@@ -1,32 +1,71 @@
-import { useEffect, useState } from 'react';
-import IconError from 'assets/images/modal/error/error_modal_img.svg';
-import Link from 'next/link';
-import Modal from '../Commons/Modal';
-import Image from 'next/image';
+import { useEffect, useState } from "react";
+import IconError from "assets/images/modal/error/error_modal_img.svg";
+import Link from "next/link";
+import Modal from "../Commons/Modal";
+import Image from "next/image";
 import {
   getPersonalSign,
   isWalletConnected,
   getWalletAccount,
-} from 'util/MetaMask';
+  getCurrentNetworkId,
+} from "util/MetaMask";
+import { NETWORKS } from "config/networks";
+import axios from "axios";
+import Config from "config/config";
 
-const MoonpayModal = ({
-  handleClose,
-  show,
-}) => {
-  const [account, setAccount] = useState("")
+const MoonpayModal = ({ handleClose, show }) => {
+  const [account, setAccount] = useState("");
+  const [network, setNetwork] = useState("");
+  const [src, setSrc] = useState("");
+
   useEffect(() => {
-    fetchAccount()
-  }, [])
+    fetchAccount();
+  }, []);
 
   const fetchAccount = async () => {
     const address = await getWalletAccount();
-    setAccount(address)
-  }
-  const src = `https://buy-staging.moonpay.io?baseCurrencyCode=USD&apiKey=pk_test_AG2hCibtgtMgggMKhLh7ijwaNKw6Mwy&currencyCode=eth&walletAddress=${account}`
-  console.log("SRC", src)
+    const network = await getCurrentNetworkId();
+    setAccount(address);
+    setNetwork(network);
+  };
+
+  useEffect(() => {
+    if (account && network) {
+      createSrcUrl();
+    }
+  }, [account, network]);
+
+  const createSrcUrl = async () => {
+    let src = `${Config.MOONPAY_URL}?baseCurrencyCode=USD&apiKey=${
+      Config.MOONPAY_KEY
+    }&currencyCode=${
+      network && NETWORKS[network].value
+    }&walletAddress=${account}`;
+    console.log("Res SRC", src);
+
+    let formdata = new FormData();
+    formdata.append("url", src);
+
+    const res = await axios({
+      method: "POST",
+      url: `${Config.API_ENDPOINT}/payment/moonpay-hash`,
+      data: formdata,
+    });
+    console.log("Res: ", res);
+
+    src = `${src}&signature=${res.hash}`;
+    setSrc(src);
+  };
+
+  console.log("SRC: ", src);
   return (
-    <Modal width={400} height={620} show={show} handleClose={() => handleClose(false)}>
-      <div className='text-center' style={{marginTop: 30}}>
+    <Modal
+      width={400}
+      height={620}
+      show={show}
+      handleClose={() => handleClose(false)}
+    >
+      <div className="text-center" style={{ marginTop: 30 }}>
         <iframe
           allow="accelerometer; autoplay; camera; gyroscope; payment"
           frameborder="0"
