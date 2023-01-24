@@ -9,13 +9,14 @@ import VideoCard from '../card/VideoCard';
 import ImageCard from '../card/ImageCard';
 import FileCard from '../card/FileCard';
 import { uniqBy } from 'lodash';
-export default function AllTab({ project }) {
+export default function AllTab({ project, sortBy }) {
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setLoading] = useState(false);
   const [payload, setPayload] = useState({
     id: project?.id,
     page: 1,
-    orderBy: 'newer',
+    orderBy: sortBy ? sortBy : 'newer',
+    limit: 10,
   });
   const [list, setList] = useState([]);
   const onContentListGet = async () => {
@@ -25,7 +26,7 @@ export default function AllTab({ project }) {
         setLoading(false);
         if (res.code === 0) {
           let oldList = [...list];
-          const mergedList = oldList.concat(res.data);
+          const mergedList = oldList.concat(res?.data);
           const uniqList = uniqBy(mergedList, function (e) {
             return e.id;
           });
@@ -80,21 +81,23 @@ export default function AllTab({ project }) {
               </div>
             }
           >
-            <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6'>
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6'>
               {list?.map((content, index) => (
                 <div key={index}>
-                  {content?.file_type === 'movie' && (
-                    <VideoCard content={content} />
-                  )}
-                  {content?.file_type === 'audio' && (
-                    <AudioCardGrid content={content} />
-                  )}
-                  {content?.file_type === 'image' && (
-                    <ImageCard content={content} />
-                  )}
-                  {content?.file_type === 'other' && (
-                    <FileCard content={content} />
-                  )}
+                  <>
+                    {content?.file_type === 'movie' && (
+                      <VideoCard content={content} />
+                    )}
+                    {content?.file_type === 'audio' && (
+                      <AudioCardGrid content={content} />
+                    )}
+                    {content?.file_type === 'image' && (
+                      <ImageCard content={content} />
+                    )}
+                    {content?.file_type === 'other' && (
+                      <FileCard content={content} />
+                    )}
+                  </>
                 </div>
               ))}
             </div>

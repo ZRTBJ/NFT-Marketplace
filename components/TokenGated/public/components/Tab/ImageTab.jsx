@@ -6,14 +6,15 @@ import Image from 'next/image';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ImageCard from '../card/ImageCard';
 import { uniqBy } from 'lodash';
-export default function ImageTab({ project }) {
+export default function ImageTab({ project, sortBy }) {
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setLoading] = useState(false);
   const [payload, setPayload] = useState({
     id: project?.id,
     page: 1,
-    orderBy: 'newer',
+    orderBy: sortBy ? sortBy : 'newer',
     file_type: 'image',
+    limit: 10,
   });
   const [list, setList] = useState([]);
   const onContentListGet = async () => {
@@ -78,7 +79,7 @@ export default function ImageTab({ project }) {
               </div>
             }
           >
-            <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6'>
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6'>
               {list?.map((content, index) => (
                 <div key={index}>
                   {content?.file_type === 'image' && (

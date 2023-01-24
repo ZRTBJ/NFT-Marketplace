@@ -61,7 +61,9 @@ export default function PublishContentModal({
                 show={showConfirmModal}
                 handleClose={() => handleClose()}
                 handleApply={() => confirmDelete()}
-                message='Are you sure to delete contents'
+                message={`Are you sure to delete ${
+                  contents?.length > 1 ? 'contents' : 'content'
+                } ?`}
               />
             </>
           )}
@@ -78,7 +80,10 @@ export default function PublishContentModal({
             >
               <div className='text-center px-4'>
                 <p className='font-black text-[18px]'>Please wait</p>
-                <p>Your contents are being deleted</p>
+                <p>
+                  Your {contents?.length > 1 ? 'contents are ' : 'content is '}{' '}
+                  being deleted
+                </p>
                 <div className='overflow-hidden rounded-full h-4 w-full mt-4 md:mt-6 mb-8 relative animated fadeIn'>
                   <div className='animated-process-bar'></div>
                 </div>

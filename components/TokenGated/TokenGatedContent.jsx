@@ -30,7 +30,13 @@ export default function TokenGatedContent({ query, createMode }) {
   const [contentList, setContentList] = useState({});
   const [linkDetails, setLinkDetails] = useState({ link: '', type: 'image' });
   const [linkError, setLinkError] = useState(false);
-
+  const [sortBy, setSortBy] = useState('');
+  const [payload, setPayload] = useState({
+    id: query?.id,
+    page: 1,
+    orderBy: 'newer',
+    limit: 20,
+  });
   const handleLinkDetails = (e) => {
     if (e.target.value.length && e.target.name === 'link') {
       if (isValidURL(e.target.value)) {
@@ -52,10 +58,10 @@ export default function TokenGatedContent({ query, createMode }) {
     }
   };
 
-  const onGetTokenGatedProject = async (id) => {
+  const onGetTokenGatedProject = async () => {
     setShowOverLayLoading(true);
     let projectInfo = '';
-    await getTokenGatedProject(id)
+    await getTokenGatedProject(payload?.id)
       .then((res) => {
         if (res.code === 0) {
           let response = { ...res?.token_gate_project };
@@ -88,7 +94,7 @@ export default function TokenGatedContent({ query, createMode }) {
       .catch((err) => {
         setShowOverLayLoading(false);
       });
-    await onContentListGet(query?.id, projectInfo);
+    await onContentListGet(payload?.id, projectInfo);
   };
   const onAddNewContentClick = async () => {
     setShowAddNewContentModal(true);
@@ -105,13 +111,7 @@ export default function TokenGatedContent({ query, createMode }) {
       router.replace(`/token-gated/${id}`);
     }
   };
-  const onContentListGet = async (projectId, projectInfo) => {
-    const payload = {
-      id: projectId,
-      page: 1,
-      orderBy: 'newer',
-      limit: 20,
-    };
+  const onContentListGet = async (projectInfo) => {
     await getContentList(payload)
       .then((res) => {
         setShowOverLayLoading(false);
@@ -132,10 +132,24 @@ export default function TokenGatedContent({ query, createMode }) {
   };
 
   useEffect(() => {
-    if (!createMode) {
-      onGetTokenGatedProject(query?.id);
+    onGetTokenGatedProject();
+  }, [payload]);
+
+  useEffect(() => {
+    if (
+      (selectedSort && selectedSort === '2') ||
+      (selectedSort && selectedSort === '3')
+    ) {
+      setSortBy(selectedSort === '2' ? 'newer' : 'older');
     }
-  }, [query?.id]);
+  }, [selectedSort]);
+  useEffect(() => {
+    if (sortBy) {
+      let oldPayload = { ...payload };
+      oldPayload.orderBy = sortBy;
+      setPayload(oldPayload);
+    }
+  }, [sortBy]);
 
   return (
     <>

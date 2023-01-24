@@ -17,7 +17,7 @@ export default function FileCard({ content }) {
   return (
     <>
       <div
-        className='relative cursor-pointer'
+        className='relative cursor-pointer rounded'
         onClick={() => router.push(`/token-gated/content/${content?.id}`)}
         style={{
           backgroundColor: 'rgba(18, 36, 120, 0.05)',
@@ -28,21 +28,24 @@ export default function FileCard({ content }) {
           width: '100%',
         }}
       >
-        <div className='flex flex-wrap items-center gap-2 px-2 pt-2 text-white text-[12px]'>
-          {content?.sensitive && (
-            <div className='bg-danger-1 py-1 px-3 rounded'>18+</div>
+        <div className='flex whitespace-nowrap items-center gap-2 px-2 pt-2 text-white text-[12px]'>
+          {content?.sensitive.toString() === 'true' && (
+            <div className='bg-danger-1 py-1 px-3 rounded '>18+</div>
           )}
           {content?.config_names && content?.config_names?.length > 0 && (
             <>
-              {content?.config_names.slice(0, 2)?.map((c, index) => (
-                <div key={index}>
-                  <div className='bg-textSubtle py-1 px-3 rounded  truncate'>
-                    {c}
-                  </div>
+              {content?.config_names?.slice(0, 2)?.map((c, index) => (
+                <div
+                  key={index}
+                  className={`bg-textSubtle py-1 px-3 rounded ${
+                    c && c?.length > 15 ? 'truncate' : ''
+                  }`}
+                >
+                  {c}
                 </div>
               ))}
               {content?.config_names && content?.config_names?.length > 2 && (
-                <div className='bg-textSubtle py-1 px-3 rounded  truncate'>
+                <div className='bg-textSubtle py-1 px-3 rounded'>
                   +{content?.config_names?.length - 2}
                 </div>
               )}
@@ -50,7 +53,7 @@ export default function FileCard({ content }) {
           )}
         </div>
         {content?.consumable_data ? (
-          <i class='text-[34px] absolute  top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 fa-solid fa-file'></i>
+          <i className='text-[34px] absolute  top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 fa-solid fa-file'></i>
         ) : (
           lockIcon
         )}

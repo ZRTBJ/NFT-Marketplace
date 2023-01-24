@@ -6,14 +6,15 @@ import Image from 'next/image';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import AudiCardHorizontal from '../card/AudiCardHorizontal';
 import { uniqBy } from 'lodash';
-export default function AudioTab({ project }) {
+export default function AudioTab({ project, sortBy }) {
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setLoading] = useState(false);
   const [payload, setPayload] = useState({
     id: project?.id,
     page: 1,
-    orderBy: 'newer',
+    orderBy: sortBy ? sortBy : 'newer',
     file_type: 'audio',
+    limit: 10,
   });
   const [list, setList] = useState([]);
   const onContentListGet = async () => {
@@ -79,7 +80,7 @@ export default function AudioTab({ project }) {
             }
           >
             <div className='w-full md:max-w-6xl mx-auto mt-10'>
-              <div className='grid grid-cols-1  gap-6'>
+              <div className='grid grid-cols-1  gap-10'>
                 {list?.map((content, index) => (
                   <div key={index}>
                     {content?.file_type === 'audio' && (

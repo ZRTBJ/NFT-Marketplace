@@ -10,6 +10,7 @@ export default function PublishContentModal({
   handleClose,
   contents,
   onContentPublished,
+  usedForPublish,
 }) {
   const [step, setStep] = useState(1);
   const [showConfirmModal, setShowConfirmModal] = useState(true);
@@ -20,8 +21,7 @@ export default function PublishContentModal({
 
   const publish = async (content) => {
     const data = {
-      is_publish:
-        contents.length > 1 ? true : content?.status === 'draft' ? true : false,
+      is_publish: checkUsedFor === 'publish' ? true : false,
     };
     await publishTokenGatedContent(content.id, data)
       .then((resp) => {
@@ -35,6 +35,7 @@ export default function PublishContentModal({
       })
       .catch((err) => {});
   };
+
   const publishContent = async () => {
     setStep(2);
     setShowLoading(true);
@@ -52,6 +53,13 @@ export default function PublishContentModal({
     handleClose();
     onContentPublished();
   };
+  const checkUsedFor = usedForPublish
+    ? contents?.length > 1
+      ? 'publish'
+      : contents[0]?.status === 'draft'
+      ? 'publish'
+      : 'un-publish'
+    : 'un-publish';
   return (
     <>
       {step === 1 && (
@@ -62,7 +70,9 @@ export default function PublishContentModal({
                 show={showConfirmModal}
                 handleClose={() => handleClose()}
                 handleApply={() => publishContent()}
-                message='Are you sure to publish contents'
+                message={`Are you sure to ${checkUsedFor}  ${
+                  contents?.length > 1 ? 'contents' : 'content'
+                } ?`}
               />
             </>
           )}
@@ -81,7 +91,10 @@ export default function PublishContentModal({
                 <p className='font-black text-[18px]'>
                   Please do not close the tab
                 </p>
-                <p>Your contents are being published</p>
+                <p>
+                  We are updating the
+                  {contents?.length > 1 ? ' contents' : ' content'}
+                </p>
                 <div className='overflow-hidden rounded-full h-4 w-full mt-4 md:mt-6 mb-8 relative animated fadeIn'>
                   <div className='animated-process-bar'></div>
                 </div>
@@ -100,7 +113,7 @@ export default function PublishContentModal({
           )}
           {showErrorModal && (
             <ErrorModal
-              title={'Failed to Publish'}
+              title={`Failed to ${usedForPublish ? 'Publish' : 'Un-Publish'}`}
               message={`${errorMessage}`}
               handleClose={() => {
                 setShowErrorModal(false);

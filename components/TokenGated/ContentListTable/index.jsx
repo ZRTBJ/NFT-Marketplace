@@ -19,6 +19,7 @@ export default function ContentListTable({
   const [showPublishContentModal, setShowPublishContentModal] = useState(false);
   const [showConfigContentModal, setShowConfigContentModal] = useState(false);
   const [showDeleteContentModal, setShowDeleteContentModal] = useState(false);
+  const [usedForPublish, setUsedForPublish] = useState(true);
 
   const onDrop = async (e) => {
     console.log(e, 'dropped');
@@ -49,14 +50,17 @@ export default function ContentListTable({
     }
     if (actionName === 'publish') {
       setShowPublishContentModal(true);
+      setUsedForPublish(true);
+    }
+    if (actionName === 'un-publish') {
+      setShowPublishContentModal(true);
+      setUsedForPublish(false);
     } else if (actionName === 'configure') {
       setShowConfigContentModal(true);
     } else if (actionName === 'delete') {
       setShowDeleteContentModal(true);
     }
   };
-
-  console.log(selectedContents);
   useEffect(() => {
     if (project && project?.contents?.length > 0) {
       let oldProject = { ...project };
@@ -74,10 +78,10 @@ export default function ContentListTable({
       {/* multiple action start */}
       {selectedContents.length > 0 && (
         <div className='text-white-shade-900 mt-10 flex flex-wrap items-center'>
-          <div className='bg-txtblack border-r border-white-shade-900 py-6 px-7'>
+          <div className='bg-txtblack border-r border-white-shade-900 py-4 md:py-6 px-2 md:px-7'>
             {selectedContents.length} Selected
           </div>
-          <div className='flex-1 flex flex-wrap items-center gap-20 bg-txtblack py-6 px-7'>
+          <div className='flex-1 flex flex-wrap items-center gap-4 md:gap-20 bg-txtblack py-4 md:py-6 px-2 md:px-7'>
             {/* edit */}
             <div className='token-gated-dropdown relative'>
               <button className='flex transition duration-150 ease-in-out   focus:outline-none focus:border-none '>
@@ -85,7 +89,7 @@ export default function ContentListTable({
                 <i className='fa-solid fa-chevron-down mt-[2px]'></i>
               </button>
               <div className='opacity-0 text-[14px] invisible token-gated-dropdown-menu transition-all duration-300 transform origin-top-right -translate-y-2 scale-95'>
-                <div className='absolute left-0 w-56 mt-[1.5rem] origin-top-right bg-txtblack    outline-none'>
+                <div className='absolute left-0 w-56 mt-5 md:mt-[1.5rem] origin-top-right bg-txtblack    outline-none'>
                   <div className='px-4 py-3'>
                     <p
                       className='cursor-pointer'
@@ -93,6 +97,7 @@ export default function ContentListTable({
                         onContentActions(selectedContents, 'configure')
                       }
                     >
+                      <i className='fa-solid fa-screwdriver-wrench mr-2'></i>
                       Configure Accessible
                     </p>
                   </div>
@@ -106,17 +111,7 @@ export default function ContentListTable({
                 <i className='fa-solid fa-chevron-down mt-[2px]'></i>
               </button>
               <div className='opacity-0 text-[14px] invisible token-gated-dropdown-menu transition-all duration-300 transform origin-top-right -translate-y-2 scale-95'>
-                <div className='absolute left-0 w-56 mt-[1.5rem] origin-top-right bg-txtblack  outline-none'>
-                  <div className='px-4 py-3'>
-                    <p
-                      className='cursor-pointer'
-                      onClick={() =>
-                        onContentActions(selectedContents, 'delete')
-                      }
-                    >
-                      Delete Content
-                    </p>
-                  </div>
+                <div className='absolute left-0 w-56 mt-5 md:mt-[1.5rem] origin-top-right bg-txtblack  outline-none'>
                   <div className='px-4 py-3'>
                     <p
                       className='cursor-pointer'
@@ -124,7 +119,30 @@ export default function ContentListTable({
                         onContentActions(selectedContents, 'publish')
                       }
                     >
-                      Publish
+                      <i className='fa-solid fa-play mr-2'></i>
+                      Publish Contents
+                    </p>
+                  </div>
+                  <div className='px-4 py-3'>
+                    <p
+                      className='cursor-pointer'
+                      onClick={() =>
+                        onContentActions(selectedContents, 'un-publish')
+                      }
+                    >
+                      <i className='fa-solid fa-eye-slash mr-1'></i>
+                      Un-Publish Contents
+                    </p>
+                  </div>
+                  <div className='px-4 py-3'>
+                    <p
+                      className='cursor-pointer'
+                      onClick={() =>
+                        onContentActions(selectedContents, 'delete')
+                      }
+                    >
+                      <i class='fa-solid fa-trash mr-2'></i>
+                      Delete Contents
                     </p>
                   </div>
                 </div>
@@ -138,11 +156,11 @@ export default function ContentListTable({
       {/* table start */}
       <div {...getRootProps({ className: 'dropzone' })}>
         <input {...getInputProps()} />
-        <div className='overflow-x-auto'>
-          <table className='w-full text-left !whitespace-nowrap '>
+        <div className='md:overflow-x-auto'>
+          <table className='text-left w-full  md:!whitespace-nowrap'>
             <thead className='text-black border border-divider'>
               <tr>
-                <th scope='col' className='py-3 px-6 !font-black'>
+                <th scope='col' className='py-3 px-2 md:px-6 !font-black'>
                   <div className='flex items-center '>
                     {project?.contents?.length > 0 && (
                       <input
@@ -159,19 +177,34 @@ export default function ContentListTable({
                     <div>Contents</div>
                   </div>
                 </th>
-                <th scope='col' className='py-3 px-6 !font-black'>
+                <th
+                  scope='col'
+                  className='py-3 px-6 !font-black hidden md:table-cell'
+                >
                   Status
                 </th>
-                <th scope='col' className='py-3 px-6 !font-black'>
+                <th
+                  scope='col'
+                  className='py-3 px-6 !font-black hidden md:table-cell'
+                >
                   Accessible
                 </th>
-                <th scope='col' className='py-3 px-6 !font-black'>
+                <th
+                  scope='col'
+                  className='py-3 px-6 !font-black hidden md:table-cell'
+                >
                   Date Created
                 </th>
-                <th scope='col' className='py-3 px-6 !font-black'>
+                <th
+                  scope='col'
+                  className='py-3 px-6 !font-black hidden md:table-cell'
+                >
                   File Type
                 </th>
-                <th scope='col' className='py-3 px-6 !font-black'>
+                <th
+                  scope='col'
+                  className='py-3 px-6 !font-black text-right md:text-center'
+                >
                   Action
                 </th>
               </tr>
@@ -198,7 +231,7 @@ export default function ContentListTable({
               )}
               {project?.contents?.map((content, index) => (
                 <tr key={index}>
-                  <td className='py-4 px-6'>
+                  <td className='py-4  pr-6 md:px-6'>
                     <div className='flex items-center gap-3'>
                       <input
                         type='checkbox'
@@ -212,24 +245,32 @@ export default function ContentListTable({
                           )
                         }
                       />
-                      <div className='w-[40px]'>
+                      <div className='hidden md:block w-[40px]'>
                         {content?.file_type === 'movie' && (
-                          <i className='fa-solid fa-circle-video text-[35px]'></i>
+                          <div className='social-icon-button cursor-pointer w-9 h-9  flex justify-center items-center rounded-md ease-in-out duration-300'>
+                            <i className='fa-solid fa-circle-video gradient-text text-[20px]'></i>
+                          </div>
                         )}
                         {content?.file_type === 'audio' && (
-                          <i className='fa-solid fa-file-audio text-[35px]'></i>
+                          <div className='social-icon-button cursor-pointer w-9 h-9  flex justify-center items-center rounded-md ease-in-out duration-300'>
+                            <i className='fa-solid fa-file-audio gradient-text text-[20px]'></i>
+                          </div>
                         )}
                         {content?.file_type === 'image' && (
-                          <i className='fa-solid fa-image text-[35px]'></i>
+                          <div className='social-icon-button cursor-pointer w-9 h-9  flex justify-center items-center rounded-md ease-in-out duration-300'>
+                            <i className='fa-solid fa-image gradient-text text-[20px]'></i>
+                          </div>
                         )}
                         {content?.file_type === 'other' && (
-                          <i className='fa-solid fa-file text-[35px]'></i>
+                          <div className='social-icon-button cursor-pointer w-9 h-9  flex justify-center items-center rounded-md ease-in-out duration-300'>
+                            <i className='fa-solid fa-file gradient-text text-[20px]'></i>
+                          </div>
                         )}
                       </div>
-                      <div>{content?.title}</div>
+                      <div className=''>{content?.title}</div>
                     </div>
                   </td>
-                  <td className='py-4 px-6'>
+                  <td className='py-4 px-6 hidden md:table-cell'>
                     {content?.status === 'published' ? (
                       <div className='px-4 py-2 rounded w-[100px] bg-secondary-900/[0.10] text-secondary-900'>
                         Published
@@ -240,43 +281,79 @@ export default function ContentListTable({
                       </div>
                     )}
                   </td>
-                  <td className='py-4 px-6'>
-                    {content?.config_names &&
-                      content?.config_names?.length > 0 && (
-                        <>
-                          {content?.config_names
-                            ?.slice(0, 2)
-                            .map((n, index) => {
-                              return <span key={index}> {n},</span>;
-                            })}
-                          {content?.config_names?.length > 3 && (
-                            <>
-                              <span className='ml-2'>...</span>
-                            </>
-                          )}
-                        </>
-                      )}
+                  <td className='py-4 px-6 hidden md:table-cell'>
+                    <div className='flex  items-center gap-2  text-white text-[12px] '>
+                      {content?.config_names &&
+                        content?.config_names?.length > 0 && (
+                          <>
+                            {content?.config_names
+                              .slice(0, 2)
+                              ?.map((c, index) => (
+                                <div
+                                  key={index}
+                                  className='bg-textSubtle py-1 px-3 rounded max-w-[150px] truncate'
+                                >
+                                  {c}
+                                </div>
+                              ))}
+                          </>
+                        )}
+                      {content?.config_names &&
+                        content?.config_names?.length > 2 && (
+                          <div className='bg-textSubtle py-1 px-3 rounded'>
+                            +{content?.config_names?.length - 2}
+                          </div>
+                        )}
+                    </div>
                   </td>
-                  <td className='py-4 px-6'>
+                  <td className='py-4 px-6 hidden md:table-cell'>
                     {dayjs(content?.created_at).format('DD/MM/YYYY')}
                   </td>
-                  <td className='py-4 px-6'>{content?.file_type}</td>
-                  <td className='py-4 px-6'>
-                    <div className='flex flex-wrap items-center gap-3'>
+                  <td className='py-4 px-6 capitalize hidden md:table-cell'>
+                    {content?.file_type}
+                  </td>
+                  <td className='py-4 px-2 md:px-6 '>
+                    <div className='hidden md:flex justify-center  items-center gap-3 '>
                       <button
                         onClick={() => onContentActions(content, 'publish')}
-                        className='py-2 px-4 border bg-primary-900/[0.10] text-primary-900 font-bold rounded w-[121px]'
+                        className='py-2  border bg-primary-900/[0.10] text-primary-900 font-bold rounded w-[140px]'
                       >
-                        <i className='fa-solid fa-play mr-2'></i>
+                        <i
+                          className={`${
+                            content?.status === 'draft'
+                              ? 'fa-solid fa-play'
+                              : 'fa-solid fa-eye-slash'
+                          }  mr-2`}
+                        ></i>
                         {content?.status === 'draft' ? 'Publish' : 'Un-Publish'}
                       </button>
                       <button
                         onClick={() => onContentActions(content, 'configure')}
-                        className='py-2 px-4 border border-primary-900 text-primary-900 font-bold rounded'
+                        className='py-2  border border-primary-900 text-primary-900 font-bold rounded w-[140px]'
                       >
                         <i className='fa-solid fa-screwdriver-wrench mr-2'></i>
                         Configure
                       </button>
+                    </div>
+                    <div
+                      onClick={() => onContentActions(content, 'publish')}
+                      className='text-center mb-4 md:hidden py-2 border bg-primary-900/[0.10] text-primary-900 font-bold ml-auto rounded w-[130px]'
+                    >
+                      <i
+                        className={`${
+                          content?.status === 'draft'
+                            ? 'fa-solid fa-play'
+                            : 'fa-solid fa-eye-slash'
+                        }  mr-2`}
+                      ></i>
+                      {content?.status === 'draft' ? 'Publish' : 'Un-Publish'}
+                    </div>
+                    <div
+                      onClick={() => onContentActions(content, 'configure')}
+                      className='md:hidden py-2  text-center border border-primary-900 text-primary-900 font-bold ml-auto rounded w-[130px]'
+                    >
+                      <i className='fa-solid fa-screwdriver-wrench mr-2'></i>
+                      Configure
                     </div>
                   </td>
                 </tr>
@@ -293,6 +370,7 @@ export default function ContentListTable({
           handleClose={() => setShowPublishContentModal(false)}
           contents={lastSelectedContents}
           onContentPublished={onContentPublished}
+          usedForPublish={usedForPublish}
         />
       )}
       {showConfigContentModal && (

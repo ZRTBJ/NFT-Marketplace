@@ -23,7 +23,7 @@ export default function Creator({ project, createMode, settingSaved }) {
   };
   return (
     <>
-      <div className='flex flex-wrap gap-4 items-start border border-divider rounded p-4'>
+      <div className='flex flex-wrap gap-4 items-start md:border md:border-divider rounded md:p-4'>
         <div className='flex flex-wrap items-start gap-4'>
           <div>
             <Image
