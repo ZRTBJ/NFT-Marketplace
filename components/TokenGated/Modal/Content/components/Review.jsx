@@ -2,10 +2,14 @@ import React from 'react';
 import SettingContent from './SettingContent';
 import Configuration from './Configuration';
 
-const Review = ({ content, configurations, options }) => {
+const Review = ({ content, configurations, options, linkDetails }) => {
   return (
     <div>
-      <SettingContent content={content} reviewScreen={true} />
+      <SettingContent
+        content={content}
+        reviewScreen={true}
+        linkDetails={linkDetails}
+      />
       <Configuration
         content={content}
         configurations={configurations}

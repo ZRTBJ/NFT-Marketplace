@@ -207,6 +207,7 @@ export default function TokenGatedContent({ query, createMode }) {
           }}
           tokenProjectId={query?.id}
           onContentAdded={() => onGetTokenGatedProject(query?.id)}
+          setShowUploadByLinkModal={setShowUploadByLinkModal}
           linkDetails={linkDetails}
         />
       )}

@@ -8,6 +8,8 @@ const SettingContent = ({
   reviewScreen = false,
   isSubmitted,
   linkDetails,
+  handleClose,
+  setShowUploadByLinkModal,
 }) => {
   let mediaType = linkDetails?.link
     ? linkDetails.type
@@ -24,6 +26,14 @@ const SettingContent = ({
       >
         <label
           htmlFor={`dropzone-file`}
+          onClick={
+            linkDetails?.link
+              ? () => {
+                  setShowUploadByLinkModal(true);
+                  handleClose();
+                }
+              : null
+          }
           className={`flex flex-col justify-center items-center w-full  ${
             mediaType === 'video' || mediaType === 'movie' ? '' : 'h-40'
           } ${
@@ -88,20 +98,23 @@ const SettingContent = ({
               </>
             )}
           </div>
-
-          <input
-            id={`dropzone-file`}
-            type='file'
-            className='hidden'
-            accept='audio/*, image/*, video/*'
-            disabled={reviewScreen}
-            onChange={handleMediaFile}
-          />
+          {linkDetails?.link ? null : (
+            <input
+              id={`dropzone-file`}
+              type='file'
+              className='hidden'
+              accept='audio/*, image/*, video/*'
+              disabled={reviewScreen}
+              onChange={handleMediaFile}
+            />
+          )}
         </label>
       </div>
-      {isSubmitted && !content?.media?.file && (
-        <p className='text-red-500 text-xs font-medium'>Media is required</p>
-      )}
+      <>
+        {isSubmitted && !content?.media?.file && !linkDetails?.link && (
+          <p className='text-red-500 text-xs font-medium'>Media is required</p>
+        )}
+      </>
       <div className='mt-6'>
         <div className='flex items-center mb-2'>
           <div className='txtblack text-[14px]'>Name</div>

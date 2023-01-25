@@ -34,6 +34,7 @@ export default function AddNewContent({
   tokenProjectId,
   onContentAdded,
   linkDetails,
+  setShowUploadByLinkModal,
 }) {
   const [activeStep, setActiveStep] = useState(1);
   const [content, setContent] = useState({
@@ -72,6 +73,7 @@ export default function AddNewContent({
   const [addressError, setAddressError] = useState(false);
   const [addressValid, setAddressValid] = useState(false);
   const [blockchain, setBlockchain] = useState('');
+  const [currentContent, setCurrentContent] = useState('');
 
   const dispatch = useDispatch();
 
@@ -115,7 +117,10 @@ export default function AddNewContent({
     e.preventDefault();
     setIsSubmitted(true);
     if (activeStep === 1) {
-      if (content?.title && content?.media?.file) {
+      if (
+        (content?.title && content?.media?.file) ||
+        (content?.title && linkDetails.link)
+      ) {
         setHandledSteps([...handledSteps, activeStep]);
         setActiveStep(activeStep + 1);
       }
@@ -198,7 +203,7 @@ export default function AddNewContent({
             return e.id;
           });
           let filtered = uniqCollectionList.filter(
-            (list) => list.type === 'product'
+            (list) => list.status === 'published'
           );
           setOptions(filtered);
           setIsCollectionLoading(false);
@@ -243,7 +248,7 @@ export default function AddNewContent({
     setSmartContractAddress(e.target.value);
     getCollectionDetailFromContract(e.target.value)
       .then((resp) => {
-        if (resp?.address) {
+        if (resp?.address && resp?.contractMetadata?.tokenType !== 'UNKNOWN') {
           setCollectionDetail({
             contract_address: resp?.address,
             name: resp?.contractMetadata?.name,
@@ -279,16 +284,19 @@ export default function AddNewContent({
           if (resp.code === 0) {
             let tokenId = resp?.token_gate_content?.id;
             handleUpdateContent(tokenId, asset_id);
+            setCurrentContent(tokenId);
           } else {
             setIsLoading(false);
             setShowError(true);
             setPublishNow(false);
+            setCurrentContent('');
           }
         })
         .catch((err) => {
           setIsLoading(false);
           setPublishNow(false);
           setShowError(true);
+          setCurrentContent('');
         });
     }
   };
@@ -343,6 +351,7 @@ export default function AddNewContent({
                   setPublishNow(false);
                   setIsLoading(false);
                   setShowError(true);
+                  setCurrentContent('');
                 }
               })
               .catch((err) => {
@@ -350,6 +359,7 @@ export default function AddNewContent({
                 setIsLoading(false);
                 setShowError(true);
                 setPublishNow(false);
+                setCurrentContent('');
               });
           } else {
             setShowSuccess(true);
@@ -359,6 +369,7 @@ export default function AddNewContent({
           setShowSuccess(false);
           setIsLoading(false);
           setShowError(true);
+          setCurrentContent('');
           setPublishNow(false);
         }
       })
@@ -366,6 +377,7 @@ export default function AddNewContent({
         setIsLoading(false);
         setShowError(true);
         setPublishNow(false);
+        setCurrentContent('');
       });
   };
 
@@ -462,8 +474,8 @@ export default function AddNewContent({
             : `Content Saved Successfully`
         }
         link={
-          window !== 'undefined' && isPublishing
-            ? `${window.location.origin}/token-gated/${tokenProjectId}`
+          window !== 'undefined' && isPublishing && currentContent
+            ? `${window.location.origin}/token-gated/content/${currentContent}`
             : ''
         }
         btnText='Close'
@@ -550,6 +562,8 @@ export default function AddNewContent({
                     handleMediaFile={handleMediaFile}
                     isSubmitted={isSubmitted}
                     linkDetails={linkDetails}
+                    setShowUploadByLinkModal={setShowUploadByLinkModal}
+                    handleClose={handleClose}
                   />
                 )}
                 {activeStep === 2 && (
@@ -569,6 +583,7 @@ export default function AddNewContent({
                     content={content}
                     configurations={configurations}
                     options={options}
+                    linkDetails={linkDetails}
                   />
                 )}
               </div>
