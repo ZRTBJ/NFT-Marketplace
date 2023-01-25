@@ -480,6 +480,30 @@ table > thead > tr > th {
   border: none !important;
   color: #fff !important;
 }
+
+
+/* Language selector */
+.goog-te-banner-frame.skiptranslate {
+  display: none !important;
+}
+body {
+  top: 0px !important;
+}
+.goog-te-gadget img {
+  display: none;
+}
+.goog-te-gadget-simple {
+  border-color: #3498ff !important;
+  border-radius: 10px;
+  padding: 5px;
+  color: #3498ff;
+}
+
+.goog-te-gadget-simple .goog-te-menu-value span {
+  font-size: 12px;
+  padding-right: 5px;
+}
+=======
 .token-gated-dropdown:focus-within .token-gated-dropdown-menu {
   opacity: 1;
   transform: translate(0) scale(1);
@@ -507,3 +531,4 @@ table > thead > tr > th {
 .accordian-detail-content.show {
   visibility: visible !important;
 }
+
