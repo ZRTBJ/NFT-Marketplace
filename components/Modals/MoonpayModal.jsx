@@ -39,7 +39,6 @@ const MoonpayModal = ({ handleClose, show }) => {
     let src = `https://buy-staging.moonpay.io?baseCurrencyCode=USD&apiKey=pk_test_AG2hCibtgtMgggMKhLh7ijwaNKw6Mwy&currencyCode=${
       network && NETWORKS[network].value
     }&walletAddress=${account}`;
-    console.log("Res SRC", src);
 
     let formdata = new FormData();
     formdata.append("url", src);
@@ -49,13 +48,11 @@ const MoonpayModal = ({ handleClose, show }) => {
       url: `${Config.API_ENDPOINT}/payment/moonpay-hash`,
       data: formdata,
     });
-    console.log("Res: ", res);
 
-    src = `${src}&signature=${res.hash}`;
+    // src = `${src}&signature=${res.hash}`;
     setSrc(src);
   };
 
-  console.log("SRC: ", src);
   return (
     <Modal
       width={400}
