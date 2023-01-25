@@ -4,6 +4,7 @@ import thumbIcon from 'assets/images/profile/card.svg';
 import SocialLink from 'components/Commons/SocialLink';
 import SettingModal from 'components/TokenGated/Modal/Setting';
 import { toast } from 'react-toastify';
+import Link from 'next/link';
 export default function Creator({ project, createMode, settingSaved }) {
   const origin =
     typeof window !== 'undefined' && window.location.origin
@@ -43,13 +44,9 @@ export default function Creator({ project, createMode, settingSaved }) {
               <div className='w-[270px] md:w-[450px] truncate block'>
                 <span className='textSubtle font-bold'>Project Link: </span>
                 <span className='ml-2'>
-                  <a
-                    href={`${publicDetailsLink}`}
-                    target='_blank'
-                    rel='noreferrer'
-                  >
+                  <Link href={`${publicDetailsLink}`} rel='noreferrer'>
                     {publicDetailsLink}
-                  </a>
+                  </Link>
                 </span>
               </div>
               <i

@@ -141,7 +141,7 @@ export default function ContentListTable({
                         onContentActions(selectedContents, 'delete')
                       }
                     >
-                      <i class='fa-solid fa-trash mr-2'></i>
+                      <i className='fa-solid fa-trash mr-2'></i>
                       Delete Contents
                     </p>
                   </div>
