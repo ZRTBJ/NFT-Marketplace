@@ -44,7 +44,9 @@ const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
 
   return (
     <>
-      <div className={`bg-light1 h-screen sticky top-0 ${styles.sidenav}`}>
+      <div
+        className={`bg-light1 h-screen sticky top-0 ${styles.sidenav} border-r-1 border`}
+      >
         <div className={`${styles.sidebarLinksContainer} flex flex-col`}>
           <div className='pl-6 pr-10 flex-0 flex flex-col'>
             <Link

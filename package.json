@@ -57,6 +57,7 @@
     "sharp": "^0.31.2",
     "swiper": "^8.4.5",
     "tw-elements": "^1.0.0-alpha12",
+    "wavesurfer.js": "^6.4.0",
     "web3": "^1.7.4"
   },
   "devDependencies": {

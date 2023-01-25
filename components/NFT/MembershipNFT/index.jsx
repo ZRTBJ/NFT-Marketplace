@@ -761,7 +761,6 @@ export default function MembershipNFT({ query }) {
     ? NETWORKS?.[Number(curCollection?.blockchain)]?.networkName
     : null;
 
-  console.log(collection_id, options);
   return (
     <>
       {isNftLoading && <div className='loading'></div>}

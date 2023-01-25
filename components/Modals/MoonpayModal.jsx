@@ -3,6 +3,11 @@ import IconError from "assets/images/modal/error/error_modal_img.svg";
 import Link from "next/link";
 import Modal from "../Commons/Modal";
 import Image from "next/image";
+import { useEffect, useState } from 'react';
+import IconError from 'assets/images/modal/error/error_modal_img.svg';
+import Link from 'next/link';
+import Modal from '../Commons/Modal';
+import Image from 'next/image';
 import {
   getPersonalSign,
   isWalletConnected,
