@@ -7,7 +7,7 @@ import Image from 'next/image';
 
 const currency = {
   eth: Eth,
-  polygon: Polygon,
+  matic: Polygon,
   bnb: Bnb
 }
 

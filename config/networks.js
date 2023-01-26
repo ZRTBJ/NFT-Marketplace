@@ -1,4 +1,3 @@
-
 import Eth from "assets/images/eth.svg";
 import Matic from "assets/images/polygon.svg";
 import Bnb from "assets/images/bnb.svg";
@@ -41,6 +40,29 @@ const TESTNET = {
     discount: address.discountGoerli,
     scan: EthScan,
     alchamey: process.env.NEXT_PUBLIC_GOERLI_NFT_ALCHEMY_URL,
+  },
+  97: {
+    networkName: "BNB Testnet",
+    cryto: "BNB",
+    quickNodeURL: process.env.NEXT_PUBLIC_BNBTEST_QUICKNODE_URL,
+    value: "bnb",
+    label: "BNB",
+    icon: Bnb,
+    forwarder: address.MinimalForwarderBnbTest,
+    webhook: process.env.NEXT_PUBLIC_WEBHOOK_URL_BNBTEST,
+    genericProxyFacotory: address.GenericProxyFactoryBnbTest,
+    masterCopyDAO: address.CreatorDAOMasterCopyBnbTest,
+    masterCopyCollection: address.CreateCollectionMasterCopyBnbTest,
+    masterMembershipCollection: address.CreateMembershipCollectionMasterCopyBnbTest,
+    masterRoyaltySplitter: address.RoyaltySplitterMasterCopyBnbTest,
+    network: 97,
+    gnosis: `${gnosisFundTransferUrl}/bnb`,
+    raribleNFTDetailsUrl: raribleNFTDetailsUrl,
+    openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/BSC_TESTNET/`,
+    viewContractAddressUrl: `https://testnet.bscscan.com/address/`,
+    viewTxUrl: `https://testnet.bscscan.com/tx/`,
+    decirTreasury: address.decirTreasuryBnbTest,
+    discount: address.discountBnbTest,
   },
   97: {
     networkName: "BNB Testnet",
