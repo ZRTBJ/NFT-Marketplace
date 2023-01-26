@@ -32,6 +32,7 @@ import TransferNFT from 'components/NFT/TransferNFT/TransferNFT';
 import { getProjectDetailsById } from 'services/project/projectService';
 import Eth from 'assets/images/network/eth.svg';
 import Polygon from 'assets/images/network/polygon.svg';
+import Bnb from 'assets/images/network/bnb.svg';
 import MemberListTable from './RoyaltySplitter/MemberListTable';
 import PlusIcon from 'assets/images/icons/plus-circle.svg';
 import NFTSales from './NFTSale';
@@ -53,6 +54,12 @@ import PublishRoyaltyConfirmModal from './Publish/PublishRoyaltyConfirmModal';
 import Image from 'next/image';
 import DaoConnectModal from 'components/Collection/DaoConnectModal/DaoConnectModal';
 import WithdrawModal from './WithdrawModal';
+
+const currency = {
+  eth: Eth,
+  matic: Polygon,
+  bnb: Bnb
+}
 
 const TABLE_HEADERS = [
   { id: 0, label: 'Wallet Address' },
@@ -1333,7 +1340,7 @@ const CollectionContent = ({ collectionId, userId }) => {
                                 {nft?.currency ? (
                                   <Image
                                     className='ml-auto'
-                                    src={nft.currency === 'eth' ? Eth : Polygon}
+                                    src={currency[nft.currency]}
                                     alt={collectionNetwork}
                                     width={24}
                                     height={24}
