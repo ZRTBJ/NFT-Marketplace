@@ -71,3 +71,11 @@ export async function getContentList(payload) {
 export async function deleteTokenGatedContent(id, data) {
   return await client('DELETE', `/tkg-content/${id}`);
 }
+
+export async function getTokenGatedContentDetail(id) {
+  return await client('GET', `/tkg-content/${id}`);
+}
+
+export async function getTokenGatedContentAsset(data) {
+  return await client('GET', `${data}`);
+}

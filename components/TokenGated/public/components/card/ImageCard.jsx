@@ -15,7 +15,7 @@ export default function ImageCard({ content }) {
       <i className='fa-solid fa-lock text-[34px] text-white cursor-pointer '></i>
     </div>
   );
-
+  console.log(content);
   return (
     <>
       <div

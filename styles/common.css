@@ -530,3 +530,18 @@ body {
 .accordian-detail-content.show {
   visibility: visible !important;
 }
+
+.dark-shadow-bg {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.8) 30%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  color: #fff;
+  padding-bottom: 50px;
+  display: flex;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-top: 24px;
+  align-items: flex-start;
+}
