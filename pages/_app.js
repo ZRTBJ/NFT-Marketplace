@@ -21,6 +21,7 @@ import Favicon from 'components/Commons/Favicon';
 import axios from 'axios';
 import Config from 'config/config';
 import Maintenance from 'components/Commons/Maintenance';
+import { GoogleAnalytics } from "nextjs-google-analytics";
 
 export const persistor = persistStore(store);
 
@@ -67,6 +68,7 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <>
+      <GoogleAnalytics trackPageViews />
       <Head>
         <Favicon></Favicon>
       </Head>
