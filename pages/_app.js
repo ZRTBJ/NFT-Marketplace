@@ -18,7 +18,6 @@ import store from '../redux';
 import MetaHead from 'components/Commons/MetaHead/MetaHead';
 import Head from 'next/head';
 import Favicon from 'components/Commons/Favicon';
-import { GoogleAnalytics } from 'nextjs-google-analytics';
 
 dynamic(() => import('tw-elements'), { ssr: false });
 
@@ -45,9 +44,7 @@ function MyApp({ Component, pageProps }) {
 
 
   return (
-    <>
-      <GoogleAnalytics trackPageViews />
-      
+    <>      
       <Head>
         <Favicon></Favicon>
       </Head>
@@ -60,6 +57,20 @@ function MyApp({ Component, pageProps }) {
         src='https://kit.fontawesome.com/6ebe0998e8.js'
         crossorigin='anonymous'
       ></Script>
+      { /*START Global site tag (gtag.js) - Google Analytics*/ }
+      <Script
+        src={"https://www.googletagmanager.com/gtag/js?id="+process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} strategy="afterInteractive"
+      />
+      <Script id="google-analytics" strategy="afterInteractive">
+      {`
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){window.dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}');
+      `}
+      </Script>
+      { /* END Global site tag (gtag.js) - Google Analytics*/ }
+
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <DAppProvider config={{}}>
