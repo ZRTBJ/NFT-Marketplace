@@ -45,7 +45,7 @@ export default function UploadByLink({
                 onChange={handleLinkDetails}
               >
                 <option value='image'>Image</option>
-                <option value='video'>Video</option>
+                <option value='movie'>Video</option>
                 <option value='audio'>Audio</option>
                 <option value='other'>Other</option>
               </select>
