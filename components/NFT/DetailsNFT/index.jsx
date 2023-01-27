@@ -108,7 +108,7 @@ export default function DetailsNFT({ type, id }) {
       } else {
         setTransactionWaitingModal(false);
         setShowMoonpayModal(true)
-        // setErrorMsg("You don't have enough balance in your wallet to Mint NFT");
+        // setErrorMsg('You don't have enough balance in your wallet to Mint NFT');
       }
     } catch (err) {
       setTransactionWaitingModal(false);
