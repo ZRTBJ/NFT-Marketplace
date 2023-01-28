@@ -33,3 +33,5 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 gcloud container clusters get-credentials web2-frontend
 4. Deploy
 kubectl apply -f deployment/prod/deployment.yml
+### Autobuild
+The env variables are set at cloudbuild.yaml file, and in env list in google cloud build 
