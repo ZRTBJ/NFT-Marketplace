@@ -63,10 +63,10 @@ const currency = {
 
 const TABLE_HEADERS = [
   { id: 0, label: 'Wallet Address' },
-  // { id: 2, label: "Email" },
+  // { id: 2, label: 'Email' },
   { id: 1, label: 'Percentage' },
   { id: 2, label: 'Name' },
-  // { id: 4, label: "Token ID" },
+  // { id: 4, label: 'Token ID' },
   { id: 3, label: 'Role' },
   { id: 4, label: 'Action' },
 ];
@@ -1298,13 +1298,13 @@ const CollectionContent = ({ collectionId, userId }) => {
                                         </li>
                                         {Collection?.type === 'membership' && (
                                           <>
-                                            {/* <li className="border">
+                                            {/* <li className='border'>
                                           <div
                                             onClick={() => {
                                               setShowTransferNFT(true);
                                               setShowOptions(false);
                                             }}
-                                            className="block p-4 hover:bg-gray-100 cursor-pointer"
+                                            className='block p-4 hover:bg-gray-100 cursor-pointer'
                                           >
                                             Transfer NFT
                                           </div>
