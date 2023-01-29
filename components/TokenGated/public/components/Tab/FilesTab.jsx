@@ -83,7 +83,7 @@ export default function FilesTab({ project, sortBy }) {
               {list?.map((content, index) => (
                 <div key={index}>
                   {content?.file_type === 'other' && (
-                    <FileCard content={content} />
+                    <FileCard content={content} projectId={project?.id} />
                   )}
                 </div>
               ))}

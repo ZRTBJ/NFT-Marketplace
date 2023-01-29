@@ -7,6 +7,8 @@ import Critical from 'assets/images/critical.svg';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import Play from 'assets/images/play.svg';
+import RelatedContent from './RelatedContent';
+import Left from 'assets/images/arr-left.svg';
 const Waveform = dynamic(() => import('../public/components/card/Waveform'), {
   ssr: false,
 });
@@ -52,88 +54,96 @@ const TokenGatedContentDetailContainer = ({ query }) => {
     router.back();
   };
 
-  useEffect(() => {}, [videoRef?.current]);
-
-  console.log(videoRef?.current);
   return (
-    <div
-      className='relative'
-      style={{
-        background: `url(${`${
-          asset && data?.file_type === 'image' ? asset : null
-        }`})`,
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: 'contain',
-        backgroundPosition: 'center',
-        height: 'calc(100vh - 71px)',
-        width: '100%',
-        backgroundColor: data?.file_type === 'audio' ? '#303548' : '',
-      }}
-    >
-      {data?.file_type === 'movie' ? (
-        <>
-          <div className='dark-shadow-bg absolute w-full z-[99]'>
-            <Image
-              src={LeftArrow}
-              className='cursor-pointer'
-              onClick={handleBack}
-              alt='Go back'
-            />
-            <div className='ml-6'>
-              <h3 className='font-[28px]'>{data?.title}</h3>
-              <p className='mt-2'>{data?.description}</p>
-            </div>
-            <Image
-              src={Critical}
-              className='ml-auto cursor-pointer'
-              alt='Report'
-            />
-          </div>
-          {showPlay ? (
-            <div
-              onClick={handlePlayVideo}
-              className='absolute top-[50%] left-[50%] cursor-pointer z-[99]'
-            >
-              <Image src={Play} alt='Play' />
-            </div>
-          ) : null}
-
-          <video className='w-full h-[100vh]' autoplay ref={videoRef}>
-            <source src={asset} />
-            Your browser does not support the video tag.
-          </video>
-        </>
-      ) : (
-        <>
-          <div className='dark-shadow-bg'>
-            <Image
-              src={LeftArrow}
-              className='cursor-pointer'
-              onClick={handleBack}
-              alt='Go back'
-            />
-            <div className='ml-6'>
-              <h3 className='font-[28px]'>{data?.title}</h3>
-              <p className='mt-2'>{data?.description}</p>
-            </div>
-            <Image
-              src={Critical}
-              className='ml-auto cursor-pointer'
-              alt='Report'
-            />
-          </div>
+    <>
+      <div
+        className='relative'
+        style={{
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'contain',
+          backgroundPosition: 'center',
+          backgroundImage: `url(${`${
+            asset && data?.file_type === 'image' ? asset : null
+          }`})`,
+          height: 'calc(100vh - 71px)',
+          width: '100%',
+          backgroundColor: data?.file_type === 'audio' ? '#303548' : '',
+        }}
+      >
+        {data?.file_type === 'movie' ? (
           <>
-            {data?.file_type === 'audio' ? (
-              <div className='h-[calc(100vh-200px)] flex items-center'>
-                <div className='w-full'>
-                  <Waveform url={asset} id={data?.data} />
-                </div>
+            <div className='dark-shadow-bg absolute w-full z-[99]'>
+              <Image
+                src={LeftArrow}
+                className='cursor-pointer'
+                onClick={handleBack}
+                alt='Go back'
+              />
+              <div className='ml-6'>
+                <h3 className='font-[28px]'>{data?.title}</h3>
+                <p className='mt-2'>{data?.description}</p>
+              </div>
+              <Image
+                src={Critical}
+                className='ml-auto cursor-pointer'
+                alt='Report'
+              />
+            </div>
+            {showPlay ? (
+              <div
+                onClick={handlePlayVideo}
+                className='absolute top-[50%] left-[50%] cursor-pointer z-[99]'
+              >
+                <Image src={Play} alt='Play' />
               </div>
             ) : null}
+
+            <video className='w-full h-[100vh]' autoplay ref={videoRef}>
+              <source src={asset} />
+              Your browser does not support the video tag.
+            </video>
           </>
-        </>
-      )}
-    </div>
+        ) : (
+          <>
+            <div className='dark-shadow-bg'>
+              <Image
+                src={LeftArrow}
+                className='cursor-pointer'
+                onClick={handleBack}
+                alt='Go back'
+              />
+              <div className='ml-6'>
+                <h3 className='font-[28px]'>{data?.title}</h3>
+                <p className='mt-2'>{data?.description}</p>
+              </div>
+              <Image
+                src={Critical}
+                className='ml-auto cursor-pointer'
+                alt='Report'
+              />
+            </div>
+            <>
+              {data?.file_type === 'audio' ? (
+                <div className='h-[calc(100vh-200px)] flex items-center'>
+                  <div className='w-full'>
+                    <Waveform url={asset} id={data?.data} />
+                  </div>
+                </div>
+              ) : null}
+            </>
+          </>
+        )}
+        <div
+          data-bs-toggle='offcanvas'
+          data-bs-target='#offcanvasRight'
+          aria-controls='offcanvasRight'
+          className='cursor-pointer absolute top-[48%] right-0 w-[56px] h-[90px] bg-[#303548] flex items-center justify-center'
+        >
+          <Image src={Left} alt='Show' />
+        </div>
+      </div>
+      <RelatedContent projectId={query?.projectId} />
+    </>
   );
 };
 

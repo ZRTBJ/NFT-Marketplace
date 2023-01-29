@@ -18,7 +18,7 @@ const SettingContent = ({
   let mediaPath = linkDetails?.link ? linkDetails.link : content?.media?.path;
   const [audioRef, setAudioref] = useState();
   return (
-    <div className='mt-6 overflow-x-auto h-[610px]'>
+    <div className='mt-6'>
       <p className='mb-2 text-[14px]'>Media</p>
       <div
         className={`flex justify-center items-center max-w-full w-40 h-40'

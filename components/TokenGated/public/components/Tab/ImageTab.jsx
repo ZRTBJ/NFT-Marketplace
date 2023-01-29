@@ -83,7 +83,7 @@ export default function ImageTab({ project, sortBy }) {
               {list?.map((content, index) => (
                 <div key={index}>
                   {content?.file_type === 'image' && (
-                    <ImageCard content={content} />
+                    <ImageCard content={content} projectId={project?.id} />
                   )}
                 </div>
               ))}

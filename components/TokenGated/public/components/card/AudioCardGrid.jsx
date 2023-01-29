@@ -7,7 +7,7 @@ import darkBg from 'assets/images/token-gated/darkBg.png';
 import { useRouter } from 'next/router';
 import audioWeb from 'assets/images/token-gated/audioWeb.svg';
 import playIcon from 'assets/images/token-gated/audioPlay.svg';
-export default function AudioCardGrid({ content }) {
+export default function AudioCardGrid({ content, projectId }) {
   const router = useRouter();
   const userinfo = useSelector((state) => state.user.userinfo);
   const createdAt = moment(content?.created_at);
@@ -20,7 +20,11 @@ export default function AudioCardGrid({ content }) {
     <>
       <div
         className='relative cursor-pointer rounded'
-        onClick={() => router.push(`/token-gated/content/${content?.id}`)}
+        onClick={() =>
+          router.push(
+            `/token-gated/content/${content?.id}?projectId=${projectId}`
+          )
+        }
         style={{
           backgroundImage: `url(${darkBg.src})`,
           backgroundRepeat: 'no-repeat',

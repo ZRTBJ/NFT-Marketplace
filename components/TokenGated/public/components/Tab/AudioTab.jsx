@@ -84,7 +84,10 @@ export default function AudioTab({ project, sortBy }) {
                 {list?.map((content, index) => (
                   <div key={index}>
                     {content?.file_type === 'audio' && (
-                      <AudiCardHorizontal content={content} />
+                      <AudiCardHorizontal
+                        content={content}
+                        projectId={project?.id}
+                      />
                     )}
                   </div>
                 ))}

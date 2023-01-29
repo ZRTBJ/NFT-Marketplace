@@ -6,7 +6,7 @@ import darkBg from 'assets/images/token-gated/darkBg.png';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { ls_GetUserToken } from 'util/ApplicationStorage';
-export default function ImageCard({ content }) {
+export default function ImageCard({ content, projectId }) {
   const router = useRouter();
   const userinfo = useSelector((state) => state.user.userinfo);
   const createdAt = moment(content?.created_at);
@@ -15,12 +15,16 @@ export default function ImageCard({ content }) {
       <i className='fa-solid fa-lock text-[34px] text-white cursor-pointer '></i>
     </div>
   );
-  console.log(content);
+
   return (
     <>
       <div
         className='relative cursor-pointer rounded'
-        onClick={() => router.push(`/token-gated/content/${content?.id}`)}
+        onClick={() =>
+          router.push(
+            `/token-gated/content/${content?.id}?projectId=${projectId}`
+          )
+        }
         style={{
           backgroundImage: `url(${
             content?.consumable_data

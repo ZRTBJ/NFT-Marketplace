@@ -8,7 +8,7 @@ import defaultThumbnail from 'assets/images/profile/card.svg';
 import playIcon from 'assets/images/token-gated/audioPlay.svg';
 import Image from 'next/image';
 
-export default function VideoCard({ content }) {
+export default function VideoCard({ content, projectId }) {
   const router = useRouter();
   const userinfo = useSelector((state) => state.user.userinfo);
   const createdAt = moment(content?.created_at);
@@ -26,7 +26,11 @@ export default function VideoCard({ content }) {
     <>
       <div
         className='cursor-pointer rounded'
-        onClick={() => router.push(`/token-gated/content/${content?.id}`)}
+        onClick={() =>
+          router.push(
+            `/token-gated/content/${content?.id}?projectId=${projectId}`
+          )
+        }
         style={{
           backgroundImage: `url(${
             content?.consumable_data

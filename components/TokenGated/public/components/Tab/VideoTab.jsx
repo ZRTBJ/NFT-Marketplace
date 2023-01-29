@@ -83,7 +83,7 @@ export default function VideoTab({ project, sortBy }) {
               {list?.map((content, index) => (
                 <div key={index}>
                   {content?.file_type === 'movie' && (
-                    <VideoCard content={content} />
+                    <VideoCard content={content} projectId={project?.id} />
                   )}
                 </div>
               ))}

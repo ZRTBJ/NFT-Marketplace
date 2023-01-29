@@ -8,7 +8,7 @@ import darkBg from 'assets/images/token-gated/darkBg.png';
 import audioWeb from 'assets/images/token-gated/audioWeb.svg';
 import moment from 'moment';
 // const Waveform = dynamic(() => import('./Waveform'), { ssr: false });
-export default function AudiCardHorizontal({ content }) {
+export default function AudiCardHorizontal({ content, projectId }) {
   const userinfo = useSelector((state) => state.user.userinfo);
   const createdAt = moment(content?.created_at);
   const router = useRouter();
@@ -53,7 +53,11 @@ export default function AudiCardHorizontal({ content }) {
         </div>
         <div
           className='w-full flex-grow cursor-pointer '
-          onClick={() => router.push(`/token-gated/content/${content?.id}`)}
+          onClick={() =>
+            router.push(
+              `/token-gated/content/${content?.id}?projectId=${projectId}`
+            )
+          }
         >
           <div>
             <div className='font-bold text-[24px] text-txtblack'>

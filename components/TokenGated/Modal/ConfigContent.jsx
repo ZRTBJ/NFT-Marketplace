@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import Modal from 'components/Commons/Modal';
 // import Configuration from './Content/components/Configuration';
 
@@ -6,13 +6,14 @@ export default function ConfigContentModal({ show, handleClose, contents }) {
   // console.log(contents);
   return (
     <Modal
-      width={500}w
+      width={500}
+      w
       show={show}
       handleClose={() => handleClose()}
       showCloseIcon={true}
     >
       <div className='p-4'>
-       {/* <Configuration 
+        {/* <Configuration 
           content={content}
           handleFieldChange={handleFieldChange}
           handleStep={handleStep}
@@ -22,7 +23,7 @@ export default function ConfigContentModal({ show, handleClose, contents }) {
           handleConfigValue={handleConfigValue}
           setShowAddCollection={setShowAddCollection}
        /> */}
-       contents
+        contents
       </div>
     </Modal>
   );

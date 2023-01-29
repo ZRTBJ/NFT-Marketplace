@@ -7,10 +7,13 @@ import PublishContentModal from 'components/TokenGated/Modal/PublishContent';
 import ConfigContentModal from 'components/TokenGated/Modal/ConfigContent';
 import DeleteContentModal from 'components/TokenGated/Modal/DeleteContent';
 import dayjs from 'dayjs';
+import AddNewContent from '../Modal/Content/AddNewContent';
+
 export default function ContentListTable({
   projectInfo,
   onContentPublished,
   onContentDelete,
+  tokenProjectId,
 }) {
   const [project, setProject] = useState(projectInfo);
   const [selectedContents, setSelectedContents] = useState([]);
@@ -20,6 +23,7 @@ export default function ContentListTable({
   const [showConfigContentModal, setShowConfigContentModal] = useState(false);
   const [showDeleteContentModal, setShowDeleteContentModal] = useState(false);
   const [usedForPublish, setUsedForPublish] = useState(true);
+  const [showConfigureAllModal, setShowConfigureAllModal] = useState(false);
 
   const onDrop = async (e) => {
     console.log(e, 'dropped');
@@ -56,9 +60,11 @@ export default function ContentListTable({
       setShowPublishContentModal(true);
       setUsedForPublish(false);
     } else if (actionName === 'configure') {
-      setShowConfigContentModal(true);
+      setShowConfigContentModal(content);
     } else if (actionName === 'delete') {
       setShowDeleteContentModal(true);
+    } else if (actionName === 'configureAll') {
+      setShowConfigureAllModal(true);
     }
   };
   useEffect(() => {
@@ -94,7 +100,7 @@ export default function ContentListTable({
                     <p
                       className='cursor-pointer'
                       onClick={() =>
-                        onContentActions(selectedContents, 'configure')
+                        onContentActions(selectedContents, 'configureAll')
                       }
                     >
                       <i className='fa-solid fa-screwdriver-wrench mr-2'></i>
@@ -374,10 +380,26 @@ export default function ContentListTable({
         />
       )}
       {showConfigContentModal && (
-        <ConfigContentModal
+        <AddNewContent
           show={showConfigContentModal}
-          handleClose={() => setShowConfigContentModal(false)}
+          handleClose={() => {
+            setShowConfigContentModal(false);
+          }}
+          tokenProjectId={tokenProjectId}
+          onContentAdded={onContentPublished}
           contents={lastSelectedContents}
+        />
+      )}
+      {showConfigureAllModal && (
+        <AddNewContent
+          show={showConfigureAllModal}
+          handleClose={() => {
+            setShowConfigureAllModal(false);
+          }}
+          tokenProjectId={tokenProjectId}
+          onContentAdded={onContentPublished}
+          allContents={lastSelectedContents}
+          isConfigureAll={true}
         />
       )}
       {showDeleteContentModal && (
