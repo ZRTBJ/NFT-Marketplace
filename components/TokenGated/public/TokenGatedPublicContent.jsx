@@ -33,6 +33,11 @@ export default function TokenGatedPublicContent({ query, userId }) {
               { title: 'customLinks1', icon: 'link', value: '' },
             ];
           }
+          response.file_types.all =
+            parseInt(response?.file_types?.audio) +
+            parseInt(response?.file_types?.image) +
+            parseInt(response?.file_types?.movie) +
+            parseInt(response?.file_types?.other);
           setProject(response);
           setShowOverLayLoading(false);
         } else {

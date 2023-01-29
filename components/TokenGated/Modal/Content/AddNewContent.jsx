@@ -352,13 +352,15 @@ export default function AddNewContent({
     if (finalType === 'video') {
       finalType = 'movie';
     }
+    const linkType =
+      linkDetails?.type === 'video' ? 'movie' : linkDetails?.type;
     let payload = {
       title: content?.title,
       description: content?.description,
       sensitive: content?.isExplicit,
       data: data ? data : linkDetails?.link ? linkDetails.link : asset_id,
       content_type: linkDetails?.link ? 'url' : 'asset_id',
-      file_type: type ? type : linkDetails?.link ? linkDetails.type : finalType,
+      file_type: type ? type : linkDetails?.link ? linkType : finalType,
       ...((config.some((item) => item.col_contract_address) ||
         content?.accessToAll) && {
         configs: content?.accessToAll ? [] : JSON.stringify(config),

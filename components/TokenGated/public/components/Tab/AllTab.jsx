@@ -83,7 +83,7 @@ export default function AllTab({ project, sortBy, verticalList = false }) {
           >
             {verticalList ? (
               <div className='flex flex-col verticalList'>
-                {list?.map((content, index) => (
+                {list?.filter((x) => x?.file_type)?.map((content, index) => (
                   <div key={index}>
                     <>
                       {content?.file_type === 'movie' && (
@@ -107,7 +107,7 @@ export default function AllTab({ project, sortBy, verticalList = false }) {
               </div>
             ) : (
               <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6'>
-                {list?.map((content, index) => (
+                {list?.filter((x) => x?.file_type)?.map((content, index) => (
                   <div key={index}>
                     <>
                       {content?.file_type === 'movie' && (

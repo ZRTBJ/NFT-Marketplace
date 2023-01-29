@@ -7,6 +7,7 @@ import PublishContentModal from 'components/TokenGated/Modal/PublishContent';
 import ConfigContentModal from 'components/TokenGated/Modal/ConfigContent';
 import DeleteContentModal from 'components/TokenGated/Modal/DeleteContent';
 import dayjs from 'dayjs';
+import Link from 'next/link';
 import AddNewContent from '../Modal/Content/AddNewContent';
 
 export default function ContentListTable({
@@ -104,7 +105,7 @@ export default function ContentListTable({
                       }
                     >
                       <i className='fa-solid fa-screwdriver-wrench mr-2'></i>
-                      Configure Accessible
+                      Edit Accessibility
                     </p>
                   </div>
                 </div>
@@ -193,7 +194,7 @@ export default function ContentListTable({
                   scope='col'
                   className='py-3 px-6 !font-black hidden md:table-cell'
                 >
-                  Accessible
+                  Accessibility
                 </th>
                 <th
                   scope='col'
@@ -273,7 +274,14 @@ export default function ContentListTable({
                           </div>
                         )}
                       </div>
-                      <div className=''>{content?.title}</div>
+                      <div>
+                        <Link
+                          href={`/token-gated/content/${content?.id}`}
+                          className='font-bold !no-underline text-txtblack'
+                        >
+                          {content?.title}
+                        </Link>
+                      </div>
                     </div>
                   </td>
                   <td className='py-4 px-6 hidden md:table-cell'>

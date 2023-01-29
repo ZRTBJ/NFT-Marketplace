@@ -6,6 +6,8 @@ import darkBg from 'assets/images/token-gated/darkBg.png';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { ls_GetUserToken } from 'util/ApplicationStorage';
+import defaultThumbnail from 'assets/images/profile/card.svg';
+
 export default function ImageCard({ content, projectId }) {
   const router = useRouter();
   const userinfo = useSelector((state) => state.user.userinfo);
@@ -32,7 +34,7 @@ export default function ImageCard({ content, projectId }) {
                 ? content?.thumbnail
                 : `${content?.consumable_data}&token=${ls_GetUserToken()}`
               : darkBg.src
-          })`,
+          }), url(${defaultThumbnail.src})`,
           backgroundRepeat: 'no-repeat',
           backgroundSize: 'cover',
           backgroundPosition: 'center',

@@ -12,11 +12,15 @@ const sortingOptions = [
 ];
 export default function TabComponents({ project }) {
   const [tabs, setTabs] = useState([
-    { id: 1, label: 'ALL', length: 0 },
-    { id: 2, label: 'Video', length: 0 },
-    { id: 3, label: 'Audio', length: 0 },
-    { id: 4, label: 'Image', length: 0 },
-    { id: 5, label: 'Files', length: 0 },
+    {
+      id: 1,
+      label: 'ALL',
+      length: project?.file_types?.all,
+    },
+    { id: 2, label: 'Video', length: project?.file_types?.movie },
+    { id: 3, label: 'Audio', length: project?.file_types?.audio },
+    { id: 4, label: 'Image', length: project?.file_types?.image },
+    { id: 5, label: 'Files', length: project?.file_types?.other },
   ]);
   const [selectedTab, setSelectedTab] = useState(1);
   const [selectedSort, setSelectedSort] = useState('');
@@ -77,7 +81,7 @@ export default function TabComponents({ project }) {
                 >
                   {tab.label}
                   <span className='bg-color-ass-7/[0.4] rounded p-2 ml-2 font-normal'>
-                    0
+                    {tab.length}
                   </span>
                 </button>
               </li>

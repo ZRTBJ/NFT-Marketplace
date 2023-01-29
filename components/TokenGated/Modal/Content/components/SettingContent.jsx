@@ -71,6 +71,16 @@ const SettingContent = ({
                     </video>
                   </>
                 ) : null}
+                {mediaType === 'application' || mediaType === 'other' ? (
+                  <div className='h-40 w-40 rounded bg-white-filled-form text-center overflow-hidden px-2 pb-2'>
+                    <i className='text-[30px] fa-solid fa-file mt-10'></i>
+                    <p className='text-[14px] mt-1'>
+                      {content?.media?.file?.name
+                        ? content?.media?.file?.name
+                        : mediaPath}
+                    </p>
+                  </div>
+                ) : null}
               </>
             ) : (
               <>
