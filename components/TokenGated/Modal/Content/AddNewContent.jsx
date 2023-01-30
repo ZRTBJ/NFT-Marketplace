@@ -14,6 +14,8 @@ import {
   createTokenGatedContent,
   updateTokenGatedContent,
   publishTokenGatedContent,
+  configMultiContent,
+  getTokenGatedContentDetail,
 } from 'services/tokenGated/tokenGatedService';
 import { getNotificationData } from 'redux/notification';
 import axios from 'axios';
@@ -39,7 +41,6 @@ export default function AddNewContent({
   isConfigureAll,
   allContents,
 }) {
-  console.log(allContents);
   const [activeStep, setActiveStep] = useState(1);
   const [content, setContent] = useState({
     media: null,
@@ -79,6 +80,9 @@ export default function AddNewContent({
   const [blockchain, setBlockchain] = useState('');
   const [currentContent, setCurrentContent] = useState('');
   const [isEdit, setIsEdit] = useState(false);
+  const [selectedContractValidation, setSelectedContractValidation] =
+    useState(false);
+  const [selectedContractError, setSelectedContractError] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -90,10 +94,15 @@ export default function AddNewContent({
 
   useEffect(() => {
     if (contents?.length) {
+      console.log(contents);
       let title = contents[0]?.title;
       let description = contents[0]?.description;
       let isExplicit = contents[0]?.sensitive;
+      let config_names = contents[0]?.config_names;
       let token = ls_GetUserToken();
+      if (contents?.[0]?.id) {
+        getContentDetail(contents[0].id);
+      }
       setIsEdit(true);
       setContent({
         title,
@@ -103,6 +112,7 @@ export default function AddNewContent({
           path: `${contents[0]?.consumable_data}&token=${token}`,
           file: { type: contents[0]?.file_type },
         },
+        accessToAll: config_names?.length ? false : true,
       });
     }
   }, [contents]);
@@ -122,6 +132,41 @@ export default function AddNewContent({
       }
     }
   }, [fileUploadNotification, jobId]);
+
+  const getContentDetail = (contentId) => {
+    getTokenGatedContentDetail(contentId)
+      .then((resp) => {
+        if (resp.code === 0) {
+          console.log(resp);
+          if (resp?.token_gate_content?.token_gate_configs.length) {
+            let tokenConfigs = resp?.token_gate_content?.token_gate_configs;
+            let finalData = tokenConfigs.map((item, id) => {
+              let tokens = item?.token_config.split('-');
+              return {
+                id: id + 1,
+                name: item?.collection_name,
+                collectionAddress: item?.collection_ct,
+                blockchain: item?.blockchain,
+                ...(tokens?.length === 2 && {
+                  tokenMin: tokens[0],
+                  tokenMax: tokens[1],
+                  settings: 'Token Range',
+                }),
+                ...(tokens?.filter((item) => item)?.length === 1 && {
+                  tokenId: tokens[0],
+                  settings: 'Specific Token ID',
+                }),
+                ...(tokens?.filter((item) => item)?.length === 0 && {
+                  settings: 'All Token ID',
+                }),
+              };
+            });
+            setConfigurations(finalData);
+          }
+        }
+      })
+      .catch((err) => console.log(err));
+  };
 
   const handleFieldChange = (e) => {
     setContent({
@@ -481,7 +526,7 @@ export default function AddNewContent({
 
   const handleConfigureAll = (e) => {
     e.preventDefault();
-
+    setIsLoading(true);
     let config = configurations.map((item) => {
       return {
         col_contract_address: item?.collectionAddress,
@@ -493,15 +538,13 @@ export default function AddNewContent({
       };
     });
 
-    let payload = {
-      configs: content?.accessToAll ? [] : JSON.stringify(config),
-    };
+    let configs = content?.accessToAll ? [] : JSON.stringify(config);
 
-    allContents?.map((item) =>
-      updateTokenGatedContent(item.id, payload)
+    allContents?.map((item, id) =>
+      configMultiContent(item.id, configs)
         .then((resp) => {
           if (resp.code === 0) {
-            if (item.id === item.length - 1) {
+            if (id === allContents.length - 1) {
               setShowSuccess(true);
               setPublishNow(false);
               setIsLoading(false);
@@ -521,6 +564,29 @@ export default function AddNewContent({
           setCurrentContent('');
         })
     );
+  };
+
+  const handleSelectCollection = (data) => {
+    setCollectionDetail(data);
+    if (data?.contract_address) {
+      getCollectionDetailFromContract(data?.contract_address)
+        .then((resp) => {
+          if (
+            resp?.address &&
+            resp?.contractMetadata?.tokenType !== 'UNKNOWN'
+          ) {
+            setSelectedContractValidation(true);
+            setSelectedContractError(false);
+          } else {
+            setSelectedContractValidation(false);
+            setSelectedContractError(true);
+          }
+        })
+        .catch((err) => {
+          setSelectedContractValidation(false);
+          setSelectedContractError(true);
+        });
+    }
   };
 
   if (isLoading) {
@@ -587,7 +653,7 @@ export default function AddNewContent({
       />
     );
   }
-
+  console.log(blockchain, collectionDetail);
   return (
     <Modal
       width={600}
@@ -607,7 +673,6 @@ export default function AddNewContent({
             isCollectionLoading={isCollectionLoading}
             options={options}
             setSmartContractAddress={setSmartContractAddress}
-            setCollectionDetail={setCollectionDetail}
             collectionDetail={collectionDetail}
             showAddCollection={showAddCollection}
             addressError={addressError}
@@ -617,6 +682,11 @@ export default function AddNewContent({
             setAddressValid={setAddressValid}
             setAddressError={setAddressError}
             setShowAddCollection={setShowAddCollection}
+            handleSelectCollection={handleSelectCollection}
+            selectedContractValidation={selectedContractValidation}
+            selectedContractError={selectedContractError}
+            setSelectedContractValidation={setSelectedContractValidation}
+            setSelectedContractError={setSelectedContractError}
           />
         ) : (
           <>
