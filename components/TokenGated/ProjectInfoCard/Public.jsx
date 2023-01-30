@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 export default function PublicProjectInfoCard({ project, userId }) {
   const userinfo = useSelector((state) => state.user.userinfo);
   return (
-    <div className='my-4 md:my-10 px-4 md:px-0'>
+    <div className='my-4 md:my-10'>
       <div className={`grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6`}>
         <div className='md:order-last col-span-2'>
           {project?.coverUrl && (

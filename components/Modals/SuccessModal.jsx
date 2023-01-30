@@ -22,7 +22,7 @@ const SuccessModal = ({
 
   const copyToClipboard = () => {
     if (typeof window !== 'undefined') {
-      navigator.clipboard.writeText(window.location.href);
+      navigator.clipboard.writeText(link);
       toast.success(`Link successfully copied`);
     }
   };

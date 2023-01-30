@@ -725,7 +725,7 @@ export default function ProductNFT({ query }) {
                                     setAsseteRemoveInUpdateMode(true);
                                     setnftFile({ file: null, path: '' });
                                   }}
-                                  class='absolute top-0 text-[18px] cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark'
+                                  className='absolute top-0 text-[18px] cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark'
                                 ></i>
                                 <video width='650' height='400' controls>
                                   <source src={nftFile.path} type='video/mp4' />

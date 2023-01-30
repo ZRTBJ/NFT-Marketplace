@@ -127,7 +127,7 @@ const ContributorsList = ({
                       {isEdit === r.wallet_address ? (
                         <div>
                           <i
-                            class='fa-solid fa-check bg-green-400 rounded-[4px] text-white flex items-center justify-center h-[24px] w-[24px] text-[20px] cursor-pointer'
+                            className='fa-solid fa-check bg-green-400 rounded-[4px] text-white flex items-center justify-center h-[24px] w-[24px] text-[20px] cursor-pointer'
                             onClick={handleEditNull}
                           ></i>
                         </div>

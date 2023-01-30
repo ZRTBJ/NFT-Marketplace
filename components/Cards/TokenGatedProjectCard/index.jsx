@@ -28,7 +28,8 @@ export default function TokenGatedProjectCard({ tokenGatedProject }) {
             {tokenGatedProject?.title}
           </p>
           <p className='text-txtSubtle text-[14px]'>
-            {tokenGatedProject?.total_content} Content
+            {tokenGatedProject?.total_content}{' '}
+            {tokenGatedProject?.total_content >= 2 ? 'Contents' : 'Content'}
           </p>
           <Link href={`/token-gated/${tokenGatedProject?.id}`}>
             <p className='cursor-pointer text-[#30A5DC] font-bold text-[14px]'>

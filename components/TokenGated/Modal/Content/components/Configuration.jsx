@@ -17,6 +17,7 @@ const Configuration = ({
   handleConfigValue,
   setShowAddCollection,
 }) => {
+  console.log(configurations);
   return (
     <div>
       {' '}
@@ -107,12 +108,16 @@ const Configuration = ({
                           </p>
                         </div>
                       ) : (
-                        <button
-                          className='text-[14px] border-[1px] border-primary-100 px-2 py-2 text-primary-900 w-full font-bold'
-                          onClick={() => setShowAddCollection(item.id)}
-                        >
-                          Add Collection
-                        </button>
+                        <>
+                          {!reviewScreen ? (
+                            <button
+                              className='text-[14px] border-[1px] border-primary-100 px-2 py-2 text-primary-900 w-full font-bold'
+                              onClick={() => setShowAddCollection(item.id)}
+                            >
+                              Add Collection
+                            </button>
+                          ) : null}
+                        </>
                       )}
                       {typeof window !== 'undefined' &&
                         item?.collectionAddress && (

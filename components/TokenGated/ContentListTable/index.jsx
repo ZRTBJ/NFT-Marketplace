@@ -7,10 +7,14 @@ import PublishContentModal from 'components/TokenGated/Modal/PublishContent';
 import ConfigContentModal from 'components/TokenGated/Modal/ConfigContent';
 import DeleteContentModal from 'components/TokenGated/Modal/DeleteContent';
 import dayjs from 'dayjs';
+import Link from 'next/link';
+import AddNewContent from '../Modal/Content/AddNewContent';
+
 export default function ContentListTable({
   projectInfo,
   onContentPublished,
   onContentDelete,
+  tokenProjectId,
 }) {
   const [project, setProject] = useState(projectInfo);
   const [selectedContents, setSelectedContents] = useState([]);
@@ -20,6 +24,7 @@ export default function ContentListTable({
   const [showConfigContentModal, setShowConfigContentModal] = useState(false);
   const [showDeleteContentModal, setShowDeleteContentModal] = useState(false);
   const [usedForPublish, setUsedForPublish] = useState(true);
+  const [showConfigureAllModal, setShowConfigureAllModal] = useState(false);
 
   const onDrop = async (e) => {
     console.log(e, 'dropped');
@@ -56,9 +61,11 @@ export default function ContentListTable({
       setShowPublishContentModal(true);
       setUsedForPublish(false);
     } else if (actionName === 'configure') {
-      setShowConfigContentModal(true);
+      setShowConfigContentModal(content);
     } else if (actionName === 'delete') {
       setShowDeleteContentModal(true);
+    } else if (actionName === 'configureAll') {
+      setShowConfigureAllModal(true);
     }
   };
   useEffect(() => {
@@ -94,11 +101,11 @@ export default function ContentListTable({
                     <p
                       className='cursor-pointer'
                       onClick={() =>
-                        onContentActions(selectedContents, 'configure')
+                        onContentActions(selectedContents, 'configureAll')
                       }
                     >
                       <i className='fa-solid fa-screwdriver-wrench mr-2'></i>
-                      Configure Accessible
+                      Edit Accessibility
                     </p>
                   </div>
                 </div>
@@ -141,7 +148,7 @@ export default function ContentListTable({
                         onContentActions(selectedContents, 'delete')
                       }
                     >
-                      <i class='fa-solid fa-trash mr-2'></i>
+                      <i className='fa-solid fa-trash mr-2'></i>
                       Delete Contents
                     </p>
                   </div>
@@ -187,7 +194,7 @@ export default function ContentListTable({
                   scope='col'
                   className='py-3 px-6 !font-black hidden md:table-cell'
                 >
-                  Accessible
+                  Accessibility
                 </th>
                 <th
                   scope='col'
@@ -267,7 +274,14 @@ export default function ContentListTable({
                           </div>
                         )}
                       </div>
-                      <div className=''>{content?.title}</div>
+                      <div>
+                        <Link
+                          href={`/token-gated/content/${content?.id}`}
+                          className='font-bold !no-underline text-txtblack'
+                        >
+                          {content?.title}
+                        </Link>
+                      </div>
                     </div>
                   </td>
                   <td className='py-4 px-6 hidden md:table-cell'>
@@ -374,10 +388,26 @@ export default function ContentListTable({
         />
       )}
       {showConfigContentModal && (
-        <ConfigContentModal
+        <AddNewContent
           show={showConfigContentModal}
-          handleClose={() => setShowConfigContentModal(false)}
+          handleClose={() => {
+            setShowConfigContentModal(false);
+          }}
+          tokenProjectId={tokenProjectId}
+          onContentAdded={onContentPublished}
           contents={lastSelectedContents}
+        />
+      )}
+      {showConfigureAllModal && (
+        <AddNewContent
+          show={showConfigureAllModal}
+          handleClose={() => {
+            setShowConfigureAllModal(false);
+          }}
+          tokenProjectId={tokenProjectId}
+          onContentAdded={onContentPublished}
+          allContents={lastSelectedContents}
+          isConfigureAll={true}
         />
       )}
       {showDeleteContentModal && (

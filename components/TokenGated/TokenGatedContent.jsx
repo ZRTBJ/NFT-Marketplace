@@ -37,6 +37,8 @@ export default function TokenGatedContent({ query, createMode }) {
     orderBy: 'newer',
     limit: 20,
   });
+  const [showConfigure, setShowConfigure] = useState(null);
+
   const handleLinkDetails = (e) => {
     if (e.target.value.length && e.target.name === 'link') {
       if (isValidURL(e.target.value)) {
@@ -195,6 +197,7 @@ export default function TokenGatedContent({ query, createMode }) {
             createMode={createMode}
             onContentPublished={() => onGetTokenGatedProject(query?.id)}
             onContentDelete={() => onGetTokenGatedProject(query?.id)}
+            tokenProjectId={query?.id}
           ></ContentListTable>
         </div>
       )}
@@ -207,6 +210,7 @@ export default function TokenGatedContent({ query, createMode }) {
           }}
           tokenProjectId={query?.id}
           onContentAdded={() => onGetTokenGatedProject(query?.id)}
+          setShowUploadByLinkModal={setShowUploadByLinkModal}
           linkDetails={linkDetails}
         />
       )}

@@ -7,7 +7,7 @@ import darkBg from 'assets/images/token-gated/darkBg.png';
 import { useRouter } from 'next/router';
 import audioWeb from 'assets/images/token-gated/audioWeb.svg';
 import playIcon from 'assets/images/token-gated/audioPlay.svg';
-export default function AudioCardGrid({ content }) {
+export default function AudioCardGrid({ content, projectId }) {
   const router = useRouter();
   const userinfo = useSelector((state) => state.user.userinfo);
   const createdAt = moment(content?.created_at);
@@ -20,7 +20,11 @@ export default function AudioCardGrid({ content }) {
     <>
       <div
         className='relative cursor-pointer rounded'
-        onClick={() => router.push(`/token-gated/content/${content?.id}`)}
+        onClick={() =>
+          router.push(
+            `/token-gated/content/${content?.id}?projectId=${projectId}`
+          )
+        }
         style={{
           backgroundImage: `url(${darkBg.src})`,
           backgroundRepeat: 'no-repeat',
@@ -85,7 +89,6 @@ export default function AudioCardGrid({ content }) {
               {content?.title}
             </Link>
           </p>
-          <i className='fa-solid fa-ellipsis-vertical cursor-pointer'></i>
         </div>
         <div className='mt-2 flex items-center gap-2'>
           {content?.status === 'draft' ? (
@@ -99,7 +102,7 @@ export default function AudioCardGrid({ content }) {
           )}
           <span>-</span>
           <span className='text-[12px] text-txtSubtle'>
-            {content?.view_count} Views
+            {content?.view_count} {content?.view_count >= 2 ? 'Views' : 'View'}
           </span>
         </div>
       </div>
