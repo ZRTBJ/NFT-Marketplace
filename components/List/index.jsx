@@ -18,6 +18,8 @@ import ReactPaginate from 'react-paginate';
 import { getMintedNftListByUserId } from 'services/nft/nftService';
 import emptyStateCommon from 'assets/images/profile/emptyStateCommon.svg';
 import Image from 'next/image';
+import TokenGatedProjectCard from 'components/Cards/TokenGatedProjectCard';
+import { getTokenGatedProjectList } from 'services/tokenGated/tokenGatedService';
 
 function List({ query }) {
   SwiperCore.use([Autoplay]);
@@ -75,6 +77,20 @@ function List({ query }) {
         order_by: payload.order_by,
       };
       projectResponse = await getMintedNftListByUserId(payloadData);
+    }
+    if (query?.type === 'tokenGated') {
+      let listType = '';
+      if (query?.user === 'true') {
+        listType = 'user';
+      }
+      let payloadData = {
+        id: query?.user,
+        page: payload.page,
+        limit: 10,
+        keyword: payload.keyword,
+        order_by: payload.order_by,
+      };
+      projectResponse = await getTokenGatedProjectList(payloadData);
     }
 
     if (categoriesRes?.categories && projectResponse?.data) {
@@ -185,7 +201,9 @@ function List({ query }) {
             ? 'Collection List'
             : query?.type === 'dao'
             ? 'DAO List'
-            : 'Minted NFT'}
+            : query?.type === 'tokenGated'
+            ? 'Token Gated Project List'
+            : 'Minted NFT List'}
         </h1>
         <section className='flex px-4 mb-6'>
           <div className='mr-4 flex-1'>
@@ -333,6 +351,28 @@ function List({ query }) {
                         : projectList.map((nft, index) => (
                             <div key={`${nft.id}-${nft.token_id}`}>
                               <NFTListCard nft={nft} />
+                            </div>
+                          ))}
+                    </section>
+                  )}
+
+                  {query?.type === 'tokenGated' && (
+                    <section className='grid gap-6  grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'>
+                      {isSearching
+                        ? searchList.map((item, index) => (
+                            <div key={item.id}>
+                              <TokenGatedProjectCard
+                                key={index}
+                                tokenGatedProject={item}
+                              />
+                            </div>
+                          ))
+                        : projectList.map((item, index) => (
+                            <div key={item.id}>
+                              <TokenGatedProjectCard
+                                key={item.id}
+                                tokenGatedProject={item}
+                              />
                             </div>
                           ))}
                     </section>

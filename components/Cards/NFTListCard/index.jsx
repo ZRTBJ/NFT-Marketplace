@@ -2,7 +2,15 @@ import React from 'react';
 import Link from 'next/link';
 import Eth from 'assets/images/network/eth.svg';
 import Polygon from 'assets/images/network/polygon.svg';
+import Bnb from 'assets/images/network/bnb.svg';
 import Image from 'next/image';
+
+const currency = {
+  eth: Eth,
+  matic: Polygon,
+  bnb: Bnb
+}
+
 export default function NFTListCard({ nft }) {
   return (
     <>
@@ -39,7 +47,7 @@ export default function NFTListCard({ nft }) {
                 <Image
                   width={24}
                   height={24}
-                  src={nft.currency === 'eth' ? Eth : Polygon}
+                  src={currency[nft.currency]}
                   alt='currency logo'
                 />
               </div>

@@ -16,6 +16,7 @@ import { createMintInstance } from 'config/ABI/mint-nft';
 import DropdownCreabo from 'components/Commons/Dropdown';
 import Matic from 'assets/images/polygon.svg';
 import Eth from 'assets/images/eth.svg';
+import Bnb from 'assets/images/bnb.svg';
 import Modal from 'components/Commons/Modal';
 import Select, { components } from 'react-select';
 import { createMembsrshipMintInstance } from 'config/ABI/mint-membershipNFT';
@@ -29,9 +30,11 @@ import Image from 'next/image';
 //TODO: in the future, 1 network can support multiple currency, please fix this
 const CURRENCY = [
   { id: 5, value: 'eth', label: 'ETH', icon: Eth },
+  { id: 97, value: 'bnb', label: 'BNB', icon: Bnb },
   { id: 80001, value: 'matic', label: 'MATIC', icon: Matic },
   { id: 1, value: 'eth', label: 'ETH', icon: Eth },
   { id: 137, value: 'matic', label: 'MATIC', icon: Matic },
+  { id: 56, value: 'bnb', label: 'BNB', icon: Bnb },
 ];
 
 const Control = ({ children, ...props }) => {

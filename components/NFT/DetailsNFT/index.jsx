@@ -38,11 +38,18 @@ import { getCurrentNetworkId, getAccountBalance } from 'util/MetaMask';
 import NetworkHandlerModal from 'components/Modals/NetworkHandlerModal';
 import Eth from 'assets/images/network/eth.svg';
 import Polygon from 'assets/images/network/polygon.svg';
+import Bnb from 'assets/images/network/bnb.svg';
 import { toast } from 'react-toastify';
 import { cryptoConvert } from 'services/chainlinkService';
 import tickIcon from 'assets/images/tick.svg';
 import { getCollectionDetailsById } from 'services/collection/collectionService';
 import Image from 'next/image';
+
+const currency = {
+  eth: Eth,
+  matic: Polygon,
+  bnb: Bnb
+}
 
 export default function DetailsNFT({ type, id }) {
   const userinfo = useSelector((state) => state.user.userinfo);
@@ -101,7 +108,7 @@ export default function DetailsNFT({ type, id }) {
       } else {
         setTransactionWaitingModal(false);
         setShowMoonpayModal(true)
-        // setErrorMsg("You don't have enough balance in your wallet to Mint NFT");
+        // setErrorMsg('You don't have enough balance in your wallet to Mint NFT');
       }
     } catch (err) {
       setTransactionWaitingModal(false);
@@ -469,7 +476,8 @@ export default function DetailsNFT({ type, id }) {
                     {info?.currency ? (
                       <Image
                         className='h-[22px] w-[22px]'
-                        src={info?.currency === 'eth' ? Eth : Polygon}
+                        src={currency[info?.currency]}
+                        // src={info?.currency === 'eth' ? Eth : Polygon}
                         alt={'Currency Logo'}
                       />
                     ) : null}

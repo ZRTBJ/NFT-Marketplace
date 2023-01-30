@@ -18,10 +18,10 @@ import store from '../redux';
 import MetaHead from 'components/Commons/MetaHead/MetaHead';
 import Head from 'next/head';
 import Favicon from 'components/Commons/Favicon';
-dynamic(() => import('tw-elements'), { ssr: false });
 import axios from 'axios';
 import Config from 'config/config';
 import Maintenance from 'components/Commons/Maintenance';
+import { GoogleAnalytics } from 'nextjs-google-analytics';
 
 export const persistor = persistStore(store);
 
@@ -31,6 +31,14 @@ function MyApp({ Component, pageProps }) {
   const [isEmbedView, setIsEmbedView] = useState(false);
   const [isMaintenance, setIsMaintenance] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const use = async () => {
+      (await import('tw-elements')).default;
+    };
+    use();
+  }, []);
+
   const handleToggleSideBar = () => {
     setShowSideBar(!showSideBar);
   };
@@ -60,6 +68,7 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <>
+      <GoogleAnalytics trackPageViews />
       <Head>
         <Favicon></Favicon>
       </Head>

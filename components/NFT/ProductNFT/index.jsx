@@ -605,7 +605,7 @@ export default function ProductNFT({ query }) {
   let networkName = curCollection?.blockchain
     ? NETWORKS?.[Number(curCollection?.blockchain)]?.networkName
     : null;
-  console.log(curCollection, collectionId, options);
+
   return (
     <>
       {isNftLoading && <div className='loading'></div>}

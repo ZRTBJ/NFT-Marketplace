@@ -32,6 +32,7 @@ import TransferNFT from 'components/NFT/TransferNFT/TransferNFT';
 import { getProjectDetailsById } from 'services/project/projectService';
 import Eth from 'assets/images/network/eth.svg';
 import Polygon from 'assets/images/network/polygon.svg';
+import Bnb from 'assets/images/network/bnb.svg';
 import MemberListTable from './RoyaltySplitter/MemberListTable';
 import PlusIcon from 'assets/images/icons/plus-circle.svg';
 import NFTSales from './NFTSale';
@@ -54,12 +55,18 @@ import Image from 'next/image';
 import DaoConnectModal from 'components/Collection/DaoConnectModal/DaoConnectModal';
 import WithdrawModal from './WithdrawModal';
 
+const currency = {
+  eth: Eth,
+  matic: Polygon,
+  bnb: Bnb
+}
+
 const TABLE_HEADERS = [
   { id: 0, label: 'Wallet Address' },
-  // { id: 2, label: "Email" },
+  // { id: 2, label: 'Email' },
   { id: 1, label: 'Percentage' },
   { id: 2, label: 'Name' },
-  // { id: 4, label: "Token ID" },
+  // { id: 4, label: 'Token ID' },
   { id: 3, label: 'Role' },
   { id: 4, label: 'Action' },
 ];
@@ -1291,13 +1298,13 @@ const CollectionContent = ({ collectionId, userId }) => {
                                         </li>
                                         {Collection?.type === 'membership' && (
                                           <>
-                                            {/* <li className="border">
+                                            {/* <li className='border'>
                                           <div
                                             onClick={() => {
                                               setShowTransferNFT(true);
                                               setShowOptions(false);
                                             }}
-                                            className="block p-4 hover:bg-gray-100 cursor-pointer"
+                                            className='block p-4 hover:bg-gray-100 cursor-pointer'
                                           >
                                             Transfer NFT
                                           </div>
@@ -1333,7 +1340,7 @@ const CollectionContent = ({ collectionId, userId }) => {
                                 {nft?.currency ? (
                                   <Image
                                     className='ml-auto'
-                                    src={nft.currency === 'eth' ? Eth : Polygon}
+                                    src={currency[nft.currency]}
                                     alt={collectionNetwork}
                                     width={24}
                                     height={24}

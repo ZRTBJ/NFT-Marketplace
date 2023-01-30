@@ -65,7 +65,6 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   );
 
   useEffect(() => {
-    // setCookie('googtrans', '/en/en');
     var addScript = document.createElement('script');
     addScript.setAttribute(
       'src',
@@ -82,17 +81,11 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     };
   }, []);
 
-  // function setCookie(key, value, expiry) {
-  //   var expires = new Date();
-  //   expires.setTime(expires.getTime() + expiry * 24 * 60 * 60 * 1000);
-  //   document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
-  // }
-
   const googleTranslateElementInit = () => {
     new window.google.translate.TranslateElement(
       {
         pageLanguage: 'en',
-        includedLanguages: 'en,es,ja,zh-CN',
+        includedLanguages: 'en,es,ja,zh-CN,fr',
         layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
       },
       'google_translate_element'
@@ -284,6 +277,12 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
               data: lastMessage.data,
             };
             dispatch(getNotificationData(notificationData));
+          } else if (data.type === 'fileUploadTokengatedNotification') {
+            const notificationData = {
+              function_uuid: data.Data.asset_uid,
+              data: lastMessage.data,
+            };
+            dispatch(getNotificationData(notificationData));
           }
         }
       } catch (err) {
@@ -358,7 +357,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   };
 
   return (
-    <header className='bg-light1'>
+    <header className='bg-light1 border border-b-1'>
       <AccountChangedModal
         show={showAccountChanged}
         handleClose={() => setShowAccountChanged(false)}
