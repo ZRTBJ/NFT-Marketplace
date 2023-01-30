@@ -54,7 +54,7 @@ export default function AllTab({ project, sortBy, verticalList = false }) {
 
   return (
     <>
-      <div className='px-4'>
+      <div>
         {list?.length === 0 && !isLoading && (
           <div className='text-center text-textSubtle'>
             <Image
@@ -83,51 +83,67 @@ export default function AllTab({ project, sortBy, verticalList = false }) {
           >
             {verticalList ? (
               <div className='flex flex-col verticalList'>
-                {list?.filter((x) => x?.file_type)?.map((content, index) => (
-                  <div key={index}>
-                    <>
-                      {content?.file_type === 'movie' && (
-                        <VideoCard content={content} projectId={project?.id} />
-                      )}
-                      {content?.file_type === 'audio' && (
-                        <AudioCardGrid
-                          content={content}
-                          projectId={project?.id}
-                        />
-                      )}
-                      {content?.file_type === 'image' && (
-                        <ImageCard content={content} projectId={project?.id} />
-                      )}
-                      {content?.file_type === 'other' && (
-                        <FileCard content={content} projectId={project?.id} />
-                      )}
-                    </>
-                  </div>
-                ))}
+                {list
+                  ?.filter((x) => x?.file_type)
+                  ?.map((content, index) => (
+                    <div key={index}>
+                      <>
+                        {content?.file_type === 'movie' && (
+                          <VideoCard
+                            content={content}
+                            projectId={project?.id}
+                          />
+                        )}
+                        {content?.file_type === 'audio' && (
+                          <AudioCardGrid
+                            content={content}
+                            projectId={project?.id}
+                          />
+                        )}
+                        {content?.file_type === 'image' && (
+                          <ImageCard
+                            content={content}
+                            projectId={project?.id}
+                          />
+                        )}
+                        {content?.file_type === 'other' && (
+                          <FileCard content={content} projectId={project?.id} />
+                        )}
+                      </>
+                    </div>
+                  ))}
               </div>
             ) : (
               <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6'>
-                {list?.filter((x) => x?.file_type)?.map((content, index) => (
-                  <div key={index}>
-                    <>
-                      {content?.file_type === 'movie' && (
-                        <VideoCard content={content} projectId={project?.id} />
-                      )}
-                      {content?.file_type === 'audio' && (
-                        <AudioCardGrid
-                          content={content}
-                          projectId={project?.id}
-                        />
-                      )}
-                      {content?.file_type === 'image' && (
-                        <ImageCard content={content} projectId={project?.id} />
-                      )}
-                      {content?.file_type === 'other' && (
-                        <FileCard content={content} projectId={project?.id} />
-                      )}
-                    </>
-                  </div>
-                ))}
+                {list
+                  ?.filter((x) => x?.file_type)
+                  ?.map((content, index) => (
+                    <div key={index}>
+                      <>
+                        {content?.file_type === 'movie' && (
+                          <VideoCard
+                            content={content}
+                            projectId={project?.id}
+                          />
+                        )}
+                        {content?.file_type === 'audio' && (
+                          <AudioCardGrid
+                            content={content}
+                            projectId={project?.id}
+                          />
+                        )}
+                        {content?.file_type === 'image' && (
+                          <ImageCard
+                            content={content}
+                            projectId={project?.id}
+                          />
+                        )}
+                        {content?.file_type === 'other' && (
+                          <FileCard content={content} projectId={project?.id} />
+                        )}
+                      </>
+                    </div>
+                  ))}
               </div>
             )}
           </InfiniteScroll>

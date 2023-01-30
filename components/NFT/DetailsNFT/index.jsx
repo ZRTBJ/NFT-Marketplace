@@ -47,9 +47,9 @@ import Image from 'next/image';
 
 const currency = {
   eth: Eth,
-  polygon: Polygon,
-  bnb: Bnb
-}
+  matic: Polygon,
+  bnb: Bnb,
+};
 
 export default function DetailsNFT({ type, id }) {
   const userinfo = useSelector((state) => state.user.userinfo);
@@ -62,7 +62,7 @@ export default function DetailsNFT({ type, id }) {
   const [showNftSuccessModal, setNftSuccessModal] = useState(false);
   const [funcId, setFuncId] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
-  const [showMoonpayModal, setShowMoonpayModal] = useState(false)
+  const [showMoonpayModal, setShowMoonpayModal] = useState(false);
   const [mintData, setMintData] = useState();
   const [hash, setHash] = useState('');
   const [showEmbedNFT, setShowEmbedNFT] = useState(false);
@@ -107,7 +107,7 @@ export default function DetailsNFT({ type, id }) {
         }
       } else {
         setTransactionWaitingModal(false);
-        setShowMoonpayModal(true)
+        setShowMoonpayModal(true);
         // setErrorMsg("You don't have enough balance in your wallet to Mint NFT");
       }
     } catch (err) {
@@ -141,10 +141,10 @@ export default function DetailsNFT({ type, id }) {
       .then((resp) => {
         if (resp.code === 0) {
           setNft(resp);
-          if (resp.more_info.currency) {
+          if (resp.more_info?.currency) {
             dollarConvert(
-              resp.more_info.currency.toUpperCase(),
-              resp.more_info.price
+              resp?.more_info?.currency?.toUpperCase(),
+              resp?.more_info?.price
             );
           }
           collectionId = resp?.lnft?.collection_uuid;
@@ -506,12 +506,12 @@ export default function DetailsNFT({ type, id }) {
                 <button
                   disabled={
                     nft?.lnft?.minted_amount >= nft?.lnft?.supply ||
-                    !nft?.more_info.currency
+                    !nft?.more_info?.currency
                   }
                   className={`w-[264px] !text-[16px] h-[44px]   ${
                     nft?.lnft?.minted_amount >= nft?.lnft?.supply
                       ? 'bg-color-asss-3 text-white'
-                      : !nft.more_info.currency
+                      : !nft?.more_info?.currency
                       ? 'bg-color-asss-3 text-white'
                       : 'contained-button'
                   }`}

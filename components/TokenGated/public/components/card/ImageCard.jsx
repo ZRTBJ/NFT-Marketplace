@@ -79,7 +79,6 @@ export default function ImageCard({ content, projectId }) {
               {content?.title}
             </Link>
           </p>
-          <i className='fa-solid fa-ellipsis-vertical cursor-pointer'></i>
         </div>
         <div className='mt-2 flex items-center gap-2'>
           {content?.status === 'draft' ? (
@@ -93,7 +92,7 @@ export default function ImageCard({ content, projectId }) {
           )}
           <span>-</span>
           <span className='text-[12px] text-txtSubtle'>
-            {content?.view_count} Views
+            {content?.view_count} {content?.view_count >= 2 ? 'Views' : 'View'}
           </span>
         </div>
       </div>

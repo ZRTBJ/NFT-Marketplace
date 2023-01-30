@@ -52,7 +52,7 @@ export default function ImageTab({ project, sortBy }) {
 
   return (
     <>
-      <div className='px-4'>
+      <div>
         {list?.length === 0 && !isLoading && (
           <div className='text-center text-textSubtle'>
             <Image

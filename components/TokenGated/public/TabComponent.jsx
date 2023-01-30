@@ -51,9 +51,9 @@ export default function TabComponents({ project }) {
           disabled={project?.contents?.length === 0}
         />
       </div>
-      <div className='mb-4 px-4 '>
+      <div className='mb-4'>
         <ul
-          className='flex flex-wrap gap-x-2 gap-y-4 border-b  border-b-[2px] text-sm font-medium text-center '
+          className='flex flex-wrap  gap-x-3 md:gap-x-6 gap-y-2 border-b  border-b-[2px] text-sm font-medium text-center '
           id='myTab'
           data-tabs-toggle='#token-gated-public-project'
           role='tablist'
@@ -67,7 +67,7 @@ export default function TabComponents({ project }) {
                 key={tab.id}
               >
                 <button
-                  className={`inline-block py-2 md:p-4 md:text-lg rounded-t-lg ${
+                  className={`inline-block py-2  md:text-lg rounded-t-lg ${
                     selectedTab === tab.id
                       ? ' border-textSubtle text-txtblack'
                       : 'border-transparent text-textSubtle'
