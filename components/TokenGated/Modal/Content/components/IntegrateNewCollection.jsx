@@ -240,7 +240,7 @@ const IntegrateNewCollection = ({
                     Select Blockchain
                   </option>
                   {validNetworks.map((network) => (
-                    <option value={network?.network}>
+                    <option value={network?.network} key={network?.network}>
                       {network?.networkName}
                     </option>
                   ))}

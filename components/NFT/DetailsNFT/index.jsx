@@ -48,8 +48,8 @@ import Image from 'next/image';
 const currency = {
   eth: Eth,
   matic: Polygon,
-  bnb: Bnb,
-};
+  bnb: Bnb
+}
 
 export default function DetailsNFT({ type, id }) {
   const userinfo = useSelector((state) => state.user.userinfo);
@@ -107,8 +107,8 @@ export default function DetailsNFT({ type, id }) {
         }
       } else {
         setTransactionWaitingModal(false);
-        setShowMoonpayModal(true);
-        // setErrorMsg("You don't have enough balance in your wallet to Mint NFT");
+        setShowMoonpayModal(true)
+        // setErrorMsg('You don't have enough balance in your wallet to Mint NFT');
       }
     } catch (err) {
       setTransactionWaitingModal(false);

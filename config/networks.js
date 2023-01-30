@@ -1,12 +1,14 @@
 
-import Eth from "assets/images/eth.svg";
-import Matic from "assets/images/polygon.svg";
-import Bnb from "assets/images/bnb.svg";
-import { address } from "./contractAddresses.js";
+import Eth from 'assets/images/eth.svg';
+import Matic from 'assets/images/polygon.svg';
+import Bnb from 'assets/images/bnb.svg';
+import { address } from './contractAddresses.js';
 import PolyScan from 'assets/images/poly-scan.png';
 import EthScan from 'assets/images/eth-scan.png';
 
-const gnosisFundTransferUrl = "https://app.safe.global";
+
+const gnosisFundTransferUrl = 'https://app.safe.global';
+
 const raribleNFTDetailsUrl =
   process.env.NEXT_PUBLIC_ENV === "production"
     ? "https://rarible.com/token/"
