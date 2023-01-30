@@ -481,7 +481,6 @@ table > thead > tr > th {
   color: #fff !important;
 }
 
-
 /* Language selector */
 .goog-te-banner-frame.skiptranslate {
   display: none !important;
@@ -503,7 +502,7 @@ body {
   font-size: 12px;
   padding-right: 5px;
 }
-=======
+
 .token-gated-dropdown:focus-within .token-gated-dropdown-menu {
   opacity: 1;
   transform: translate(0) scale(1);
@@ -531,4 +530,3 @@ body {
 .accordian-detail-content.show {
   visibility: visible !important;
 }
-
