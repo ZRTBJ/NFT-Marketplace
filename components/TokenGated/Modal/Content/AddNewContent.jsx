@@ -40,6 +40,7 @@ export default function AddNewContent({
   contents,
   isConfigureAll,
   allContents,
+  setLinkDetails,
 }) {
   const [activeStep, setActiveStep] = useState(1);
   const [content, setContent] = useState({
@@ -76,7 +77,6 @@ export default function AddNewContent({
   );
   const [publishNow, setPublishNow] = useState(false);
   const [addressError, setAddressError] = useState(false);
-  const [addressValid, setAddressValid] = useState(false);
   const [blockchain, setBlockchain] = useState('');
   const [currentContent, setCurrentContent] = useState('');
   const [isEdit, setIsEdit] = useState(false);
@@ -109,11 +109,19 @@ export default function AddNewContent({
         description,
         isExplicit,
         media: {
-          path: `${contents[0]?.consumable_data}&token=${token}`,
+          path: `${contents[0]?.consumable_data}?token=${token}`,
           file: { type: contents[0]?.file_type },
         },
         accessToAll: config_names?.length ? false : true,
       });
+      if (contents?.[0]?.content_type === 'url') {
+        setLinkDetails({
+          link: `${contents[0]?.consumable_data}?token=${token}}`,
+          type: contents[0]?.file_type,
+        });
+      } else {
+        setLinkDetails({ link: '', type: 'image' });
+      }
     }
   }, [contents]);
 
@@ -222,6 +230,15 @@ export default function AddNewContent({
     setSmartContractAddress('');
   };
 
+  const deleteConfiguration = (id) => {
+    console.log(id);
+    let configures = configurations.filter((value) => value.id !== id);
+    setConfigurations(configures);
+    if (!configures.length) {
+      setContent({ ...content, accessToAll: true });
+    }
+  };
+
   function scrolledBottom() {
     let oldPayload = { ...payload };
     oldPayload.page = oldPayload.page + 1;
@@ -321,31 +338,6 @@ export default function AddNewContent({
 
   const handleAddressChange = (e) => {
     setSmartContractAddress(e.target.value);
-    getCollectionDetailFromContract(e.target.value)
-      .then((resp) => {
-        if (resp?.address && resp?.contractMetadata?.tokenType !== 'UNKNOWN') {
-          setCollectionDetail({
-            contract_address: resp?.address,
-            name: resp?.contractMetadata?.name,
-            blockchain: blockchain,
-            collection_symbol: resp?.contractMetadata?.symbol,
-            total_supply: resp?.contractMetadata?.totalSupply,
-            token_standard: resp?.contractMetadata?.tokenType,
-          });
-          collectionDetail?.contract_address,
-            collectionDetail?.name,
-            collectionDetail?.blockchain;
-          setAddressError(false);
-          setAddressValid(true);
-        } else {
-          setAddressError(true);
-          setAddressValid(false);
-        }
-      })
-      .catch((err) => {
-        setAddressError(true);
-        setAddressValid(false);
-      });
   };
 
   const handleCreateContent = (asset_id) => {
@@ -412,6 +404,8 @@ export default function AddNewContent({
       }),
       ...(isDraft && { status: 'draft' }),
     };
+
+    console.log(payload, linkDetails);
 
     updateTokenGatedContent(id, payload)
       .then((resp) => {
@@ -567,9 +561,8 @@ export default function AddNewContent({
   };
 
   const handleSelectCollection = (data) => {
-    setCollectionDetail(data);
     if (data?.contract_address) {
-      getCollectionDetailFromContract(data?.contract_address)
+      getCollectionDetailFromContract(data?.contract_address, data?.blockchain)
         .then((resp) => {
           if (
             resp?.address &&
@@ -577,6 +570,7 @@ export default function AddNewContent({
           ) {
             setSelectedContractValidation(true);
             setSelectedContractError(false);
+            setCollectionDetail(data);
           } else {
             setSelectedContractValidation(false);
             setSelectedContractError(true);
@@ -676,10 +670,8 @@ export default function AddNewContent({
             collectionDetail={collectionDetail}
             showAddCollection={showAddCollection}
             addressError={addressError}
-            addressValid={addressValid}
             setBlockchain={setBlockchain}
             blockchain={blockchain}
-            setAddressValid={setAddressValid}
             setAddressError={setAddressError}
             setShowAddCollection={setShowAddCollection}
             handleSelectCollection={handleSelectCollection}
@@ -687,6 +679,7 @@ export default function AddNewContent({
             selectedContractError={selectedContractError}
             setSelectedContractValidation={setSelectedContractValidation}
             setSelectedContractError={setSelectedContractError}
+            setCollectionDetail={setCollectionDetail}
           />
         ) : (
           <>
@@ -738,6 +731,7 @@ export default function AddNewContent({
                     handleSettings={handleSettings}
                     handleConfigValue={handleConfigValue}
                     setShowAddCollection={setShowAddCollection}
+                    deleteConfiguration={deleteConfiguration}
                   />
                 )}
                 {activeStep === 3 && (

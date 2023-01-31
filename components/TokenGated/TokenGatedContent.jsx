@@ -198,6 +198,8 @@ export default function TokenGatedContent({ query, createMode }) {
             onContentPublished={() => onGetTokenGatedProject(query?.id)}
             onContentDelete={() => onGetTokenGatedProject(query?.id)}
             tokenProjectId={query?.id}
+            setLinkDetails={setLinkDetails}
+            linkDetails={linkDetails}
           ></ContentListTable>
         </div>
       )}
@@ -212,6 +214,7 @@ export default function TokenGatedContent({ query, createMode }) {
           onContentAdded={() => onGetTokenGatedProject(query?.id)}
           setShowUploadByLinkModal={setShowUploadByLinkModal}
           linkDetails={linkDetails}
+          setLinkDetails={setLinkDetails}
         />
       )}
       {showUploadByLinkModal && (

@@ -47,12 +47,17 @@ const TokenGatedContentDetailContainer = ({ query }) => {
     getTokenGatedContentDetail(query?.id)
       .then(async (resp) => {
         if (resp.code === 0) {
-          let assetUrl = `${
-            resp?.token_gate_content?.consumable_data
-          }&token=${ls_GetUserToken()}`;
-          await getContentAuth(assetUrl);
-          setAsset(assetUrl);
-          setData(resp?.token_gate_content);
+          if (resp?.token_gate_content?.consumable_data) {
+            setShowError(false);
+            let assetUrl = `${
+              resp?.token_gate_content?.consumable_data
+            }?token=${ls_GetUserToken()}`;
+            await getContentAuth(assetUrl);
+            setAsset(assetUrl);
+            setData(resp?.token_gate_content);
+          } else {
+            setShowError(true);
+          }
         }
       })
       .catch((err) => console.log(err));

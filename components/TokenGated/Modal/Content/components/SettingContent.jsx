@@ -113,7 +113,6 @@ const SettingContent = ({
               id={`dropzone-file`}
               type='file'
               className='hidden'
-              accept='audio/*, image/*, video/*'
               disabled={reviewScreen}
               onChange={handleMediaFile}
             />
