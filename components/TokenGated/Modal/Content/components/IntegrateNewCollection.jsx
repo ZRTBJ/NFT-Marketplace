@@ -19,7 +19,6 @@ const IntegrateNewCollection = ({
   options,
   setSmartContractAddress,
   collectionDetail,
-  setCollectionDetail,
   handleConfigurations,
   showAddCollection,
   addressError,
@@ -29,6 +28,11 @@ const IntegrateNewCollection = ({
   setAddressError,
   setAddressValid,
   setShowAddCollection,
+  handleSelectCollection,
+  selectedContractValidation,
+  selectedContractError,
+  setSelectedContractError,
+  setSelectedContractValidation,
 }) => {
   const [showExistingCollection, setShowExistingCollection] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -40,12 +44,14 @@ const IntegrateNewCollection = ({
       setAddressError(false);
       setBlockchain('');
     } else {
-      setCollectionDetail('');
+      handleSelectCollection('');
+      setSelectedContractError(false);
+      setSelectedContractValidation(false);
     }
   }, [showExistingCollection]);
 
   const handleNext = () => {
-    if (collectionDetail) {
+    if (collectionDetail && (addressValid || selectedContractValidation)) {
       setShowPreview(true);
     }
   };
@@ -168,7 +174,7 @@ const IntegrateNewCollection = ({
                 showAddCollection,
                 collectionDetail?.contract_address,
                 collectionDetail?.name,
-                collectionDetail?.blockchain
+                blockchain ? blockchain : collectionDetail?.blockchain
               )
             }
           >
@@ -210,7 +216,7 @@ const IntegrateNewCollection = ({
             />
             {addressError && (
               <p className='text-danger-800 text-sm mt-1'>
-                <strong>X</strong> Smart contract is wrong
+                <strong>X</strong> Smart contract is Unknown
               </p>
             )}
             {addressValid && (
@@ -266,7 +272,7 @@ const IntegrateNewCollection = ({
                 <div className='mb-2'>
                   <Select
                     value={collectionDetail}
-                    onChange={(data) => setCollectionDetail(data)}
+                    onChange={(data) => handleSelectCollection(data)}
                     components={{
                       IndicatorSeparator: () => null,
                     }}
@@ -276,10 +282,19 @@ const IntegrateNewCollection = ({
                       menuPortal: (base) => ({ ...base, zIndex: 9999 }),
                       control: (base) => ({
                         ...base,
-                        border: '1px solid hsl(0, 0%, 80%)',
+                        border: selectedContractValidation
+                          ? '1px solid rgba(50, 232, 101, 0.8)'
+                          : selectedContractError
+                          ? '1px solid rgba(255, 60, 60, 0.8)'
+                          : '1px solid hsl(0, 0%, 80%)',
                         borderRadius: 8,
                         height: 64,
                         fontWeight: 900,
+                        color: selectedContractValidation
+                          ? '1px solid rgba(50, 232, 101, 0.8)'
+                          : selectedContractError
+                          ? '1px solid rgba(255, 60, 60, 0.8)'
+                          : 'hsl(0, 0%, 20%)',
                       }),
                     }}
                     menuPortalTarget={document.body}
@@ -294,6 +309,17 @@ const IntegrateNewCollection = ({
                     menuShouldScrollIntoView
                     onMenuScrollToBottom={() => scrolledBottom()}
                   />
+                  {selectedContractValidation && (
+                    <p className='text-success-800 text-sm mt-1 flex'>
+                      <Image src={TickSuccess} alt='success' className='mr-2' />{' '}
+                      Your smart contract is validated
+                    </p>
+                  )}
+                  {selectedContractError && (
+                    <p className='text-danger-800 text-sm mt-1'>
+                      <strong>X</strong> Smart contract is Unknown
+                    </p>
+                  )}
                 </div>
               )}
             </div>

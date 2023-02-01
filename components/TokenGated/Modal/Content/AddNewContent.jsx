@@ -14,6 +14,8 @@ import {
   createTokenGatedContent,
   updateTokenGatedContent,
   publishTokenGatedContent,
+  configMultiContent,
+  getTokenGatedContentDetail,
 } from 'services/tokenGated/tokenGatedService';
 import { getNotificationData } from 'redux/notification';
 import axios from 'axios';
@@ -34,6 +36,10 @@ export default function AddNewContent({
   tokenProjectId,
   onContentAdded,
   linkDetails,
+  setShowUploadByLinkModal,
+  contents,
+  isConfigureAll,
+  allContents,
 }) {
   const [activeStep, setActiveStep] = useState(1);
   const [content, setContent] = useState({
@@ -72,8 +78,44 @@ export default function AddNewContent({
   const [addressError, setAddressError] = useState(false);
   const [addressValid, setAddressValid] = useState(false);
   const [blockchain, setBlockchain] = useState('');
+  const [currentContent, setCurrentContent] = useState('');
+  const [isEdit, setIsEdit] = useState(false);
+  const [selectedContractValidation, setSelectedContractValidation] =
+    useState(false);
+  const [selectedContractError, setSelectedContractError] = useState(false);
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (isConfigureAll) {
+      setActiveStep(2);
+    }
+  }, [isConfigureAll]);
+
+  useEffect(() => {
+    if (contents?.length) {
+      console.log(contents);
+      let title = contents[0]?.title;
+      let description = contents[0]?.description;
+      let isExplicit = contents[0]?.sensitive;
+      let config_names = contents[0]?.config_names;
+      let token = ls_GetUserToken();
+      if (contents?.[0]?.id) {
+        getContentDetail(contents[0].id);
+      }
+      setIsEdit(true);
+      setContent({
+        title,
+        description,
+        isExplicit,
+        media: {
+          path: `${contents[0]?.consumable_data}&token=${token}`,
+          file: { type: contents[0]?.file_type },
+        },
+        accessToAll: config_names?.length ? false : true,
+      });
+    }
+  }, [contents]);
 
   useEffect(() => {
     // file upload web socket
@@ -90,6 +132,41 @@ export default function AddNewContent({
       }
     }
   }, [fileUploadNotification, jobId]);
+
+  const getContentDetail = (contentId) => {
+    getTokenGatedContentDetail(contentId)
+      .then((resp) => {
+        if (resp.code === 0) {
+          console.log(resp);
+          if (resp?.token_gate_content?.token_gate_configs.length) {
+            let tokenConfigs = resp?.token_gate_content?.token_gate_configs;
+            let finalData = tokenConfigs.map((item, id) => {
+              let tokens = item?.token_config.split('-');
+              return {
+                id: id + 1,
+                name: item?.collection_name,
+                collectionAddress: item?.collection_ct,
+                blockchain: item?.blockchain,
+                ...(tokens?.length === 2 && {
+                  tokenMin: tokens[0],
+                  tokenMax: tokens[1],
+                  settings: 'Token Range',
+                }),
+                ...(tokens?.filter((item) => item)?.length === 1 && {
+                  tokenId: tokens[0],
+                  settings: 'Specific Token ID',
+                }),
+                ...(tokens?.filter((item) => item)?.length === 0 && {
+                  settings: 'All Token ID',
+                }),
+              };
+            });
+            setConfigurations(finalData);
+          }
+        }
+      })
+      .catch((err) => console.log(err));
+  };
 
   const handleFieldChange = (e) => {
     setContent({
@@ -115,7 +192,10 @@ export default function AddNewContent({
     e.preventDefault();
     setIsSubmitted(true);
     if (activeStep === 1) {
-      if (content?.title && content?.media?.file) {
+      if (
+        (content?.title && content?.media?.file) ||
+        (content?.title && linkDetails.link)
+      ) {
         setHandledSteps([...handledSteps, activeStep]);
         setActiveStep(activeStep + 1);
       }
@@ -198,7 +278,7 @@ export default function AddNewContent({
             return e.id;
           });
           let filtered = uniqCollectionList.filter(
-            (list) => list.type === 'product'
+            (list) => list.status === 'published'
           );
           setOptions(filtered);
           setIsCollectionLoading(false);
@@ -243,7 +323,7 @@ export default function AddNewContent({
     setSmartContractAddress(e.target.value);
     getCollectionDetailFromContract(e.target.value)
       .then((resp) => {
-        if (resp?.address) {
+        if (resp?.address && resp?.contractMetadata?.tokenType !== 'UNKNOWN') {
           setCollectionDetail({
             contract_address: resp?.address,
             name: resp?.contractMetadata?.name,
@@ -279,21 +359,24 @@ export default function AddNewContent({
           if (resp.code === 0) {
             let tokenId = resp?.token_gate_content?.id;
             handleUpdateContent(tokenId, asset_id);
+            setCurrentContent(tokenId);
           } else {
             setIsLoading(false);
             setShowError(true);
             setPublishNow(false);
+            setCurrentContent('');
           }
         })
         .catch((err) => {
           setIsLoading(false);
           setPublishNow(false);
           setShowError(true);
+          setCurrentContent('');
         });
     }
   };
 
-  const handleUpdateContent = (id, asset_id) => {
+  const handleUpdateContent = (id, asset_id, isDraft = false) => {
     let config = configurations.map((item) => {
       return {
         col_contract_address: item?.collectionAddress,
@@ -304,6 +387,8 @@ export default function AddNewContent({
         ...(item?.tokenMax && { token_max: item?.tokenMax }),
       };
     });
+    let data = contents?.[0]?.data;
+    let type = contents?.[0]?.file_type;
 
     let finalType = content.media?.file?.type
       ? content.media.file.type.split('/')[0]
@@ -312,17 +397,20 @@ export default function AddNewContent({
     if (finalType === 'video') {
       finalType = 'movie';
     }
+    const linkType =
+      linkDetails?.type === 'video' ? 'movie' : linkDetails?.type;
     let payload = {
       title: content?.title,
       description: content?.description,
       sensitive: content?.isExplicit,
-      data: linkDetails?.link ? linkDetails.link : asset_id,
+      data: data ? data : linkDetails?.link ? linkDetails.link : asset_id,
       content_type: linkDetails?.link ? 'url' : 'asset_id',
-      file_type: linkDetails?.link ? linkDetails.type : finalType,
+      file_type: type ? type : linkDetails?.link ? linkType : finalType,
       ...((config.some((item) => item.col_contract_address) ||
         content?.accessToAll) && {
         configs: content?.accessToAll ? [] : JSON.stringify(config),
       }),
+      ...(isDraft && { status: 'draft' }),
     };
 
     updateTokenGatedContent(id, payload)
@@ -343,6 +431,7 @@ export default function AddNewContent({
                   setPublishNow(false);
                   setIsLoading(false);
                   setShowError(true);
+                  setCurrentContent('');
                 }
               })
               .catch((err) => {
@@ -350,6 +439,7 @@ export default function AddNewContent({
                 setIsLoading(false);
                 setShowError(true);
                 setPublishNow(false);
+                setCurrentContent('');
               });
           } else {
             setShowSuccess(true);
@@ -359,6 +449,7 @@ export default function AddNewContent({
           setShowSuccess(false);
           setIsLoading(false);
           setShowError(true);
+          setCurrentContent('');
           setPublishNow(false);
         }
       })
@@ -366,6 +457,7 @@ export default function AddNewContent({
         setIsLoading(false);
         setShowError(true);
         setPublishNow(false);
+        setCurrentContent('');
       });
   };
 
@@ -406,19 +498,94 @@ export default function AddNewContent({
     e.preventDefault();
     setIsPublishing(true);
     setPublishNow(true);
-    if (linkDetails?.link) {
-      handleCreateContent();
+    if (isEdit) {
+      let id = contents?.[0]?.id;
+      handleUpdateContent(id);
     } else {
-      uploadAFile();
+      if (linkDetails?.link) {
+        handleCreateContent();
+      } else {
+        uploadAFile();
+      }
     }
   };
 
   const handleDraft = (e) => {
     e.preventDefault();
-    if (linkDetails?.link) {
-      handleCreateContent();
+    if (isEdit) {
+      let id = contents?.[0]?.id;
+      handleUpdateContent(id, null, true);
     } else {
-      uploadAFile();
+      if (linkDetails?.link) {
+        handleCreateContent();
+      } else {
+        uploadAFile();
+      }
+    }
+  };
+
+  const handleConfigureAll = (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    let config = configurations.map((item) => {
+      return {
+        col_contract_address: item?.collectionAddress,
+        blockchain: item?.blockchain,
+        col_name: item?.name,
+        ...(item?.tokenId && { token_id: item?.tokenId }),
+        ...(item?.tokenMin && { token_min: item?.tokenMin }),
+        ...(item?.tokenMax && { token_max: item?.tokenMax }),
+      };
+    });
+
+    let configs = content?.accessToAll ? [] : JSON.stringify(config);
+
+    allContents?.map((item, id) =>
+      configMultiContent(item.id, configs)
+        .then((resp) => {
+          if (resp.code === 0) {
+            if (id === allContents.length - 1) {
+              setShowSuccess(true);
+              setPublishNow(false);
+              setIsLoading(false);
+            }
+          } else {
+            setShowSuccess(false);
+            setIsLoading(false);
+            setShowError(true);
+            setCurrentContent('');
+            setPublishNow(false);
+          }
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          setShowError(true);
+          setPublishNow(false);
+          setCurrentContent('');
+        })
+    );
+  };
+
+  const handleSelectCollection = (data) => {
+    setCollectionDetail(data);
+    if (data?.contract_address) {
+      getCollectionDetailFromContract(data?.contract_address)
+        .then((resp) => {
+          if (
+            resp?.address &&
+            resp?.contractMetadata?.tokenType !== 'UNKNOWN'
+          ) {
+            setSelectedContractValidation(true);
+            setSelectedContractError(false);
+          } else {
+            setSelectedContractValidation(false);
+            setSelectedContractError(true);
+          }
+        })
+        .catch((err) => {
+          setSelectedContractValidation(false);
+          setSelectedContractError(true);
+        });
     }
   };
 
@@ -462,8 +629,8 @@ export default function AddNewContent({
             : `Content Saved Successfully`
         }
         link={
-          window !== 'undefined' && isPublishing
-            ? `${window.location.origin}/token-gated/${tokenProjectId}`
+          window !== 'undefined' && isPublishing && currentContent
+            ? `${window.location.origin}/token-gated/content/${currentContent}`
             : ''
         }
         btnText='Close'
@@ -486,10 +653,11 @@ export default function AddNewContent({
       />
     );
   }
-
+  console.log(blockchain, collectionDetail);
   return (
     <Modal
       width={600}
+      overflow={'auto'}
       show={show}
       handleClose={() => handleClose()}
       showCloseIcon={showAddCollection ? false : true}
@@ -505,7 +673,6 @@ export default function AddNewContent({
             isCollectionLoading={isCollectionLoading}
             options={options}
             setSmartContractAddress={setSmartContractAddress}
-            setCollectionDetail={setCollectionDetail}
             collectionDetail={collectionDetail}
             showAddCollection={showAddCollection}
             addressError={addressError}
@@ -515,6 +682,11 @@ export default function AddNewContent({
             setAddressValid={setAddressValid}
             setAddressError={setAddressError}
             setShowAddCollection={setShowAddCollection}
+            handleSelectCollection={handleSelectCollection}
+            selectedContractValidation={selectedContractValidation}
+            selectedContractError={selectedContractError}
+            setSelectedContractValidation={setSelectedContractValidation}
+            setSelectedContractError={setSelectedContractError}
           />
         ) : (
           <>
@@ -522,27 +694,29 @@ export default function AddNewContent({
             <p className='text-textLight text-[14px] mt-2'>
               Please set up the content to explain more to your audience.
             </p>
-            <div className='flex items-center justify-around mt-5'>
-              {STEPS.map((step) => (
-                <span
-                  key={step.id}
-                  onClick={() => {
-                    if (handledSteps.includes(step.id)) {
-                      setActiveStep(step.id);
-                    }
-                  }}
-                  className={`w-[110px] text-center text-[14px] font-bold border-b-[4px] pb-2 cursor-pointer ${
-                    handledSteps.includes(step.id) || activeStep === step.id
-                      ? 'border-primary-900 text-primary-900'
-                      : 'border-black-shade-800 text-black-shade-800'
-                  }`}
-                >
-                  {step.label}
-                </span>
-              ))}
-            </div>
+            {!isConfigureAll ? (
+              <div className='flex items-center justify-around mt-5'>
+                {STEPS.map((step) => (
+                  <span
+                    key={step.id}
+                    onClick={() => {
+                      if (handledSteps.includes(step.id)) {
+                        setActiveStep(step.id);
+                      }
+                    }}
+                    className={`w-[110px] text-center text-[14px] font-bold border-b-[4px] pb-2 cursor-pointer ${
+                      handledSteps.includes(step.id) || activeStep === step.id
+                        ? 'border-primary-900 text-primary-900'
+                        : 'border-black-shade-800 text-black-shade-800'
+                    }`}
+                  >
+                    {step.label}
+                  </span>
+                ))}
+              </div>
+            ) : null}
             <div>
-              <div className='overflow-y-auto max-h-[650px]'>
+              <div>
                 {activeStep === 1 && (
                   <SettingContent
                     content={content}
@@ -550,6 +724,8 @@ export default function AddNewContent({
                     handleMediaFile={handleMediaFile}
                     isSubmitted={isSubmitted}
                     linkDetails={linkDetails}
+                    setShowUploadByLinkModal={setShowUploadByLinkModal}
+                    handleClose={handleClose}
                   />
                 )}
                 {activeStep === 2 && (
@@ -569,34 +745,53 @@ export default function AddNewContent({
                     content={content}
                     configurations={configurations}
                     options={options}
+                    linkDetails={linkDetails}
                   />
                 )}
               </div>
-              <div>
-                {activeStep === 3 ? (
-                  <button
-                    className='px-6 py-2 contained-button rounded font-black text-white-shade-900 w-full mt-6'
-                    onClick={handlePublish}
-                  >
-                    Publish Content
-                  </button>
-                ) : (
-                  <button
-                    className='px-6 py-2 contained-button rounded font-black text-white-shade-900 w-full mt-6'
-                    onClick={handleStep}
-                  >
-                    Next <i className='ml-4 fa-solid fa-arrow-right'></i>
-                  </button>
-                )}
-                {activeStep !== 3 && (
-                  <button
-                    className='px-6 py-2 rounded font-black text-textSubtle w-full mt-6'
-                    onClick={handleDraft}
-                  >
-                    Save as Draft
-                  </button>
-                )}
-              </div>
+              {isConfigureAll ? (
+                <button
+                  className='px-6 py-2 contained-button rounded font-black text-white-shade-900 w-full mt-6'
+                  onClick={handleConfigureAll}
+                >
+                  Save
+                </button>
+              ) : (
+                <div>
+                  {activeStep === 3 ? (
+                    <>
+                      <button
+                        className='px-6 py-2 contained-button rounded font-black text-white-shade-900 w-full mt-6'
+                        onClick={handlePublish}
+                      >
+                        Publish Content
+                      </button>
+
+                      <button
+                        className='px-6 py-2 rounded font-black text-textSubtle w-full mt-6 mb-4'
+                        onClick={handleDraft}
+                      >
+                        Save as Draft
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      className='px-6 py-2 contained-button rounded font-black text-white-shade-900 w-full mt-6'
+                      onClick={handleStep}
+                    >
+                      Next <i className='ml-4 fa-solid fa-arrow-right'></i>
+                    </button>
+                  )}
+                  {activeStep !== 3 && (
+                    <button
+                      className='px-6 py-2 rounded font-black text-textSubtle w-full mt-6 mb-4'
+                      onClick={handleDraft}
+                    >
+                      Save as Draft
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           </>
         )}

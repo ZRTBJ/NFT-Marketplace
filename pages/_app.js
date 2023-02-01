@@ -30,6 +30,9 @@ function MyApp({ Component, pageProps }) {
   const [showModal, setShowModal] = useState(false);
   const [isEmbedView, setIsEmbedView] = useState(false);
   const [isMaintenance, setIsMaintenance] = useState(false);
+  const [isContentView, setIsContentView] = useState(false);
+  const [isTokenGatedProjectPublicView, setIsTokenGatedProjectPublicView] =
+    useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -64,6 +67,12 @@ function MyApp({ Component, pageProps }) {
     let view =
       pathItems && pathItems.length ? pathItems.includes('embed-nft') : false;
     setIsEmbedView(view);
+    let contentView =
+      pathItems && pathItems.length ? pathItems.includes('content') : false;
+    setIsContentView(contentView);
+    let tokenGatedProjectPublicView =
+      pathItems && pathItems.length ? pathItems.includes('public') : false;
+    setIsTokenGatedProjectPublicView(tokenGatedProjectPublicView);
   }, [router?.asPath]);
 
   return (
@@ -96,9 +105,20 @@ function MyApp({ Component, pageProps }) {
                       showModal={showModal}
                     />
                   )}
-                  <main className='container min-h-[calc(100vh-71px)]'>
+                  <main
+                    className='container min-h-[calc(100vh-71px)]'
+                    style={
+                      isContentView
+                        ? { width: '100%', maxWidth: '100%' }
+                        : isTokenGatedProjectPublicView
+                        ? { width: '100%', maxWidth: '100%' }
+                        : {}
+                    }
+                  >
                     <div className='flex flex-row'>
-                      {!isEmbedView && (
+                      {isEmbedView ||
+                      isContentView ||
+                      isTokenGatedProjectPublicView ? null : (
                         <div className='hidden md:block mr-4 '>
                           <Sidebar
                             setShowModal={setShowModal}
@@ -106,7 +126,9 @@ function MyApp({ Component, pageProps }) {
                           />
                         </div>
                       )}
-                      {!isEmbedView && (
+                      {isEmbedView ||
+                      isContentView ||
+                      isTokenGatedProjectPublicView ? null : (
                         <div
                           className={`${
                             showSideBar ? 'translate-x-0' : '-translate-x-full'

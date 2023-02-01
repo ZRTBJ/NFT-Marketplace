@@ -128,7 +128,9 @@ const DeployingProjectModal = ({
               alt=''
             />
             <div className='md:mx-16'>
-              <h5>Your DAO is published successfully!</h5>
+              <p className='text-[20px] font-bold text-txtblack'>
+                Your DAO is published successfully!
+              </p>
               <p className='text-[#9499AE] mt-[12px]'>
                 Now you can publish your collection!
               </p>

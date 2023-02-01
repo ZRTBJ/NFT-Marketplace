@@ -52,7 +52,7 @@ export default function AudioTab({ project, sortBy }) {
 
   return (
     <>
-      <div className='px-4'>
+      <div>
         {list?.length === 0 && !isLoading && (
           <div className='text-center text-textSubtle'>
             <Image
@@ -79,12 +79,15 @@ export default function AudioTab({ project, sortBy }) {
               </div>
             }
           >
-            <div className='w-full md:max-w-6xl mx-auto mt-10'>
-              <div className='grid grid-cols-1  gap-10'>
+            <div className='w-full md:max-w-6xl mx-auto mt-[36px]'>
+              <div className='grid grid-cols-1  gap-[60px]'>
                 {list?.map((content, index) => (
                   <div key={index}>
                     {content?.file_type === 'audio' && (
-                      <AudiCardHorizontal content={content} />
+                      <AudiCardHorizontal
+                        content={content}
+                        projectId={project?.id}
+                      />
                     )}
                   </div>
                 ))}

@@ -8,7 +8,7 @@ import defaultThumbnail from 'assets/images/profile/card.svg';
 import playIcon from 'assets/images/token-gated/audioPlay.svg';
 import Image from 'next/image';
 
-export default function VideoCard({ content }) {
+export default function VideoCard({ content, projectId }) {
   const router = useRouter();
   const userinfo = useSelector((state) => state.user.userinfo);
   const createdAt = moment(content?.created_at);
@@ -26,13 +26,17 @@ export default function VideoCard({ content }) {
     <>
       <div
         className='cursor-pointer rounded'
-        onClick={() => router.push(`/token-gated/content/${content?.id}`)}
+        onClick={() =>
+          router.push(
+            `/token-gated/content/${content?.id}?projectId=${projectId}`
+          )
+        }
         style={{
           backgroundImage: `url(${
             content?.consumable_data
               ? content?.thumbnail
                 ? content?.thumbnail
-                : defaultThumbnail.src
+                : darkBg.src
               : darkBg.src
           })`,
           backgroundRepeat: 'no-repeat',
@@ -78,7 +82,6 @@ export default function VideoCard({ content }) {
               {content?.title}
             </Link>
           </p>
-          <i className='fa-solid fa-ellipsis-vertical cursor-pointer'></i>
         </div>
         <div className='mt-2 flex items-center gap-2'>
           {content?.status === 'draft' ? (
@@ -92,7 +95,7 @@ export default function VideoCard({ content }) {
           )}
           <span>-</span>
           <span className='text-[12px] text-txtSubtle'>
-            {content?.view_count} Views
+            {content?.view_count} {content?.view_count >= 2 ? 'Views' : 'View'}
           </span>
         </div>
       </div>

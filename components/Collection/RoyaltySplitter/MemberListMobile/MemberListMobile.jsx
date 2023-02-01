@@ -73,11 +73,11 @@ const MemberRowMobile = (props) => {
                 </div>
                 <div className='ml-1'>
                   <i
-                    class='fa-solid fa-check bg-green-400 rounded-[4px] text-white flex items-center justify-center h-[24px] w-[24px] text-[20px] cursor-pointer'
+                    className='fa-solid fa-check bg-green-400 rounded-[4px] text-white flex items-center justify-center h-[24px] w-[24px] text-[20px] cursor-pointer'
                     onClick={handleUpdatePercent}
                   ></i>
                   <i
-                    class='fa-solid fa-xmark bg-red-400 rounded-[4px] text-white flex items-center justify-center h-[24px] w-[24px] text-[20px] cursor-pointer'
+                    className='fa-solid fa-xmark bg-red-400 rounded-[4px] text-white flex items-center justify-center h-[24px] w-[24px] text-[20px] cursor-pointer'
                     onClick={() => setIsEdit(false)}
                   ></i>
                 </div>
