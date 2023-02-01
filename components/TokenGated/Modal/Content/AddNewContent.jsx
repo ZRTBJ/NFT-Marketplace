@@ -654,7 +654,7 @@ export default function AddNewContent({
       overflow={'auto'}
       show={show}
       handleClose={() => handleClose()}
-      showCloseIcon={showAddCollection ? false : true}
+      showCloseIcon={true}
     >
       <div className='py-4'>
         {showAddCollection ? (

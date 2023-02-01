@@ -41,7 +41,7 @@ export default function Creator({ project, createMode, settingSaved }) {
               {project?.title ? project?.title : 'Unnamed Project'}
             </p>
             <div className='my-2 md:flex align-items-center pr-2'>
-              <div className='w-screen md:w-[450px] truncate block'>
+              <div className='w-[calc(100vw-20px)] md:w-[450px] truncate block'>
                 <span className='textSubtle font-bold'>Project Link: </span>
                 <span className='ml-2'>
                   <Link href={`${publicDetailsLink}`} rel='noreferrer'>

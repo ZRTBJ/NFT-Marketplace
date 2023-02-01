@@ -95,3 +95,27 @@ export async function configMultiContent(id, data) {
 export async function getUserAuthorization(link) {
   return await axios.get(link);
 }
+export async function reportTokenGatedProject(payload) {
+  const bodyFormData = new FormData();
+  bodyFormData.append('scam', payload.isScam);
+  return await client(
+    'PUT',
+    `/tokengate/${payload.id}/report-scam`,
+    bodyFormData,
+    'formdata'
+  );
+}
+export async function reportTokenContent(payload) {
+  const bodyFormData = new FormData();
+  bodyFormData.append('scam', payload.isScam);
+  return await client(
+    'PUT',
+    `/tkg-content/${payload?.id}/report-scam`,
+    bodyFormData,
+    'formdata'
+  );
+}
+
+export async function deleteTokenGatedProject(id) {
+  return await client('DELETE', `/tkg-content/${id}`);
+}
