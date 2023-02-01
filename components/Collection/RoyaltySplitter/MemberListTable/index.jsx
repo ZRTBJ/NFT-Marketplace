@@ -194,11 +194,11 @@ const MemberListTable = ({
                             {isEdit === r.user_eoa ? (
                               <div className='flex flex-col'>
                                 <i
-                                  class='fa-solid fa-check bg-green-400 rounded-[4px] text-white p-[2px] text-[18px] cursor-pointer'
+                                  className='fa-solid fa-check bg-green-400 rounded-[4px] text-white p-[2px] text-[18px] cursor-pointer'
                                   onClick={handleAutoFill}
                                 ></i>
                                 <i
-                                  class='fa-solid fa-xmark bg-red-400 rounded-[4px] text-white p-[2px] pl-[4px] text-[20px] cursor-pointer'
+                                  className='fa-solid fa-xmark bg-red-400 rounded-[4px] text-white p-[2px] pl-[4px] text-[20px] cursor-pointer'
                                   onClick={() => setIsEdit(null)}
                                 ></i>
                               </div>
@@ -263,24 +263,24 @@ const MemberListTable = ({
       <div className='mb-4'>
         {newItems ? (
           <div className='flex items-center ml-0 md:ml-4'>
-            <div class='w-[250px] mr-4 md:mr-8'>
+            <div className='w-[250px] mr-4 md:mr-8'>
               <input
                 id={'address'}
                 type='text'
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder='Add Wallet Address or ENS'
-                class='w-full bg-secondary rounded-[6px] text-[12px] px-[10px] py-[14px] text-text-base'
+                className='w-full bg-secondary rounded-[6px] text-[12px] px-[10px] py-[14px] text-text-base'
               />
             </div>
-            <div class='w-[150px] mr-4 md:mr-8 relative'>
+            <div className='w-[150px] mr-4 md:mr-8 relative'>
               <input
                 id={'percentage'}
                 type='number'
                 value={percentage}
                 onChange={(e) => setPercentage(e.target.value)}
                 placeholder='-'
-                class='w-full bg-secondary rounded-[6px] text-[12px] pl-[10px] !pr-[30px] py-[14px] text-text-base'
+                className='w-full bg-secondary rounded-[6px] text-[12px] pl-[10px] !pr-[30px] py-[14px] text-text-base'
               />
               <p className='absolute top-3 right-4'>%</p>
             </div>
@@ -292,7 +292,7 @@ const MemberListTable = ({
               <span>Add</span>
             </button>
             <i
-              class='fa-regular fa-xmark-large ml-5 cursor-pointer'
+              className='fa-regular fa-xmark-large ml-5 cursor-pointer'
               onClick={removeContributorField}
             ></i>
           </div>

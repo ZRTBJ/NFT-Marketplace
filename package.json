@@ -32,6 +32,7 @@
     "moment": "^2.29.4",
     "next": "13.0.5",
     "next-seo": "^5.15.0",
+    "nextjs-google-analytics": "^2.3.0",
     "papaparse": "^5.3.2",
     "react": "18.2.0",
     "react-circular-progressbar": "^2.1.0",
@@ -57,6 +58,7 @@
     "sharp": "^0.31.2",
     "swiper": "^8.4.5",
     "tw-elements": "^1.0.0-alpha12",
+    "wavesurfer.js": "^6.4.0",
     "web3": "^1.7.4"
   },
   "devDependencies": {

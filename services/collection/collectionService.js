@@ -1,4 +1,8 @@
 import { client } from '../httpClient';
+import { ls_GetChainID } from 'util/ApplicationStorage';
+import { NETWORKS } from 'config/networks';
+import axios from 'axios';
+
 export async function checkUniqueCollectionName(payload) {
   const bodyFormData = new FormData();
   bodyFormData.append('collection_name', payload.projectName);
@@ -170,4 +174,9 @@ export async function setWithdrawalDetails(id, payload) {
     payload,
     'formdata'
   );
+}
+
+export async function getCollectionDetailFromContract(id, chainId) {
+  let url = NETWORKS?.[chainId]?.alchamey;
+  return await axios.get(`${url}?contractAddress=${id}`);
 }

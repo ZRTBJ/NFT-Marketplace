@@ -2,11 +2,18 @@
 import styles from './style.module.css';
 import Eth from 'assets/images/network/eth.svg';
 import Polygon from 'assets/images/network/polygon.svg';
+import Bnb from 'assets/images/network/bnb.svg';
 import manImg from 'assets/images/image-default.svg';
 import { useState } from 'react';
 import NFTSalesMobile from './NFTSalesMobile';
 import dayjs from 'dayjs';
 import Image from 'next/image';
+
+const currency = {
+  eth: Eth,
+  matic: Polygon,
+  bnb: Bnb,
+};
 
 const headers = [
   {
@@ -96,7 +103,7 @@ const NFTSales = ({ items }) => {
                       <span> {r.nft_price ? r.nft_price : '-'}</span>
                       {r?.nft_currency && (
                         <Image
-                          src={r?.nft_currency === 'eth' ? Eth : Polygon}
+                          src={currency[r?.nft_currency]}
                           alt='network'
                           width={20}
                           height={20}

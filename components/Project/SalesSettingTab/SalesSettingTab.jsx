@@ -275,10 +275,10 @@ const SalesSettingsTab = ({ projectNetwork }) => {
                             alt='collection cover'
                           />
                           <Link
-                            className='!no-underline'
+                            className='!no-underline md:w-[90%] '
                             href={`/collection/${element.id}`}
                           >
-                            <h4 className='text-[16px] pr-[40px] md:pr-0'>
+                            <h4 className='text-[16px] pr-[40px] md:pr-0 truncate'>
                               {element.name}
                             </h4>
                           </Link>

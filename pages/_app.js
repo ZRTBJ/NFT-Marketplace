@@ -18,10 +18,10 @@ import store from '../redux';
 import MetaHead from 'components/Commons/MetaHead/MetaHead';
 import Head from 'next/head';
 import Favicon from 'components/Commons/Favicon';
-dynamic(() => import('tw-elements'), { ssr: false });
 import axios from 'axios';
 import Config from 'config/config';
 import Maintenance from 'components/Commons/Maintenance';
+import { GoogleAnalytics } from 'nextjs-google-analytics';
 
 export const persistor = persistStore(store);
 
@@ -30,7 +30,18 @@ function MyApp({ Component, pageProps }) {
   const [showModal, setShowModal] = useState(false);
   const [isEmbedView, setIsEmbedView] = useState(false);
   const [isMaintenance, setIsMaintenance] = useState(false);
+  const [isContentView, setIsContentView] = useState(false);
+  const [isTokenGatedProjectPublicView, setIsTokenGatedProjectPublicView] =
+    useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const use = async () => {
+      (await import('tw-elements')).default;
+    };
+    use();
+  }, []);
+
   const handleToggleSideBar = () => {
     setShowSideBar(!showSideBar);
   };
@@ -56,10 +67,17 @@ function MyApp({ Component, pageProps }) {
     let view =
       pathItems && pathItems.length ? pathItems.includes('embed-nft') : false;
     setIsEmbedView(view);
+    let contentView =
+      pathItems && pathItems.length ? pathItems.includes('content') : false;
+    setIsContentView(contentView);
+    let tokenGatedProjectPublicView =
+      pathItems && pathItems.length ? pathItems.includes('public') : false;
+    setIsTokenGatedProjectPublicView(tokenGatedProjectPublicView);
   }, [router?.asPath]);
 
   return (
     <>
+      <GoogleAnalytics trackPageViews />
       <Head>
         <Favicon></Favicon>
       </Head>
@@ -87,9 +105,20 @@ function MyApp({ Component, pageProps }) {
                       showModal={showModal}
                     />
                   )}
-                  <main className='container min-h-[calc(100vh-71px)]'>
+                  <main
+                    className='container min-h-[calc(100vh-71px)]'
+                    style={
+                      isContentView
+                        ? { width: '100%', maxWidth: '100%' }
+                        : isTokenGatedProjectPublicView
+                        ? { width: '100%', maxWidth: '100%' }
+                        : {}
+                    }
+                  >
                     <div className='flex flex-row'>
-                      {!isEmbedView && (
+                      {isEmbedView ||
+                      isContentView ||
+                      isTokenGatedProjectPublicView ? null : (
                         <div className='hidden md:block mr-4 '>
                           <Sidebar
                             setShowModal={setShowModal}
@@ -97,7 +126,9 @@ function MyApp({ Component, pageProps }) {
                           />
                         </div>
                       )}
-                      {!isEmbedView && (
+                      {isEmbedView ||
+                      isContentView ||
+                      isTokenGatedProjectPublicView ? null : (
                         <div
                           className={`${
                             showSideBar ? 'translate-x-0' : '-translate-x-full'

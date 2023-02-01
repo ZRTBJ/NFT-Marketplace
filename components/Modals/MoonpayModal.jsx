@@ -36,25 +36,16 @@ const MoonpayModal = ({ handleClose, show }) => {
   }, [account, network]);
 
   const createSrcUrl = async () => {
-    let src = `${Config.MOONPAY_URL}?baseCurrencyCode=USD&apiKey=${
-      Config.MOONPAY_KEY
-    }&currencyCode=${
-      network && NETWORKS[network].value
-    }&walletAddress=${account}`;
-    console.log('Res SRC', src);
-
-    let formdata = new FormData();
-    formdata.append('url', src);
-
     const res = await axios({
       method: 'POST',
-      url: `${Config.API_ENDPOINT}/payment/moonpay-hash`,
-      data: formdata,
+      url: Config.MOONPAY_GCP,
+      data: {
+        walletAddress: account,
+        currencyCode: network && NETWORKS[network].value,
+      },
     });
     console.log('Res: ', res);
-
-    src = `${src}&signature=${res.hash}`;
-    setSrc(src);
+    setSrc(res);
   };
 
   console.log('SRC: ', src);
