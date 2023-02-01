@@ -7,9 +7,11 @@ import { useRouter } from 'next/router';
 import defaultThumbnail from 'assets/images/profile/card.svg';
 import playIcon from 'assets/images/token-gated/audioPlay.svg';
 import Image from 'next/image';
+
 import { ls_GetUserToken } from 'util/ApplicationStorage';
 import Config from 'config/config';
 const ROOT_URL = Config.API_ENDPOINT;
+
 export default function VideoCard({ content, projectId }) {
   const router = useRouter();
   const userinfo = useSelector((state) => state.user.userinfo);

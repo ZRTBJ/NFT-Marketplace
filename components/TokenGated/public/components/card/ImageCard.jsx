@@ -8,6 +8,7 @@ import { ls_GetUserToken } from 'util/ApplicationStorage';
 import defaultThumbnail from 'assets/images/profile/card.svg';
 import Config from 'config/config';
 const ROOT_URL = Config.API_ENDPOINT;
+
 export default function ImageCard({ content, projectId }) {
   const router = useRouter();
   const userinfo = useSelector((state) => state.user.userinfo);
