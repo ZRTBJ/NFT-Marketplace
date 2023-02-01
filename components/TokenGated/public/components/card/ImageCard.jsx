@@ -4,20 +4,48 @@ import { useSelector } from 'react-redux';
 import moment from 'moment';
 import darkBg from 'assets/images/token-gated/darkBg.png';
 import { useRouter } from 'next/router';
-import Image from 'next/image';
 import { ls_GetUserToken } from 'util/ApplicationStorage';
 import defaultThumbnail from 'assets/images/profile/card.svg';
+import Config from 'config/config';
+const ROOT_URL = Config.API_ENDPOINT;
 
 export default function ImageCard({ content, projectId }) {
   const router = useRouter();
   const userinfo = useSelector((state) => state.user.userinfo);
   const createdAt = moment(content?.created_at);
+  const [canSeeContent, setCanSeeContent] = useState(false);
   const lockIcon = (
     <div className='absolute  top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2'>
       <i className='fa-solid fa-lock text-[34px] text-white cursor-pointer '></i>
     </div>
   );
-
+  const contentUrl = `${ROOT_URL}/tkg-content/${
+    content?.id
+  }/data?token=${ls_GetUserToken()}`;
+  async function urlValidate() {
+    const img = new Image();
+    img.src = contentUrl;
+    return await new Promise((resolve) => {
+      img.onload = () => resolve(true);
+      img.onerror = () => resolve(false);
+    });
+  }
+  async function userValidate() {
+    await urlValidate()
+      .then((res) => {
+        if (res) {
+          setCanSeeContent(true);
+        }
+      })
+      .catch((res) => {
+        console.log(res);
+        setCanSeeContent(false);
+      });
+  }
+  useEffect(() => {
+    userValidate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [content?.id]);
   return (
     <>
       <div
@@ -29,10 +57,10 @@ export default function ImageCard({ content, projectId }) {
         }
         style={{
           backgroundImage: `url(${
-            content?.consumable_data
+            content?.thumbnail
               ? content?.thumbnail
-                ? content?.thumbnail
-                : `${content?.consumable_data}&token=${ls_GetUserToken()}`
+              : canSeeContent
+              ? contentUrl
               : darkBg.src
           }), url(${defaultThumbnail.src})`,
           backgroundRepeat: 'no-repeat',
@@ -66,7 +94,7 @@ export default function ImageCard({ content, projectId }) {
             </>
           )}
         </div>
-        {content?.consumable_data ? null : lockIcon}
+        {canSeeContent ? null : lockIcon}
       </div>
 
       <div className='mt-4'>

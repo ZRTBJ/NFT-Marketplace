@@ -7,15 +7,49 @@ import darkBg from 'assets/images/token-gated/darkBg.png';
 import { useRouter } from 'next/router';
 import audioWeb from 'assets/images/token-gated/audioWeb.svg';
 import playIcon from 'assets/images/token-gated/audioPlay.svg';
+import { ls_GetUserToken } from 'util/ApplicationStorage';
+import Config from 'config/config';
+const ROOT_URL = Config.API_ENDPOINT;
 export default function AudioCardGrid({ content, projectId }) {
   const router = useRouter();
   const userinfo = useSelector((state) => state.user.userinfo);
+  const [canSeeContent, setCanSeeContent] = useState(false);
   const createdAt = moment(content?.created_at);
   const lockIcon = (
     <div className='absolute  top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2'>
       <i className='fa-solid fa-lock text-[34px] text-white cursor-pointer '></i>
     </div>
   );
+  const contentUrl = `${ROOT_URL}/tkg-content/${
+    content?.id
+  }/data?token=${ls_GetUserToken()}`;
+  async function urlValidate() {
+    if (typeof window !== 'undefined') {
+      return await new Promise((resolve) => {
+        let audioPlayer = document.createElement('AUDIO');
+        audioPlayer.setAttribute('src', contentUrl);
+        audioPlayer.oncanplay = function () {
+          resolve(true);
+        };
+      });
+    }
+  }
+  async function userValidate() {
+    await urlValidate(contentUrl)
+      .then((res) => {
+        if (res) {
+          setCanSeeContent(true);
+        }
+      })
+      .catch((res) => {
+        console.log(res);
+        setCanSeeContent(false);
+      });
+  }
+  useEffect(() => {
+    userValidate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [content?.id]);
   return (
     <>
       <div
@@ -66,7 +100,7 @@ export default function AudioCardGrid({ content, projectId }) {
           alt='web'
           unoptimized
         />
-        {content?.consumable_data ? (
+        {canSeeContent ? (
           <Image
             src={playIcon}
             className='absolute w-full m-auto top-0 bottom-0 left-0 right-0 block h-[50px] w-[50px] object-cover '

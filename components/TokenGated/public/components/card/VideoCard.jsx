@@ -8,9 +8,14 @@ import defaultThumbnail from 'assets/images/profile/card.svg';
 import playIcon from 'assets/images/token-gated/audioPlay.svg';
 import Image from 'next/image';
 
+import { ls_GetUserToken } from 'util/ApplicationStorage';
+import Config from 'config/config';
+const ROOT_URL = Config.API_ENDPOINT;
+
 export default function VideoCard({ content, projectId }) {
   const router = useRouter();
   const userinfo = useSelector((state) => state.user.userinfo);
+  const [canSeeContent, setCanSeeContent] = useState(false);
   const createdAt = moment(content?.created_at);
   const lockIcon = (
     <div className='absolute  top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2'>
@@ -22,6 +27,36 @@ export default function VideoCard({ content, projectId }) {
       <Image src={playIcon} alt='img' height={44} width={44}></Image>
     </div>
   );
+  const contentUrl = `${ROOT_URL}/tkg-content/${
+    content?.id
+  }/data?token=${ls_GetUserToken()}`;
+  async function urlValidate() {
+    if (typeof window !== 'undefined') {
+      return await new Promise((resolve) => {
+        let videoPlayer = document.createElement('VIDEO');
+        videoPlayer.setAttribute('src', contentUrl);
+        videoPlayer.oncanplay = function () {
+          resolve(true);
+        };
+      });
+    }
+  }
+  async function userValidate() {
+    await urlValidate(contentUrl)
+      .then((res) => {
+        if (res) {
+          setCanSeeContent(true);
+        }
+      })
+      .catch((res) => {
+        console.log(res);
+        setCanSeeContent(false);
+      });
+  }
+  useEffect(() => {
+    userValidate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [content?.id]);
   return (
     <>
       <div
@@ -33,12 +68,8 @@ export default function VideoCard({ content, projectId }) {
         }
         style={{
           backgroundImage: `url(${
-            content?.consumable_data
-              ? content?.thumbnail
-                ? content?.thumbnail
-                : darkBg.src
-              : darkBg.src
-          })`,
+            content?.thumbnail ? content?.thumbnail : darkBg.src
+          }), url(${darkBg.src})`,
           backgroundRepeat: 'no-repeat',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
@@ -70,7 +101,7 @@ export default function VideoCard({ content, projectId }) {
             </>
           )}
         </div>
-        {content?.consumable_data ? playSvg : lockIcon}
+        {canSeeContent ? playSvg : lockIcon}
       </div>
       <div className='mt-4'>
         <div className='flex items-center justify-between'>

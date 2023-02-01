@@ -9,6 +9,7 @@ import manImg from 'assets/images/image-default.svg';
 import { walletAddressTruncate } from 'util/WalletUtils';
 import { NETWORKS } from 'config/networks';
 import TickSuccess from 'assets/images/tick-success.svg';
+import { getCollectionDetailFromContract } from 'services/collection/collectionService';
 
 const IntegrateNewCollection = ({
   handleAddressChange,
@@ -22,25 +23,25 @@ const IntegrateNewCollection = ({
   handleConfigurations,
   showAddCollection,
   addressError,
-  addressValid,
   blockchain,
   setBlockchain,
   setAddressError,
-  setAddressValid,
   setShowAddCollection,
   handleSelectCollection,
   selectedContractValidation,
   selectedContractError,
   setSelectedContractError,
   setSelectedContractValidation,
+  setCollectionDetail,
 }) => {
   const [showExistingCollection, setShowExistingCollection] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   useEffect(() => {
+    setIsSubmitted(false);
     if (showExistingCollection) {
       setSmartContractAddress('');
-      setAddressValid(false);
       setAddressError(false);
       setBlockchain('');
     } else {
@@ -51,8 +52,40 @@ const IntegrateNewCollection = ({
   }, [showExistingCollection]);
 
   const handleNext = () => {
-    if (collectionDetail && (addressValid || selectedContractValidation)) {
-      setShowPreview(true);
+    if (showExistingCollection) {
+      if (collectionDetail) {
+        setShowPreview(true);
+      }
+    } else {
+      setIsSubmitted(true);
+      if (smartContractAddress && blockchain) {
+        getCollectionDetailFromContract(smartContractAddress, blockchain)
+          .then((resp) => {
+            if (
+              resp?.contractMetadata?.tokenType !== 'UNKNOWN' &&
+              typeof resp !== 'string'
+            ) {
+              setCollectionDetail({
+                contract_address: resp?.address,
+                name: resp?.contractMetadata?.name,
+                blockchain: blockchain,
+                collection_symbol: resp?.contractMetadata?.symbol,
+                total_supply: resp?.contractMetadata?.totalSupply,
+                token_standard: resp?.contractMetadata?.tokenType,
+              });
+              collectionDetail?.contract_address,
+                collectionDetail?.name,
+                collectionDetail?.blockchain;
+              setAddressError(false);
+              setShowPreview(true);
+            } else {
+              setAddressError(true);
+            }
+          })
+          .catch((err) => {
+            setAddressError(true);
+          });
+      }
     }
   };
 
@@ -208,21 +241,20 @@ const IntegrateNewCollection = ({
               name='smartContract'
               className={`debounceInput mt-3 ${
                 addressError ? 'border-danger-800' : ''
-              } ${addressValid ? 'border-success-800' : ''}`}
+              }`}
               value={smartContractAddress}
               placeholder='Input smart contract address'
               onChange={handleAddressChange}
               disabled={showExistingCollection}
             />
+            {isSubmitted && !smartContractAddress && (
+              <p className='text-danger-800 text-sm mt-1'>
+                Address is required
+              </p>
+            )}
             {addressError && (
               <p className='text-danger-800 text-sm mt-1'>
                 <strong>X</strong> Smart contract is Unknown
-              </p>
-            )}
-            {addressValid && (
-              <p className='text-success-800 text-sm mt-1 flex'>
-                <Image src={TickSuccess} alt='success' className='mr-2' /> Your
-                smart contract is validated
               </p>
             )}
             <div className='mt-4'>
@@ -246,7 +278,7 @@ const IntegrateNewCollection = ({
                   ))}
                 </select>
               </div>
-              {addressValid && !blockchain && (
+              {isSubmitted && !blockchain && (
                 <p className='text-danger-800 text-sm mt-1'>
                   Blockchain is required
                 </p>

@@ -176,8 +176,7 @@ export async function setWithdrawalDetails(id, payload) {
   );
 }
 
-export async function getCollectionDetailFromContract(id) {
-  let chainId = ls_GetChainID();
+export async function getCollectionDetailFromContract(id, chainId) {
   let url = NETWORKS?.[chainId]?.alchamey;
   return await axios.get(`${url}?contractAddress=${id}`);
 }

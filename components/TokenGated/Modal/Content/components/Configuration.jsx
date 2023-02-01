@@ -1,5 +1,7 @@
 import React from 'react';
 import Select from 'react-select';
+import Trash from 'assets/images/trash.svg';
+import Image from 'next/image';
 
 const SETTINGS = [
   { value: 'Token Range', label: 'Token Range' },
@@ -16,6 +18,7 @@ const Configuration = ({
   reviewScreen = false,
   handleConfigValue,
   setShowAddCollection,
+  deleteConfiguration,
 }) => {
   console.log(configurations);
   return (
@@ -66,8 +69,9 @@ const Configuration = ({
                     className='accordion-header mb-0'
                     id={`heading-${item.id}`}
                   >
-                    <button
-                      className='
+                    <div className='flex'>
+                      <button
+                        className='
             accordion-button
             relative
             flex
@@ -82,14 +86,21 @@ const Configuration = ({
             focus:outline-none
             accordian-sub-button
           '
-                      type='button'
-                      data-bs-toggle='collapse'
-                      data-bs-target={`#configure-${item.id}`}
-                      aria-expanded='true'
-                      aria-controls={`configure-${item.id}`}
-                    >
-                      Configuration {item.id}
-                    </button>
+                        type='button'
+                        data-bs-toggle='collapse'
+                        data-bs-target={`#configure-${item.id}`}
+                        aria-expanded='true'
+                        aria-controls={`configure-${item.id}`}
+                      >
+                        Configuration {item.id}
+                      </button>
+                      <Image
+                        src={Trash}
+                        alt='Delete'
+                        className='mr-2 cursor-pointer'
+                        onClick={() => deleteConfiguration(item.id)}
+                      />
+                    </div>
                   </h2>
                   <div
                     id={`configure-${item.id}`}
