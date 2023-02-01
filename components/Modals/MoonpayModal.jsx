@@ -45,6 +45,7 @@ const MoonpayModal = ({ handleClose, show }) => {
       },
     });
     console.log('Res: ', res);
+    setSrc(res);
   };
 
   console.log('SRC: ', src);
