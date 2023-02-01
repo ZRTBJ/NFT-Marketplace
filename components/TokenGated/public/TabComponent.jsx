@@ -12,11 +12,15 @@ const sortingOptions = [
 ];
 export default function TabComponents({ project }) {
   const [tabs, setTabs] = useState([
-    { id: 1, label: 'ALL', length: 0 },
-    { id: 2, label: 'Video', length: 0 },
-    { id: 3, label: 'Audio', length: 0 },
-    { id: 4, label: 'Image', length: 0 },
-    { id: 5, label: 'Files', length: 0 },
+    {
+      id: 1,
+      label: 'ALL',
+      length: project?.file_types?.all,
+    },
+    { id: 2, label: 'Video', length: project?.file_types?.movie },
+    { id: 3, label: 'Audio', length: project?.file_types?.audio },
+    { id: 4, label: 'Image', length: project?.file_types?.image },
+    { id: 5, label: 'Files', length: project?.file_types?.other },
   ]);
   const [selectedTab, setSelectedTab] = useState(1);
   const [selectedSort, setSelectedSort] = useState('');
@@ -47,9 +51,9 @@ export default function TabComponents({ project }) {
           disabled={project?.contents?.length === 0}
         />
       </div>
-      <div className='mb-4 px-4 '>
+      <div className='mb-4'>
         <ul
-          className='flex flex-wrap gap-x-2 gap-y-4 border-b  border-b-[2px] text-sm font-medium text-center '
+          className='flex flex-wrap  gap-x-3 md:gap-x-6 gap-y-2 border-b  border-b-[2px] text-sm font-medium text-center '
           id='myTab'
           data-tabs-toggle='#token-gated-public-project'
           role='tablist'
@@ -63,7 +67,7 @@ export default function TabComponents({ project }) {
                 key={tab.id}
               >
                 <button
-                  className={`inline-block py-2 md:p-4 md:text-lg rounded-t-lg ${
+                  className={`inline-block py-2  md:text-lg rounded-t-lg ${
                     selectedTab === tab.id
                       ? ' border-textSubtle text-txtblack'
                       : 'border-transparent text-textSubtle'
@@ -77,7 +81,7 @@ export default function TabComponents({ project }) {
                 >
                   {tab.label}
                   <span className='bg-color-ass-7/[0.4] rounded p-2 ml-2 font-normal'>
-                    0
+                    {tab.length}
                   </span>
                 </button>
               </li>

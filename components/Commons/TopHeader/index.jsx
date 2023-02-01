@@ -65,6 +65,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   );
 
   useEffect(() => {
+
     var addScript = document.createElement('script');
     addScript.setAttribute(
       'src',
@@ -80,6 +81,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
       container?.remove();
     };
   }, []);
+
 
   const googleTranslateElementInit = () => {
     new window.google.translate.TranslateElement(

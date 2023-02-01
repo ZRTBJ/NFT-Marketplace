@@ -8,6 +8,8 @@ const SettingContent = ({
   reviewScreen = false,
   isSubmitted,
   linkDetails,
+  handleClose,
+  setShowUploadByLinkModal,
 }) => {
   let mediaType = linkDetails?.link
     ? linkDetails.type
@@ -16,7 +18,7 @@ const SettingContent = ({
   let mediaPath = linkDetails?.link ? linkDetails.link : content?.media?.path;
   const [audioRef, setAudioref] = useState();
   return (
-    <div className='mt-6 overflow-x-auto h-[610px]'>
+    <div className='mt-6'>
       <p className='mb-2 text-[14px]'>Media</p>
       <div
         className={`flex justify-center items-center max-w-full w-40 h-40'
@@ -24,6 +26,14 @@ const SettingContent = ({
       >
         <label
           htmlFor={`dropzone-file`}
+          onClick={
+            linkDetails?.link
+              ? () => {
+                  setShowUploadByLinkModal(true);
+                  handleClose();
+                }
+              : null
+          }
           className={`flex flex-col justify-center items-center w-full  ${
             mediaType === 'video' || mediaType === 'movie' ? '' : 'h-40'
           } ${
@@ -61,6 +71,16 @@ const SettingContent = ({
                     </video>
                   </>
                 ) : null}
+                {mediaType === 'application' || mediaType === 'other' ? (
+                  <div className='h-40 w-40 rounded bg-white-filled-form text-center overflow-hidden px-2 pb-2'>
+                    <i className='text-[30px] fa-solid fa-file mt-10'></i>
+                    <p className='text-[14px] mt-1'>
+                      {content?.media?.file?.name
+                        ? content?.media?.file?.name
+                        : mediaPath}
+                    </p>
+                  </div>
+                ) : null}
               </>
             ) : (
               <>
@@ -88,20 +108,23 @@ const SettingContent = ({
               </>
             )}
           </div>
-
-          <input
-            id={`dropzone-file`}
-            type='file'
-            className='hidden'
-            accept='audio/*, image/*, video/*'
-            disabled={reviewScreen}
-            onChange={handleMediaFile}
-          />
+          {linkDetails?.link ? null : (
+            <input
+              id={`dropzone-file`}
+              type='file'
+              className='hidden'
+              accept='audio/*, image/*, video/*'
+              disabled={reviewScreen}
+              onChange={handleMediaFile}
+            />
+          )}
         </label>
       </div>
-      {isSubmitted && !content?.media?.file && (
-        <p className='text-red-500 text-xs font-medium'>Media is required</p>
-      )}
+      <>
+        {isSubmitted && !content?.media?.file && !linkDetails?.link && (
+          <p className='text-red-500 text-xs font-medium'>Media is required</p>
+        )}
+      </>
       <div className='mt-6'>
         <div className='flex items-center mb-2'>
           <div className='txtblack text-[14px]'>Name</div>

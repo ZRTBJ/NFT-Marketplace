@@ -33,6 +33,11 @@ export default function TokenGatedPublicContent({ query, userId }) {
               { title: 'customLinks1', icon: 'link', value: '' },
             ];
           }
+          response.file_types.all =
+            parseInt(response?.file_types?.audio) +
+            parseInt(response?.file_types?.image) +
+            parseInt(response?.file_types?.movie) +
+            parseInt(response?.file_types?.other);
           setProject(response);
           setShowOverLayLoading(false);
         } else {
@@ -50,12 +55,12 @@ export default function TokenGatedPublicContent({ query, userId }) {
     <div>
       {showOverLayLoading && <div className='loading'></div>}
       {!showOverLayLoading && (
-        <>
+        <div className='px-4 md:px-[50px]'>
           <PublicProjectInfoCard project={project}></PublicProjectInfoCard>
           <div className='my-10 md:mt-[50px] md:mb-[100px]'>
             <TabComponent project={project} />
           </div>
-        </>
+        </div>
       )}
     </div>
   );

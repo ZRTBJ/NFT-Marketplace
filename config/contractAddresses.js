@@ -39,6 +39,7 @@ export const address = {
   decirTreasuryBnbTest: "0x0cfD7230b1805f554D8dA778FED11E1eC813b38f",
   discountBnbTest: "0xF448eB4C8B44955989dE5399EADcC3c0DD40737F",
 
+
   //BnbTest Testnet
   GenericProxyFactoryBnbTest: '0x7780fC98e459E4c538Cc24b09960c2Cb1a320bF7',
   MinimalForwarderBnbTest: '0x16cc8Db27C065CB1D5Caff84E9F1D400f7C82624',

@@ -52,7 +52,7 @@ export default function VideoTab({ project, sortBy }) {
 
   return (
     <>
-      <div className='px-4'>
+      <div>
         {list?.length === 0 && !isLoading && (
           <div className='text-center text-textSubtle'>
             <Image
@@ -83,7 +83,7 @@ export default function VideoTab({ project, sortBy }) {
               {list?.map((content, index) => (
                 <div key={index}>
                   {content?.file_type === 'movie' && (
-                    <VideoCard content={content} />
+                    <VideoCard content={content} projectId={project?.id} />
                   )}
                 </div>
               ))}

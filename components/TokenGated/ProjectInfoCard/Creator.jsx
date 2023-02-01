@@ -4,6 +4,7 @@ import thumbIcon from 'assets/images/profile/card.svg';
 import SocialLink from 'components/Commons/SocialLink';
 import SettingModal from 'components/TokenGated/Modal/Setting';
 import { toast } from 'react-toastify';
+import Link from 'next/link';
 export default function Creator({ project, createMode, settingSaved }) {
   const origin =
     typeof window !== 'undefined' && window.location.origin
@@ -23,7 +24,7 @@ export default function Creator({ project, createMode, settingSaved }) {
   };
   return (
     <>
-      <div className='flex flex-wrap gap-4 items-start md:border md:border-divider rounded md:p-4'>
+      <div className='flex flex-wrap gap-4 items-start md:border  rounded md:p-4'>
         <div className='flex flex-wrap items-start gap-4'>
           <div>
             <Image
@@ -39,21 +40,17 @@ export default function Creator({ project, createMode, settingSaved }) {
             <p className='text-[18px] text-txtblack font-black'>
               {project?.title ? project?.title : 'Unnamed Project'}
             </p>
-            <div className='my-2 md:flex align-items-center'>
-              <div className='w-[270px] md:w-[450px] truncate block'>
+            <div className='my-2 md:flex align-items-center pr-2'>
+              <div className='w-screen md:w-[450px] truncate block'>
                 <span className='textSubtle font-bold'>Project Link: </span>
                 <span className='ml-2'>
-                  <a
-                    href={`${publicDetailsLink}`}
-                    target='_blank'
-                    rel='noreferrer'
-                  >
+                  <Link href={`${publicDetailsLink}`} rel='noreferrer'>
                     {publicDetailsLink}
-                  </a>
+                  </Link>
                 </span>
               </div>
               <i
-                className='fa-regular fa-copy text-lg cursor-pointer text-primary-900 md:ml-2'
+                className='fa-regular fa-copy text-lg cursor-pointer text-primary-900 md:ml-2 mt-2 md:mt-0'
                 onClick={() => copyToClipboard()}
               ></i>
             </div>

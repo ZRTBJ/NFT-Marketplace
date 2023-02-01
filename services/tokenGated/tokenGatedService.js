@@ -1,4 +1,5 @@
 import { client } from '../httpClient';
+import axios from 'axios';
 
 export async function createTokenGatedProject(title) {
   const bodyFormData = new FormData();
@@ -70,4 +71,27 @@ export async function getContentList(payload) {
 
 export async function deleteTokenGatedContent(id, data) {
   return await client('DELETE', `/tkg-content/${id}`);
+}
+
+export async function getTokenGatedContentDetail(id) {
+  return await client('GET', `/tkg-content/${id}`);
+}
+
+export async function getTokenGatedContentAsset(data) {
+  return await client('GET', `${data}`);
+}
+
+export async function configMultiContent(id, data) {
+  const bodyFormData = new FormData();
+  bodyFormData.append('configs', data);
+  return await client(
+    'PUT',
+    `/tkg-content/${id}/config`,
+    bodyFormData,
+    'formdata'
+  );
+}
+
+export async function getUserAuthorization(link) {
+  return await axios.get(link);
 }

@@ -6,6 +6,7 @@ const nextConfig = {
       'storage.googleapis.com',
       'crastonic.mypinata.cloud',
       'decir.mypinata.cloud',
+      'web2api-dev.decir.io',
     ],
   },
   webpack: (config, options) => {
