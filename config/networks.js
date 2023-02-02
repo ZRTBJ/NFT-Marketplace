@@ -1,4 +1,3 @@
-
 import Eth from 'assets/images/eth.svg';
 import Matic from 'assets/images/polygon.svg';
 import Bnb from 'assets/images/bnb.svg';
@@ -6,25 +5,24 @@ import { address } from './contractAddresses.js';
 import PolyScan from 'assets/images/poly-scan.png';
 import EthScan from 'assets/images/eth-scan.png';
 
-
 const gnosisFundTransferUrl = 'https://app.safe.global';
 
 const raribleNFTDetailsUrl =
-  process.env.NEXT_PUBLIC_ENV === "production"
-    ? "https://rarible.com/token/"
-    : "https://testnet.rarible.com/token/";
+  process.env.NEXT_PUBLIC_ENV === 'production'
+    ? 'https://rarible.com/token/'
+    : 'https://testnet.rarible.com/token/';
 const openSeaNFTDetailsUrl =
-  process.env.NEXT_PUBLIC_ENV === "production"
-    ? "https://opensea.io/assets/"
-    : "https://testnets.opensea.io/assets";
+  process.env.NEXT_PUBLIC_ENV === 'production'
+    ? 'https://opensea.io/assets/'
+    : 'https://testnets.opensea.io/assets';
 
 const TESTNET = {
   5: {
-    networkName: "Goerli Testnet",
-    cryto: "GoerliETH",
+    networkName: 'Goerli Testnet',
+    cryto: 'GoerliETH',
     quickNodeURL: process.env.NEXT_PUBLIC_GOERLI_QUICKNODE_URL,
-    value: "eth",
-    label: "ETH",
+    value: 'eth',
+    label: 'ETH',
     icon: Eth,
     forwarder: address.MinimalForwarderGoerli,
     webhook: process.env.NEXT_PUBLIC_WEBHOOK_URL_GOERLI,
@@ -45,18 +43,43 @@ const TESTNET = {
     alchamey: process.env.NEXT_PUBLIC_GOERLI_NFT_ALCHEMY_URL,
   },
   97: {
-    networkName: "BNB Testnet",
-    cryto: "BNB",
+    networkName: 'BNB Testnet',
+    cryto: 'BNB',
     quickNodeURL: process.env.NEXT_PUBLIC_BNBTEST_QUICKNODE_URL,
-    value: "bnb",
-    label: "BNB",
+    value: 'bnb',
+    label: 'BNB',
     icon: Bnb,
     forwarder: address.MinimalForwarderBnbTest,
     webhook: process.env.NEXT_PUBLIC_WEBHOOK_URL_BNBTEST,
     genericProxyFacotory: address.GenericProxyFactoryBnbTest,
     masterCopyDAO: address.CreatorDAOMasterCopyBnbTest,
     masterCopyCollection: address.CreateCollectionMasterCopyBnbTest,
-    masterMembershipCollection: address.CreateMembershipCollectionMasterCopyBnbTest,
+    masterMembershipCollection:
+      address.CreateMembershipCollectionMasterCopyBnbTest,
+    masterRoyaltySplitter: address.RoyaltySplitterMasterCopyBnbTest,
+    network: 97,
+    gnosis: `${gnosisFundTransferUrl}/bnb`,
+    raribleNFTDetailsUrl: raribleNFTDetailsUrl,
+    openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/BSC_TESTNET/`,
+    viewContractAddressUrl: `https://testnet.bscscan.com/address/`,
+    viewTxUrl: `https://testnet.bscscan.com/tx/`,
+    decirTreasury: address.decirTreasuryBnbTest,
+    discount: address.discountBnbTest,
+  },
+  97: {
+    networkName: 'BNB Testnet',
+    cryto: 'BNB',
+    quickNodeURL: process.env.NEXT_PUBLIC_BNBTEST_QUICKNODE_URL,
+    value: 'bnb',
+    label: 'BNB',
+    icon: Bnb,
+    forwarder: address.MinimalForwarderBnbTest,
+    webhook: process.env.NEXT_PUBLIC_WEBHOOK_URL_BNBTEST,
+    genericProxyFacotory: address.GenericProxyFactoryBnbTest,
+    masterCopyDAO: address.CreatorDAOMasterCopyBnbTest,
+    masterCopyCollection: address.CreateCollectionMasterCopyBnbTest,
+    masterMembershipCollection:
+      address.CreateMembershipCollectionMasterCopyBnbTest,
     masterRoyaltySplitter: address.RoyaltySplitterMasterCopyBnbTest,
     network: 97,
     gnosis: `${gnosisFundTransferUrl}/bnb`,
@@ -68,11 +91,11 @@ const TESTNET = {
     discount: address.discountBnbTest,
   },
   80001: {
-    networkName: "Polygon Testnet Mumbai",
-    cryto: "MATIC",
+    networkName: 'Polygon Testnet Mumbai',
+    cryto: 'MATIC',
     quickNodeURL: process.env.NEXT_PUBLIC_MUMBAI_QUICKNODE_URL,
-    value: "matic",
-    label: "MATIC",
+    value: 'matic',
+    label: 'MATIC',
     icon: Matic,
     forwarder: address.MinimalForwarderMumbai,
     webhook: process.env.NEXT_PUBLIC_WEBHOOK_URL_MUMBAI,
@@ -97,11 +120,11 @@ const TESTNET = {
 
 const MAINNET = {
   1: {
-    networkName: "Ethereum Mainnet",
-    crypto: "ETH",
+    networkName: 'Ethereum Mainnet',
+    crypto: 'ETH',
     quickNodeURL: process.env.NEXT_PUBLIC_ETHEREUM_QUICKNODE_URL,
-    value: "eth",
-    label: "ETH",
+    value: 'eth',
+    label: 'ETH',
     icon: Eth,
     forwarder: address.MinimalForwarderEthereum,
     webhook: process.env.NEXT_PUBLIC_WEBHOOK_URL_ETHEREUM,
@@ -116,18 +139,18 @@ const MAINNET = {
     raribleNFTDetailsUrl: raribleNFTDetailsUrl,
     openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/ethereum/`,
     viewContractAddressUrl: `https://etherscan.io/address/`,
-    viewTxUrl: "https://etherscan.io/tx/",
+    viewTxUrl: 'https://etherscan.io/tx/',
     decirTreasury: address.decirTreasuryEthereum,
     discount: address.discountEthereum,
     scan: EthScan,
     alchamey: process.env.NEXT_PUBLIC_ETHEREUM_NFT_ALCHEMY_URL,
   },
   137: {
-    networkName: "Polygon Mainnet",
-    crypto: "MATIC",
+    networkName: 'Polygon Mainnet',
+    crypto: 'MATIC',
     quickNodeURL: process.env.NEXT_PUBLIC_POLYGON_QUICKNODE_URL,
-    value: "matic",
-    label: "MATIC",
+    value: 'matic',
+    label: 'MATIC',
     icon: Matic,
     forwarder: address.MinimalForwarderPolygon,
     webhook: process.env.NEXT_PUBLIC_WEBHOOK_URL_POLYGON,
@@ -142,7 +165,7 @@ const MAINNET = {
     raribleNFTDetailsUrl: raribleNFTDetailsUrl,
     openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/matic/`,
     viewContractAddressUrl: `https://polygonscan.com/address/`,
-    viewTxUrl: "https://polygonscan.com/tx/",
+    viewTxUrl: 'https://polygonscan.com/tx/',
     decirTreasury: address.decirTreasuryPolygon,
     discount: address.discountPolygon,
     scan: PolyScan,
@@ -150,6 +173,6 @@ const MAINNET = {
   },
 };
 
-let NETWORKS = process.env.NEXT_PUBLIC_ENV === "production" ? MAINNET : TESTNET;
+let NETWORKS = process.env.NEXT_PUBLIC_ENV === 'production' ? MAINNET : TESTNET;
 
 export { NETWORKS };

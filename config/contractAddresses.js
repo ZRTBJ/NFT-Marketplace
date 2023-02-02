@@ -53,6 +53,19 @@ export const address = {
   decirTreasuryBnbTest: '0x0cfD7230b1805f554D8dA778FED11E1eC813b38f',
   discountBnbTest: '0xF448eB4C8B44955989dE5399EADcC3c0DD40737F',
 
+  //BnbTest Testnet
+  GenericProxyFactoryBnbTest: '0x7780fC98e459E4c538Cc24b09960c2Cb1a320bF7',
+  MinimalForwarderBnbTest: '0x16cc8Db27C065CB1D5Caff84E9F1D400f7C82624',
+  CreatorDAOMasterCopyBnbTest: '0x913A42e0f06D52c4541f4ed111626452D455D970',
+  CreateCollectionMasterCopyBnbTest:
+    '0x14E668361EFdBA2487b4A6491e6342817DF05243',
+  CreateMembershipCollectionMasterCopyBnbTest:
+    '0x422d6E719d793Af69C6BD59B6251D948eDBeBBB0',
+  RoyaltySplitterMasterCopyBnbTest:
+    '0x37f7D467784257920d24E40F6A5f669269740fBc',
+  decirTreasuryBnbTest: '0x0cfD7230b1805f554D8dA778FED11E1eC813b38f',
+  discountBnbTest: '0xF448eB4C8B44955989dE5399EADcC3c0DD40737F',
+
   //Polygon Mainnet
   GenericProxyFactoryPolygon: "0xFc1331F9Bf73f20c89049bbaeD2186Db1C789e77",
   MinimalForwarderPolygon: "0x09c075eCd101d8820F54152eAc4529Cb9534EB72",
