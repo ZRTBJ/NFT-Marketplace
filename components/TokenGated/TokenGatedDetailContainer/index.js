@@ -137,7 +137,7 @@ const TokenGatedContentDetailContainer = ({ query }) => {
             ) : (
               <>
                 <div className='flex items-center justify-center h-[calc(100vh-200px)]'>
-                  <a href={asset} target='_blank'>
+                  <a href={asset} target='_blank' rel="noreferrer">
                     <button className='contained-button text-[28px]'>
                       Get Content
                     </button>
