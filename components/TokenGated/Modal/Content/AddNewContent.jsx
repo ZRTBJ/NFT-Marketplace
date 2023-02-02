@@ -460,6 +460,7 @@ export default function AddNewContent({
     setIsSubmitted(true);
     let headers;
     let token = ls_GetUserToken();
+
     headers = {
       'Content-Type': 'multipart/form-data',
       'Access-Control-Allow-Origin': '*',
@@ -468,6 +469,7 @@ export default function AddNewContent({
     setIsLoading(true);
     let formdata = new FormData();
     formdata.append('file', content?.media?.file);
+    console.log('2');
     await axios({
       method: 'POST',
       url: Config.TOKEN_GATE_FILE_SERVER_URL,
@@ -475,6 +477,7 @@ export default function AddNewContent({
       headers: headers,
     })
       .then((resp) => {
+        console.log('3');
         if (resp?.code === 200) {
           const notificationData = {
             etherscan: '',
@@ -484,11 +487,13 @@ export default function AddNewContent({
           setJobId(resp?.job_id);
           dispatch(getNotificationData(notificationData));
         } else {
+          console.log('5');
           setShowError(true);
           setIsLoading(false);
         }
       })
       .catch((err) => {
+        console.log('4');
         setShowError(true);
         setIsLoading(false);
       });
@@ -517,6 +522,7 @@ export default function AddNewContent({
       if (linkDetails?.link) {
         handleCreateContent();
       } else {
+        console.log('1');
         uploadAFile();
       }
     }
@@ -650,7 +656,7 @@ export default function AddNewContent({
       />
     );
   }
-  console.log(blockchain, collectionDetail);
+
   return (
     <Modal
       width={600}
