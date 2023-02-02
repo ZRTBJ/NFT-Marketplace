@@ -116,7 +116,7 @@ export default function AddNewContent({
       });
       if (contents?.[0]?.content_type === 'url') {
         setLinkDetails({
-          link: `${contents[0]?.consumable_data}?token=${token}}`,
+          link: `${contents[0]?.consumable_data}?token=${token}`,
           type: contents[0]?.file_type,
         });
       } else {
@@ -146,7 +146,7 @@ export default function AddNewContent({
       .then((resp) => {
         if (resp.code === 0) {
           console.log(resp);
-          if (resp?.token_gate_content?.token_gate_configs.length) {
+          if (resp?.token_gate_content?.token_gate_configs?.length) {
             let tokenConfigs = resp?.token_gate_content?.token_gate_configs;
             let finalData = tokenConfigs.map((item, id) => {
               let tokens = item?.token_config.split('-');
