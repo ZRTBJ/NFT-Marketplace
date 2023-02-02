@@ -191,8 +191,7 @@ export default function Setting({
             show={show}
             handleClose={() => handleClose()}
             showCloseIcon={true}
-            height={700}
-            overflow='scroll'
+            overflow={'auto'}
             id='token-gated-project-setting-modal'
           >
             <form
@@ -200,7 +199,7 @@ export default function Setting({
               name='tokenGatedSettingForm'
               onSubmit={handleSubmit(onSubmit)}
             >
-              <div className='px-10  mt-5'>
+              <div className='px-4 md:px-10  mt-5'>
                 <p className='font-black text-txtblack text-[22px] mb-4'>
                   Project Settings
                 </p>
