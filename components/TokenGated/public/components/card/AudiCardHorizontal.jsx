@@ -6,10 +6,9 @@ import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import darkBg from 'assets/images/token-gated/darkBg.png';
 import audioWeb from 'assets/images/token-gated/audioWeb.svg';
-import { ls_GetUserToken } from 'util/ApplicationStorage';
 import moment from 'moment';
-import Config from 'config/config';
-const ROOT_URL = Config.API_ENDPOINT;
+import { getUserVerification } from 'services/tokenGated/tokenGatedService';
+
 export default function AudiCardHorizontal({ content, projectId }) {
   const userinfo = useSelector((state) => state.user.userinfo);
   const createdAt = moment(content?.created_at);
@@ -18,24 +17,11 @@ export default function AudiCardHorizontal({ content, projectId }) {
   const lockIcon = (
     <i className='fa-solid fa-lock text-[34px] text-black-shade-900 cursor-pointer '></i>
   );
-  const contentUrl = `${ROOT_URL}/tkg-content/${
-    content?.id
-  }/data?token=${ls_GetUserToken()}`;
-  async function urlValidate() {
-    if (typeof window !== 'undefined') {
-      return await new Promise((resolve) => {
-        let audioPlayer = document.createElement('AUDIO');
-        audioPlayer.setAttribute('src', contentUrl);
-        audioPlayer.oncanplay = function () {
-          resolve(true);
-        };
-      });
-    }
-  }
+
   async function userValidate() {
-    await urlValidate(contentUrl)
+    await getUserVerification(content?.id)
       .then((res) => {
-        if (res) {
+        if (res?.status === 200) {
           setCanSeeContent(true);
         }
       })
