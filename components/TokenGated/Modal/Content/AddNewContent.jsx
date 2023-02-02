@@ -474,13 +474,18 @@ export default function AddNewContent({
       headers: headers,
     })
       .then((resp) => {
-        const notificationData = {
-          etherscan: '',
-          function_uuid: resp?.job_id,
-          data: '',
-        };
-        setJobId(resp?.job_id);
-        dispatch(getNotificationData(notificationData));
+        if (resp.code === 200) {
+          const notificationData = {
+            etherscan: '',
+            function_uuid: resp?.job_id,
+            data: '',
+          };
+          setJobId(resp?.job_id);
+          dispatch(getNotificationData(notificationData));
+        } else {
+          setShowError(true);
+          setIsLoading(false);
+        }
       })
       .catch((err) => {
         setShowError(true);
