@@ -38,7 +38,7 @@ const TokenGatedContentDetailContainer = ({ query }) => {
 
   const getContentAuth = (assetUrl) => {
     getUserAuthorization(assetUrl).then((resp) => {
-      if (resp.code === 4000) {
+      if (resp?.code === 4000) {
         setShowError(true);
       } else {
         setShowError(false);
@@ -79,7 +79,6 @@ const TokenGatedContentDetailContainer = ({ query }) => {
   const handleBack = () => {
     router.back();
   };
-  console.log(data);
   return (
     <>
       <div
@@ -96,55 +95,10 @@ const TokenGatedContentDetailContainer = ({ query }) => {
           backgroundColor: data?.file_type === 'audio' ? '#303548' : '',
         }}
       >
-        {data?.file_type === 'movie' ? (
-          <>
+        {data?.file_type === 'other' ? (
+          <div className='bg-[#303548] h-[calc(100vh-71px)]'>
+            {' '}
             <div className='dark-shadow-bg absolute w-full z-[99]'>
-              <Image
-                src={LeftArrow}
-                className='cursor-pointer'
-                onClick={handleBack}
-                alt='Go back'
-              />
-              <div className='ml-6'>
-                <h3 className='font-[28px]'>{data?.title}</h3>
-                <p className='mt-2'>{data?.description}</p>
-              </div>
-              {!alreadyReported && (
-                <>
-                  <Image
-                    src={Critical}
-                    className='ml-auto cursor-pointer'
-                    alt='Report'
-                    onClick={() => setShowReportModal(true)}
-                  />
-                </>
-              )}
-            </div>
-            {showPlay ? (
-              <div
-                onClick={handlePlayVideo}
-                className='absolute top-[50%] left-[50%] cursor-pointer z-[99]'
-              >
-                <Image src={Play} alt='Play' />
-              </div>
-            ) : null}
-
-            <video
-              className='w-full h-[100vh] object-cover'
-              controls={!showPlay}
-              ref={videoRef}
-            >
-              <source src={asset} />
-              Your browser does not support the video tag.
-            </video>
-          </>
-        ) : (
-          <>
-            <div
-              className={`dark-shadow-bg ${
-                showError ? 'bg-black bg-opacity-[0.7]' : ''
-              }`}
-            >
               <Image
                 src={LeftArrow}
                 className='cursor-pointer'
@@ -182,13 +136,131 @@ const TokenGatedContentDetailContainer = ({ query }) => {
               </div>
             ) : (
               <>
-                {data?.file_type === 'audio' ? (
-                  <div className='h-[calc(100vh-200px)] flex items-center'>
-                    <div className='w-full'>
-                      <Waveform url={asset} id={data?.data} />
+                <div className='flex items-center justify-center h-[calc(100vh-200px)]'>
+                  <a href={asset} target='_blank'>
+                    <button className='contained-button text-[28px]'>
+                      Get Content
+                    </button>
+                  </a>
+                </div>
+              </>
+            )}
+          </div>
+        ) : (
+          <>
+            {data?.file_type === 'movie' ? (
+              <>
+                <div className='dark-shadow-bg absolute w-full z-[99]'>
+                  <Image
+                    src={LeftArrow}
+                    className='cursor-pointer'
+                    onClick={handleBack}
+                    alt='Go back'
+                  />
+                  <div className='ml-6'>
+                    <h3 className='font-[28px]'>{data?.title}</h3>
+                    <p className='mt-2'>{data?.description}</p>
+                  </div>
+                  {!alreadyReported && (
+                    <>
+                      <Image
+                        src={Critical}
+                        className='ml-auto cursor-pointer'
+                        alt='Report'
+                        onClick={() => setShowReportModal(true)}
+                      />
+                    </>
+                  )}
+                </div>
+                {showError ? (
+                  <div className='flex items-center justify-center h-[calc(100vh-140px)] bg-black bg-opacity-[0.7]'>
+                    <div className='text-center text-light flex items-center flex-col'>
+                      <Image src={Locked} alt='Locked' />
+                      <h3 className='font-[28px] mt-4 w-3/4'>
+                        YOUR TOKEN ID DIDNT MATCH WITH THIS SPECIFIC CONTENT
+                      </h3>
+                      <Link href='/list?type=collection&user=true'>
+                        <button className='btn bg-white text-black rounded-[4px] p-2 mt-5'>
+                          Go to Collection
+                        </button>
+                      </Link>
                     </div>
                   </div>
-                ) : null}
+                ) : (
+                  <>
+                    {showPlay ? (
+                      <div
+                        onClick={handlePlayVideo}
+                        className='absolute top-[50%] left-[50%] cursor-pointer z-[99]'
+                      >
+                        <Image src={Play} alt='Play' />
+                      </div>
+                    ) : null}
+
+                    <video
+                      className='w-full h-[100vh] object-cover'
+                      controls={!showPlay}
+                      ref={videoRef}
+                    >
+                      <source src={asset} />
+                      Your browser does not support the video tag.
+                    </video>
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                <div
+                  className={`dark-shadow-bg ${
+                    showError ? 'bg-black bg-opacity-[0.7]' : ''
+                  }`}
+                >
+                  <Image
+                    src={LeftArrow}
+                    className='cursor-pointer'
+                    onClick={handleBack}
+                    alt='Go back'
+                  />
+                  <div className='ml-6'>
+                    <h3 className='font-[28px]'>{data?.title}</h3>
+                    <p className='mt-2'>{data?.description}</p>
+                  </div>
+                  {!alreadyReported && (
+                    <>
+                      <Image
+                        src={Critical}
+                        className='ml-auto cursor-pointer'
+                        alt='Report'
+                        onClick={() => setShowReportModal(true)}
+                      />
+                    </>
+                  )}
+                </div>
+                {showError ? (
+                  <div className='flex items-center justify-center h-[calc(100vh-140px)] bg-black bg-opacity-[0.7]'>
+                    <div className='text-center text-light flex items-center flex-col'>
+                      <Image src={Locked} alt='Locked' />
+                      <h3 className='font-[28px] mt-4 w-3/4'>
+                        YOUR TOKEN ID DIDNT MATCH WITH THIS SPECIFIC CONTENT
+                      </h3>
+                      <Link href='/list?type=collection&user=true'>
+                        <button className='btn bg-white text-black rounded-[4px] p-2 mt-5'>
+                          Go to Collection
+                        </button>
+                      </Link>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    {data?.file_type === 'audio' ? (
+                      <div className='h-[calc(100vh-200px)] flex items-center'>
+                        <div className='w-full'>
+                          <Waveform url={asset} id={data?.data} />
+                        </div>
+                      </div>
+                    ) : null}
+                  </>
+                )}
               </>
             )}
           </>
