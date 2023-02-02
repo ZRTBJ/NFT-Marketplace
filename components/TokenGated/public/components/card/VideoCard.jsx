@@ -1,20 +1,13 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import moment from 'moment';
 import darkBg from 'assets/images/token-gated/darkBg.png';
 import { useRouter } from 'next/router';
-import defaultThumbnail from 'assets/images/profile/card.svg';
 import playIcon from 'assets/images/token-gated/audioPlay.svg';
 import Image from 'next/image';
-
-import { ls_GetUserToken } from 'util/ApplicationStorage';
-import Config from 'config/config';
-const ROOT_URL = Config.API_ENDPOINT;
-
+import { getUserVerification } from 'services/tokenGated/tokenGatedService';
 export default function VideoCard({ content, projectId }) {
   const router = useRouter();
-  const userinfo = useSelector((state) => state.user.userinfo);
   const [canSeeContent, setCanSeeContent] = useState(false);
   const createdAt = moment(content?.created_at);
   const lockIcon = (
@@ -27,24 +20,11 @@ export default function VideoCard({ content, projectId }) {
       <Image src={playIcon} alt='img' height={44} width={44}></Image>
     </div>
   );
-  const contentUrl = `${ROOT_URL}/tkg-content/${
-    content?.id
-  }/data?token=${ls_GetUserToken()}`;
-  async function urlValidate() {
-    if (typeof window !== 'undefined') {
-      return await new Promise((resolve) => {
-        let videoPlayer = document.createElement('VIDEO');
-        videoPlayer.setAttribute('src', contentUrl);
-        videoPlayer.oncanplay = function () {
-          resolve(true);
-        };
-      });
-    }
-  }
+
   async function userValidate() {
-    await urlValidate(contentUrl)
+    await getUserVerification(content?.id)
       .then((res) => {
-        if (res) {
+        if (res?.status === 200) {
           setCanSeeContent(true);
         }
       })

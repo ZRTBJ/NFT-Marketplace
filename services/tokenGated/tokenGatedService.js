@@ -1,5 +1,8 @@
 import { client } from '../httpClient';
 import axios from 'axios';
+import Config from 'config/config';
+const ROOT_URL = Config.API_ENDPOINT;
+import { ls_GetUserToken } from 'util/ApplicationStorage';
 
 export async function createTokenGatedProject(title) {
   const bodyFormData = new FormData();
@@ -118,4 +121,9 @@ export async function reportTokenContent(payload) {
 
 export async function deleteTokenGatedProject(id) {
   return await client('DELETE', `/tkg-content/${id}`);
+}
+export async function getUserVerification(contentId) {
+  return await fetch(
+    `${ROOT_URL}/tkg-content/${contentId}/data?token=${ls_GetUserToken()}&verify=true`
+  );
 }
