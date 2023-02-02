@@ -1,17 +1,16 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import moment from 'moment';
 import darkBg from 'assets/images/token-gated/darkBg.png';
 import { useRouter } from 'next/router';
 import { ls_GetUserToken } from 'util/ApplicationStorage';
 import defaultThumbnail from 'assets/images/profile/card.svg';
+import { getUserVerification } from 'services/tokenGated/tokenGatedService';
 import Config from 'config/config';
 const ROOT_URL = Config.API_ENDPOINT;
 
 export default function ImageCard({ content, projectId }) {
   const router = useRouter();
-  const userinfo = useSelector((state) => state.user.userinfo);
   const createdAt = moment(content?.created_at);
   const [canSeeContent, setCanSeeContent] = useState(false);
   const lockIcon = (
@@ -22,18 +21,10 @@ export default function ImageCard({ content, projectId }) {
   const contentUrl = `${ROOT_URL}/tkg-content/${
     content?.id
   }/data?token=${ls_GetUserToken()}`;
-  async function urlValidate() {
-    const img = new Image();
-    img.src = contentUrl;
-    return await new Promise((resolve) => {
-      img.onload = () => resolve(true);
-      img.onerror = () => resolve(false);
-    });
-  }
   async function userValidate() {
-    await urlValidate()
+    await getUserVerification(content?.id)
       .then((res) => {
-        if (res) {
+        if (res?.status === 200) {
           setCanSeeContent(true);
         }
       })
@@ -96,7 +87,6 @@ export default function ImageCard({ content, projectId }) {
         </div>
         {canSeeContent ? null : lockIcon}
       </div>
-
       <div className='mt-4'>
         <div className='flex items-center justify-between'>
           <p className='text-txtblack text-[18px] font-black w-[95%] truncate'>

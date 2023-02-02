@@ -98,21 +98,26 @@ export default function TokenGatedContent({ query, createMode }) {
       });
     await onContentListGet(payload?.id, projectInfo);
   };
+
   const onAddNewContentClick = async () => {
     setShowAddNewContentModal(true);
   };
+
   const onUploadByLinkClick = async () => {
     setShowUploadByLinkModal(true);
   };
+
   const OnSorting = async (event) => {
     setSelectedSort(event.target.value);
   };
+
   const onSettingSaved = async (id) => {
     await onGetTokenGatedProject(id);
     if (createMode) {
       router.replace(`/token-gated/${id}`);
     }
   };
+
   const onContentListGet = async (projectInfo) => {
     await getContentList(payload)
       .then((res) => {
@@ -145,6 +150,7 @@ export default function TokenGatedContent({ query, createMode }) {
       setSortBy(selectedSort === '2' ? 'newer' : 'older');
     }
   }, [selectedSort]);
+
   useEffect(() => {
     if (sortBy) {
       let oldPayload = { ...payload };

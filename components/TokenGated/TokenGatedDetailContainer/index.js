@@ -30,6 +30,7 @@ const TokenGatedContentDetailContainer = ({ query }) => {
   const [alreadyReported, setAlreadyReported] = useState(
     data?.is_scam_reported
   );
+  const [showOverLayLoading, setShowOverLayLoading] = useState(true);
   useEffect(() => {
     if (query?.id) {
       getContentDetail();
@@ -37,13 +38,19 @@ const TokenGatedContentDetailContainer = ({ query }) => {
   }, [query?.id]);
 
   const getContentAuth = (assetUrl) => {
-    getUserAuthorization(assetUrl).then((resp) => {
-      if (resp?.code === 4000) {
-        setShowError(true);
-      } else {
-        setShowError(false);
-      }
-    });
+    getUserAuthorization(assetUrl)
+      .then((resp) => {
+        setShowOverLayLoading(false);
+        if (resp?.code === 4000) {
+          setShowError(true);
+        } else {
+          setShowError(false);
+        }
+      })
+      .catch((er) => {
+        console.log(er);
+        setShowOverLayLoading(false);
+      });
   };
 
   const getContentDetail = () => {
@@ -63,7 +70,10 @@ const TokenGatedContentDetailContainer = ({ query }) => {
           }
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setShowOverLayLoading(false);
+      });
   };
 
   const handlePlayVideo = () => {
@@ -81,75 +91,26 @@ const TokenGatedContentDetailContainer = ({ query }) => {
   };
   return (
     <>
-      <div
-        className='relative'
-        style={{
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundImage: `url(${`${
-            asset && data?.file_type === 'image' ? asset : null
-          }`})`,
-          height: 'calc(100vh - 71px)',
-          width: '100%',
-          backgroundColor: data?.file_type === 'audio' ? '#303548' : '',
-        }}
-      >
-        {data?.file_type === 'other' ? (
-          <div className='bg-[#303548] h-[calc(100vh-71px)]'>
-            {' '}
-            <div className='dark-shadow-bg absolute w-full z-[99]'>
-              <Image
-                src={LeftArrow}
-                className='cursor-pointer'
-                onClick={handleBack}
-                alt='Go back'
-              />
-              <div className='ml-6'>
-                <h3 className='font-[28px]'>{data?.title}</h3>
-                <p className='mt-2'>{data?.description}</p>
-              </div>
-              {!alreadyReported && (
-                <>
-                  <Image
-                    src={Critical}
-                    className='ml-auto cursor-pointer'
-                    alt='Report'
-                    onClick={() => setShowReportModal(true)}
-                  />
-                </>
-              )}
-            </div>
-            {showError ? (
-              <div className='flex items-center justify-center h-[calc(100vh-140px)] bg-black bg-opacity-[0.7]'>
-                <div className='text-center text-light flex items-center flex-col'>
-                  <Image src={Locked} alt='Locked' />
-                  <h3 className='font-[28px] mt-4 w-3/4'>
-                    YOUR TOKEN ID DIDNT MATCH WITH THIS SPECIFIC CONTENT
-                  </h3>
-                  <Link href='/list?type=collection&user=true'>
-                    <button className='btn bg-white text-black rounded-[4px] p-2 mt-5'>
-                      Go to Collection
-                    </button>
-                  </Link>
-                </div>
-              </div>
-            ) : (
-              <>
-                <div className='flex items-center justify-center h-[calc(100vh-200px)]'>
-                  <a href={asset} target='_blank' rel="noreferrer">
-                    <button className='contained-button text-[28px]'>
-                      Get Content
-                    </button>
-                  </a>
-                </div>
-              </>
-            )}
-          </div>
-        ) : (
-          <>
-            {data?.file_type === 'movie' ? (
-              <>
+      {showOverLayLoading && <div className='loading'></div>}
+      {!showOverLayLoading && (
+        <>
+          <div
+            className='relative'
+            style={{
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: 'contain',
+              backgroundPosition: 'center',
+              backgroundImage: `url(${`${
+                asset && data?.file_type === 'image' ? asset : null
+              }`})`,
+              height: 'calc(100vh - 71px)',
+              width: '100%',
+              backgroundColor: '#303548',
+            }}
+          >
+            {data?.file_type === 'other' ? (
+              <div className='bg-[#303548] h-[calc(100vh-71px)]'>
+                {' '}
                 <div className='dark-shadow-bg absolute w-full z-[99]'>
                   <Image
                     src={LeftArrow}
@@ -188,92 +149,146 @@ const TokenGatedContentDetailContainer = ({ query }) => {
                   </div>
                 ) : (
                   <>
-                    {showPlay ? (
-                      <div
-                        onClick={handlePlayVideo}
-                        className='absolute top-[50%] left-[50%] cursor-pointer z-[99]'
-                      >
-                        <Image src={Play} alt='Play' />
-                      </div>
-                    ) : null}
-
-                    <video
-                      className='w-full h-[100vh] object-cover'
-                      controls={!showPlay}
-                      ref={videoRef}
-                    >
-                      <source src={asset} />
-                      Your browser does not support the video tag.
-                    </video>
+                    <div className='flex items-center justify-center h-[calc(100vh-200px)]'>
+                      <a href={asset} target='_blank' rel='noreferrer'>
+                        <button className='contained-button text-[28px]'>
+                          Get Content
+                        </button>
+                      </a>
+                    </div>
                   </>
                 )}
-              </>
+              </div>
             ) : (
               <>
-                <div
-                  className={`dark-shadow-bg ${
-                    showError ? 'bg-black bg-opacity-[0.7]' : ''
-                  }`}
-                >
-                  <Image
-                    src={LeftArrow}
-                    className='cursor-pointer'
-                    onClick={handleBack}
-                    alt='Go back'
-                  />
-                  <div className='ml-6'>
-                    <h3 className='font-[28px]'>{data?.title}</h3>
-                    <p className='mt-2'>{data?.description}</p>
-                  </div>
-                  {!alreadyReported && (
-                    <>
-                      <Image
-                        src={Critical}
-                        className='ml-auto cursor-pointer'
-                        alt='Report'
-                        onClick={() => setShowReportModal(true)}
-                      />
-                    </>
-                  )}
-                </div>
-                {showError ? (
-                  <div className='flex items-center justify-center h-[calc(100vh-140px)] bg-black bg-opacity-[0.7]'>
-                    <div className='text-center text-light flex items-center flex-col'>
-                      <Image src={Locked} alt='Locked' />
-                      <h3 className='font-[28px] mt-4 w-3/4'>
-                        YOUR TOKEN ID DIDNT MATCH WITH THIS SPECIFIC CONTENT
-                      </h3>
-                      <Link href='/list?type=collection&user=true'>
-                        <button className='btn bg-white text-black rounded-[4px] p-2 mt-5'>
-                          Go to Collection
-                        </button>
-                      </Link>
-                    </div>
-                  </div>
-                ) : (
+                {data?.file_type === 'movie' ? (
                   <>
-                    {data?.file_type === 'audio' ? (
-                      <div className='h-[calc(100vh-200px)] flex items-center'>
-                        <div className='w-full'>
-                          <Waveform url={asset} id={data?.data} />
+                    <div className='dark-shadow-bg absolute w-full z-[99]'>
+                      <Image
+                        src={LeftArrow}
+                        className='cursor-pointer'
+                        onClick={handleBack}
+                        alt='Go back'
+                      />
+                      <div className='ml-6'>
+                        <h3 className='font-[28px]'>{data?.title}</h3>
+                        <p className='mt-2'>{data?.description}</p>
+                      </div>
+                      {!alreadyReported && (
+                        <>
+                          <Image
+                            src={Critical}
+                            className='ml-auto cursor-pointer'
+                            alt='Report'
+                            onClick={() => setShowReportModal(true)}
+                          />
+                        </>
+                      )}
+                    </div>
+                    {showError ? (
+                      <div className='flex items-center justify-center h-[calc(100vh-140px)] bg-black bg-opacity-[0.7]'>
+                        <div className='text-center text-light flex items-center flex-col'>
+                          <Image src={Locked} alt='Locked' />
+                          <h3 className='font-[28px] mt-4 w-3/4'>
+                            YOUR TOKEN ID DIDNT MATCH WITH THIS SPECIFIC CONTENT
+                          </h3>
+                          <Link href='/list?type=collection&user=true'>
+                            <button className='btn bg-white text-black rounded-[4px] p-2 mt-5'>
+                              Go to Collection
+                            </button>
+                          </Link>
                         </div>
                       </div>
-                    ) : null}
+                    ) : (
+                      <>
+                        {showPlay ? (
+                          <div
+                            onClick={handlePlayVideo}
+                            className='absolute top-[50%] left-[50%] cursor-pointer z-[99]'
+                          >
+                            <Image src={Play} alt='Play' />
+                          </div>
+                        ) : null}
+
+                        <video
+                          className='w-full h-[100vh] object-cover'
+                          controls={!showPlay}
+                          ref={videoRef}
+                        >
+                          <source src={asset} />
+                          Your browser does not support the video tag.
+                        </video>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <div
+                      className={`dark-shadow-bg ${
+                        showError ? 'bg-black bg-opacity-[0.7]' : ''
+                      }`}
+                    >
+                      <Image
+                        src={LeftArrow}
+                        className='cursor-pointer'
+                        onClick={handleBack}
+                        alt='Go back'
+                      />
+                      <div className='ml-6'>
+                        <h3 className='font-[28px]'>{data?.title}</h3>
+                        <p className='mt-2'>{data?.description}</p>
+                      </div>
+                      {!alreadyReported && (
+                        <>
+                          <Image
+                            src={Critical}
+                            className='ml-auto cursor-pointer'
+                            alt='Report'
+                            onClick={() => setShowReportModal(true)}
+                          />
+                        </>
+                      )}
+                    </div>
+                    {showError ? (
+                      <div className='flex items-center justify-center h-[calc(100vh-140px)] bg-black bg-opacity-[0.7]'>
+                        <div className='text-center text-light flex items-center flex-col'>
+                          <Image src={Locked} alt='Locked' />
+                          <h3 className='font-[28px] mt-4 w-3/4'>
+                            YOUR TOKEN ID DIDNT MATCH WITH THIS SPECIFIC CONTENT
+                          </h3>
+                          <Link href='/list?type=collection&user=true'>
+                            <button className='btn bg-white text-black rounded-[4px] p-2 mt-5'>
+                              Go to Collection
+                            </button>
+                          </Link>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        {data?.file_type === 'audio' ? (
+                          <div className='h-[calc(100vh-200px)] flex items-center'>
+                            <div className='w-full'>
+                              <Waveform url={asset} id={data?.data} />
+                            </div>
+                          </div>
+                        ) : null}
+                      </>
+                    )}
                   </>
                 )}
               </>
             )}
-          </>
-        )}
-        <div
-          data-bs-toggle='offcanvas'
-          data-bs-target='#offcanvasRight'
-          aria-controls='offcanvasRight'
-          className='cursor-pointer absolute top-[48%] right-0 w-[56px] h-[90px] bg-[#303548] flex items-center justify-center'
-        >
-          <Image src={Left} alt='Show' />
-        </div>
-      </div>
+            <div
+              data-bs-toggle='offcanvas'
+              data-bs-target='#offcanvasRight'
+              aria-controls='offcanvasRight'
+              className='cursor-pointer absolute top-[48%] right-0 w-[56px] h-[90px] bg-[#303548] flex items-center justify-center'
+            >
+              <Image src={Left} alt='Show' />
+            </div>
+          </div>
+        </>
+      )}
       <RelatedContent projectId={query?.projectId} />
       {showReportModal && (
         <ReportModal

@@ -116,7 +116,7 @@ export default function AddNewContent({
       });
       if (contents?.[0]?.content_type === 'url') {
         setLinkDetails({
-          link: `${contents[0]?.consumable_data}?token=${token}}`,
+          link: `${contents[0]?.consumable_data}?token=${token}`,
           type: contents[0]?.file_type,
         });
       } else {
@@ -146,7 +146,7 @@ export default function AddNewContent({
       .then((resp) => {
         if (resp.code === 0) {
           console.log(resp);
-          if (resp?.token_gate_content?.token_gate_configs.length) {
+          if (resp?.token_gate_content?.token_gate_configs?.length) {
             let tokenConfigs = resp?.token_gate_content?.token_gate_configs;
             let finalData = tokenConfigs.map((item, id) => {
               let tokens = item?.token_config.split('-');
@@ -196,8 +196,7 @@ export default function AddNewContent({
     }
   };
 
-  const handleStep = (e) => {
-    e.preventDefault();
+  const handleStep = () => {
     setIsSubmitted(true);
     if (activeStep === 1) {
       if (
@@ -389,6 +388,10 @@ export default function AddNewContent({
     if (finalType === 'video') {
       finalType = 'movie';
     }
+    if (finalType === 'application') {
+      finalType = 'other';
+    }
+
     const linkType =
       linkDetails?.type === 'video' ? 'movie' : linkDetails?.type;
     let payload = {
@@ -404,8 +407,6 @@ export default function AddNewContent({
       }),
       ...(isDraft && { status: 'draft' }),
     };
-
-    console.log(payload, linkDetails);
 
     updateTokenGatedContent(id, payload)
       .then((resp) => {
@@ -474,7 +475,7 @@ export default function AddNewContent({
       headers: headers,
     })
       .then((resp) => {
-        if (resp.code === 200) {
+        if (resp?.code === 200) {
           const notificationData = {
             etherscan: '',
             function_uuid: resp?.job_id,
@@ -493,8 +494,7 @@ export default function AddNewContent({
       });
   }
 
-  const handlePublish = (e) => {
-    e.preventDefault();
+  const handlePublish = () => {
     setIsPublishing(true);
     setPublishNow(true);
     if (isEdit) {
@@ -509,8 +509,7 @@ export default function AddNewContent({
     }
   };
 
-  const handleDraft = (e) => {
-    e.preventDefault();
+  const handleDraft = () => {
     if (isEdit) {
       let id = contents?.[0]?.id;
       handleUpdateContent(id, null, true);
@@ -523,8 +522,7 @@ export default function AddNewContent({
     }
   };
 
-  const handleConfigureAll = (e) => {
-    e.preventDefault();
+  const handleConfigureAll = () => {
     setIsLoading(true);
     let config = configurations.map((item) => {
       return {
