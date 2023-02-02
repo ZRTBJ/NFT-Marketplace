@@ -478,6 +478,7 @@ export default function AddNewContent({
     })
       .then((resp) => {
         console.log('3');
+        console.log(resp);
         if (resp?.code === 200) {
           const notificationData = {
             etherscan: '',
