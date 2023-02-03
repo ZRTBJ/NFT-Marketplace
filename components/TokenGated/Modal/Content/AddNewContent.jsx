@@ -688,7 +688,7 @@ export default function AddNewContent({
           <>
             <h2 className='text-[28px] text-black'>Configure your content</h2>
             <p className='text-textLight text-[14px] mt-2'>
-              Please set up the content to explain more to your audience.
+              Please set up your content and NFT collection config to decide which audience can view.
             </p>
             {!isConfigureAll ? (
               <div className='flex items-center justify-around mt-5'>
