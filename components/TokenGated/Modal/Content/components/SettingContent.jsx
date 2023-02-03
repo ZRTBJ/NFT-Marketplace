@@ -162,7 +162,7 @@ const SettingContent = ({
         <div className='flex-1 px-3'>
           <p className='-mt-1'>Sensitive Content</p>
           <small className='text-textSubtle'>
-            Defined properties on your NFT
+            Mark this content as sensitive
           </small>
         </div>
         <div className='flex flex-wrap items-center'>

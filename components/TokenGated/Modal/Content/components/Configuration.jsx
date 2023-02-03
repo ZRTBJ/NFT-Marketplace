@@ -27,7 +27,7 @@ const Configuration = ({
       {!reviewScreen && (
         <div className='mt-4 flex py-3'>
           <div className='flex-1 px-3'>
-            <p className='font-black text-sm'>Make Accessible to all Holders</p>
+            <p className='font-black text-sm'>Make accessible to everyone</p>
           </div>
           <div className='flex flex-wrap items-center'>
             <label

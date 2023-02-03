@@ -25,7 +25,7 @@ import ErrorModal from 'components/Modals/ErrorModal';
 import { ls_GetUserToken } from 'util/ApplicationStorage';
 
 const STEPS = [
-  { id: 1, label: 'Setting Content' },
+  { id: 1, label: 'Content' },
   { id: 2, label: 'Configuration' },
   { id: 3, label: 'Review' },
 ];
