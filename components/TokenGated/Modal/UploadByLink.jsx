@@ -9,6 +9,7 @@ export default function UploadByLink({
   handleLinkDetails,
   handleAddLink,
   linkError,
+  setShowUploadByLinkModal,
 }) {
   const [showUploadLinkHelper, setShowUploadLinkHelper] = useState(false);
   const [step, setStep] = useState(0);

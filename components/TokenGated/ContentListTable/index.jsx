@@ -17,6 +17,7 @@ export default function ContentListTable({
   setLinkDetails,
   tokenProjectId,
   linkDetails,
+  setShowUploadByLinkModal = { setShowUploadByLinkModal },
 }) {
   const [project, setProject] = useState(projectInfo);
   const [selectedContents, setSelectedContents] = useState([]);
@@ -399,19 +400,8 @@ export default function ContentListTable({
           onContentAdded={onContentPublished}
           contents={lastSelectedContents}
           setLinkDetails={setLinkDetails}
+          setShowUploadByLinkModal={setShowUploadByLinkModal}
           linkDetails={linkDetails}
-        />
-      )}
-      {showConfigureAllModal && (
-        <AddNewContent
-          show={showConfigureAllModal}
-          handleClose={() => {
-            setShowConfigureAllModal(false);
-          }}
-          tokenProjectId={tokenProjectId}
-          onContentAdded={onContentPublished}
-          allContents={lastSelectedContents}
-          isConfigureAll={true}
         />
       )}
       {showConfigureAllModal && (

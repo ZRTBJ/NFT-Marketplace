@@ -10,6 +10,8 @@ const SettingContent = ({
   linkDetails,
   handleClose,
   setShowUploadByLinkModal,
+  fileError,
+  isEdit,
 }) => {
   let mediaType = linkDetails?.link
     ? linkDetails.type
@@ -30,7 +32,9 @@ const SettingContent = ({
             linkDetails?.link
               ? () => {
                   setShowUploadByLinkModal(true);
-                  handleClose();
+                  if (!isEdit) {
+                    handleClose();
+                  }
                 }
               : null
           }
@@ -122,6 +126,11 @@ const SettingContent = ({
       <>
         {isSubmitted && !content?.media?.file && !linkDetails?.link && (
           <p className='text-red-500 text-xs font-medium'>Media is required</p>
+        )}
+        {fileError && (
+          <p className='text-red-500 text-xs font-medium mt-2'>
+            Please select a vaild file.
+          </p>
         )}
       </>
       <div className='mt-6'>

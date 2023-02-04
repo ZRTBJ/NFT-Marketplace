@@ -50,12 +50,14 @@ const TokenGatedContentDetailContainer = ({ query }) => {
       .catch((er) => {
         console.log(er);
         setShowOverLayLoading(false);
+        setShowError(true);
       });
   };
 
   const getContentDetail = () => {
     getTokenGatedContentDetail(query?.id)
       .then(async (resp) => {
+        setShowOverLayLoading(false);
         if (resp.code === 0) {
           if (resp?.token_gate_content?.consumable_data) {
             setShowError(false);
@@ -72,6 +74,7 @@ const TokenGatedContentDetailContainer = ({ query }) => {
       })
       .catch((err) => {
         console.log(err);
+        setShowError(true);
         setShowOverLayLoading(false);
       });
   };
@@ -89,6 +92,7 @@ const TokenGatedContentDetailContainer = ({ query }) => {
   const handleBack = () => {
     router.back();
   };
+
   return (
     <>
       {showOverLayLoading && <div className='loading'></div>}

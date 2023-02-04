@@ -19,8 +19,9 @@ const Configuration = ({
   handleConfigValue,
   setShowAddCollection,
   deleteConfiguration,
+  validationError,
 }) => {
-  console.log(configurations);
+  console.log(validationError);
   return (
     <div>
       {' '}
@@ -175,7 +176,11 @@ const Configuration = ({
                               <input
                                 id='tokenMin'
                                 name='tokenMin'
-                                className={`debounceInput mt-1`}
+                                className={`debounceInput mt-1 ${
+                                  validationError
+                                    ? 'border-red-500 text-red-500'
+                                    : ''
+                                }`}
                                 value={item?.tokenMin}
                                 placeholder='Input Token ID'
                                 disabled={reviewScreen}
@@ -193,7 +198,11 @@ const Configuration = ({
                               <input
                                 id='tokenMax'
                                 name='tokenMax'
-                                className={`debounceInput mt-1`}
+                                className={`debounceInput mt-1 ${
+                                  validationError
+                                    ? 'border-red-500 text-red-500'
+                                    : ''
+                                }`}
                                 onChange={(e) => handleConfigValue(e, item.id)}
                                 value={item?.tokenMax}
                                 placeholder='Input Token ID'
@@ -201,6 +210,11 @@ const Configuration = ({
                               />
                             </>
                           </div>
+                          {validationError && (
+                            <p className='text-sm text-red-500'>
+                              Token Min should be smaller than Token Max
+                            </p>
+                          )}
                         </>
                       )}
                       {item?.settings === 'Specific Token ID' && (

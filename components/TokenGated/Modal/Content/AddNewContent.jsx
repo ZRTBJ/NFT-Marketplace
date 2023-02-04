@@ -83,9 +83,32 @@ export default function AddNewContent({
   const [selectedContractValidation, setSelectedContractValidation] =
     useState(false);
   const [selectedContractError, setSelectedContractError] = useState(false);
+  const [isVerificationLoading, setIsVerificationLoading] = useState(false);
+  const [fileError, setFileError] = useState();
+  const [errorTitle, setErrorTitle] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [uploadError, setUploadError] = useState(false);
+  const [validationError, setValidationError] = useState(false);
+  const userinfo = useSelector((state) => state.user.userinfo);
 
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    let tokenRange = configurations.filter(
+      (config) => config.settings === 'Token Range'
+    );
+
+    tokenRange.length &&
+      tokenRange.map((range) => {
+        if (Number(range.tokenMin) > Number(range.tokenMax)) {
+          setValidationError(true);
+        } else {
+          setValidationError(false);
+        }
+      });
+  }, [configurations]);
+  console.log(configurations);
   useEffect(() => {
     if (isConfigureAll) {
       setActiveStep(2);
@@ -184,31 +207,64 @@ export default function AddNewContent({
     });
   };
 
-  const handleMediaFile = (e) => {
+  const handleMediaFile = (event) => {
     try {
-      const file = e.currentTarget.files[0];
-      setContent({
-        ...content,
-        media: { file, path: URL.createObjectURL(file) },
-      });
+      const file = event.currentTarget.files[0];
+      const usedSize = userinfo['storage_usage'];
+      let totalSize = 0;
+      if (usedSize) {
+        if (usedSize && file) {
+          totalSize = (usedSize + file.size) / 1024 / 1024;
+          if (file.size / 1024 / 1024 > 100) {
+            setErrorTitle('Maximum file size limit exceeded');
+            setErrorMessage(`You can add your assets up to 100MB.`);
+            setShowErrorModal(true);
+            event.currentTarget.value = '';
+          } else if (totalSize > 1024) {
+            setErrorTitle('Maximum file size limit exceeded');
+            setErrorMessage(
+              `You can add your assets up to 1GB. you have a remaining of ${(
+                1024 -
+                usedSize / 1024 / 1024
+              ).toFixed(2)} MB storage`
+            );
+            setShowErrorModal(true);
+            event.currentTarget.value = '';
+          } else {
+            setContent({
+              ...content,
+              media: { file, path: URL.createObjectURL(file) },
+            });
+            setFileError(false);
+          }
+        }
+      } else if (!usedSize) {
+        setContent({
+          ...content,
+          media: { file, path: URL.createObjectURL(file) },
+        });
+        setFileError(false);
+      }
     } catch (err) {
-      console.log(err);
+      setFileError(false);
     }
   };
 
   const handleStep = () => {
-    setIsSubmitted(true);
-    if (activeStep === 1) {
-      if (
-        (content?.title && content?.media?.file) ||
-        (content?.title && linkDetails.link)
-      ) {
+    if (!validationError) {
+      setIsSubmitted(true);
+      if (activeStep === 1) {
+        if (
+          (content?.title && content?.media?.file) ||
+          (content?.title && linkDetails.link)
+        ) {
+          setHandledSteps([...handledSteps, activeStep]);
+          setActiveStep(activeStep + 1);
+        }
+      } else {
         setHandledSteps([...handledSteps, activeStep]);
         setActiveStep(activeStep + 1);
       }
-    } else {
-      setHandledSteps([...handledSteps, activeStep]);
-      setActiveStep(activeStep + 1);
     }
   };
 
@@ -481,15 +537,18 @@ export default function AddNewContent({
             function_uuid: resp?.job_id,
             data: '',
           };
+          setUploadError(false);
           setJobId(resp?.job_id);
           dispatch(getNotificationData(notificationData));
         } else {
           setShowError(true);
+          setUploadError(true);
           setIsLoading(false);
         }
       })
       .catch((err) => {
         setShowError(true);
+        setUploadError(true);
         setIsLoading(false);
       });
   }
@@ -510,14 +569,16 @@ export default function AddNewContent({
   };
 
   const handleDraft = () => {
-    if (isEdit) {
-      let id = contents?.[0]?.id;
-      handleUpdateContent(id, null, true);
-    } else {
-      if (linkDetails?.link) {
-        handleCreateContent();
+    if (!validationError) {
+      if (isEdit) {
+        let id = contents?.[0]?.id;
+        handleUpdateContent(id, null, true);
       } else {
-        uploadAFile();
+        if (linkDetails?.link) {
+          handleCreateContent();
+        } else {
+          uploadAFile();
+        }
       }
     }
   };
@@ -565,6 +626,7 @@ export default function AddNewContent({
 
   const handleSelectCollection = (data) => {
     if (data?.contract_address) {
+      setIsVerificationLoading(true);
       getCollectionDetailFromContract(data?.contract_address, data?.blockchain)
         .then((resp) => {
           if (
@@ -574,13 +636,16 @@ export default function AddNewContent({
             setSelectedContractValidation(true);
             setSelectedContractError(false);
             setCollectionDetail(data);
+            setIsVerificationLoading(false);
           } else {
             setSelectedContractValidation(false);
             setSelectedContractError(true);
+            setIsVerificationLoading(false);
           }
         })
         .catch((err) => {
           setSelectedContractValidation(false);
+          setIsVerificationLoading(false);
           setSelectedContractError(true);
         });
     }
@@ -643,10 +708,27 @@ export default function AddNewContent({
           setIsPublishing(false);
         }}
         show={showError}
-        message={`Content failed to ${
-          isPublishing ? 'publish' : 'save'
-        }. Please try again later`}
+        message={
+          uploadError
+            ? 'Error when uploading file, please check connection or contact us'
+            : `Error saving token gate config, please check your contract or token id settings`
+        }
         buttomText='Try Again'
+      />
+    );
+  }
+
+  if (showErrorModal) {
+    return (
+      <ErrorModal
+        handleClose={() => {
+          setShowErrorModal(false);
+          setErrorTitle(null);
+          setErrorMessage(null);
+        }}
+        show={showErrorModal}
+        title={errorTitle}
+        message={errorMessage}
       />
     );
   }
@@ -683,12 +765,15 @@ export default function AddNewContent({
             setSelectedContractValidation={setSelectedContractValidation}
             setSelectedContractError={setSelectedContractError}
             setCollectionDetail={setCollectionDetail}
+            setIsVerificationLoading={setIsVerificationLoading}
+            isVerificationLoading={isVerificationLoading}
           />
         ) : (
           <>
             <h2 className='text-[28px] text-black'>Configure your content</h2>
             <p className='text-textLight text-[14px] mt-2'>
-              Please set up your content and NFT collection config to decide which audience can view.
+              Please set up your content and NFT collection config to decide
+              which audience can view.
             </p>
             {!isConfigureAll ? (
               <div className='flex items-center justify-around mt-5'>
@@ -722,6 +807,8 @@ export default function AddNewContent({
                     linkDetails={linkDetails}
                     setShowUploadByLinkModal={setShowUploadByLinkModal}
                     handleClose={handleClose}
+                    fileError={fileError}
+                    isEdit={isEdit}
                   />
                 )}
                 {activeStep === 2 && (
@@ -735,6 +822,7 @@ export default function AddNewContent({
                     handleConfigValue={handleConfigValue}
                     setShowAddCollection={setShowAddCollection}
                     deleteConfiguration={deleteConfiguration}
+                    validationError={validationError}
                   />
                 )}
                 {activeStep === 3 && (
