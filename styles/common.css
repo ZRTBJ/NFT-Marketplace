@@ -557,3 +557,7 @@ body {
 .verticalList span {
   color: #c7cee6 !important;
 }
+video::-webkit-media-controls-panel {
+  display: flex !important;
+  opacity: 1 !important;
+}

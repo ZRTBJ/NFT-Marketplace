@@ -10,6 +10,8 @@ const SettingContent = ({
   linkDetails,
   handleClose,
   setShowUploadByLinkModal,
+  fileError,
+  isEdit,
 }) => {
   let mediaType = linkDetails?.link
     ? linkDetails.type
@@ -30,7 +32,9 @@ const SettingContent = ({
             linkDetails?.link
               ? () => {
                   setShowUploadByLinkModal(true);
-                  handleClose();
+                  if (!isEdit) {
+                    handleClose();
+                  }
                 }
               : null
           }
@@ -73,12 +77,7 @@ const SettingContent = ({
                 ) : null}
                 {mediaType === 'application' || mediaType === 'other' ? (
                   <div className='h-40 w-40 rounded bg-white-filled-form text-center overflow-hidden px-2 pb-2'>
-                    <i className='text-[30px] fa-solid fa-file mt-10'></i>
-                    <p className='text-[14px] mt-1'>
-                      {content?.media?.file?.name
-                        ? content?.media?.file?.name
-                        : mediaPath}
-                    </p>
+                    <i className='text-[30px] fa-solid fa-file mt-12'></i>
                   </div>
                 ) : null}
               </>
@@ -122,6 +121,11 @@ const SettingContent = ({
       <>
         {isSubmitted && !content?.media?.file && !linkDetails?.link && (
           <p className='text-red-500 text-xs font-medium'>Media is required</p>
+        )}
+        {fileError && (
+          <p className='text-red-500 text-xs font-medium mt-2'>
+            Please select a vaild file.
+          </p>
         )}
       </>
       <div className='mt-6'>

@@ -50,12 +50,14 @@ const TokenGatedContentDetailContainer = ({ query }) => {
       .catch((er) => {
         console.log(er);
         setShowOverLayLoading(false);
+        setShowError(true);
       });
   };
 
   const getContentDetail = () => {
     getTokenGatedContentDetail(query?.id)
       .then(async (resp) => {
+        setShowOverLayLoading(false);
         if (resp.code === 0) {
           if (resp?.token_gate_content?.consumable_data) {
             setShowError(false);
@@ -72,6 +74,7 @@ const TokenGatedContentDetailContainer = ({ query }) => {
       })
       .catch((err) => {
         console.log(err);
+        setShowError(true);
         setShowOverLayLoading(false);
       });
   };
@@ -89,6 +92,7 @@ const TokenGatedContentDetailContainer = ({ query }) => {
   const handleBack = () => {
     router.back();
   };
+
   return (
     <>
       {showOverLayLoading && <div className='loading'></div>}
@@ -211,7 +215,7 @@ const TokenGatedContentDetailContainer = ({ query }) => {
                         ) : null}
 
                         <video
-                          className='w-full h-[100vh] object-cover'
+                          className='w-full h-[100vh] object-contain md:object-cover'
                           controls={!showPlay}
                           ref={videoRef}
                         >
@@ -267,7 +271,7 @@ const TokenGatedContentDetailContainer = ({ query }) => {
                       <>
                         {data?.file_type === 'audio' ? (
                           <div className='h-[calc(100vh-200px)] flex items-center'>
-                            <div className='w-full'>
+                            <div className='w-full z-0'>
                               <Waveform url={asset} id={data?.data} />
                             </div>
                           </div>

@@ -14,6 +14,7 @@ import DropdownCreabo from 'components/Commons/Dropdown';
 import CreatorProjectInfoCard from 'components/TokenGated/ProjectInfoCard/Creator';
 import ContentListTable from 'components/TokenGated/ContentListTable';
 import { isValidURL } from 'util/functions';
+import ReactTooltip from 'react-tooltip';
 
 const sortingOptions = [
   { id: 1, value: '', name: 'Sort By' },
@@ -171,15 +172,44 @@ export default function TokenGatedContent({ query, createMode }) {
           />
           <div className='flex flex-wrap gap-4 items-start my-4 md:my-[50px]'>
             <div className='flex flex-wrap gap-4 items-start md:flex-1'>
+              <ReactTooltip place='top' type='info' effect='solid' />
               <button
-                onClick={() => onAddNewContentClick()}
+                onClick={
+                  contentList?.contents?.length >= 3
+                    ? null
+                    : () => onAddNewContentClick()
+                }
+                data-tip={
+                  contentList?.contents?.length >= 3
+                    ? 'You have reached your limit for creating new content'
+                    : ''
+                }
+                style={
+                  contentList?.contents?.length >= 3
+                    ? { filter: 'grayscale(60%)' }
+                    : null
+                }
                 className='py-2 px-4 border   bg-primary-900/[0.10] text-primary-900 font-bold rounded'
               >
                 <i className='fa-solid fa-square-plus mr-2'></i>
                 Add New Content
               </button>
               <button
-                onClick={() => onUploadByLinkClick()}
+                onClick={
+                  contentList?.contents?.length >= 3
+                    ? null
+                    : () => onUploadByLinkClick()
+                }
+                style={
+                  contentList?.contents?.length >= 3
+                    ? { filter: 'grayscale(60%)' }
+                    : null
+                }
+                data-tip={
+                  contentList?.contents?.length >= 3
+                    ? 'You have reached your limit for creating new content'
+                    : ''
+                }
                 className='py-2 px-4 border  border-primary-900 text-primary-900 font-bold rounded'
               >
                 <i className='fa-solid fa-upload mr-2'></i>
@@ -206,6 +236,7 @@ export default function TokenGatedContent({ query, createMode }) {
             tokenProjectId={query?.id}
             setLinkDetails={setLinkDetails}
             linkDetails={linkDetails}
+            setShowUploadByLinkModal={setShowUploadByLinkModal}
           ></ContentListTable>
         </div>
       )}
