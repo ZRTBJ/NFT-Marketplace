@@ -233,7 +233,6 @@ const IntegrateNewCollection = ({
               Content viewer must own your collection's NFT in order to access
               to your content. Set your own smart contract here
             </p>
-
             <input
               id='smartContract'
               name='smartContract'
@@ -305,7 +304,6 @@ const IntegrateNewCollection = ({
                   Create New
                 </Link>
               </p>
-
               {typeof window !== 'undefined' && (
                 <div className='mb-2'>
                   <Select
