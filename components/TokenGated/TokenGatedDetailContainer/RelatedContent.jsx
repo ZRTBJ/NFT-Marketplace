@@ -1,5 +1,6 @@
 import Right from 'assets/images/arr-right.svg';
 import Image from 'next/image';
+import { useState } from 'react';
 import AllTab from '../public/components/Tab/AllTab';
 
 const RelatedContent = ({ projectId }) => {
@@ -19,7 +20,17 @@ const RelatedContent = ({ projectId }) => {
       </div>
 
       <div className='offcanvas-body flex-grow p-4 overflow-y-auto'>
-        <p className='text-[24px] font-bold text-white mt-4'>For you</p>
+        <div className='flex items-center justify-between'>
+          <p className='text-[24px] font-bold text-white mt-4 mb-4'>For you</p>
+          <button
+            className='text-white md:hidden'
+            id='offcanvasRightLabel'
+            data-bs-dismiss='offcanvas'
+          >
+            <i className='fa-regular fa-xmark text-[20px]'></i>
+          </button>
+        </div>
+
         <AllTab project={{ id: projectId }} verticalList={true} />
       </div>
     </div>

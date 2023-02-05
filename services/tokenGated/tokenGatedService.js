@@ -120,7 +120,7 @@ export async function reportTokenContent(payload) {
 }
 
 export async function deleteTokenGatedProject(id) {
-  return await client('DELETE', `/tkg-content/${id}`);
+  return await client('DELETE', `/tokengate/${id}`);
 }
 export async function getUserVerification(contentId) {
   return await fetch(
