@@ -180,3 +180,10 @@ export async function getCollectionDetailFromContract(id, chainId) {
   let url = NETWORKS?.[chainId]?.alchamey;
   return await axios.get(`${url}?contractAddress=${id}`);
 }
+
+export async function getCollectionByContractAddress(id) {
+  return await client(
+    'GET',
+    `/collection?page=1&limit=10&col_contract_address=${id}`
+  );
+}

@@ -3,6 +3,7 @@ import {
   getTokenGatedContentDetail,
   getUserAuthorization,
 } from 'services/tokenGated/tokenGatedService';
+import { getCollectionByContractAddress } from 'services/collection/collectionService';
 import { ls_GetUserToken } from 'util/ApplicationStorage';
 import LeftArrow from 'assets/images/arrow-left.svg';
 import Image from 'next/image';
@@ -31,6 +32,7 @@ const TokenGatedContentDetailContainer = ({ query }) => {
     data?.is_scam_reported
   );
   const [showOverLayLoading, setShowOverLayLoading] = useState(true);
+  const [collectionId, setCollectionId] = useState('');
   useEffect(() => {
     if (query?.id) {
       getContentDetail();
@@ -54,11 +56,27 @@ const TokenGatedContentDetailContainer = ({ query }) => {
       });
   };
 
+  const getCollectionDetails = (conAddress) => {
+    getCollectionByContractAddress(conAddress).then((resp) => {
+      console.log(resp);
+      if (resp.code === 0) {
+        let id = resp.data?.[0]?.id;
+        setCollectionId(id);
+      }
+    });
+  };
+
   const getContentDetail = () => {
     getTokenGatedContentDetail(query?.id)
       .then(async (resp) => {
         setShowOverLayLoading(false);
         if (resp.code === 0) {
+          console.log(resp);
+          let conAddress =
+            resp?.token_gate_content?.token_gate_configs?.[0]?.collection_ct;
+          if (conAddress) {
+            getCollectionDetails(conAddress);
+          }
           if (resp?.token_gate_content?.consumable_data) {
             setShowError(false);
             let assetUrl = `${
@@ -144,7 +162,7 @@ const TokenGatedContentDetailContainer = ({ query }) => {
                       <h3 className='font-[28px] mt-4 w-3/4'>
                         YOUR TOKEN ID DIDNT MATCH WITH THIS SPECIFIC CONTENT
                       </h3>
-                      <Link href='/list?type=collection&user=true'>
+                      <Link href={`/collection/${collectionId}`}>
                         <button className='btn bg-white text-black rounded-[4px] p-2 mt-5'>
                           Go to Collection
                         </button>
@@ -196,7 +214,7 @@ const TokenGatedContentDetailContainer = ({ query }) => {
                           <h3 className='font-[28px] mt-4 w-3/4'>
                             YOUR TOKEN ID DIDNT MATCH WITH THIS SPECIFIC CONTENT
                           </h3>
-                          <Link href='/list?type=collection&user=true'>
+                          <Link href={`/collection/${collectionId}`}>
                             <button className='btn bg-white text-black rounded-[4px] p-2 mt-5'>
                               Go to Collection
                             </button>
@@ -260,7 +278,7 @@ const TokenGatedContentDetailContainer = ({ query }) => {
                           <h3 className='font-[28px] mt-4 w-3/4'>
                             YOUR TOKEN ID DIDNT MATCH WITH THIS SPECIFIC CONTENT
                           </h3>
-                          <Link href='/list?type=collection&user=true'>
+                          <Link href={`/collection/${collectionId}`}>
                             <button className='btn bg-white text-black rounded-[4px] p-2 mt-5'>
                               Go to Collection
                             </button>
