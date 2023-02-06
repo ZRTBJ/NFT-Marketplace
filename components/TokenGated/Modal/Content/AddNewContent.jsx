@@ -75,7 +75,7 @@ export default function AddNewContent({
       ? state?.notifications?.notificationData
       : []
   );
-  const [publishNow, setPublishNow] = useState(false);
+  var [publishNow, setPublishNow] = useState(false);
   const [addressError, setAddressError] = useState(false);
   const [blockchain, setBlockchain] = useState('');
   const [currentContent, setCurrentContent] = useState('');
@@ -108,7 +108,8 @@ export default function AddNewContent({
         }
       });
   }, [configurations]);
-  console.log(configurations);
+
+  
   useEffect(() => {
     if (isConfigureAll) {
       setActiveStep(2);
@@ -395,13 +396,14 @@ export default function AddNewContent({
     setSmartContractAddress(e.target.value);
   };
 
-  const handleCreateContent = (asset_id) => {
+  const handleCreateContent = async (asset_id) => {
     let payload = {
       title: content?.title,
       project_id: tokenProjectId,
     };
+    setIsLoading(true);
     if (content?.title) {
-      createTokenGatedContent(payload)
+      await createTokenGatedContent(payload)
         .then((resp) => {
           if (resp.code === 0) {
             let tokenId = resp?.token_gate_content?.id;
@@ -424,6 +426,7 @@ export default function AddNewContent({
   };
 
   const handleUpdateContent = (id, asset_id, isDraft = false) => {
+    console.log(publishNow);
     let config = configurations.map((item) => {
       return {
         col_contract_address: item?.collectionAddress,
@@ -467,7 +470,7 @@ export default function AddNewContent({
     updateTokenGatedContent(id, payload)
       .then((resp) => {
         if (resp.code === 0) {
-          if (publishNow) {
+          if (publishNow || isPublishing) {
             const data = {
               is_publish: true,
             };
@@ -553,19 +556,27 @@ export default function AddNewContent({
       });
   }
 
-  const handlePublish = () => {
+  const setPublishing = async () => {
     setIsPublishing(true);
     setPublishNow(true);
+  };
+
+  const handleStates = async () => {
     if (isEdit) {
       let id = contents?.[0]?.id;
       handleUpdateContent(id);
     } else {
       if (linkDetails?.link) {
-        handleCreateContent();
+        handleCreateContent('');
       } else {
         uploadAFile();
       }
     }
+  };
+
+  const handlePublish = async () => {
+    await setPublishing();
+    await handleStates();
   };
 
   const handleDraft = () => {
