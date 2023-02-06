@@ -395,6 +395,7 @@ export default function ContentListTable({
           show={showConfigContentModal}
           handleClose={() => {
             setShowConfigContentModal(false);
+            setLinkDetails({ link: '', type: 'image' });
           }}
           tokenProjectId={tokenProjectId}
           onContentAdded={onContentPublished}

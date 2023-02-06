@@ -95,12 +95,14 @@ const Configuration = ({
                       >
                         Configuration {item.id}
                       </button>
-                      <Image
-                        src={Trash}
-                        alt='Delete'
-                        className='mr-2 cursor-pointer'
-                        onClick={() => deleteConfiguration(item.id)}
-                      />
+                      {!reviewScreen ? (
+                        <Image
+                          src={Trash}
+                          alt='Delete'
+                          className='mr-2 cursor-pointer'
+                          onClick={() => deleteConfiguration(item.id)}
+                        />
+                      ) : null}
                     </div>
                   </h2>
                   <div
