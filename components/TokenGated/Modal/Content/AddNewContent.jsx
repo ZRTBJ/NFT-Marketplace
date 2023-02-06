@@ -109,6 +109,7 @@ export default function AddNewContent({
       });
   }, [configurations]);
 
+  
   useEffect(() => {
     if (isConfigureAll) {
       setActiveStep(2);
