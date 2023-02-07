@@ -39,6 +39,15 @@ const TokenGatedContentDetailContainer = ({ query }) => {
   useEffect(() => {
     if (query?.id) {
       getContentDetail();
+
+      return () => {
+        setData(null);
+        setShowError(false);
+        setAsset(null);
+        setCollectionId('');
+        setShowErrorModal(false);
+        setErrorMessage('');
+      };
     }
   }, [query?.id]);
 

@@ -394,10 +394,14 @@ export default function AddNewContent({
 
   const handleSettings = (id, value) => {
     let items = configurations.map((item) => {
+      console.log(item);
       if (item.id === id) {
         return {
-          ...item,
           settings: value,
+          blockchain: item.blockchain,
+          id: item.id,
+          collectionAddress: item.collectionAddress,
+          name: item.name,
         };
       }
       return item;
