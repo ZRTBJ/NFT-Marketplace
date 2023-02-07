@@ -15,6 +15,9 @@ import FileDragAndDrop from 'components/FormUtility/FileDragAndDrop';
 import Image from 'next/image';
 import deleteIcon from 'assets/images/projectCreate/ico_delete01.svg';
 import ConfirmationModal from 'components/Modals/ConfirmationModal';
+import { event } from "nextjs-google-analytics";
+
+
 export default function Setting({
   show,
   handleClose,
@@ -109,6 +112,7 @@ export default function Setting({
 
     // create and then  update
     if (createMode) {
+      event("create_token_gate_project", { category: "token_gate"});
       let projectId = '';
       await createTokenGatedProject(data['title'])
         .then((res) => {
@@ -130,6 +134,7 @@ export default function Setting({
           setErrorMessage(err);
         });
       if (projectId !== '') {
+        event("update_token_gate_project", { category: "token_gate"});
         payload.id = projectId;
         await updateTokenGatedProject(payload)
           .then((res) => {
@@ -192,6 +197,7 @@ export default function Setting({
     setStep(1);
   };
   const onDeleteTokenGatedProject = async () => {
+    event("delete_token_gate_project", { category: "token_gate"});
     setShowOverlayLoading(true);
     await deleteTokenGatedProject(project?.id).then((res) => {
       setShowOverlayLoading(false);

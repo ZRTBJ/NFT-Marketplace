@@ -10,6 +10,7 @@ import { createProvider } from 'util/smartcontract/provider';
 import { createInstance } from 'config/ABI/genericProxyFactory';
 import { createCollection } from './deploy-collection';
 import Image from 'next/image';
+import { event } from "nextjs-google-analytics";
 
 const DeployingCollectiontModal = ({
   handleClose,
@@ -44,6 +45,7 @@ const DeployingCollectiontModal = ({
   }, []);
 
   function publishThisCollection(data) {
+    event("publish_collection", { category: "collection" });
     setIsLoading(true);
     let payload = new FormData();
     if (data) {

@@ -5,6 +5,8 @@ import ConfirmationModal from 'components/Modals/ConfirmationModal';
 import SuccessModal from 'components/Modals/SuccessModal';
 import ErrorModal from 'components/Modals/ErrorModal';
 import { useState } from 'react';
+import { event } from "nextjs-google-analytics";
+
 export default function PublishContentModal({
   show,
   handleClose,
@@ -20,6 +22,7 @@ export default function PublishContentModal({
   const [errorMessage, setErrorMessage] = useState('');
 
   const publish = async (content) => {
+    event("publish_tokengate_content", { category: "token_gate"});
     const data = {
       is_publish: checkUsedFor === 'publish' ? true : false,
     };

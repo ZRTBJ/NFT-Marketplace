@@ -52,6 +52,9 @@ import {
   getTokenGatedProjectList,
 } from 'services/tokenGated/tokenGatedService';
 import TokenGatedProjectCard from 'components/Cards/TokenGatedProjectCard';
+import { event } from "nextjs-google-analytics";
+
+
 const Profile = ({ id }) => {
   const dispatch = useDispatch();
   const provider = createProvider();
@@ -405,6 +408,7 @@ const Profile = ({ id }) => {
     setRoyaltiesList(royaltyList);
   }
   const onCreateTokenGatedProject = async () => {
+    event("create_token_gate_project", { category: "token_gate"});
     setShowOverlayLoading(true);
     let title = `Unnamed Project ${new Date().toISOString()}`;
     await createTokenGatedProject(title)

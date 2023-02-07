@@ -44,6 +44,8 @@ import { cryptoConvert } from 'services/chainlinkService';
 import tickIcon from 'assets/images/tick.svg';
 import { getCollectionDetailsById } from 'services/collection/collectionService';
 import Image from 'next/image';
+import { event } from "nextjs-google-analytics";
+
 
 const currency = {
   eth: Eth,
@@ -174,13 +176,14 @@ export default function DetailsNFT({ type, id }) {
   }
 
   async function handleProceedPayment(response) {
+    event("mint_nft", { category: "nft", label:"type", value: nft?.lnft?.nft_type});
     setTransactionModal(false);
     setTransactionWaitingModal(true);
     let formData = new FormData();
 
     response.hash && formData.append('transaction_hash', response.hash);
     response.blockNumber &&
-      formData.append('block_number', response.blockNumber);
+    formData.append('block_number', response.blockNumber);
     const payload = {
       id: nft?.lnft?.id,
       data: formData,

@@ -23,6 +23,7 @@ import Config from 'config/config';
 import SuccessModal from 'components/Modals/SuccessModal';
 import ErrorModal from 'components/Modals/ErrorModal';
 import { ls_GetUserToken } from 'util/ApplicationStorage';
+import { event } from "nextjs-google-analytics";
 
 const STEPS = [
   { id: 1, label: 'Content' },
@@ -397,6 +398,7 @@ export default function AddNewContent({
   };
 
   async function handleCreateContent(asset_id) {
+    event("create_tokengate_content", { category: "token_gate"});
     let payload = {
       title: content?.title,
       project_id: tokenProjectId,
@@ -425,6 +427,7 @@ export default function AddNewContent({
   }
 
   const handleUpdateContent = (id, asset_id, isDraft = false) => {
+    event("update_tokengate_content", { category: "token_gate"});
     let config = configurations.map((item) => {
       return {
         col_contract_address: item?.collectionAddress,
@@ -469,6 +472,7 @@ export default function AddNewContent({
       .then((resp) => {
         if (resp.code === 0) {
           if (publishNow || isPublishing) {
+            event("publish_tokengate_content", { category: "token_gate"});
             const data = {
               is_publish: true,
             };
