@@ -257,7 +257,10 @@ export default function TokenGatedContent({ query, createMode }) {
       {showUploadByLinkModal && (
         <UploadByLinkModal
           show={showUploadByLinkModal}
-          handleClose={() => setShowUploadByLinkModal(false)}
+          handleClose={() => {
+            setLinkDetails({ link: '', type: 'image' });
+            setShowUploadByLinkModal(false);
+          }}
           handleLinkDetails={handleLinkDetails}
           linkDetails={linkDetails}
           handleAddLink={handleAddLink}

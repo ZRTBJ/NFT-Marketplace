@@ -76,7 +76,7 @@ export default function AddNewContent({
       ? state?.notifications?.notificationData
       : []
   );
-  var [publishNow, setPublishNow] = useState(false);
+  const [publishNow, setPublishNow] = useState(false);
   const [addressError, setAddressError] = useState(false);
   const [blockchain, setBlockchain] = useState('');
   const [currentContent, setCurrentContent] = useState('');
@@ -110,7 +110,6 @@ export default function AddNewContent({
       });
   }, [configurations]);
 
-  
   useEffect(() => {
     if (isConfigureAll) {
       setActiveStep(2);
@@ -351,8 +350,9 @@ export default function AddNewContent({
           const uniqCollectionList = uniqBy(mergedCollectionList, function (e) {
             return e.id;
           });
+
           let filtered = uniqCollectionList.filter(
-            (list) => list.status === 'published'
+            (list) => list.status === 'published' && list.blockchain !== '97'
           );
           setOptions(filtered);
           setIsCollectionLoading(false);
@@ -397,13 +397,12 @@ export default function AddNewContent({
     setSmartContractAddress(e.target.value);
   };
 
-  const handleCreateContent = async (asset_id) => {
+  async function handleCreateContent(asset_id) {
     event("create_tokengate_content", { category: "token_gate"});
     let payload = {
       title: content?.title,
       project_id: tokenProjectId,
     };
-    setIsLoading(true);
     if (content?.title) {
       await createTokenGatedContent(payload)
         .then((resp) => {
@@ -425,11 +424,10 @@ export default function AddNewContent({
           setCurrentContent('');
         });
     }
-  };
+  }
 
   const handleUpdateContent = (id, asset_id, isDraft = false) => {
     event("update_tokengate_content", { category: "token_gate"});
-    console.log(publishNow);
     let config = configurations.map((item) => {
       return {
         col_contract_address: item?.collectionAddress,
@@ -465,7 +463,7 @@ export default function AddNewContent({
       file_type: type ? type : linkDetails?.link ? linkType : finalType,
       ...((config.some((item) => item.col_contract_address) ||
         content?.accessToAll) && {
-        configs: content?.accessToAll ? [] : JSON.stringify(config),
+        configs: content?.accessToAll ? null : JSON.stringify(config),
       }),
       ...(isDraft && { status: 'draft' }),
     };
@@ -528,7 +526,6 @@ export default function AddNewContent({
       'Access-Control-Allow-Origin': '*',
       Authorization: `Bearer ${token}`,
     };
-    setIsLoading(true);
     let formdata = new FormData();
     formdata.append('file', content?.media?.file);
     await axios({
@@ -566,6 +563,7 @@ export default function AddNewContent({
   };
 
   const handleStates = async () => {
+    setIsLoading(true);
     if (isEdit) {
       let id = contents?.[0]?.id;
       handleUpdateContent(id);
@@ -578,12 +576,13 @@ export default function AddNewContent({
     }
   };
 
-  const handlePublish = async () => {
+  async function handlePublish() {
     await setPublishing();
     await handleStates();
-  };
+  }
 
   const handleDraft = () => {
+    setIsLoading(true);
     if (!validationError) {
       if (isEdit) {
         let id = contents?.[0]?.id;
@@ -611,7 +610,7 @@ export default function AddNewContent({
       };
     });
 
-    let configs = content?.accessToAll ? [] : JSON.stringify(config);
+    let configs = content?.accessToAll ? null : JSON.stringify(config);
 
     allContents?.map((item, id) =>
       configMultiContent(item.id, configs)
@@ -796,7 +795,7 @@ export default function AddNewContent({
                   <span
                     key={step.id}
                     onClick={() => {
-                      if (handledSteps.includes(step.id)) {
+                      if (handledSteps.includes(step.id) || isEdit) {
                         setActiveStep(step.id);
                       }
                     }}
