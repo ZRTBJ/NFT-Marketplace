@@ -10,12 +10,18 @@ const ErrorModal = ({
   message,
   buttomText,
   redirection,
+  showCloseIcon = false,
 }) => {
   const btnText = buttomText ? buttomText : 'CLOSE';
   const titleMsg = title ? title : 'Sorry, something went wrong.';
   const bodyMsg = message ? message : 'Please try again.';
   return (
-    <Modal width={400} show={show} handleClose={() => handleClose(false)}>
+    <Modal
+      width={400}
+      show={show}
+      showCloseIcon={showCloseIcon}
+      handleClose={() => handleClose(false)}
+    >
       <div className='text-center'>
         <Image className='block mx-auto max-h-60	' src={IconError} alt='' />
         <div className='mb-4 text-[16px] font-bold txtblack'>{titleMsg}</div>

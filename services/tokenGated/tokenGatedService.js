@@ -16,7 +16,9 @@ export async function getTokenGatedProject(id) {
 export async function getTokenGatedProjectList(payload) {
   return await client(
     'GET',
-    `/tokengate?page=${payload.page}&limit=${payload.limit}`
+    `/tokengate?page=${payload.page}&limit=${payload.limit}&order_by=${
+      payload?.order_by ? payload?.order_by : ''
+    }&keyword=${payload?.keyword ? payload?.keyword : ''}`
   );
 }
 export async function updateTokenGatedProject(payload) {

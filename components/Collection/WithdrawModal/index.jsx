@@ -28,7 +28,7 @@ const WithdrawModal = ({
   id,
   getCollectionNewWorth,
 }) => {
-  const [dollarValue, setDollarValue] = useState('');
+  const [dollarValue, setDollarValue] = useState();
   const [value, setValue] = useState(0);
   const { walletAddress } = useSelector((state) => state.auth);
   const [error, setError] = useState('');
@@ -206,9 +206,14 @@ const WithdrawModal = ({
                 />
               </div>
               <div className='w-[18%] border-[1px] border-[#C7CEE6] min-h-[42px] rounded-[6px] flex items-center'>
-                <p className='text-[14px] ml-1 overflow-x-auto'>
-                  $ {dollarValue}
-                </p>
+                {dollarValue && (
+                  <p className='text-[14px] ml-1 overflow-x-auto'>
+                    {dollarValue < 0.01 ? '<' : ''} $
+                    {dollarValue.toFixed(2) == 0.0
+                      ? 0.01
+                      : dollarValue.toFixed(2)}
+                  </p>
+                )}
               </div>
             </div>
             {/* <div className='mt-4'>
