@@ -66,7 +66,6 @@ const TESTNET = {
     decirTreasury: address.decirTreasuryBnbTest,
     discount: address.discountBnbTest,
   },
-  
   80001: {
     networkName: 'Polygon Testnet Mumbai',
     cryto: 'MATIC',

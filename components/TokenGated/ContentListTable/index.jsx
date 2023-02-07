@@ -18,6 +18,7 @@ export default function ContentListTable({
   tokenProjectId,
   linkDetails,
   setShowUploadByLinkModal = { setShowUploadByLinkModal },
+  setIsEditContent,
 }) {
   const [project, setProject] = useState(projectInfo);
   const [selectedContents, setSelectedContents] = useState([]);
@@ -53,22 +54,29 @@ export default function ContentListTable({
     if (!Array.isArray(content)) {
       list.push(content);
       setLastSelectedContents(list);
+      setIsEditContent(false);
     } else {
       setLastSelectedContents(content);
+      setIsEditContent(false);
     }
     if (actionName === 'publish') {
       setShowPublishContentModal(true);
       setUsedForPublish(true);
+      setIsEditContent(false);
     }
     if (actionName === 'un-publish') {
       setShowPublishContentModal(true);
       setUsedForPublish(false);
+      setIsEditContent(false);
     } else if (actionName === 'configure') {
+      setIsEditContent(true);
       setShowConfigContentModal(content);
     } else if (actionName === 'delete') {
       setShowDeleteContentModal(true);
+      setIsEditContent(false);
     } else if (actionName === 'configureAll') {
       setShowConfigureAllModal(true);
+      setIsEditContent(false);
     }
   };
   useEffect(() => {

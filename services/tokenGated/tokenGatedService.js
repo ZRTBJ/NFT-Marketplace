@@ -124,8 +124,13 @@ export async function reportTokenContent(payload) {
 export async function deleteTokenGatedProject(id) {
   return await client('DELETE', `/tokengate/${id}`);
 }
+
 export async function getUserVerification(contentId) {
   return await fetch(
     `${ROOT_URL}/tkg-content/${contentId}/data?token=${ls_GetUserToken()}&verify=true`
   );
+}
+
+export async function getAssetDetail(id) {
+  return await client('GET', `/asset?id=${id}`);
 }
