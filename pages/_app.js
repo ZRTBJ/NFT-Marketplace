@@ -21,7 +21,7 @@ import Favicon from 'components/Commons/Favicon';
 import axios from 'axios';
 import Config from 'config/config';
 import Maintenance from 'components/Commons/Maintenance';
-import * as gtag from 'util/gtag';
+import { GoogleAnalytics } from "nextjs-google-analytics";
 
 dynamic(() => import('tw-elements'), { ssr: false });
 
@@ -78,20 +78,9 @@ function MyApp({ Component, pageProps }) {
   }, [router?.asPath]);
 
 
-  useEffect(() => {
-    const handleRouteChange = (url) => {
-      gtag.pageview(url);
-    };
-    router.events.on('routeChangeComplete', handleRouteChange);
-    router.events.on('hashChangeComplete', handleRouteChange);
-    return () => {
-      router.events.off('routeChangeComplete', handleRouteChange);
-      router.events.off('hashChangeComplete', handleRouteChange);
-    };
-  }, [router.events]);
-
   return (
     <>
+      <GoogleAnalytics trackPageViews />
       <Head>
         <Favicon></Favicon>
       </Head>
@@ -104,25 +93,6 @@ function MyApp({ Component, pageProps }) {
         src="https://kit.fontawesome.com/6ebe0998e8.js"
         crossorigin="anonymous"
       ></Script>
-      {/* Global Site Tag (gtag.js) - Google Analytics */}
-      <Script
-        strategy='afterInteractive'
-        src={`https://www.googletagmanager.com/gtag/js?id=${gtag.GA_TRACKING_ID}`}
-      />
-      <Script
-        id='gtag-init'
-        strategy='afterInteractive'
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${gtag.GA_TRACKING_ID}', {
-              page_path: window.location.pathname,
-            });
-          `,
-        }}
-      />
 
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
