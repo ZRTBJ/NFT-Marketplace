@@ -250,11 +250,13 @@ export default function TokenGatedContent({ query, createMode }) {
           handleClose={() => {
             setShowAddNewContentModal(false);
             setLinkDetails({ link: '', type: 'image' });
+            setIsEditContent(false);
           }}
           tokenProjectId={query?.id}
           onContentAdded={() => onGetTokenGatedProject(query?.id)}
           setShowUploadByLinkModal={setShowUploadByLinkModal}
           linkDetails={linkDetails}
+          setIsEditContent={setIsEditContent}
           setLinkDetails={setLinkDetails}
         />
       )}
@@ -262,7 +264,9 @@ export default function TokenGatedContent({ query, createMode }) {
         <UploadByLinkModal
           show={showUploadByLinkModal}
           handleClose={() => {
-            setLinkDetails({ link: '', type: 'image' });
+            if (!isEditContent) {
+              setLinkDetails({ link: '', type: 'image' });
+            }
             setShowUploadByLinkModal(false);
           }}
           handleLinkDetails={handleLinkDetails}

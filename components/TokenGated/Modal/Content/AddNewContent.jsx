@@ -43,6 +43,7 @@ export default function AddNewContent({
   isConfigureAll,
   allContents,
   setLinkDetails,
+  setIsEditContent,
 }) {
   const [activeStep, setActiveStep] = useState(1);
   const [content, setContent] = useState({
@@ -377,7 +378,10 @@ export default function AddNewContent({
           });
 
           let filtered = uniqCollectionList.filter(
-            (list) => list.status === 'published' && list.blockchain !== '97'
+            (list) =>
+              list.status === 'published' &&
+              list.blockchain !== '97' &&
+              list.blockchain !== '56'
           );
           setOptions(filtered);
           setIsCollectionLoading(false);
@@ -394,7 +398,6 @@ export default function AddNewContent({
 
   const handleSettings = (id, value) => {
     let items = configurations.map((item) => {
-      console.log(item);
       if (item.id === id) {
         return {
           settings: value,
@@ -509,8 +512,8 @@ export default function AddNewContent({
         ? finalType
         : linkDetails?.link
         ? linkType
-        : data
-        ? data
+        : type
+        ? type
         : finalType,
       ...((config.some((item) => item.col_contract_address) ||
         content?.accessToAll) && {
@@ -536,6 +539,7 @@ export default function AddNewContent({
                   setShowSuccess(true);
                   setPublishNow(false);
                   setIsLoading(false);
+                  setIsEditContent(false);
                 } else {
                   setShowSuccess(false);
                   setPublishNow(false);
@@ -543,6 +547,7 @@ export default function AddNewContent({
                   setShowError(true);
                   setCurrentContent('');
                   setUploadFileTrue(false);
+                  setIsEditContent(false);
                 }
               })
               .catch((err) => {
@@ -555,12 +560,14 @@ export default function AddNewContent({
                 setPublishNow(false);
                 setCurrentContent('');
                 setUploadFileTrue(false);
+                setIsEditContent(false);
               });
           } else {
             if (setTimer) {
               clearInterval(setTimer);
             }
             setShowSuccess(true);
+            setIsEditContent(false);
             setIsLoading(false);
           }
         } else {
@@ -573,6 +580,7 @@ export default function AddNewContent({
           setCurrentContent('');
           setPublishNow(false);
           setUploadFileTrue(false);
+          setIsEditContent(false);
         }
       })
       .catch((err) => {
@@ -584,6 +592,7 @@ export default function AddNewContent({
         setPublishNow(false);
         setCurrentContent('');
         setUploadFileTrue(false);
+        setIsEditContent(false);
       });
   };
 

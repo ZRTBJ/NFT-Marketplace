@@ -109,7 +109,9 @@ const IntegrateNewCollection = ({
     collectionDetail.assets.find((img) => img['asset_purpose'] === 'logo');
 
   let validNetworks = NETWORKS
-    ? Object.values(NETWORKS).filter((net) => net.network !== 97)
+    ? Object.values(NETWORKS).filter(
+        (net) => net.network !== 97 && net.network !== 56
+      )
     : [];
 
   return (

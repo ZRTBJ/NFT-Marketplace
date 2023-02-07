@@ -403,6 +403,7 @@ export default function ContentListTable({
           show={showConfigContentModal}
           handleClose={() => {
             setShowConfigContentModal(false);
+            setIsEditContent(false);
             setLinkDetails({ link: '', type: 'image' });
           }}
           tokenProjectId={tokenProjectId}
