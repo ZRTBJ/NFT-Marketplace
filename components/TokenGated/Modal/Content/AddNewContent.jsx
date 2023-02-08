@@ -16,6 +16,7 @@ import {
   publishTokenGatedContent,
   configMultiContent,
   getTokenGatedContentDetail,
+  getAssetDetail,
 } from 'services/tokenGated/tokenGatedService';
 import { getNotificationData } from 'redux/notification';
 import axios from 'axios';
@@ -23,6 +24,7 @@ import Config from 'config/config';
 import SuccessModal from 'components/Modals/SuccessModal';
 import ErrorModal from 'components/Modals/ErrorModal';
 import { ls_GetUserToken } from 'util/ApplicationStorage';
+import { event } from 'nextjs-google-analytics';
 
 const STEPS = [
   { id: 1, label: 'Content' },
@@ -41,6 +43,7 @@ export default function AddNewContent({
   isConfigureAll,
   allContents,
   setLinkDetails,
+  setIsEditContent,
 }) {
   const [activeStep, setActiveStep] = useState(1);
   const [content, setContent] = useState({
@@ -75,7 +78,7 @@ export default function AddNewContent({
       ? state?.notifications?.notificationData
       : []
   );
-  var [publishNow, setPublishNow] = useState(false);
+  const [publishNow, setPublishNow] = useState(false);
   const [addressError, setAddressError] = useState(false);
   const [blockchain, setBlockchain] = useState('');
   const [currentContent, setCurrentContent] = useState('');
@@ -90,6 +93,8 @@ export default function AddNewContent({
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [uploadError, setUploadError] = useState(false);
   const [validationError, setValidationError] = useState(false);
+  const [setTimer, setSetTimer] = useState();
+  const [uploadFileTrue, setUploadFileTrue] = useState(false);
   const userinfo = useSelector((state) => state.user.userinfo);
 
   const dispatch = useDispatch();
@@ -109,7 +114,6 @@ export default function AddNewContent({
       });
   }, [configurations]);
 
-  
   useEffect(() => {
     if (isConfigureAll) {
       setActiveStep(2);
@@ -157,7 +161,12 @@ export default function AddNewContent({
     if (projectDeployStatus && projectDeployStatus.data) {
       const data = JSON.parse(projectDeployStatus.data);
       if (data.Data['asset_uid'] && data.Data['asset_uid'].length > 0) {
-        handleCreateContent(data.Data['asset_uid']);
+        if (isEdit) {
+          let id = contents?.[0]?.id;
+          handleUpdateContent(id, data.Data['asset_uid']);
+        } else {
+          handleCreateContent(data.Data['asset_uid']);
+        }
       } else {
         setIsLoading(false);
         setShowError(true);
@@ -165,11 +174,23 @@ export default function AddNewContent({
     }
   }, [fileUploadNotification, jobId]);
 
+  const getAssetStatus = (id) => {
+    getAssetDetail(id).then((resp) => {
+      if (resp?.asset?.id) {
+        if (isEdit) {
+          let id = contents?.[0]?.id;
+          handleUpdateContent(id, resp?.asset?.id);
+        } else {
+          handleCreateContent(resp?.asset?.id);
+        }
+      }
+    });
+  };
+
   const getContentDetail = (contentId) => {
     getTokenGatedContentDetail(contentId)
       .then((resp) => {
         if (resp.code === 0) {
-          console.log(resp);
           if (resp?.token_gate_content?.token_gate_configs?.length) {
             let tokenConfigs = resp?.token_gate_content?.token_gate_configs;
             let finalData = tokenConfigs.map((item, id) => {
@@ -220,6 +241,7 @@ export default function AddNewContent({
             setErrorTitle('Maximum file size limit exceeded');
             setErrorMessage(`You can add your assets up to 100MB.`);
             setShowErrorModal(true);
+            setUploadFileTrue(false);
             event.currentTarget.value = '';
           } else if (totalSize > 1024) {
             setErrorTitle('Maximum file size limit exceeded');
@@ -230,12 +252,14 @@ export default function AddNewContent({
               ).toFixed(2)} MB storage`
             );
             setShowErrorModal(true);
+            setUploadFileTrue(false);
             event.currentTarget.value = '';
           } else {
             setContent({
               ...content,
               media: { file, path: URL.createObjectURL(file) },
             });
+            setUploadFileTrue(true);
             setFileError(false);
           }
         }
@@ -244,10 +268,12 @@ export default function AddNewContent({
           ...content,
           media: { file, path: URL.createObjectURL(file) },
         });
+        setUploadFileTrue(true);
         setFileError(false);
       }
     } catch (err) {
       setFileError(false);
+      setUploadFileTrue(false);
     }
   };
 
@@ -350,8 +376,12 @@ export default function AddNewContent({
           const uniqCollectionList = uniqBy(mergedCollectionList, function (e) {
             return e.id;
           });
+
           let filtered = uniqCollectionList.filter(
-            (list) => list.status === 'published'
+            (list) =>
+              list.status === 'published' &&
+              list.blockchain !== '97' &&
+              list.blockchain !== '56'
           );
           setOptions(filtered);
           setIsCollectionLoading(false);
@@ -370,8 +400,11 @@ export default function AddNewContent({
     let items = configurations.map((item) => {
       if (item.id === id) {
         return {
-          ...item,
           settings: value,
+          blockchain: item.blockchain,
+          id: item.id,
+          collectionAddress: item.collectionAddress,
+          name: item.name,
         };
       }
       return item;
@@ -396,47 +429,57 @@ export default function AddNewContent({
     setSmartContractAddress(e.target.value);
   };
 
-  const handleCreateContent = async (asset_id) => {
+  async function handleCreateContent(asset_id, isPublish) {
+    event('create_tokengate_content', { category: 'token_gate' });
     let payload = {
       title: content?.title,
       project_id: tokenProjectId,
     };
-    setIsLoading(true);
     if (content?.title) {
       await createTokenGatedContent(payload)
         .then((resp) => {
+          if (setTimer) {
+            clearInterval(setTimer);
+          }
           if (resp.code === 0) {
             let tokenId = resp?.token_gate_content?.id;
-            handleUpdateContent(tokenId, asset_id);
+            handleUpdateContent(tokenId, asset_id, false, isPublish);
             setCurrentContent(tokenId);
           } else {
             setIsLoading(false);
             setShowError(true);
             setPublishNow(false);
             setCurrentContent('');
+            setUploadFileTrue(false);
           }
         })
         .catch((err) => {
+          if (setTimer) {
+            clearInterval(setTimer);
+          }
           setIsLoading(false);
           setPublishNow(false);
           setShowError(true);
           setCurrentContent('');
+          setUploadFileTrue(false);
         });
     }
-  };
+  }
 
-  const handleUpdateContent = (id, asset_id, isDraft = false) => {
-    console.log(publishNow);
-    let config = configurations.map((item) => {
-      return {
-        col_contract_address: item?.collectionAddress,
-        blockchain: item?.blockchain,
-        col_name: item?.name,
-        ...(item?.tokenId && { token_id: item?.tokenId }),
-        ...(item?.tokenMin && { token_min: item?.tokenMin }),
-        ...(item?.tokenMax && { token_max: item?.tokenMax }),
-      };
-    });
+  const handleUpdateContent = (id, asset_id, isDraft = false, isPublish) => {
+    event('update_tokengate_content', { category: 'token_gate' });
+    let config = configurations
+      .map((item) => {
+        return {
+          col_contract_address: item?.collectionAddress,
+          blockchain: item?.blockchain,
+          col_name: item?.name,
+          ...(item?.tokenId && { token_id: item?.tokenId }),
+          ...(item?.tokenMin && { token_min: item?.tokenMin }),
+          ...(item?.tokenMax && { token_max: item?.tokenMax }),
+        };
+      })
+      ?.filter((item) => item.col_contract_address);
     let data = contents?.[0]?.data;
     let type = contents?.[0]?.file_type;
 
@@ -457,12 +500,24 @@ export default function AddNewContent({
       title: content?.title,
       description: content?.description,
       sensitive: content?.isExplicit,
-      data: data ? data : linkDetails?.link ? linkDetails.link : asset_id,
+      data: uploadFileTrue
+        ? asset_id
+        : linkDetails?.link
+        ? linkDetails?.link
+        : data
+        ? data
+        : asset_id,
       content_type: linkDetails?.link ? 'url' : 'asset_id',
-      file_type: type ? type : linkDetails?.link ? linkType : finalType,
+      file_type: uploadFileTrue
+        ? finalType
+        : linkDetails?.link
+        ? linkType
+        : type
+        ? type
+        : finalType,
       ...((config.some((item) => item.col_contract_address) ||
         content?.accessToAll) && {
-        configs: content?.accessToAll ? [] : JSON.stringify(config),
+        configs: content?.accessToAll ? null : JSON.stringify(config),
       }),
       ...(isDraft && { status: 'draft' }),
     };
@@ -470,7 +525,11 @@ export default function AddNewContent({
     updateTokenGatedContent(id, payload)
       .then((resp) => {
         if (resp.code === 0) {
-          if (publishNow || isPublishing) {
+          if (setTimer) {
+            clearInterval(setTimer);
+          }
+          if (publishNow || isPublishing || isPublish) {
+            event('publish_tokengate_content', { category: 'token_gate' });
             const data = {
               is_publish: true,
             };
@@ -480,38 +539,60 @@ export default function AddNewContent({
                   setShowSuccess(true);
                   setPublishNow(false);
                   setIsLoading(false);
+                  setIsEditContent(false);
                 } else {
                   setShowSuccess(false);
                   setPublishNow(false);
                   setIsLoading(false);
                   setShowError(true);
                   setCurrentContent('');
+                  setUploadFileTrue(false);
+                  setIsEditContent(false);
                 }
               })
               .catch((err) => {
                 setShowSuccess(false);
                 setIsLoading(false);
+                if (setTimer) {
+                  clearInterval(setTimer);
+                }
                 setShowError(true);
                 setPublishNow(false);
                 setCurrentContent('');
+                setUploadFileTrue(false);
+                setIsEditContent(false);
               });
           } else {
+            if (setTimer) {
+              clearInterval(setTimer);
+            }
             setShowSuccess(true);
+            setIsEditContent(false);
             setIsLoading(false);
           }
         } else {
+          if (setTimer) {
+            clearInterval(setTimer);
+          }
           setShowSuccess(false);
           setIsLoading(false);
           setShowError(true);
           setCurrentContent('');
           setPublishNow(false);
+          setUploadFileTrue(false);
+          setIsEditContent(false);
         }
       })
       .catch((err) => {
+        if (setTimer) {
+          clearInterval(setTimer);
+        }
         setIsLoading(false);
         setShowError(true);
         setPublishNow(false);
         setCurrentContent('');
+        setUploadFileTrue(false);
+        setIsEditContent(false);
       });
   };
 
@@ -524,7 +605,6 @@ export default function AddNewContent({
       'Access-Control-Allow-Origin': '*',
       Authorization: `Bearer ${token}`,
     };
-    setIsLoading(true);
     let formdata = new FormData();
     formdata.append('file', content?.media?.file);
     await axios({
@@ -543,16 +623,24 @@ export default function AddNewContent({
           setUploadError(false);
           setJobId(resp?.job_id);
           dispatch(getNotificationData(notificationData));
+          let interval = setInterval(() => {
+            if (resp?.job_id) {
+              getAssetStatus(resp.job_id);
+            }
+          }, [8000]);
+          setSetTimer(interval);
         } else {
           setShowError(true);
           setUploadError(true);
           setIsLoading(false);
+          setUploadFileTrue(false);
         }
       })
       .catch((err) => {
         setShowError(true);
         setUploadError(true);
         setIsLoading(false);
+        setUploadFileTrue(false);
       });
   }
 
@@ -562,31 +650,41 @@ export default function AddNewContent({
   };
 
   const handleStates = async () => {
+    setIsLoading(true);
     if (isEdit) {
-      let id = contents?.[0]?.id;
-      handleUpdateContent(id);
+      if (uploadFileTrue) {
+        uploadAFile();
+      } else {
+        let id = contents?.[0]?.id;
+        handleUpdateContent(id);
+      }
     } else {
       if (linkDetails?.link) {
-        handleCreateContent('');
+        handleCreateContent('', true);
       } else {
         uploadAFile();
       }
     }
   };
 
-  const handlePublish = async () => {
+  async function handlePublish() {
     await setPublishing();
     await handleStates();
-  };
+  }
 
   const handleDraft = () => {
+    setIsLoading(true);
     if (!validationError) {
       if (isEdit) {
-        let id = contents?.[0]?.id;
-        handleUpdateContent(id, null, true);
+        if (uploadFileTrue) {
+          uploadAFile();
+        } else {
+          let id = contents?.[0]?.id;
+          handleUpdateContent(id);
+        }
       } else {
         if (linkDetails?.link) {
-          handleCreateContent();
+          handleCreateContent('');
         } else {
           uploadAFile();
         }
@@ -607,11 +705,14 @@ export default function AddNewContent({
       };
     });
 
-    let configs = content?.accessToAll ? [] : JSON.stringify(config);
+    let configs = content?.accessToAll ? null : JSON.stringify(config);
 
     allContents?.map((item, id) =>
       configMultiContent(item.id, configs)
         .then((resp) => {
+          if (setTimer) {
+            clearInterval(setTimer);
+          }
           if (resp.code === 0) {
             if (id === allContents.length - 1) {
               setShowSuccess(true);
@@ -622,15 +723,20 @@ export default function AddNewContent({
             setShowSuccess(false);
             setIsLoading(false);
             setShowError(true);
+            setUploadFileTrue(false);
             setCurrentContent('');
             setPublishNow(false);
           }
         })
         .catch((err) => {
+          if (setTimer) {
+            clearInterval(setTimer);
+          }
           setIsLoading(false);
           setShowError(true);
           setPublishNow(false);
           setCurrentContent('');
+          setUploadFileTrue(false);
         })
     );
   };
@@ -792,7 +898,7 @@ export default function AddNewContent({
                   <span
                     key={step.id}
                     onClick={() => {
-                      if (handledSteps.includes(step.id)) {
+                      if (handledSteps.includes(step.id) || isEdit) {
                         setActiveStep(step.id);
                       }
                     }}

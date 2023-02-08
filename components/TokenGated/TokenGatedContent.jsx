@@ -39,6 +39,7 @@ export default function TokenGatedContent({ query, createMode }) {
     limit: 20,
   });
   const [showConfigure, setShowConfigure] = useState(null);
+  const [isEditContent, setIsEditContent] = useState(false);
 
   const handleLinkDetails = (e) => {
     if (e.target.value.length && e.target.name === 'link') {
@@ -56,7 +57,9 @@ export default function TokenGatedContent({ query, createMode }) {
   const handleAddLink = (e) => {
     e.preventDefault();
     if (!linkError) {
-      setShowAddNewContentModal(true);
+      if (!isEditContent) {
+        setShowAddNewContentModal(true);
+      }
       setShowUploadByLinkModal(false);
     }
   };
@@ -159,7 +162,7 @@ export default function TokenGatedContent({ query, createMode }) {
       setPayload(oldPayload);
     }
   }, [sortBy]);
-
+  console.log(showAddNewContentModal);
   return (
     <>
       {showOverLayLoading && <div className='loading'></div>}
@@ -237,6 +240,7 @@ export default function TokenGatedContent({ query, createMode }) {
             setLinkDetails={setLinkDetails}
             linkDetails={linkDetails}
             setShowUploadByLinkModal={setShowUploadByLinkModal}
+            setIsEditContent={setIsEditContent}
           ></ContentListTable>
         </div>
       )}
@@ -246,18 +250,25 @@ export default function TokenGatedContent({ query, createMode }) {
           handleClose={() => {
             setShowAddNewContentModal(false);
             setLinkDetails({ link: '', type: 'image' });
+            setIsEditContent(false);
           }}
           tokenProjectId={query?.id}
           onContentAdded={() => onGetTokenGatedProject(query?.id)}
           setShowUploadByLinkModal={setShowUploadByLinkModal}
           linkDetails={linkDetails}
+          setIsEditContent={setIsEditContent}
           setLinkDetails={setLinkDetails}
         />
       )}
       {showUploadByLinkModal && (
         <UploadByLinkModal
           show={showUploadByLinkModal}
-          handleClose={() => setShowUploadByLinkModal(false)}
+          handleClose={() => {
+            if (!isEditContent) {
+              setLinkDetails({ link: '', type: 'image' });
+            }
+            setShowUploadByLinkModal(false);
+          }}
           handleLinkDetails={handleLinkDetails}
           linkDetails={linkDetails}
           handleAddLink={handleAddLink}

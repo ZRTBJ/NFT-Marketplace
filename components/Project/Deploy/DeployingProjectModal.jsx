@@ -6,6 +6,7 @@ import { createDAO } from './deploy-dao';
 import { createProvider } from 'util/smartcontract/provider';
 import { createInstance } from 'config/ABI/genericProxyFactory';
 import Image from 'next/image';
+import { event } from "nextjs-google-analytics";
 
 const DeployingProjectModal = ({
   handleClose,
@@ -29,6 +30,7 @@ const DeployingProjectModal = ({
   }, [publishStep]);
 
   function publishThisProject(transactionData) {
+    event("publish_dao", { category: "dao" });
     setIsLoading(true);
     let payload = new FormData();
     if (transactionData) {

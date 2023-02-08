@@ -26,6 +26,8 @@ import Delete from 'assets/images/trash.svg';
 import { getCurrentNetworkId } from 'util/MetaMask';
 import NetworkHandlerModal from 'components/Modals/NetworkHandlerModal';
 import Image from 'next/image';
+import { event } from "nextjs-google-analytics";
+
 
 //TODO: in the future, 1 network can support multiple currency, please fix this
 const CURRENCY = [
@@ -184,6 +186,7 @@ const SalesPageModal = ({
       setIsSubmitted(true);
       let type = collectionType ? collectionType : currentCollection.type;
       if (agree && date?.length === 2) {
+        event("set_sale_page", { category: "nft", label: "type", value: type });
         const payload = {
           price: data?.['price'],
           startTime: getUnixTime(date?.[0]),

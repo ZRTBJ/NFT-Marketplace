@@ -16,7 +16,9 @@ export async function getTokenGatedProject(id) {
 export async function getTokenGatedProjectList(payload) {
   return await client(
     'GET',
-    `/tokengate?page=${payload.page}&limit=${payload.limit}`
+    `/tokengate?page=${payload.page}&limit=${payload.limit}&order_by=${
+      payload?.order_by ? payload?.order_by : ''
+    }&keyword=${payload?.keyword ? payload?.keyword : ''}`
   );
 }
 export async function updateTokenGatedProject(payload) {
@@ -122,8 +124,13 @@ export async function reportTokenContent(payload) {
 export async function deleteTokenGatedProject(id) {
   return await client('DELETE', `/tokengate/${id}`);
 }
+
 export async function getUserVerification(contentId) {
   return await fetch(
     `${ROOT_URL}/tkg-content/${contentId}/data?token=${ls_GetUserToken()}&verify=true`
   );
+}
+
+export async function getAssetDetail(id) {
+  return await client('GET', `/asset?id=${id}`);
 }

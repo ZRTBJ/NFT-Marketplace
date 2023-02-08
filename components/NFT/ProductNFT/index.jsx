@@ -30,6 +30,9 @@ import Select from 'react-select';
 import { uniqBy } from 'lodash';
 import { NETWORKS } from 'config/networks';
 import ConfirmationModal from 'components/Modals/ConfirmationModal';
+import { event } from "nextjs-google-analytics";
+
+
 export default function ProductNFT({ query }) {
   const audioRef = useRef();
   const dispatch = useDispatch();
@@ -334,6 +337,7 @@ export default function ProductNFT({ query }) {
   };
 
   function saveNFTDetails(assetId, collectionID) {
+    event("create_product_nft", { category: "nft" });
     if (assetId && assetId.length > 0) {
       setIsLoading(true);
       const request = new FormData();
@@ -497,6 +501,7 @@ export default function ProductNFT({ query }) {
   }
 
   function createNewCollection() {
+    event("create_collection", { category: "collection", label: "blockchain", value: ls_GetChainID() });
     let createPayload = {
       blockchain: ls_GetChainID(),
       collection_type: 'product',

@@ -16,6 +16,7 @@ import Left from 'assets/images/arr-left.svg';
 import Locked from 'assets/images/locked.svg';
 import Link from 'next/link';
 import ReportModal from 'components/Commons/ReportModal/ReportModal';
+import ErrorModal from 'components/Modals/ErrorModal';
 const Waveform = dynamic(() => import('../public/components/card/Waveform'), {
   ssr: false,
 });
@@ -33,9 +34,20 @@ const TokenGatedContentDetailContainer = ({ query }) => {
   );
   const [showOverLayLoading, setShowOverLayLoading] = useState(true);
   const [collectionId, setCollectionId] = useState('');
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   useEffect(() => {
     if (query?.id) {
       getContentDetail();
+
+      return () => {
+        setData(null);
+        setShowError(false);
+        setAsset(null);
+        setCollectionId('');
+        setShowErrorModal(false);
+        setErrorMessage('');
+      };
     }
   }, [query?.id]);
 
@@ -71,7 +83,6 @@ const TokenGatedContentDetailContainer = ({ query }) => {
       .then(async (resp) => {
         setShowOverLayLoading(false);
         if (resp.code === 0) {
-          console.log(resp);
           let conAddress =
             resp?.token_gate_content?.token_gate_configs?.[0]?.collection_ct;
           if (conAddress) {
@@ -88,6 +99,9 @@ const TokenGatedContentDetailContainer = ({ query }) => {
           } else {
             setShowError(true);
           }
+        } else {
+          setShowErrorModal(true);
+          setErrorMessage(resp?.message);
         }
       })
       .catch((err) => {
@@ -319,6 +333,15 @@ const TokenGatedContentDetailContainer = ({ query }) => {
           usedFor='Content'
           id={data?.id}
           onReported={() => setAlreadyReported(true)}
+        />
+      )}
+      {showErrorModal && (
+        <ErrorModal
+          handleClose={() => setShowErrorModal(false)}
+          show={showErrorModal}
+          message={errorMessage}
+          buttomText='Close'
+          redirection={`/dashboard`}
         />
       )}
     </>
