@@ -27,7 +27,7 @@ const Modal = ({
         show
           ? `${styles.modal} ${styles.displayBlock}`
           : `${styles.modal} ${styles.displayNone}`
-      } z-[99] `}
+      } z-[100] `}
     >
       <section
         style={styleObj}

@@ -1,4 +1,8 @@
 import { client } from '../httpClient';
+import { ls_GetChainID } from 'util/ApplicationStorage';
+import { NETWORKS } from 'config/networks';
+import axios from 'axios';
+
 export async function checkUniqueCollectionName(payload) {
   const bodyFormData = new FormData();
   bodyFormData.append('collection_name', payload.projectName);
@@ -21,19 +25,13 @@ export async function checkUniqueCollectionSymbol(payload) {
 export async function createCollection(payload) {
   const bodyFormData = new FormData();
   payload?.name && bodyFormData.append('name', payload?.name);
-  bodyFormData.append('project_id', payload.dao_id);
+  payload?.dao_id && bodyFormData.append('project_id', payload.dao_id);
+  payload?.blockchain && bodyFormData.append('blockchain', payload.blockchain);
   bodyFormData.append('collection_type', payload.collection_type);
 
   return await client('POST', `/collection`, bodyFormData, 'formdata');
 }
-export async function mockCreateCollection(payload) {
-  const bodyFormData = new FormData();
-  payload?.name && bodyFormData.append('name', payload?.name);
-  bodyFormData.append('project_id', payload.dao_id);
-  bodyFormData.append('collection_type', payload.collection_type);
 
-  return await client('POST', `/collection`, bodyFormData, 'formdata');
-}
 export async function updateCollection(payload) {
   const bodyFormData = new FormData();
   if (payload.cover !== null) {
@@ -44,7 +42,7 @@ export async function updateCollection(payload) {
   bodyFormData.append('description', payload.overview);
   bodyFormData.append('links', payload.webLinks);
   bodyFormData.append('category_id', payload.category_id);
-  bodyFormData.append('blockchain', payload.blockchainCategory);
+  bodyFormData.append('blockchain', payload.blockchain);
   // bodyFormData.append("primary_royalty", payload.primaryRoyalties);
   // bodyFormData.append("secondary_royalty", payload.secondaryRoyalties);
   if (payload.collectionSymbol) {
@@ -59,6 +57,18 @@ export async function updateCollection(payload) {
   bodyFormData.append('royalty_percent', payload.royaltyPercentage);
   bodyFormData.append('total_supply', payload.total_supply);
 
+  return await client(
+    'PUT',
+    `/collection/${payload.id}`,
+    bodyFormData,
+    'formdata'
+  );
+}
+export async function connectCollectionToDAO(payload) {
+  const bodyFormData = new FormData();
+  for (const key in payload) {
+    bodyFormData.append(`${key}`, payload[key]);
+  }
   return await client(
     'PUT',
     `/collection/${payload.id}`,
@@ -88,7 +98,7 @@ export async function getCollections(
 export async function getUserCollections(payload) {
   return await client(
     'GET',
-    `/collection?list_type=user&page=${payload.page}&limit=${payload.limit}`
+    `/collection?list_type=user&page=${payload?.page}&limit=${payload?.limit}`
   );
 }
 
@@ -151,5 +161,29 @@ export async function getProductNFTCollectionSalesSetupInformation(
     'GET',
     `/product-nft/collection/${collectionId}/sale
 `
+  );
+}
+export async function deleteDraftCollection(id) {
+  return await client('DELETE', `/collection/${id}`);
+}
+
+export async function setWithdrawalDetails(id, payload) {
+  return await client(
+    'POST',
+    `/collection/${id}/withdrawal`,
+    payload,
+    'formdata'
+  );
+}
+
+export async function getCollectionDetailFromContract(id, chainId) {
+  let url = NETWORKS?.[chainId]?.alchamey;
+  return await axios.get(`${url}?contractAddress=${id}`);
+}
+
+export async function getCollectionByContractAddress(id) {
+  return await client(
+    'GET',
+    `/collection?page=1&limit=10&col_contract_address=${id}`
   );
 }

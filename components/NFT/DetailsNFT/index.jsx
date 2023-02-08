@@ -24,6 +24,7 @@ import TransactionModal from 'components/NFT/DetailsNFT/MintNFT/TransactionModal
 import WaitingModal from 'components/NFT/DetailsNFT/MintNFT/WaitingModal';
 import NftSuccessModal from 'components/NFT/DetailsNFT/MintNFT/NftSuccessModal';
 import ErrorModal from 'components/Modals/ErrorModal';
+import MoonpayModal from 'components/Modals/MoonpayModal';
 import WalletConnectModal from 'components/Login/WalletConnectModal';
 import { createMintNFT } from 'components/NFT/DetailsNFT/MintNFT/deploy-mintnft';
 import { createProvider } from 'util/smartcontract/provider';
@@ -37,11 +38,20 @@ import { getCurrentNetworkId, getAccountBalance } from 'util/MetaMask';
 import NetworkHandlerModal from 'components/Modals/NetworkHandlerModal';
 import Eth from 'assets/images/network/eth.svg';
 import Polygon from 'assets/images/network/polygon.svg';
+import Bnb from 'assets/images/network/bnb.svg';
 import { toast } from 'react-toastify';
 import { cryptoConvert } from 'services/chainlinkService';
 import tickIcon from 'assets/images/tick.svg';
 import { getCollectionDetailsById } from 'services/collection/collectionService';
 import Image from 'next/image';
+import { event } from "nextjs-google-analytics";
+
+
+const currency = {
+  eth: Eth,
+  matic: Polygon,
+  bnb: Bnb
+}
 
 export default function DetailsNFT({ type, id }) {
   const userinfo = useSelector((state) => state.user.userinfo);
@@ -54,6 +64,7 @@ export default function DetailsNFT({ type, id }) {
   const [showNftSuccessModal, setNftSuccessModal] = useState(false);
   const [funcId, setFuncId] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const [showMoonpayModal, setShowMoonpayModal] = useState(false);
   const [mintData, setMintData] = useState();
   const [hash, setHash] = useState('');
   const [showEmbedNFT, setShowEmbedNFT] = useState(false);
@@ -98,7 +109,8 @@ export default function DetailsNFT({ type, id }) {
         }
       } else {
         setTransactionWaitingModal(false);
-        setErrorMsg("You don't have enough balance in your wallet to Mint NFT");
+        // setShowMoonpayModal(true)
+        setErrorMsg('You don\'t have enough balance in your wallet to Mint NFT');
       }
     } catch (err) {
       setTransactionWaitingModal(false);
@@ -131,10 +143,10 @@ export default function DetailsNFT({ type, id }) {
       .then((resp) => {
         if (resp.code === 0) {
           setNft(resp);
-          if (resp.more_info.currency) {
+          if (resp.more_info?.currency) {
             dollarConvert(
-              resp.more_info.currency.toUpperCase(),
-              resp.more_info.price
+              resp?.more_info?.currency?.toUpperCase(),
+              resp?.more_info?.price
             );
           }
           collectionId = resp?.lnft?.collection_uuid;
@@ -164,13 +176,14 @@ export default function DetailsNFT({ type, id }) {
   }
 
   async function handleProceedPayment(response) {
+    event("mint_nft", { category: "nft", label:"type", value: nft?.lnft?.nft_type});
     setTransactionModal(false);
     setTransactionWaitingModal(true);
     let formData = new FormData();
 
     response.hash && formData.append('transaction_hash', response.hash);
     response.blockNumber &&
-      formData.append('block_number', response.blockNumber);
+    formData.append('block_number', response.blockNumber);
     const payload = {
       id: nft?.lnft?.id,
       data: formData,
@@ -326,6 +339,14 @@ export default function DetailsNFT({ type, id }) {
           show={errorMsg}
         />
       )}
+      {/* {showMoonpayModal && (
+        <MoonpayModal
+          handleClose={() => {
+            setShowMoonpayModal(false);
+          }}
+          show={showMoonpayModal}
+        />
+      )} */}
       {showModal && (
         <WalletConnectModal
           showModal={showModal}
@@ -458,7 +479,8 @@ export default function DetailsNFT({ type, id }) {
                     {info?.currency ? (
                       <Image
                         className='h-[22px] w-[22px]'
-                        src={info?.currency === 'eth' ? Eth : Polygon}
+                        src={currency[info?.currency]}
+                        // src={info?.currency === 'eth' ? Eth : Polygon}
                         alt={'Currency Logo'}
                       />
                     ) : null}
@@ -487,12 +509,12 @@ export default function DetailsNFT({ type, id }) {
                 <button
                   disabled={
                     nft?.lnft?.minted_amount >= nft?.lnft?.supply ||
-                    !nft?.more_info.currency
+                    !nft?.more_info?.currency
                   }
                   className={`w-[264px] !text-[16px] h-[44px]   ${
                     nft?.lnft?.minted_amount >= nft?.lnft?.supply
                       ? 'bg-color-asss-3 text-white'
-                      : !nft.more_info.currency
+                      : !nft?.more_info?.currency
                       ? 'bg-color-asss-3 text-white'
                       : 'contained-button'
                   }`}

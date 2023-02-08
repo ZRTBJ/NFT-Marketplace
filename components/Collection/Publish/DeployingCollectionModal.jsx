@@ -10,6 +10,7 @@ import { createProvider } from 'util/smartcontract/provider';
 import { createInstance } from 'config/ABI/genericProxyFactory';
 import { createCollection } from './deploy-collection';
 import Image from 'next/image';
+import { event } from "nextjs-google-analytics";
 
 const DeployingCollectiontModal = ({
   handleClose,
@@ -22,6 +23,7 @@ const DeployingCollectiontModal = ({
   collectionSymbol,
   collectionType,
   publishStep,
+  productPrice,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [statusStep, setStatusStep] = useState(1);
@@ -43,6 +45,7 @@ const DeployingCollectiontModal = ({
   }, []);
 
   function publishThisCollection(data) {
+    event("publish_collection", { category: "collection" });
     setIsLoading(true);
     let payload = new FormData();
     if (data) {
@@ -114,7 +117,8 @@ const DeployingCollectiontModal = ({
         collectionContract,
         provider,
         config,
-        collectionType
+        collectionType,
+        productPrice
       );
       let hash;
       if (response?.txReceipt) {

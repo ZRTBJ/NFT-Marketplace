@@ -7,7 +7,7 @@ import { DateRangePicker } from 'rsuite';
 import { setSalesPage } from 'services/nft/nftService';
 import {
   getExchangeRate,
-  getCollections,
+  getUserCollections,
   getCollectionNFTs,
 } from 'services/collection/collectionService';
 import { setNFTPrice } from './deploy-nftPrice';
@@ -16,6 +16,7 @@ import { createMintInstance } from 'config/ABI/mint-nft';
 import DropdownCreabo from 'components/Commons/Dropdown';
 import Matic from 'assets/images/polygon.svg';
 import Eth from 'assets/images/eth.svg';
+import Bnb from 'assets/images/bnb.svg';
 import Modal from 'components/Commons/Modal';
 import Select, { components } from 'react-select';
 import { createMembsrshipMintInstance } from 'config/ABI/mint-membershipNFT';
@@ -25,13 +26,17 @@ import Delete from 'assets/images/trash.svg';
 import { getCurrentNetworkId } from 'util/MetaMask';
 import NetworkHandlerModal from 'components/Modals/NetworkHandlerModal';
 import Image from 'next/image';
+import { event } from "nextjs-google-analytics";
+
 
 //TODO: in the future, 1 network can support multiple currency, please fix this
 const CURRENCY = [
   { id: 5, value: 'eth', label: 'ETH', icon: Eth },
+  { id: 97, value: 'bnb', label: 'BNB', icon: Bnb },
   { id: 80001, value: 'matic', label: 'MATIC', icon: Matic },
   { id: 1, value: 'eth', label: 'ETH', icon: Eth },
   { id: 137, value: 'matic', label: 'MATIC', icon: Matic },
+  { id: 56, value: 'bnb', label: 'BNB', icon: Bnb },
 ];
 
 const Control = ({ children, ...props }) => {
@@ -149,16 +154,17 @@ const SalesPageModal = ({
   }, [watch('price')]);
 
   useEffect(() => {
-    if (projectId)
-      getCollections('project', projectId).then((resp) => {
-        if (resp.code === 0) {
-          let collections = resp.data.filter(
-            (item) => item.status === 'published'
-          );
-          setPublishedCollections(collections);
-        }
-      });
-  }, [projectId]);
+    getUserCollections().then((resp) => {
+      if (resp.code === 0) {
+        let pubCollections = resp.data.filter(
+          (item) => item.status === 'published'
+        );
+        setPublishedCollections(
+          collectionType === 'membership' ? pubCollections : resp.data
+        );
+      }
+    });
+  }, []);
 
   useEffect(() => {
     if (selectedCollection) {
@@ -180,6 +186,7 @@ const SalesPageModal = ({
       setIsSubmitted(true);
       let type = collectionType ? collectionType : currentCollection.type;
       if (agree && date?.length === 2) {
+        event("set_sale_page", { category: "nft", label: "type", value: type });
         const payload = {
           price: data?.['price'],
           startTime: getUnixTime(date?.[0]),
@@ -192,67 +199,77 @@ const SalesPageModal = ({
 
         setIsLoading(true);
         try {
-          const priceContract = createMintInstance(
-            address ? address : currentCollection.contract_address,
-            provider
-          );
-          const membershipPriceContract = createMembsrshipMintInstance(
-            address ? address : currentCollection.contract_address,
-            provider
-          );
+          if (type === 'membership') {
+            const priceContract = createMintInstance(
+              address ? address : currentCollection.contract_address,
+              provider
+            );
+            const membershipPriceContract = createMembsrshipMintInstance(
+              address ? address : currentCollection.contract_address,
+              provider
+            );
 
-          let tiers = [
-            {
-              tierId: nftId,
-              floorPrice: ethers.utils.parseEther(data['price'].toString()),
-              totalSupply: supply,
-            },
-          ];
+            let tiers = [
+              {
+                tierId: nftId,
+                floorPrice: ethers.utils.parseEther(data['price'].toString()),
+                totalSupply: supply,
+              },
+            ];
 
-          let allTiers = selectedTiers.map((value) => {
-            return {
-              tierId: value.id,
-              floorPrice: ethers.utils.parseEther(data['price'].toString()),
-              totalSupply: value.supply,
-            };
-          });
-          const response =
-            type === 'membership'
-              ? await setMemNFTPrice(
-                  membershipPriceContract,
-                  provider,
-                  nftId ? tiers : allTiers
-                )
-              : await setNFTPrice(priceContract, provider, data['price']);
-          if (response?.txReceipt) {
-            if (response.txReceipt?.status === 1) {
-              const request = new FormData();
-              request.append('price', data['price']);
-              request.append('start_time', payload.startTime);
-              request.append('end_time', payload.endTime);
-              request.append('currency', selectedCurrency.value);
-              request.append(
-                'transaction_hash',
-                response?.txReceipt?.transactionHash
-              );
-              if (allTiers.length && !nftId) {
-                allTiers.map((value) =>
-                  handleSalesAPICall(
-                    type,
-                    selectedCollection,
-                    request,
-                    value.tierId
+            let allTiers = selectedTiers.map((value) => {
+              return {
+                tierId: value.id,
+                floorPrice: ethers.utils.parseEther(data['price'].toString()),
+                totalSupply: value.supply,
+              };
+            });
+            const response =
+              type === 'membership'
+                ? await setMemNFTPrice(
+                    membershipPriceContract,
+                    provider,
+                    nftId ? tiers : allTiers
                   )
+                : await setNFTPrice(priceContract, provider, data['price']);
+            if (response?.txReceipt) {
+              if (response.txReceipt?.status === 1) {
+                const request = new FormData();
+                request.append('price', data['price']);
+                request.append('start_time', payload.startTime);
+                request.append('end_time', payload.endTime);
+                request.append('currency', selectedCurrency.value);
+                request.append(
+                  'transaction_hash',
+                  response?.txReceipt?.transactionHash
                 );
-              } else {
-                handleSalesAPICall(type, selectedCollection, request, nftId);
+                if (allTiers.length && !nftId) {
+                  allTiers.map((value) =>
+                    handleSalesAPICall(
+                      type,
+                      selectedCollection,
+                      request,
+                      value.tierId
+                    )
+                  );
+                } else {
+                  handleSalesAPICall(type, selectedCollection, request, nftId);
+                }
               }
+            } else {
+              setErrorMessage(response);
+              setIsLoading(false);
+              setIsSubmitted(false);
+              setShowErrorModal(true);
             }
           } else {
-            setErrorMessage(response);
-            setIsLoading(false);
-            setIsSubmitted(false);
-            setShowErrorModal(true);
+            const request = new FormData();
+            request.append('price', data['price']);
+            request.append('start_time', payload.startTime);
+            request.append('end_time', payload.endTime);
+            request.append('currency', selectedCurrency.value);
+            request.append('transaction_hash', '');
+            handleSalesAPICall(type, selectedCollection, request, nftId);
           }
         } catch (err) {
           if (err.message) {

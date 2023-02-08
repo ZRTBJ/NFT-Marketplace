@@ -5,7 +5,6 @@ import { DebounceInput } from 'react-debounce-input';
 import Tooltip from 'components/Commons/Tooltip';
 import Modal from 'components/Commons/Modal';
 import SuccessModal from 'components/Modals/SuccessModal';
-import { createProject } from 'services/project/projectService';
 import { createCollection } from 'services/collection/collectionService';
 import {
   generateUploadkey,
@@ -13,18 +12,26 @@ import {
   getassetDetails,
   getNftDetails,
   updateMembershipNFT,
+  deleteDraftNFT,
 } from 'services/nft/nftService';
 import {
   updateRoyaltySplitter,
   getCollectionDetailsById,
+  getUserCollections,
 } from 'services/collection/collectionService';
 import { ls_GetChainID } from 'util/ApplicationStorage';
-
+import Select from 'react-select';
+import { uniqBy } from 'lodash';
 import axios from 'axios';
 import Config from 'config/config';
 import { getNotificationData } from 'redux/notification';
 import ErrorModal from 'components/Modals/ErrorModal';
+import MoonpayModal from 'components/Modals/MoonpayModal';
 import Image from 'next/image';
+import { NETWORKS } from 'config/networks';
+import ConfirmationModal from 'components/Modals/ConfirmationModal';
+import { event } from "nextjs-google-analytics";
+
 
 export default function MembershipNFT({ query }) {
   const fileUploadNotification = useSelector((state) =>
@@ -71,12 +78,12 @@ export default function MembershipNFT({ query }) {
   const [indexOfNfts, setIndexOfNfts] = useState('');
   const [isPreview, setIsPreview] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [dao_id, setDao_id] = useState(null);
   const [collection_id, setCollection_id] = useState(null);
   const [projectCreated, setProjectCreated] = useState(false);
-  const [projectId, setProjectId] = useState('');
   const [projectInfo, setProjectInfo] = useState({});
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [showMoonpayModal, setShowMoonpayModal] = useState(false);
+  const [options, setOptions] = useState([]);
   const jobIds = [];
   const [calledIds, setCalledIds] = useState([]);
   const [showDataUploadingModal, setShowDataUploadingModal] = useState(false);
@@ -85,11 +92,78 @@ export default function MembershipNFT({ query }) {
   const [errorTitle, setErrorTitle] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [isNftLoading, setIsNftLoading] = useState(false);
+  const [hasNextPageData, setHasNextPageData] = useState(true);
   const [asseteRemoveInUpdateMode, setAsseteRemoveInUpdateMode] =
     useState(false);
   const [collection, setCollection] = useState({});
+  const [payload, setPayload] = useState({
+    page: 1,
+    perPage: 10,
+    keyword: '',
+    order_by: 'newer',
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDeleteSuccessModal, setShowDeleteSuccessModal] = useState(false);
   function onTextfieldChange(index, fieldName, value) {
     setValue(index, fieldName, value);
+  }
+  const useDebounceCallback = (delay = 100, cleaning = true) => {
+    // or: delayed debounce callback
+    const ref = React.useRef();
+    React.useEffect(() => {
+      if (cleaning) {
+        // cleaning uncalled delayed callback with component destroying
+        return () => {
+          if (ref.current) clearTimeout(ref.current);
+        };
+      }
+    }, []);
+    return (callback) => {
+      if (ref.current) clearTimeout(ref.current);
+      ref.current = setTimeout(callback, delay);
+    };
+  };
+  const delayCallback = useDebounceCallback(500);
+  async function onDaoSearch(keyword) {
+    delayCallback(() => {
+      let oldPayload = { ...payload };
+      oldPayload.keyword = keyword;
+      setPayload(oldPayload);
+    });
+  }
+  function scrolledBottom() {
+    let oldPayload = { ...payload };
+    oldPayload.page = oldPayload.page + 1;
+    setPayload(oldPayload);
+  }
+  async function collectionFetch() {
+    setIsLoading(true);
+    await getUserCollections(payload)
+      .then((res) => {
+        if (res?.code === 0) {
+          // const matchedBlockchainDao = res?.data?.filter(
+          //   (dao) => dao?.blockchain === collection?.blockchain
+          // );
+          const daoList = [...options];
+          const mergedDaoList = [...daoList, ...res?.data];
+          const uniqDaoList = uniqBy(mergedDaoList, function (e) {
+            return e.id;
+          });
+          let filtered = uniqDaoList.filter(
+            (list) => list.type === 'membership'
+          );
+          setOptions(filtered);
+          setIsLoading(false);
+          if (res?.data?.length === 0) {
+            setHasNextPageData(false);
+          }
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
   }
   function setValue(index, fieldName, value) {
     let oldNfts = [...nfts];
@@ -192,7 +266,6 @@ export default function MembershipNFT({ query }) {
     });
     setNfts(oldNfts);
   }
-
   function onBenefitChange(index, benefitIndex, value) {
     let oldNfts = nfts.map((nft, i) => {
       if (i === index) {
@@ -272,22 +345,13 @@ export default function MembershipNFT({ query }) {
       setIsListUpdate(false);
     }, 50);
   }
-  async function daoCreate() {
-    let daoId = '';
-    let payload = {
-      blockchain: ls_GetChainID(),
-    };
-    await createProject(payload).then((res) => {
-      daoId = res.project.id;
-      setDao_id(daoId);
-    });
-    return daoId;
-  }
-  async function collectionCreate(dao_id) {
+  async function collectionCreate() {
+    event("create_collection", { category: "collection", label: "blockchain", value: ls_GetChainID() });
+
     let collection_id = '';
     let payload = {
-      dao_id: dao_id,
       collection_type: 'membership',
+      blockchain: ls_GetChainID(),
     };
     await createCollection(payload).then((res) => {
       collection_id = res.collection.id;
@@ -300,7 +364,6 @@ export default function MembershipNFT({ query }) {
     });
     return collection_id;
   }
-
   const handleErrorState = (msg, jobId) => {
     if (typeof window !== 'undefined') {
       jobId && localStorage.removeItem(`${jobId}`);
@@ -334,6 +397,7 @@ export default function MembershipNFT({ query }) {
     request.append('benefit_array', JSON.stringify(benefit_array));
 
     if (!updateMode) {
+      event("create_membership_nft", { category: "nft"});
       await createMembershipNft(request)
         .then((res) => {
           if (res.code === 0) {
@@ -343,7 +407,6 @@ export default function MembershipNFT({ query }) {
               if (index > -1) {
                 jobIds.splice(index, 1); // 2nd parameter means remove one item only
               }
-              console.log('remove', jobIds.length);
               const upload_number = localStorage.getItem('upload_number');
               const update_upload_number = parseInt(upload_number) - 1;
               localStorage.setItem('upload_number', update_upload_number);
@@ -374,7 +437,7 @@ export default function MembershipNFT({ query }) {
         });
     }
   }
-  async function uploadAFile(uploadKey, daoId, nft) {
+  async function uploadAFile(uploadKey, nft) {
     let headers;
     headers = {
       'Content-Type': 'multipart/form-data',
@@ -383,7 +446,6 @@ export default function MembershipNFT({ query }) {
     };
     let formdata = new FormData();
     formdata.append('file', nft.assets.file);
-    console.log('2upload file');
     await axios({
       method: 'POST',
       url: Config.FILE_SERVER_URL,
@@ -408,7 +470,6 @@ export default function MembershipNFT({ query }) {
         }
         jobIds.push(response['job_id']);
         const notificationData = {
-          projectId: daoId,
           etherscan: '',
           function_uuid: response['job_id'],
           data: '',
@@ -420,7 +481,6 @@ export default function MembershipNFT({ query }) {
       });
   }
   async function genUploadKey() {
-    console.log('1gen upload key');
     let key = '';
     const request = new FormData();
     await generateUploadkey(request)
@@ -457,27 +517,27 @@ export default function MembershipNFT({ query }) {
   async function createBlock(validateNfts) {
     setShowDataUploadingModal(true);
     if (!updateMode) {
-      if (query?.collection_id) {
+      if (query?.collection_id || collection_id) {
         if (typeof window !== 'undefined') {
           localStorage.setItem('upload_number', validateNfts.length);
         }
         for (const iterator of validateNfts) {
           const key = await genUploadKey();
           if (key !== '') {
-            await uploadAFile(key, dao_id, iterator);
+            await uploadAFile(key, iterator);
           }
         }
         // recheckStatus();
       } else {
-        const daoId = await daoCreate();
-        const collection_id = await collectionCreate(daoId);
+        // const daoId = await daoCreate();
+        const collection_id = await collectionCreate();
         if (typeof window !== 'undefined') {
           localStorage.setItem('upload_number', validateNfts?.length);
         }
         for (const iterator of validateNfts) {
-          const key = await genUploadKey(daoId, collection_id, iterator);
+          const key = await genUploadKey();
           if (key !== '') {
-            await uploadAFile(key, daoId, iterator);
+            await uploadAFile(key, iterator);
           }
         }
         // recheckStatus();
@@ -491,7 +551,7 @@ export default function MembershipNFT({ query }) {
       } else if (asseteRemoveInUpdateMode) {
         const uploadKey = await genUploadKey();
         if (uploadKey !== '') {
-          await uploadAFile(uploadKey, dao_id, validateNfts[0]);
+          await uploadAFile(uploadKey, validateNfts[0]);
         }
       }
     }
@@ -570,7 +630,6 @@ export default function MembershipNFT({ query }) {
               } else if (res.code === 5001) {
                 setTimeout(function () {
                   const notificationData = {
-                    projectId: projectDeployStatus.projectId,
                     etherscan: '',
                     function_uuid: projectDeployStatus.function_uuid,
                     data: '',
@@ -625,7 +684,6 @@ export default function MembershipNFT({ query }) {
         setIsNftLoading(false);
       });
   }
-
   const getCollectionDetail = async (collectionId) => {
     let payload = {
       id: collectionId,
@@ -635,6 +693,37 @@ export default function MembershipNFT({ query }) {
         setCollection(resp.collection);
       }
     });
+  };
+  function removePropertyOfTier(nft, index) {
+    setIsListUpdate(true);
+    let tempProperty = [...nft.properties];
+    tempProperty = tempProperty.filter((prop) => prop !== tempProperty[index]);
+    let oldNfts = [...nfts];
+    oldNfts[indexOfNfts].properties = tempProperty;
+    setNfts(oldNfts);
+    setTimeout(() => {
+      setIsListUpdate(false);
+    }, 50);
+  }
+  const deleteMembershipNFT = async () => {
+    setIsNftLoading(true);
+    await deleteDraftNFT(nftItem?.id)
+      .then((res) => {
+        if (res.code === 0) {
+          setShowDeleteModal(false);
+          setShowDeleteSuccessModal(true);
+          setIsNftLoading(false);
+        } else {
+          setShowErrorModal(true);
+          setErrorTitle('Opps, something went wrong');
+          setErrorMessage(res.message);
+          setIsNftLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsNftLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -651,15 +740,9 @@ export default function MembershipNFT({ query }) {
     setCollection_id(collection_id);
   }, [collection_id]);
   useEffect(() => {
-    setDao_id(dao_id);
-  }, [dao_id]);
-  useEffect(() => {
     if (query?.collection_id) {
       setCollection_id(query?.collection_id);
       getCollectionDetail(query?.collection_id);
-    }
-    if (query?.dao_id) {
-      setDao_id(query?.collection_id);
     }
   }, []);
   useEffect(() => {
@@ -670,36 +753,53 @@ export default function MembershipNFT({ query }) {
       }
     } catch {}
   }, []);
+  useEffect(() => {
+    if (hasNextPageData) {
+      collectionFetch();
+    }
+  }, [payload]);
 
-  function removePropertyOfTier(nft, index) {
-    setIsListUpdate(true);
-    let tempProperty = [...nft.properties];
-    tempProperty = tempProperty.filter((prop) => prop !== tempProperty[index]);
-    let oldNfts = [...nfts];
-    oldNfts[indexOfNfts].properties = tempProperty;
-    setNfts(oldNfts);
-    setTimeout(() => {
-      setIsListUpdate(false);
-    }, 50);
-  }
+  let curCollection = collection_id
+    ? options.find((item) => item.id === collection_id)
+    : null;
+
+  let networkName = curCollection?.blockchain
+    ? NETWORKS?.[Number(curCollection?.blockchain)]?.networkName
+    : null;
 
   return (
     <>
       {isNftLoading && <div className='loading'></div>}
       <div className='max-w-[600px] md:mx-auto pt-6 md:pt-0 md:mt-[40px] mx-4  '>
-        <div className='mb-[24px]'>
-          <h1 className='text-[28px] font-black mb-[6px]'>
-            {isPreview
-              ? 'Preview Membership NFT'
-              : updateMode
-              ? 'Update Membership NFT'
-              : 'Create Membership NFT'}
-          </h1>
-          <p className='text-[14px] text-textSubtle '>
-            {isPreview
-              ? ' Preview the NFT'
-              : ' Please fill this require data for setup your NFT'}
-          </p>
+        <div className='mb-[24px] flex flex-wrap items-center'>
+          <div>
+            <h1 className='text-[28px] font-black mb-[6px]'>
+              {isPreview
+                ? 'Preview Membership NFT'
+                : updateMode
+                ? 'Update Membership NFT'
+                : 'Create Membership NFT'}
+            </h1>
+            <p className='text-[14px] text-textSubtle '>
+              {isPreview
+                ? ' Preview the NFT'
+                : ' Please fill this require data for setup your NFT'}
+            </p>
+          </div>
+          <div className='ml-auto'>
+            {updateMode &&
+              nftItem?.is_owner &&
+              !isPreview &&
+              collection?.status === 'draft' && (
+                <button
+                  onClick={() => setShowDeleteModal(true)}
+                  className='px-4 py-2 text-white bg-danger-1  rounded'
+                >
+                  <i className='fa-solid fa-trash mr-1'></i>
+                  <span>Delete</span>
+                </button>
+              )}
+          </div>
         </div>
         <div>
           {nfts.map((nft, index) => (
@@ -725,7 +825,7 @@ export default function MembershipNFT({ query }) {
                     className={`debounceInput mt-1 ${
                       isPreview ? ' !border-none bg-transparent' : ''
                     } `}
-                    disabled={isPreview || collection.status === 'published'}
+                    disabled={isPreview}
                     value={nft.tierName}
                     onChange={(e) =>
                       onTextfieldChange(index, 'tierName', e.target.value)
@@ -847,7 +947,7 @@ export default function MembershipNFT({ query }) {
                     </div>
 
                     <input
-                      disabled={isPreview || collection.status === 'published'}
+                      disabled={isPreview}
                       key={index}
                       id={`dropzone-file${index}`}
                       type='file'
@@ -878,7 +978,7 @@ export default function MembershipNFT({ query }) {
                     className={`debounceInput mt-1 ${
                       isPreview ? ' !border-none bg-transparent' : ''
                     } `}
-                    disabled={isPreview || collection.status === 'published'}
+                    disabled={isPreview}
                     value={nft.externalLink}
                     onChange={(e) =>
                       onTextfieldChange(index, 'externalLink', e.target.value)
@@ -902,9 +1002,62 @@ export default function MembershipNFT({ query }) {
                   className={`mt-1 p-4 ${
                     isPreview ? ' !border-none bg-transparent' : ''
                   } `}
-                  disabled={isPreview || collection.status === 'published'}
+                  disabled={isPreview}
                 ></textarea>
               </div>
+              {typeof window !== 'undefined' && (
+                <div className='mb-6'>
+                  <div className='flex items-center mb-2'>
+                    <Tooltip message='If you selecting a Collection, it will generate automatically'></Tooltip>
+                    <p className='txtblack text-[14px]'>Connect Collection</p>
+                  </div>
+                  <Select
+                    // defaultValue={curCollection}
+                    value={curCollection}
+                    onChange={(data) => setCollection_id(data?.id)}
+                    onKeyDown={(event) => onDaoSearch(event.target.value)}
+                    options={options}
+                    styles={{
+                      menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                      control: (base) => ({
+                        ...base,
+                        border: isPreview
+                          ? 'none'
+                          : '1px solid hsl(0, 0%, 80%)',
+                      }),
+                    }}
+                    isDisabled={query?.collection_id || isPreview}
+                    menuPortalTarget={document.body}
+                    placeholder='Choose Collection'
+                    isLoading={isLoading}
+                    noOptionsMessage={() => 'No Collection Found'}
+                    loadingMessage={() => 'Loading,please wait...'}
+                    getOptionLabel={(option) => `${option.name}`}
+                    getOptionValue={(option) => option.id}
+                    classNamePrefix='collection-connect'
+                    isClearable
+                    isSearchable
+                    menuShouldScrollIntoView
+                    onMenuScrollToBottom={() => scrolledBottom()}
+                  />
+                </div>
+              )}
+              {networkName && (
+                <div className='mb-6 '>
+                  <p className='txtblack text-[14px]'>Blockchain</p>
+                  <>
+                    <DebounceInput
+                      debounceTimeout={0}
+                      className={`debounceInput mt-1 ${
+                        isPreview ? ' !border-none bg-transparent' : ''
+                      } `}
+                      disabled
+                      value={networkName}
+                      type='text'
+                    />
+                  </>
+                </div>
+              )}
               <div className='mb-6'>
                 <p className='txtblack text-[14px]'>Benefit</p>
                 {nft.benefits.map((benefit, benefitIndex) => (
@@ -958,16 +1111,14 @@ export default function MembershipNFT({ query }) {
                       Add NFT properties
                     </small>
                   </div>
-                  {collection.status !== 'published' && (
-                    <>
-                      {!isPreview && (
-                        <i
-                          className='fa-regular fa-square-plus text-2xl text-primary-900 cursor-pointer'
-                          onClick={() => openPropertyModal(index)}
-                        ></i>
-                      )}
-                    </>
-                  )}
+                  <>
+                    {!isPreview && (
+                      <i
+                        className='fa-regular fa-square-plus text-2xl text-primary-900 cursor-pointer'
+                        onClick={() => openPropertyModal(index)}
+                      ></i>
+                    )}
+                  </>
                 </div>
                 <div className='flex py-3 border-b border-b-divider'>
                   <p className='text-txtblack text-[18px] font-black'>18+</p>
@@ -977,7 +1128,7 @@ export default function MembershipNFT({ query }) {
                       Defined properties on your NFT
                     </small>
                   </div>
-                  {isPreview || collection.status === 'published' ? (
+                  {isPreview ? (
                     <p className='text-[14px] text-textSubtle'>
                       {nft.sensitiveContent.toString().toLocaleUpperCase()}
                     </p>
@@ -1034,18 +1185,16 @@ export default function MembershipNFT({ query }) {
                                 disabled={true}
                               />
 
-                              {collection.status !== 'published' && (
-                                <>
-                                  {!isPreview && (
-                                    <i
-                                      className='cursor-pointer fa-solid fa-trash text-danger-1/[0.7] ml-3'
-                                      onClick={() => {
-                                        removePropertyOfTier(nft, i);
-                                      }}
-                                    ></i>
-                                  )}
-                                </>
-                              )}
+                              <>
+                                {!isPreview && (
+                                  <i
+                                    className='cursor-pointer fa-solid fa-trash text-danger-1/[0.7] ml-3'
+                                    onClick={() => {
+                                      removePropertyOfTier(nft, i);
+                                    }}
+                                  ></i>
+                                )}
+                              </>
                             </div>
                           </div>
                         )}
@@ -1066,7 +1215,7 @@ export default function MembershipNFT({ query }) {
                     className={`debounceInput mt-1 ${
                       isPreview ? ' !border-none bg-transparent' : ''
                     } `}
-                    disabled={isPreview || collection.status === 'published'}
+                    disabled={isPreview}
                     value={nft.supply}
                     type='number'
                     onChange={(e) =>
@@ -1210,6 +1359,14 @@ export default function MembershipNFT({ query }) {
           message={errorMessage}
         />
       )}
+      {/* {showMoonpayModal && (
+        <MoonpayModal
+          handleClose={() => {
+            setShowMoonpayModal(false);
+          }}
+          show={showMoonpayModal}
+        />
+      )} */}
       {showDataUploadingModal && (
         <Modal
           width={400}
@@ -1227,6 +1384,24 @@ export default function MembershipNFT({ query }) {
             </div>
           </div>
         </Modal>
+      )}
+      {showDeleteModal && (
+        <ConfirmationModal
+          show={showDeleteModal}
+          handleClose={() => setShowDeleteModal(false)}
+          handleApply={deleteMembershipNFT}
+          message='Are you sure to delete this NFT?'
+        />
+      )}
+      {showDeleteSuccessModal && (
+        <SuccessModal
+          message={`You have successfully deleted the NFT!`}
+          subMessage=''
+          buttonText='Close'
+          redirection={`/collection/${collection_id}`}
+          show={showDeleteSuccessModal}
+          handleClose={() => setShowDeleteSuccessModal(false)}
+        />
       )}
     </>
   );

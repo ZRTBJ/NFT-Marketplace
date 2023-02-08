@@ -32,7 +32,7 @@
 }
 @media (max-width: 767px) {
   .modalMain {
-    max-height: 60%;
+    max-height: 95%;
   }
 }
 @media (min-width: 767px) {
@@ -48,4 +48,18 @@
   max-width: 200ppx;
   padding: 20px 30px;
   border-radius: 10px;
+}
+.modalMain::-webkit-scrollbar-track {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.modalMain::-webkit-scrollbar-thumb {
+  background-color: #9f9f9f;
+  border: 4px solid transparent;
+  border-radius: 8px;
+  background-clip: padding-box;
+}
+
+.modalMain::-webkit-scrollbar {
+  width: 15px;
 }

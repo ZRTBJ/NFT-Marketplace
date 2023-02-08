@@ -1,6 +1,12 @@
-import axios from "axios";
-import { ls_GetUserRefreshToken, ls_GetUserToken, ls_SetUserID, ls_SetUserRefreshToken, ls_SetUserToken } from "util/ApplicationStorage";
-import Config from "config/config";
+import axios from 'axios';
+import {
+  ls_GetUserRefreshToken,
+  ls_GetUserToken,
+  ls_SetUserID,
+  ls_SetUserRefreshToken,
+  ls_SetUserToken,
+} from 'util/ApplicationStorage';
+import Config from 'config/config';
 // import jwt from "jwt-decode";
 
 const ROOT_URL = Config.API_ENDPOINT;
@@ -16,13 +22,13 @@ export async function client(method, url, body, contentType) {
   // headers
   let headers;
 
-  if (contentType === "formdata") {
-    headers = { "Content-Type": "multipart/form-data" };
+  if (contentType === 'formdata') {
+    headers = { 'Content-Type': 'multipart/form-data' };
   } else {
-    headers = { "Content-Type": "application/json" };
+    headers = { 'Content-Type': 'application/json' };
   }
   if (token && token.length > 0) {
-    headers["token"] = token;
+    headers['token'] = token;
   }
 
   return await axios({
@@ -43,22 +49,22 @@ async function refreshToken() {
     // const diff = (tknExpDate - today) / (1000 * 60 * 60 * 24);
     // if (diff <= 6.96) {
     const headers = {
-      "Content-Type": "multipart/form-data",
+      'Content-Type': 'multipart/form-data',
       refresh_token: refreshTkn,
     };
     const bodyFormData = new FormData();
 
     const response = await axios({
-      method: "POST",
-      url: `${ROOT_URL + "/auth/refresh"}`,
+      method: 'POST',
+      url: `${ROOT_URL + '/auth/refresh'}`,
       data: bodyFormData,
       headers: headers,
     });
-    ls_SetUserToken(response.token);
-    ls_SetUserRefreshToken(response.refresh_token);
-    ls_SetUserID(response.user_id);
+    ls_SetUserToken(response?.token);
+    ls_SetUserRefreshToken(response?.refresh_token);
+    ls_SetUserID(response?.user_id);
 
-    token = response.token;
+    token = response?.token;
     // }
   }
   return token;
@@ -79,6 +85,6 @@ axios.interceptors.response.use(
     if (error?.data?.code === 4031 || error?.data?.code === 4032) {
       tokenExpired();
     }
-    return error.response.data;
+    return error.response?.data;
   }
 );

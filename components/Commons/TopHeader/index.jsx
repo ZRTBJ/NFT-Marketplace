@@ -64,6 +64,43 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
       : []
   );
 
+  useEffect(() => {
+
+    var addScript = document.createElement('script');
+    addScript.setAttribute(
+      'src',
+      '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit'
+    );
+    document?.body?.appendChild(addScript);
+    if (typeof window !== 'undefined') {
+      window.googleTranslateElementInit = googleTranslateElementInit;
+    }
+
+    return () => {
+      let container = document.getElementById('google_translate_element');
+      container?.remove();
+    };
+  }, []);
+
+
+  const googleTranslateElementInit = () => {
+    new window.google.translate.TranslateElement(
+      {
+        pageLanguage: 'en',
+        includedLanguages: 'en,es,ja,zh-CN,fr',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+      },
+      'google_translate_element'
+    );
+  };
+
+  useEffect(() => {
+    let getLabel = document.querySelector('.goog-te-menu-value span');
+    if (getLabel?.innerHTML === 'Select Language') {
+      getLabel.innerHTML = 'English';
+    }
+  });
+
   /** Metamask network change detection */
   useEffect(() => {
     setNetworkChangeDetected(false);
@@ -242,6 +279,12 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
               data: lastMessage.data,
             };
             dispatch(getNotificationData(notificationData));
+          } else if (data.type === 'fileUploadTokengatedNotification') {
+            const notificationData = {
+              function_uuid: data.Data.asset_uid,
+              data: lastMessage.data,
+            };
+            dispatch(getNotificationData(notificationData));
           }
         }
       } catch (err) {
@@ -316,7 +359,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   };
 
   return (
-    <header className='bg-light1'>
+    <header className='bg-light1 border border-b-1'>
       <AccountChangedModal
         show={showAccountChanged}
         handleClose={() => setShowAccountChanged(false)}
@@ -396,7 +439,6 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                 What’s DeCir
               </h5>
             )}
-
             <ul
               className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${
                 userId ? '' : 'sm:py-2'
@@ -464,7 +506,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
 
               <li className='md:ml-2'>
                 {userinfo?.id ? (
-                  <div className='flex space-x-2'>
+                  <div className='flex space-x-2 items-center'>
                     <div className='relative w-16 h-12 pt-2 cursor-pointer'>
                       <div
                         className='flex place-items-center'
@@ -490,26 +532,30 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                         )}
                       </div>
                     </div>
+                    <div id='google_translate_element'></div>
                   </div>
                 ) : (
-                  <button
-                    onClick={() => setShowModal(true)}
-                    className={`flex place-items-center ${styles.walletInfo} !w-auto`}
-                  >
-                    <svg
-                      width='16'
-                      height='16'
-                      viewBox='0 0 16 16'
-                      fill='none'
-                      xmlns='http://www.w3.org/2000/svg'
+                  <div className='flex items-center'>
+                    <button
+                      onClick={() => setShowModal(true)}
+                      className={`flex place-items-center ${styles.walletInfo} !w-auto`}
                     >
-                      <path
-                        d='M14 0C14.5312 0 15 0.46875 15 1C15 1.5625 14.5312 2 14 2H2.5C2.21875 2 2 2.25 2 2.5C2 2.78125 2.21875 3 2.5 3H14C15.0938 3 16 3.90625 16 5V12C16 13.125 15.0938 14 14 14H2C0.875 14 0 13.125 0 12V2C0 0.90625 0.875 0 2 0H14ZM13 9.5C13.5312 9.5 14 9.0625 14 8.5C14 7.96875 13.5312 7.5 13 7.5C12.4375 7.5 12 7.96875 12 8.5C12 9.0625 12.4375 9.5 13 9.5Z'
-                        fill='#46A6FF'
-                      />
-                    </svg>
-                    <span className='font-bold ml-2'>Connect Wallet</span>
-                  </button>
+                      <svg
+                        width='16'
+                        height='16'
+                        viewBox='0 0 16 16'
+                        fill='none'
+                        xmlns='http://www.w3.org/2000/svg'
+                      >
+                        <path
+                          d='M14 0C14.5312 0 15 0.46875 15 1C15 1.5625 14.5312 2 14 2H2.5C2.21875 2 2 2.25 2 2.5C2 2.78125 2.21875 3 2.5 3H14C15.0938 3 16 3.90625 16 5V12C16 13.125 15.0938 14 14 14H2C0.875 14 0 13.125 0 12V2C0 0.90625 0.875 0 2 0H14ZM13 9.5C13.5312 9.5 14 9.0625 14 8.5C14 7.96875 13.5312 7.5 13 7.5C12.4375 7.5 12 7.96875 12 8.5C12 9.0625 12.4375 9.5 13 9.5Z'
+                          fill='#46A6FF'
+                        />
+                      </svg>
+                      <span className='font-bold ml-2'>Connect Wallet</span>
+                    </button>
+                    <div id='google_translate_element' className='ml-3'></div>
+                  </div>
                 )}
               </li>
             </ul>
@@ -613,7 +659,12 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
               </div>
             )}
           </div>
+          <div>
+            {' '}
+            <div id='google_translate_element'></div>
+          </div>
         </div>
+
         {/* <form
           className={`${
             showSearchMobile

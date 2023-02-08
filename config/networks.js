@@ -1,8 +1,12 @@
 import Eth from 'assets/images/eth.svg';
 import Matic from 'assets/images/polygon.svg';
+import Bnb from 'assets/images/bnb.svg';
 import { address } from './contractAddresses.js';
+import PolyScan from 'assets/images/poly-scan.png';
+import EthScan from 'assets/images/eth-scan.png';
 
 const gnosisFundTransferUrl = 'https://app.safe.global';
+
 const raribleNFTDetailsUrl =
   process.env.NEXT_PUBLIC_ENV === 'production'
     ? 'https://rarible.com/token/'
@@ -33,6 +37,34 @@ const TESTNET = {
     openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/goerli/`,
     viewContractAddressUrl: `https://goerli.etherscan.io/address/`,
     viewTxUrl: `https://goerli.etherscan.io/tx/`,
+    decirTreasury: address.decirTreasuryGoerli,
+    discount: address.discountGoerli,
+    scan: EthScan,
+    alchamey: process.env.NEXT_PUBLIC_GOERLI_NFT_ALCHEMY_URL,
+  },
+  97: {
+    networkName: 'BNB Testnet',
+    cryto: 'BNB',
+    quickNodeURL: process.env.NEXT_PUBLIC_BNBTEST_QUICKNODE_URL,
+    value: 'bnb',
+    label: 'BNB',
+    icon: Bnb,
+    forwarder: address.MinimalForwarderBnbTest,
+    webhook: process.env.NEXT_PUBLIC_WEBHOOK_URL_BNBTEST,
+    genericProxyFacotory: address.GenericProxyFactoryBnbTest,
+    masterCopyDAO: address.CreatorDAOMasterCopyBnbTest,
+    masterCopyCollection: address.CreateCollectionMasterCopyBnbTest,
+    masterMembershipCollection:
+      address.CreateMembershipCollectionMasterCopyBnbTest,
+    masterRoyaltySplitter: address.RoyaltySplitterMasterCopyBnbTest,
+    network: 97,
+    gnosis: `${gnosisFundTransferUrl}/bnb`,
+    raribleNFTDetailsUrl: raribleNFTDetailsUrl,
+    openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/BSC_TESTNET/`,
+    viewContractAddressUrl: `https://testnet.bscscan.com/address/`,
+    viewTxUrl: `https://testnet.bscscan.com/tx/`,
+    decirTreasury: address.decirTreasuryBnbTest,
+    discount: address.discountBnbTest,
   },
   80001: {
     networkName: 'Polygon Testnet Mumbai',
@@ -55,6 +87,10 @@ const TESTNET = {
     openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/mumbai/`,
     viewContractAddressUrl: `https://mumbai.polygonscan.com/address/`,
     viewTxUrl: `https://mumbai.polygonscan.com/tx/`,
+    decirTreasury: address.decirTreasuryMumbai,
+    discount: address.discountMumbai,
+    scan: PolyScan,
+    alchamey: process.env.NEXT_PUBLIC_MUMBAI_NFT_ALCHEMY_URL,
   },
 };
 
@@ -80,6 +116,10 @@ const MAINNET = {
     openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/ethereum/`,
     viewContractAddressUrl: `https://etherscan.io/address/`,
     viewTxUrl: 'https://etherscan.io/tx/',
+    decirTreasury: address.decirTreasuryEthereum,
+    discount: address.discountEthereum,
+    scan: EthScan,
+    alchamey: process.env.NEXT_PUBLIC_ETHEREUM_NFT_ALCHEMY_URL,
   },
   137: {
     networkName: 'Polygon Mainnet',
@@ -102,6 +142,33 @@ const MAINNET = {
     openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/matic/`,
     viewContractAddressUrl: `https://polygonscan.com/address/`,
     viewTxUrl: 'https://polygonscan.com/tx/',
+    decirTreasury: address.decirTreasuryPolygon,
+    discount: address.discountPolygon,
+    scan: PolyScan,
+    alchamey: process.env.NEXT_PUBLIC_POLYGON_NFT_ALCHEMY_URL,
+  },
+  56: {
+    networkName: 'BNB Mainnet',
+    cryto: 'BNB',
+    quickNodeURL: process.env.NEXT_PUBLIC_BNB_QUICKNODE_URL,
+    value: 'bnb',
+    label: 'BNB',
+    icon: Bnb,
+    forwarder: address.MinimalForwarderBnb,
+    webhook: process.env.NEXT_PUBLIC_WEBHOOK_URL_BNB,
+    genericProxyFacotory: address.GenericProxyFactoryBnb,
+    masterCopyDAO: address.CreatorDAOMasterCopyBnb,
+    masterCopyCollection: address.CreateCollectionMasterCopyBnb,
+    masterMembershipCollection: address.CreateMembershipCollectionMasterCopyBnb,
+    masterRoyaltySplitter: address.RoyaltySplitterMasterCopyBnb,
+    network: 56,
+    gnosis: `${gnosisFundTransferUrl}/bnb`,
+    raribleNFTDetailsUrl: raribleNFTDetailsUrl,
+    openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/BSC/`,
+    viewContractAddressUrl: `https://bscscan.com/address/`,
+    viewTxUrl: `https://bscscan.com/tx/`,
+    decirTreasury: address.decirTreasuryBnb,
+    discount: address.discountBnb,
   },
 };
 

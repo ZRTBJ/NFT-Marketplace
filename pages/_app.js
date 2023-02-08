@@ -18,7 +18,10 @@ import store from '../redux';
 import MetaHead from 'components/Commons/MetaHead/MetaHead';
 import Head from 'next/head';
 import Favicon from 'components/Commons/Favicon';
-import * as gtag from 'util/gtag';
+import axios from 'axios';
+import Config from 'config/config';
+import Maintenance from 'components/Commons/Maintenance';
+import { GoogleAnalytics } from "nextjs-google-analytics";
 
 dynamic(() => import('tw-elements'), { ssr: false });
 
@@ -28,35 +31,56 @@ function MyApp({ Component, pageProps }) {
   const [showSideBar, setShowSideBar] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [isEmbedView, setIsEmbedView] = useState(false);
+  const [isMaintenance, setIsMaintenance] = useState(false);
+  const [isContentView, setIsContentView] = useState(false);
+  const [isTokenGatedProjectPublicView, setIsTokenGatedProjectPublicView] =
+    useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const use = async () => {
+      (await import('tw-elements')).default;
+    };
+    use();
+  }, []);
+
   const handleToggleSideBar = () => {
     setShowSideBar(!showSideBar);
   };
 
   const { data } = pageProps;
+  const getMaintenanceInfo = async () => {
+    await axios
+      .get(`${Config.MAINTENANCE_MODE_URL}/status.json`)
+      .then((res) => {
+        if (res?.maintain) {
+          setIsMaintenance(true);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   useEffect(() => {
+    getMaintenanceInfo();
     let path = typeof window !== 'undefined' && router?.asPath;
     let pathItems = path && path.split('/');
     let view =
       pathItems && pathItems.length ? pathItems.includes('embed-nft') : false;
     setIsEmbedView(view);
+    let contentView =
+      pathItems && pathItems.length ? pathItems.includes('content') : false;
+    setIsContentView(contentView);
+    let tokenGatedProjectPublicView =
+      pathItems && pathItems.length ? pathItems.includes('public') : false;
+    setIsTokenGatedProjectPublicView(tokenGatedProjectPublicView);
   }, [router?.asPath]);
 
-  useEffect(() => {
-    const handleRouteChange = (url) => {
-      gtag.pageview(url);
-    };
-    router.events.on('routeChangeComplete', handleRouteChange);
-    router.events.on('hashChangeComplete', handleRouteChange);
-    return () => {
-      router.events.off('routeChangeComplete', handleRouteChange);
-      router.events.off('hashChangeComplete', handleRouteChange);
-    };
-  }, [router.events]);
 
   return (
     <>
+      <GoogleAnalytics trackPageViews />
       <Head>
         <Favicon></Favicon>
       </Head>
@@ -69,79 +93,77 @@ function MyApp({ Component, pageProps }) {
         src="https://kit.fontawesome.com/6ebe0998e8.js"
         crossorigin="anonymous"
       ></Script>
-      {/* Global Site Tag (gtag.js) - Google Analytics */}
-      <Script
-        strategy='afterInteractive'
-        src={`https://www.googletagmanager.com/gtag/js?id=${gtag.GA_TRACKING_ID}`}
-      />
-      <Script
-        id='gtag-init'
-        strategy='afterInteractive'
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${gtag.GA_TRACKING_ID}', {
-              page_path: window.location.pathname,
-            });
-          `,
-        }}
-      />
 
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <DAppProvider config={{}}>
-            <Auth>
-              <div className='bg-light'>
-                {!isEmbedView && (
-                  <Header
-                    handleSidebar={handleToggleSideBar}
-                    setShowModal={setShowModal}
-                    showModal={showModal}
-                  />
-                )}
-                <main className='container min-h-[calc(100vh-71px)]'>
-                  <div className='flex flex-row'>
-                    {!isEmbedView && (
-                      <div className='hidden md:block mr-4 '>
-                        <Sidebar
-                          setShowModal={setShowModal}
-                          handleToggleSideBar={handleToggleSideBar}
-                        />
-                      </div>
-                    )}
-                    {!isEmbedView && (
-                      <div
-                        className={`${
-                          showSideBar ? 'translate-x-0' : '-translate-x-full'
-                        } block md:hidden mr-4 absolute z-[100] ease-in-out duration-300`}
-                      >
-                        <Sidebar
-                          setShowModal={setShowModal}
-                          handleToggleSideBar={handleToggleSideBar}
-                        />
-                      </div>
-                    )}
-                    <div className='w-full min-w-[calc(100vw-300px)]'>
-                      <Component {...pageProps} />
+            {isMaintenance ? (
+              <Maintenance />
+            ) : (
+              <Auth>
+                <div className='bg-light'>
+                  {!isEmbedView && (
+                    <Header
+                      handleSidebar={handleToggleSideBar}
+                      setShowModal={setShowModal}
+                      showModal={showModal}
+                    />
+                  )}
+                  <main
+                    className='container min-h-[calc(100vh-71px)]'
+                    style={
+                      isContentView
+                        ? { width: '100%', maxWidth: '100%' }
+                        : isTokenGatedProjectPublicView
+                        ? { width: '100%', maxWidth: '100%' }
+                        : {}
+                    }
+                  >
+                    <div className='flex flex-row'>
+                      {isEmbedView ||
+                      isContentView ||
+                      isTokenGatedProjectPublicView ? null : (
+                        <div className='hidden md:block mr-4 '>
+                          <Sidebar
+                            setShowModal={setShowModal}
+                            handleToggleSideBar={handleToggleSideBar}
+                          />
+                        </div>
+                      )}
+                      {isEmbedView ||
+                      isContentView ||
+                      isTokenGatedProjectPublicView ? null : (
+                        <div
+                          className={`${
+                            showSideBar ? 'translate-x-0' : '-translate-x-full'
+                          } block md:hidden mr-4 absolute z-[100] ease-in-out duration-300`}
+                        >
+                          <Sidebar
+                            setShowModal={setShowModal}
+                            handleToggleSideBar={handleToggleSideBar}
+                          />
+                        </div>
+                      )}
+                      <div className='w-full min-w-[calc(100vw-300px)]'>
+                        <Component {...pageProps} />
 
-                      <ToastContainer
-                        className='impct-toast'
-                        position='top-right'
-                        autoClose={3000}
-                        newestOnTop
-                        closeOnClick
-                        rtl={false}
-                        pauseOnVisibilityChange
-                        draggable={false}
-                        transition={Slide}
-                      />
+                        <ToastContainer
+                          className='impct-toast'
+                          position='top-right'
+                          autoClose={3000}
+                          newestOnTop
+                          closeOnClick
+                          rtl={false}
+                          pauseOnVisibilityChange
+                          draggable={false}
+                          transition={Slide}
+                        />
+                      </div>
                     </div>
-                  </div>
-                </main>
-              </div>
-            </Auth>
+                  </main>
+                </div>
+              </Auth>
+            )}
           </DAppProvider>
         </PersistGate>
       </Provider>

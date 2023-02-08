@@ -21,7 +21,9 @@ const PublishRoyaltyConfirmModal = ({ handleClose, show, publishProject }) => {
         <img
           className="h-[200px] md:w-[300px] mx-auto"
           src={publishModalSvg}
-          alt=""
+          alt='Publish modal svg'
+          height={200}
+          width={200}
         />
         <div className="md:mx-16">
           <div className="font-black text-[28px] font-black">

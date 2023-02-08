@@ -6,6 +6,7 @@ import { createDAO } from './deploy-dao';
 import { createProvider } from 'util/smartcontract/provider';
 import { createInstance } from 'config/ABI/genericProxyFactory';
 import Image from 'next/image';
+import { event } from "nextjs-google-analytics";
 
 const DeployingProjectModal = ({
   handleClose,
@@ -29,6 +30,7 @@ const DeployingProjectModal = ({
   }, [publishStep]);
 
   function publishThisProject(transactionData) {
+    event("publish_dao", { category: "dao" });
     setIsLoading(true);
     let payload = new FormData();
     if (transactionData) {
@@ -128,7 +130,9 @@ const DeployingProjectModal = ({
               alt=''
             />
             <div className='md:mx-16'>
-              <h5>Your DAO is published successfully!</h5>
+              <p className='text-[20px] font-bold text-txtblack'>
+                Your DAO is published successfully!
+              </p>
               <p className='text-[#9499AE] mt-[12px]'>
                 Now you can publish your collection!
               </p>

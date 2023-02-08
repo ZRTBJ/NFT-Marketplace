@@ -5,7 +5,7 @@ import DefaultProfilePicture from 'assets/images/defaultProfile.svg';
 import DefaultProjectLogo from 'assets/images/profile/defaultProjectLogo.svg';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Autoplay } from 'swiper';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
@@ -37,7 +37,7 @@ import { ls_GetUserID } from 'util/ApplicationStorage';
 import { getCurrentNetworkId } from 'util/MetaMask';
 import NetworkHandlerModal from 'components/Modals/NetworkHandlerModal';
 import Image from 'next/image';
-
+import tokenGatedCreateIcon from 'assets/images/token-gated/createIcon.svg';
 import nftSvg from 'assets/images/profile/nftSvg.svg';
 import daoCreate from 'assets/images/profile/daoCreate.svg';
 import CreateNFTModal from 'components/Project/CreateDAOandNFT/components/CreateNFTModal.jsx';
@@ -46,7 +46,17 @@ import emptyStateRoyalty from 'assets/images/profile/emptyStateRoyalty.png';
 import curvVector from 'assets/images/profile/curv1.png';
 import Modal from 'components/Commons/Modal';
 import CollectionCard from 'components/Cards/CollectionCard';
+import { logout } from 'redux/auth';
+import {
+  createTokenGatedProject,
+  getTokenGatedProjectList,
+} from 'services/tokenGated/tokenGatedService';
+import TokenGatedProjectCard from 'components/Cards/TokenGatedProjectCard';
+import { event } from "nextjs-google-analytics";
+
+
 const Profile = ({ id }) => {
+  const dispatch = useDispatch();
   const provider = createProvider();
   SwiperCore.use([Autoplay]);
   const router = useRouter();
@@ -56,6 +66,7 @@ const Profile = ({ id }) => {
   const [daoLoading, setDaoLoading] = useState(true);
   const [collectionLoading, setCollectionLoading] = useState(true);
   const [nftLoading, setNftLoading] = useState(true);
+  const [tokenGatedLoading, setTokenGatedLoading] = useState(true);
   const [royaltyEarned, setRoyaltyEarned] = useState({});
   const [sncList, setsncList] = useState([]);
   const socialLinks = [
@@ -140,6 +151,8 @@ const Profile = ({ id }) => {
 
   const [ShowCreateNFT, setShowCreateNFT] = useState(false);
   const [profileModal, setProfileModal] = useState(false);
+  const [showOverlayLoading, setShowOverlayLoading] = useState(false);
+  const [tokenGatedProjectList, setTokenGatedProjectList] = useState(true);
 
   const userinfo = useSelector((state) => state.user.userinfo);
   // function start
@@ -194,6 +207,9 @@ const Profile = ({ id }) => {
             }
             SetPagination(pageList);
           }
+        } else if (res?.code === 4032) {
+          dispatch(logout());
+          router.push('/');
         }
       })
       .catch(() => {
@@ -352,6 +368,29 @@ const Profile = ({ id }) => {
       });
     setNftLoading(false);
   }
+  async function OnGetTokenGatedProjectList() {
+    const payload = {
+      userId: id,
+      page: 1,
+      limit: 10,
+    };
+    await getTokenGatedProjectList(payload)
+      .then((e) => {
+        if (e.code === 0 && e.data !== null) {
+          setTokenGatedProjectList(e.data);
+          setIsLoading(false);
+          setTokenGatedLoading(false);
+        } else {
+          setIsLoading(false);
+          setTokenGatedLoading(false);
+        }
+      })
+      .catch(() => {
+        setIsLoading(false);
+        setTokenGatedLoading(false);
+      });
+    setTokenGatedLoading(false);
+  }
 
   function setRoyaltyData(royalty, type) {
     let royaltyList = [...royaltiesList];
@@ -368,6 +407,24 @@ const Profile = ({ id }) => {
     royaltyList[royaltyIndex] = royaltyLocal;
     setRoyaltiesList(royaltyList);
   }
+  const onCreateTokenGatedProject = async () => {
+    event("create_token_gate_project", { category: "token_gate"});
+    setShowOverlayLoading(true);
+    let title = `Unnamed Project ${new Date().toISOString()}`;
+    await createTokenGatedProject(title)
+      .then((res) => {
+        setShowOverlayLoading(false);
+        if (res.code === 0) {
+          router.push(`/token-gated/${res?.token_gate_project?.id}`);
+        } else {
+          toast.error(`Failed, ${res?.message}`);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setShowOverlayLoading(false);
+      });
+  };
 
   useEffect(() => {
     userInfo();
@@ -377,7 +434,9 @@ const Profile = ({ id }) => {
     setWalletAddress(user?.eao);
   }, [user]);
   useEffect(() => {
-    getUserRoyaltiesInfo(1);
+    if (id) {
+      getUserRoyaltiesInfo(1);
+    }
   }, []);
   useEffect(() => {
     getProjectList();
@@ -387,6 +446,9 @@ const Profile = ({ id }) => {
   }, []);
   useEffect(() => {
     getNftList();
+  }, [id]);
+  useEffect(() => {
+    OnGetTokenGatedProjectList();
   }, [id]);
 
   useEffect(() => {
@@ -491,9 +553,9 @@ const Profile = ({ id }) => {
                               >
                                 <i
                                   className={`fa-brands fa-${
-                                    socialLinks.find(
+                                    socialLinks?.find(
                                       (x) => x.title === snc.title
-                                    ).icon
+                                    )?.icon
                                   } text-[20px] gradient-text text-white-shade-900 mt-1`}
                                 ></i>
                               </a>
@@ -567,6 +629,21 @@ const Profile = ({ id }) => {
                 Create New Dao
               </span>
             </div>
+            <div
+              onClick={() => onCreateTokenGatedProject()}
+              className=' cursor-pointer min-h-[72px] p-3   rounded  bg-danger-1/[0.10] border border-danger-1'
+            >
+              <Image
+                src={tokenGatedCreateIcon}
+                className='mb-1 h-[24px] w-[24px]'
+                width={24}
+                height={24}
+                alt=''
+              />
+              <span className='text-danger-1 font-black'>
+                Create Token Gated Project
+              </span>
+            </div>
           </div>
           {/* Royalties Table */}
           <div className=' mt-[20px] mx-3 mb-[36px] pt-[30px]  px-4  pb-[35px] bg-white-shade-900 rounded-xl'>
@@ -602,7 +679,7 @@ const Profile = ({ id }) => {
                                 Icon
                               </th>
                               <th scope='col' className='px-5'>
-                                Project Name
+                                DAO Name
                               </th>
                               <th scope='col' className='px-5'>
                                 Collection Name
@@ -633,7 +710,7 @@ const Profile = ({ id }) => {
                               >
                                 <td className='py-4 px-5'>
                                   <Image
-                                    src={NETWORKS[Number(r.blockchain)].icon}
+                                    src={NETWORKS[Number(r.blockchain)]?.icon}
                                     className='h-[30px] w-[30px]  rounded-full'
                                     alt={DefaultProjectLogo}
                                     width={30}
@@ -742,7 +819,7 @@ const Profile = ({ id }) => {
                           <div className={`flex   items-center mb-8 `}>
                             <div className={'flex  items-center'}>
                               <Image
-                                src={NETWORKS[Number(r.blockchain)].icon}
+                                src={NETWORKS[Number(r.blockchain)]?.icon}
                                 className='h-[34px] w-[34px] object-cover rounded-full'
                                 alt={DefaultProjectLogo}
                                 width={34}
@@ -851,6 +928,67 @@ const Profile = ({ id }) => {
                   activeClassName='text-primary-900 bg-primary-900 !no-underline'
                   activeLinkClassName='!text-txtblack !no-underline'
                 />
+              </>
+            )}
+          </div>
+          {/* Token gated projects */}
+          <div className='mb-[50px]'>
+            <div className='mb-5 flex px-4 flex-wrap'>
+              <div className='text-[24px] text-txtblack font-black'>
+                Your token gated project
+              </div>
+              {tokenGatedProjectList?.length > 0 && (
+                <Link
+                  href={`/list/?type=tokenGated&user=true`}
+                  className='contained-button rounded ml-auto'
+                >
+                  View All
+                </Link>
+              )}
+            </div>
+            {tokenGatedLoading ? (
+              <div className='text-center'>
+                <Spinner />
+              </div>
+            ) : (
+              <>
+                {tokenGatedProjectList.length > 0 ? (
+                  <Swiper
+                    breakpoints={settings}
+                    navigation={false}
+                    modules={[Navigation]}
+                    className={styles.createSwiper}
+                  >
+                    <div>
+                      {tokenGatedProjectList.map((tokenGatedProject, index) => (
+                        <div key={tokenGatedProject.id}>
+                          <SwiperSlide
+                            key={tokenGatedProject.id}
+                            className={styles.nftCard}
+                          >
+                            <TokenGatedProjectCard
+                              key={index}
+                              tokenGatedProject={tokenGatedProject}
+                            ></TokenGatedProjectCard>
+                          </SwiperSlide>
+                        </div>
+                      ))}
+                    </div>
+                  </Swiper>
+                ) : (
+                  <div className='text-center mt-6 text-textSubtle'>
+                    <Image
+                      src={emptyStateCommon}
+                      className='h-[210px] w-[315px] m-auto'
+                      alt=''
+                      width={315}
+                      height={210}
+                    />
+                    <p className='text-subtitle font-bold'>
+                      You have no Token Gated Project Created
+                    </p>
+                  </div>
+                )}
               </>
             )}
           </div>
@@ -1081,6 +1219,7 @@ const Profile = ({ id }) => {
           </div>
         </Modal>
       )}
+      {showOverlayLoading && <div className='loading'></div>}
     </>
   );
 };

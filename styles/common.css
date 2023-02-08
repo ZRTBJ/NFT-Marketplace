@@ -389,6 +389,16 @@ table > thead > tr > th {
     ),
     #ffffff;
 }
+
+.gray-linear-gradient-card-bg {
+  background: linear-gradient(
+      0deg,
+      rgba(18, 36, 120, 0.05),
+      rgba(18, 36, 120, 0.05)
+    ),
+    #ffffff;
+}
+
 /**
 * ======================================================
 * Rsuite Dropdown
@@ -464,4 +474,90 @@ table > thead > tr > th {
   max-width: 200ppx;
   padding: 20px 30px;
   border-radius: 10px;
+}
+.rs-btn-primary {
+  background-color: #3498ff !important;
+  border: none !important;
+  color: #fff !important;
+}
+
+/* Language selector */
+.goog-te-banner-frame.skiptranslate {
+  display: none !important;
+}
+body {
+  top: 0px !important;
+}
+.goog-te-gadget img {
+  display: none;
+}
+.goog-te-gadget-simple {
+  border-color: #3498ff !important;
+  border-radius: 10px;
+  padding: 5px;
+  color: #3498ff;
+}
+
+.goog-te-gadget-simple .goog-te-menu-value span {
+  font-size: 12px;
+  padding-right: 5px;
+}
+
+.token-gated-dropdown:focus-within .token-gated-dropdown-menu {
+  opacity: 1;
+  transform: translate(0) scale(1);
+  visibility: visible;
+}
+
+.content-accordian {
+  background: linear-gradient(
+      0deg,
+      rgba(18, 36, 120, 0.02),
+      rgba(18, 36, 120, 0.02)
+    ),
+    #ffffff;
+}
+
+.accordian-sub-button {
+  background: linear-gradient(
+      0deg,
+      rgba(18, 36, 120, 0.02),
+      rgba(18, 36, 120, 0.02)
+    ),
+    #ffffff !important;
+}
+
+.accordian-detail-content.show {
+  visibility: visible !important;
+}
+
+.dark-shadow-bg {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.8) 30%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  color: #fff;
+  padding-bottom: 50px;
+  display: flex;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-top: 24px;
+  align-items: flex-start;
+}
+
+.verticalList p a {
+  color: #fff !important;
+}
+
+.verticalList i {
+  color: #fff !important;
+}
+
+.verticalList span {
+  color: #c7cee6 !important;
+}
+video::-webkit-media-controls-panel {
+  display: flex !important;
+  opacity: 1 !important;
 }

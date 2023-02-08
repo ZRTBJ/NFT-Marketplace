@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCopy } from "@fortawesome/free-solid-svg-icons";
-import Trash from "assets/images/icons/trash.svg";
-import Edit from "assets/images/icons/edit.svg";
-import { walletAddressTruncate } from "util/WalletUtils";
+import { useState } from 'react';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCopy } from '@fortawesome/free-solid-svg-icons';
+import Trash from 'assets/images/icons/trash.svg';
+import Edit from 'assets/images/icons/edit.svg';
+import { walletAddressTruncate } from 'util/WalletUtils';
+import Image from 'next/image';
 
 const MemberRowMobile = (props) => {
   const { item, isLastItem, handleValueChange, handleAutoFill } = props;
@@ -16,67 +17,67 @@ const MemberRowMobile = (props) => {
   };
 
   return (
-    <div className={`${isLastItem ? "border-b" : ""} pb-4 mb-4`}>
-      <div className="flex items-center justify-between">
-        <div className="mb-3">
-          <p className="text-[14px] font-bold">Wallet Address</p>
-          <div className="flex items-center">
-            <p className="text-[13px] mt-0">
+    <div className={`${isLastItem ? 'border-b' : ''} pb-4 mb-4`}>
+      <div className='flex items-center justify-between'>
+        <div className='mb-3'>
+          <p className='text-[14px] font-bold'>Wallet Address</p>
+          <div className='flex items-center'>
+            <p className='text-[13px] mt-0'>
               {walletAddressTruncate(item.user_eoa)}
             </p>
             <CopyToClipboard text={item.user_eoa}>
-              <button className="ml-1 w-[32px] h-[32px] rounded-[4px] flex items-center justify-center cursor-pointer text-[#A3D7EF] active:text-black">
-                <FontAwesomeIcon className="" icon={faCopy} />
+              <button className='ml-1 w-[32px] h-[32px] rounded-[4px] flex items-center justify-center cursor-pointer text-[#A3D7EF] active:text-black'>
+                <FontAwesomeIcon className='' icon={faCopy} />
               </button>
             </CopyToClipboard>
           </div>
         </div>
         {item.is_owner ? null : (
-          <div className="w-[32px] h-[32px] bg-[#FF3C3C] rounded-[4px] flex items-center justify-center cursor-pointer">
-            <img src={Trash} alt="delete" />
+          <div className='w-[32px] h-[32px] bg-[#FF3C3C] rounded-[4px] flex items-center justify-center cursor-pointer'>
+            <Image src={Trash} alt='delete' />
           </div>
         )}
       </div>
-      <div className="flex items-center justify-between">
-        <div className="">
-          <p className="text-[14px] font-bold">Name</p>
-          <p className="text-[13px] mt-0">
-            {item.user_name ? item.user_name : "-"}
+      <div className='flex items-center justify-between'>
+        <div className=''>
+          <p className='text-[14px] font-bold'>Name</p>
+          <p className='text-[13px] mt-0'>
+            {item.user_name ? item.user_name : '-'}
           </p>
         </div>
-        <div className="">
-          <p className="text-[14px] font-bold">Percentage</p>
-          <div className="flex">
+        <div className=''>
+          <p className='text-[14px] font-bold'>Percentage</p>
+          <div className='flex'>
             {!isEdit && (
               <>
-                <span className="text-[13px] mt-0">
-                  {item.royalty_percent ? `${item.royalty_percent}%` : "-"}
+                <span className='text-[13px] mt-0'>
+                  {item.royalty_percent ? `${item.royalty_percent}%` : '-'}
                 </span>
-                <img
-                  className="ml-2 cursor-pointer"
+                <Image
+                  className='ml-2 cursor-pointer'
                   src={Edit}
-                  alt="edit"
+                  alt='edit'
                   onClick={() => setIsEdit(true)}
                 />
               </>
             )}
             {isEdit && (
-              <div className="flex">
-                <div className="w-[60px]">
+              <div className='flex'>
+                <div className='w-[60px]'>
                   <input
-                    type="number"
+                    type='number'
                     value={item.royalty_percent}
-                    style={{ padding: "5px 10px" }}
+                    style={{ padding: '5px 10px' }}
                     onChange={(e) => handleValueChange(e, item.user_eoa)}
                   />
                 </div>
-                <div className="ml-1">
+                <div className='ml-1'>
                   <i
-                    class="fa-solid fa-check bg-green-400 rounded-[4px] text-white flex items-center justify-center h-[24px] w-[24px] text-[20px] cursor-pointer"
+                    className='fa-solid fa-check bg-green-400 rounded-[4px] text-white flex items-center justify-center h-[24px] w-[24px] text-[20px] cursor-pointer'
                     onClick={handleUpdatePercent}
                   ></i>
                   <i
-                    class="fa-solid fa-xmark bg-red-400 rounded-[4px] text-white flex items-center justify-center h-[24px] w-[24px] text-[20px] cursor-pointer"
+                    className='fa-solid fa-xmark bg-red-400 rounded-[4px] text-white flex items-center justify-center h-[24px] w-[24px] text-[20px] cursor-pointer'
                     onClick={() => setIsEdit(false)}
                   ></i>
                 </div>
@@ -84,16 +85,16 @@ const MemberRowMobile = (props) => {
             )}
           </div>
         </div>
-        <div className="">
-          <p className="text-[14px] font-bold">Roles</p>
+        <div className=''>
+          <p className='text-[14px] font-bold'>Roles</p>
           <p
             className={`text-[13px] mt-0 bg-opacity-[0.2] py-1 px-2 w-fit rounded-[4px] font-bold ${
               item.is_owner
-                ? "text-info-1 bg-[#46A6FF]"
-                : " text-success-1 bg-[#32E865]"
+                ? 'text-info-1 bg-[#46A6FF]'
+                : ' text-success-1 bg-[#32E865]'
             }`}
           >
-            {item.is_owner ? "Owner" : "Contributor"}
+            {item.is_owner ? 'Owner' : 'Contributor'}
           </p>
         </div>
       </div>

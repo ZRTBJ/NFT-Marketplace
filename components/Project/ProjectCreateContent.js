@@ -8,11 +8,15 @@ import {
   updateProject,
   getProjectDetailsById,
   deleteAssetsOfProject,
+  deleteDraftDao,
 } from 'services/project/projectService';
 import ErrorModal from 'components/Modals/ErrorModal';
 import SuccessModal from 'components/Modals/SuccessModal';
 import { getProjectCategory } from 'services/project/projectService';
 import { ls_GetChainID } from 'util/ApplicationStorage';
+import ConfirmationModal from 'components/Modals/ConfirmationModal';
+import { event } from "nextjs-google-analytics";
+
 
 function ProjectCreateContent({ search }) {
   // Logo start
@@ -237,6 +241,9 @@ function ProjectCreateContent({ search }) {
   const [projectCategoryList, setProjectCategoryList] = useState([]);
   const [notOwner, setNotOwner] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [projectPublished, setProjectPublished] = useState(false);
+  const [daoDeleted, setDaoDeleted] = useState(false);
 
   function handelClickBack() {
     let currentIndex = currentStep.pop();
@@ -294,6 +301,7 @@ function ProjectCreateContent({ search }) {
   }
 
   async function createNewProject() {
+    event("create_dao", { category: "dao", label: "name", value: projectName });
     let createPayload = {
       name: projectName,
       category_id: projectCategory,
@@ -319,6 +327,7 @@ function ProjectCreateContent({ search }) {
     return projectId;
   }
   async function updateExistingProject(id) {
+    event("update_dao", { category: "dao", label: "name", value: projectName });
     try {
       let updatePayload = {
         logo: logoPhoto.length > 0 ? logoPhoto[0] : null,
@@ -349,6 +358,7 @@ function ProjectCreateContent({ search }) {
       if (e.code === 4040 && !response) {
         setDataIsLoading(false);
         setShowErrorModal(true);
+        setErrorMessage(e.message);
       } else {
         // console.log(response);
 
@@ -391,6 +401,7 @@ function ProjectCreateContent({ search }) {
         if (response?.project_status === 'published') {
           setProjectNameDisabled(true);
           setDaoWalletDisable(true);
+          setProjectPublished(true);
         }
         if (!response?.is_owner) {
           setNotOwner(true);
@@ -455,6 +466,27 @@ function ProjectCreateContent({ search }) {
   function useQuery() {
     return React.useMemo(() => new URLSearchParams(search), [search]);
   }
+  async function deleteDao() {
+    event("delete_dao", { category: "dao", label: "name", value: projectName });
+    setDataIsLoading(true);
+    await deleteDraftDao(projectId)
+      .then((res) => {
+        if (res.code === 0) {
+          setDaoDeleted(true);
+          setShowDeleteModal(false);
+          setShowSuccessModal(true);
+          setDataIsLoading(false);
+        } else {
+          setShowErrorModal(true);
+          setErrorMessage(res.message);
+          setDataIsLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setDataIsLoading(false);
+      });
+  }
   useEffect(() => {
     getProjectCategory().then((e) => {
       setProjectCategoryList(e.categories);
@@ -483,13 +515,26 @@ function ProjectCreateContent({ search }) {
             <div className='create-project-container'>
               {currentStep.length === 1 && (
                 <div>
-                  <h1 className='text-[28px] font-black mb-[6px]'>
-                    {!projectCreated ? 'Create New' : 'Update'} DAO
-                  </h1>
-                  <p className='text-[14px] text-textSubtle mb-[24px]'>
-                    Fill the require form to{' '}
-                    {!projectCreated ? 'create' : 'update'} dao
-                  </p>
+                  <div className='flex flex-wrap items-center mb-[24px]'>
+                    <div>
+                      <h1 className='text-[28px] font-black mb-[6px]'>
+                        {!projectCreated ? 'Create New' : 'Update'} DAO
+                      </h1>
+                      <p className='text-[14px] text-textSubtle '>
+                        Fill the require form to{' '}
+                        {!projectCreated ? 'create' : 'update'} dao
+                      </p>
+                    </div>
+                    {query.get('id') && !notOwner && !projectPublished && (
+                      <button
+                        onClick={() => setShowDeleteModal(true)}
+                        className='px-4 py-2 text-white bg-danger-1 ml-auto rounded'
+                      >
+                        <i className='fa-solid fa-trash mr-1'></i>
+                        <span>Delete</span>
+                      </button>
+                    )}
+                  </div>
                   <Outline
                     key={outlineKey}
                     // logo
@@ -612,12 +657,12 @@ function ProjectCreateContent({ search }) {
       </div>
       {showSuccessModal && (
         <SuccessModal
-          redirection={`/dao/${projectId}`}
+          redirection={!daoDeleted ? `/dao/${projectId}` : `/dashboard`}
           show={showSuccessModal}
-          message={'DAO successfully  saved'}
-          subMessage={"Let's explore the DAO"}
-          buttonText='VIEW DAO'
-          handleClose={setShowSuccessModal}
+          message={`DAO successfully ${!daoDeleted ? 'saved' : 'deleted'}`}
+          subMessage={!daoDeleted ? "Let's explore the DAO" : ''}
+          buttonText={!daoDeleted ? 'VIEW DAO' : 'Close'}
+          handleClose={() => setShowSuccessModal(false)}
         />
       )}
       {showErrorModal && (
@@ -628,7 +673,15 @@ function ProjectCreateContent({ search }) {
           }}
           show={showErrorModal}
           message={errorMessage}
-          redirection={'/dao/create'}
+          redirection={'/dashboard'}
+        />
+      )}
+      {showDeleteModal && (
+        <ConfirmationModal
+          show={showDeleteModal}
+          handleClose={() => setShowDeleteModal(false)}
+          handleApply={deleteDao}
+          message='Are you sure  to delete this DAO?'
         />
       )}
     </>

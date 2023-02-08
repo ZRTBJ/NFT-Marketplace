@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import thumbIcon from 'assets/images/profile/card.svg';
 import Image from 'next/image';
-// import SalesSuccessModal from "Pages/Collection/SaleSetting/SalesSuccessModal";
+// import SalesSuccessModal from 'Pages/Collection/SaleSetting/SalesSuccessModal';
 
 const ProductNFTTab = ({ project, projectId, productCollectionList }) => {
   const truncateArray = (members) => {
@@ -58,49 +58,49 @@ const ProductNFTTab = ({ project, projectId, productCollectionList }) => {
                   </h2>
                   <div className='relative'>
                     {/* Hide dropdown menu <button
-                                type="button"
+                                type='button'
                                 onClick={() => {
                                   const el = document.getElementById(
                                     `collection-option-${index}`
                                   );
-                                  el.classList.toggle("hidden");
+                                  el.classList.toggle('hidden');
                                 }}
                               >
                                 {project?.is_owner && (
-                                  <i className="fa-regular fa-ellipsis-vertical text-textSubtle"></i>
+                                  <i className='fa-regular fa-ellipsis-vertical text-textSubtle'></i>
                                 )}
                               </button> 
 
                     {project?.is_owner && (
                       <div
                         id={`collection-option-${index}`}
-                        className="z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden"
+                        className='z-10 w-48 bg-white border border-divide rounded-md  absolute left-0 top-8 hidden'
                       >
-                        <ul className="text-sm">
-                          <li className="border-b border-divide cursor-pointer">
+                        <ul className='text-sm'>
+                          <li className='border-b border-divide cursor-pointer'>
                             <a
                               onClick={() => {
                                 setShowSalesPageModal(true);
                                 setCollectionId(collection?.id);
-                                setCollectionType("product");
+                                setCollectionType('product');
                               }}
-                              className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                              className='block p-4 hover:bg-gray-100 dark:hover:bg-gray-600'
                             >
                               Sales Page
                             </a>
                           </li>
-                          <li className="border-b border-divide">
+                          <li className='border-b border-divide'>
                             <Link
                               to={`/collection/create/?id=${collection?.id}`}
-                              className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                              className='block p-4 hover:bg-gray-100 dark:hover:bg-gray-600'
                             >
                               Edit Collections
                             </Link>
                           </li>
-                          <li className="border-b border-divide">
+                          <li className='border-b border-divide'>
                             <a
-                              href="#"
-                              className="block p-4 hover:bg-gray-100 dark:hover:bg-gray-600"
+                              href='#'
+                              className='block p-4 hover:bg-gray-100 dark:hover:bg-gray-600'
                             >
                               Connect right-attach NFT
                             </a>

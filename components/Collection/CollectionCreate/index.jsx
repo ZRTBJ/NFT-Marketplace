@@ -10,6 +10,7 @@ import {
   updateCollection,
   getCollectionDetailsById,
   deleteAssetsOfCollection,
+  deleteDraftCollection,
 } from 'services/collection/collectionService';
 import ErrorModal from 'components/Modals/ErrorModal';
 import SuccessModal from 'components/Modals/SuccessModal';
@@ -20,6 +21,8 @@ import {
 import { ls_GetChainID } from 'util/ApplicationStorage';
 import Outline from 'components/FormUtility/Outline';
 import Confirmation from 'components/FormUtility/Confirmation';
+import ConfirmationModal from 'components/Modals/ConfirmationModal';
+import { event } from "nextjs-google-analytics";
 
 export default function CollectionCreate({ query }) {
   // logo start
@@ -206,10 +209,6 @@ export default function CollectionCreate({ query }) {
   }
   // category end
 
-  // Blockchain start
-  const [blockchainCategory, setBlockchaainCategory] = useState('polygon');
-  // Blockchain end
-
   // Freeze MetaData start
   const [isMetaDaFreezed, setIsMetaDataFreezed] = useState(true);
   const [freezeMetadataDisabled, setFreezeMetadataDisabled] = useState(false);
@@ -254,7 +253,7 @@ export default function CollectionCreate({ query }) {
   }
 
   // Royalty Percentage end
-
+  let chainId = ls_GetChainID();
   //Supply
   const [supply, setSupply] = useState(0);
   const [supplyDisable, setSupplyDisable] = useState(false);
@@ -281,6 +280,11 @@ export default function CollectionCreate({ query }) {
   const [dao_id, setDao_id] = useState(null);
   const [notOwner, setNotOwner] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [network, setNetwork] = useState(chainId?.toString());
+  const [disableNetwork, setDisableNetwork] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [collectionPublished, setCollectionPublished] = useState(false);
+  const [collectionDeleted, setCollectionDeleted] = useState(false);
 
   function handelClickBack() {
     let currentIndex = currentStep.pop();
@@ -288,24 +292,13 @@ export default function CollectionCreate({ query }) {
   }
   async function createBlock(id) {
     try {
-      if (dao_id) {
-        setDataIsLoading(true);
-        id = await createNewProject(dao_id);
-        await updateExistingProject(id);
-        // await projectDetails(id);
-        setDataIsLoading(false);
-        setShowSuccessModal(true);
-      } else {
-        setDataIsLoading(true);
-        const daoId = await daoCreate();
-        if (daoId !== '') {
-          id = await createNewProject(daoId);
-          await updateExistingProject(id);
-          setShowSuccessModal(true);
-        }
-        setDataIsLoading(false);
-        // await projectDetails(id);
-      }
+      setDataIsLoading(true);
+      id = await createNewProject();
+      await updateExistingProject(id);
+      setShowSuccessModal(true);
+
+      setDataIsLoading(false);
+      // await projectDetails(id);
     } catch (err) {
       setDataIsLoading(false);
       setShowSuccessModal(false);
@@ -346,11 +339,14 @@ export default function CollectionCreate({ query }) {
       }
     }
   }
-  async function createNewProject(dao_id) {
+  async function createNewProject() {
+    event("create_collection", {category: "collection", label: "blockchain", value: network});
+
     let createPayload = {
       name: projectName,
-      dao_id: dao_id,
       collection_type: collectionType,
+      blockchain: network,
+      ...(dao_id && { dao_id: dao_id }),
     };
 
     let projectId = '';
@@ -373,6 +369,7 @@ export default function CollectionCreate({ query }) {
     return projectId;
   }
   async function updateExistingProject(id) {
+    event("update_collection", { category: "collection" });
     let updatePayload = {
       logo: logoPhoto.length > 0 ? logoPhoto[0] : null,
       name: projectName,
@@ -382,7 +379,7 @@ export default function CollectionCreate({ query }) {
       // secondaryRoyalties: secondaryRoyalties,
       webLinks: JSON.stringify(webLinks),
       category_id: projectCategory,
-      blockchainCategory: blockchainCategory,
+      blockchain: network,
       isMetaDaFreezed: isMetaDaFreezed,
       isTokenTransferable: isTokenTransferable,
       royaltyPercentage: royaltyPercentage,
@@ -403,6 +400,7 @@ export default function CollectionCreate({ query }) {
         const logo = response?.assets?.find((x) => x?.asset_purpose === 'logo');
         setLogoPhotoUrl(logo ? logo : '');
         setProjectName(response?.name);
+        setNetwork(response?.blockchain);
         setDaoSymbol(response?.collection_symbol);
         setOverview(response?.description);
         const cover = response?.assets?.find(
@@ -422,8 +420,8 @@ export default function CollectionCreate({ query }) {
         setProjectInfo(response);
         setProjectStatus(response?.status);
         setProjectCreated(true);
-        setProjectId(response.id);
-        if (response.type === 'right_attach') {
+        setProjectId(response?.id);
+        if (response?.type === 'right_attach') {
           setTokenTransferableDisabled(true);
           setIsMetaDataFreezed(true);
           setFreezeMetadataDisabled(true);
@@ -433,20 +431,23 @@ export default function CollectionCreate({ query }) {
           setShowWebLinks(false);
         }
 
-        if (response.status === 'published') {
+        if (response?.status === 'published') {
           setProjectNameDisabled(true);
           setDaoSymbolDisable(true);
           setFreezeMetadataDisabled(true);
           setTokenTransferableDisabled(true);
           setRoyaltyPercentageDisable(true);
           setSupplyDisable(true);
+          setDisableNetwork(true);
+          setCollectionPublished(true);
         }
-        if (!response.is_owner) {
+        if (!response?.is_owner) {
           setNotOwner(true);
         }
       } else {
         setDataIsLoading(false);
         showErrorModal(true);
+        setErrorMessage(e?.message);
       }
     });
   }
@@ -495,23 +496,44 @@ export default function CollectionCreate({ query }) {
       }
     }
   }
-  async function daoCreate() {
-    let daoId = '';
-    let payload = {
-      // name: `DAO_${uuidv4()}`,
-      blockchain: ls_GetChainID(),
-    };
-    await createProject(payload).then((res) => {
-      if (res.code === 0) {
-        daoId = res.project.id;
-        setDao_id(daoId);
-      } else {
-        setShowErrorModal(true);
-        setErrorMessage(res.message);
-      }
-    });
-    return daoId;
+  async function deleteCollection() {
+    event("delete_collection", { category: "collection"});
+    setDataIsLoading(true);
+    await deleteDraftCollection(projectId)
+      .then((res) => {
+        if (res.code === 0) {
+          setCollectionDeleted(true);
+          setShowDeleteModal(false);
+          setShowSuccessModal(true);
+          setDataIsLoading(false);
+        } else {
+          setShowErrorModal(true);
+          setErrorMessage(res.message);
+          setDataIsLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setDataIsLoading(false);
+      });
   }
+  // async function daoCreate() {
+  //   let daoId = '';
+  //   let payload = {
+  //     // name: `DAO_${uuidv4()}`,
+  //     blockchain: ls_GetChainID(),
+  //   };
+  //   await createProject(payload).then((res) => {
+  //     if (res.code === 0) {
+  //       daoId = res.project.id;
+  //       setDao_id(daoId);
+  //     } else {
+  //       setShowErrorModal(true);
+  //       setErrorMessage(res.message);
+  //     }
+  //   });
+  //   return daoId;
+  // }
   useEffect(() => {
     setDao_id(dao_id);
   }, [dao_id]);
@@ -552,13 +574,26 @@ export default function CollectionCreate({ query }) {
             <div className='create-collection-container'>
               {currentStep.length === 1 && (
                 <div>
-                  <h1 className='txtblack text-[28px] font-black mb-[6px]'>
-                    {projectCreated ? 'Update' : 'Create New'} Collection
-                  </h1>
-                  <p className='txtblack text-[14px] text-textSubtle mb-[24px]'>
-                    Fill the require form to{' '}
-                    {!projectCreated ? 'create ' : 'Update'} collection
-                  </p>
+                  <div className='flex flex-wrap items-center mb-[24px]'>
+                    <div>
+                      <h1 className='txtblack text-[28px] font-black mb-[6px]'>
+                        {projectCreated ? 'Update' : 'Create New'} Collection
+                      </h1>
+                      <p className='txtblack text-[14px] text-textSubtle'>
+                        Fill the require form to{' '}
+                        {!projectCreated ? 'create ' : 'Update'} collection
+                      </p>
+                    </div>
+                    {query?.id && !notOwner && !collectionPublished && (
+                      <button
+                        onClick={() => setShowDeleteModal(true)}
+                        className='px-4 py-2 text-white bg-danger-1 ml-auto rounded'
+                      >
+                        <i className='fa-solid fa-trash mr-1'></i>
+                        <span>Delete</span>
+                      </button>
+                    )}
+                  </div>
                   <Outline
                     key={outlineKey}
                     // logo
@@ -640,6 +675,8 @@ export default function CollectionCreate({ query }) {
                     supply={supply}
                     handleSupplyValue={handleSupplyValue}
                     supplyDisable={supplyDisable}
+                    collectionNetwork={network}
+                    disableNetwork={disableNetwork}
                     isSupplyValid={isSupplyValid}
                   />
                 </div>
@@ -689,6 +726,7 @@ export default function CollectionCreate({ query }) {
                   royaltyPercentage={royaltyPercentage}
                   showSupplyData={collectionType === 'product' ? true : false}
                   supply={supply}
+                  network={network}
                 />
               )}
             </div>
@@ -729,9 +767,14 @@ export default function CollectionCreate({ query }) {
         <SuccessModal
           handleClose={() => setShowSuccessModal(false)}
           show={showSuccessModal}
-          redirection={`/collection/${projectId}`}
-          subMessage={"Let's explore the Collection"}
-          buttonText='View Collection'
+          redirection={
+            !collectionDeleted ? `/collection/${projectId}` : `/dashboard`
+          }
+          message={`Collection successfully ${
+            !collectionDeleted ? 'saved' : 'deleted'
+          }`}
+          subMessage={!collectionDeleted ? "Let's explore the Collection" : ''}
+          buttonText={!collectionDeleted ? 'VIEW Collection' : 'Close'}
         />
       )}
       {showErrorModal && (
@@ -743,6 +786,14 @@ export default function CollectionCreate({ query }) {
           show={showErrorModal}
           message={errorMessage}
           buttomText='Try Again'
+        />
+      )}
+      {showDeleteModal && (
+        <ConfirmationModal
+          show={showDeleteModal}
+          handleClose={() => setShowDeleteModal(false)}
+          handleApply={deleteCollection}
+          message='Are you sure  to delete this Collection?'
         />
       )}
     </>

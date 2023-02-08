@@ -13,18 +13,25 @@ import {
   getNftDetails,
   saveProductNFT,
   updateProductNFT,
+  deleteDraftNFT,
 } from 'services/nft/nftService';
 import { getNotificationData } from 'redux/notification';
 import SuccessModal from 'components/Modals/SuccessModal';
-import { createProject } from 'services/project/projectService';
 import { createCollection } from 'services/collection/collectionService';
 import PublishingProductNFT from './PublishingProductNFT';
 import {
   getCollectionDetailsById,
   updateRoyaltySplitter,
+  getUserCollections,
 } from 'services/collection/collectionService';
 import { ls_GetChainID } from 'util/ApplicationStorage';
 import Image from 'next/image';
+import Select from 'react-select';
+import { uniqBy } from 'lodash';
+import { NETWORKS } from 'config/networks';
+import ConfirmationModal from 'components/Modals/ConfirmationModal';
+import { event } from "nextjs-google-analytics";
+
 
 export default function ProductNFT({ query }) {
   const audioRef = useRef();
@@ -51,7 +58,6 @@ export default function ProductNFT({ query }) {
   const [isNFTSaved, setIsNFTSaved] = useState(false);
   const [savingNFT, setSavingNFT] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [projectId, setProjectId] = useState('');
   const [collectionId, setCollectionId] = useState('');
   const [isListUpdate, setIsListUpdate] = useState(false);
   const [fileSize, setFileSize] = useState(0);
@@ -62,7 +68,19 @@ export default function ProductNFT({ query }) {
   const [isNftLoading, setIsNftLoading] = useState(false);
   const [asseteRemoveInUpdateMode, setAsseteRemoveInUpdateMode] =
     useState(false);
+  const [hasNextPageData, setHasNextPageData] = useState(true);
+  const [payload, setPayload] = useState({
+    page: 1,
+    perPage: 10,
+    keyword: '',
+    order_by: 'newer',
+  });
+
   const [collection, setCollection] = useState({});
+  const [options, setOptions] = useState([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDeleteSuccessModal, setShowDeleteSuccessModal] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -70,6 +88,70 @@ export default function ProductNFT({ query }) {
     watch,
     formState: { errors },
   } = useForm();
+
+  const useDebounceCallback = (delay = 100, cleaning = true) => {
+    // or: delayed debounce callback
+    const ref = React.useRef();
+    React.useEffect(() => {
+      if (cleaning) {
+        // cleaning uncalled delayed callback with component destroying
+        return () => {
+          if (ref.current) clearTimeout(ref.current);
+        };
+      }
+    }, []);
+    return (callback) => {
+      if (ref.current) clearTimeout(ref.current);
+      ref.current = setTimeout(callback, delay);
+    };
+  };
+  const delayCallback = useDebounceCallback(500);
+  async function onDaoSearch(keyword) {
+    delayCallback(() => {
+      let oldPayload = { ...payload };
+      oldPayload.keyword = keyword;
+      setPayload(oldPayload);
+    });
+  }
+
+  useEffect(() => {
+    if (hasNextPageData) {
+      collectionFetch();
+    }
+  }, [payload]);
+
+  function scrolledBottom() {
+    let oldPayload = { ...payload };
+    oldPayload.page = oldPayload.page + 1;
+    setPayload(oldPayload);
+  }
+
+  async function collectionFetch() {
+    setIsLoading(true);
+    await getUserCollections(payload)
+      .then((res) => {
+        if (res?.code === 0) {
+          // const matchedBlockchainDao = res?.data?.filter(
+          //   (dao) => dao?.blockchain === collection?.blockchain
+          // );
+          const daoList = [...options];
+          const mergedDaoList = [...daoList, ...res?.data];
+          const uniqDaoList = uniqBy(mergedDaoList, function (e) {
+            return e.id;
+          });
+          let filtered = uniqDaoList.filter((list) => list.type === 'product');
+          setOptions(filtered);
+          setIsLoading(false);
+          if (res?.data?.length === 0) {
+            setHasNextPageData(false);
+          }
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }
 
   useEffect(() => {
     // file upload web socket
@@ -245,7 +327,7 @@ export default function ProductNFT({ query }) {
     setIsLoading(false);
     setShowConfirmation(false);
     setShowSteps(false);
-    setErrorTitle('Create Product NFT Failed');
+    setErrorTitle('Saving Product NFT Failed');
     setErrorMessage(msg);
     setShowSuccessModal(false);
     setShowErrorModal(true);
@@ -255,6 +337,7 @@ export default function ProductNFT({ query }) {
   };
 
   function saveNFTDetails(assetId, collectionID) {
+    event("create_product_nft", { category: "nft" });
     if (assetId && assetId.length > 0) {
       setIsLoading(true);
       const request = new FormData();
@@ -362,7 +445,6 @@ export default function ProductNFT({ query }) {
             } else {
               setJobId(res['function_uuid']);
               const notificationData = {
-                projectId: projectId,
                 etherscan: '',
                 function_uuid: res['function_uuid'],
                 data: '',
@@ -376,9 +458,7 @@ export default function ProductNFT({ query }) {
             setIsLoading(false);
             setShowSuccessModal(true);
           } else {
-            handleErrorState(
-              'Failed to update product NFT. Please try again later'
-            );
+            handleErrorState(res?.message);
           }
         })
         .catch((err) => {
@@ -417,27 +497,13 @@ export default function ProductNFT({ query }) {
   }
 
   function createNewProject() {
-    let payload = {
-      // name: `DAO_${uuidv4()}`,
-      blockchain: ls_GetChainID(),
-    };
-    createProject(payload)
-      .then((res) => {
-        if (res.code === 0) {
-          setProjectId(res.project.id);
-          createNewCollection(res.project.id);
-        } else {
-          handleErrorState(res.message);
-        }
-      })
-      .catch((err) => {
-        handleErrorState('Please try again later');
-      });
+    createNewCollection();
   }
 
-  function createNewCollection(dao_id) {
+  function createNewCollection() {
+    event("create_collection", { category: "collection", label: "blockchain", value: ls_GetChainID() });
     let createPayload = {
-      dao_id: dao_id,
+      blockchain: ls_GetChainID(),
       collection_type: 'product',
     };
 
@@ -502,6 +568,27 @@ export default function ProductNFT({ query }) {
       })
       .catch((err) => console.log(err));
   };
+  const deleteProductNFT = async () => {
+    setIsNftLoading(true);
+    await deleteDraftNFT(nft?.id)
+      .then((res) => {
+        if (res.code === 0) {
+          setShowDeleteModal(false);
+          setShowDeleteSuccessModal(true);
+          setIsNftLoading(false);
+        } else {
+          setShowErrorModal(true);
+          setErrorTitle('Opps, something went wrong');
+          setErrorMessage(res?.message);
+          setIsNftLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsNftLoading(false);
+      });
+  };
+
   useEffect(() => {
     if (query?.collectionId) {
       getCollectionDetail(query?.collectionId);
@@ -516,26 +603,51 @@ export default function ProductNFT({ query }) {
     } catch {}
   }, []);
 
+  let curCollection = collectionId
+    ? options.find((item) => item.id === collectionId)
+    : null;
+
+  let networkName = curCollection?.blockchain
+    ? NETWORKS?.[Number(curCollection?.blockchain)]?.networkName
+    : null;
+
   return (
     <>
       {isNftLoading && <div className='loading'></div>}
       <>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className='max-w-[600px] mx-4 md:mx-auto md:mt-[40px]'>
-            <div className='mb-[24px]'>
-              <h1 className='text-[28px] font-black mb-[6px]'>
-                {showConfirmation
-                  ? 'Preview '
-                  : updateMode
-                  ? 'Update '
-                  : 'Create '}
-                Product NFT
-              </h1>
-              <p className='text-[14px] text-textSubtle '>
-                {showConfirmation
-                  ? 'Preview the NFT'
-                  : 'Please fill this require data for setup your NFT'}
-              </p>
+            <div className='mb-[24px] flex flex-wrap items-center'>
+              <div>
+                <h1 className='text-[28px] font-black mb-[6px]'>
+                  {showConfirmation
+                    ? 'Preview '
+                    : updateMode
+                    ? 'Update '
+                    : 'Create '}
+                  Product NFT
+                </h1>
+                <p className='text-[14px] text-textSubtle '>
+                  {showConfirmation
+                    ? 'Preview the NFT'
+                    : 'Please fill this require data for setup your NFT'}
+                </p>
+              </div>
+              <div className='ml-auto'>
+                {updateMode &&
+                  nft?.is_owner &&
+                  collection?.status === 'draft' &&
+                  !showConfirmation && (
+                    <button
+                      type='button'
+                      onClick={() => setShowDeleteModal(true)}
+                      className='px-4 py-2 text-white bg-danger-1  rounded'
+                    >
+                      <i className='fa-solid fa-trash mr-1'></i>
+                      <span>Delete</span>
+                    </button>
+                  )}
+              </div>
             </div>
             <div>
               <div className='bg-white mb-6 rounded-[12px]  border border-divider  p-4'>
@@ -618,7 +730,7 @@ export default function ProductNFT({ query }) {
                                     setAsseteRemoveInUpdateMode(true);
                                     setnftFile({ file: null, path: '' });
                                   }}
-                                  class='absolute top-0 text-[18px] cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark'
+                                  className='absolute top-0 text-[18px] cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark'
                                 ></i>
                                 <video width='650' height='400' controls>
                                   <source src={nftFile.path} type='video/mp4' />
@@ -741,6 +853,58 @@ export default function ProductNFT({ query }) {
                     </p>
                   )}
                 </div>
+                {typeof window !== 'undefined' && (
+                  <div className='mb-6'>
+                    <div className='flex items-center mb-2'>
+                      <Tooltip message='If you selecting a Collection, it will generate automatically'></Tooltip>
+                      <p className='txtblack text-[14px]'>Connect Collection</p>
+                    </div>
+                    <Select
+                      // defaultValue={curCollection}
+                      value={curCollection}
+                      onChange={(data) => setCollectionId(data?.id)}
+                      onKeyDown={(event) => onDaoSearch(event.target.value)}
+                      options={options}
+                      styles={{
+                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                        control: (base) => ({
+                          ...base,
+                          border: showConfirmation
+                            ? 'none'
+                            : '1px solid hsl(0, 0%, 80%)',
+                        }),
+                      }}
+                      isDisabled={query?.collectionId}
+                      menuPortalTarget={document.body}
+                      placeholder='Choose Collection'
+                      isLoading={isLoading}
+                      noOptionsMessage={() => 'No Collection Found'}
+                      loadingMessage={() => 'Loading,please wait...'}
+                      getOptionLabel={(option) => `${option.name}`}
+                      getOptionValue={(option) => option.id}
+                      classNamePrefix='collection-connect'
+                      isClearable
+                      isSearchable
+                      menuShouldScrollIntoView
+                      onMenuScrollToBottom={() => scrolledBottom()}
+                    />
+                  </div>
+                )}
+                {networkName && (
+                  <div className='mb-6 '>
+                    <p className='txtblack text-[14px]'>Blockchain</p>
+                    <>
+                      <input
+                        className={`debounceInput mt-1 ${
+                          showConfirmation ? ' !border-none bg-transparent' : ''
+                        } `}
+                        disabled
+                        value={networkName}
+                        type='text'
+                      />
+                    </>
+                  </div>
+                )}
                 <div className='mb-6'>
                   <div className='text-txtblack font-bold '>Properties</div>
                   <div className='text-textSubtle text-[14px] mb-[16px]'>
@@ -960,6 +1124,24 @@ export default function ProductNFT({ query }) {
             sizeUploaded={uploadingSize}
             uploadedPercent={uploadedPercent}
             mode={updateMode ? 'update' : 'create'}
+          />
+        )}
+        {showDeleteModal && (
+          <ConfirmationModal
+            show={showDeleteModal}
+            handleClose={() => setShowDeleteModal(false)}
+            handleApply={deleteProductNFT}
+            message='Are you sure to delete this NFT?'
+          />
+        )}
+        {showDeleteSuccessModal && (
+          <SuccessModal
+            message={`You have successfully deleted the NFT!`}
+            subMessage=''
+            buttonText='Close'
+            redirection={`/collection/${collectionId}`}
+            show={showDeleteSuccessModal}
+            handleClose={() => setShowDeleteSuccessModal(false)}
           />
         )}
       </>
