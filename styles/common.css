@@ -482,7 +482,7 @@ table > thead > tr > th {
 }
 
 /* Language selector */
-.goog-te-banner-frame.skiptranslate {
+.skiptranslate iframe {
   display: none !important;
 }
 body {
