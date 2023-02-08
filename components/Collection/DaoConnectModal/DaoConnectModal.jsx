@@ -12,6 +12,8 @@ import SuccessModal from 'components/Modals/SuccessModal';
 import ErrorModal from 'components/Modals/ErrorModal';
 import { NETWORKS } from 'config/networks';
 import { uniqBy } from 'lodash';
+import { event } from "nextjs-google-analytics";
+
 export default function DaoConnectModal({
   handleClose,
   show,
@@ -94,6 +96,7 @@ export default function DaoConnectModal({
     });
   }
   async function connectDao() {
+    event("collection_connect_dao", { category: "collection"});
     setDaoConnecting(true);
     let payload = { ...collection };
     payload.project_uid = selectedOption?.id;

@@ -15,6 +15,9 @@ import SuccessModal from 'components/Modals/SuccessModal';
 import { getProjectCategory } from 'services/project/projectService';
 import { ls_GetChainID } from 'util/ApplicationStorage';
 import ConfirmationModal from 'components/Modals/ConfirmationModal';
+import { event } from "nextjs-google-analytics";
+
+
 function ProjectCreateContent({ search }) {
   // Logo start
   // logo is the cover photo
@@ -298,6 +301,7 @@ function ProjectCreateContent({ search }) {
   }
 
   async function createNewProject() {
+    event("create_dao", { category: "dao", label: "name", value: projectName });
     let createPayload = {
       name: projectName,
       category_id: projectCategory,
@@ -323,6 +327,7 @@ function ProjectCreateContent({ search }) {
     return projectId;
   }
   async function updateExistingProject(id) {
+    event("update_dao", { category: "dao", label: "name", value: projectName });
     try {
       let updatePayload = {
         logo: logoPhoto.length > 0 ? logoPhoto[0] : null,
@@ -462,6 +467,7 @@ function ProjectCreateContent({ search }) {
     return React.useMemo(() => new URLSearchParams(search), [search]);
   }
   async function deleteDao() {
+    event("delete_dao", { category: "dao", label: "name", value: projectName });
     setDataIsLoading(true);
     await deleteDraftDao(projectId)
       .then((res) => {

@@ -33,6 +33,8 @@ const IntegrateNewCollection = ({
   setSelectedContractError,
   setSelectedContractValidation,
   setCollectionDetail,
+  isVerificationLoading,
+  setIsVerificationLoading,
 }) => {
   const [showExistingCollection, setShowExistingCollection] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -59,6 +61,7 @@ const IntegrateNewCollection = ({
     } else {
       setIsSubmitted(true);
       if (smartContractAddress && blockchain) {
+        setIsVerificationLoading(true);
         getCollectionDetailFromContract(smartContractAddress, blockchain)
           .then((resp) => {
             if (
@@ -77,13 +80,16 @@ const IntegrateNewCollection = ({
                 collectionDetail?.name,
                 collectionDetail?.blockchain;
               setAddressError(false);
+              setIsVerificationLoading(false);
               setShowPreview(true);
             } else {
               setAddressError(true);
+              setIsVerificationLoading(false);
             }
           })
           .catch((err) => {
             setAddressError(true);
+            setIsVerificationLoading(false);
           });
       }
     }
@@ -102,7 +108,11 @@ const IntegrateNewCollection = ({
     collectionDetail?.assets?.length &&
     collectionDetail.assets.find((img) => img['asset_purpose'] === 'logo');
 
-  let validNetworks = NETWORKS ? Object.values(NETWORKS) : [];
+  let validNetworks = NETWORKS
+    ? Object.values(NETWORKS).filter(
+        (net) => net.network !== 97 && net.network !== 56
+      )
+    : [];
 
   return (
     <div>
@@ -116,7 +126,7 @@ const IntegrateNewCollection = ({
               <i className='fa-regular mr-2 fa-arrow-left cursor-pointer text-xl text-black'></i>
               <span>Back</span>
             </p>
-            <h2 className='text-[28px] text-black mt-3'>Import Preview</h2>
+            <h2 className='text-[28px] text-black mt-3'>Collection Preview</h2>
           </div>
           <div className='mt-8 rounded-[8px]'>
             <div className='flex'>
@@ -220,21 +230,12 @@ const IntegrateNewCollection = ({
             className='fa fa-xmark cursor-pointer text-xl absolute top-8 right-8 text-black'
             onClick={() => setShowAddCollection(null)}
           ></i>
-          <h2 className='text-[28px] text-black'>Add New Collection</h2>
+          <h2 className='text-[28px] text-black'>Collection configuration</h2>
           <div className='mt-5 border-b-[1px] border-textSubtle pb-4'>
-            <h3>Import Collection</h3>
+            <h3>Set Collection</h3>
             <p className='text-textSubtle text-[12px] mt-2'>
-              Import collection with your own smart contract and manage the
-              token gated content in Decir
-            </p>
-            <p className='mt-3 text-[13px]'>
-              Dont have Collection?{' '}
-              <Link
-                href='/collection/create'
-                className='text-primary-900 font-bold'
-              >
-                Create New
-              </Link>
+              Content viewer must own your collection's NFT in order to access
+              to your content. Set your own smart contract here
             </p>
             <input
               id='smartContract'
@@ -298,7 +299,14 @@ const IntegrateNewCollection = ({
             <div className={`mt-5 transition-all ease-in-out duration-200`}>
               <h3>Select Existing Collection</h3>
               <p className='text-textSubtle text-[12px] mt-2 mb-3'>
-                Select collection that created on Decir
+                Select collection that created on Decir. If you don't have
+                Collection,{' '}
+                <Link
+                  href='/collection/create'
+                  className='text-primary-900 font-bold'
+                >
+                  Create New
+                </Link>
               </p>
               {typeof window !== 'undefined' && (
                 <div className='mb-2'>
@@ -360,7 +368,14 @@ const IntegrateNewCollection = ({
             className='px-6 py-2 contained-button rounded font-black text-white-shade-900 w-full mt-6'
             onClick={handleNext}
           >
-            Next
+            {isVerificationLoading ? (
+              <i
+                className='fa fa-spinner fa-spin text-light text-md'
+                aria-hidden='true'
+              ></i>
+            ) : (
+              'Next'
+            )}
           </button>
         </>
       )}

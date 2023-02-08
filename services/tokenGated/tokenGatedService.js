@@ -1,5 +1,8 @@
 import { client } from '../httpClient';
 import axios from 'axios';
+import Config from 'config/config';
+const ROOT_URL = Config.API_ENDPOINT;
+import { ls_GetUserToken } from 'util/ApplicationStorage';
 
 export async function createTokenGatedProject(title) {
   const bodyFormData = new FormData();
@@ -13,7 +16,9 @@ export async function getTokenGatedProject(id) {
 export async function getTokenGatedProjectList(payload) {
   return await client(
     'GET',
-    `/tokengate?page=${payload.page}&limit=${payload.limit}`
+    `/tokengate?page=${payload.page}&limit=${payload.limit}&order_by=${
+      payload?.order_by ? payload?.order_by : ''
+    }&keyword=${payload?.keyword ? payload?.keyword : ''}`
   );
 }
 export async function updateTokenGatedProject(payload) {
@@ -94,4 +99,38 @@ export async function configMultiContent(id, data) {
 
 export async function getUserAuthorization(link) {
   return await axios.get(link);
+}
+export async function reportTokenGatedProject(payload) {
+  const bodyFormData = new FormData();
+  bodyFormData.append('scam', payload.isScam);
+  return await client(
+    'PUT',
+    `/tokengate/${payload.id}/report-scam`,
+    bodyFormData,
+    'formdata'
+  );
+}
+export async function reportTokenContent(payload) {
+  const bodyFormData = new FormData();
+  bodyFormData.append('scam', payload.isScam);
+  return await client(
+    'PUT',
+    `/tkg-content/${payload?.id}/report-scam`,
+    bodyFormData,
+    'formdata'
+  );
+}
+
+export async function deleteTokenGatedProject(id) {
+  return await client('DELETE', `/tokengate/${id}`);
+}
+
+export async function getUserVerification(contentId) {
+  return await fetch(
+    `${ROOT_URL}/tkg-content/${contentId}/data?token=${ls_GetUserToken()}&verify=true`
+  );
+}
+
+export async function getAssetDetail(id) {
+  return await client('GET', `/asset?id=${id}`);
 }

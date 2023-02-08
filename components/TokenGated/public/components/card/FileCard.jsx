@@ -1,19 +1,33 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import moment from 'moment';
 import { useRouter } from 'next/router';
-
+import { getUserVerification } from 'services/tokenGated/tokenGatedService';
 export default function FileCard({ content }) {
   const router = useRouter();
-  const userinfo = useSelector((state) => state.user.userinfo);
+  const [canSeeContent, setCanSeeContent] = useState(false);
   const createdAt = moment(content?.created_at);
   const lockIcon = (
     <div className='absolute  top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2'>
       <i className='fa-solid fa-lock text-[34px]  cursor-pointer '></i>
     </div>
   );
-
+  async function userValidate() {
+    await getUserVerification(content?.id)
+      .then((res) => {
+        if (res?.status === 200) {
+          setCanSeeContent(true);
+        }
+      })
+      .catch((res) => {
+        console.log(res);
+        setCanSeeContent(false);
+      });
+  }
+  useEffect(() => {
+    userValidate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [content?.id]);
   return (
     <>
       <div
@@ -52,7 +66,7 @@ export default function FileCard({ content }) {
             </>
           )}
         </div>
-        {content?.consumable_data ? (
+        {canSeeContent ? (
           <i className='text-[34px] absolute  top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 fa-solid fa-file'></i>
         ) : (
           lockIcon

@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-
+import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import {
   getTokenGatedProject,
   createTokenGatedProject,
   updateTokenGatedProject,
+  deleteTokenGatedProject,
 } from 'services/tokenGated/tokenGatedService';
 import Modal from 'components/Commons/Modal';
 import Spinner from 'components/Commons/Spinner';
@@ -13,6 +14,10 @@ import ErrorModal from 'components/Modals/ErrorModal';
 import FileDragAndDrop from 'components/FormUtility/FileDragAndDrop';
 import Image from 'next/image';
 import deleteIcon from 'assets/images/projectCreate/ico_delete01.svg';
+import ConfirmationModal from 'components/Modals/ConfirmationModal';
+import { event } from "nextjs-google-analytics";
+
+
 export default function Setting({
   show,
   handleClose,
@@ -20,6 +25,7 @@ export default function Setting({
   createMode,
   settingSaved,
 }) {
+  const router = useRouter();
   const links = [
     { title: 'linkInsta', icon: 'instagram', value: '' },
     { title: 'linkGithub', icon: 'github', value: '' },
@@ -40,6 +46,9 @@ export default function Setting({
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [projectDeleted, setProjectDeleted] = useState(false);
+  const [showOverlayLoading, setShowOverlayLoading] = useState(false);
   const [coverPhoto, setCoverPhoto] = useState({
     image: null,
     path: projectInfo?.coverUrl ? projectInfo?.coverUrl : '',
@@ -103,6 +112,7 @@ export default function Setting({
 
     // create and then  update
     if (createMode) {
+      event("create_token_gate_project", { category: "token_gate"});
       let projectId = '';
       await createTokenGatedProject(data['title'])
         .then((res) => {
@@ -124,6 +134,7 @@ export default function Setting({
           setErrorMessage(err);
         });
       if (projectId !== '') {
+        event("update_token_gate_project", { category: "token_gate"});
         payload.id = projectId;
         await updateTokenGatedProject(payload)
           .then((res) => {
@@ -171,19 +182,39 @@ export default function Setting({
     }
   };
   const onSuccess = () => {
-    setShowSuccessModal(false);
-    setStep(1);
-    handleClose(false);
-    settingSaved(projectId);
+    if (!projectDeleted) {
+      setShowSuccessModal(false);
+      setStep(1);
+      handleClose(false);
+      settingSaved(projectId);
+    } else {
+      router.push('/dashboard');
+    }
   };
   const onError = () => {
     setShowErrorModal(false);
     setErrorMessage('');
     setStep(1);
   };
+  const onDeleteTokenGatedProject = async () => {
+    event("delete_token_gate_project", { category: "token_gate"});
+    setShowOverlayLoading(true);
+    await deleteTokenGatedProject(project?.id).then((res) => {
+      setShowOverlayLoading(false);
+      setShowDeleteModal(false);
+      if (res?.code === 0) {
+        setProjectDeleted(true);
+        setShowSuccessModal(true);
+      } else {
+        setShowErrorModal(true);
+        setErrorMessage(res?.message);
+      }
+    });
+  };
 
   return (
     <>
+      {showOverlayLoading && <div className='loading'></div>}
       {step === 1 && (
         <>
           <Modal
@@ -191,8 +222,7 @@ export default function Setting({
             show={show}
             handleClose={() => handleClose()}
             showCloseIcon={true}
-            height={700}
-            overflow='scroll'
+            overflow={'auto'}
             id='token-gated-project-setting-modal'
           >
             <form
@@ -200,10 +230,20 @@ export default function Setting({
               name='tokenGatedSettingForm'
               onSubmit={handleSubmit(onSubmit)}
             >
-              <div className='px-10  mt-5'>
+              <div className='px-4 md:px-10  mt-5'>
                 <p className='font-black text-txtblack text-[22px] mb-4'>
                   Project Settings
                 </p>
+                <button
+                  onClick={() => {
+                    setStep(2);
+                    setShowDeleteModal(true);
+                  }}
+                  className='px-4 py-2 text-white bg-danger-1 block ml-auto rounded'
+                >
+                  <i className='fa-solid fa-trash mr-1'></i>
+                  <span>Delete</span>
+                </button>
 
                 {/* photo */}
                 <div className='mb-6'>
@@ -372,7 +412,9 @@ export default function Setting({
             <SuccessModal
               show={showSuccessModal}
               handleClose={() => onSuccess()}
-              message='Successfully Saved Token Gated Project'
+              message={`Successfully  ${
+                projectDeleted ? 'Deleted' : 'Saved'
+              }  Token Gated Project`}
               btnText='Close'
             />
           )}
@@ -382,6 +424,17 @@ export default function Setting({
               show={showErrorModal}
               message={errorMessage}
               buttomText='Try Again'
+            />
+          )}
+          {showDeleteModal && (
+            <ConfirmationModal
+              show={showDeleteModal}
+              handleClose={() => {
+                setStep(1);
+                setShowDeleteModal(false);
+              }}
+              handleApply={() => onDeleteTokenGatedProject()}
+              message='Are you sure  to delete this Token Gated Project?'
             />
           )}
         </>

@@ -10,6 +10,8 @@ const SettingContent = ({
   linkDetails,
   handleClose,
   setShowUploadByLinkModal,
+  fileError,
+  isEdit,
 }) => {
   let mediaType = linkDetails?.link
     ? linkDetails.type
@@ -17,6 +19,7 @@ const SettingContent = ({
 
   let mediaPath = linkDetails?.link ? linkDetails.link : content?.media?.path;
   const [audioRef, setAudioref] = useState();
+  console.log(linkDetails);
   return (
     <div className='mt-6'>
       <p className='mb-2 text-[14px]'>Media</p>
@@ -30,7 +33,9 @@ const SettingContent = ({
             linkDetails?.link
               ? () => {
                   setShowUploadByLinkModal(true);
-                  handleClose();
+                  if (!isEdit) {
+                    handleClose();
+                  }
                 }
               : null
           }
@@ -73,12 +78,7 @@ const SettingContent = ({
                 ) : null}
                 {mediaType === 'application' || mediaType === 'other' ? (
                   <div className='h-40 w-40 rounded bg-white-filled-form text-center overflow-hidden px-2 pb-2'>
-                    <i className='text-[30px] fa-solid fa-file mt-10'></i>
-                    <p className='text-[14px] mt-1'>
-                      {content?.media?.file?.name
-                        ? content?.media?.file?.name
-                        : mediaPath}
-                    </p>
+                    <i className='text-[30px] fa-solid fa-file mt-12'></i>
                   </div>
                 ) : null}
               </>
@@ -123,6 +123,11 @@ const SettingContent = ({
         {isSubmitted && !content?.media?.file && !linkDetails?.link && (
           <p className='text-red-500 text-xs font-medium'>Media is required</p>
         )}
+        {fileError && (
+          <p className='text-red-500 text-xs font-medium mt-2'>
+            Please select a vaild file.
+          </p>
+        )}
       </>
       <div className='mt-6'>
         <div className='flex items-center mb-2'>
@@ -162,7 +167,7 @@ const SettingContent = ({
         <div className='flex-1 px-3'>
           <p className='-mt-1'>Sensitive Content</p>
           <small className='text-textSubtle'>
-            Defined properties on your NFT
+            Mark this content as sensitive
           </small>
         </div>
         <div className='flex flex-wrap items-center'>

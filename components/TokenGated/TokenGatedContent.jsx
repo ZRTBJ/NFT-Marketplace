@@ -14,6 +14,7 @@ import DropdownCreabo from 'components/Commons/Dropdown';
 import CreatorProjectInfoCard from 'components/TokenGated/ProjectInfoCard/Creator';
 import ContentListTable from 'components/TokenGated/ContentListTable';
 import { isValidURL } from 'util/functions';
+import ReactTooltip from 'react-tooltip';
 
 const sortingOptions = [
   { id: 1, value: '', name: 'Sort By' },
@@ -38,6 +39,7 @@ export default function TokenGatedContent({ query, createMode }) {
     limit: 20,
   });
   const [showConfigure, setShowConfigure] = useState(null);
+  const [isEditContent, setIsEditContent] = useState(false);
 
   const handleLinkDetails = (e) => {
     if (e.target.value.length && e.target.name === 'link') {
@@ -55,7 +57,9 @@ export default function TokenGatedContent({ query, createMode }) {
   const handleAddLink = (e) => {
     e.preventDefault();
     if (!linkError) {
-      setShowAddNewContentModal(true);
+      if (!isEditContent) {
+        setShowAddNewContentModal(true);
+      }
       setShowUploadByLinkModal(false);
     }
   };
@@ -98,21 +102,26 @@ export default function TokenGatedContent({ query, createMode }) {
       });
     await onContentListGet(payload?.id, projectInfo);
   };
+
   const onAddNewContentClick = async () => {
     setShowAddNewContentModal(true);
   };
+
   const onUploadByLinkClick = async () => {
     setShowUploadByLinkModal(true);
   };
+
   const OnSorting = async (event) => {
     setSelectedSort(event.target.value);
   };
+
   const onSettingSaved = async (id) => {
     await onGetTokenGatedProject(id);
     if (createMode) {
       router.replace(`/token-gated/${id}`);
     }
   };
+
   const onContentListGet = async (projectInfo) => {
     await getContentList(payload)
       .then((res) => {
@@ -145,6 +154,7 @@ export default function TokenGatedContent({ query, createMode }) {
       setSortBy(selectedSort === '2' ? 'newer' : 'older');
     }
   }, [selectedSort]);
+
   useEffect(() => {
     if (sortBy) {
       let oldPayload = { ...payload };
@@ -152,7 +162,7 @@ export default function TokenGatedContent({ query, createMode }) {
       setPayload(oldPayload);
     }
   }, [sortBy]);
-
+  console.log(showAddNewContentModal);
   return (
     <>
       {showOverLayLoading && <div className='loading'></div>}
@@ -165,15 +175,44 @@ export default function TokenGatedContent({ query, createMode }) {
           />
           <div className='flex flex-wrap gap-4 items-start my-4 md:my-[50px]'>
             <div className='flex flex-wrap gap-4 items-start md:flex-1'>
+              <ReactTooltip place='top' type='info' effect='solid' />
               <button
-                onClick={() => onAddNewContentClick()}
+                onClick={
+                  contentList?.contents?.length >= 3
+                    ? null
+                    : () => onAddNewContentClick()
+                }
+                data-tip={
+                  contentList?.contents?.length >= 3
+                    ? 'You have reached your limit for creating new content'
+                    : ''
+                }
+                style={
+                  contentList?.contents?.length >= 3
+                    ? { filter: 'grayscale(60%)' }
+                    : null
+                }
                 className='py-2 px-4 border   bg-primary-900/[0.10] text-primary-900 font-bold rounded'
               >
                 <i className='fa-solid fa-square-plus mr-2'></i>
                 Add New Content
               </button>
               <button
-                onClick={() => onUploadByLinkClick()}
+                onClick={
+                  contentList?.contents?.length >= 3
+                    ? null
+                    : () => onUploadByLinkClick()
+                }
+                style={
+                  contentList?.contents?.length >= 3
+                    ? { filter: 'grayscale(60%)' }
+                    : null
+                }
+                data-tip={
+                  contentList?.contents?.length >= 3
+                    ? 'You have reached your limit for creating new content'
+                    : ''
+                }
                 className='py-2 px-4 border  border-primary-900 text-primary-900 font-bold rounded'
               >
                 <i className='fa-solid fa-upload mr-2'></i>
@@ -200,6 +239,8 @@ export default function TokenGatedContent({ query, createMode }) {
             tokenProjectId={query?.id}
             setLinkDetails={setLinkDetails}
             linkDetails={linkDetails}
+            setShowUploadByLinkModal={setShowUploadByLinkModal}
+            setIsEditContent={setIsEditContent}
           ></ContentListTable>
         </div>
       )}
@@ -209,18 +250,25 @@ export default function TokenGatedContent({ query, createMode }) {
           handleClose={() => {
             setShowAddNewContentModal(false);
             setLinkDetails({ link: '', type: 'image' });
+            setIsEditContent(false);
           }}
           tokenProjectId={query?.id}
           onContentAdded={() => onGetTokenGatedProject(query?.id)}
           setShowUploadByLinkModal={setShowUploadByLinkModal}
           linkDetails={linkDetails}
+          setIsEditContent={setIsEditContent}
           setLinkDetails={setLinkDetails}
         />
       )}
       {showUploadByLinkModal && (
         <UploadByLinkModal
           show={showUploadByLinkModal}
-          handleClose={() => setShowUploadByLinkModal(false)}
+          handleClose={() => {
+            if (!isEditContent) {
+              setLinkDetails({ link: '', type: 'image' });
+            }
+            setShowUploadByLinkModal(false);
+          }}
           handleLinkDetails={handleLinkDetails}
           linkDetails={linkDetails}
           handleAddLink={handleAddLink}

@@ -5,6 +5,8 @@ import * as RoyaltySplitter from 'config/ABI/genericProxyFactory';
 import useSendTransaction from './useSendTransaction';
 import { NETWORKS } from 'config/networks';
 import { ls_GetChainID } from 'util/ApplicationStorage';
+import { event } from "nextjs-google-analytics";
+
 
 export default function usePublishRoyaltySplitter(payload = {}) {
   const { collection, splitters, onUpdateStatus = () => {} } = payload;
@@ -93,6 +95,7 @@ export default function usePublishRoyaltySplitter(payload = {}) {
   };
 
   const publish = async () => {
+    event("publish_royalty_splitter", { category: "royalty_splitter"});
     try {
       if (!canPublish) {
         return;

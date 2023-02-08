@@ -18,9 +18,12 @@ const Waveform = ({ url, id }) => {
         cursorWidth: 3,
         barHeight: 7,
         cursorColor: '#8D2CCB',
+        normalize: true,
+        responsive: true,
+        fillParent: true,
         // Add the regions plugin.
         // More info here https://wavesurfer-js.org/plugins/regions.html
-        plugins: [WaveformRegionsPlugin.create({ maxLength: 90 })],
+        // plugins: [WaveformRegionsPlugin.create({ maxLength: 90 })],
       });
 
       wavesurfer.current.load(`${url}`);
@@ -32,14 +35,14 @@ const Waveform = ({ url, id }) => {
       // =========== ADDED =========
 
       // Enable dragging on the audio waveform
-      wavesurfer.current.enableDragSelection({
-        maxLength: 90,
-      });
+      // wavesurfer.current.enableDragSelection({
+      //   maxLength: 90,
+      // });
       // Perform action when new region is created
-      wavesurfer.current.on('region-created', (e) => {
-        let color = '#8D2CCB';
-        e.color = color;
-      });
+      // wavesurfer.current.on('region-created', (e) => {
+      //   let color = '#8D2CCB';
+      //   e.color = color;
+      // });
     }
 
     // =========== ADDED =========

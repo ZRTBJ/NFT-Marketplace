@@ -30,6 +30,9 @@ import MoonpayModal from 'components/Modals/MoonpayModal';
 import Image from 'next/image';
 import { NETWORKS } from 'config/networks';
 import ConfirmationModal from 'components/Modals/ConfirmationModal';
+import { event } from "nextjs-google-analytics";
+
+
 export default function MembershipNFT({ query }) {
   const fileUploadNotification = useSelector((state) =>
     state?.notifications?.notificationData
@@ -343,6 +346,8 @@ export default function MembershipNFT({ query }) {
     }, 50);
   }
   async function collectionCreate() {
+    event("create_collection", { category: "collection", label: "blockchain", value: ls_GetChainID() });
+
     let collection_id = '';
     let payload = {
       collection_type: 'membership',
@@ -392,6 +397,7 @@ export default function MembershipNFT({ query }) {
     request.append('benefit_array', JSON.stringify(benefit_array));
 
     if (!updateMode) {
+      event("create_membership_nft", { category: "nft"});
       await createMembershipNft(request)
         .then((res) => {
           if (res.code === 0) {
@@ -1353,14 +1359,14 @@ export default function MembershipNFT({ query }) {
           message={errorMessage}
         />
       )}
-      {showMoonpayModal && (
+      {/* {showMoonpayModal && (
         <MoonpayModal
           handleClose={() => {
             setShowMoonpayModal(false);
           }}
           show={showMoonpayModal}
         />
-      )}
+      )} */}
       {showDataUploadingModal && (
         <Modal
           width={400}

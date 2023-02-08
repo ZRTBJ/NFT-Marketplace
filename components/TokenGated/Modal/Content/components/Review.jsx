@@ -3,6 +3,10 @@ import SettingContent from './SettingContent';
 import Configuration from './Configuration';
 
 const Review = ({ content, configurations, options, linkDetails }) => {
+  let finalConfigs = configurations.filter(
+    (config) => config.collectionAddress
+  );
+
   return (
     <div>
       <SettingContent
@@ -12,7 +16,7 @@ const Review = ({ content, configurations, options, linkDetails }) => {
       />
       <Configuration
         content={content}
-        configurations={configurations}
+        configurations={finalConfigs}
         options={options}
         reviewScreen={true}
       />

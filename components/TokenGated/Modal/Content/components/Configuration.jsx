@@ -19,15 +19,16 @@ const Configuration = ({
   handleConfigValue,
   setShowAddCollection,
   deleteConfiguration,
+  validationError,
 }) => {
-  console.log(configurations);
+  console.log(validationError);
   return (
     <div>
       {' '}
       {!reviewScreen && (
         <div className='mt-4 flex py-3'>
           <div className='flex-1 px-3'>
-            <p className='font-black text-sm'>Make Accessible to all Holders</p>
+            <p className='font-black text-sm'>Make accessible to everyone</p>
           </div>
           <div className='flex flex-wrap items-center'>
             <label
@@ -94,12 +95,14 @@ const Configuration = ({
                       >
                         Configuration {item.id}
                       </button>
-                      <Image
-                        src={Trash}
-                        alt='Delete'
-                        className='mr-2 cursor-pointer'
-                        onClick={() => deleteConfiguration(item.id)}
-                      />
+                      {!reviewScreen ? (
+                        <Image
+                          src={Trash}
+                          alt='Delete'
+                          className='mr-2 cursor-pointer'
+                          onClick={() => deleteConfiguration(item.id)}
+                        />
+                      ) : null}
                     </div>
                   </h2>
                   <div
@@ -125,7 +128,7 @@ const Configuration = ({
                               className='text-[14px] border-[1px] border-primary-100 px-2 py-2 text-primary-900 w-full font-bold'
                               onClick={() => setShowAddCollection(item.id)}
                             >
-                              Add Collection
+                              Set Collection
                             </button>
                           ) : null}
                         </>
@@ -175,7 +178,11 @@ const Configuration = ({
                               <input
                                 id='tokenMin'
                                 name='tokenMin'
-                                className={`debounceInput mt-1`}
+                                className={`debounceInput mt-1 ${
+                                  validationError
+                                    ? 'border-red-500 text-red-500'
+                                    : ''
+                                }`}
                                 value={item?.tokenMin}
                                 placeholder='Input Token ID'
                                 disabled={reviewScreen}
@@ -193,7 +200,11 @@ const Configuration = ({
                               <input
                                 id='tokenMax'
                                 name='tokenMax'
-                                className={`debounceInput mt-1`}
+                                className={`debounceInput mt-1 ${
+                                  validationError
+                                    ? 'border-red-500 text-red-500'
+                                    : ''
+                                }`}
                                 onChange={(e) => handleConfigValue(e, item.id)}
                                 value={item?.tokenMax}
                                 placeholder='Input Token ID'
@@ -201,6 +212,11 @@ const Configuration = ({
                               />
                             </>
                           </div>
+                          {validationError && (
+                            <p className='text-sm text-red-500'>
+                              Token Min should be smaller than Token Max
+                            </p>
+                          )}
                         </>
                       )}
                       {item?.settings === 'Specific Token ID' && (

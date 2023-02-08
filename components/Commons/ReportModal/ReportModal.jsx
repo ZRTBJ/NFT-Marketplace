@@ -1,18 +1,19 @@
 import React from 'react';
 import Modal from 'components/Commons/Modal';
-import { publishTokenGatedContent } from 'services/tokenGated/tokenGatedService';
+import {
+  reportTokenContent,
+  reportTokenGatedProject,
+} from 'services/tokenGated/tokenGatedService';
 import ConfirmationModal from 'components/Modals/ConfirmationModal';
 import SuccessModal from 'components/Modals/SuccessModal';
-import ErrorModal from 'components/Modals/ErrorModal';
 import { useState } from 'react';
-import { event } from "nextjs-google-analytics";
-
-export default function PublishContentModal({
+import ErrorModal from 'components/Modals/ErrorModal';
+export default function ReportModal({
   show,
   handleClose,
-  contents,
-  onContentPublished,
-  usedForPublish,
+  onReported,
+  usedFor,
+  id,
 }) {
   const [step, setStep] = useState(1);
   const [showConfirmModal, setShowConfirmModal] = useState(true);
@@ -20,49 +21,41 @@ export default function PublishContentModal({
   const [showSuccess, setShowSuccess] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-
-  const publish = async (content) => {
-    event("publish_tokengate_content", { category: "token_gate"});
-    const data = {
-      is_publish: checkUsedFor === 'publish' ? true : false,
-    };
-    await publishTokenGatedContent(content.id, data)
-      .then((resp) => {
-        if (resp.code === 0) {
-          // console.log(resp);
-        } else {
-          setShowLoading(false);
-          setShowErrorModal(true);
-          setErrorMessage(resp.message);
-        }
-      })
-      .catch((err) => {});
-  };
-
-  const publishContent = async () => {
+  const confirm = async () => {
     setStep(2);
     setShowLoading(true);
-    for (const iterator of contents) {
-      await publish(iterator);
-    }
-    setShowLoading(false);
-    if (!showErrorModal) {
-      setShowSuccess(true);
+    const payload = {
+      id: id,
+      isScam: true,
+    };
+    if (usedFor === 'Token Gated Project') {
+      await reportTokenGatedProject(payload).then((res) => {
+        setShowLoading(false);
+        if (res.code === 0) {
+          setShowSuccess(true);
+        } else {
+          setShowErrorModal(true);
+          setErrorMessage(res.message);
+        }
+      });
+    } else if (usedFor === 'Content') {
+      await reportTokenContent(payload).then((res) => {
+        setShowLoading(false);
+        if (res.code === 0) {
+          setShowSuccess(true);
+        } else {
+          setShowErrorModal(true);
+          setErrorMessage(res.message);
+        }
+      });
     }
   };
   const onSuccess = () => {
     setStep(1);
     setShowSuccess(false);
     handleClose();
-    onContentPublished();
+    onReported();
   };
-  const checkUsedFor = usedForPublish
-    ? contents?.length > 1
-      ? 'publish'
-      : contents[0]?.status === 'draft'
-      ? 'publish'
-      : 'un-publish'
-    : 'un-publish';
   return (
     <>
       {step === 1 && (
@@ -72,10 +65,8 @@ export default function PublishContentModal({
               <ConfirmationModal
                 show={showConfirmModal}
                 handleClose={() => handleClose()}
-                handleApply={() => publishContent()}
-                message={`Are you sure to ${checkUsedFor}  ${
-                  contents?.length > 1 ? 'contents' : 'content'
-                } ?`}
+                handleApply={() => confirm()}
+                message={`Are you sure to report of this ${usedFor} ?`}
               />
             </>
           )}
@@ -91,13 +82,8 @@ export default function PublishContentModal({
               showCloseIcon={false}
             >
               <div className='text-center px-4'>
-                <p className='font-black text-[18px]'>
-                  Please do not close the tab
-                </p>
-                <p>
-                  We are updating the
-                  {contents?.length > 1 ? ' contents' : ' content'}
-                </p>
+                <p className='font-black text-[18px]'>Please wait</p>
+                <p>We are processing you report</p>
                 <div className='overflow-hidden rounded-full h-4 w-full mt-4 md:mt-6 mb-8 relative animated fadeIn'>
                   <div className='animated-process-bar'></div>
                 </div>
@@ -105,18 +91,16 @@ export default function PublishContentModal({
             </Modal>
           )}
           {showSuccess && (
-            <>
-              <SuccessModal
-                show={showSuccess}
-                handleClose={() => onSuccess()}
-                message='Successfully Updated'
-                btnText='Close'
-              />
-            </>
+            <SuccessModal
+              show={showSuccess}
+              handleClose={() => onSuccess()}
+              message='Successfully Submitted'
+              btnText='Close'
+            />
           )}
           {showErrorModal && (
             <ErrorModal
-              title={`Failed to ${usedForPublish ? 'Publish' : 'Un-Publish'}`}
+              title={'Failed to Report'}
               message={`${errorMessage}`}
               handleClose={() => {
                 setShowErrorModal(false);
