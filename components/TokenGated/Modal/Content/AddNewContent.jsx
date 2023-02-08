@@ -122,7 +122,6 @@ export default function AddNewContent({
 
   useEffect(() => {
     if (contents?.length) {
-      console.log(contents);
       let title = contents[0]?.title;
       let description = contents[0]?.description;
       let isExplicit = contents[0]?.sensitive;
@@ -143,9 +142,12 @@ export default function AddNewContent({
         accessToAll: config_names?.length ? false : true,
       });
       if (contents?.[0]?.content_type === 'url') {
+        console.log(contents);
+        let fileType =
+          contents[0]?.file_type === 'movie' ? 'video' : contents[0]?.file_type;
         setLinkDetails({
           link: `${contents[0]?.consumable_data}?token=${token}`,
-          type: contents[0]?.file_type,
+          type: fileType,
         });
       } else {
         setLinkDetails({ link: '', type: 'image' });
@@ -656,7 +658,7 @@ export default function AddNewContent({
         uploadAFile();
       } else {
         let id = contents?.[0]?.id;
-        handleUpdateContent(id);
+        handleUpdateContent(id, '', false, true);
       }
     } else {
       if (linkDetails?.link) {

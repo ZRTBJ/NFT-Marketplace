@@ -396,6 +396,7 @@ export default function ContentListTable({
           contents={lastSelectedContents}
           onContentPublished={onContentPublished}
           usedForPublish={usedForPublish}
+          setIsEditContent={setIsEditContent}
         />
       )}
       {showConfigContentModal && (
@@ -412,6 +413,7 @@ export default function ContentListTable({
           setLinkDetails={setLinkDetails}
           setShowUploadByLinkModal={setShowUploadByLinkModal}
           linkDetails={linkDetails}
+          setIsEditContent={setIsEditContent}
         />
       )}
       {showConfigureAllModal && (
