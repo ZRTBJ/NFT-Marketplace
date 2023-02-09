@@ -287,7 +287,7 @@ export default function ContentListTable({
                       </div>
                       <div>
                         <Link
-                          href={`/token-gated/content/${content?.id}`}
+                          href={`/token-gated/content/${content?.id}?projectId=${tokenProjectId}`}
                           className='font-bold !no-underline text-txtblack'
                         >
                           {content?.title}
