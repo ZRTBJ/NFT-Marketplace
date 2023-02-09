@@ -147,11 +147,7 @@ export default function AddNewContent({
           contents[0]?.file_type === 'movie' ? 'video' : contents[0]?.file_type;
         setLinkDetails({
           link: `${contents[0]?.consumable_data}?token=${token}`,
-<<<<<<< HEAD
-          type: contents[0]?.file_type,
-=======
           type: fileType,
->>>>>>> 5666fc032ba8f85d00059bd5c82d761736a2ef35
         });
       } else {
         setLinkDetails({ link: '', type: 'image' });
@@ -662,11 +658,7 @@ export default function AddNewContent({
         uploadAFile();
       } else {
         let id = contents?.[0]?.id;
-<<<<<<< HEAD
-        handleUpdateContent(id);
-=======
         handleUpdateContent(id, '', false, true);
->>>>>>> 5666fc032ba8f85d00059bd5c82d761736a2ef35
       }
     } else {
       if (linkDetails?.link) {
