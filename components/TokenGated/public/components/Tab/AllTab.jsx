@@ -86,7 +86,8 @@ export default function AllTab({ project, sortBy, verticalList = false }) {
                 {list
                   ?.filter((x) => x?.file_type)
                   ?.map((content, index) => (
-                    <div key={index}>
+                    // data-bs-dismiss='offcanvas' is token gated detail page related content's off canvas
+                    <div key={index} data-bs-dismiss='offcanvas'>
                       <>
                         {content?.file_type === 'movie' && (
                           <VideoCard
