@@ -416,18 +416,6 @@ export default function ContentListTable({
           setIsEditContent={setIsEditContent}
         />
       )}
-      {showConfigureAllModal && (
-        <AddNewContent
-          show={showConfigureAllModal}
-          handleClose={() => {
-            setShowConfigureAllModal(false);
-          }}
-          tokenProjectId={tokenProjectId}
-          onContentAdded={onContentPublished}
-          allContents={lastSelectedContents}
-          isConfigureAll={true}
-        />
-      )}
       {showDeleteContentModal && (
         <DeleteContentModal
           show={showDeleteContentModal}
