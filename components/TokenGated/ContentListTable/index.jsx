@@ -396,6 +396,7 @@ export default function ContentListTable({
           contents={lastSelectedContents}
           onContentPublished={onContentPublished}
           usedForPublish={usedForPublish}
+          setIsEditContent={setIsEditContent}
         />
       )}
       {showConfigContentModal && (
@@ -412,18 +413,7 @@ export default function ContentListTable({
           setLinkDetails={setLinkDetails}
           setShowUploadByLinkModal={setShowUploadByLinkModal}
           linkDetails={linkDetails}
-        />
-      )}
-      {showConfigureAllModal && (
-        <AddNewContent
-          show={showConfigureAllModal}
-          handleClose={() => {
-            setShowConfigureAllModal(false);
-          }}
-          tokenProjectId={tokenProjectId}
-          onContentAdded={onContentPublished}
-          allContents={lastSelectedContents}
-          isConfigureAll={true}
+          setIsEditContent={setIsEditContent}
         />
       )}
       {showDeleteContentModal && (

@@ -164,7 +164,7 @@ const MAINNET = {
     network: 56,
     gnosis: `${gnosisFundTransferUrl}/bnb`,
     raribleNFTDetailsUrl: raribleNFTDetailsUrl,
-    openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/bsc/`,
+    openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/BSC/`,
     viewContractAddressUrl: `https://bscscan.com/address/`,
     viewTxUrl: `https://bscscan.com/tx/`,
     decirTreasury: address.decirTreasuryBnb,
