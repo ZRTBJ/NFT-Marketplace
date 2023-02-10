@@ -4,7 +4,6 @@ import emptyStateSvg from 'assets/images/token-gated/emptyState.svg';
 import Image from 'next/image';
 import thumbIcon from 'assets/images/profile/card.svg';
 import PublishContentModal from 'components/TokenGated/Modal/PublishContent';
-import ConfigContentModal from 'components/TokenGated/Modal/ConfigContent';
 import DeleteContentModal from 'components/TokenGated/Modal/DeleteContent';
 import dayjs from 'dayjs';
 import Link from 'next/link';
