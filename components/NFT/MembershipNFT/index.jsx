@@ -1359,14 +1359,14 @@ export default function MembershipNFT({ query }) {
           message={errorMessage}
         />
       )}
-      {/* {showMoonpayModal && (
+      {showMoonpayModal && process.env.NEXT_PUBLIC_ENV !== "production" && (
         <MoonpayModal
           handleClose={() => {
             setShowMoonpayModal(false);
           }}
           show={showMoonpayModal}
         />
-      )} */}
+      )}
       {showDataUploadingModal && (
         <Modal
           width={400}

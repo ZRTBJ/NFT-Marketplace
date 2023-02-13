@@ -109,8 +109,11 @@ export default function DetailsNFT({ type, id }) {
         }
       } else {
         setTransactionWaitingModal(false);
-        // setShowMoonpayModal(true)
-        setErrorMsg('You don\'t have enough balance in your wallet to Mint NFT');
+        if (process.env.NEXT_PUBLIC_ENV !== "production") {
+          setShowMoonpayModal(true)
+        } else {
+          setErrorMsg('You don\'t have enough balance in your wallet to Mint NFT');
+        }
       }
     } catch (err) {
       setTransactionWaitingModal(false);
@@ -339,14 +342,14 @@ export default function DetailsNFT({ type, id }) {
           show={errorMsg}
         />
       )}
-      {/* {showMoonpayModal && (
+      {showMoonpayModal && process.env.NEXT_PUBLIC_ENV !== "production" && (
         <MoonpayModal
           handleClose={() => {
             setShowMoonpayModal(false);
           }}
           show={showMoonpayModal}
         />
-      )} */}
+      )}
       {showModal && (
         <WalletConnectModal
           showModal={showModal}
