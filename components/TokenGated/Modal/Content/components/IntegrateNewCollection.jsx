@@ -119,13 +119,10 @@ const IntegrateNewCollection = ({
       {showPreview ? (
         <div>
           <div>
-            <p
-              className='absolute top-3 cursor-pointer'
+            <i
+              className='fa fa-xmark cursor-pointer text-xl absolute top-8 right-8 text-black'
               onClick={() => setShowPreview(false)}
-            >
-              <i className='fa-regular mr-2 fa-arrow-left cursor-pointer text-xl text-black'></i>
-              <span>Back</span>
-            </p>
+            ></i>
             <h2 className='text-[28px] text-black mt-3'>Collection Preview</h2>
           </div>
           <div className='mt-8 rounded-[8px]'>
@@ -232,65 +229,76 @@ const IntegrateNewCollection = ({
           ></i>
           <h2 className='text-[28px] text-black'>Collection configuration</h2>
           <div className='mt-5 border-b-[1px] border-textSubtle pb-4'>
-            <h3>Set Collection</h3>
-            <p className='text-textSubtle text-[12px] mt-2'>
-              Content viewer must own your collection's NFT in order to access
-              to your content. Set your own smart contract here
-            </p>
-            <input
-              id='smartContract'
-              name='smartContract'
-              className={`debounceInput mt-3 ${
-                addressError ? 'border-danger-800' : ''
-              }`}
-              value={smartContractAddress}
-              placeholder='Input smart contract address'
-              onChange={handleAddressChange}
-              disabled={showExistingCollection}
-            />
-            {isSubmitted && !smartContractAddress && (
-              <p className='text-danger-800 text-sm mt-1'>
-                Address is required
-              </p>
-            )}
-            {addressError && (
-              <p className='text-danger-800 text-sm mt-1'>
-                <strong>X</strong> Smart contract is Unknown
-              </p>
-            )}
-            <div className='mt-4'>
-              <div className='flex flex-wrap items-center mb-2'>
-                <div className='txtblack text-[14px]'>Select Blockchain</div>
-              </div>
-              <div className='select-wrapper'>
-                <select
-                  value={blockchain}
-                  onChange={(e) => setBlockchain(e.target.value)}
-                  disabled={showExistingCollection}
-                  className='h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3'
-                >
-                  <option value={''} defaultValue>
-                    Select Blockchain
-                  </option>
-                  {validNetworks.map((network) => (
-                    <option value={network?.network} key={network?.network}>
-                      {network?.networkName}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              {isSubmitted && !blockchain && (
-                <p className='text-danger-800 text-sm mt-1'>
-                  Blockchain is required
+            {!showExistingCollection && (
+              <div>
+                <h3>Set Collection</h3>
+                <p className='text-textSubtle text-[12px] mt-2'>
+                  Content viewer must own your collection's NFT in order to
+                  access to your content. Set your own smart contract here
                 </p>
-              )}
-            </div>
+                <input
+                  id='smartContract'
+                  name='smartContract'
+                  className={`debounceInput mt-3 ${
+                    addressError ? 'border-danger-800' : ''
+                  }`}
+                  value={smartContractAddress}
+                  placeholder='Input smart contract address'
+                  onChange={handleAddressChange}
+                  disabled={showExistingCollection}
+                />
+                {isSubmitted && !smartContractAddress && (
+                  <p className='text-danger-800 text-sm mt-1'>
+                    Address is required
+                  </p>
+                )}
+                {addressError && (
+                  <p className='text-danger-800 text-sm mt-1'>
+                    <strong>X</strong> Smart contract is Unknown
+                  </p>
+                )}
+                <div className='mt-4'>
+                  <div className='flex flex-wrap items-center mb-2'>
+                    <div className='txtblack text-[14px]'>
+                      Select Blockchain
+                    </div>
+                  </div>
+                  <div className='select-wrapper'>
+                    <select
+                      value={blockchain}
+                      onChange={(e) => setBlockchain(e.target.value)}
+                      disabled={showExistingCollection}
+                      className='h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3'
+                    >
+                      <option value={''} defaultValue>
+                        Select Blockchain
+                      </option>
+                      {validNetworks.map((network) => (
+                        <option value={network?.network} key={network?.network}>
+                          {network?.networkName}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {isSubmitted && !blockchain && (
+                    <p className='text-danger-800 text-sm mt-1'>
+                      Blockchain is required
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
             <div
               className='flex items-center justify-between mt-6 cursor-pointer'
               onClick={() => setShowExistingCollection(!showExistingCollection)}
             >
               <p>
-                Or you can <strong>Select Existing Collection</strong>
+                Or you can{' '}
+                {showExistingCollection ? (
+                  <strong>Set Collection</strong>
+                ) : (
+                  <strong>Select Existing Collection</strong>
+                )}
               </p>
               <Image src={showExistingCollection ? right : down} alt='down' />
             </div>

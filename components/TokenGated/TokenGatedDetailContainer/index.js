@@ -122,7 +122,7 @@ const TokenGatedContentDetailContainer = ({ query }) => {
   };
 
   const handleBack = () => {
-    router.back();
+    router.push(`/token-gated/public/${query.projectId}`);
   };
 
   return (
@@ -176,11 +176,17 @@ const TokenGatedContentDetailContainer = ({ query }) => {
                       <h3 className='font-[28px] mt-4 w-3/4'>
                         YOUR TOKEN ID DIDNT MATCH WITH THIS SPECIFIC CONTENT
                       </h3>
-                      <Link href={`/collection/${collectionId}`}>
-                        <button className='btn bg-white text-black rounded-[4px] p-2 mt-5'>
-                          Go to Collection
-                        </button>
-                      </Link>
+                      {collectionId ? (
+                        <Link href={`/collection/${collectionId}`}>
+                          <button className='btn bg-white text-black rounded-[4px] p-2 mt-5'>
+                            Go to Collection
+                          </button>
+                        </Link>
+                      ) : (
+                        <h4 className='text-lg mt-4 font-bold'>
+                          PLEASE CONTACT CREATOR
+                        </h4>
+                      )}
                     </div>
                   </div>
                 ) : (
@@ -228,11 +234,17 @@ const TokenGatedContentDetailContainer = ({ query }) => {
                           <h3 className='font-[28px] mt-4 w-3/4'>
                             YOUR TOKEN ID DIDNT MATCH WITH THIS SPECIFIC CONTENT
                           </h3>
-                          <Link href={`/collection/${collectionId}`}>
-                            <button className='btn bg-white text-black rounded-[4px] p-2 mt-5'>
-                              Go to Collection
-                            </button>
-                          </Link>
+                          {collectionId ? (
+                            <Link href={`/collection/${collectionId}`}>
+                              <button className='btn bg-white text-black rounded-[4px] p-2 mt-5'>
+                                Go to Collection
+                              </button>
+                            </Link>
+                          ) : (
+                            <h4 className='text-lg mt-4 font-bold'>
+                              PLEASE CONTACT CREATOR
+                            </h4>
+                          )}
                         </div>
                       </div>
                     ) : (
@@ -292,11 +304,17 @@ const TokenGatedContentDetailContainer = ({ query }) => {
                           <h3 className='font-[28px] mt-4 w-3/4'>
                             YOUR TOKEN ID DIDNT MATCH WITH THIS SPECIFIC CONTENT
                           </h3>
-                          <Link href={`/collection/${collectionId}`}>
-                            <button className='btn bg-white text-black rounded-[4px] p-2 mt-5'>
-                              Go to Collection
-                            </button>
-                          </Link>
+                          {collectionId ? (
+                            <Link href={`/collection/${collectionId}`}>
+                              <button className='btn bg-white text-black rounded-[4px] p-2 mt-5'>
+                                Go to Collection
+                              </button>
+                            </Link>
+                          ) : (
+                            <h4 className='text-lg mt-4 font-bold'>
+                              PLEASE CONTACT CREATOR
+                            </h4>
+                          )}
                         </div>
                       </div>
                     ) : (

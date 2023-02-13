@@ -244,12 +244,14 @@ const Configuration = ({
             })}
           </div>
           {!reviewScreen && (
-            <button
-              className='mt-3 min-h-[52px] accordian-sub-button text-textSubtle font-black text-[14px] border-dashed border-[1px] w-full rounded-[8px]'
-              onClick={addConfigurations}
-            >
-              Add More
-            </button>
+            <div className='w-full text-right'>
+              <button
+                className='mt-3 min-h-[52px] accordian-sub-button text-textSubtle font-black text-[14px] border-dashed border-[1px] rounded-[8px] px-4'
+                onClick={addConfigurations}
+              >
+                Add Configuration
+              </button>
+            </div>
           )}
         </>
       )}

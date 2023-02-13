@@ -4,7 +4,6 @@ import emptyStateSvg from 'assets/images/token-gated/emptyState.svg';
 import Image from 'next/image';
 import thumbIcon from 'assets/images/profile/card.svg';
 import PublishContentModal from 'components/TokenGated/Modal/PublishContent';
-import ConfigContentModal from 'components/TokenGated/Modal/ConfigContent';
 import DeleteContentModal from 'components/TokenGated/Modal/DeleteContent';
 import dayjs from 'dayjs';
 import Link from 'next/link';
@@ -287,7 +286,7 @@ export default function ContentListTable({
                       </div>
                       <div>
                         <Link
-                          href={`/token-gated/content/${content?.id}`}
+                          href={`/token-gated/content/${content?.id}?projectId=${tokenProjectId}`}
                           className='font-bold !no-underline text-txtblack'
                         >
                           {content?.title}
@@ -414,6 +413,18 @@ export default function ContentListTable({
           setShowUploadByLinkModal={setShowUploadByLinkModal}
           linkDetails={linkDetails}
           setIsEditContent={setIsEditContent}
+        />
+      )}
+      {showConfigureAllModal && (
+        <AddNewContent
+          show={showConfigureAllModal}
+          handleClose={() => {
+            setShowConfigureAllModal(false);
+          }}
+          tokenProjectId={tokenProjectId}
+          onContentAdded={onContentPublished}
+          allContents={lastSelectedContents}
+          isConfigureAll={true}
         />
       )}
       {showDeleteContentModal && (
