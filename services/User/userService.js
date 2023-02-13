@@ -27,5 +27,6 @@ export async function claimRoyalty(payload) {
 }
 
 export async function sendMessage(payload) {
-  return await axios.post('/api/contact', payload);
+  let host = window.location.origin;
+  return await axios.post(new URL('/api/contact', host), payload);
 }

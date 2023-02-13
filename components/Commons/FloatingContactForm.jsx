@@ -38,6 +38,7 @@ const FloatingContactForm = () => {
             toast.error(`Failed to send the message. Please try again!`);
           }
           resetState();
+          setShowForm(false);
         })
         .catch((err) => {
           resetState();
@@ -57,41 +58,43 @@ const FloatingContactForm = () => {
             <h2 className='mb-2'>Hello! 👋</h2>
             <p>Need Help? Please write to us!</p>
           </div>
-          <div className='p-6'>
-            <div className='mb-6'>
-              <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className='p-4 mb-1'
-                name='message'
-                type='email'
-                placeholder='Email'
-              />
-              {validEmail && (
-                <p className='text-red-400 text-sm'>Email is required</p>
-              )}
+          <form onSubmit={handleSend}>
+            <div className='p-6'>
+              <div className='mb-6'>
+                <input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className='p-4 mb-1'
+                  name='message'
+                  type='email'
+                  placeholder='Email'
+                />
+                {validEmail && (
+                  <p className='text-red-400 text-sm'>Email is required</p>
+                )}
+              </div>
+              <div className='mb-6'>
+                <textarea
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className='p-3'
+                  name='message'
+                  cols='30'
+                  rows='6'
+                  placeholder='Message'
+                ></textarea>
+                {validMessage && (
+                  <p className='text-red-400 text-sm'>Message is required</p>
+                )}
+              </div>
+              <button
+                type='submit'
+                className='bg-[#59cdff] w-full py-2 font-bold text-md rounded-[4px]'
+              >
+                Send
+              </button>
             </div>
-            <div className='mb-6'>
-              <textarea
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                className='p-3'
-                name='message'
-                cols='30'
-                rows='6'
-                placeholder='Message'
-              ></textarea>
-              {validMessage && (
-                <p className='text-red-400 text-sm'>Message is required</p>
-              )}
-            </div>
-            <button
-              onClick={handleSend}
-              className='bg-[#59cdff] w-full py-2 font-bold text-md rounded-[4px]'
-            >
-              Send
-            </button>
-          </div>
+          </form>
         </div>
       ) : null}
       <button

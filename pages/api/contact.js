@@ -1,6 +1,6 @@
 import Config from 'config/config';
 
-export default async function createFeedbackAPI(req, res) {
+export default async function sendHelpMessage(req, res) {
   const { email, message } = req.body;
 
   try {
