@@ -34,6 +34,15 @@ import { logout } from 'redux/auth';
 import Image from 'next/image';
 import { getWalletAccount } from 'util/MetaMask';
 
+const LANGS = {
+  'en|en': 'English',
+  'en|ar': 'Arabic',
+  'en|zh-CN': 'Chinese (Simplified)',
+  'en|fr': 'French',
+  'en|ja': 'Japanese',
+  'en|es': 'Spanish',
+};
+
 const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -107,10 +116,10 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     let slicedVal = val ? val.slice(1) : '';
 
     let output = slicedVal ? slicedVal.replace(/\//g, '|') : '';
-
+    console.log(output);
     if (getLabel) {
       if (output) {
-        getLabel.innerHTML = output;
+        getLabel.innerHTML = LANGS[output];
       } else {
         getLabel.innerHTML = 'en|en';
       }

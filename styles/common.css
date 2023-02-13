@@ -561,3 +561,21 @@ video::-webkit-media-controls-panel {
   display: flex !important;
   opacity: 1 !important;
 }
+
+.floating-button {
+  background-color: #59cdff;
+  z-index: 9;
+  color: #fff;
+  box-shadow: 0 1px 6px 0 rgb(0 0 0 / 6%), 0 2px 32px 0 rgb(0 0 0 / 16%);
+}
+
+.contact-help-form {
+  box-shadow: 0 1px 6px 0 rgb(0 0 0 / 6%), 0 2px 32px 0 rgb(0 0 0 / 16%);
+  z-index: 9;
+  background: #fff;
+}
+
+.contact-help-header {
+  border-top-right-radius: 20px;
+  border-top-left-radius: 20px;
+}
