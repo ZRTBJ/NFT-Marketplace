@@ -15,8 +15,7 @@ import FileDragAndDrop from 'components/FormUtility/FileDragAndDrop';
 import Image from 'next/image';
 import deleteIcon from 'assets/images/projectCreate/ico_delete01.svg';
 import ConfirmationModal from 'components/Modals/ConfirmationModal';
-import { event } from "nextjs-google-analytics";
-
+import { event } from 'nextjs-google-analytics';
 
 export default function Setting({
   show,
@@ -112,7 +111,7 @@ export default function Setting({
 
     // create and then  update
     if (createMode) {
-      event("create_token_gate_project", { category: "token_gate"});
+      event('create_token_gate_project', { category: 'token_gate' });
       let projectId = '';
       await createTokenGatedProject(data['title'])
         .then((res) => {
@@ -134,7 +133,7 @@ export default function Setting({
           setErrorMessage(err);
         });
       if (projectId !== '') {
-        event("update_token_gate_project", { category: "token_gate"});
+        event('update_token_gate_project', { category: 'token_gate' });
         payload.id = projectId;
         await updateTokenGatedProject(payload)
           .then((res) => {
@@ -197,7 +196,7 @@ export default function Setting({
     setStep(1);
   };
   const onDeleteTokenGatedProject = async () => {
-    event("delete_token_gate_project", { category: "token_gate"});
+    event('delete_token_gate_project', { category: 'token_gate' });
     setShowOverlayLoading(true);
     await deleteTokenGatedProject(project?.id).then((res) => {
       setShowOverlayLoading(false);
@@ -234,26 +233,15 @@ export default function Setting({
                 <p className='font-black text-txtblack text-[22px] mb-4'>
                   Project Settings
                 </p>
-                <button
-                  onClick={() => {
-                    setStep(2);
-                    setShowDeleteModal(true);
-                  }}
-                  className='px-4 py-2 text-white bg-danger-1 block ml-auto rounded'
-                >
-                  <i className='fa-solid fa-trash mr-1'></i>
-                  <span>Delete</span>
-                </button>
-
-                {/* photo */}
+                {/* cover */}
                 <div className='mb-6'>
-                  <div className='label-grey mb-2'>Add project photo</div>
-                  {projectPhoto && projectPhoto.path.length < 1 ? (
+                  <div className='label-grey mb-2'>Add cover photo</div>
+                  {coverPhoto && coverPhoto.path.length < 1 ? (
                     <div className='w-full md:max-w-[186px]'>
                       <FileDragAndDrop
                         maxFiles={1}
                         height='160px'
-                        onDrop={(e) => projectPhotoSelect(e)}
+                        onDrop={(e) => coverPhotoSelect(e)}
                         sizePlaceholder='1300X600'
                         maxSize={4000000}
                       />
@@ -262,7 +250,7 @@ export default function Setting({
                     <div className='relative w-[180px] h-[180px] '>
                       <Image
                         className='coverPreview block w-[180px] h-[180px] rounded-xl object-cover'
-                        src={projectPhoto.path}
+                        src={coverPhoto.path}
                         alt="user's cover picture"
                         width={200}
                         height={230}
@@ -272,7 +260,7 @@ export default function Setting({
                         alt='cross icon'
                         src={deleteIcon}
                         className='absolute top-0 cp right-0'
-                        onClick={removeProjectPhoto}
+                        onClick={removeCoverPhoto}
                       />
                     </div>
                   )}
@@ -321,14 +309,14 @@ export default function Setting({
                   </>
                 </div>
 
-                {/* cover */}
+                {/* photo */}
                 <div className='mb-6'>
-                  <div className='label-grey mb-2'>Add cover photo</div>
-                  {coverPhoto && coverPhoto.path.length < 1 ? (
+                  <div className='label-grey mb-2'>Add project photo</div>
+                  {projectPhoto && projectPhoto.path.length < 1 ? (
                     <FileDragAndDrop
                       maxFiles={1}
                       height='230px'
-                      onDrop={(e) => coverPhotoSelect(e)}
+                      onDrop={(e) => projectPhotoSelect(e)}
                       sizePlaceholder='1300X600'
                       maxSize={4000000}
                     />
@@ -336,7 +324,7 @@ export default function Setting({
                     <div className='relative w-full '>
                       <Image
                         className='coverPreview block w-full rounded-xl max-h-[230px] object-cover'
-                        src={coverPhoto.path}
+                        src={projectPhoto.path}
                         alt="user's cover picture"
                         width={230}
                         height={230}
@@ -347,7 +335,7 @@ export default function Setting({
                         alt='cross icon'
                         src={deleteIcon}
                         className='absolute top-0 cp right-0'
-                        onClick={removeCoverPhoto}
+                        onClick={removeProjectPhoto}
                       />
                     </div>
                   )}
@@ -395,12 +383,24 @@ export default function Setting({
                     </div>
                   ))}
                 </div>
-                <button
-                  disabled={isLoading}
-                  className='contained-button w-full py-2 text-center'
-                >
-                  {isLoading ? <Spinner forButton={true} /> : 'Save'}
-                </button>
+                <div className='flex flex-wrap gap-4 my-4 justify-between'>
+                  <button
+                    onClick={() => {
+                      setStep(2);
+                      setShowDeleteModal(true);
+                    }}
+                    className='px-4 py-2 text-danger-1 border border-danger-1  rounded'
+                  >
+                    <i className='fa-solid fa-trash mr-1'></i>
+                    <span>Delete</span>
+                  </button>
+                  <button
+                    disabled={isLoading}
+                    className='contained-button w-[100px] py-2 text-center'
+                  >
+                    {isLoading ? <Spinner forButton={true} /> : 'Save'}
+                  </button>
+                </div>
               </div>
             </form>
           </Modal>
