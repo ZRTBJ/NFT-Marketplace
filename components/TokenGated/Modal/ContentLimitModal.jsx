@@ -5,7 +5,6 @@ export default function ContentLimitModal({ show, handleClose }) {
   return (
     <Modal
       width={500}
-      w
       show={show}
       handleClose={() => handleClose()}
       showCloseIcon={true}
