@@ -148,14 +148,16 @@ function MyApp({ Component, pageProps }) {
                       )}
                       <div className='w-full min-w-[calc(100vw-300px)]'>
                         <Component {...pageProps} />
-                        <FeedbackWidget
-                          showOnInitial={false}
-                          type='form'
-                          themeColor='#59cdff'
-                          title={'Hi 👋'}
-                          description='Need Help? Please write to us!'
-                          apiPath='api/contact'
-                        />
+                        {typeof window !== 'undefined' && (
+                          <FeedbackWidget
+                            showOnInitial={false}
+                            type='form'
+                            themeColor='#59cdff'
+                            title={'Hi 👋'}
+                            description='Need Help? Please write to us!'
+                            apiPath='api/contact'
+                          />
+                        )}
                         <ToastContainer
                           className='impct-toast'
                           position='top-right'
