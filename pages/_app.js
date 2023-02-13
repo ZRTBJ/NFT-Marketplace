@@ -154,6 +154,7 @@ function MyApp({ Component, pageProps }) {
                           themeColor='#59cdff'
                           title={'Hi 👋'}
                           description='Need Help? Please write to us!'
+                          apiPath='api/contact'
                         />
                         <ToastContainer
                           className='impct-toast'
