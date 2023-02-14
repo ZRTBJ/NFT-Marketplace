@@ -116,12 +116,11 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     let slicedVal = val ? val.slice(1) : '';
 
     let output = slicedVal ? slicedVal.replace(/\//g, '|') : '';
-    console.log(output);
     if (getLabel) {
       if (output) {
         getLabel.innerHTML = LANGS[output];
       } else {
-        getLabel.innerHTML = 'en|en';
+        getLabel.innerHTML = 'English';
       }
     }
   }

@@ -30,7 +30,7 @@ const FloatingContactForm = () => {
       };
       sendMessage(payload)
         .then((resp) => {
-          if (resp?.message === 'success') {
+          if (resp?.code === 0) {
             toast.success(
               `Thank you for the message, we will contact you as soon as possible.`
             );
