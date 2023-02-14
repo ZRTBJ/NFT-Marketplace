@@ -1,0 +1,68 @@
+steps:
+  - name: node
+    entrypoint: npm
+    args: ['run', 'create-env']
+    env:
+      - 'NEXT_PUBLIC_API_ENDPOINT=${_NEXT_PUBLIC_API_ENDPOINT}'
+      - 'NEXT_PUBLIC_ENV=${_NEXT_PUBLIC_ENV}'
+      - 'NEXT_PUBLIC_FILE_SERVER_ENDPOINT=${_NEXT_PUBLIC_FILE_SERVER_ENDPOINT}'
+      - 'NEXT_PUBLIC_GOERLI_QUICKNODE_URL=${_NEXT_PUBLIC_GOERLI_QUICKNODE_URL}'
+      - 'NEXT_PUBLIC_MUMBAI_QUICKNODE_URL=${_NEXT_PUBLIC_MUMBAI_QUICKNODE_URL}'
+      - 'NEXT_PUBLIC_TOKEN_GATED_FILE_ENDPOINT=${_NEXT_PUBLIC_TOKEN_GATED_FILE_ENDPOINT}'
+      - 'NEXT_PUBLIC_PINATA=${_NEXT_PUBLIC_PINATA}'
+      - 'NEXT_PUBLIC_SENTRY_DSN=${_NEXT_PUBLIC_SENTRY_DSN}'
+      - 'NEXT_PUBLIC_WEB_SOKET=${_NEXT_PUBLIC_WEB_SOKET}'
+      - 'NEXT_PUBLIC_WEBHOOK_URL_GOERLI=${_NEXT_PUBLIC_WEBHOOK_URL_GOERLI}'
+      - 'NEXT_PUBLIC_WEBHOOK_URL_MUMBAI=${_NEXT_PUBLIC_WEBHOOK_URL_MUMBAI}'
+      - 'NEXT_PUBLIC_MOONPAY_API=${_NEXT_PUBLIC_MOONPAY_API}'
+      - 'NEXT_PUBLIC_MOONPAY_KEY=${_NEXT_PUBLIC_MOONPAY_KEY}'
+      - 'NEXT_PUBLIC_MOONPAY_GCP=${_NEXT_PUBLIC_MOONPAY_GCP}'
+      - 'NEXT_PUBLIC_GA_MEASUREMENT_ID=${_NEXT_PUBLIC_GA_MEASUREMENT_ID}'
+      - 'NEXT_PUBLIC_BNBTEST_QUICKNODE_URL=${_NEXT_PUBLIC_BNBTEST_QUICKNODE_URL}'
+      - 'NEXT_PUBLIC_WEBHOOK_URL_BNBTEST=${_NEXT_PUBLIC_WEBHOOK_URL_BNBTEST}'
+      - 'NEXT_PUBLIC_GOERLI_NFT_ALCHEMY_URL=${_NEXT_PUBLIC_GOERLI_NFT_ALCHEMY_URL}'
+      - 'NEXT_PUBLIC_MUMBAI_NFT_ALCHEMY_URL=${_NEXT_PUBLIC_MUMBAI_NFT_ALCHEMY_URL}'
+      - 'NEXT_PUBLIC_SLACK_WEBHOOK_URL={_NEXT_PUBLIC_SLACK_WEBHOOK_URL}'
+      - 'NEXT_PUBLIC_MAINTENANCE_MODE_API=${_NEXT_PUBLIC_MAINTENANCE_MODE_API}'
+
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - '-t'
+      - '$_GCR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA'
+      - .
+      - '-f'
+      - Dockerfile
+    id: Build
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - '$_GCR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA'
+    id: Push
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - decir-webapp
+      - '--image'
+      - '$_GCR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA'
+      - '--region'
+      - us-central1-c
+      - '--min-instance'
+      - 1
+      - '--port'
+      - 3000
+images:
+  - '$_GCR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA'
+options:
+  substitutionOption: ALLOW_LOOSE
+substitutions:
+  _TRIGGER_ID: 55ab0f5a-731d-49f8-bd37-86e01b29b856
+  _SERVICE_NAME: decir-webapp
+  _DEPLOY_REGION: us-central1-c
+  _GCR_HOSTNAME: gcr.io
+  _PLATFORM: managed
+  _LABELS: gcp-trigger-id=55ab0f5a-731d-49f8-bd37-86e01b29b856
+tags:
+  - creabo-web2-frontend
