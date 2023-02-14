@@ -48,7 +48,7 @@ steps:
       - '--image'
       - '$_GCR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA'
       - '--region'
-      - us-central1-c
+      - global
       - '--min-instance'
       - 1
       - '--port'
