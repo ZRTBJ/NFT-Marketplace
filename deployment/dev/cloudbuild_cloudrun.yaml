@@ -44,15 +44,17 @@ steps:
     args:
       - run
       - deploy
-      - decir-webapp
+      - 'decir-webapp'
       - '--image'
       - '$_GCR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA'
       - '--region'
-      - global
-      - '--min-instance'
-      - 1
+      - 'us-central1'
+      - '--min-instances'
+      - '1'
       - '--port'
-      - 3000
+      - '3000'
+      - '--no-use-http2'
+      - '--allow-unauthenticated'
 images:
   - '$_GCR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA'
 options:
@@ -60,7 +62,7 @@ options:
 substitutions:
   _TRIGGER_ID: 55ab0f5a-731d-49f8-bd37-86e01b29b856
   _SERVICE_NAME: decir-webapp
-  _DEPLOY_REGION: us-central1-c
+  _DEPLOY_REGION: us-central1
   _GCR_HOSTNAME: gcr.io
   _PLATFORM: managed
   _LABELS: gcp-trigger-id=55ab0f5a-731d-49f8-bd37-86e01b29b856
