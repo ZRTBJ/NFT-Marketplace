@@ -11,7 +11,7 @@ export default function Creator({ project, createMode, settingSaved }) {
       ? window.location.origin
       : '';
   const hostURL = `${origin}`;
-  const publicDetailsLink = `${hostURL}/token-gated/public/${project?.id}`;
+  const publicDetailsLink = `${hostURL}/token-gated/public/${project?.slug}/${project?.id}`;
   const [showSettingModal, setShowSettingModal] = useState(false);
   const onSettingClick = async () => {
     setShowSettingModal(true);
