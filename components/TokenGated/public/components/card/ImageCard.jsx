@@ -7,6 +7,8 @@ import { ls_GetUserToken } from 'util/ApplicationStorage';
 import defaultThumbnail from 'assets/images/profile/card.svg';
 import { getUserVerification } from 'services/tokenGated/tokenGatedService';
 import Config from 'config/config';
+import Image from 'next/image';
+
 const ROOT_URL = Config.API_ENDPOINT;
 
 export default function ImageCard({ content, projectId }) {
@@ -21,6 +23,14 @@ export default function ImageCard({ content, projectId }) {
   const contentUrl = `${ROOT_URL}/tkg-content/${
     content?.id
   }/data?token=${ls_GetUserToken()}`;
+  const [imageSrc, setImageSrc] = useState(
+    content?.thumbnail
+      ? content?.thumbnail
+      : canSeeContent
+      ? contentUrl
+      : darkBg.src
+  );
+
   async function userValidate() {
     await getUserVerification(content?.id)
       .then((res) => {
@@ -37,54 +47,59 @@ export default function ImageCard({ content, projectId }) {
     userValidate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content?.id]);
+  useEffect(() => {
+    if (canSeeContent) {
+      setImageSrc(contentUrl);
+    }
+  }, [canSeeContent]);
   return (
     <>
       <div
-        className='relative cursor-pointer rounded'
+        className='cursor-pointer relative'
         onClick={() =>
           router.push(
             `/token-gated/content/${content?.id}?projectId=${projectId}`
           )
         }
-        style={{
-          backgroundImage: `url(${
-            content?.thumbnail
-              ? content?.thumbnail
-              : canSeeContent
-              ? contentUrl
-              : darkBg.src
-          }), url(${defaultThumbnail.src})`,
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          height: '240px',
-          width: '100%',
-        }}
       >
-        <div className='flex whitespace-nowrap items-center gap-2 px-2 pt-2 text-white text-[12px]'>
-          {content?.sensitive.toString() === 'true' && (
-            <div className='bg-danger-1 py-1 px-3 rounded '>18+</div>
-          )}
-          {content?.config_names && content?.config_names?.length > 0 && (
-            <>
-              {content?.config_names?.slice(0, 2)?.map((c, index) => (
-                <div
-                  key={index}
-                  className={`bg-textSubtle py-1 px-3 rounded ${
-                    c && c?.length > 15 ? 'truncate' : ''
-                  }`}
-                >
-                  {c}
-                </div>
-              ))}
-              {content?.config_names && content?.config_names?.length > 2 && (
-                <div className='bg-textSubtle py-1 px-3 rounded'>
-                  +{content?.config_names?.length - 2}
-                </div>
-              )}
-            </>
-          )}
+        <Image
+          unoptimized
+          width={200}
+          height={240}
+          alt='token gated content image'
+          className='w-full h-[240px] object-cover'
+          src={imageSrc}
+          style={{ width: '100%' }}
+          onError={() => setImageSrc(defaultThumbnail.src)}
+        ></Image>
+
+        <div className='absolute top-1 left-1'>
+          <div className='flex whitespace-nowrap items-center gap-2 px-2 pt-2 text-white text-[12px]'>
+            {content?.sensitive.toString() === 'true' && (
+              <div className='bg-danger-1 py-1 px-3 rounded '>18+</div>
+            )}
+            {content?.config_names && content?.config_names?.length > 0 && (
+              <>
+                {content?.config_names?.slice(0, 2)?.map((c, index) => (
+                  <div
+                    key={index}
+                    className={`bg-textSubtle py-1 px-3 rounded ${
+                      c && c?.length > 15 ? 'truncate' : ''
+                    }`}
+                  >
+                    {c}
+                  </div>
+                ))}
+                {content?.config_names && content?.config_names?.length > 2 && (
+                  <div className='bg-textSubtle py-1 px-3 rounded'>
+                    +{content?.config_names?.length - 2}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
         </div>
+
         {canSeeContent ? null : lockIcon}
       </div>
       <div className='mt-4'>

@@ -44,14 +44,13 @@ import { cryptoConvert } from 'services/chainlinkService';
 import tickIcon from 'assets/images/tick.svg';
 import { getCollectionDetailsById } from 'services/collection/collectionService';
 import Image from 'next/image';
-import { event } from "nextjs-google-analytics";
-
+import { event } from 'nextjs-google-analytics';
 
 const currency = {
   eth: Eth,
   matic: Polygon,
-  bnb: Bnb
-}
+  bnb: Bnb,
+};
 
 export default function DetailsNFT({ type, id }) {
   const userinfo = useSelector((state) => state.user.userinfo);
@@ -109,10 +108,12 @@ export default function DetailsNFT({ type, id }) {
         }
       } else {
         setTransactionWaitingModal(false);
-        if (process.env.NEXT_PUBLIC_ENV !== "production") {
-          setShowMoonpayModal(true)
+        if (process.env.NEXT_PUBLIC_ENV !== 'production') {
+          setShowMoonpayModal(true);
         } else {
-          setErrorMsg('You don\'t have enough balance in your wallet to Mint NFT');
+          setErrorMsg(
+            "You don't have enough balance in your wallet to Mint NFT"
+          );
         }
       }
     } catch (err) {
@@ -179,14 +180,18 @@ export default function DetailsNFT({ type, id }) {
   }
 
   async function handleProceedPayment(response) {
-    event("mint_nft", { category: "nft", label:"type", value: nft?.lnft?.nft_type});
+    event('mint_nft', {
+      category: 'nft',
+      label: 'type',
+      value: nft?.lnft?.nft_type,
+    });
     setTransactionModal(false);
     setTransactionWaitingModal(true);
     let formData = new FormData();
 
     response.hash && formData.append('transaction_hash', response.hash);
     response.blockNumber &&
-    formData.append('block_number', response.blockNumber);
+      formData.append('block_number', response.blockNumber);
     const payload = {
       id: nft?.lnft?.id,
       data: formData,
@@ -342,7 +347,7 @@ export default function DetailsNFT({ type, id }) {
           show={errorMsg}
         />
       )}
-      {showMoonpayModal && process.env.NEXT_PUBLIC_ENV !== "production" && (
+      {showMoonpayModal && process.env.NEXT_PUBLIC_ENV !== 'production' && (
         <MoonpayModal
           handleClose={() => {
             setShowMoonpayModal(false);
@@ -386,6 +391,9 @@ export default function DetailsNFT({ type, id }) {
                 <video
                   className='rounded-xl  h-[200px] md:h-[421px] w-[421px] object-cover max-w-full'
                   controls
+                  loop
+                  autoPlay
+                  muted
                 >
                   <source src={nft?.lnft?.asset?.path} type='video/mp4' />
                   Your browser does not support the video tag.

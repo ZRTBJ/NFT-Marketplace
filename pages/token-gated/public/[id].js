@@ -10,7 +10,7 @@ export async function getServerSideProps(context) {
   let output = await resp.json();
 
   let image = output?.token_gate_project?.assets?.find(
-    (img) => img['asset_purpose'] === 'logo'
+    (img) => img['asset_purpose'] === 'subphoto'
   );
   let data = {
     title: output?.token_gate_project?.title
@@ -19,7 +19,9 @@ export async function getServerSideProps(context) {
     description: output?.token_gate_project?.description
       ? output.token_gate_project.description
       : '',
-    image: image?.path ? image.path : '',
+    image: image?.path
+      ? image.path
+      : 'https://storage.googleapis.com/apollo_creabo_prod/decir/ogp_img.jpg',
   };
   return { props: { query, data } };
 }

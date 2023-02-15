@@ -16,7 +16,9 @@ export async function getServerSideProps(context) {
     description: output?.token_gate_content?.description
       ? output.token_gate_content.description
       : '',
-    image: image ? image : '',
+    image: image
+      ? image
+      : 'https://storage.googleapis.com/apollo_creabo_prod/decir/ogp_img.jpg',
   };
   return { props: { query, data } };
 }
