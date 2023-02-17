@@ -91,7 +91,8 @@ const NewUserProfileModal = () => {
           ) : (
             <span>
               {' '}
-              Next <i className='fa-regular fa-arrow-right ml-1'></i>
+              {/* Next <i className='fa-regular fa-arrow-right ml-1'></i>    */}
+              Submit
             </span>
           )}
         </button>
