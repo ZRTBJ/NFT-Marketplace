@@ -1,13 +1,14 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
-  status: "idle",
+  status: 'idle',
   userinfo: {},
   loggedIn: false,
   showSidebar: false,
+  isNewUser: false,
 };
 
 export const userSlice = createSlice({
-  name: "userInfo",
+  name: 'userInfo',
   initialState,
   reducers: {
     userLoading(state, action) {
@@ -16,10 +17,13 @@ export const userSlice = createSlice({
     setUserDetails(state, action) {
       state.userinfo = action.payload;
       state.loggedIn = true;
-      state.status = "idle";
+      state.status = 'idle';
     },
     setShowSideBar(state, action) {
       state.showSidebar = action.payload;
+    },
+    setIsNewUser(state, action) {
+      state.isNewUser = action.payload;
     },
   },
 });

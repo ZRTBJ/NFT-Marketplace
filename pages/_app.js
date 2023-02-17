@@ -146,7 +146,8 @@ function MyApp({ Component, pageProps }) {
                       )}
                       <div className='w-full min-w-[calc(100vw-300px)]'>
                         <Component {...pageProps} />
-                        <FloatingContactForm />
+                        {!isEmbedView && <FloatingContactForm />}
+
                         <ToastContainer
                           className='impct-toast'
                           position='top-right'
