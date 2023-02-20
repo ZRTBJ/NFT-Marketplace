@@ -83,3 +83,45 @@ export async function createDAO(dao, provider, name, treasuryAddress, chainId) {
 
   return output;
 }
+
+export async function createDAOByCaller(
+  dao,
+  provider,
+  name,
+  treasuryAddress,
+  chainId
+) {
+  if (!window.ethereum) throw new Error(`User wallet not found`);
+
+  await window.ethereum.enable();
+  const userProvider = new ethers.providers.Web3Provider(window.ethereum);
+  const signer = userProvider.getSigner();
+  const from = await signer.getAddress();
+  let formData = new FormData();
+  formData.append('addresses', from);
+  formData.append('blockchain', chainId);
+  const setupData = await addressGnosisSetup(formData);
+  let minimalForwarder = NETWORKS?.[Number(chainId)]?.forwarder;
+  let masterCopy = NETWORKS?.[Number(chainId)]?.masterCopyDAO;
+  let config = {
+    isDAO: true,
+    dao: {
+      masterCopy: masterCopy,
+      safeFactory: address.SafeProxyAddress,
+      singleton: address.SafeSingletonAddress,
+      setupData: `0x${setupData.call_data}`,
+      nonce: new Date().getTime(),
+      hasTreasury: treasuryAddress ? true : false,
+      safeProxy: treasuryAddress
+        ? treasuryAddress
+        : ethers.constants.AddressZero,
+      creator: from,
+    },
+    forwarder: minimalForwarder,
+  };
+
+  const tx = await dao.connect(signer).createDAOProxy(config);
+  const res = await tx.wait();
+
+  return { txReceipt: res };
+}

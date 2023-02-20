@@ -5,8 +5,8 @@ import * as RoyaltySplitter from 'config/ABI/genericProxyFactory';
 import useSendTransaction from './useSendTransaction';
 import { NETWORKS } from 'config/networks';
 import { ls_GetChainID } from 'util/ApplicationStorage';
-import { event } from "nextjs-google-analytics";
-
+import { event } from 'nextjs-google-analytics';
+import Config from 'config/config';
 
 export default function usePublishRoyaltySplitter(payload = {}) {
   const { collection, splitters, onUpdateStatus = () => {} } = payload;
@@ -20,6 +20,8 @@ export default function usePublishRoyaltySplitter(payload = {}) {
   const txReceipt = useRef();
   const listener = useRef();
   const { sendTransaction, waitTransactionResult } = useSendTransaction();
+
+  const gaslessMode = Config.GASLESS_ENABLE;
 
   useEffect(() => {
     const init = async () => {
@@ -90,12 +92,42 @@ export default function usePublishRoyaltySplitter(payload = {}) {
     });
   };
 
+  const runTransaction = async (data) => {
+    const signer = await provider.current.getSigner();
+    const creator = signer.getAddress();
+    let chainId = ls_GetChainID();
+    let minimalForwarder = NETWORKS?.[chainId]?.forwarder;
+    let masterRoyaltySplitter = NETWORKS?.[chainId]?.masterRoyaltySplitter;
+    let discount = NETWORKS[Number(chainId)]?.discount;
+    let treasury = NETWORKS[Number(chainId)]?.decirTreasury;
+
+    const functionPayload = {
+      receivers: data?.config?.receivers?.map((spliter) => spliter.user_eoa),
+      shares: data?.config?.receivers?.map((splitter) =>
+        ethers.utils.parseUnits(splitter.royalty_percent.toString())
+      ),
+      collection: data?.config?.collection_address,
+      masterCopy: masterRoyaltySplitter,
+      creator,
+      decirContract: treasury,
+      discountContract: discount,
+      forwarder: minimalForwarder,
+    };
+
+    const tx = await contract.current
+      .connect(signer)
+      .createRoyaltyProxy(functionPayload);
+    const res = await tx.wait();
+
+    return res;
+  };
+
   const cleanUp = () => {
     contract.current.off('ProxyCreated', listener.current);
   };
 
   const publish = async () => {
-    event("publish_royalty_splitter", { category: "royalty_splitter"});
+    event('publish_royalty_splitter', { category: 'royalty_splitter' });
     try {
       if (!canPublish) {
         return;
@@ -103,8 +135,13 @@ export default function usePublishRoyaltySplitter(payload = {}) {
 
       setIsLoading(true);
       const publishData = await callPublishApi();
-      transaction.current = await sendOnChainTransaction(publishData);
-      txReceipt.current = await waitTransactionResult(transaction.current);
+
+      if (gaslessMode === 'true') {
+        transaction.current = await sendOnChainTransaction(publishData);
+        txReceipt.current = await waitTransactionResult(transaction.current);
+      } else {
+        txReceipt.current = await runTransaction(publishData);
+      }
       const publishResponse = await updateOffChainData();
       if (publishResponse.function.status === 'failed') {
         throw new Error(
