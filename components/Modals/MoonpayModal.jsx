@@ -44,11 +44,9 @@ const MoonpayModal = ({ handleClose, show }) => {
         currencyCode: network && NETWORKS[network].value,
       },
     });
-    console.log('Res: ', res);
     setSrc(res);
   };
 
-  console.log('SRC: ', src);
   return (
     <Modal
       width={400}
