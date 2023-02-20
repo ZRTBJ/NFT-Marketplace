@@ -52,8 +52,8 @@ import {
   getTokenGatedProjectList,
 } from 'services/tokenGated/tokenGatedService';
 import TokenGatedProjectCard from 'components/Cards/TokenGatedProjectCard';
-import { event } from "nextjs-google-analytics";
-
+import { event } from 'nextjs-google-analytics';
+import NewUserProfileModal from './components/NewUserProfileModal';
 
 const Profile = ({ id }) => {
   const dispatch = useDispatch();
@@ -154,7 +154,6 @@ const Profile = ({ id }) => {
   const [showOverlayLoading, setShowOverlayLoading] = useState(false);
   const [tokenGatedProjectList, setTokenGatedProjectList] = useState(true);
 
-  const userinfo = useSelector((state) => state.user.userinfo);
   // function start
   const calculatePageCount = (pageSize, totalItems) => {
     return totalItems < pageSize ? 1 : Math.ceil(totalItems / pageSize);
@@ -408,7 +407,7 @@ const Profile = ({ id }) => {
     setRoyaltiesList(royaltyList);
   }
   const onCreateTokenGatedProject = async () => {
-    event("create_token_gate_project", { category: "token_gate"});
+    event('create_token_gate_project', { category: 'token_gate' });
     setShowOverlayLoading(true);
     let title = `Unnamed Project ${new Date().toISOString()}`;
     await createTokenGatedProject(title)
@@ -1200,6 +1199,7 @@ const Profile = ({ id }) => {
           handleClose={() => setShowCreateNFT(false)}
         />
       )}
+      <NewUserProfileModal />
       {profileModal && (
         <Modal
           width={320}

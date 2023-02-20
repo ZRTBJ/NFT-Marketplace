@@ -1,5 +1,5 @@
 import React from 'react';
-import TokenGatedContent from 'components/TokenGated/TokenGatedContent';
+import TokenGatedPublicContent from 'components/TokenGated/public/TokenGatedPublicContent';
 
 export async function getServerSideProps(context) {
   const query = context.query;
@@ -10,7 +10,7 @@ export async function getServerSideProps(context) {
   let output = await resp.json();
 
   let image = output?.token_gate_project?.assets?.find(
-    (img) => img['asset_purpose'] === 'logo'
+    (img) => img['asset_purpose'] === 'subphoto'
   );
   let data = {
     title: output?.token_gate_project?.title
@@ -19,16 +19,13 @@ export async function getServerSideProps(context) {
     description: output?.token_gate_project?.description
       ? output.token_gate_project.description
       : '',
-    image: image?.path ? image.path : '',
+    image: image?.path
+      ? image.path
+      : 'https://storage.googleapis.com/apollo_creabo_prod/decir/ogp_img.jpg',
   };
   return { props: { query, data } };
 }
 
-export default function TokenGated(query) {
-  return (
-    <TokenGatedContent
-      query={query?.query}
-      createMode={query?.query?.id === 'create' ? true : false}
-    />
-  );
+export default function TokenGatedPublic(query) {
+  return <TokenGatedPublicContent query={query?.query} />;
 }

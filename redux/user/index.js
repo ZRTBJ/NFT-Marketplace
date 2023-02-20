@@ -1,4 +1,9 @@
-import { setUserInfo, setSideBar, setUserLoading } from "./action";
-import { userSlice } from "./slice";
+import {
+  setUserInfo,
+  setSideBar,
+  setUserLoading,
+  handleNewUser,
+} from './action';
+import { userSlice } from './slice';
 
-export { userSlice, setUserInfo, setSideBar, setUserLoading };
+export { userSlice, setUserInfo, setSideBar, setUserLoading, handleNewUser };

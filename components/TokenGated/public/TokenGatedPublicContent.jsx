@@ -6,7 +6,6 @@ import { getTokenGatedProject } from 'services/tokenGated/tokenGatedService';
 export default function TokenGatedPublicContent({ query, userId }) {
   const [showOverLayLoading, setShowOverLayLoading] = useState(false);
   const [project, setProject] = useState({});
-
   const onGetTokenGatedProject = async (id) => {
     setShowOverLayLoading(true);
     await getTokenGatedProject(id)
