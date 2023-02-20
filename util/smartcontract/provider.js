@@ -10,8 +10,3 @@ export function createProvider() {
     chainId
   );
 }
-
-export function createUserProvider() {
-  const userProvider = new ethers.providers.Web3Provider(window.ethereum);
-  return userProvider
-}

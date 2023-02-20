@@ -10,7 +10,7 @@ import {
   getUserCollections,
   getCollectionNFTs,
 } from 'services/collection/collectionService';
-import { setNFTPrice, setNFTPriceByCaller } from './deploy-nftPrice';
+import { setNFTPrice } from './deploy-nftPrice';
 import { createProvider } from 'util/smartcontract/provider';
 import { createMintInstance } from 'config/ABI/mint-nft';
 import DropdownCreabo from 'components/Commons/Dropdown';
@@ -20,17 +20,14 @@ import Bnb from 'assets/images/bnb.svg';
 import Modal from 'components/Commons/Modal';
 import Select, { components } from 'react-select';
 import { createMembsrshipMintInstance } from 'config/ABI/mint-membershipNFT';
-import {
-  setMemNFTPrice,
-  setMemNFTPriceByCaller,
-} from 'components/Collection/SaleSetting/deploy-membershipNFTPrice';
+import { setMemNFTPrice } from 'components/Collection/SaleSetting/deploy-membershipNFTPrice';
 import { ethers } from 'ethers';
 import Delete from 'assets/images/trash.svg';
 import { getCurrentNetworkId } from 'util/MetaMask';
 import NetworkHandlerModal from 'components/Modals/NetworkHandlerModal';
 import Image from 'next/image';
-import { event } from 'nextjs-google-analytics';
-import Config from 'config/config';
+import { event } from "nextjs-google-analytics";
+
 
 //TODO: in the future, 1 network can support multiple currency, please fix this
 const CURRENCY = [
@@ -41,8 +38,6 @@ const CURRENCY = [
   { id: 137, value: 'matic', label: 'MATIC', icon: Matic },
   { id: 56, value: 'bnb', label: 'BNB', icon: Bnb },
 ];
-
-const gaslessMode = Config.GASLESS_ENABLE;
 
 const Control = ({ children, ...props }) => {
   const { value } = props.selectProps;
@@ -191,7 +186,7 @@ const SalesPageModal = ({
       setIsSubmitted(true);
       let type = collectionType ? collectionType : currentCollection.type;
       if (agree && date?.length === 2) {
-        event('set_sale_page', { category: 'nft', label: 'type', value: type });
+        event("set_sale_page", { category: "nft", label: "type", value: type });
         const payload = {
           price: data?.['price'],
           startTime: getUnixTime(date?.[0]),
@@ -229,30 +224,14 @@ const SalesPageModal = ({
                 totalSupply: value.supply,
               };
             });
-            let response;
-            if (gaslessMode === 'true') {
-              response =
-                type === 'membership'
-                  ? await setMemNFTPrice(
-                      membershipPriceContract,
-                      provider,
-                      nftId ? tiers : allTiers
-                    )
-                  : await setNFTPrice(priceContract, provider, data['price']);
-            } else {
-              response =
-                type === 'membership'
-                  ? await setMemNFTPriceByCaller(
-                      membershipPriceContract,
-                      provider,
-                      nftId ? tiers : allTiers
-                    )
-                  : await setNFTPriceByCaller(
-                      priceContract,
-                      provider,
-                      data['price']
-                    );
-            }
+            const response =
+              type === 'membership'
+                ? await setMemNFTPrice(
+                    membershipPriceContract,
+                    provider,
+                    nftId ? tiers : allTiers
+                  )
+                : await setNFTPrice(priceContract, provider, data['price']);
             if (response?.txReceipt) {
               if (response.txReceipt?.status === 1) {
                 const request = new FormData();

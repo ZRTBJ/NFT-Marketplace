@@ -6,18 +6,11 @@ import {
 } from 'services/collection/collectionService';
 import { useDispatch, useSelector } from 'react-redux';
 import deploySuccessSvg from 'assets/images/modal/deploySuccessSvg.svg';
-import {
-  createProvider,
-  createUserProvider,
-} from 'util/smartcontract/provider';
+import { createProvider } from 'util/smartcontract/provider';
 import { createInstance } from 'config/ABI/genericProxyFactory';
-import {
-  createCollection,
-  createCollectionByCaller,
-} from './deploy-collection';
+import { createCollection } from './deploy-collection';
 import Image from 'next/image';
-import { event } from 'nextjs-google-analytics';
-import Config from 'config/config';
+import { event } from "nextjs-google-analytics";
 
 const DeployingCollectiontModal = ({
   handleClose,
@@ -39,9 +32,6 @@ const DeployingCollectiontModal = ({
 
   const [txnData, setTxnData] = useState();
 
-  // const gaslessMode = "true";
-  const gaslessMode = Config.GASLESS_ENABLE;
-
   useEffect(() => {
     if (txnData) {
       publishThisCollection(txnData);
@@ -55,7 +45,7 @@ const DeployingCollectiontModal = ({
   }, []);
 
   function publishThisCollection(data) {
-    event('publish_collection', { category: 'collection' });
+    event("publish_collection", { category: "collection" });
     setIsLoading(true);
     let payload = new FormData();
     if (data) {
@@ -121,25 +111,15 @@ const DeployingCollectiontModal = ({
   const handleSmartContract = async (config) => {
     setStatusStep(1);
     try {
-      let response;
-      const provider = createUserProvider();
+      const provider = createProvider();
       const collectionContract = createInstance(provider);
-      if (gaslessMode === 'true') {
-        response = await createCollection(
-          collectionContract,
-          provider,
-          config,
-          collectionType,
-          productPrice
-        );
-      } else {
-        response = await createCollectionByCaller(
-          collectionContract,
-          config,
-          collectionType,
-          productPrice
-        );
-      }
+      const response = await createCollection(
+        collectionContract,
+        provider,
+        config,
+        collectionType,
+        productPrice
+      );
       let hash;
       if (response?.txReceipt) {
         hash = response.txReceipt;

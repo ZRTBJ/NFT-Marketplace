@@ -2,12 +2,11 @@ import Modal from 'components/Commons/Modal';
 import { useEffect, useState } from 'react';
 import { publishProject } from 'services/project/projectService';
 import deploySuccessSvg from 'assets/images/modal/deploySuccessSvg.svg';
-import { createDAO, createDAOByCaller } from './deploy-dao';
+import { createDAO } from './deploy-dao';
 import { createProvider } from 'util/smartcontract/provider';
 import { createInstance } from 'config/ABI/genericProxyFactory';
 import Image from 'next/image';
-import { event } from 'nextjs-google-analytics';
-import Config from 'config/config';
+import { event } from "nextjs-google-analytics";
 
 const DeployingProjectModal = ({
   handleClose,
@@ -23,8 +22,6 @@ const DeployingProjectModal = ({
   const provider = createProvider();
   const dao = createInstance(provider);
 
-  const gaslessMode = Config.GASLESS_ENABLE;
-
   useEffect(() => {
     if (publishStep >= 1) {
       console.log(publishStep);
@@ -33,7 +30,7 @@ const DeployingProjectModal = ({
   }, [publishStep]);
 
   function publishThisProject(transactionData) {
-    event('publish_dao', { category: 'dao' });
+    event("publish_dao", { category: "dao" });
     setIsLoading(true);
     let payload = new FormData();
     if (transactionData) {
@@ -78,24 +75,13 @@ const DeployingProjectModal = ({
   const handleSmartContract = async (name, treasuryAddress, chainId) => {
     setStatusStep(1);
     try {
-      let response;
-      if (gaslessMode === 'true') {
-        response = await createDAO(
-          dao,
-          provider,
-          name,
-          treasuryAddress,
-          chainId
-        );
-      } else {
-        response = await createDAOByCaller(
-          dao,
-          provider,
-          name,
-          treasuryAddress,
-          chainId
-        );
-      }
+      const response = await createDAO(
+        dao,
+        provider,
+        name,
+        treasuryAddress,
+        chainId
+      );
       let hash;
       if (response?.txReceipt) {
         hash = response.txReceipt;
