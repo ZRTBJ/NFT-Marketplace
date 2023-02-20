@@ -21,7 +21,8 @@ import Favicon from 'components/Commons/Favicon';
 import axios from 'axios';
 import Config from 'config/config';
 import Maintenance from 'components/Commons/Maintenance';
-import { GoogleAnalytics } from "nextjs-google-analytics";
+import { GoogleAnalytics } from 'nextjs-google-analytics';
+import FloatingContactForm from 'components/Commons/FloatingContactForm';
 
 dynamic(() => import('tw-elements'), { ssr: false });
 
@@ -77,7 +78,6 @@ function MyApp({ Component, pageProps }) {
     setIsTokenGatedProjectPublicView(tokenGatedProjectPublicView);
   }, [router?.asPath]);
 
-
   return (
     <>
       <GoogleAnalytics trackPageViews />
@@ -90,8 +90,8 @@ function MyApp({ Component, pageProps }) {
         image={data?.image}
       />
       <Script
-        src="https://kit.fontawesome.com/6ebe0998e8.js"
-        crossorigin="anonymous"
+        src='https://kit.fontawesome.com/6ebe0998e8.js'
+        crossorigin='anonymous'
       ></Script>
 
       <Provider store={store}>
@@ -146,6 +146,7 @@ function MyApp({ Component, pageProps }) {
                       )}
                       <div className='w-full min-w-[calc(100vw-300px)]'>
                         <Component {...pageProps} />
+                        {!isEmbedView && <FloatingContactForm />}
 
                         <ToastContainer
                           className='impct-toast'

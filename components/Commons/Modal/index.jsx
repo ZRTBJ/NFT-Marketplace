@@ -9,6 +9,7 @@ const Modal = ({
   width,
   overflow,
   showCloseIcon = true,
+  gradientBg = false,
 }) => {
   let styleObj = {
     height: height ? height + 'px' : '',
@@ -27,19 +28,25 @@ const Modal = ({
         show
           ? `${styles.modal} ${styles.displayBlock}`
           : `${styles.modal} ${styles.displayNone}`
-      } z-[100] `}
+      } z-[100]`}
     >
       <section
         style={styleObj}
-        className={`${styles.modalMain} bg-white rounded-3xl relative txtblack px-4 py-6`}
+        className={`${styles.modalMain} bg-white rounded-[12px] relative txtblack`}
       >
-        {showCloseIcon && (
-          <i
-            className='fa fa-xmark cursor-pointer text-xl absolute top-8 right-8 text-black'
-            onClick={handleClose}
-          ></i>
-        )}
-        <div className='mt-0'>{children}</div>
+        <div
+          className={`${
+            gradientBg ? 'gradient-card-bg' : 'bg-white'
+          } px-4 py-6`}
+        >
+          {showCloseIcon && (
+            <i
+              className='fa fa-xmark cursor-pointer text-xl absolute top-8 right-8 text-black'
+              onClick={handleClose}
+            ></i>
+          )}
+          <div className='mt-0'>{children}</div>
+        </div>
       </section>
     </div>
   );

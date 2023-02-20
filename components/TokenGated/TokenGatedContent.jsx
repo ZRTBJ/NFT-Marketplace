@@ -15,6 +15,7 @@ import CreatorProjectInfoCard from 'components/TokenGated/ProjectInfoCard/Creato
 import ContentListTable from 'components/TokenGated/ContentListTable';
 import { isValidURL } from 'util/functions';
 import ReactTooltip from 'react-tooltip';
+import ContentLimitModal from './Modal/ContentLimitModal';
 
 const sortingOptions = [
   { id: 1, value: '', name: 'Sort By' },
@@ -40,6 +41,7 @@ export default function TokenGatedContent({ query, createMode }) {
   });
   const [showConfigure, setShowConfigure] = useState(null);
   const [isEditContent, setIsEditContent] = useState(false);
+  const [showLimitModal, setShowLimitModal] = useState(false);
 
   const handleLinkDetails = (e) => {
     if (e.target.value.length && e.target.name === 'link') {
@@ -162,7 +164,7 @@ export default function TokenGatedContent({ query, createMode }) {
       setPayload(oldPayload);
     }
   }, [sortBy]);
-  console.log(showAddNewContentModal);
+
   return (
     <>
       {showOverLayLoading && <div className='loading'></div>}
@@ -175,22 +177,11 @@ export default function TokenGatedContent({ query, createMode }) {
           />
           <div className='flex flex-wrap gap-4 items-start my-4 md:my-[50px]'>
             <div className='flex flex-wrap gap-4 items-start md:flex-1'>
-              <ReactTooltip place='top' type='info' effect='solid' />
               <button
                 onClick={
                   contentList?.contents?.length >= 3
-                    ? null
+                    ? () => setShowLimitModal(true)
                     : () => onAddNewContentClick()
-                }
-                data-tip={
-                  contentList?.contents?.length >= 3
-                    ? 'You have reached your limit for creating new content'
-                    : ''
-                }
-                style={
-                  contentList?.contents?.length >= 3
-                    ? { filter: 'grayscale(60%)' }
-                    : null
                 }
                 className='py-2 px-4 border   bg-primary-900/[0.10] text-primary-900 font-bold rounded'
               >
@@ -200,18 +191,8 @@ export default function TokenGatedContent({ query, createMode }) {
               <button
                 onClick={
                   contentList?.contents?.length >= 3
-                    ? null
+                    ? () => setShowLimitModal(true)
                     : () => onUploadByLinkClick()
-                }
-                style={
-                  contentList?.contents?.length >= 3
-                    ? { filter: 'grayscale(60%)' }
-                    : null
-                }
-                data-tip={
-                  contentList?.contents?.length >= 3
-                    ? 'You have reached your limit for creating new content'
-                    : ''
                 }
                 className='py-2 px-4 border  border-primary-900 text-primary-900 font-bold rounded'
               >
@@ -273,6 +254,12 @@ export default function TokenGatedContent({ query, createMode }) {
           linkDetails={linkDetails}
           handleAddLink={handleAddLink}
           linkError={linkError}
+        />
+      )}
+      {showLimitModal && (
+        <ContentLimitModal
+          show={showLimitModal}
+          handleClose={() => setShowLimitModal(false)}
         />
       )}
     </>

@@ -236,6 +236,9 @@ export default function DetailsNFT({ nftId, tokenId }) {
                 <video
                   className='rounded-xl  h-[200px] md:h-[421px] w-[421px] object-cover max-w-full'
                   controls
+                  loop
+                  autoPlay
+                  muted
                 >
                   <source src={nft?.lnft?.asset?.path} type='video/mp4' />
                   Your browser does not support the video tag.
