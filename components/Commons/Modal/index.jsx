@@ -10,6 +10,7 @@ const Modal = ({
   overflow,
   showCloseIcon = true,
   gradientBg = false,
+  addPadding = true,
 }) => {
   let styleObj = {
     height: height ? height + 'px' : '',
@@ -32,12 +33,12 @@ const Modal = ({
     >
       <section
         style={styleObj}
-        className={`${styles.modalMain} bg-white rounded-[12px] relative txtblack`}
+        className={`${styles.modalMain} bg-white rounded-[25px] relative txtblack`}
       >
         <div
-          className={`${
-            gradientBg ? 'gradient-card-bg' : 'bg-white'
-          } px-4 py-6`}
+          className={`${gradientBg ? 'gradient-card-bg' : 'bg-white'} ${
+            addPadding ? 'px-4 py-6' : ''
+          }`}
         >
           {showCloseIcon && (
             <i

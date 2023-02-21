@@ -27,12 +27,15 @@ import {
   ls_GetWalletAddress,
   ls_SetChainID,
   ls_GetChainID,
+  ls_SetNewUser,
+  ls_GetNewUser,
 } from 'util/ApplicationStorage';
 import { toast } from 'react-toastify';
 import { NETWORKS } from 'config/networks';
 import { logout } from 'redux/auth';
 import Image from 'next/image';
 import { getWalletAccount } from 'util/MetaMask';
+import WelcomeModal from 'components/Commons/WelcomeModal/WelcomeModal';
 
 const LANGS = {
   'en|en': 'English',
@@ -67,6 +70,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const [networkChangeDetected, setNetworkChangeDetected] = useState(false);
   const [networkId, setNetworkId] = useState();
   const [showSearchMobile, setShowSearchMobile] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(false);
   const projectDeploy = useSelector((state) =>
     state?.notifications?.notificationData
       ? state?.notifications?.notificationData
@@ -100,6 +104,14 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
       'google_translate_element'
     );
   };
+
+  useEffect(() => {
+    if (!ls_GetNewUser()) {
+      setShowWelcome(true);
+    } else {
+      setShowWelcome(false);
+    }
+  }, []);
 
   useEffect(() => {
     let getLabel = document.querySelector('.goog-te-gadget-simple a span');
@@ -395,6 +407,11 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     setShowSearchMobile(!showSearchMobile);
   };
 
+  const handleWelcomeModal = () => {
+    setShowWelcome(false);
+    ls_SetNewUser(true);
+  };
+
   return (
     <header className='bg-light1 border border-b-1'>
       <AccountChangedModal
@@ -406,6 +423,9 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
         handleClose={() => setShowNetworkChanged(false)}
         networkId={networkId}
       />
+      {showWelcome && (
+        <WelcomeModal show={showWelcome} handleClose={handleWelcomeModal} />
+      )}
       <div id='notificationDropdown' className='hidden'>
         {showNotificationPopup && (
           <NotificatioMenu

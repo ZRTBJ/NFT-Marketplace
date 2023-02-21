@@ -9,6 +9,7 @@ const KEY_NOTIFICATION_LIST = 'NOTIFICATION_LIST';
 const KEY_WALLET_TYPE = 'wallet';
 const KEY_WALLET_ADDRESS = 'walletAddress';
 const KEY_NETWORK_CHAIN = 'networkChain';
+const NEW_USER = 'newUser';
 
 //---------- User
 export function ls_GetUserToken() {
@@ -71,6 +72,16 @@ export function ls_GetWalletAddress() {
   return (
     typeof window !== 'undefined' && localStorage?.getItem(KEY_WALLET_ADDRESS)
   );
+}
+
+export function ls_SetNewUser(value) {
+  return (
+    typeof window !== 'undefined' && localStorage?.setItem(NEW_USER, value)
+  );
+}
+
+export function ls_GetNewUser() {
+  return typeof window !== 'undefined' && localStorage?.getItem(NEW_USER);
 }
 
 export function ls_SetWalletAddress(address) {

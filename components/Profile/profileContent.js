@@ -63,6 +63,7 @@ const Profile = ({ id }) => {
   const router = useRouter();
   // User general data start
   const [user, setUser] = useState({});
+
   const [royaltyLoading, setRoyaltyLoading] = useState(true);
   const [daoLoading, setDaoLoading] = useState(true);
   const [collectionLoading, setCollectionLoading] = useState(true);
