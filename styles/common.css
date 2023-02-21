@@ -606,3 +606,16 @@ video::-webkit-media-controls-panel {
 .connect-wallet:hover {
   background-color: #e9ebf1;
 }
+.triangle {
+  width: 27px;
+  height: 27px;
+  background: linear-gradient(to left, #12b4ff 0%, #e100ff 100%);
+  border-top-left-radius: 8px;
+  -webkit-clip-path: polygon(0 0, 0% 100%, 100% 0);
+  clip-path: polygon(0 0, 0% 100%, 100% 0);
+}
+.gradient-text-deep-pueple {
+  background: linear-gradient(to left, #12b4ff 0%, #e100ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
