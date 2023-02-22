@@ -620,7 +620,7 @@ video::-webkit-media-controls-panel {
     rgba(18, 180, 255, 0.1) -0.33%,
     rgba(225, 0, 255, 0.1) 100.18%
   );
-  }
+}
 .triangle {
   width: 27px;
   height: 27px;
@@ -632,5 +632,17 @@ video::-webkit-media-controls-panel {
 .gradient-text-deep-pueple {
   background: linear-gradient(to left, #12b4ff 0%, #e100ff 100%);
   -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.content-valuation {
+  background: #2d373d;
+  border-radius: 0px 0px 16px 16px;
+  color: #fff;
+}
+
+.gradient-text-new {
+  background: linear-gradient(90.13deg, #12b4ff -0.33%, #e100ff 100.18%);
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }

@@ -36,6 +36,8 @@ import { logout } from 'redux/auth';
 import Image from 'next/image';
 import { getWalletAccount } from 'util/MetaMask';
 import WelcomeModal from 'components/Commons/WelcomeModal/WelcomeModal';
+import Search from 'assets/images/header/search.svg';
+import Globe from 'assets/images/header/globe.svg';
 
 const LANGS = {
   'en|en': 'English',
@@ -71,6 +73,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const [networkId, setNetworkId] = useState();
   const [showSearchMobile, setShowSearchMobile] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
+  const [showLang, setShowLang] = useState(false);
   const projectDeploy = useSelector((state) =>
     state?.notifications?.notificationData
       ? state?.notifications?.notificationData
@@ -413,7 +416,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   };
 
   return (
-    <header className='bg-light1 border border-b-1'>
+    <header className='bg-[#e2ecf0]'>
       <AccountChangedModal
         show={showAccountChanged}
         handleClose={() => setShowAccountChanged(false)}
@@ -449,13 +452,14 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
       </div>
       <nav className='pl-5 pr-7 hidden md:block lg:pl-10 lg:pr-12'>
         <div className='flex justify-between items-center min-h-[71px]'>
-          <div className='flex items-center flex-1'>
-            <div
+          <div className='flex items-center'>
+            {/* <div
               className='cp mr-5 lg:ml-1 lg:mr-20'
               onClick={() => router.push('/')}
             >
               <Image src={Logo} alt='DeCir' />
-            </div>
+            </div> */}
+            <h1 className='!text-[24px] !font-black text-[#000]'>Dashboard</h1>
 
             {/* <form className="mr-6 flex-1 hidden md:block">
               <label
@@ -489,13 +493,19 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                 )}
             </form> */}
           </div>
+          <div className='relative'>
+            <Image
+              src={Search}
+              alt='Search'
+              className='absolute top-2 left-3'
+            />
+            <input
+              className='bg-[#fff] w-[400px] pl-[40px] pr-[12px] py-[8px] rounded-[8px] text-[14px]'
+              placeholder='How to create DAO community 🔥 '
+            />
+          </div>
 
           <div className='flex items-center' id='mobile-menu'>
-            {!userinfo?.id && (
-              <h5 className='text-primary-900 mr-2 hidden md:block'>
-                What’s DeCir
-              </h5>
-            )}
             <ul
               className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${
                 userId ? '' : 'sm:py-2'
@@ -595,9 +605,9 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                   <div className='flex items-center'>
                     <button
                       onClick={() => setShowModal(true)}
-                      className={`flex place-items-center ${styles.walletInfo} !w-auto`}
+                      className={`flex place-items-center ${styles.walletInfo} !w-auto contained-button-new`}
                     >
-                      <svg
+                      {/* <svg
                         width='16'
                         height='16'
                         viewBox='0 0 16 16'
@@ -608,10 +618,16 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                           d='M14 0C14.5312 0 15 0.46875 15 1C15 1.5625 14.5312 2 14 2H2.5C2.21875 2 2 2.25 2 2.5C2 2.78125 2.21875 3 2.5 3H14C15.0938 3 16 3.90625 16 5V12C16 13.125 15.0938 14 14 14H2C0.875 14 0 13.125 0 12V2C0 0.90625 0.875 0 2 0H14ZM13 9.5C13.5312 9.5 14 9.0625 14 8.5C14 7.96875 13.5312 7.5 13 7.5C12.4375 7.5 12 7.96875 12 8.5C12 9.0625 12.4375 9.5 13 9.5Z'
                           fill='#46A6FF'
                         />
-                      </svg>
+                      </svg> */}
                       <span className='font-bold ml-2'>Connect Wallet</span>
                     </button>
                     <div id='google_translate_element' className='ml-3'></div>
+                    {/* <Image
+                      src={Globe}
+                      alt='Language'
+                      className='ml-4 cursor-pointer'
+                      onClick={() => setShowLang(!show)}
+                    /> */}
                   </div>
                 )}
               </li>
