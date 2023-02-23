@@ -1,10 +1,36 @@
-import React, { useState } from 'react';
-import rectangleSVG from 'assets/images/profile/RectangleGradient.svg';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Gas from 'assets/images/header/gas.svg';
+import WalletConnectModal from 'components/Login/WalletConnectModal';
+import CreateNFTModal from 'components/Project/CreateDAOandNFT/components/CreateNFTModal.jsx';
+import { useSelector } from 'react-redux';
 
 export default function OnBoardingGuide() {
+  const userinfo = useSelector((state) => state.user.userinfo);
   const [open, setOPen] = useState(true);
+  const [showWalletConnectModal, setShowWalletConnectModal] = useState(false);
+  const [showCreateNFTModal, setShowCreateNFTModal] = useState(false);
+  const [needToShowAfterLogin, setNeedToShowAfterLogin] = useState(false);
+
+  const redirectToDiscord = () => {
+    if (typeof window !== 'undefined') {
+      window.open('https://discord.com/invite/ST2tNtPvGY', '_blank').focus();
+    }
+  };
+
+  const redirectToNftCreatePage = () => {
+    if (userinfo?.id) {
+      setShowCreateNFTModal(true);
+    } else {
+      setNeedToShowAfterLogin(true);
+      setShowWalletConnectModal(true);
+    }
+  };
+  useEffect(() => {
+    console.log(needToShowAfterLogin);
+    console.log(userinfo);
+  }, [needToShowAfterLogin, userinfo]);
+
   return (
     <>
       <div className='bg-gradient-to-b from-color-gray-dark to-color-gray-light rounded-b-2xl z-10 relative'>
@@ -41,7 +67,10 @@ export default function OnBoardingGuide() {
                       Few step to create NFT without coding
                     </p>
                   </div>
-                  <div className='ml-auto text-black font-black text-[14px]'>
+                  <div
+                    className='ml-auto text-black font-black text-[14px] cursor-pointer'
+                    onClick={() => redirectToNftCreatePage()}
+                  >
                     Get started{' '}
                     <i className=' ml-2 fa-sharp fa-solid fa-arrow-right'></i>
                   </div>
@@ -58,16 +87,19 @@ export default function OnBoardingGuide() {
                       Walk you thought the core function
                     </p>
                   </div>
-                  <div className='ml-auto text-black font-black text-[14px]'>
+                  <div className='ml-auto text-black font-black text-[14px] cursor-pointer'>
                     Get started{' '}
-                    <i class=' ml-2 fa-sharp fa-solid fa-arrow-right'></i>
+                    <i className=' ml-2 fa-sharp fa-solid fa-arrow-right'></i>
                   </div>
                 </div>
               </div>
               <div className='min-w-[302px] rounded-[8px] bg-gradient-to-r from-white to-secondary-200/[0.8]'>
                 <div className='triangle'></div>
                 <div className='flex items-center px-6 pb-3 -mt-4'>
-                  <div>
+                  <div
+                    className='cursor-pointer'
+                    onClick={() => redirectToDiscord()}
+                  >
                     <div className='gradient-text-deep-pueple font-black text-[18px]'>
                       Need help?
                     </div>
@@ -108,6 +140,21 @@ export default function OnBoardingGuide() {
           </p>
         </div>
       </div>
+      <WalletConnectModal
+        showModal={showWalletConnectModal}
+        closeModal={() => setShowWalletConnectModal(false)}
+        noRedirection={true}
+      />
+
+      {showCreateNFTModal && (
+        <CreateNFTModal
+          show={showCreateNFTModal}
+          handleClose={() => {
+            setShowCreateNFTModal(false);
+            setNeedToShowAfterLogin(false);
+          }}
+        />
+      )}
     </>
   );
 }

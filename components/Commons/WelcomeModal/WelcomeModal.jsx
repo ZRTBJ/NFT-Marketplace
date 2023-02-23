@@ -69,7 +69,7 @@ const WelcomeModal = ({ show, handleClose }) => {
                     onClick={() => handleShowModal(1)}
                   >
                     Create membership NFTs
-                    <span class='ml-auto h-5 w-5 shrink-0 rotate-[-180deg] fill-[#336dec] transition-transform duration-200 ease-in-out '>
+                    <span className='ml-auto h-5 w-5 shrink-0 rotate-[-180deg] fill-[#336dec] transition-transform duration-200 ease-in-out '>
                       {open.includes(1) ? (
                         <Image src={Minus} alt='Accordian Minus' />
                       ) : (
@@ -121,7 +121,7 @@ const WelcomeModal = ({ show, handleClose }) => {
                     onClick={() => handleShowModal(2)}
                   >
                     Create token gated contents
-                    <span class='ml-auto h-5 w-5 shrink-0 rotate-[-180deg] fill-[#336dec] transition-transform duration-200 ease-in-out '>
+                    <span className='ml-auto h-5 w-5 shrink-0 rotate-[-180deg] fill-[#336dec] transition-transform duration-200 ease-in-out '>
                       {open.includes(2) ? (
                         <Image src={Minus} alt='Accordian Minus' />
                       ) : (
@@ -176,7 +176,7 @@ const WelcomeModal = ({ show, handleClose }) => {
                     onClick={() => handleShowModal(3)}
                   >
                     Automated Royalty Splitting
-                    <span class='ml-auto h-5 w-5 shrink-0 rotate-[-180deg] fill-[#336dec] transition-transform duration-200 ease-in-out '>
+                    <span className='ml-auto h-5 w-5 shrink-0 rotate-[-180deg] fill-[#336dec] transition-transform duration-200 ease-in-out '>
                       {open.includes(3) ? (
                         <Image src={Minus} alt='Accordian Minus' />
                       ) : (

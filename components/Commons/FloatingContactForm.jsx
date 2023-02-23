@@ -102,9 +102,9 @@ const FloatingContactForm = () => {
         className='cursor-pointer fixed bottom-5 flex items-center justify-center right-5 w-[50px] h-[50px] floating-button rounded-[50px]'
       >
         {showForm ? (
-          <i class='fa-regular fa-xmark text-[25px]'></i>
+          <i className='fa-regular fa-xmark text-[25px]'></i>
         ) : (
-          <i class='fa-light fa-message-dots text-[25px]'></i>
+          <i className='fa-light fa-message-dots text-[25px]'></i>
         )}
       </button>
     </>
