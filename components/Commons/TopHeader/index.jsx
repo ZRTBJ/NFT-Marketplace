@@ -38,6 +38,7 @@ import { getWalletAccount } from 'util/MetaMask';
 import WelcomeModal from 'components/Commons/WelcomeModal/WelcomeModal';
 import Search from 'assets/images/header/search.svg';
 import Globe from 'assets/images/header/globe.svg';
+import AvatarDefault from 'assets/images/avatar-default.svg';
 
 const LANGS = {
   'en|en': 'English',
@@ -556,11 +557,21 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                     >
                       {walletAddress && walletAddress.length > 5 && (
                         <div
-                          className={`flex place-items-center ${styles.walletInfo}`}
+                          className={`flex place-items-center gradient-border-new`}
                         >
-                          <i className='fa-solid fa-wallet gradient-text'></i>
+                          <Image
+                            className='rounded-full border w-[24px] h-[24px] border-gray-100 shadow-sm mr-2'
+                            src={
+                              userinfo['avatar']
+                                ? userinfo['avatar']
+                                : AvatarDefault
+                            }
+                            height={42}
+                            width={42}
+                            alt='user icon'
+                          />
 
-                          <div className='mx-2 font-semibold text-base gradient-text'>
+                          <div className='mx-2 font-semibold text-[14px] text-black'>
                             {walletAddressTruncate(walletAddress)}
                           </div>
                           <i className='fa-solid fa-angle-down'></i>
@@ -574,8 +585,8 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
               <li className='md:ml-2'>
                 {userinfo?.id ? (
                   <div className='flex space-x-2 items-center'>
-                    <div className='relative w-16 h-12 pt-2 cursor-pointer'>
-                      <div
+                    {/* <div className='relative w-16 h-12 pt-2 cursor-pointer'> */}
+                    {/* <div
                         className='flex place-items-center'
                         onClick={() => router.push(`/profile/settings`)}
                       >
@@ -587,18 +598,18 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                           height={42}
                           width={42}
                           alt='user icon'
-                        />
-                        {/* <i className="fa-solid fa-angle-down text-textSubtle"></i> */}
-                      </div>
-                      {/* Dropdown menu */}
-                      <div id='userDropDown' className='hidden'>
+                        /> */}
+                    {/* <i className="fa-solid fa-angle-down text-textSubtle"></i> */}
+                    {/* </div> */}
+                    {/* Dropdown menu */}
+                    {/* <div id='userDropDown' className='hidden'>
                         {showUserpopup && (
                           <UserDropDownMenu
                             handleUserDropdownClose={showHideUserPopup}
                           />
                         )}
                       </div>
-                    </div>
+                    </div> */}
                     <div id='google_translate_element'></div>
                   </div>
                 ) : (
@@ -717,7 +728,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                   : () => setShowModal(true)
               }
             />
-            {userinfo?.id && (
+            {/* {userinfo?.id && (
               <div
                 className='flex ml-4 place-items-center'
                 onClick={() => router.push(`/profile/settings`)}
@@ -730,7 +741,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                   alt='user icon'
                 />
               </div>
-            )}
+            )} */}
           </div>
           <div>
             {' '}

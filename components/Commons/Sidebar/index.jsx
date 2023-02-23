@@ -6,9 +6,10 @@ import { getUserInfo } from 'services/User/userService';
 import { setUserInfo, setSideBar } from 'redux/user';
 import Image from 'next/image';
 import Logo from 'assets/images/header/logo.svg';
-import Twitter from 'assets/images/header/twitter.svg';
-import Discord from 'assets/images/header/discord.svg';
-import Telegram from 'assets/images/header/telegram.svg';
+import Twitter from 'assets/images/twitter-new.svg';
+import Discord from 'assets/images/discord.svg';
+import Telegram from 'assets/images/telegram.svg';
+import FeatureRequest from '../FeatureRequest/FeatureRequest';
 
 const MENU_ITEMS = [
   { id: 0, label: '🌈 Home', path: 'https://decir.io/', external: true },
@@ -38,6 +39,7 @@ const MENU_ITEMS = [
 
 const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
   const dispatch = useDispatch();
+  const [showrequestModal, setShowRequestModal] = useState(false);
   const userinfo = useSelector((state) => state.user.userinfo);
   useEffect(() => {
     if (userinfo?.id) {
@@ -75,6 +77,10 @@ const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
 
   return (
     <>
+      <FeatureRequest
+        show={showrequestModal}
+        handleClose={() => setShowRequestModal(false)}
+      />
       <div
         className={`bg-light1 h-screen sticky top-0 ${styles.sidenav} border-r-1 border`}
       >
@@ -96,7 +102,7 @@ const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
                 rel='noopener noreferrer'
                 target={item?.external ? '_blank' : ''}
                 href={item.path}
-                className='justify-start flex items-center font-satoshi-bold mb-1 pl-5 pr-3 py-3 font-bold   ease-in-out duration-300 hover:text-[#000] hover:font-black last:mt-auto text-textSubtle cursor-pointer text-[15px]'
+                className='justify-start flex items-center font-satoshi-bold mb-1 pr-3 py-3 font-bold   ease-in-out duration-300 hover:text-[#000] hover:font-black last:mt-auto text-textSubtle cursor-pointer text-[15px]'
               >
                 <span className='ml-2'>{item.label}</span>
               </Link>
@@ -104,11 +110,15 @@ const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
           </div>
           <div className='mt-auto text-left mr-auto ml-6'>
             <div className='mb-[40px]'>
-              <p className='gradient-text-new'>DC price (24hrs) </p>
-              <div className='flex items-center'>
-                <p className='text-[#E9F2F6] text-[14px]'>$1.68</p>
-                <p className='text-[#32E865] text-[14px] ml-2 mt-0'>+32%</p>
-              </div>
+              <button
+                className='gradient-border-new'
+                onClick={() => setShowRequestModal(true)}
+              >
+                ✋{' '}
+                <span className='gradient-text-new text-[14px] font-bold'>
+                  Feature request
+                </span>
+              </button>
             </div>
             <div>
               <h2 className='!text-[14px] !font-black mb-3'>Follow us</h2>

@@ -4,13 +4,13 @@ import Gas from 'assets/images/header/gas.svg';
 import WalletConnectModal from 'components/Login/WalletConnectModal';
 import CreateNFTModal from 'components/Project/CreateDAOandNFT/components/CreateNFTModal.jsx';
 import { useSelector } from 'react-redux';
+import Link from 'next/link';
 
 export default function OnBoardingGuide() {
   const userinfo = useSelector((state) => state.user.userinfo);
   const [open, setOPen] = useState(true);
   const [showWalletConnectModal, setShowWalletConnectModal] = useState(false);
   const [showCreateNFTModal, setShowCreateNFTModal] = useState(false);
-  const [needToShowAfterLogin, setNeedToShowAfterLogin] = useState(false);
 
   const redirectToDiscord = () => {
     if (typeof window !== 'undefined') {
@@ -22,14 +22,9 @@ export default function OnBoardingGuide() {
     if (userinfo?.id) {
       setShowCreateNFTModal(true);
     } else {
-      setNeedToShowAfterLogin(true);
       setShowWalletConnectModal(true);
     }
   };
-  useEffect(() => {
-    console.log(needToShowAfterLogin);
-    console.log(userinfo);
-  }, [needToShowAfterLogin, userinfo]);
 
   return (
     <>
@@ -87,10 +82,15 @@ export default function OnBoardingGuide() {
                       Walk you thought the core function
                     </p>
                   </div>
-                  <div className='ml-auto text-black font-black text-[14px] cursor-pointer'>
+                  <Link
+                    className='ml-auto text-black font-black text-[14px] cursor-pointer'
+                    href='https://decir.gitbook.io/decir/'
+                    passHref
+                    target='_blank'
+                  >
                     Get started{' '}
                     <i className=' ml-2 fa-sharp fa-solid fa-arrow-right'></i>
-                  </div>
+                  </Link>
                 </div>
               </div>
               <div className='min-w-[302px] rounded-[8px] bg-gradient-to-r from-white to-secondary-200/[0.8]'>
@@ -143,7 +143,8 @@ export default function OnBoardingGuide() {
       <WalletConnectModal
         showModal={showWalletConnectModal}
         closeModal={() => setShowWalletConnectModal(false)}
-        noRedirection={true}
+        noRedirection={false}
+        navigateToPage={'/dashboard?createNFT=true'}
       />
 
       {showCreateNFTModal && (

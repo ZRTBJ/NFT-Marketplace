@@ -61,6 +61,7 @@ const Profile = ({ id }) => {
   const provider = createProvider();
   SwiperCore.use([Autoplay]);
   const router = useRouter();
+
   // User general data start
   const [user, setUser] = useState({});
 
@@ -155,6 +156,12 @@ const Profile = ({ id }) => {
   const [profileModal, setProfileModal] = useState(false);
   const [showOverlayLoading, setShowOverlayLoading] = useState(false);
   const [tokenGatedProjectList, setTokenGatedProjectList] = useState(true);
+
+  useEffect(() => {
+    if (router?.query?.createNFT === 'true') {
+      setShowCreateNFT(true);
+    }
+  }, [router?.query]);
 
   // function start
   const calculatePageCount = (pageSize, totalItems) => {
