@@ -1,7 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react';
-import DefaultProfilePicture from 'assets/images/defaultProfile.svg';
 import DefaultProjectLogo from 'assets/images/profile/defaultProjectLogo.svg';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Autoplay } from 'swiper';
@@ -56,6 +55,11 @@ import { event } from 'nextjs-google-analytics';
 import NewUserProfileModal from './components/NewUserProfileModal';
 import LandingPage from 'components/LandingPage/LandingPage';
 import OnBoardingGuide from 'components/LandingPage/components/OnBoardingGuide';
+import UserBasicInfo from './components/UserBasicInfo';
+import BalanceInfo from './components/BalanceInfo';
+import TokenGatedBannerCard from 'components/LandingPage/components/TokenGatedBannerCard';
+import CreateNFTCard from 'components/LandingPage/components/CreateNFTCard';
+import BuildDaoCard from 'components/LandingPage/components/BuildDaoCard';
 const Profile = ({ id }) => {
   const dispatch = useDispatch();
   const provider = createProvider();
@@ -156,6 +160,14 @@ const Profile = ({ id }) => {
   const [profileModal, setProfileModal] = useState(false);
   const [showOverlayLoading, setShowOverlayLoading] = useState(false);
   const [tokenGatedProjectList, setTokenGatedProjectList] = useState(true);
+  const [balanceInfo, setBalanceInfo] = useState({
+    dao_nft_splitter_amount: '0.00 USD',
+    wallet_value: '0.00 USD',
+    eoa: '0x317aec3033568ce240f069279c09754fb925b041',
+    dao_treasury: '0.00 USD',
+    nft_collection_treasury: '0.00 USD',
+    royalties: 'N/A',
+  });
 
   useEffect(() => {
     if (router?.query?.createNFT === 'true') {
@@ -180,11 +192,13 @@ const Profile = ({ id }) => {
             const weblist = [...webs].map((e) => ({
               title: Object.keys(e)[0],
               url: Object.values(e)[0],
+              value: Object.values(e)[0],
             }));
             const sociallinks = JSON.parse(response.user['social']);
             const sncs = [...sociallinks].map((e) => ({
               title: Object.keys(e)[0],
               url: Object.values(e)[0],
+              value: Object.values(e)[0],
             }));
             setsncList(sncs.concat(weblist));
           } catch {
@@ -467,142 +481,91 @@ const Profile = ({ id }) => {
   }, [isActive]);
 
   return (
-    <div className='bg-color-gray-dark'>
+    <div className='bg-color-gray-light-300'>
       <>
         {!id && <LandingPage userId={id} />}
         {id && (
           <>
             <OnBoardingGuide />
-            <div className='container mx-auto'>
-              {/* profile information section */}
-              <div className='lg:flex items-center'>
-                <div className='mt-[30px] md:flex-[70%] mx-3  bg-white-shade-900 rounded-lg p-[13px] md:p-[25px] shadow-lg md:flex'>
-                  <div className='flex'>
-                    {user?.avatar ? (
-                      <Image
-                        onClick={() => setProfileModal(true)}
-                        src={user.avatar}
-                        className='rounded-lg w-[102px] object-cover h-[102px] cursor-pointer'
-                        alt={'profile'}
-                        width={102}
-                        height={102}
-                      />
-                    ) : (
-                      <Image
-                        onClick={() => setProfileModal(true)}
-                        src={DefaultProfilePicture}
-                        className='rounded-lg w-[102px] object-cover h-[102px] cursor-pointer'
-                        alt={'profile'}
-                        width={102}
-                        height={102}
-                      />
-                    )}
-                    <div className='pl-[20px]'>
-                      <div className='break-all text-txtblack mb-2 text-[14px] font-black md:text-[18px]'>
-                        {user.display_name}
-                      </div>
-                      <div className='text-[13px] text-textSubtle mb-2'>
-                        {user?.eoa && walletAddressTruncate(user.eoa)}
-                        <i
-                          onClick={() => {
-                            copyToClipboard(user.eoa);
-                          }}
-                          className='fa-solid  fa-copy cursor-pointer pl-[6px]'
-                        ></i>
-                        <span id='copied-message' className='hidden ml-2'>
-                          Copied !
-                        </span>
-                      </div>
-                      <div className='flex items-center mb-2'>
-                        <i className='fa-solid fa-map-pin mr-[7px] text-danger-1 text-[12px]'></i>
-                        <span className='text-[13px] text-txtblack'>
-                          {user.area}
-                        </span>
-                      </div>
-                      <div className='flex items-center'>
-                        <i className='fa-solid fa-briefcase mr-[7px] text-danger-1 text-[12px]'></i>
-                        <span className='text-[13px] text-txtblack'>
-                          {user.job}
-                        </span>
-                      </div>
-                    </div>
+            <div className='w-full px-4 my-10 md:max-w-[1100px] mx-auto'>
+              <UserBasicInfo userInfo={user} sncList={sncList} />
+              <BalanceInfo balanceInfo={balanceInfo} />
+
+              {/* token gated start */}
+              <div className='my-20'>
+                {tokenGatedLoading ? (
+                  <div className='text-center'>
+                    <Spinner />
                   </div>
-                  <div className='mt-5  md:ml-auto'>
-                    <div className='flex flex-wrap'>
-                      {sncList &&
-                        sncList.map((snc, index) => (
-                          <div key={`snc-${index}`}>
-                            {snc.url !== '' && (
-                              <div
-                                key={`snc-${index}`}
-                                className='cursor-pointer mr-2 w-[44px] h-[44px] mb-4 bg-primary-900/[.09] flex justify-center  items-center rounded-md '
-                              >
-                                {snc.title.toLowerCase().match('weblink') ? (
-                                  <div className=''>
-                                    <a
-                                      href={snc.url}
-                                      target='_blank'
-                                      rel='noreferrer'
-                                    >
-                                      <i
-                                        className='fa fa-link text-[20px] gradient-text mt-1'
-                                        aria-hidden='true'
-                                      ></i>
-                                    </a>
-                                  </div>
-                                ) : (
-                                  <a
-                                    href={snc.url}
-                                    target='_blank'
-                                    rel='noreferrer'
+                ) : (
+                  <>
+                    {tokenGatedProjectList.length > 0 ? (
+                      <>
+                        <div className='mb-5 flex  flex-wrap'>
+                          <div className='flex flex-wrap items-center gap-4'>
+                            <p className='text-[24px] text-txtblack font-black'>
+                              Your Token Gated Project
+                            </p>
+                            <button
+                              onClick={() => onCreateTokenGatedProject()}
+                              className=' gradient-text-deep-pueple font-black border w-[160px] text-center h-[40px] rounded-lg border-secondary-900'
+                            >
+                              <i className=' mr-2 fa-solid fa-plus'></i>
+                              Create New
+                            </button>
+                          </div>
+                          <Link
+                            href={`/list/?type=tokenGated&user=true`}
+                            className='contained-button rounded ml-auto mt-2'
+                          >
+                            View All
+                          </Link>
+                        </div>
+                        <Swiper
+                          breakpoints={settings}
+                          navigation={false}
+                          modules={[Navigation]}
+                          className={styles.createSwiper}
+                        >
+                          <div>
+                            {tokenGatedProjectList.map(
+                              (tokenGatedProject, index) => (
+                                <div key={tokenGatedProject.id}>
+                                  <SwiperSlide
+                                    key={tokenGatedProject.id}
+                                    className={styles.nftCard}
                                   >
-                                    <i
-                                      className={`fa-brands fa-${
-                                        socialLinks?.find(
-                                          (x) => x.title === snc.title
-                                        )?.icon
-                                      } text-[20px] gradient-text text-white-shade-900 mt-1`}
-                                    ></i>
-                                  </a>
-                                )}
-                              </div>
+                                    <TokenGatedProjectCard
+                                      key={index}
+                                      tokenGatedProject={tokenGatedProject}
+                                    ></TokenGatedProjectCard>
+                                  </SwiperSlide>
+                                </div>
+                              )
                             )}
                           </div>
-                        ))}
-                    </div>
-                    <div className='ml-auto'>
-                      <Link href='/profile/settings'>
-                        <button className='rounded  social-icon-button text-primary-900 px-4 py-2'>
-                          <span>Edit</span>{' '}
-                          <i className='fa-solid  fa-pen-to-square ml-2'></i>
-                        </button>
-                      </Link>
-                    </div>
-                  </div>
+                        </Swiper>
+                      </>
+                    ) : (
+                      <TokenGatedBannerCard />
+                    )}
+                  </>
+                )}
+              </div>
+              {/* token gated end */}
+
+              {/* collection and dao start */}
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                <div>
+                  <CreateNFTCard size='lg' />
                 </div>
-                <div className='md:flex-[30%]  mt-[30px] relative px-6 rounded-lg mx-3 p-[13px] md:p-[20px] text-white-shade-900 shadow-lg gradient-background rounded-lg'>
-                  <Image
-                    src={curvVector}
-                    className='absolute top-0 right-0  h-full'
-                    alt=''
-                  />
-                  <div className=' md:mt-[24px] text-[18px] font-black '>
-                    Total Earned Token
-                  </div>
-                  <div className='font-black text-[28px]  md:mt-[8px]'>
-                    {royaltyEarned?.total_earn}
-                  </div>
-                  <div className=' md:mt-[8px] flex flex-wrap align-center'>
-                    <div className='bg-success-1 h-[26px] w-[26px]  rounded-full'>
-                      <i className='fa-solid fa-up text-[#FFFF] ml-1.5  mt-[3px] text-[20px]'></i>
-                    </div>
-                    <div className='text-[14px] ml-2'>
-                      Last month earned : {royaltyEarned?.last_month_earn}
-                    </div>
-                  </div>
+                <div>
+                  <BuildDaoCard size='lg' />
                 </div>
               </div>
-
+              {/* collection and dao end */}
+            </div>
+            <div className='container mx-auto'>
               <div className='mx-3 my-6 grid gap-4 grid-cols-2 md:grid-cols-4 lg:grid-cols-5 '>
                 <div
                   onClick={() => setShowCreateNFT(true)}
@@ -946,69 +909,7 @@ const Profile = ({ id }) => {
                   </>
                 )}
               </div>
-              {/* Token gated projects */}
-              <div className='mb-[50px]'>
-                <div className='mb-5 flex px-4 flex-wrap'>
-                  <div className='text-[24px] text-txtblack font-black'>
-                    Your token gated project
-                  </div>
-                  {tokenGatedProjectList?.length > 0 && (
-                    <Link
-                      href={`/list/?type=tokenGated&user=true`}
-                      className='contained-button rounded ml-auto'
-                    >
-                      View All
-                    </Link>
-                  )}
-                </div>
-                {tokenGatedLoading ? (
-                  <div className='text-center'>
-                    <Spinner />
-                  </div>
-                ) : (
-                  <>
-                    {tokenGatedProjectList.length > 0 ? (
-                      <Swiper
-                        breakpoints={settings}
-                        navigation={false}
-                        modules={[Navigation]}
-                        className={styles.createSwiper}
-                      >
-                        <div>
-                          {tokenGatedProjectList.map(
-                            (tokenGatedProject, index) => (
-                              <div key={tokenGatedProject.id}>
-                                <SwiperSlide
-                                  key={tokenGatedProject.id}
-                                  className={styles.nftCard}
-                                >
-                                  <TokenGatedProjectCard
-                                    key={index}
-                                    tokenGatedProject={tokenGatedProject}
-                                  ></TokenGatedProjectCard>
-                                </SwiperSlide>
-                              </div>
-                            )
-                          )}
-                        </div>
-                      </Swiper>
-                    ) : (
-                      <div className='text-center mt-6 text-textSubtle'>
-                        <Image
-                          src={emptyStateCommon}
-                          className='h-[210px] w-[315px] m-auto'
-                          alt=''
-                          width={315}
-                          height={210}
-                        />
-                        <p className='text-subtitle font-bold'>
-                          You have no Token Gated Project Created
-                        </p>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
+
               {/* Dao */}
               <div className='mb-[50px]'>
                 <div className='mb-5 flex px-4 flex-wrap'>

@@ -31,6 +31,7 @@ const SocialLink = ({ links, forTokenGated }) => {
             </a>
           </div>
         )}
+
       {links?.find((link) => link.title === 'linkTwitter') &&
         links?.find((link) => link.title === 'linkTwitter').value?.length >
           0 && (
@@ -46,6 +47,7 @@ const SocialLink = ({ links, forTokenGated }) => {
             </a>
           </div>
         )}
+
       {links?.find((link) => link.title === 'linkGithub') &&
         links?.find((link) => link.title === 'linkGithub').value?.length >
           0 && (
@@ -61,6 +63,23 @@ const SocialLink = ({ links, forTokenGated }) => {
             </a>
           </div>
         )}
+
+      {links?.find((link) => link.title === 'linkReddit') &&
+        links?.find((link) => link.title === 'linkReddit').value?.length >
+          0 && (
+          <div className='social-icon-button cursor-pointer w-9 h-9  flex justify-center items-center rounded-md ease-in-out duration-300'>
+            <a
+              href={`${
+                links?.find((link) => link.title === 'linkReddit').value
+              }`}
+              target='_blank'
+              rel='noreferrer'
+            >
+              <i className='fa-brands fa-reddit gradient-text'></i>
+            </a>
+          </div>
+        )}
+
       {links?.find((link) => link.title === 'customLinks1') &&
         links?.find((link) => link.title === 'customLinks1').value?.length >
           0 && (
@@ -69,6 +88,19 @@ const SocialLink = ({ links, forTokenGated }) => {
               href={`${
                 links?.find((link) => link.title === 'customLinks1').value
               }`}
+              target='_blank'
+              rel='noreferrer'
+            >
+              <i className='fa-solid fa-globe gradient-text'></i>
+            </a>
+          </div>
+        )}
+
+      {links?.find((link) => link.title === 'webLink1') &&
+        links?.find((link) => link.title === 'webLink1').value?.length > 0 && (
+          <div className='social-icon-button cursor-pointer w-9 h-9  flex justify-center items-center rounded-md ease-in-out duration-300'>
+            <a
+              href={`${links?.find((link) => link.title === 'webLink1').value}`}
               target='_blank'
               rel='noreferrer'
             >

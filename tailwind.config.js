@@ -50,6 +50,7 @@ module.exports = {
         divider: '#C7CEE5',
         'white-filled-form': '#E6E8EE',
         'border-primary': '#C7CEE6',
+        'color-gray-light-300': '#E7F0F3',
 
         primary: {
           50: '#E8F5FB',
