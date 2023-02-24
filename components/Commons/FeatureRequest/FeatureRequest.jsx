@@ -24,6 +24,7 @@ const FeatureRequest = ({ show, handleClose }) => {
     if ((email, message)) {
       setIsLoading(true);
       let payload = {
+        type: 'feature_request',
         email,
         message,
       };

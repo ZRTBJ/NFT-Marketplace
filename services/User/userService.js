@@ -28,7 +28,7 @@ export async function claimRoyalty(payload) {
 
 export async function sendMessage(payload) {
   let formData = new FormData();
-  formData.append('noti_type', 'userContact');
+  formData.append('noti_type', payload.type);
   formData.append('message', payload.message);
   formData.append('email', payload.email);
   return await client('POST', '/send-slack', formData, 'formdata');

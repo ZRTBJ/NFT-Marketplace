@@ -25,6 +25,7 @@ const FloatingContactForm = () => {
     setIsSubmitted(true);
     if ((email, message)) {
       let payload = {
+        type: 'user_contact',
         email,
         message,
       };
