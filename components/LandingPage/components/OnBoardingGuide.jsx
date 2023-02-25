@@ -5,12 +5,25 @@ import WalletConnectModal from 'components/Login/WalletConnectModal';
 import CreateNFTModal from 'components/Project/CreateDAOandNFT/components/CreateNFTModal.jsx';
 import { useSelector } from 'react-redux';
 import Link from 'next/link';
+import { NETWORKS } from 'config/networks';
+import { getCurrentNetworkId } from 'util/MetaMask';
 
 export default function OnBoardingGuide() {
   const userinfo = useSelector((state) => state.user.userinfo);
   const [open, setOPen] = useState(true);
   const [showWalletConnectModal, setShowWalletConnectModal] = useState(false);
   const [showCreateNFTModal, setShowCreateNFTModal] = useState(false);
+  const [gasPrice, setGasPrice] = useState({
+    standard: 0,
+    slow: 0,
+    fast: 0,
+    rapid: 0,
+    usd: 0,
+  });
+
+  useEffect(() => {
+    getGasPrice();
+  }, []);
 
   const redirectToDiscord = () => {
     if (typeof window !== 'undefined') {
@@ -23,6 +36,24 @@ export default function OnBoardingGuide() {
       setShowCreateNFTModal(true);
     } else {
       setShowWalletConnectModal(true);
+    }
+  };
+
+  const getGasPrice = async () => {
+    let networkId = await getCurrentNetworkId();
+    let link = NETWORKS[networkId];
+    let data = await fetch(link?.scanApi);
+    let response = await data.json();
+    if (response?.message === 'OK') {
+      setGasPrice({
+        standard: response?.result?.suggestBaseFee,
+        slow: response?.result?.SafeGasPrice,
+        fast: response?.result?.FastGasPrice,
+        rapid: response?.result?.ProposeGasPrice
+          ? response.result.ProposeGasPrice
+          : '-',
+        usd: response?.result?.UsdPrice ? response.result.UsdPrice : '-',
+      });
     }
   };
 
@@ -120,23 +151,26 @@ export default function OnBoardingGuide() {
         </div>
         <div className='mx-6'>
           <p className=' text-[12px]'>
-            <span className='font-black'>Standard</span> 19 GWei - $0.65 | 1
-            Minute
+            <span className='font-black'>Standard</span> {gasPrice?.standard}{' '}
+            GWei - ${gasPrice?.usd} | ~5 Mins
           </p>
         </div>
         <div className='mx-6'>
           <p className=' text-[12px]'>
-            <span className='font-black'>Slow</span> 19 GWei - $0.65 | 1 Minute
+            <span className='font-black'>Slow</span> {gasPrice?.slow} GWei - $
+            {gasPrice?.usd} | ~5 Mins
           </p>
         </div>
         <div className='mx-6'>
           <p className=' text-[12px]'>
-            <span className='font-black'>Fast</span> 19 GWei - $0.65 | 1 Minute
+            <span className='font-black'>Fast</span> {gasPrice?.fast} GWei - $
+            {gasPrice?.usd} | ~5 Mins
           </p>
         </div>
         <div>
           <p className=' text-[12px]'>
-            <span className='font-black'>Rapid</span> 19 GWei - $0.65 | 1 Minute
+            <span className='font-black'>Rapid</span> {gasPrice?.rapid} GWei - $
+            {gasPrice?.usd} | ~5 Mins
           </p>
         </div>
       </div>

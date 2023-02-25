@@ -31,12 +31,6 @@ function List({ query }) {
   const [pagination, SetPagination] = useState([1, 2]);
   const [isActive, setIsactive] = useState(1);
 
-  const payload = {
-    order_by: 'newer',
-    page: 1,
-    limit: 10,
-    keyword: '',
-  };
   const calculatePageCount = (pageSize, totalItems) => {
     return totalItems < pageSize ? 1 : Math.ceil(totalItems / pageSize);
   };

@@ -1,6 +1,15 @@
 import { userSlice } from './slice';
-const { userLoading, setUserDetails, setShowSideBar, setIsNewUser } =
-  userSlice.actions;
+import { getUserNotifications } from 'services/notification/notificationService';
+
+const {
+  userLoading,
+  setUserDetails,
+  setShowSideBar,
+  setIsNewUser,
+  getNotificationsLoading,
+  getNotificationsSuccess,
+  getNotificationsError,
+} = userSlice.actions;
 
 export const setUserInfo = (user) => (dispatch) => {
   dispatch(setUserDetails(user));
@@ -14,4 +23,14 @@ export const setUserLoading = (value) => (dispatch) => {
 
 export const handleNewUser = (value) => (dispatch) => {
   dispatch(setIsNewUser(value));
+};
+
+export const getUserNotification = (isActive) => async (dispatch) => {
+  try {
+    dispatch(getNotificationsLoading());
+    const response = await getUserNotifications(isActive);
+    dispatch(getNotificationsSuccess(response));
+  } catch (err) {
+    dispatch(getNotificationsError());
+  }
 };

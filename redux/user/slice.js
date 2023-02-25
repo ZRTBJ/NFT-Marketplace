@@ -5,6 +5,9 @@ const initialState = {
   loggedIn: false,
   showSidebar: false,
   isNewUser: false,
+  notifications: [],
+  notificationLoading: false,
+  notificationError: false,
 };
 
 export const userSlice = createSlice({
@@ -24,6 +27,15 @@ export const userSlice = createSlice({
     },
     setIsNewUser(state, action) {
       state.isNewUser = action.payload;
+    },
+    getNotificationsLoading(state, action) {
+      state.notificationLoading = true;
+    },
+    getNotificationsSuccess(state, action) {
+      state.notifications = action.payload;
+    },
+    getNotificationsError(state, action) {
+      state.notificationError = true;
     },
   },
 });

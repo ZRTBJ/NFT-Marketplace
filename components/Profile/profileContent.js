@@ -16,6 +16,7 @@ import {
   getRoyalties,
   claimRoyalty,
 } from 'services/User/userService';
+import { getUserNotification } from 'redux/user/action';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import SuccessModal from 'components/Modals/SuccessModal';
@@ -213,6 +214,10 @@ const Profile = ({ id }) => {
     }
   }, [router?.query]);
 
+  useEffect(() => {
+    dispatch(getUserNotification());
+  }, []);
+
   // function start
   const calculatePageCount = (pageSize, totalItems) => {
     return totalItems < pageSize ? 1 : Math.ceil(totalItems / pageSize);
@@ -277,6 +282,7 @@ const Profile = ({ id }) => {
       });
     setRoyaltyLoading(false);
   }
+
   async function getProjectList() {
     let payload = {
       id: id,

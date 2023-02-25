@@ -10,6 +10,7 @@ import Twitter from 'assets/images/twitter-new.svg';
 import Discord from 'assets/images/discord.svg';
 import Telegram from 'assets/images/telegram.svg';
 import FeatureRequest from '../FeatureRequest/FeatureRequest';
+import { useRouter } from 'next/router';
 
 const MENU_ITEMS = [
   { id: 0, label: '🌈 Home', path: 'https://decir.io/', external: true },
@@ -34,18 +35,23 @@ const MENU_ITEMS = [
     external: true,
   },
   { id: 6, label: '🤓 Profile', path: '/profile/settings', external: false },
-  { id: 7, label: '🔔 Notifications', path: '/', external: false },
+  { id: 7, label: '🔔 Notifications', path: '/notifications', external: false },
 ];
 
 const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [showrequestModal, setShowRequestModal] = useState(false);
-  const userinfo = useSelector((state) => state.user.userinfo);
+  const { userinfo, notifications } = useSelector((state) => state.user);
   useEffect(() => {
     if (userinfo?.id) {
       getUserDetails(userinfo.id);
     }
   }, []);
+
+  let unReadNotifications = notifications?.notifications?.filter(
+    (data) => data.unread
+  );
 
   async function getUserDetails(userID) {
     const response = await getUserInfo(userID);
@@ -105,6 +111,12 @@ const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
                 className='justify-start flex items-center font-satoshi-bold mb-1 pr-3 py-3 font-bold   ease-in-out duration-300 hover:text-[#000] hover:font-black last:mt-auto text-textSubtle cursor-pointer text-[15px]'
               >
                 <span className='ml-2'>{item.label}</span>
+                {unReadNotifications?.length &&
+                item.label === '🔔 Notifications' ? (
+                  <span className='bg-[#12b4ff] text-[#fff] ml-2 text-[14px] px-1 rounded-[6px]'>
+                    {unReadNotifications.length}
+                  </span>
+                ) : null}
               </Link>
             ))}
           </div>

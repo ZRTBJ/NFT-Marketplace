@@ -231,29 +231,29 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     }
   }, [showSearchMobile]);
 
-  useEffect(() => {
-    getNotificationList();
-  }, [projectDeploy]);
+  // useEffect(() => {
+  //   getNotificationList();
+  // }, [projectDeploy]);
 
-  function getNotificationList() {
-    setIsNotificationLoading(true);
-    getUserNotifications()
-      .then((res) => {
-        if (res && res.notifications) {
-          setNotificationList(res.notifications);
-          if (res.notifications.length > 0) {
-            const unreadNotifications = res.notifications.filter(
-              (n) => n.unread === true
-            );
-            setnotificationCount(unreadNotifications.length);
-          }
-        }
-        setIsNotificationLoading(false);
-      })
-      .catch(() => {
-        setIsNotificationLoading(false);
-      });
-  }
+  // function getNotificationList() {
+  //   setIsNotificationLoading(true);
+  //   getUserNotifications()
+  //     .then((res) => {
+  //       if (res && res.notifications) {
+  //         setNotificationList(res.notifications);
+  //         if (res.notifications.length > 0) {
+  //           const unreadNotifications = res.notifications.filter(
+  //             (n) => n.unread === true
+  //           );
+  //           setnotificationCount(unreadNotifications.length);
+  //         }
+  //       }
+  //       setIsNotificationLoading(false);
+  //     })
+  //     .catch(() => {
+  //       setIsNotificationLoading(false);
+  //     });
+  // }
 
   function showHideUserPopup() {
     const userDropDown = document.getElementById('userDropDown');
@@ -267,13 +267,13 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     setShowWalletpopup(!showWalletpopup);
   }
 
-  function showHideNotification() {
-    const userDropDown = document.getElementById('notificationDropdown');
-    userDropDown.classList.toggle('hidden');
-    if (!isNotificationLoading) {
-      getNotificationList();
-    }
-  }
+  // function showHideNotification() {
+  //   const userDropDown = document.getElementById('notificationDropdown');
+  //   userDropDown.classList.toggle('hidden');
+  //   if (!isNotificationLoading) {
+  //     getNotificationList();
+  //   }
+  // }
 
   function hideModal() {
     setShowModal(false);
@@ -515,7 +515,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
               {userinfo?.id && (
                 <>
                   <li>
-                    <a
+                    {/* <a
                       href='#'
                       onClick={(e) => {
                         e.preventDefault();
@@ -542,7 +542,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                           {notificationCount}
                         </span>
                       )}
-                    </a>
+                    </a> */}
                     {/* wallet popup */}
                   </li>
 
@@ -702,7 +702,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                 onClick={handleShowMobileSearch}
               />
             )} */}
-            {userinfo?.id ? (
+            {/* {userinfo?.id ? (
               <Image
                 src={bellImage}
                 alt='Notifications'
@@ -714,7 +714,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                   showHideNotification();
                 }}
               />
-            ) : null}
+            ) : null} */}
             <Image
               src={walletImage}
               alt='Wallet'
