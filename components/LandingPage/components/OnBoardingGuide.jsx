@@ -144,7 +144,7 @@ export default function OnBoardingGuide() {
         showModal={showWalletConnectModal}
         closeModal={() => setShowWalletConnectModal(false)}
         noRedirection={false}
-        navigateToPage={'/dashboard?createNFT=true'}
+        navigateToPage={'dashboard?createNFT=true'}
       />
 
       {showCreateNFTModal && (
@@ -152,7 +152,6 @@ export default function OnBoardingGuide() {
           show={showCreateNFTModal}
           handleClose={() => {
             setShowCreateNFTModal(false);
-            setNeedToShowAfterLogin(false);
           }}
         />
       )}

@@ -8,7 +8,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
-import DAOCard from 'components/Cards/DAOCard';
 import styles from './style.module.css';
 import { Navigation } from 'swiper';
 import { getUserProjectListById } from 'services/project/projectService';
@@ -21,9 +20,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import SuccessModal from 'components/Modals/SuccessModal';
 import { getUserCollections } from 'services/collection/collectionService';
-import thumbIcon from 'assets/images/cover-default.svg';
 import ErrorModal from 'components/Modals/ErrorModal';
-import { walletAddressTruncate } from 'util/WalletUtils';
 import { getMintedNftListByUserId } from 'services/nft/nftService';
 import NFTListCard from 'components/Cards/NFTListCard';
 import { royaltyClaim } from './royalty-claim';
@@ -36,15 +33,11 @@ import { ls_GetUserID } from 'util/ApplicationStorage';
 import { getCurrentNetworkId } from 'util/MetaMask';
 import NetworkHandlerModal from 'components/Modals/NetworkHandlerModal';
 import Image from 'next/image';
-import tokenGatedCreateIcon from 'assets/images/token-gated/createIcon.svg';
-import nftSvg from 'assets/images/profile/nftSvg.svg';
-import daoCreate from 'assets/images/profile/daoCreate.svg';
+
 import CreateNFTModal from 'components/Project/CreateDAOandNFT/components/CreateNFTModal.jsx';
 import emptyStateCommon from 'assets/images/profile/emptyStateCommon.svg';
 import emptyStateRoyalty from 'assets/images/profile/emptyStateRoyalty.png';
-import curvVector from 'assets/images/profile/curv1.png';
 import Modal from 'components/Commons/Modal';
-import CollectionCard from 'components/Cards/CollectionCard';
 import { logout } from 'redux/auth';
 import {
   createTokenGatedProject,
@@ -60,6 +53,51 @@ import BalanceInfo from './components/BalanceInfo';
 import TokenGatedBannerCard from 'components/LandingPage/components/TokenGatedBannerCard';
 import CreateNFTCard from 'components/LandingPage/components/CreateNFTCard';
 import BuildDaoCard from 'components/LandingPage/components/BuildDaoCard';
+import CollectionTable from './components/CollectionTable';
+import DaoTable from './components/DaoTable';
+import UseCase from 'components/LandingPage/components/UseCase';
+const nftUseCase = {
+  usedFor: 'NFTs',
+  text: 'Lorem Ipsum is simply dummy text of the printing and Ipsum has been ',
+  steps: [
+    {
+      title: 'Title / headline',
+      description:
+        'Lorem Ipsum is simply dummy text of the printing and Ipsum has been ',
+    },
+    {
+      title: 'Title / headline',
+      description:
+        'Lorem Ipsum is simply dummy text of the printing and Ipsum has been ',
+    },
+    {
+      title: 'Title / headline',
+      description:
+        'Lorem Ipsum is simply dummy text of the printing and Ipsum has been ',
+    },
+  ],
+};
+const daoUseCase = {
+  usedFor: 'DAO Community',
+  text: 'Lorem Ipsum is simply dummy text of the printing and Ipsum has been ',
+  steps: [
+    {
+      title: 'Title / headline',
+      description:
+        'Lorem Ipsum is simply dummy text of the printing and Ipsum has been ',
+    },
+    {
+      title: 'Title / headline',
+      description:
+        'Lorem Ipsum is simply dummy text of the printing and Ipsum has been ',
+    },
+    {
+      title: 'Title / headline',
+      description:
+        'Lorem Ipsum is simply dummy text of the printing and Ipsum has been ',
+    },
+  ],
+};
 const Profile = ({ id }) => {
   const dispatch = useDispatch();
   const provider = createProvider();
@@ -243,7 +281,7 @@ const Profile = ({ id }) => {
     let payload = {
       id: id,
       page: 1,
-      perPage: 10,
+      perPage: 5,
     };
     await getUserProjectListById(payload)
       .then((e) => {
@@ -273,7 +311,7 @@ const Profile = ({ id }) => {
     const payload = {
       id: id,
       page: 1,
-      limit: 10,
+      limit: 5,
     };
     await getUserCollections(payload)
       .then((e) => {
@@ -487,7 +525,7 @@ const Profile = ({ id }) => {
         {id && (
           <>
             <OnBoardingGuide />
-            <div className='w-full px-4 my-10 md:max-w-[1100px] mx-auto'>
+            <div className='w-full px-4 mt-10 pb-10 md:max-w-[1100px] mx-auto'>
               <UserBasicInfo userInfo={user} sncList={sncList} />
               <BalanceInfo balanceInfo={balanceInfo} />
 
@@ -557,64 +595,87 @@ const Profile = ({ id }) => {
               {/* collection and dao start */}
               <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                 <div>
-                  <CreateNFTCard size='lg' />
+                  {collectionList?.length === 0 ? (
+                    <CreateNFTCard size='lg' />
+                  ) : (
+                    <CollectionTable userId={id} tableData={collectionList} />
+                  )}
                 </div>
                 <div>
-                  <BuildDaoCard size='lg' />
+                  {projectList?.length === 0 ? (
+                    <BuildDaoCard size='lg' />
+                  ) : (
+                    <DaoTable userId={id} tableData={projectList} />
+                  )}
                 </div>
               </div>
               {/* collection and dao end */}
-            </div>
-            <div className='container mx-auto'>
-              <div className='mx-3 my-6 grid gap-4 grid-cols-2 md:grid-cols-4 lg:grid-cols-5 '>
-                <div
-                  onClick={() => setShowCreateNFT(true)}
-                  className=' cursor-pointer  p-3  rounded min-h-[72px] bg-primary-900/[0.10] border border-primary-900'
-                >
-                  <Image
-                    src={nftSvg}
-                    className='mb-1 min-h-[24px] w-[24px]'
-                    width={24}
-                    height={24}
-                    alt=''
-                  />
-                  <span className='text-primary-900 font-black'>
-                    Create New NFT
-                  </span>
+
+              {/* minted NFT start */}
+              <div className='mt-[50px]'>
+                <div className='mb-5 flex px-4 flex-wrap'>
+                  <div className='text-[24px] text-txtblack font-black'>
+                    Minted NFT
+                  </div>
+                  <Link
+                    href={`/list/?type=nft&user=${id}`}
+                    className='contained-button rounded ml-auto'
+                  >
+                    View All
+                  </Link>
                 </div>
-                <div
-                  onClick={() => router.push('/dao/create')}
-                  className=' cursor-pointer min-h-[72px] p-3   rounded  bg-secondary-900/[0.10] border border-secondary-900'
-                >
-                  <Image
-                    src={daoCreate}
-                    className='mb-1 h-[24px] w-[24px]'
-                    width={24}
-                    height={24}
-                    alt=''
-                  />
-                  <span className='text-secondary-900 font-black'>
-                    Create New Dao
-                  </span>
-                </div>
-                <div
-                  onClick={() => onCreateTokenGatedProject()}
-                  className=' cursor-pointer min-h-[72px] p-3   rounded  bg-danger-1/[0.10] border border-danger-1'
-                >
-                  <Image
-                    src={tokenGatedCreateIcon}
-                    className='mb-1 h-[24px] w-[24px]'
-                    width={24}
-                    height={24}
-                    alt=''
-                  />
-                  <span className='text-danger-1 font-black'>
-                    Create Token Gated Project
-                  </span>
-                </div>
+
+                {nftLoading ? (
+                  <div className='text-center'>
+                    <Spinner />
+                  </div>
+                ) : (
+                  <>
+                    {mintedNftList.length > 0 ? (
+                      <Swiper
+                        breakpoints={settings}
+                        navigation={false}
+                        modules={[Navigation]}
+                        className={styles.createSwiper}
+                      >
+                        <div>
+                          {mintedNftList.map((nft) => (
+                            <SwiperSlide
+                              className={styles.nftCard}
+                              key={`${nft.id}-${nft.token_id}`}
+                            >
+                              <NFTListCard nft={nft} />
+                            </SwiperSlide>
+                          ))}
+                        </div>
+                      </Swiper>
+                    ) : (
+                      <div className='text-center mt-6 text-textSubtle'>
+                        <Image
+                          src={emptyStateCommon}
+                          className='h-[210px] w-[315px] m-auto'
+                          alt=''
+                          height={210}
+                          width={315}
+                        />
+                        <p className='text-subtitle font-bold'>
+                          You have no NFT minted
+                        </p>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+              {/* minted nft end */}
+
+              <div className='px-4 my-10'>
+                <UseCase data={nftUseCase} />
+              </div>
+              <div className='px-4 pb-10 '>
+                <UseCase data={daoUseCase} />
               </div>
               {/* Royalties Table */}
-              <div className=' mt-[20px] mx-3 mb-[36px] pt-[30px]  px-4  pb-[35px] bg-white-shade-900 rounded-xl'>
+              <div className='mt-[20px] mx-3  pt-[30px]  px-4  pb-[35px] bg-white-shade-900 rounded-xl'>
                 <div className='flex  items-center mb-[24px]'>
                   <div className='text-[24px] text-txtblack font-black'>
                     Royalties
@@ -906,177 +967,6 @@ const Profile = ({ id }) => {
                       activeClassName='text-primary-900 bg-primary-900 !no-underline'
                       activeLinkClassName='!text-txtblack !no-underline'
                     />
-                  </>
-                )}
-              </div>
-
-              {/* Dao */}
-              <div className='mb-[50px]'>
-                <div className='mb-5 flex px-4 flex-wrap'>
-                  <div className='text-[24px] text-txtblack font-black'>
-                    Your DAO
-                  </div>
-                  <Link
-                    href={`/list/?type=dao&user=${id}`}
-                    className='contained-button rounded ml-auto'
-                  >
-                    View All
-                  </Link>
-                </div>
-                {daoLoading ? (
-                  <div className='text-center'>
-                    <Spinner />
-                  </div>
-                ) : (
-                  <>
-                    {projectList?.length > 0 ? (
-                      <Swiper
-                        breakpoints={daosettings}
-                        navigation={false}
-                        modules={[Navigation]}
-                        className={styles.createSwiper}
-                      >
-                        <div>
-                          {projectList.map((item) => (
-                            <div key={item.id}>
-                              <SwiperSlide
-                                key={item.id}
-                                className={styles.daoCard}
-                              >
-                                <DAOCard item={item} key={item.id} />
-                              </SwiperSlide>
-                            </div>
-                          ))}
-                        </div>
-                      </Swiper>
-                    ) : (
-                      <div className='text-center mt-6'>
-                        <Image
-                          src={emptyStateCommon}
-                          className='h-[210px] w-[315px] m-auto'
-                          alt=''
-                          width={315}
-                          height={210}
-                        />
-                        <p className='text-subtitle font-bold'>
-                          You have no DAO Created
-                        </p>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-              {/* collection */}
-              <div className='mb-[50px]'>
-                <div className='mb-5 flex px-4 flex-wrap'>
-                  <div className='text-[24px] text-txtblack font-black'>
-                    Your Collection
-                  </div>
-                  <Link
-                    href={`/list/?type=collection&user=true`}
-                    className='contained-button rounded ml-auto'
-                  >
-                    View All
-                  </Link>
-                </div>
-                {collectionLoading ? (
-                  <div className='text-center'>
-                    <Spinner />
-                  </div>
-                ) : (
-                  <>
-                    {collectionList.length > 0 ? (
-                      <Swiper
-                        breakpoints={settings}
-                        navigation={false}
-                        modules={[Navigation]}
-                        className={styles.createSwiper}
-                      >
-                        <div>
-                          {collectionList.map((collection, index) => (
-                            <div key={collection.id}>
-                              <SwiperSlide
-                                key={collection.id}
-                                className={styles.nftCard}
-                              >
-                                <CollectionCard
-                                  key={index}
-                                  collection={collection}
-                                ></CollectionCard>
-                              </SwiperSlide>
-                            </div>
-                          ))}
-                        </div>
-                      </Swiper>
-                    ) : (
-                      <div className='text-center mt-6 text-textSubtle'>
-                        <Image
-                          src={emptyStateCommon}
-                          className='h-[210px] w-[315px] m-auto'
-                          alt=''
-                          width={315}
-                          height={210}
-                        />
-                        <p className='text-subtitle font-bold'>
-                          You have no Collection Created
-                        </p>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-              {/* Nft */}
-              <div className='mb-[50px]'>
-                <div className='mb-5 flex px-4 flex-wrap'>
-                  <div className='text-[24px] text-txtblack font-black'>
-                    Minted NFT
-                  </div>
-                  <Link
-                    href={`/list/?type=nft&user=${id}`}
-                    className='contained-button rounded ml-auto'
-                  >
-                    View All
-                  </Link>
-                </div>
-
-                {nftLoading ? (
-                  <div className='text-center'>
-                    <Spinner />
-                  </div>
-                ) : (
-                  <>
-                    {mintedNftList.length > 0 ? (
-                      <Swiper
-                        breakpoints={settings}
-                        navigation={false}
-                        modules={[Navigation]}
-                        className={styles.createSwiper}
-                      >
-                        <div>
-                          {mintedNftList.map((nft) => (
-                            <SwiperSlide
-                              className={styles.nftCard}
-                              key={`${nft.id}-${nft.token_id}`}
-                            >
-                              <NFTListCard nft={nft} />
-                            </SwiperSlide>
-                          ))}
-                        </div>
-                      </Swiper>
-                    ) : (
-                      <div className='text-center mt-6 text-textSubtle'>
-                        <Image
-                          src={emptyStateCommon}
-                          className='h-[210px] w-[315px] m-auto'
-                          alt=''
-                          height={210}
-                          width={315}
-                        />
-                        <p className='text-subtitle font-bold'>
-                          You have no NFT minted
-                        </p>
-                      </div>
-                    )}
                   </>
                 )}
               </div>

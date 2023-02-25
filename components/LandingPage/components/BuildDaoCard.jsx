@@ -30,7 +30,7 @@ export default function BuildDaoCard({ size }) {
         <div
           className={`${
             size === 'lg'
-              ? 'bg-white text-black text-center px-4 py-6 rounded-bl-2xl rounded-br-2xl w-full border-t'
+              ? 'bg-white text-black text-center px-4 py-[95px] rounded-bl-2xl rounded-br-2xl w-full border-t'
               : ' text-black'
           }`}
         >
@@ -77,7 +77,8 @@ export default function BuildDaoCard({ size }) {
       <WalletConnectModal
         showModal={showWalletConnectModal}
         closeModal={() => setShowWalletConnectModal(false)}
-        noRedirection={true}
+        noRedirection={false}
+        navigateToPage={'dao/create'}
       />
     </div>
   );
