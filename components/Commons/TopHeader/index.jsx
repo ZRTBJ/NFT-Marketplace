@@ -11,6 +11,7 @@ import { getProjectListBySearch } from 'services/project/projectService';
 import SearchBarResult from './SearchBarResult';
 import { getNotificationData } from 'redux/notification';
 import NotificatioMenu from './NotificationMenu';
+import { searchContent } from 'services/User/userService';
 import { getUserNotifications } from 'services/notification/notificationService';
 import UserDropDownMenu from './UserDropDownMenu';
 import userImg from 'assets/images/defaultProfile.svg';
@@ -22,6 +23,7 @@ import Logo from 'assets/images/header/logo.svg';
 import AccountChangedModal from './Account/AccountChangedModal';
 import NetworkChangedModal from './Account/NetworkChangedModal';
 import { walletAddressTruncate } from 'util/WalletUtils';
+import ReactPaginate from 'react-paginate';
 import {
   ls_GetUserToken,
   ls_GetWalletAddress,
@@ -53,6 +55,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const inputRef = useRef(null);
+  const outsideRef = useRef(null);
   const { user, walletAddress, token } = useSelector((state) => state.auth);
   const [userId, setUserId] = useState(user ? user : '');
   const userinfo = useSelector((state) => state.user.userinfo);
@@ -80,6 +83,46 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
       ? state?.notifications?.notificationData
       : []
   );
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [searchItems, setSearchItems] = useState([]);
+  const [searching, setSearching] = useState(false);
+  const [pagination, setPagination] = useState([1]);
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickedOutside);
+    return () => {
+      document.removeEventListener('click', handleClickedOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    handleSearch(null, searchKeyword);
+  }, [page]);
+
+  useEffect(() => {
+    let arr = Array.from({ length: searchItems?.pageSize }, (v, k) => k + 1);
+    setPagination(arr);
+  }, [searchItems]);
+
+  useEffect(() => {
+    if (!searchKeyword) {
+      setPage(1);
+      setPagination([1]);
+    } else {
+      setPage(1);
+    }
+  }, [searchKeyword]);
+
+  const handlePageClick = (event) => {
+    setPage(event.selected + 1);
+  };
+
+  const handleClickedOutside = () => {
+    if (searchKeyword && outsideRef && outsideRef.current) {
+      setSearchKeyword('');
+    }
+  };
 
   useEffect(() => {
     var addScript = document.createElement('script');
@@ -416,6 +459,37 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     ls_SetNewUser(true);
   };
 
+  const handleSearch = (e, text) => {
+    setSearching(true);
+    let value = e?.target?.value ? e.target.value : text;
+    setSearchKeyword(value);
+    if (e?.target?.value || text) {
+      let payload = {
+        page: page,
+        keyword: value,
+      };
+      searchContent(payload).then((resp) => {
+        if (resp.code === 0) {
+          setSearchItems(resp);
+        }
+        setSearching(false);
+      });
+    }
+  };
+
+  const handleSearchNavigation = (item) => {
+    if (item.id) {
+      setSearchKeyword('');
+      if (item.type === 'collection') {
+        router.push(`/collection/${item.id}`);
+      } else if (item.type === 'dao') {
+        router.push(`/dao/${item.id}`);
+      } else {
+        router.push(`/token-gated/${item.id}`);
+      }
+    }
+  };
+
   return (
     <header className='bg-[#e2ecf0]'>
       <AccountChangedModal
@@ -494,16 +568,78 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                 )}
             </form> */}
           </div>
-          <div className='relative'>
+          <div className='relative' ref={outsideRef}>
             <Image
               src={Search}
               alt='Search'
               className='absolute top-2 left-3'
             />
             <input
+              value={searchKeyword}
+              onChange={handleSearch}
               className='bg-[#fff] w-[400px] pl-[40px] pr-[12px] py-[8px] rounded-[8px] text-[14px]'
               placeholder='How to create DAO community 🔥 '
             />
+            {searchKeyword?.length ? (
+              <div
+                className='absolute bg-[#fff] rounded-[8px] py-3 w-full top-11 z-[999]'
+                style={{ boxShadow: 'rgb(2 17 24 / 8%) 0px 16px 32px' }}
+              >
+                {searching ? <p className='text-center'>Loading...</p> : null}
+                {!searching && searchItems?.data?.length ? (
+                  searchItems?.data?.map((item) => (
+                    <div
+                      key={item.id}
+                      onClick={() => handleSearchNavigation(item)}
+                      className='flex items-center mb-1 hover:bg-[#ccc] cursor-pointer px-3 py-1'
+                    >
+                      <p
+                        style={{
+                          width: 240,
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                        }}
+                      >
+                        {item.name}
+                      </p>
+                      <p className='mt-0 text-[12px] bg-[#12b4ff] text-[#fff] rounded-[8px] px-1 ml-1'>
+                        {item?.type === 'token_gate_projects'
+                          ? 'Token Gate Project'
+                          : item?.type === 'dao'
+                          ? 'DAO'
+                          : 'Collection'}
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <>
+                    {!searching ? (
+                      <p className='text-center'>No data found</p>
+                    ) : (
+                      ''
+                    )}
+                  </>
+                )}
+                {!searching &&
+                  searchItems?.data?.length &&
+                  pagination.length > 0 && (
+                    <ReactPaginate
+                      className='flex flex-wrap md:space-x-10 space-x-3 justify-center items-center my-6'
+                      pageClassName='px-3 py-1 font-satoshi-bold text-sm  bg-opacity-5 rounded hover:bg-opacity-7 !text-txtblack '
+                      breakLabel='...'
+                      nextLabel='>'
+                      onPageChange={handlePageClick}
+                      pageRangeDisplayed={2}
+                      pageCount={pagination.length}
+                      previousLabel='<'
+                      renderOnZeroPageCount={null}
+                      activeClassName='text-primary-900 bg-primary-900 !no-underline'
+                      activeLinkClassName='!text-txtblack !no-underline'
+                    />
+                  )}
+              </div>
+            ) : null}
           </div>
 
           <div className='flex items-center' id='mobile-menu'>

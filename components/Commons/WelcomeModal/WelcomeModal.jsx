@@ -8,6 +8,7 @@ import NFT from 'assets/images/nft-grad.svg';
 import Royalty from 'assets/images/royalty.svg';
 import TokenGate from 'assets/images/token-gate.svg';
 import LogoBG from 'assets/images/bg-logo.svg';
+import Link from 'next/link';
 
 const WelcomeModal = ({ show, handleClose }) => {
   const [open, setOpen] = useState([]);
@@ -229,9 +230,14 @@ const WelcomeModal = ({ show, handleClose }) => {
                 Find it easy on our whitepaper. you can get all our features
                 knowledge
               </p>
-              <p className='text-[12px] font-bold mt-0'>
+              <Link
+                className='text-[12px] font-bold mt-0'
+                href='https://decir.gitbook.io/decir/'
+                passHref
+                target='_blank'
+              >
                 LEARN MORE <i className='fa-regular fa-arrow-right ml-1'></i>
-              </p>
+              </Link>
             </div>
           </div>
         </div>
