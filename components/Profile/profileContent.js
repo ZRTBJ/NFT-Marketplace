@@ -15,6 +15,7 @@ import {
   getUserInfo,
   getRoyalties,
   claimRoyalty,
+  getUserRevenue,
 } from 'services/User/userService';
 import { getUserNotification } from 'redux/user/action';
 import Link from 'next/link';
@@ -199,13 +200,12 @@ const Profile = ({ id }) => {
   const [profileModal, setProfileModal] = useState(false);
   const [showOverlayLoading, setShowOverlayLoading] = useState(false);
   const [tokenGatedProjectList, setTokenGatedProjectList] = useState(true);
+
   const [balanceInfo, setBalanceInfo] = useState({
-    dao_nft_splitter_amount: '0.00 USD',
-    wallet_value: '0.00 USD',
-    eoa: '0x317aec3033568ce240f069279c09754fb925b041',
-    dao_treasury: '0.00 USD',
-    nft_collection_treasury: '0.00 USD',
-    royalties: 'N/A',
+    dao_nft_splitter_amount: 0,
+    dao_treasury: 0,
+    nft_collection_treasury: 0,
+    royalties: 0,
   });
 
   useEffect(() => {
@@ -222,7 +222,6 @@ const Profile = ({ id }) => {
   const calculatePageCount = (pageSize, totalItems) => {
     return totalItems < pageSize ? 1 : Math.ceil(totalItems / pageSize);
   };
-
   async function userInfo() {
     await getUserInfo(id)
       .then((response) => {
@@ -253,7 +252,6 @@ const Profile = ({ id }) => {
         setIsLoading(false);
       });
   }
-
   async function getUserRoyaltiesInfo(pageNumber) {
     setRoyaltyLoading(true);
     await getRoyalties(id, pageNumber)
@@ -306,7 +304,6 @@ const Profile = ({ id }) => {
   const handlePageClick = (event) => {
     setIsactive(event.selected + 1);
   };
-
   async function calculateTotalRoyalties() {
     const sum = royaltiesList
       .map((item) => item.earnable_amount)
@@ -334,18 +331,6 @@ const Profile = ({ id }) => {
       });
     setCollectionLoading(false);
   }
-  const truncateArray = (members) => {
-    let slicedItems = members.slice(0, 3);
-    return { slicedItems, restSize: members.length - slicedItems.length };
-  };
-  function copyToClipboard(text) {
-    navigator.clipboard.writeText(text);
-    const copyEl = document.getElementById('copied-message');
-    copyEl.classList.toggle('hidden');
-    setTimeout(() => {
-      copyEl.classList.toggle('hidden');
-    }, 2000);
-  }
   async function claimRoyaltyWithtnx(data) {
     const payload = {
       royalty_uid: data.id,
@@ -353,7 +338,6 @@ const Profile = ({ id }) => {
     };
     return await claimRoyalty(payload);
   }
-
   async function claimRoyaltyById(royalty) {
     let networkId = await getCurrentNetworkId();
     setDAONetwork(royalty.blockchain);
@@ -457,7 +441,6 @@ const Profile = ({ id }) => {
       });
     setTokenGatedLoading(false);
   }
-
   function setRoyaltyData(royalty, type) {
     let royaltyList = [...royaltiesList];
     const royaltyIndex = royaltyList.findIndex(
@@ -491,6 +474,25 @@ const Profile = ({ id }) => {
         setShowOverlayLoading(false);
       });
   };
+  const onUserRevenueGet = async () => {
+    await getUserRevenue(id)
+      .then((res) => {
+        if (res?.code === 0) {
+          const data = {
+            nft_collection_treasury: res?.collection_holding_usd,
+            dao_treasury: res?.dao_holding_usd,
+            royalties: res?.splitter_holding_token,
+            dao_nft_splitter_amount:
+              parseFloat(res?.collection_holding_usd) +
+              parseFloat(res?.dao_holding_usd),
+          };
+          setBalanceInfo(data);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   useEffect(() => {
     userInfo();
@@ -502,6 +504,7 @@ const Profile = ({ id }) => {
   useEffect(() => {
     if (id) {
       getUserRoyaltiesInfo(1);
+      onUserRevenueGet();
     }
   }, []);
   useEffect(() => {
@@ -533,7 +536,7 @@ const Profile = ({ id }) => {
             <OnBoardingGuide />
             <div className='w-full px-4 mt-10 pb-10 md:max-w-[1100px] mx-auto'>
               <UserBasicInfo userInfo={user} sncList={sncList} />
-              <BalanceInfo balanceInfo={balanceInfo} />
+              <BalanceInfo balanceInfo={balanceInfo} userInfo={user} />
 
               {/* token gated start */}
               <div className='my-20'>

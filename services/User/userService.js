@@ -33,3 +33,6 @@ export async function sendMessage(payload) {
   formData.append('email', payload.email);
   return await client('POST', '/send-slack', formData, 'formdata');
 }
+export async function getUserRevenue(id) {
+  return await client('GET', `/user/${id}/revenue`);
+}

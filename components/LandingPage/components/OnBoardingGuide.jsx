@@ -60,7 +60,7 @@ export default function OnBoardingGuide() {
   return (
     <>
       <div className='bg-gradient-to-b from-color-gray-dark to-color-gray-light rounded-b-2xl z-10 relative'>
-        <div className=' overflow-x-auto md:max-w-[1239px] mx-auto px-6 '>
+        <div className='overflow-x-auto md:max-w-[1239px] mx-auto px-6 custom-scrollbar'>
           <div className='flex flex-wrap items-center justify-center gap-4 text-black my-4'>
             <p className='break-normal  text-center text-[14px] '>
               👋🏻 <span className='font-black'>Welcome to DeCir</span>, Let’s get
@@ -81,8 +81,11 @@ export default function OnBoardingGuide() {
             </button>
           </div>
           {open && (
-            <div className='flex my-5 pb-3 gap-x-4 overflow-x-auto whitespace-nowrap'>
-              <div className='min-w-[434px]  rounded-[8px] bg-gradient-to-r from-white to-secondary-200/[0.8]'>
+            <div className='flex my-5 pb-3 gap-x-4 overflow-x-auto whitespace-nowrap custom-scrollbar'>
+              <div
+                onClick={() => redirectToNftCreatePage()}
+                className='cursor-pointer min-w-[434px]  rounded-[8px] bg-gradient-to-r from-white to-secondary-200/[0.8]'
+              >
                 <div className='triangle'></div>
                 <div className='flex items-center px-6 pb-3 -mt-4'>
                   <div>
@@ -93,16 +96,18 @@ export default function OnBoardingGuide() {
                       Few step to create NFT without coding
                     </p>
                   </div>
-                  <div
-                    className='ml-auto text-black font-black text-[14px] cursor-pointer'
-                    onClick={() => redirectToNftCreatePage()}
-                  >
+                  <div className='ml-auto text-black font-black text-[14px] '>
                     Get started{' '}
                     <i className=' ml-2 fa-sharp fa-solid fa-arrow-right'></i>
                   </div>
                 </div>
               </div>
-              <div className='min-w-[407px]  rounded-[8px] bg-gradient-to-r from-white to-secondary-200/[0.8]'>
+              <Link
+                href='https://decir.gitbook.io/decir/'
+                passHref
+                target='_blank'
+                className='!no-underline min-w-[407px]  rounded-[8px] bg-gradient-to-r from-white to-secondary-200/[0.8]'
+              >
                 <div className='triangle'></div>
                 <div className='flex items-center px-6 pb-3 -mt-4'>
                   <div>
@@ -113,7 +118,7 @@ export default function OnBoardingGuide() {
                       Walk you thought the core function
                     </p>
                   </div>
-                  <Link
+                  <div
                     className='ml-auto text-black font-black text-[14px] cursor-pointer'
                     href='https://decir.gitbook.io/decir/'
                     passHref
@@ -121,16 +126,16 @@ export default function OnBoardingGuide() {
                   >
                     Get started{' '}
                     <i className=' ml-2 fa-sharp fa-solid fa-arrow-right'></i>
-                  </Link>
+                  </div>
                 </div>
-              </div>
-              <div className='min-w-[302px] rounded-[8px] bg-gradient-to-r from-white to-secondary-200/[0.8]'>
+              </Link>
+              <div
+                onClick={() => redirectToDiscord()}
+                className='cursor-pointer min-w-[302px] rounded-[8px] bg-gradient-to-r from-white to-secondary-200/[0.8]'
+              >
                 <div className='triangle'></div>
                 <div className='flex items-center px-6 pb-3 -mt-4'>
-                  <div
-                    className='cursor-pointer'
-                    onClick={() => redirectToDiscord()}
-                  >
+                  <div className='cursor-pointer'>
                     <div className='gradient-text-deep-pueple font-black text-[18px]'>
                       Need help?
                     </div>

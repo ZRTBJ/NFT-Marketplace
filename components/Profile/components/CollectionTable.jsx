@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import thumbIcon from 'assets/images/profile/card.svg';
 import Image from 'next/image';
 import Link from 'next/link';
+import CreateNFTModal from 'components/Project/CreateDAOandNFT/components/CreateNFTModal.jsx';
 
 export default function CollectionTable({ tableData }) {
+  const [showCreateNFTModal, setShowCreateNFTModal] = useState(false);
+
   return (
     <>
       <div className='flex items-center gap-4 flex-wrap my-3'>
@@ -11,12 +14,12 @@ export default function CollectionTable({ tableData }) {
           {' '}
           NFT Collection
         </p>
-        <Link
-          href={`/collection/create`}
+        <button
+          onClick={() => setShowCreateNFTModal(true)}
           className='contained-button rounded ml-auto !text-white'
         >
           Create Collection
-        </Link>
+        </button>
       </div>
 
       <div className=' relative gradient-border-new pt-5 md:h-[652px] custom-scrollbar hover:overflow-y-auto overflow-y-hidden'>
@@ -63,13 +66,15 @@ export default function CollectionTable({ tableData }) {
                     <div className='w-[40%] pr-2'>
                       <p className='m-0 text-[12px]'>Remaining / Supply</p>
                       <p className='m-0 text-[12px] font-black text-black truncate'>
-                        0/{item?.total_supply}
+                        {parseInt(item?.total_supply) -
+                          parseInt(item?.summary?.sold_count)}
+                        /{item?.total_supply}
                       </p>
                     </div>
                     <div className='w-[20%]'>
                       <p className='m-0 text-[12px]'>Owners</p>
                       <p className='m-0 text-[12px] font-black text-black truncate'>
-                        221
+                        {item?.summary?.buyer_count}
                       </p>
                     </div>
                   </div>
@@ -87,6 +92,15 @@ export default function CollectionTable({ tableData }) {
           View All <i className=' ml-2 fa-sharp fa-solid fa-arrow-right'></i>
         </Link>
       </div>
+
+      {showCreateNFTModal && (
+        <CreateNFTModal
+          show={showCreateNFTModal}
+          handleClose={() => {
+            setShowCreateNFTModal(false);
+          }}
+        />
+      )}
     </>
   );
 }

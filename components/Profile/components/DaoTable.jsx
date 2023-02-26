@@ -45,13 +45,17 @@ export default function DaoTable({ tableData }) {
                     <div className='w-[40%] pr-2'>
                       <p className='text-[12px] m-0 truncate'>DAO Member</p>
                       <p className='font-black m-0 text-black text-[12px] truncate'>
-                        124
+                        {item?.summary?.member_count
+                          ? item?.summary?.member_count
+                          : '0'}
                       </p>
                     </div>
                     <div className='w-[40%] pr-2'>
                       <p className='m-0 text-[12px]'>Linked Collection</p>
                       <p className='m-0 text-[12px] font-black text-black truncate'>
-                        2
+                        {item?.summary?.collection_count
+                          ? item?.summary?.collection_count
+                          : '0'}
                       </p>
                     </div>
                   </div>

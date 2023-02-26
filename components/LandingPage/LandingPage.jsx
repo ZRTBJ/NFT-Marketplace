@@ -53,7 +53,7 @@ export default function LandingPage() {
       <div className='w-full px-4 my-10 md:max-w-[1100px] mx-auto'>
         <TokenGatedBannerCard />
       </div>
-      <div className='w-full px-4  pb-3 md:max-w-[1100px] mx-auto flex gap-x-8 my-10 overflow-x-auto flex-nowrap'>
+      <div className='w-full px-4  pb-3 md:max-w-[1100px] mx-auto flex gap-x-8 my-10 overflow-x-auto flex-nowrap custom-scrollbar'>
         <CreateNFTCard size='md' />
         <BuildDaoCard size='md' />
       </div>

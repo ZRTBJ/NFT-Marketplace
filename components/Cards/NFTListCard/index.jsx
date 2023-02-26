@@ -8,16 +8,16 @@ import Image from 'next/image';
 const currency = {
   eth: Eth,
   matic: Polygon,
-  bnb: Bnb
-}
+  bnb: Bnb,
+};
 
 export default function NFTListCard({ nft }) {
   return (
     <>
-      <div key={nft?.id} className='  bg-white'>
+      <div key={nft?.id} className=''>
         <Link href={`/minted-nft/${nft?.id}/${nft?.token_id}`}>
           <Image
-            className='h-[176px] rounded-xl md:h-[276px]  object-cover w-full '
+            className='h-[176px] rounded-xl md:h-[276px] shadow object-cover w-full'
             src={nft?.asset?.path}
             alt=''
             width={276}
