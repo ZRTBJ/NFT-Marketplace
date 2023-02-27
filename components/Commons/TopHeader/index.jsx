@@ -29,15 +29,12 @@ import {
   ls_GetWalletAddress,
   ls_SetChainID,
   ls_GetChainID,
-  ls_SetNewUser,
-  ls_GetNewUser,
 } from 'util/ApplicationStorage';
 import { toast } from 'react-toastify';
 import { NETWORKS } from 'config/networks';
 import { logout } from 'redux/auth';
 import Image from 'next/image';
 import { getWalletAccount } from 'util/MetaMask';
-import WelcomeModal from 'components/Commons/WelcomeModal/WelcomeModal';
 import Search from 'assets/images/header/search.svg';
 import Globe from 'assets/images/header/globe.svg';
 import AvatarDefault from 'assets/images/avatar-default.svg';
@@ -76,7 +73,6 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const [networkChangeDetected, setNetworkChangeDetected] = useState(false);
   const [networkId, setNetworkId] = useState();
   const [showSearchMobile, setShowSearchMobile] = useState(false);
-  const [showWelcome, setShowWelcome] = useState(false);
   const [showLang, setShowLang] = useState(false);
   const projectDeploy = useSelector((state) =>
     state?.notifications?.notificationData
@@ -101,7 +97,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   }, [page]);
 
   useEffect(() => {
-    let arr = Array.from({ length: searchItems?.pageSize }, (v, k) => k + 1);
+    let arr = Array.from({ length: searchItems?.total / 10 }, (v, k) => k + 1);
     setPagination(arr);
   }, [searchItems]);
 
@@ -151,14 +147,6 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
       'google_translate_element'
     );
   };
-
-  useEffect(() => {
-    if (!ls_GetNewUser()) {
-      setShowWelcome(true);
-    } else {
-      setShowWelcome(false);
-    }
-  }, []);
 
   useEffect(() => {
     let getLabel = document.querySelector('.goog-te-gadget-simple a span');
@@ -454,11 +442,6 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     setShowSearchMobile(!showSearchMobile);
   };
 
-  const handleWelcomeModal = () => {
-    setShowWelcome(false);
-    ls_SetNewUser(true);
-  };
-
   const handleSearch = (e, text) => {
     setSearching(true);
     let value = e?.target?.value ? e.target.value : text;
@@ -498,8 +481,17 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     return title;
   }, [router]);
 
+  //TODO: Need to refactor
+  const isNewBg = useMemo(() => {
+    if (['/dashboard', '/transactions', '/'].includes(router.pathname)) {
+      return true;
+    } else {
+      return false;
+    }
+  }, [router]);
+
   return (
-    <header className='bg-[#e2ecf0]'>
+    <header className={`${isNewBg ? 'bg-[#e2ecf0]' : 'bg-[#fff]'}`}>
       <AccountChangedModal
         show={showAccountChanged}
         handleClose={() => setShowAccountChanged(false)}
@@ -509,9 +501,6 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
         handleClose={() => setShowNetworkChanged(false)}
         networkId={networkId}
       />
-      {showWelcome && (
-        <WelcomeModal show={showWelcome} handleClose={handleWelcomeModal} />
-      )}
       <div id='notificationDropdown' className='hidden'>
         {showNotificationPopup && (
           <NotificatioMenu
@@ -587,7 +576,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
             <input
               value={searchKeyword}
               onChange={handleSearch}
-              className='bg-[#fff] w-[400px] pl-[40px] pr-[12px] py-[8px] rounded-[8px] text-[14px]'
+              className='border-[1px] border-[#e2ecf0] bg-[#fff] w-[400px] pl-[40px] pr-[12px] py-[8px] rounded-[8px] text-[14px]'
               placeholder='How to create DAO community 🔥 '
             />
             {searchKeyword?.length ? (

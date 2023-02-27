@@ -13,29 +13,62 @@ import FeatureRequest from '../FeatureRequest/FeatureRequest';
 import { useRouter } from 'next/router';
 
 const MENU_ITEMS = [
-  { id: 0, label: '🌈 Home', path: 'https://decir.io/', external: true },
-  { id: 1, label: '🎛️ Dashboard', path: '/dashboard', external: false },
+  {
+    id: 0,
+    label: '🌈 Home',
+    path: 'https://decir.io/',
+    external: true,
+    isAuthenticated: false,
+  },
+  {
+    id: 1,
+    label: '🎛️ Dashboard',
+    path: '/dashboard',
+    external: false,
+    isAuthenticated: true,
+  },
   {
     id: 2,
     label: '👥 NFT Collections',
     path: '/list?type=collection&user=true',
     external: false,
+    isAuthenticated: true,
   },
-  { id: 3, label: '🎚️ DAO', path: '/list?type=dao', external: false },
+  {
+    id: 3,
+    label: '🎚️ DAO',
+    path: '/list?type=dao',
+    external: false,
+    isAuthenticated: true,
+  },
   {
     id: 4,
     label: '🔒 Gated contents',
     path: '/list?type=tokenGated&user=true',
     external: false,
+    isAuthenticated: true,
   },
   {
     id: 5,
     label: '📖 Learn',
     path: 'https://decir.gitbook.io/decir/',
     external: true,
+    isAuthenticated: false,
   },
-  { id: 6, label: '🤓 Profile', path: '/profile/settings', external: false },
-  { id: 7, label: '🔔 Notifications', path: '/notifications', external: false },
+  {
+    id: 6,
+    label: '🤓 Profile',
+    path: '/profile/settings',
+    external: false,
+    isAuthenticated: true,
+  },
+  {
+    id: 7,
+    label: '🔔 Notifications',
+    path: '/notifications',
+    external: false,
+    isAuthenticated: true,
+  },
 ];
 
 const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
@@ -103,7 +136,11 @@ const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
             {MENU_ITEMS.map((item) => (
               <Link
                 key={item.id}
-                onClick={item?.external ? () => {} : accessCheck}
+                onClick={
+                  item?.external || !item.isAuthenticated
+                    ? () => {}
+                    : accessCheck
+                }
                 passHref={true}
                 rel='noopener noreferrer'
                 target={item?.external ? '_blank' : ''}

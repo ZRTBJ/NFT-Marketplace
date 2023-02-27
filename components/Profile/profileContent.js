@@ -58,6 +58,8 @@ import BuildDaoCard from 'components/LandingPage/components/BuildDaoCard';
 import CollectionTable from './components/CollectionTable';
 import DaoTable from './components/DaoTable';
 import UseCase from 'components/LandingPage/components/UseCase';
+import WelcomeModal from 'components/Commons/WelcomeModal/WelcomeModal';
+import { ls_SetNewUser, ls_GetNewUser } from 'util/ApplicationStorage';
 const nftUseCase = {
   usedFor: 'NFTs',
   text: 'Lorem Ipsum is simply dummy text of the printing and Ipsum has been ',
@@ -116,6 +118,7 @@ const Profile = ({ id }) => {
   const [tokenGatedLoading, setTokenGatedLoading] = useState(true);
   const [royaltyEarned, setRoyaltyEarned] = useState({});
   const [sncList, setsncList] = useState([]);
+  const [showWelcome, setShowWelcome] = useState(false);
   const socialLinks = [
     { title: 'linkInsta', icon: 'instagram', value: '' },
     { title: 'linkReddit', icon: 'reddit', value: '' },
@@ -270,10 +273,12 @@ const Profile = ({ id }) => {
             }
             SetPagination(pageList);
           }
-        } else if (res?.code === 4032) {
-          dispatch(logout());
-          router.push('/');
         }
+        //  else if (res?.code === 4032) {
+        //   debugger;
+        //   dispatch(logout());
+        //   router.push('/');
+        // }
       })
       .catch(() => {
         setRoyaltyLoading(false);
@@ -528,8 +533,24 @@ const Profile = ({ id }) => {
     getUserRoyaltiesInfo(isActive);
   }, [isActive]);
 
+  useEffect(() => {
+    if (!ls_GetNewUser()) {
+      setShowWelcome(true);
+    } else {
+      setShowWelcome(false);
+    }
+  }, []);
+
+  const handleWelcomeModal = () => {
+    setShowWelcome(false);
+    ls_SetNewUser(true);
+  };
+
   return (
     <div className='bg-color-gray-light-300'>
+      {showWelcome && (
+        <WelcomeModal show={showWelcome} handleClose={handleWelcomeModal} />
+      )}
       <>
         {!id && <LandingPage userId={id} />}
         {id && (
