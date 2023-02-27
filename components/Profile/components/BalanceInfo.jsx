@@ -6,6 +6,7 @@ import { getAccountBalance } from 'util/MetaMask';
 import { NETWORKS } from 'config/networks';
 import { cryptoConvert } from 'services/chainlinkService';
 import { ls_GetChainID } from 'util/ApplicationStorage';
+import { formatNumber } from 'accounting';
 export default function BalanceInfo({ balanceInfo, userInfo }) {
   const [open, setOPen] = useState(true);
   const [walletValue, setWalletValue] = useState(0);
@@ -46,19 +47,21 @@ export default function BalanceInfo({ balanceInfo, userInfo }) {
       <div className='flex flex-col md:flex-row gap-6 flex-wrap  justify-between mt-4'>
         <div>
           <p className='text-textsubtle-100 font-bold '>
-            DAO, NFT, Splitter amount
+            DAO, NFT Collection Amount
           </p>
           <p className='text-black font-black text-[24px]'>
             $
             {balanceInfo?.dao_nft_splitter_amount &&
-              balanceInfo?.dao_nft_splitter_amount?.toFixed(2)}{' '}
+              formatNumber(
+                balanceInfo?.dao_nft_splitter_amount?.toFixed(2)
+              )}{' '}
             USD
           </p>
         </div>
         <div>
           <p className='text-textsubtle-100 font-bold '>Wallet value</p>
           <p className='text-black font-black mt-0'>
-            ${walletValue.toFixed(2)} USD
+            ${formatNumber(walletValue.toFixed(2))} USD
           </p>
           <div className='mt-2 flex items-center'>
             <p className='text-textSubtle'>
@@ -94,7 +97,7 @@ export default function BalanceInfo({ balanceInfo, userInfo }) {
               <p className='text-black font-black text-[24px] flex items-start'>
                 $
                 {balanceInfo?.dao_treasury &&
-                  balanceInfo?.dao_treasury.toFixed(2)}{' '}
+                  formatNumber(balanceInfo?.dao_treasury.toFixed(2))}{' '}
                 USD
                 <Link
                   className='ml-2 !no-underline text-textSubtle text-[16px]'
@@ -110,7 +113,9 @@ export default function BalanceInfo({ balanceInfo, userInfo }) {
               <p className='text-black font-black text-[24px] flex items-start'>
                 $
                 {balanceInfo?.nft_collection_treasury &&
-                  balanceInfo?.nft_collection_treasury.toFixed(2)}{' '}
+                  formatNumber(
+                    balanceInfo?.nft_collection_treasury.toFixed(2)
+                  )}{' '}
                 USD
                 <Link
                   className='ml-2 !no-underline text-textSubtle text-[16px]'
@@ -125,7 +130,7 @@ export default function BalanceInfo({ balanceInfo, userInfo }) {
               <p>Royalties</p>
               <p className='text-black font-black text-[24px] flex items-start'>
                 {balanceInfo?.royalties
-                  ? `${balanceInfo?.royalties.toFixed(2)} USD`
+                  ? `${formatNumber(balanceInfo?.royalties.toFixed(2))} USD`
                   : 'N/A'}
                 <Link
                   className='ml-2 !no-underline text-textSubtle text-[16px]'

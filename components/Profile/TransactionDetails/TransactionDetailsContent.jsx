@@ -381,8 +381,12 @@ export default function TransactionDetailsContent({ query }) {
                     <table class='min-w-full text-left text-sm font-light'>
                       <thead class='border-b font-medium border-[#B1C1C8]'>
                         <tr>
-                          {ITEMS[selectedTab].headers.map((title) => (
-                            <th scope='col' class='px-6 py-4 text-[#727E83]'>
+                          {ITEMS[selectedTab].headers.map((title, index) => (
+                            <th
+                              key={index}
+                              scope='col'
+                              class='px-6 py-4 text-[#727E83]'
+                            >
                               {title}
                             </th>
                           ))}
@@ -430,16 +434,20 @@ export default function TransactionDetailsContent({ query }) {
                     <table class='min-w-full text-left text-sm font-light'>
                       <thead class='border-b font-medium border-[#B1C1C8]'>
                         <tr>
-                          {ITEMS[selectedTab].headers.map((title) => (
-                            <th scope='col' class='px-6 py-4 text-[#727E83]'>
+                          {ITEMS[selectedTab].headers.map((title, index) => (
+                            <th
+                              key={index}
+                              scope='col'
+                              class='px-6 py-4 text-[#727E83]'
+                            >
                               {title}
                             </th>
                           ))}
                         </tr>
                       </thead>
                       <tbody>
-                        {collectionList.map((list) => (
-                          <tr class='border-b border-[#B1C1C8]'>
+                        {collectionList.map((list, index) => (
+                          <tr key={index} class='border-b border-[#B1C1C8]'>
                             <td class='whitespace-nowrap px-6 py-4'>
                               <Image
                                 src={NETWORKS?.[list?.blockchain]?.icon}
@@ -485,16 +493,20 @@ export default function TransactionDetailsContent({ query }) {
                     <table class='min-w-full text-left text-sm font-light'>
                       <thead class='border-b font-medium border-[#B1C1C8]'>
                         <tr>
-                          {ITEMS[selectedTab].headers.map((title) => (
-                            <th scope='col' class='px-6 py-4 text-[#727E83]'>
+                          {ITEMS[selectedTab].headers.map((title, index) => (
+                            <th
+                              key={index}
+                              scope='col'
+                              class='px-6 py-4 text-[#727E83]'
+                            >
                               {title}
                             </th>
                           ))}
                         </tr>
                       </thead>
                       <tbody>
-                        {royaltiesList.map((list) => (
-                          <tr class='border-b border-[#B1C1C8]'>
+                        {royaltiesList.map((list, index) => (
+                          <tr key={index} class='border-b border-[#B1C1C8]'>
                             <td class='whitespace-nowrap px-6 py-4'>
                               <Image
                                 src={NETWORKS?.[list?.blockchain]?.icon}

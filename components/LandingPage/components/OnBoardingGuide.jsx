@@ -84,10 +84,10 @@ export default function OnBoardingGuide() {
             <div className='flex my-5 pb-3 gap-x-4 overflow-x-auto whitespace-nowrap custom-scrollbar'>
               <div
                 onClick={() => redirectToNftCreatePage()}
-                className='cursor-pointer min-w-[434px]  rounded-[8px] bg-gradient-to-r from-white to-secondary-200/[0.8]'
+                className='cursor-pointer min-w-[86vw]  md:min-w-[434px]  rounded-[8px] bg-gradient-to-r from-white to-secondary-200/[0.8]'
               >
                 <div className='triangle'></div>
-                <div className='flex items-center px-6 pb-3 -mt-4'>
+                <div className='flex items-center px-6 pb-3 -mt-4 gap-4 '>
                   <div>
                     <div className='gradient-text-deep-pueple font-black text-[18px]'>
                       Create Your NFT
@@ -106,10 +106,10 @@ export default function OnBoardingGuide() {
                 href='https://decir.gitbook.io/decir/'
                 passHref
                 target='_blank'
-                className='!no-underline min-w-[407px]  rounded-[8px] bg-gradient-to-r from-white to-secondary-200/[0.8]'
+                className=' !no-underline min-w-[86vw] md:min-w-[407px]  rounded-[8px] bg-gradient-to-r from-white to-secondary-200/[0.8]'
               >
                 <div className='triangle'></div>
-                <div className='flex items-center px-6 pb-3 -mt-4'>
+                <div className='flex items-center px-6 pb-3 -mt-4 gap-4'>
                   <div>
                     <div className='gradient-text-deep-pueple font-black text-[18px]'>
                       Guide tour
@@ -131,10 +131,10 @@ export default function OnBoardingGuide() {
               </Link>
               <div
                 onClick={() => redirectToDiscord()}
-                className='cursor-pointer min-w-[302px] rounded-[8px] bg-gradient-to-r from-white to-secondary-200/[0.8]'
+                className='cursor-pointer  min-w-[86vw] md:min-w-[302px] rounded-[8px] bg-gradient-to-r from-white to-secondary-200/[0.8]'
               >
                 <div className='triangle'></div>
-                <div className='flex items-center px-6 pb-3 -mt-4'>
+                <div className='flex items-center px-6 pb-3 -mt-4 gap-4'>
                   <div className='cursor-pointer'>
                     <div className='gradient-text-deep-pueple font-black text-[18px]'>
                       Need help?

@@ -2,6 +2,7 @@ import React from 'react';
 import thumbIcon from 'assets/images/profile/card.svg';
 import Image from 'next/image';
 import Link from 'next/link';
+import MaintainDaoCommunitySteps from 'components/LandingPage/components/MaintainDaoCommunitySteps';
 
 export default function DaoTable({ tableData }) {
   return (
@@ -65,6 +66,7 @@ export default function DaoTable({ tableData }) {
                 </Link>
               </div>
             ))}
+          {tableData?.length === 1 && <MaintainDaoCommunitySteps />}
         </div>
         <Link
           className='md:absolute  md:bottom-[10px] md:left-[50%] md:-translate-x-1/2 md:-translate-y-1/2  block mx-auto w-[100px] text-black font-black text-[14px] '

@@ -622,7 +622,7 @@ const Profile = ({ id }) => {
 
               {/* minted NFT start */}
               <div className='mt-[50px]'>
-                <div className='mb-5 flex px-4 flex-wrap'>
+                <div className='mb-5 flex  flex-wrap'>
                   <div className='text-[24px] text-txtblack font-black'>
                     Minted NFT
                   </div>
