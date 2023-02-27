@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import styles from './index.module.css';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import WalletDropDownMenu from './WalletDropdownMenu';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
@@ -490,6 +490,14 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     }
   };
 
+  const pageTitle = useMemo(() => {
+    let paths = router?.pathname?.split('/');
+    let queries = router?.query;
+
+    let title = queries?.type ? `${queries.type} ${paths[1]}` : paths[1];
+    return title;
+  }, [router]);
+
   return (
     <header className='bg-[#e2ecf0]'>
       <AccountChangedModal
@@ -534,7 +542,9 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
             >
               <Image src={Logo} alt='DeCir' />
             </div> */}
-            <h1 className='!text-[24px] !font-black text-[#000]'>Dashboard</h1>
+            <h1 className='!text-[24px] !font-black text-[#000] capitalize'>
+              {pageTitle}
+            </h1>
 
             {/* <form className="mr-6 flex-1 hidden md:block">
               <label

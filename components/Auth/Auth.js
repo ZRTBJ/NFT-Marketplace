@@ -8,6 +8,8 @@ const PrivateRoutes = [
   'dao/create',
   'settings',
   'token-gated',
+  'notifications',
+  'transactions',
 ];
 
 const Auth = ({ children }) => {

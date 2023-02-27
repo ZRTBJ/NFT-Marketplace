@@ -101,7 +101,7 @@ export default function BalanceInfo({ balanceInfo, userInfo }) {
                 USD
                 <Link
                   className='ml-2 !no-underline text-textSubtle text-[16px]'
-                  href='/transaction-details/?tab=dao'
+                  href='/transactions/?tab=dao'
                 >
                   <i className='fa-solid fa-chevron-right'></i>
                 </Link>
@@ -119,7 +119,7 @@ export default function BalanceInfo({ balanceInfo, userInfo }) {
                 USD
                 <Link
                   className='ml-2 !no-underline text-textSubtle text-[16px]'
-                  href='/transaction-details/?tab=collection'
+                  href='/transactions/?tab=collection'
                 >
                   <i className='fa-solid fa-chevron-right'></i>
                 </Link>
@@ -134,7 +134,7 @@ export default function BalanceInfo({ balanceInfo, userInfo }) {
                   : 'N/A'}
                 <Link
                   className='ml-2 !no-underline text-textSubtle text-[16px]'
-                  href='/transaction-details/?tab=royalty'
+                  href='/transactions/?tab=royalty'
                 >
                   <i className='fa-solid fa-chevron-right'></i>
                 </Link>

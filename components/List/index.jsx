@@ -197,7 +197,7 @@ function List({ query }) {
     <>
       {isLoading && <div className='loading'></div>}
       <div className='text-txtblack'>
-        <h1 className='my-6 pl-4'>
+        {/* <h1 className='my-6 pl-4'>
           {query?.type === 'collection'
             ? 'Collection List'
             : query?.type === 'dao'
@@ -205,8 +205,8 @@ function List({ query }) {
             : query?.type === 'tokenGated'
             ? 'Token Gated Project List'
             : 'Minted NFT List'}
-        </h1>
-        <section className='flex px-4 mb-6'>
+        </h1> */}
+        <section className='flex px-4 mb-6 mt-6'>
           <div className='mr-4 flex-1'>
             <div className='relative'>
               <div className='flex absolute inset-y-0 left-0 items-center pl-4 pointer-events-none'>
