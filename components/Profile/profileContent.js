@@ -21,7 +21,7 @@ import { getUserNotification } from 'redux/user/action';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import SuccessModal from 'components/Modals/SuccessModal';
-import { getUserCollections } from 'services/collection/collectionService';
+import { getUserCollectionSalesInformation } from 'services/User/userService';
 import ErrorModal from 'components/Modals/ErrorModal';
 import { getMintedNftListByUserId } from 'services/nft/nftService';
 import NFTListCard from 'components/Cards/NFTListCard';
@@ -315,8 +315,9 @@ const Profile = ({ id }) => {
       id: id,
       page: 1,
       limit: 5,
+      order_by: 'newer',
     };
-    await getUserCollections(payload)
+    await getUserCollectionSalesInformation(payload)
       .then((e) => {
         if (e.code === 0 && e.data !== null) {
           setCollectionList(e.data);

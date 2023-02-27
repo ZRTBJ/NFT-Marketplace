@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import CreateNFTModal from 'components/Project/CreateDAOandNFT/components/CreateNFTModal.jsx';
 import NFTPublishingSteps from 'components/LandingPage/components/NFTPublishingSteps';
+import { formatNumber } from 'accounting';
 
 export default function CollectionTable({ tableData }) {
   const [showCreateNFTModal, setShowCreateNFTModal] = useState(false);
@@ -58,8 +59,8 @@ export default function CollectionTable({ tableData }) {
                       </p>
                       <p className='font-black m-0 text-black text-[12px] truncate'>
                         {item?.summary?.holding_value_usd
-                          ? `$${item?.summary?.holding_value_usd.toFixed(
-                              2
+                          ? `$${formatNumber(
+                              item?.summary?.holding_value_usd.toFixed(2)
                             )} USD`
                           : '$0 USD'}
                       </p>

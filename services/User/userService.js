@@ -44,3 +44,9 @@ export async function searchContent(payload) {
 export async function getUserRevenue(id) {
   return await client('GET', `/user/${id}/revenue`);
 }
+export async function getUserCollectionSalesInformation(payload) {
+  return await client(
+    'GET',
+    `/collection/sales?page=${payload.page}&limit=${payload.limit}&order_by=${payload.order_by}`
+  );
+}
