@@ -20,6 +20,7 @@ import emptyStateCommon from 'assets/images/profile/emptyStateCommon.svg';
 import Image from 'next/image';
 import TokenGatedProjectCard from 'components/Cards/TokenGatedProjectCard';
 import { getTokenGatedProjectList } from 'services/tokenGated/tokenGatedService';
+import { ls_GetUserID } from 'util/ApplicationStorage';
 
 function List({ query }) {
   SwiperCore.use([Autoplay]);
@@ -62,7 +63,7 @@ function List({ query }) {
       );
     } else if (query?.type === 'dao') {
       let payloadData = {
-        id: query?.user,
+        id: ls_GetUserID(),
         page: payload.page,
         perPage: 10,
         keyword: payload.keyword,
@@ -71,7 +72,7 @@ function List({ query }) {
       projectResponse = await getUserProjectListById(payloadData);
     } else if (query?.type === 'nft') {
       let payloadData = {
-        userId: query?.user,
+        userId: ls_GetUserID(),
         page: payload.page,
         limit: 10,
         keyword: payload.keyword,
@@ -85,7 +86,7 @@ function List({ query }) {
         listType = 'user';
       }
       let payloadData = {
-        id: query?.user,
+        id: ls_GetUserID(),
         page: payload.page,
         limit: 10,
         keyword: payload.keyword,
@@ -142,7 +143,7 @@ function List({ query }) {
       );
       // await getCollectionList();
     })();
-  }, [sortType]);
+  }, [sortType, query]);
 
   function handleSortType(type) {
     setSortType(type);

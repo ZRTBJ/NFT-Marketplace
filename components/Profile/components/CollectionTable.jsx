@@ -28,9 +28,10 @@ export default function CollectionTable({ tableData }) {
         <div className='mb-5'>
           {tableData &&
             tableData?.map((item, index) => (
-              <div
+              <Link
+                href={`/collection/${item?.id}`}
                 key={index}
-                className='flex flex-nowrap min-w-[500px] pr-4 w-full items-center gap-4 mb-6'
+                className='flex md:items-center gap-2 md:gap-4 mb-6 !no-underline hover:text-black text-black'
               >
                 <Image
                   className='w-[88px] h-[88px] rounded-xl object-cover'
@@ -50,41 +51,39 @@ export default function CollectionTable({ tableData }) {
                       ? `${item?.name?.substring(0, 24)}...`
                       : item?.name}
                   </p>
-                  <div className='flex  items-center '>
-                    <div className='w-[40%] pr-2'>
-                      <p className='text-[12px] m-0 truncate'>
-                        {item?.collection_symbol?.length > 10
-                          ? `${item?.collection_symbol?.substring(0, 10)}...`
-                          : item?.collection_symbol}
+                  <div className='grid grid-cols-12 '>
+                    <div className='col-span-3 md:col-span-4'>
+                      <p className='text-[10px] md:text-[12px] m-0 truncate'>
+                        {item?.collection_symbol}
                       </p>
-                      <p className='font-black m-0 text-black text-[12px] truncate'>
+                      <p className='font-black m-0 text-black text-[10px] md:text-[12px] truncate'>
                         {item?.summary?.holding_value_usd
                           ? `$${formatNumber(
                               item?.summary?.holding_value_usd.toFixed(2)
-                            )} USD`
+                            )}  USD`
                           : '$0 USD'}
                       </p>
                     </div>
-                    <div className='w-[40%] pr-2'>
-                      <p className='m-0 text-[12px]'>Remaining / Supply</p>
-                      <p className='m-0 text-[12px] font-black text-black truncate'>
+                    <div className='col-span-6 md:col-span-4 text-center'>
+                      <p className='m-0 text-[10px] md:text-[12px]'>
+                        Remaining / Supply
+                      </p>
+                      <p className='m-0 text-[10px] md:text-[12px] font-black text-black truncate'>
                         {parseInt(item?.total_supply) -
                           parseInt(item?.summary?.sold_count)}
                         /{item?.total_supply}
                       </p>
                     </div>
-                    <div className='w-[20%]'>
-                      <p className='m-0 text-[12px]'>Owners</p>
-                      <p className='m-0 text-[12px] font-black text-black truncate'>
+                    <div className='col-span-3 md:col-span-4 text-center'>
+                      <p className='m-0 text-[10px] md:text-[12px]'>Owners</p>
+                      <p className='m-0 text-[10px] md:text-[12px] font-black text-black truncate'>
                         {item?.summary?.buyer_count}
                       </p>
                     </div>
                   </div>
                 </div>
-                <Link href={`/collection/${item?.id}`}>
-                  <i className='fa-solid fa-chevron-right'></i>
-                </Link>
-              </div>
+                <i className='self-center fa-solid fa-chevron-right'></i>
+              </Link>
             ))}
           {tableData?.length === 1 && <NFTPublishingSteps />}
         </div>

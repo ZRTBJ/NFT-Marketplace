@@ -13,13 +13,13 @@ import FeatureRequest from '../FeatureRequest/FeatureRequest';
 import { useRouter } from 'next/router';
 
 const MENU_ITEMS = [
-  {
-    id: 0,
-    label: '🌈 Home',
-    path: 'https://decir.io/',
-    external: true,
-    isAuthenticated: false,
-  },
+  // {
+  //   id: 0,
+  //   label: '🌈 Home',
+  //   path: 'https://decir.io/',
+  //   external: true,
+  //   isAuthenticated: false,
+  // },
   {
     id: 1,
     label: '🎛️ Dashboard',

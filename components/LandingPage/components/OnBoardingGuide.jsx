@@ -156,26 +156,30 @@ export default function OnBoardingGuide() {
         </div>
         <div className='mx-6'>
           <p className=' text-[12px]'>
-            <span className='font-black'>Standard</span> {gasPrice?.standard}{' '}
-            GWei - ${gasPrice?.usd} | ~5 Mins
+            <span className='font-black'>Standard</span>{' '}
+            {Number(gasPrice?.standard).toFixed(2)} GWei - ${gasPrice?.usd} | ~5
+            Mins
           </p>
         </div>
         <div className='mx-6'>
           <p className=' text-[12px]'>
-            <span className='font-black'>Slow</span> {gasPrice?.slow} GWei - $
-            {gasPrice?.usd} | ~5 Mins
+            <span className='font-black'>Slow</span>{' '}
+            {Number(gasPrice?.slow).toFixed(2)} GWei - ${gasPrice?.usd} | ~5
+            Mins
           </p>
         </div>
         <div className='mx-6'>
           <p className=' text-[12px]'>
-            <span className='font-black'>Fast</span> {gasPrice?.fast} GWei - $
-            {gasPrice?.usd} | ~5 Mins
+            <span className='font-black'>Fast</span>{' '}
+            {Number(gasPrice?.fast).toFixed(2)} GWei - ${gasPrice?.usd} | ~5
+            Mins
           </p>
         </div>
         <div>
           <p className=' text-[12px]'>
-            <span className='font-black'>Rapid</span> {gasPrice?.rapid} GWei - $
-            {gasPrice?.usd} | ~5 Mins
+            <span className='font-black'>Rapid</span>{' '}
+            {Number(gasPrice?.rapid).toFixed(2)} GWei - ${gasPrice?.usd} | ~5
+            Mins
           </p>
         </div>
       </div>

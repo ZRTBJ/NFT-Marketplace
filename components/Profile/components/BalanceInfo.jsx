@@ -6,7 +6,7 @@ import { getAccountBalance } from 'util/MetaMask';
 import { NETWORKS } from 'config/networks';
 import { cryptoConvert } from 'services/chainlinkService';
 import { ls_GetChainID } from 'util/ApplicationStorage';
-import { formatNumber } from 'accounting';
+import { formatMoney } from 'accounting';
 export default function BalanceInfo({ balanceInfo, userInfo }) {
   const [open, setOPen] = useState(true);
   const [walletValue, setWalletValue] = useState(0);
@@ -50,22 +50,21 @@ export default function BalanceInfo({ balanceInfo, userInfo }) {
             DAO, NFT Collection Amount
           </p>
           <p className='text-black font-black text-[24px]'>
-            $
-            {balanceInfo?.dao_nft_splitter_amount &&
-              formatNumber(
-                balanceInfo?.dao_nft_splitter_amount?.toFixed(2)
-              )}{' '}
+            {balanceInfo?.dao_nft_splitter_amount
+              ? formatMoney(balanceInfo?.dao_nft_splitter_amount)
+              : '$0 '}
             USD
           </p>
         </div>
         <div>
           <p className='text-textsubtle-100 font-bold '>Wallet value</p>
           <p className='text-black font-black mt-0'>
-            ${formatNumber(walletValue.toFixed(2))} USD
+            {walletValue ? formatMoney(walletValue) : '$0 '}
+            USD
           </p>
           <div className='mt-2 flex items-center'>
             <p className='text-textSubtle'>
-              {userInfo && walletAddressTruncate(userInfo?.eoa)}
+              {userInfo?.eoa && walletAddressTruncate(userInfo?.eoa)}
             </p>
             <i
               onClick={() => {
@@ -91,55 +90,47 @@ export default function BalanceInfo({ balanceInfo, userInfo }) {
           </span>
         </button>
         {open && (
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-            <div className='bg-white p-4 rounded-2xl flex flex-wrap items-center justify-between'>
-              <p>DAO Treasury</p>
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-4 '>
+            <Link
+              href='/transactions/?tab=dao'
+              className='!no-underline text-black bg-white p-4 rounded-2xl flex flex-wrap items-center justify-between'
+            >
+              <p className='text-textSubtle-200'>DAO Treasury</p>
               <p className='text-black font-black text-[24px] flex items-start'>
-                $
-                {balanceInfo?.dao_treasury &&
-                  formatNumber(balanceInfo?.dao_treasury.toFixed(2))}{' '}
+                {balanceInfo?.dao_treasury
+                  ? formatMoney(balanceInfo?.dao_treasury)
+                  : '$0 '}
                 USD
-                <Link
-                  className='ml-2 !no-underline text-textSubtle text-[16px]'
-                  href='/transactions/?tab=dao'
-                >
-                  <i className='fa-solid fa-chevron-right'></i>
-                </Link>
+                <i className='fa-solid fa-chevron-right text-[16px] ml-2 mt-1'></i>
               </p>
-            </div>
+            </Link>
 
-            <div className='bg-white p-4 rounded-2xl flex flex-wrap items-center justify-between'>
-              <p>NFT Collection</p>
+            <Link
+              href='/transactions/?tab=collection'
+              className='!no-underline text-black bg-white p-4 rounded-2xl flex flex-wrap items-center justify-between'
+            >
+              <p className='text-textSubtle-200'>NFT Collection</p>
               <p className='text-black font-black text-[24px] flex items-start'>
-                $
-                {balanceInfo?.nft_collection_treasury &&
-                  formatNumber(
-                    balanceInfo?.nft_collection_treasury.toFixed(2)
-                  )}{' '}
+                {balanceInfo?.nft_collection_treasury
+                  ? formatMoney(balanceInfo?.nft_collection_treasury)
+                  : '$0 '}
                 USD
-                <Link
-                  className='ml-2 !no-underline text-textSubtle text-[16px]'
-                  href='/transactions/?tab=collection'
-                >
-                  <i className='fa-solid fa-chevron-right'></i>
-                </Link>
+                <i className='fa-solid fa-chevron-right ml-2  mt-1 text-[16px]'></i>
               </p>
-            </div>
+            </Link>
 
-            <div className='bg-white p-4 rounded-2xl flex flex-wrap items-center justify-between'>
-              <p>Royalties</p>
+            <Link
+              href='/transactions/?tab=royalty'
+              className='!no-underline text-black bg-white p-4 rounded-2xl flex flex-wrap items-center justify-between'
+            >
+              <p className='text-textSubtle-200'>Royalties</p>
               <p className='text-black font-black text-[24px] flex items-start'>
-                {balanceInfo?.royalties
-                  ? `${formatNumber(balanceInfo?.royalties.toFixed(2))} USD`
-                  : 'N/A'}
-                <Link
-                  className='ml-2 !no-underline text-textSubtle text-[16px]'
-                  href='/transactions/?tab=royalty'
-                >
-                  <i className='fa-solid fa-chevron-right'></i>
-                </Link>
+                {balanceInfo?.nft_collection_treasury
+                  ? `${formatMoney(balanceInfo?.nft_collection_treasury)} USD`
+                  : 'N/A '}
+                <i className='fa-solid fa-chevron-right ml-2 mt-1 text-[16px]'></i>
               </p>
-            </div>
+            </Link>
           </div>
         )}
       </div>

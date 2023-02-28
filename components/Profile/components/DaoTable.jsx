@@ -20,9 +20,10 @@ export default function DaoTable({ tableData }) {
         <div className='mb-5'>
           {tableData &&
             tableData?.map((item, index) => (
-              <div
+              <Link
+                href={`/dao/${item?.id}`}
                 key={index}
-                className='flex flex-nowrap min-w-[500px] pr-4 w-full items-center gap-4 mb-6'
+                className='flex w-full md:items-center gap-2 md:gap-4 mb-6 !no-underline hover:text-black text-black'
               >
                 <Image
                   src={
@@ -42,8 +43,8 @@ export default function DaoTable({ tableData }) {
                       ? `${item?.name?.substring(0, 24)}...`
                       : item?.name}
                   </p>
-                  <div className='flex  items-center '>
-                    <div className='w-[40%] pr-2'>
+                  <div className='grid grid-cols-2'>
+                    <div className=''>
                       <p className='text-[12px] m-0 truncate'>DAO Member</p>
                       <p className='font-black m-0 text-black text-[12px] truncate'>
                         {item?.summary?.member_count
@@ -51,7 +52,7 @@ export default function DaoTable({ tableData }) {
                           : '0'}
                       </p>
                     </div>
-                    <div className='w-[40%] pr-2'>
+                    <div className=''>
                       <p className='m-0 text-[12px]'>Linked Collection</p>
                       <p className='m-0 text-[12px] font-black text-black truncate'>
                         {item?.summary?.collection_count
@@ -61,10 +62,8 @@ export default function DaoTable({ tableData }) {
                     </div>
                   </div>
                 </div>
-                <Link href={`/dao/${item?.id}`}>
-                  <i className='fa-solid fa-chevron-right'></i>
-                </Link>
-              </div>
+                <i className='self-center fa-solid fa-chevron-right'></i>
+              </Link>
             ))}
           {tableData?.length === 1 && <MaintainDaoCommunitySteps />}
         </div>

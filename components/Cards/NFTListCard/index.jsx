@@ -4,7 +4,7 @@ import Eth from 'assets/images/network/eth.svg';
 import Polygon from 'assets/images/network/polygon.svg';
 import Bnb from 'assets/images/network/bnb.svg';
 import Image from 'next/image';
-
+import defaultImage from 'assets/images/defaultImage.svg';
 const currency = {
   eth: Eth,
   matic: Polygon,
@@ -18,7 +18,7 @@ export default function NFTListCard({ nft }) {
         <Link href={`/minted-nft/${nft?.id}/${nft?.token_id}`}>
           <Image
             className='h-[176px] rounded-xl md:h-[276px] shadow object-cover w-full'
-            src={nft?.asset?.path}
+            src={nft?.asset?.path ? nft?.asset?.path : defaultImage}
             alt=''
             width={276}
             height={276}
