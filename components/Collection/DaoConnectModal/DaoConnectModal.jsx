@@ -12,7 +12,8 @@ import SuccessModal from 'components/Modals/SuccessModal';
 import ErrorModal from 'components/Modals/ErrorModal';
 import { NETWORKS } from 'config/networks';
 import { uniqBy } from 'lodash';
-import { event } from "nextjs-google-analytics";
+import { event } from 'nextjs-google-analytics';
+import TagManager from 'react-gtm-module';
 
 export default function DaoConnectModal({
   handleClose,
@@ -96,7 +97,14 @@ export default function DaoConnectModal({
     });
   }
   async function connectDao() {
-    event("collection_connect_dao", { category: "collection"});
+    event('collection_connect_dao', { category: 'collection' });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'collection',
+        pageTitle: 'collection_connect_dao',
+      },
+    });
     setDaoConnecting(true);
     let payload = { ...collection };
     payload.project_uid = selectedOption?.id;

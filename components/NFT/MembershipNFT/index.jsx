@@ -30,8 +30,8 @@ import MoonpayModal from 'components/Modals/MoonpayModal';
 import Image from 'next/image';
 import { NETWORKS } from 'config/networks';
 import ConfirmationModal from 'components/Modals/ConfirmationModal';
-import { event } from "nextjs-google-analytics";
-
+import { event } from 'nextjs-google-analytics';
+import TagManager from 'react-gtm-module';
 
 export default function MembershipNFT({ query }) {
   const fileUploadNotification = useSelector((state) =>
@@ -346,8 +346,20 @@ export default function MembershipNFT({ query }) {
     }, 50);
   }
   async function collectionCreate() {
-    event("create_collection", { category: "collection", label: "blockchain", value: ls_GetChainID() });
-
+    event('create_collection', {
+      category: 'collection',
+      label: 'blockchain',
+      value: ls_GetChainID(),
+    });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'collection',
+        pageTitle: 'create_collection',
+        label: 'blockchain',
+        value: ls_GetChainID(),
+      },
+    });
     let collection_id = '';
     let payload = {
       collection_type: 'membership',
@@ -397,7 +409,14 @@ export default function MembershipNFT({ query }) {
     request.append('benefit_array', JSON.stringify(benefit_array));
 
     if (!updateMode) {
-      event("create_membership_nft", { category: "nft"});
+      event('create_membership_nft', { category: 'nft' });
+      TagManager.dataLayer({
+        dataLayer: {
+          event: 'click_event',
+          category: 'nft',
+          pageTitle: 'create_membership_nft',
+        },
+      });
       await createMembershipNft(request)
         .then((res) => {
           if (res.code === 0) {
@@ -1359,7 +1378,7 @@ export default function MembershipNFT({ query }) {
           message={errorMessage}
         />
       )}
-      {showMoonpayModal && process.env.NEXT_PUBLIC_ENV !== "production" && (
+      {showMoonpayModal && process.env.NEXT_PUBLIC_ENV !== 'production' && (
         <MoonpayModal
           handleClose={() => {
             setShowMoonpayModal(false);

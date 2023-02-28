@@ -46,6 +46,8 @@ import DaoTable from './components/DaoTable';
 import UseCase from 'components/LandingPage/components/UseCase';
 import WelcomeModal from 'components/Commons/WelcomeModal/WelcomeModal';
 import { ls_SetNewUser, ls_GetNewUser } from 'util/ApplicationStorage';
+import TagManager from 'react-gtm-module';
+
 const nftUseCase = {
   usedFor: 'NFTs',
   text: 'Lorem Ipsum is simply dummy text of the printing and Ipsum has been ',
@@ -293,6 +295,13 @@ const Profile = ({ id }) => {
   }
   const onCreateTokenGatedProject = async () => {
     event('create_token_gate_project', { category: 'token_gate' });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'token_gate',
+        pageTitle: 'create_token_gate_project',
+      },
+    });
     setShowOverlayLoading(true);
     let title = `Unnamed Project ${new Date().toISOString()}`;
     await createTokenGatedProject(title)

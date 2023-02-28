@@ -23,6 +23,7 @@ import Config from 'config/config';
 import Maintenance from 'components/Commons/Maintenance';
 import { GoogleAnalytics } from 'nextjs-google-analytics';
 import FloatingContactForm from 'components/Commons/FloatingContactForm';
+import TagManager from 'react-gtm-module';
 
 dynamic(() => import('tw-elements'), { ssr: false });
 
@@ -37,6 +38,10 @@ function MyApp({ Component, pageProps }) {
   const [isTokenGatedProjectPublicView, setIsTokenGatedProjectPublicView] =
     useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    TagManager.initialize({ gtmId: process.env.NEXT_PUBLIC_GOOGLE_TAG_KEY });
+  }, []);
 
   useEffect(() => {
     const use = async () => {

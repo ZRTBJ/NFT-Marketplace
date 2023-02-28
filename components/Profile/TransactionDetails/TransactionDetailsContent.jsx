@@ -12,6 +12,7 @@ import { getUserCollections } from 'services/collection/collectionService';
 import WithdrawModal from 'components/Collection/WithdrawModal';
 import NetworkHandlerModal from 'components/Modals/NetworkHandlerModal';
 import { toast } from 'react-toastify';
+import Link from 'next/link';
 
 const ITEMS = {
   dao: {
@@ -359,7 +360,7 @@ export default function TransactionDetailsContent({ query }) {
           className='mt-[32px] bg-[#fff] rounded-[16px] py-[25px]'
           style={{ boxShadow: '0px 16px 32px rgba(2, 17, 24, 0.08)' }}
         >
-          <div className='bg-[#E1ECF0] flex items-center rounded-[10px] w-[65%] mx-auto mb-4'>
+          <div className='bg-[#E1ECF0] flex items-center rounded-[10px] w-[95%] md:w-[65%] mx-auto mb-4'>
             {values.map((value) => (
               <div
                 key={value.key}
@@ -368,7 +369,9 @@ export default function TransactionDetailsContent({ query }) {
                 }`}
                 onClick={() => setSelectedTab(value.key)}
               >
-                <p className='font-bold text-[16px]'>{value.label}</p>
+                <p className='font-bold text-[15px] md:text-[16px]'>
+                  {value.label}
+                </p>
                 <p className='text-[12px] mt-[4px]'>~ ${value.value} USD</p>
               </div>
             ))}
@@ -393,35 +396,58 @@ export default function TransactionDetailsContent({ query }) {
                         </tr>
                       </thead>
                       <tbody>
-                        {projectList.map((list) => (
-                          <tr class='border-b border-[#B1C1C8]' key={list.id}>
-                            <td class='whitespace-nowrap px-6 py-4'>
-                              <Image
-                                src={NETWORKS?.[list?.blockchain]?.icon}
-                                alt='Eth'
-                                height={32}
-                                width={32}
-                              />
-                            </td>
-                            <td class='whitespace-nowrap px-6 py-4'>
-                              {list?.name}
-                            </td>
-                            <td class='whitespace-nowrap px-6 py-4'>
-                              {' '}
-                              {list?.treasury_wallet
-                                ? walletAddressTruncate(list.treasury_wallet)
-                                : '-'}
-                            </td>
-                            <td class='whitespace-nowrap px-6 py-4'>-</td>
-                            <td class='whitespace-nowrap px-6 py-4'>
-                              <button className='text-[#2AD100] text-[12px] font-bold border-[#2AD100] border-[1px] rounded-[8px] h-[32px] w-[88px]'>
-                                Claim
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
+                        {projectList.length
+                          ? projectList.map((list) => (
+                              <tr
+                                class='border-b border-[#B1C1C8]'
+                                key={list.id}
+                              >
+                                <td class='whitespace-nowrap px-6 py-4'>
+                                  <Image
+                                    src={NETWORKS?.[list?.blockchain]?.icon}
+                                    alt='Eth'
+                                    height={32}
+                                    width={32}
+                                  />
+                                </td>
+                                <td class='whitespace-nowrap px-6 py-4'>
+                                  {list?.name}
+                                </td>
+                                <td class='whitespace-nowrap px-6 py-4'>
+                                  {' '}
+                                  {list?.treasury_wallet
+                                    ? walletAddressTruncate(
+                                        list.treasury_wallet
+                                      )
+                                    : '-'}
+                                </td>
+                                <td class='whitespace-nowrap px-6 py-4'>-</td>
+                                <td class='whitespace-nowrap px-6 py-4'>
+                                  <button className='text-[#2AD100] text-[12px] font-bold border-[#2AD100] border-[1px] rounded-[8px] h-[32px] w-[88px]'>
+                                    Claim
+                                  </button>
+                                </td>
+                              </tr>
+                            ))
+                          : null}
                       </tbody>
                     </table>
+                    {!projectList.length ? (
+                      <div className='flex items-center flex-col justify-center w-full h-[400px]'>
+                        <h2 className='!text-[20px] text-center'>
+                          Sorry Buddy, <br />
+                          You don’t have any DAO group yet. 😢{' '}
+                        </h2>
+                        <p className='text-[16px] mt-1 mb-4'>
+                          Let’s get start to create your DAO :{' '}
+                        </p>
+                        <Link href='/dao/create'>
+                          <button className='contained-button-new text-[16px] w-[320px] mt-4'>
+                            Create DAO
+                          </button>
+                        </Link>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               </div>
@@ -446,41 +472,63 @@ export default function TransactionDetailsContent({ query }) {
                         </tr>
                       </thead>
                       <tbody>
-                        {collectionList.map((list, index) => (
-                          <tr key={index} class='border-b border-[#B1C1C8]'>
-                            <td class='whitespace-nowrap px-6 py-4'>
-                              <Image
-                                src={NETWORKS?.[list?.blockchain]?.icon}
-                                alt='Eth'
-                                height={32}
-                                width={32}
-                              />
-                            </td>
-                            <td class='whitespace-nowrap px-6 py-4'>
-                              {list?.name}
-                            </td>
-                            <td class='whitespace-nowrap px-6 py-4'>
-                              {' '}
-                              {list?.contract_address
-                                ? walletAddressTruncate(list.contract_address)
-                                : '-'}
-                            </td>
-                            <td class='whitespace-nowrap px-6 py-4'>
-                              ~$ {list?.summary?.holding_value_usd}
-                            </td>
-                            <td class='whitespace-nowrap px-6 py-4'>
-                              <button
-                                disabled={!list?.withdraw_value}
-                                onClick={(e) => handleWithdrawModel(e, list)}
-                                className='text-[#2AD100] text-[12px] font-bold border-[#2AD100] border-[1px] rounded-[8px] h-[32px] w-[88px]'
-                              >
-                                Claim
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
+                        {collectionList.length
+                          ? collectionList.map((list, index) => (
+                              <tr key={index} class='border-b border-[#B1C1C8]'>
+                                <td class='whitespace-nowrap px-6 py-4'>
+                                  <Image
+                                    src={NETWORKS?.[list?.blockchain]?.icon}
+                                    alt='Eth'
+                                    height={32}
+                                    width={32}
+                                  />
+                                </td>
+                                <td class='whitespace-nowrap px-6 py-4'>
+                                  {list?.name}
+                                </td>
+                                <td class='whitespace-nowrap px-6 py-4'>
+                                  {' '}
+                                  {list?.contract_address
+                                    ? walletAddressTruncate(
+                                        list.contract_address
+                                      )
+                                    : '-'}
+                                </td>
+                                <td class='whitespace-nowrap px-6 py-4'>
+                                  ~$ {list?.summary?.holding_value_usd}
+                                </td>
+                                <td class='whitespace-nowrap px-6 py-4'>
+                                  <button
+                                    disabled={!list?.withdraw_value}
+                                    onClick={(e) =>
+                                      handleWithdrawModel(e, list)
+                                    }
+                                    className='text-[#2AD100] text-[12px] font-bold border-[#2AD100] border-[1px] rounded-[8px] h-[32px] w-[88px]'
+                                  >
+                                    Claim
+                                  </button>
+                                </td>
+                              </tr>
+                            ))
+                          : null}
                       </tbody>
                     </table>
+                    {!collectionList.length ? (
+                      <div className='flex items-center flex-col justify-center w-full h-[400px]'>
+                        <h2 className='!text-[20px] text-center'>
+                          Sorry Buddy, <br />
+                          You don’t have any NFT Collection yet. 😢{' '}
+                        </h2>
+                        <p className='text-[16px] mt-1 mb-4'>
+                          Let’s get start to create your collection :{' '}
+                        </p>
+                        <Link href='/collection/create'>
+                          <button className='contained-button-new text-[16px] w-[320px] mt-4'>
+                            Create collection
+                          </button>
+                        </Link>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               </div>
@@ -505,45 +553,57 @@ export default function TransactionDetailsContent({ query }) {
                         </tr>
                       </thead>
                       <tbody>
-                        {royaltiesList.map((list, index) => (
-                          <tr key={index} class='border-b border-[#B1C1C8]'>
-                            <td class='whitespace-nowrap px-6 py-4'>
-                              <Image
-                                src={NETWORKS?.[list?.blockchain]?.icon}
-                                alt='Eth'
-                                height={32}
-                                width={32}
-                              />
-                            </td>
-                            <td class='whitespace-nowrap px-6 py-4'>
-                              {' '}
-                              {list?.royalty_address
-                                ? walletAddressTruncate(list.royalty_address)
-                                : '-'}
-                            </td>
-                            <td class='whitespace-nowrap px-6 py-4'>
-                              {list?.royalty_percent}
-                            </td>
-                            <td class='whitespace-nowrap px-6 py-4'>
-                              {list?.collection_name}
-                            </td>
+                        {royaltiesList.length
+                          ? royaltiesList.map((list, index) => (
+                              <tr key={index} class='border-b border-[#B1C1C8]'>
+                                <td class='whitespace-nowrap px-6 py-4'>
+                                  <Image
+                                    src={NETWORKS?.[list?.blockchain]?.icon}
+                                    alt='Eth'
+                                    height={32}
+                                    width={32}
+                                  />
+                                </td>
+                                <td class='whitespace-nowrap px-6 py-4'>
+                                  {' '}
+                                  {list?.royalty_address
+                                    ? walletAddressTruncate(
+                                        list.royalty_address
+                                      )
+                                    : '-'}
+                                </td>
+                                <td class='whitespace-nowrap px-6 py-4'>
+                                  {list?.royalty_percent}
+                                </td>
+                                <td class='whitespace-nowrap px-6 py-4'>
+                                  {list?.collection_name}
+                                </td>
 
-                            <td class='whitespace-nowrap px-6 py-4'>
-                              ~$ {list?.earnable_amount}
-                            </td>
-                            <td class='whitespace-nowrap px-6 py-4'>
-                              <button
-                                disabled={!list?.list?.earnable_amount}
-                                onClick={() => claimRoyaltyById(list)}
-                                className='text-[#2AD100] text-[12px] font-bold border-[#2AD100] border-[1px] rounded-[8px] h-[32px] w-[88px]'
-                              >
-                                Claim
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
+                                <td class='whitespace-nowrap px-6 py-4'>
+                                  ~$ {list?.earnable_amount}
+                                </td>
+                                <td class='whitespace-nowrap px-6 py-4'>
+                                  <button
+                                    disabled={!list?.list?.earnable_amount}
+                                    onClick={() => claimRoyaltyById(list)}
+                                    className='text-[#2AD100] text-[12px] font-bold border-[#2AD100] border-[1px] rounded-[8px] h-[32px] w-[88px]'
+                                  >
+                                    Claim
+                                  </button>
+                                </td>
+                              </tr>
+                            ))
+                          : null}
                       </tbody>
                     </table>
+                    {!royaltiesList.length ? (
+                      <div className='flex items-center flex-col justify-center w-full h-[400px]'>
+                        <h2 className='!text-[20px] text-center'>
+                          Sorry Buddy, <br />
+                          You don’t have any Royalties yet. 😢{' '}
+                        </h2>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               </div>

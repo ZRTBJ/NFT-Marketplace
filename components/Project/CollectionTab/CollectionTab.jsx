@@ -17,8 +17,8 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import emptyStateCommon from 'assets/images/profile/emptyStateCommon.svg';
 import Image from 'next/image';
-import { event } from "nextjs-google-analytics";
-
+import { event } from 'nextjs-google-analytics';
+import TagManager from 'react-gtm-module';
 
 const CollectionTab = (props) => {
   const router = useRouter();
@@ -52,8 +52,14 @@ const CollectionTab = (props) => {
     setToDelete(true);
   }
   async function onDeleteCollection() {
-    event("delete_collection", { category: "collection"});
-    
+    event('delete_collection', { category: 'collection' });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'collection',
+        pageTitle: 'delete_collection',
+      },
+    });
     setOverlayLoading(true);
     await deleteUnpublishedCollection(collectionId)
       .then((res) => {

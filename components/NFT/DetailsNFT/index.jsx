@@ -45,6 +45,7 @@ import tickIcon from 'assets/images/tick.svg';
 import { getCollectionDetailsById } from 'services/collection/collectionService';
 import Image from 'next/image';
 import { event } from 'nextjs-google-analytics';
+import TagManager from 'react-gtm-module';
 
 const currency = {
   eth: Eth,
@@ -184,6 +185,15 @@ export default function DetailsNFT({ type, id }) {
       category: 'nft',
       label: 'type',
       value: nft?.lnft?.nft_type,
+    });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'nft',
+        pageTitle: 'mint_nft',
+        label: 'type',
+        value: nft?.lnft?.nft_type,
+      },
     });
     setTransactionModal(false);
     setTransactionWaitingModal(true);

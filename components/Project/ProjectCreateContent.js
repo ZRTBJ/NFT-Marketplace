@@ -15,8 +15,8 @@ import SuccessModal from 'components/Modals/SuccessModal';
 import { getProjectCategory } from 'services/project/projectService';
 import { ls_GetChainID } from 'util/ApplicationStorage';
 import ConfirmationModal from 'components/Modals/ConfirmationModal';
-import { event } from "nextjs-google-analytics";
-
+import { event } from 'nextjs-google-analytics';
+import TagManager from 'react-gtm-module';
 
 function ProjectCreateContent({ search }) {
   // Logo start
@@ -301,7 +301,16 @@ function ProjectCreateContent({ search }) {
   }
 
   async function createNewProject() {
-    event("create_dao", { category: "dao", label: "name", value: projectName });
+    event('create_dao', { category: 'dao', label: 'name', value: projectName });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'dao',
+        label: 'name',
+        value: projectName,
+        pageTitle: 'create_dao',
+      },
+    });
     let createPayload = {
       name: projectName,
       category_id: projectCategory,
@@ -327,7 +336,16 @@ function ProjectCreateContent({ search }) {
     return projectId;
   }
   async function updateExistingProject(id) {
-    event("update_dao", { category: "dao", label: "name", value: projectName });
+    event('update_dao', { category: 'dao', label: 'name', value: projectName });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'dao',
+        label: 'name',
+        value: projectName,
+        pageTitle: 'update_dao',
+      },
+    });
     try {
       let updatePayload = {
         logo: logoPhoto.length > 0 ? logoPhoto[0] : null,
@@ -467,7 +485,16 @@ function ProjectCreateContent({ search }) {
     return React.useMemo(() => new URLSearchParams(search), [search]);
   }
   async function deleteDao() {
-    event("delete_dao", { category: "dao", label: "name", value: projectName });
+    event('delete_dao', { category: 'dao', label: 'name', value: projectName });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'dao',
+        label: 'name',
+        value: projectName,
+        pageTitle: 'delete_dao',
+      },
+    });
     setDataIsLoading(true);
     await deleteDraftDao(projectId)
       .then((res) => {
