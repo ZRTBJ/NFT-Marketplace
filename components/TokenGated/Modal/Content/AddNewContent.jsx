@@ -25,6 +25,7 @@ import SuccessModal from 'components/Modals/SuccessModal';
 import ErrorModal from 'components/Modals/ErrorModal';
 import { ls_GetUserToken } from 'util/ApplicationStorage';
 import { event } from 'nextjs-google-analytics';
+import TagManager from 'react-gtm-module';
 
 const STEPS = [
   { id: 1, label: 'Content' },
@@ -433,6 +434,13 @@ export default function AddNewContent({
 
   async function handleCreateContent(asset_id, isPublish) {
     event('create_tokengate_content', { category: 'token_gate' });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'token_gate',
+        pageTitle: 'create_tokengate_content',
+      },
+    });
     let payload = {
       title: content?.title,
       project_id: tokenProjectId,
@@ -470,6 +478,13 @@ export default function AddNewContent({
 
   const handleUpdateContent = (id, asset_id, isDraft = false, isPublish) => {
     event('update_tokengate_content', { category: 'token_gate' });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'token_gate',
+        pageTitle: 'update_tokengate_content',
+      },
+    });
     let config = configurations
       .map((item) => {
         return {
@@ -532,6 +547,13 @@ export default function AddNewContent({
           }
           if (publishNow || isPublishing || isPublish) {
             event('publish_tokengate_content', { category: 'token_gate' });
+            TagManager.dataLayer({
+              dataLayer: {
+                event: 'click_event',
+                category: 'token_gate',
+                pageTitle: 'publish_tokengate_content',
+              },
+            });
             const data = {
               is_publish: true,
             };

@@ -156,6 +156,9 @@ p {
   word-break: break-all;
   white-space: normal;
 }
+.break-word {
+  word-break: break-word;
+}
 /* .rs-picker-daterange-menu {
   z-index: 10000000000;
   top: 100px !important;
@@ -182,4 +185,18 @@ p {
 .dao-connect__option {
   background-color: white !important;
   color: #7d849d !important;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #9f9f9f;
+  border: 4px solid transparent;
+  border-radius: 8px;
+  background-clip: padding-box;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 15px;
 }

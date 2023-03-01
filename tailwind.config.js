@@ -26,6 +26,8 @@ module.exports = {
         'color-ass-7': '#C7C7C7',
         'color-ass-8': '#646A80',
         'color-ass-9': '#828282',
+        'color-gray-light': '#B1C1C8',
+        'color-gray-dark': '#E1ECF0',
         'color-dark-1': '#211E38',
         'color-blue': '#2081E2',
         'color-yellow': '#FEDA03',
@@ -39,6 +41,8 @@ module.exports = {
         light3: '#F7F7F7',
         txtblack: '#303548',
         textSubtle: '#7D849D',
+        'textSubtle-100': '#727E83',
+        'textSubtle-200': '#4E5356',
         textLight: '#5F6479',
         'danger-1': '#FF3C3C',
         'info-1': '#46A6FF',
@@ -46,6 +50,7 @@ module.exports = {
         divider: '#C7CEE5',
         'white-filled-form': '#E6E8EE',
         'border-primary': '#C7CEE6',
+        'color-gray-light-300': '#E7F0F3',
 
         primary: {
           50: '#E8F5FB',

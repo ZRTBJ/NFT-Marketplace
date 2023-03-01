@@ -28,8 +28,25 @@ export async function claimRoyalty(payload) {
 
 export async function sendMessage(payload) {
   let formData = new FormData();
-  formData.append('noti_type', 'userContact');
+  formData.append('noti_type', payload.type);
   formData.append('message', payload.message);
   formData.append('email', payload.email);
   return await client('POST', '/send-slack', formData, 'formdata');
+}
+
+export async function searchContent(payload) {
+  return await client(
+    'GET',
+    `/search?page=${payload?.page}&limit=10&keyword=${payload?.keyword}`
+  );
+}
+
+export async function getUserRevenue(id) {
+  return await client('GET', `/user/${id}/revenue`);
+}
+export async function getUserCollectionSalesInformation(payload) {
+  return await client(
+    'GET',
+    `/collection/sales?page=${payload.page}&limit=${payload.limit}&order_by=${payload.order_by}`
+  );
 }

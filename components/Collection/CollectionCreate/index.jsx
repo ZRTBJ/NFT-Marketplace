@@ -22,7 +22,8 @@ import { ls_GetChainID } from 'util/ApplicationStorage';
 import Outline from 'components/FormUtility/Outline';
 import Confirmation from 'components/FormUtility/Confirmation';
 import ConfirmationModal from 'components/Modals/ConfirmationModal';
-import { event } from "nextjs-google-analytics";
+import { event } from 'nextjs-google-analytics';
+import TagManager from 'react-gtm-module';
 
 export default function CollectionCreate({ query }) {
   // logo start
@@ -340,8 +341,20 @@ export default function CollectionCreate({ query }) {
     }
   }
   async function createNewProject() {
-    event("create_collection", {category: "collection", label: "blockchain", value: network});
-
+    event('create_collection', {
+      category: 'collection',
+      label: 'blockchain',
+      value: network,
+    });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'collection',
+        pageTitle: 'create_collection',
+        label: 'blockchain',
+        value: network,
+      },
+    });
     let createPayload = {
       name: projectName,
       collection_type: collectionType,
@@ -369,7 +382,14 @@ export default function CollectionCreate({ query }) {
     return projectId;
   }
   async function updateExistingProject(id) {
-    event("update_collection", { category: "collection" });
+    event('update_collection', { category: 'collection' });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'collection',
+        pageTitle: 'update_collection',
+      },
+    });
     let updatePayload = {
       logo: logoPhoto.length > 0 ? logoPhoto[0] : null,
       name: projectName,
@@ -497,7 +517,14 @@ export default function CollectionCreate({ query }) {
     }
   }
   async function deleteCollection() {
-    event("delete_collection", { category: "collection"});
+    event('delete_collection', { category: 'collection' });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'collection',
+        pageTitle: 'delete_collection',
+      },
+    });
     setDataIsLoading(true);
     await deleteDraftCollection(projectId)
       .then((res) => {

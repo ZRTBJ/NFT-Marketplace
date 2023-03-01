@@ -202,7 +202,7 @@ const WalletConnectModal = ({
                     <div className='text-left ml-[8px] font-medium text-sm'>
                       I read and accept{' '}
                       <a
-                        href='https://www.decir.io/termsandcondition'
+                        href='https://decir.io/privacy-policy-2/'
                         target='_blank'
                         className='text-primary-900'
                         rel='noreferrer'

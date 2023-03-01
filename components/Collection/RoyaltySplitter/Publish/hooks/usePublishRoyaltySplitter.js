@@ -7,6 +7,7 @@ import { NETWORKS } from 'config/networks';
 import { ls_GetChainID } from 'util/ApplicationStorage';
 import { event } from 'nextjs-google-analytics';
 import Config from 'config/config';
+import TagManager from 'react-gtm-module';
 
 export default function usePublishRoyaltySplitter(payload = {}) {
   const { collection, splitters, onUpdateStatus = () => {} } = payload;
@@ -128,6 +129,13 @@ export default function usePublishRoyaltySplitter(payload = {}) {
 
   const publish = async () => {
     event('publish_royalty_splitter', { category: 'royalty_splitter' });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'royalty_splitter',
+        pageTitle: 'publish_royalty_splitter',
+      },
+    });
     try {
       if (!canPublish) {
         return;

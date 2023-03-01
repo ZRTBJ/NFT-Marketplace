@@ -88,6 +88,9 @@
   height: calc(100% - 60px);
 }
 
+.sidebarLinksContainer a:hover {
+  text-decoration: none;
+}
 .activeMenu {
   border-right-width: 4px;
   border-color: #199bd8;

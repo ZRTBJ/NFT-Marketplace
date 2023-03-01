@@ -606,3 +606,54 @@ video::-webkit-media-controls-panel {
 .connect-wallet:hover {
   background-color: #e9ebf1;
 }
+
+.welcome-gradient-bg {
+  background: linear-gradient(26deg, #e100ff 0%, #12b4ff 104.17%);
+  border-radius: 24px;
+  color: #fff;
+  padding: 50px;
+}
+
+.accordian-body-bg {
+  background: linear-gradient(
+    15deg,
+    rgba(18, 180, 255, 0.1) 20%,
+    rgba(225, 0, 255, 0.1) 30.18%,
+    rgba(255, 255, 255, 1) 50%
+  );
+}
+.triangle {
+  width: 27px;
+  height: 27px;
+  background: linear-gradient(to left, #12b4ff 0%, #e100ff 100%);
+  border-top-left-radius: 8px;
+  -webkit-clip-path: polygon(0 0, 0% 100%, 100% 0);
+  clip-path: polygon(0 0, 0% 100%, 100% 0);
+}
+.gradient-text-deep-pueple {
+  background: linear-gradient(to left, #12b4ff 0%, #e100ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.content-valuation {
+  background: #2d373d;
+  border-radius: 0px 0px 16px 16px;
+  color: #fff;
+}
+
+.gradient-text-new {
+  background: linear-gradient(90.13deg, #12b4ff -0.33%, #e100ff 100.18%);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-border-new {
+  border: solid 2px transparent;
+  background-image: linear-gradient(90.13deg, #12b4ff -0.33%, #e100ff 100.18%);
+  background-origin: border-box;
+  background-clip: border-box;
+  box-shadow: 2px 1000px 1px #fff inset;
+  border-radius: 8px;
+  padding: 11px 16px;
+}

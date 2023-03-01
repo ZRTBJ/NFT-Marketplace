@@ -3,26 +3,21 @@ import { useEffect } from 'react';
 import WalletConnectModal from 'components/Login/WalletConnectModal';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
+import ProfileContent from 'components/Profile/profileContent';
 
 export default function Home() {
   const userinfo = useSelector((state) => state.user.userinfo);
   const router = useRouter();
-  useEffect(() => {
-    if (userinfo?.id) {
-      router.push(`/dashboard`);
-    }
-  }, [userinfo?.id]);
+  // useEffect(() => {
+  //   if (userinfo?.id) {
+  //     router.push(`/dashboard`);
+  //   }
+  // }, [userinfo?.id]);
   return (
     <>
       <div className={styles.container}>
         <>
-          <WalletConnectModal
-            showModal={true}
-            showCloseMenu={false}
-            closeModal={() => null}
-            noRedirection={false}
-            navigateToPage={false}
-          />
+          <ProfileContent id={userinfo?.id} />
         </>
       </div>
     </>

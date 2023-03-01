@@ -10,8 +10,8 @@ import deleteIcon from 'assets/images/projectCreate/ico_delete01.svg';
 import SuccessModal from 'components/Modals/SuccessModal';
 import ErrorModal from 'components/Modals/ErrorModal';
 import Image from 'next/image';
-import { event } from "nextjs-google-analytics";
-
+import { event } from 'nextjs-google-analytics';
+import TagManager from 'react-gtm-module';
 
 const ProfileSettingsForm = () => {
   const dispatch = useDispatch();
@@ -126,7 +126,14 @@ const ProfileSettingsForm = () => {
   }
 
   const onSubmit = (data) => {
-    event("update_info", { category: "user"});
+    event('update_info', { category: 'user' });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'user',
+        pageTitle: 'update_info',
+      },
+    });
     const social = [];
     social.push({ linkInsta: data['linkInsta'] });
     social.push({ linkReddit: data['linkReddit'] });

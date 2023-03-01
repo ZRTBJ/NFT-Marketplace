@@ -30,8 +30,8 @@ import Select from 'react-select';
 import { uniqBy } from 'lodash';
 import { NETWORKS } from 'config/networks';
 import ConfirmationModal from 'components/Modals/ConfirmationModal';
-import { event } from "nextjs-google-analytics";
-
+import { event } from 'nextjs-google-analytics';
+import TagManager from 'react-gtm-module';
 
 export default function ProductNFT({ query }) {
   const audioRef = useRef();
@@ -337,7 +337,14 @@ export default function ProductNFT({ query }) {
   };
 
   function saveNFTDetails(assetId, collectionID) {
-    event("create_product_nft", { category: "nft" });
+    event('create_product_nft', { category: 'nft' });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'nft',
+        pageTitle: 'create_product_nft',
+      },
+    });
     if (assetId && assetId.length > 0) {
       setIsLoading(true);
       const request = new FormData();
@@ -501,7 +508,20 @@ export default function ProductNFT({ query }) {
   }
 
   function createNewCollection() {
-    event("create_collection", { category: "collection", label: "blockchain", value: ls_GetChainID() });
+    event('create_collection', {
+      category: 'collection',
+      label: 'blockchain',
+      value: ls_GetChainID(),
+    });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'collection',
+        label: 'blockchain',
+        value: ls_GetChainID(),
+        pageTitle: 'create_collection',
+      },
+    });
     let createPayload = {
       blockchain: ls_GetChainID(),
       collection_type: 'product',

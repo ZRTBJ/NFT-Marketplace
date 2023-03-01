@@ -23,6 +23,7 @@ import Config from 'config/config';
 import Maintenance from 'components/Commons/Maintenance';
 import { GoogleAnalytics } from 'nextjs-google-analytics';
 import FloatingContactForm from 'components/Commons/FloatingContactForm';
+import TagManager from 'react-gtm-module';
 
 dynamic(() => import('tw-elements'), { ssr: false });
 
@@ -37,6 +38,12 @@ function MyApp({ Component, pageProps }) {
   const [isTokenGatedProjectPublicView, setIsTokenGatedProjectPublicView] =
     useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    TagManager.initialize({
+      gtmId: process.env.NEXT_PUBLIC_GOOGLE_TAG_KEY,
+    });
+  }, []);
 
   useEffect(() => {
     const use = async () => {
@@ -102,28 +109,15 @@ function MyApp({ Component, pageProps }) {
             ) : (
               <Auth>
                 <div className='bg-light'>
-                  {!isEmbedView && (
-                    <Header
-                      handleSidebar={handleToggleSideBar}
-                      setShowModal={setShowModal}
-                      showModal={showModal}
-                    />
-                  )}
                   <main
                     className='container min-h-[calc(100vh-71px)]'
-                    style={
-                      isContentView
-                        ? { width: '100%', maxWidth: '100%' }
-                        : isTokenGatedProjectPublicView
-                        ? { width: '100%', maxWidth: '100%' }
-                        : {}
-                    }
+                    style={{ width: '100%', maxWidth: '100%' }}
                   >
                     <div className='flex flex-row'>
                       {isEmbedView ||
                       isContentView ||
                       isTokenGatedProjectPublicView ? null : (
-                        <div className='hidden md:block mr-4 '>
+                        <div className='hidden md:block'>
                           <Sidebar
                             setShowModal={setShowModal}
                             handleToggleSideBar={handleToggleSideBar}
@@ -145,6 +139,13 @@ function MyApp({ Component, pageProps }) {
                         </div>
                       )}
                       <div className='w-full min-w-[calc(100vw-300px)]'>
+                        {!isEmbedView && (
+                          <Header
+                            handleSidebar={handleToggleSideBar}
+                            setShowModal={setShowModal}
+                            showModal={showModal}
+                          />
+                        )}
                         <Component {...pageProps} />
                         {!isEmbedView && <FloatingContactForm />}
 

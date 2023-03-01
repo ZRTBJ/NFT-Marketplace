@@ -16,6 +16,7 @@ import Image from 'next/image';
 import deleteIcon from 'assets/images/projectCreate/ico_delete01.svg';
 import ConfirmationModal from 'components/Modals/ConfirmationModal';
 import { event } from 'nextjs-google-analytics';
+import TagManager from 'react-gtm-module';
 
 export default function Setting({
   show,
@@ -112,6 +113,13 @@ export default function Setting({
     // create and then  update
     if (createMode) {
       event('create_token_gate_project', { category: 'token_gate' });
+      TagManager.dataLayer({
+        dataLayer: {
+          event: 'click_event',
+          category: 'token_gate',
+          pageTitle: 'create_token_gate_project',
+        },
+      });
       let projectId = '';
       await createTokenGatedProject(data['title'])
         .then((res) => {
@@ -134,6 +142,13 @@ export default function Setting({
         });
       if (projectId !== '') {
         event('update_token_gate_project', { category: 'token_gate' });
+        TagManager.dataLayer({
+          dataLayer: {
+            event: 'click_event',
+            category: 'token_gate',
+            pageTitle: 'update_token_gate_project',
+          },
+        });
         payload.id = projectId;
         await updateTokenGatedProject(payload)
           .then((res) => {
@@ -197,6 +212,13 @@ export default function Setting({
   };
   const onDeleteTokenGatedProject = async () => {
     event('delete_token_gate_project', { category: 'token_gate' });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'token_gate',
+        pageTitle: 'delete_token_gate_project',
+      },
+    });
     setShowOverlayLoading(true);
     await deleteTokenGatedProject(project?.id).then((res) => {
       setShowOverlayLoading(false);

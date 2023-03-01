@@ -2,6 +2,7 @@ import React from 'react';
 import Select from 'react-select';
 import Trash from 'assets/images/trash.svg';
 import Image from 'next/image';
+import ReactTooltip from 'react-tooltip';
 
 const SETTINGS = [
   { value: 'Token Range', label: 'Token Range' },
@@ -21,7 +22,6 @@ const Configuration = ({
   deleteConfiguration,
   validationError,
 }) => {
-  console.log(validationError);
   return (
     <div>
       {' '}
@@ -29,6 +29,10 @@ const Configuration = ({
         <div className='mt-4 flex py-3'>
           <div className='flex-1 px-3'>
             <p className='font-black text-sm'>Make accessible to everyone</p>
+            <p className='text-yellow-500'>
+              <i class='fa-light fa-triangle-exclamation'></i> Each user should
+              have less than 50 tokenid/collection
+            </p>
           </div>
           <div className='flex flex-wrap items-center'>
             <label
@@ -245,9 +249,15 @@ const Configuration = ({
           </div>
           {!reviewScreen && (
             <div className='w-full text-right'>
+              <ReactTooltip place='left' type='info' />
               <button
+                data-tip={
+                  configurations.length >= 2 ? 'You have reached the limit' : ''
+                }
                 className='mt-3 min-h-[52px] accordian-sub-button text-textSubtle font-black text-[14px] border-dashed border-[1px] rounded-[8px] px-4'
-                onClick={addConfigurations}
+                onClick={
+                  configurations.length >= 2 ? () => {} : addConfigurations
+                }
               >
                 Add Configuration
               </button>
