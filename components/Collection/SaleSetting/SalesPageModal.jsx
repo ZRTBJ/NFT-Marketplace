@@ -193,6 +193,7 @@ const SalesPageModal = ({
       let type = collectionType ? collectionType : currentCollection.type;
       if (agree && date?.length === 2) {
         event('set_sale_page', { category: 'nft', label: 'type', value: type });
+
         TagManager.dataLayer({
           dataLayer: {
             event: 'click_event',

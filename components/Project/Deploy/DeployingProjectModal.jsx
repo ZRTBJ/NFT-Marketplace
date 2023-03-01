@@ -35,6 +35,7 @@ const DeployingProjectModal = ({
 
   function publishThisProject(transactionData) {
     event('publish_dao', { category: 'dao' });
+
     TagManager.dataLayer({
       dataLayer: {
         event: 'click_event',
@@ -42,6 +43,7 @@ const DeployingProjectModal = ({
         pageTitle: 'publish_dao',
       },
     });
+
     setIsLoading(true);
     let payload = new FormData();
     if (transactionData) {
