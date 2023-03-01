@@ -40,7 +40,9 @@ function MyApp({ Component, pageProps }) {
   const router = useRouter();
 
   useEffect(() => {
-    TagManager.initialize({ gtmId: process.env.NEXT_PUBLIC_GOOGLE_TAG_KEY });
+    TagManager.initialize({
+      gtmId: process.env.NEXT_PUBLIC_GOOGLE_TAG_KEY_TESTNET,
+    });
   }, []);
 
   useEffect(() => {
