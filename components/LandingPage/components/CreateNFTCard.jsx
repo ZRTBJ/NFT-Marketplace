@@ -45,11 +45,12 @@ export default function CreateNFTCard({ size }) {
         >
           <p className=' text-[20px] font-black mb-1'>Create NFT Collection</p>
           <p
-            className={`mb-4  ${
+            className={`mb-4 break-word ${
               size === 'lg' ? 'text-[14px] mb-10 mt-3' : 'max-w-[300px]'
             }`}
           >
-            Lorem Ipsum is simply dummy text of the printing and Ipsum has been{' '}
+            Seamlessly launch your membership NFT, PFP, and generative art with
+            DeCir’s no-code interface.{' '}
           </p>
           <div
             className={`flex items-center ${

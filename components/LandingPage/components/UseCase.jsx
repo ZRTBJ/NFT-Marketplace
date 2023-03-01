@@ -8,11 +8,11 @@ export default function UseCase({ data }) {
           <div>
             <p
               style={{ wordBreak: 'break-word' }}
-              className='text-black text-[24px] md:text-[32px] leading-relaxed font-black'
+              className='text-black  text-[24px] md:text-[32px] leading-relaxed font-black'
             >
               Use case of <br /> {data?.usedFor}
             </p>
-            <p>{data?.text}</p>
+            <p className='break-word'>{data?.text}</p>
             {/* <div className=' mt-[52px] text-black font-black text-[14px]'>
               Learn more{' '}
               <i className='ml-2 fa-sharp fa-solid fa-arrow-right text-textSubtle-200 font-medium'></i>
@@ -21,10 +21,10 @@ export default function UseCase({ data }) {
           {data?.steps?.map((step, index) => (
             <div className='text-center' key={index}>
               <div className='bg-color-gray-dark h-[88px] w-[88px] mx-auto shadow rounded-lg'></div>
-              <p className='text-black font-bold mt-4'>
-                STEP {index + 1} <br /> {step.title}
+              <p className='text-black font-bold mt-4'>{step.title}</p>
+              <p className='text-textSubtle-100 break-word'>
+                {step?.description}
               </p>
-              <p className='text-textSubtle-100'>{step?.description}</p>
             </div>
           ))}
         </div>

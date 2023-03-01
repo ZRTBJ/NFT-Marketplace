@@ -383,7 +383,7 @@ export default function DetailsNFT({ type, id }) {
 
       {isLoading && <div className='loading'></div>}
       {!isLoading && (
-        <section className='flex flex-col lg:flex-row py-5'>
+        <section className='flex flex-col lg:flex-row py-5 mx-4'>
           <div className='flex-1 w-full md:max-w-[471px] '>
             <div className='bg-white rounded-xl shadow border border-border-primary flex flex-col items-center justify-start self-start p-4 ml-4 md:ml-0 mr-4 mb-5 md:mb-0'>
               {imageRegex.test(nft?.lnft?.asset?.asset_type) && (

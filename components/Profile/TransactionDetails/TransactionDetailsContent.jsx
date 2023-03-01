@@ -57,7 +57,7 @@ export default function TransactionDetailsContent({ query }) {
       key: 'royalty',
     },
   ]);
-  const [showPrice, setShowPrice] = useState(true);
+  const [showPrice, setShowPrice] = useState(false);
   const [selectedTab, setSelectedTab] = useState('dao');
   const [royaltyLoading, setRoyaltyLoading] = useState(false);
   const [pagination, SetPagination] = useState([]);
@@ -307,7 +307,7 @@ export default function TransactionDetailsContent({ query }) {
   }
 
   return (
-    <div className='bg-[#e2ecf0] pt-[30px]'>
+    <div className='bg-[#e2ecf0] pt-[30px] md:min-h-[100vh]'>
       {showNetworkHandler && (
         <NetworkHandlerModal
           show={showNetworkHandler}
@@ -372,7 +372,10 @@ export default function TransactionDetailsContent({ query }) {
                 <p className='font-bold text-[15px] md:text-[16px]'>
                   {value.label}
                 </p>
-                <p className='text-[12px] mt-[4px]'>~ ${value.value} USD</p>
+                <p className='text-[12px] mt-[4px]'>
+                  ~ ${value.value}{' '}
+                  {value?.key === 'royalty' ? ' Token' : ' USD'}
+                </p>
               </div>
             ))}
           </div>
@@ -580,7 +583,7 @@ export default function TransactionDetailsContent({ query }) {
                                 </td>
 
                                 <td class='whitespace-nowrap px-6 py-4'>
-                                  ~$ {list?.earnable_amount}
+                                  {list?.earnable_amount} Token
                                 </td>
                                 <td class='whitespace-nowrap px-6 py-4'>
                                   <button

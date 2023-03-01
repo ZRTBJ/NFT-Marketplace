@@ -213,6 +213,7 @@ const WelcomeModal = ({ show, handleClose }) => {
                 className='text-[#E100FF] text-[14px] underline cursor-pointer'
                 href='https://metamask.io/'
                 target='_blank'
+                rel='noreferrer'
               >
                 I don’t have wallet account
               </a>
@@ -241,7 +242,7 @@ const WelcomeModal = ({ show, handleClose }) => {
             </div>
           </div>
         </div>
-        <div className='w-2/6 welcome-gradient-bg relative hidden md:block'>
+        <div className='w-2/6 welcome-gradient-bg relative hidden md:block ml-[1px]'>
           <h1 className='!text-[48px] mb-4 !leading-tight'>
             No Code DAO Creation Platform
           </h1>

@@ -60,11 +60,11 @@ export default function OnBoardingGuide() {
   return (
     <>
       <div className='bg-gradient-to-b from-color-gray-dark to-color-gray-light rounded-b-2xl z-10 relative'>
-        <div className='overflow-x-auto md:max-w-[1239px] mx-auto px-6 custom-scrollbar'>
+        <div className='overflow-x-auto md:max-w-[1291px] mx-auto px-6 custom-scrollbar'>
           <div className='flex flex-wrap items-center justify-center gap-4 text-black my-4'>
             <p className='break-normal  text-center text-[14px] '>
-              👋🏻 <span className='font-black'>Welcome to DeCir</span>, Let’s get
-              started with some guidance!
+              👋🏻 <span className='font-black'>Welcome to DeCir</span>, Here are
+              some guides for you to get started
             </p>
             <button
               onClick={() => setOPen((pre) => !pre)}
@@ -92,12 +92,12 @@ export default function OnBoardingGuide() {
                     <div className='gradient-text-deep-pueple font-black text-[18px]'>
                       Create Your NFT
                     </div>
-                    <p className='text-textSubtle-100 text-[14px]'>
-                      Few step to create NFT without coding
+                    <p className='text-textSubtle-100 text-[14px] break-word '>
+                      Find out how to create NFTs on DeCir
                     </p>
                   </div>
                   <div className='ml-auto text-black font-black text-[14px] '>
-                    Get started{' '}
+                    Learn more{' '}
                     <i className=' ml-2 fa-sharp fa-solid fa-arrow-right'></i>
                   </div>
                 </div>
@@ -112,10 +112,10 @@ export default function OnBoardingGuide() {
                 <div className='flex items-center px-6 pb-3 -mt-4 gap-4'>
                   <div>
                     <div className='gradient-text-deep-pueple font-black text-[18px]'>
-                      Guide tour
+                      Documentation
                     </div>
-                    <p className='text-textSubtle-100 text-[14px]'>
-                      Walk you thought the core function
+                    <p className='text-textSubtle-100 text-[14px]  break-word'>
+                      Explore our ecosystem’s core functionalities
                     </p>
                   </div>
                   <div
@@ -124,7 +124,7 @@ export default function OnBoardingGuide() {
                     passHref
                     target='_blank'
                   >
-                    Get started{' '}
+                    Learn more{' '}
                     <i className=' ml-2 fa-sharp fa-solid fa-arrow-right'></i>
                   </div>
                 </div>
@@ -137,10 +137,10 @@ export default function OnBoardingGuide() {
                 <div className='flex items-center px-6 pb-3 -mt-4 gap-4'>
                   <div className='cursor-pointer'>
                     <div className='gradient-text-deep-pueple font-black text-[18px]'>
-                      Need help?
+                      Feedback
                     </div>
-                    <p className='text-textSubtle-100 text-[14px]'>
-                      Ask anything you need to support
+                    <p className='text-textSubtle-100 text-[14px]  break-word'>
+                      Help improve our services with your feedback
                     </p>
                   </div>
                 </div>

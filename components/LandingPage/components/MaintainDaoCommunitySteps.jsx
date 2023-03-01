@@ -4,16 +4,16 @@ import Image from 'next/image';
 import frame from 'assets/images/profile/daoFrame.svg';
 const steps = [
   {
-    title: 'Title/Headline',
-    text: 'Lorem Ipsum is simply dummy text of the printing and Ipsum has been ',
+    title: 'Have a direction',
+    text: 'All DAOs exist for a course. Clearly define yours. This is the key to building a community of like-minds.',
   },
   {
-    title: 'Title/Headline',
-    text: 'Lorem Ipsum is simply dummy text of the printing and Ipsum has been ',
+    title: 'Engage Your Community',
+    text: 'Your DAO is as good as its member community. Constantly seek opinions to leverage the expertise of your members.',
   },
   {
-    title: 'Title/Headline',
-    text: 'Lorem Ipsum is simply dummy text of the printing and Ipsum has been ',
+    title: 'Organize social events',
+    text: 'Social events are effective tools for community bonding. Do this often - physically or virtually.',
   },
 ];
 export default function MaintainDaoCommunitySteps() {
@@ -27,9 +27,9 @@ export default function MaintainDaoCommunitySteps() {
         backgroundPosition: 'center',
       }}
     >
-      <div className='flex flex-wrap gap-6 items-center justify-between mb-2'>
+      <div className='flex flex-wrap gap-6 items-center justify-between'>
         <div className='text-[20px] font-black md:max-w-[200px] text-black'>
-          How to maintain your DAO community
+          Tips for a successful DAO
         </div>
         <div className='relative order-first md:order-last'>
           <Image
@@ -41,7 +41,7 @@ export default function MaintainDaoCommunitySteps() {
           ></Image>
         </div>
       </div>
-      <div>
+      <div className='md:mt-[-10px]'>
         {steps.map((i, index) => (
           <div key={index}>
             <div className='flex'>
@@ -60,7 +60,7 @@ export default function MaintainDaoCommunitySteps() {
                 <p className='font-black text-[14px] mt-0 text-black'>
                   {i?.title}
                 </p>
-                <p className='ml-4 text-[12px] pb-4'>{i?.text}</p>
+                <p className='ml-4 text-[12px] pb-2 break-word'>{i?.text}</p>
               </div>
             </div>
           </div>

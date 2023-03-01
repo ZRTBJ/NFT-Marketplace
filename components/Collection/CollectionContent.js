@@ -58,8 +58,8 @@ import WithdrawModal from './WithdrawModal';
 const currency = {
   eth: Eth,
   matic: Polygon,
-  bnb: Bnb
-}
+  bnb: Bnb,
+};
 
 const TABLE_HEADERS = [
   { id: 0, label: 'Wallet Address' },
@@ -538,7 +538,7 @@ const CollectionContent = ({ collectionId, userId }) => {
 
   return (
     <>
-      <div className='mx-4 md:mx-0'>
+      <div className='mx-4'>
         {dataLoading && <div className='loading'></div>}
         {showNetworkHandler && (
           <NetworkHandlerModal

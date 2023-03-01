@@ -4,16 +4,16 @@ import frame from 'assets/images/profile/nftFrame.svg';
 import Image from 'next/image';
 const steps = [
   {
-    title: 'Title/Headline',
-    text: 'Lorem Ipsum is simply dummy text of the printing and Ipsum has been ',
+    title: 'Have solid utilities',
+    text: 'Innovative use cases draw investors and collectors. Make your project stand out',
   },
   {
-    title: 'Title/Headline',
-    text: 'Lorem Ipsum is simply dummy text of the printing and Ipsum has been ',
+    title: 'Build a community',
+    text: 'The community sits at the heart of any successful web3 project. Do not hesitate',
   },
   {
-    title: 'Title/Headline',
-    text: 'Lorem Ipsum is simply dummy text of the printing and Ipsum has been ',
+    title: 'Embrace active marketing',
+    text: 'Your quality project still needs to be known. Try out a combination of web3 marketing tactics to spread the word about your project.',
   },
 ];
 export default function NFTPublishingSteps() {
@@ -27,9 +27,9 @@ export default function NFTPublishingSteps() {
         backgroundPosition: 'center',
       }}
     >
-      <div className='flex flex-wrap gap-6 items-center justify-between mb-2'>
+      <div className='flex flex-wrap gap-6 items-center justify-between'>
         <div className='text-[20px] font-black md:max-w-[175px]'>
-          How to push your sell of NFTs
+          Tips for a solid NFT project
         </div>
         <div className='relative order-first md:order-last'>
           <Image
@@ -41,7 +41,7 @@ export default function NFTPublishingSteps() {
           ></Image>
         </div>
       </div>
-      <div>
+      <div className='md:mt-[-10px]'>
         {steps.map((i, index) => (
           <div key={index}>
             <div className='flex'>
@@ -56,7 +56,7 @@ export default function NFTPublishingSteps() {
                   index + 1
                 }`}</p>
                 <p className='font-black text-[14px] mt-0'>{i?.title}</p>
-                <p className='ml-4 text-[12px] pb-4'>{i?.text}</p>
+                <p className='ml-4 text-[12px] pb-2 break-word'>{i?.text}</p>
               </div>
             </div>
           </div>

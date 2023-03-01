@@ -24,7 +24,7 @@ export default function CollectionTable({ tableData }) {
         </button>
       </div>
 
-      <div className=' relative gradient-border-new pt-5 md:h-[652px] custom-scrollbar hover:overflow-y-auto overflow-y-hidden'>
+      <div className=' relative gradient-border-new pt-5 md:h-[670px] custom-scrollbar hover:overflow-y-auto overflow-y-hidden'>
         <div className='mb-5'>
           {tableData &&
             tableData?.map((item, index) => (
@@ -87,12 +87,14 @@ export default function CollectionTable({ tableData }) {
             ))}
           {tableData?.length === 1 && <NFTPublishingSteps />}
         </div>
-        <Link
-          className='md:absolute  md:bottom-[10px] md:left-[50%] md:-translate-x-1/2 md:-translate-y-1/2  block mx-auto w-[100px]  text-black font-black text-[14px] '
-          href={`/list?type=collection&user=true`}
-        >
-          View All <i className=' ml-2 fa-sharp fa-solid fa-arrow-right'></i>
-        </Link>
+        {tableData?.length > 1 && (
+          <Link
+            className='md:absolute  md:bottom-[10px] md:left-[50%] md:-translate-x-1/2 md:-translate-y-1/2  block mx-auto w-[100px]  text-black font-black text-[14px] '
+            href={`/list?type=collection&user=true`}
+          >
+            View All <i className=' ml-2 fa-sharp fa-solid fa-arrow-right'></i>
+          </Link>
+        )}
       </div>
 
       {showCreateNFTModal && (

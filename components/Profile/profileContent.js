@@ -50,43 +50,43 @@ import TagManager from 'react-gtm-module';
 
 const nftUseCase = {
   usedFor: 'NFTs',
-  text: 'Lorem Ipsum is simply dummy text of the printing and Ipsum has been ',
+  text: 'Here are a few ways your project can deploy NFT',
   steps: [
     {
-      title: 'Title / headline',
+      title: 'Membership NFT',
       description:
-        'Lorem Ipsum is simply dummy text of the printing and Ipsum has been ',
+        'Offer personalized experiences through token-gated NFTs. Offer membership, design rewards, and create categories-based access services',
     },
     {
-      title: 'Title / headline',
+      title: 'PFP',
       description:
-        'Lorem Ipsum is simply dummy text of the printing and Ipsum has been ',
+        'PFP NFT helps your brand build and engage your online community. It is a great tool for brand identity',
     },
     {
-      title: 'Title / headline',
+      title: 'Digital Fashion',
       description:
-        'Lorem Ipsum is simply dummy text of the printing and Ipsum has been ',
+        'Design the next set of virtual fashion collectibles tailored to the increasing demands of the virtual world',
     },
   ],
 };
 const daoUseCase = {
-  usedFor: 'DAO Community',
-  text: 'Lorem Ipsum is simply dummy text of the printing and Ipsum has been ',
+  usedFor: 'a DAO',
+  text: 'DAOs can be made to serve specific purposes. What’s yours?',
   steps: [
     {
-      title: 'Title / headline',
+      title: 'Build',
       description:
-        'Lorem Ipsum is simply dummy text of the printing and Ipsum has been ',
+        'Build web3 projects to create diverse income streams for your members through the power of the DAO',
     },
     {
-      title: 'Title / headline',
+      title: 'Charity',
       description:
-        'Lorem Ipsum is simply dummy text of the printing and Ipsum has been ',
+        'Create a DAO that caters to the needs of communities around the world. Support noble courses through the power of the collective.',
     },
     {
-      title: 'Title / headline',
+      title: 'Invest',
       description:
-        'Lorem Ipsum is simply dummy text of the printing and Ipsum has been ',
+        'Invest in web3 startups and in physical assets through a DAO. Forge shared prosperity through mutual benefits',
     },
   ],
 };
@@ -377,11 +377,8 @@ const Profile = ({ id }) => {
   };
 
   return (
-    <div className='bg-color-gray-light-300'>
-      {showWelcome && (
-        <WelcomeModal show={showWelcome} handleClose={handleWelcomeModal} />
-      )}
-      <>
+    <>
+      <div className='bg-color-gray-light-300'>
         {!id && <LandingPage userId={id} />}
         {id && (
           <>
@@ -538,7 +535,7 @@ const Profile = ({ id }) => {
             </div>
           </>
         )}
-      </>
+      </div>
 
       {ShowCreateNFT && (
         <CreateNFTModal
@@ -555,7 +552,10 @@ const Profile = ({ id }) => {
         />
       )}
       {showOverlayLoading && <div className='loading'></div>}
-    </div>
+      {showWelcome && (
+        <WelcomeModal show={showWelcome} handleClose={handleWelcomeModal} />
+      )}
+    </>
   );
 };
 export default Profile;

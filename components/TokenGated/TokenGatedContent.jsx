@@ -169,7 +169,7 @@ export default function TokenGatedContent({ query, createMode }) {
     <>
       {showOverLayLoading && <div className='loading'></div>}
       {!showOverLayLoading && (
-        <div className='py-4 px-4 md:px-0'>
+        <div className='py-4 mx-4'>
           <CreatorProjectInfoCard
             project={project}
             createMode={createMode}

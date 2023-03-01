@@ -122,7 +122,9 @@ const TokenGatedContentDetailContainer = ({ query }) => {
   };
 
   const handleBack = () => {
-    router.push(`/token-gated/public/${query.projectId}`);
+    if (typeof window !== 'undefined') {
+      window.history.back();
+    }
   };
 
   return (
