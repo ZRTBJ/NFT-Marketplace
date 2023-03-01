@@ -41,7 +41,7 @@ function MyApp({ Component, pageProps }) {
 
   useEffect(() => {
     TagManager.initialize({
-      gtmId: process.env.NEXT_PUBLIC_GOOGLE_TAG_KEY_TESTNET,
+      gtmId: process.env.NEXT_PUBLIC_GOOGLE_TAG_KEY,
     });
   }, []);
 
