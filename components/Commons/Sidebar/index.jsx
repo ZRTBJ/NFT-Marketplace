@@ -179,7 +179,11 @@ const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
                 >
                   <Image src={Discord} alt='Twitter' className='mr-6' />
                 </Link>
-                <Link href='#' passHref target='_blank'>
+                <Link
+                  href='https://www.linkedin.com/company/decir-nfts/'
+                  passHref
+                  target='_blank'
+                >
                   <Image src={Telegram} alt='Twitter' className='mr-6' />
                 </Link>
                 <Link

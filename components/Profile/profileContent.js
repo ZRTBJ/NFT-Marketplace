@@ -323,12 +323,12 @@ const Profile = ({ id }) => {
       .then((res) => {
         if (res?.code === 0) {
           const data = {
-            nft_collection_treasury: res?.collection_holding_usd,
-            dao_treasury: res?.dao_holding_usd,
-            royalties: res?.splitter_holding_token,
+            nft_collection_treasury: Number(res?.collection_holding_usd),
+            dao_treasury: Number(res?.dao_holding_usd),
+            royalties: Number(res?.splitter_holding_token),
             dao_nft_splitter_amount:
-              parseFloat(res?.collection_holding_usd) +
-              parseFloat(res?.dao_holding_usd),
+              Number(res?.collection_holding_usd) +
+              Number(res?.dao_holding_usd),
           };
           setBalanceInfo(data);
         }

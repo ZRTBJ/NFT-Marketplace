@@ -125,10 +125,8 @@ export default function BalanceInfo({ balanceInfo, userInfo }) {
             >
               <p className='text-textSubtle-200'>Royalties</p>
               <p className='text-black font-black text-[24px] flex items-start'>
-                {balanceInfo?.nft_collection_treasury
-                  ? `${Number(balanceInfo?.nft_collection_treasury).toFixed(
-                      4
-                    )} Token`
+                {balanceInfo?.royalties
+                  ? `${balanceInfo?.royalties.toFixed(4)} Token`
                   : 'N/A '}
                 <i className='fa-solid fa-chevron-right ml-2 mt-1 text-[16px]'></i>
               </p>

@@ -3,7 +3,11 @@ import Eye from 'assets/images/hide-eye.svg';
 import Image from 'next/image';
 import Lines from 'assets/images/curved-lines.svg';
 import { getCurrentNetworkId } from 'util/MetaMask';
-import { getRoyalties, claimRoyalty } from 'services/User/userService';
+import {
+  getRoyalties,
+  claimRoyalty,
+  getUserRevenue,
+} from 'services/User/userService';
 import { useSelector } from 'react-redux';
 import { getUserProjectListById } from 'services/project/projectService';
 import { NETWORKS } from 'config/networks';
@@ -84,10 +88,10 @@ export default function TransactionDetailsContent({ query }) {
     setSelectedTab(query?.tab);
   }, [query?.tab]);
 
-  useEffect(() => {
-    let total = values[0].value + values[1].value;
-    setTotalValue(total);
-  }, [values]);
+  // useEffect(() => {
+  //   let total = values[0].value + values[1].value;
+  //   setTotalValue(total);
+  // }, [values]);
 
   useEffect(() => {
     if (userinfo?.id) {
@@ -100,10 +104,47 @@ export default function TransactionDetailsContent({ query }) {
   useEffect(() => {
     getProjectList();
   }, []);
-
   useEffect(() => {
-    handleSetValues();
-  }, [royaltiesList, collectionList]);
+    if (userinfo?.id) {
+      onUserRevenueGet();
+    }
+  }, []);
+
+  // useEffect(() => {
+  //   handleSetValues();
+  // }, [royaltiesList, collectionList]);
+
+  const onUserRevenueGet = async () => {
+    await getUserRevenue(userinfo?.id)
+      .then((res) => {
+        if (res?.code === 0) {
+          const data = [
+            {
+              label: 'DAO Treasury',
+              value: Number(res?.dao_holding_usd).toFixed(2),
+              key: 'dao',
+            },
+            {
+              label: 'NFT collections',
+              value: Number(res?.collection_holding_usd).toFixed(2),
+              key: 'collection',
+            },
+            {
+              label: 'Splitter',
+              value: Number(res?.splitter_holding_token).toFixed(4),
+              key: 'royalty',
+            },
+          ];
+          setValues(data);
+          setTotalValue(
+            Number(res.dao_holding_usd) + Number(res.collection_holding_usd)
+          );
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const handleDAOClaim = (data) => {
     setSelectedDAO(data);
@@ -349,11 +390,7 @@ export default function TransactionDetailsContent({ query }) {
                 DAO & NFT collection amount
               </p>
               <h1 className='text-[24px]'>
-                ~ $
-                {showPrice
-                  ? totalValue
-                  : totalValue?.toString()?.replace(/\d/g, '*')}{' '}
-                USD
+                ~ ${showPrice ? totalValue.toFixed(2) : ' **.** '} USD
               </h1>
             </div>
           </div>
@@ -376,7 +413,7 @@ export default function TransactionDetailsContent({ query }) {
                   {value.label}
                 </p>
                 <p className='text-[12px] mt-[4px]'>
-                  ~ ${value.value}{' '}
+                  ~ {value?.key !== 'royalty' ? ' $' : ' '} {value.value}{' '}
                   {value?.key === 'royalty' ? ' Token' : ' USD'}
                 </p>
               </div>
