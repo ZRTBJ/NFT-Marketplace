@@ -4,8 +4,8 @@ import { useSelector } from 'react-redux';
 
 const PrivateRoutes = [
   'dashboard',
-  'create',
-  'dao/create',
+  // 'create',
+  // 'dao/create',
   'settings',
   'token-gated',
   'notifications',

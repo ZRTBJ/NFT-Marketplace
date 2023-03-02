@@ -82,7 +82,7 @@ const WalletConnectModal = ({
                   userLogin(account, signature, 'metamask');
                 })
                 .catch((error) => {
-                  alert(error.message);
+                  // alert(error.message);
                 });
             } else {
               if (!isConnected && !account) {

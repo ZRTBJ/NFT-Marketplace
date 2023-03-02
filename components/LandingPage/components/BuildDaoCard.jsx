@@ -9,11 +9,11 @@ export default function BuildDaoCard({ size }) {
   const userinfo = useSelector((state) => state.user.userinfo);
   const [showWalletConnectModal, setShowWalletConnectModal] = useState(false);
   const handelOnClick = async () => {
-    if (userinfo?.id) {
-      router.push(`/dao/create`);
-    } else {
-      setShowWalletConnectModal(true);
-    }
+    // if (userinfo?.id) {
+    router.push(`/dao/create`);
+    // } else {
+    //   setShowWalletConnectModal(true);
+    // }
   };
   return (
     <div>
