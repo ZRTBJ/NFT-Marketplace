@@ -1,4 +1,4 @@
-import TransactionDetailsContent from 'components/Profile/TransactionDetails/TransactionDetailsContent';
+import TransactionDetailsContent from 'components/transactions/TransactionDetailsContent';
 
 export async function getServerSideProps(context) {
   const query = context.query;

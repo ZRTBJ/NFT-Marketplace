@@ -12,10 +12,7 @@ const Notifications = () => {
   const dispatch = useDispatch();
   const { notifications } = useSelector((state) => state.user);
   const router = useRouter();
-  const payload = {
-    page: 1,
-    limit: 10,
-  };
+
   useEffect(() => {
     dispatch(getUserNotification(isActive));
   }, [isActive]);
