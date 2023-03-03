@@ -19,12 +19,10 @@ const Auth = ({ children }) => {
   useEffect(() => {
     let paths = router?.asPath?.split('/');
     if (
-      (!userinfo?.id &&
-        PrivateRoutes.some(
-          (routes) => paths.includes(routes) && !paths.includes('public')
-        )) ||
-      (!userinfo?.id && router?.pathname === '/nft/product/create') ||
-      (!userinfo?.id && router?.pathname === '/nft/membership/create')
+      !userinfo?.id &&
+      PrivateRoutes.some(
+        (routes) => paths.includes(routes) && !paths.includes('public')
+      )
     ) {
       router.push('/');
     }
