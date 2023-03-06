@@ -5,7 +5,7 @@ import SocialLink from 'components/Commons/SocialLink';
 import SettingModal from 'components/TokenGated/Modal/Setting';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
-export default function Creator({ project, createMode, settingSaved }) {
+export default function Creator({ project, createMode, settingSaved, userId }) {
   const origin =
     typeof window !== 'undefined' && window.location.origin
       ? window.location.origin
@@ -40,20 +40,23 @@ export default function Creator({ project, createMode, settingSaved }) {
             <p className='text-[18px] text-txtblack font-black'>
               {project?.title ? project?.title : 'Unnamed Project'}
             </p>
-            <div className='my-2 md:flex align-items-center pr-2'>
-              <div className='w-[calc(100vw-20px)] md:w-[450px] truncate block'>
-                <span className='textSubtle font-bold'>Project Link: </span>
-                <span className='ml-2'>
-                  <Link href={`${publicDetailsLink}`} rel='noreferrer'>
-                    {publicDetailsLink}
-                  </Link>
-                </span>
+            {userId && (
+              <div className='my-2 md:flex align-items-center pr-2'>
+                <div className='w-[calc(100vw-20px)] md:w-[450px] truncate block'>
+                  <span className='textSubtle font-bold'>Project Link: </span>
+
+                  <span className='ml-2'>
+                    <Link href={`${publicDetailsLink}`} rel='noreferrer'>
+                      {publicDetailsLink}
+                    </Link>
+                  </span>
+                </div>
+                <i
+                  className='fa-regular fa-copy text-lg cursor-pointer text-primary-900 md:ml-2 mt-2 md:mt-0'
+                  onClick={() => copyToClipboard()}
+                ></i>
               </div>
-              <i
-                className='fa-regular fa-copy text-lg cursor-pointer text-primary-900 md:ml-2 mt-2 md:mt-0'
-                onClick={() => copyToClipboard()}
-              ></i>
-            </div>
+            )}
             <p className='text-textSubtle text-[12px] w-full md:max-w-[471px]'>
               {project?.description
                 ? project?.description
@@ -81,6 +84,7 @@ export default function Creator({ project, createMode, settingSaved }) {
           projectInfo={project}
           createMode={createMode}
           settingSaved={settingSaved}
+          userId={userId}
         />
       )}
     </>

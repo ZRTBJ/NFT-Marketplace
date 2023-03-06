@@ -82,7 +82,7 @@ const SplitterList = ({
                           ) : (
                             <>
                               <button
-                                disabled={!list?.list?.earnable_amount}
+                                disabled={!list?.earnable_amount}
                                 onClick={() => claimRoyaltyById(list)}
                                 className='text-[#2AD100] text-[12px] font-bold border-[#2AD100] border-[1px] rounded-[8px] h-[32px] w-[88px]'
                               >

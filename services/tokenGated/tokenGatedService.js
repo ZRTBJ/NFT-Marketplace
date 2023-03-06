@@ -6,7 +6,7 @@ import { ls_GetUserToken } from 'util/ApplicationStorage';
 
 export async function createTokenGatedProject(title) {
   const bodyFormData = new FormData();
-  bodyFormData.append('title', title);
+  title && bodyFormData.append('title', title);
   return await client('POST', `/tokengate`, bodyFormData, 'formdata');
 }
 export async function getTokenGatedProject(id) {
