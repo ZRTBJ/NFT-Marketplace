@@ -68,7 +68,10 @@ const CollectionList = ({
                           )}
                         </td>
                         <td class='whitespace-nowrap px-6 py-4'>
-                          ~$ {list?.summary?.holding_value_usd}
+                          ~${' '}
+                          {list?.summary?.holding_value_usd
+                            ? list?.summary?.holding_value_usd
+                            : 0}
                         </td>
                         <td class='whitespace-nowrap px-6 py-4'>
                           <button

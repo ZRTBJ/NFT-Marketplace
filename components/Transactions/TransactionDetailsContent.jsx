@@ -123,24 +123,22 @@ export default function TransactionDetailsContent({ query }) {
           const data = [
             {
               label: 'DAO Treasury',
-              value: Number(res?.dao_holding_usd).toFixed(2),
+              value: res?.dao_holding_usd.toFixed(2),
               key: 'dao',
             },
             {
               label: 'NFT collections',
-              value: Number(res?.collection_holding_usd).toFixed(2),
+              value: res?.collection_holding_usd.toFixed(2),
               key: 'collection',
             },
             {
               label: 'Splitter',
-              value: Number(res?.splitter_holding_token).toFixed(4),
+              value: res?.splitter_holding_token.toFixed(4),
               key: 'royalty',
             },
           ];
           setValues(data);
-          setTotalValue(
-            Number(res.dao_holding_usd) + Number(res.collection_holding_usd)
-          );
+          setTotalValue(res.dao_holding_usd + res.collection_holding_usd);
         }
       })
       .catch((err) => {

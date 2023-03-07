@@ -33,6 +33,7 @@ import ConfirmationModal from 'components/Modals/ConfirmationModal';
 import { event } from 'nextjs-google-analytics';
 import TagManager from 'react-gtm-module';
 import WalletConnectModal from 'components/Login/WalletConnectModal';
+import { DebounceInput } from 'react-debounce-input';
 
 export default function ProductNFT({ query }) {
   const audioRef = useRef();
@@ -52,6 +53,7 @@ export default function ProductNFT({ query }) {
   const [showSteps, setShowSteps] = useState(false);
   const [step, setStep] = useState(1);
   const [holdCreateNFT, setHoldCreateNFT] = useState(false);
+  const [supply, setSupply] = useState();
 
   const fileUploadNotification = useSelector((state) =>
     state?.notifications?.notificationData
@@ -270,7 +272,13 @@ export default function ProductNFT({ query }) {
 
   const onSubmit = async (data) => {
     if (nftFile && nftFile.file) {
-      setShowConfirmation(true);
+      if (!userinfo?.id && !supply) {
+        setCheckedValidation(true);
+      } else {
+        setShowConfirmation(true);
+        setCheckedValidation(false);
+      }
+
       if (showConfirmation) {
         if (userinfo?.id) {
           setFileError(false);
@@ -545,7 +553,7 @@ export default function ProductNFT({ query }) {
     let createPayload = {
       blockchain: ls_GetChainID(),
       collection_type: 'product',
-      total_supply: 1,
+      supply: supply,
     };
 
     createCollection(createPayload)
@@ -992,6 +1000,35 @@ export default function ProductNFT({ query }) {
                       </label>
                     </div>
                   </div>
+                  {!userinfo?.id ? (
+                    <div className='mb-6 '>
+                      <div className='flex items-center mb-2'>
+                        <Tooltip></Tooltip>
+                        <p className='txtblack text-[14px]'>Supply</p>
+                      </div>
+                      <>
+                        <DebounceInput
+                          minLength={1}
+                          debounceTimeout={0}
+                          className={`debounceInput mt-1 ${
+                            showConfirmation
+                              ? ' !border-none bg-transparent'
+                              : ''
+                          } `}
+                          disabled={showConfirmation}
+                          value={supply}
+                          type='number'
+                          onChange={(e) => setSupply(e.target.value)}
+                          placeholder='Supply for the NFT'
+                        />
+                        {checkedValidation && !supply && (
+                          <p className='text-red-500 text-xs font-medium'>
+                            Supply is required
+                          </p>
+                        )}
+                      </>
+                    </div>
+                  ) : null}
                   <div className='grid grid-cols-1 mt-2'>
                     {isListUpdate && (
                       <div className='text-center mt-3'>
