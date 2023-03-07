@@ -176,6 +176,7 @@ const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
                   href='https://discord.com/channels/989012893737566208/989012893737566215'
                   passHref
                   target='_blank'
+                  className='hover:opacity-[0.8]'
                 >
                   <Image src={Discord} alt='Twitter' className='mr-6' />
                 </Link>
@@ -183,13 +184,15 @@ const Sidebar = ({ handleToggleSideBar, setShowModal }) => {
                   href='https://www.linkedin.com/company/decir-nfts/'
                   passHref
                   target='_blank'
+                  className='hover:text-textSubtle'
                 >
-                  <Image src={Telegram} alt='Twitter' className='mr-6' />
+                  <i className='fa-brands fa-linkedin mr-6 text-[18px]'></i>
                 </Link>
                 <Link
                   href='https://twitter.com/decentralcircle'
                   passHref
                   target='_blank'
+                  className='hover:opacity-[0.8]'
                 >
                   <Image src={Twitter} alt='Twitter' />
                 </Link>

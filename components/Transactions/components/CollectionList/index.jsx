@@ -48,9 +48,24 @@ const CollectionList = ({
                         </td>
                         <td class='whitespace-nowrap px-6 py-4'>
                           {' '}
-                          {list?.contract_address
-                            ? walletAddressTruncate(list.contract_address)
-                            : '-'}
+                          {list?.contract_address ? (
+                            <>
+                              {' '}
+                              <a
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                className='no-underline'
+                                href={`${
+                                  NETWORKS[list?.blockchain]
+                                    ?.viewContractAddressUrl
+                                }${list.contract_address}`}
+                              >
+                                {walletAddressTruncate(list.contract_address)}
+                              </a>{' '}
+                            </>
+                          ) : (
+                            '-'
+                          )}
                         </td>
                         <td class='whitespace-nowrap px-6 py-4'>
                           ~$ {list?.summary?.holding_value_usd}

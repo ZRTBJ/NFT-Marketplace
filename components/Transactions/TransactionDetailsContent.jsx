@@ -16,7 +16,7 @@ import NetworkHandlerModal from 'components/Modals/NetworkHandlerModal';
 import { toast } from 'react-toastify';
 import LeavingSite from 'components/Project/Components/LeavingSite';
 import ErrorModal from 'components/Modals/ErrorModal';
-import { royaltyClaim } from '../profile/royalty-claim';
+import { royaltyClaim } from 'components/Profile/royalty-claim';
 import { createProvider } from 'util/smartcontract/provider';
 import DAOList from './components/DAOList';
 import CollectionList from './components/CollectionList';

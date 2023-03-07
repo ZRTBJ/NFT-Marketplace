@@ -48,9 +48,24 @@ const DAOList = ({
                         </td>
                         <td class='whitespace-nowrap px-6 py-4'>
                           {' '}
-                          {list?.treasury_wallet
-                            ? walletAddressTruncate(list.treasury_wallet)
-                            : '-'}
+                          {list?.treasury_wallet ? (
+                            <>
+                              {' '}
+                              <a
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                className='no-underline'
+                                href={`${
+                                  NETWORKS[list?.blockchain]
+                                    ?.viewContractAddressUrl
+                                }${list.treasury_wallet}`}
+                              >
+                                {walletAddressTruncate(list.treasury_wallet)}
+                              </a>{' '}
+                            </>
+                          ) : (
+                            '-'
+                          )}
                         </td>
                         <td class='whitespace-nowrap px-6 py-4'>-</td>
                         <td class='whitespace-nowrap px-6 py-4'>

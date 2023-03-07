@@ -162,9 +162,11 @@ const IntegrateNewCollection = ({
                   </p>
                 </p>
               </div>
-              <p className='text-[14px] font-bold text-white bg-[#424867] ml-auto flex items-center justify-center w-[72px] rounded-[32px] h-[26px]'>
-                {collectionDetail?.token_standard}
-              </p>
+              {collectionDetail?.token_standard && (
+                <p className='text-[14px] font-bold text-white bg-[#424867] ml-auto flex items-center justify-center w-[72px] rounded-[32px] h-[26px]'>
+                  {collectionDetail?.token_standard}
+                </p>
+              )}
             </div>
             <div className='flex justify-between items-center mt-6'>
               <div>

@@ -44,9 +44,24 @@ const SplitterList = ({
                         </td>
                         <td class='whitespace-nowrap px-6 py-4'>
                           {' '}
-                          {list?.royalty_address
-                            ? walletAddressTruncate(list.royalty_address)
-                            : '-'}
+                          {list?.royalty_address ? (
+                            <>
+                              {' '}
+                              <a
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                className='no-underline'
+                                href={`${
+                                  NETWORKS[list?.blockchain]
+                                    ?.viewContractAddressUrl
+                                }${list.royalty_address}`}
+                              >
+                                {walletAddressTruncate(list.royalty_address)}
+                              </a>{' '}
+                            </>
+                          ) : (
+                            '-'
+                          )}
                         </td>
                         <td class='whitespace-nowrap px-6 py-4'>
                           {list?.royalty_percent}
