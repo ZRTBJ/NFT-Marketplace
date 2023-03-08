@@ -109,11 +109,11 @@ export default function TransactionDetailsContent({ query }) {
   };
 
   const handleCollectionPageClick = (event) => {
-    getUserRoyaltiesInfo(event.selected + 1);
+    getCollectionList(event.selected + 1);
   };
 
   const handleSplitterPageClick = (event) => {
-    setRoyaltiesList(event.selected + 1);
+    getUserRoyaltiesInfo(event.selected + 1);
   };
 
   const onUserRevenueGet = async () => {
