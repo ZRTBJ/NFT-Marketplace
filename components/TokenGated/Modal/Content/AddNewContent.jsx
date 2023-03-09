@@ -585,6 +585,7 @@ export default function AddNewContent({
                 pageTitle: 'publish_tokengate_content',
               },
             });
+
             const data = {
               is_publish: true,
             };
@@ -727,6 +728,7 @@ export default function AddNewContent({
       await setPublishing();
       await handleStates();
     } else {
+      setPublishing();
       setCreateContent(true);
       setShowConnectModal(true);
     }
@@ -862,12 +864,14 @@ export default function AddNewContent({
           setIsPublishing(false);
           onContentAdded();
           setCreateContent(false);
-          router.push(`/token-gated/${projectID}`);
-          setTimeout(() => {
-            if (typeof window !== 'undefined') {
-              window.location.reload();
-            }
-          }, 500);
+          if (projectID) {
+            router.push(`/token-gated/${projectID}`);
+            setTimeout(() => {
+              if (typeof window !== 'undefined') {
+                window.location.reload();
+              }
+            }, 500);
+          }
         }}
         subMessage={
           isPublishing
