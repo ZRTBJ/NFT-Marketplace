@@ -927,6 +927,16 @@ export default function AddNewContent({
     );
   }
 
+  if (showConnectModal) {
+    return (
+      <WalletConnectModal
+        showModal={showConnectModal}
+        noRedirection={true}
+        closeModal={() => setShowConnectModal(false)}
+      />
+    );
+  }
+
   return (
     <Modal
       width={600}
@@ -936,13 +946,6 @@ export default function AddNewContent({
       showCloseIcon={true}
     >
       <div className='py-4'>
-        {showConnectModal && (
-          <WalletConnectModal
-            showModal={showConnectModal}
-            noRedirection={true}
-            closeModal={() => setShowConnectModal(false)}
-          />
-        )}
         {showAddCollection ? (
           <IntegrateNewCollection
             smartContractAddress={smartContractAddress}
