@@ -3,13 +3,11 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 const PrivateRoutes = [
-  'dashboard',
-  'create',
-  'dao/create',
-  'settings',
-  'token-gated',
-  'notifications',
-  'transactions',
+  '/dashboard',
+  '/profile/settings',
+  '/token-gated/[id]',
+  '/notifications',
+  '/transactions',
 ];
 
 const Auth = ({ children }) => {
@@ -17,14 +15,13 @@ const Auth = ({ children }) => {
   const userinfo = useSelector((state) => state.user.userinfo);
 
   useEffect(() => {
-    let paths = router?.asPath?.split('/');
+    let path = router?.pathname;
+    let absolutePath = router?.asPath;
     if (
-      (!userinfo?.id &&
-        PrivateRoutes.some(
-          (routes) => paths.includes(routes) && !paths.includes('public')
-        )) ||
-      (!userinfo?.id && router?.pathname === '/nft/product/create') ||
-      (!userinfo?.id && router?.pathname === '/nft/membership/create')
+      !userinfo?.id &&
+      PrivateRoutes.some(
+        (route) => path === route && absolutePath !== '/token-gated/new-draft'
+      )
     ) {
       router.push('/');
     }

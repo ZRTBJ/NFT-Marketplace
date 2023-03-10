@@ -625,7 +625,7 @@ video::-webkit-media-controls-panel {
 .triangle {
   width: 27px;
   height: 27px;
-  background: linear-gradient(to left, #12b4ff 0%, #e100ff 100%);
+  background: linear-gradient(to top, #12b4ff 0%, #e100ff 100%);
   border-top-left-radius: 8px;
   -webkit-clip-path: polygon(0 0, 0% 100%, 100% 0);
   clip-path: polygon(0 0, 0% 100%, 100% 0);

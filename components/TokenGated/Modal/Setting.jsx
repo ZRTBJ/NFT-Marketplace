@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import {
@@ -17,6 +17,7 @@ import deleteIcon from 'assets/images/projectCreate/ico_delete01.svg';
 import ConfirmationModal from 'components/Modals/ConfirmationModal';
 import { event } from 'nextjs-google-analytics';
 import TagManager from 'react-gtm-module';
+import WalletConnectModal from 'components/Login/WalletConnectModal';
 
 export default function Setting({
   show,
@@ -24,6 +25,7 @@ export default function Setting({
   projectInfo,
   createMode,
   settingSaved,
+  userId,
 }) {
   const router = useRouter();
   const links = [
@@ -40,6 +42,8 @@ export default function Setting({
     links: links,
     cover: '',
   };
+  const [showConnectModal, setShowConnectModal] = useState(false);
+  const [createProject, setCreateProject] = useState(false);
   const [project, setProject] = useState(createMode ? form : projectInfo);
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState(1);
@@ -64,8 +68,19 @@ export default function Setting({
     register,
     handleSubmit,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm();
+
+  useEffect(() => {
+    if (createProject) {
+      onSubmit();
+    }
+
+    return () => {
+      setCreateProject(false);
+    };
+  }, [userId]);
 
   const onDescriptionChange = (text) => {
     let oldProject = { ...project };
@@ -100,62 +115,41 @@ export default function Setting({
     setProjectPhoto({ image: null, path: '' });
   }
   const onSubmit = async (data) => {
-    let payload = {
-      title: data['title'],
-      headline: data['headline'],
-      description: data['description'],
-      image_1: projectPhoto.image ? projectPhoto.image : null,
-      cover: coverPhoto.image ? coverPhoto.image : null,
-      links: JSON.stringify(project?.links),
-    };
-    setIsLoading(true);
+    if (userId) {
+      let payload = {
+        title: data?.title ? data['title'] : getValues('title'),
+        headline: data?.headline ? data['headline'] : getValues('headline'),
+        description: data?.description
+          ? data['description']
+          : getValues('description'),
+        image_1: projectPhoto.image ? projectPhoto.image : null,
+        cover: coverPhoto.image ? coverPhoto.image : null,
+        links: JSON.stringify(project?.links),
+      };
+      setIsLoading(true);
 
-    // create and then  update
-    if (createMode) {
-      event('create_token_gate_project', { category: 'token_gate' });
-      TagManager.dataLayer({
-        dataLayer: {
-          event: 'click_event',
-          category: 'token_gate',
-          pageTitle: 'create_token_gate_project',
-        },
-      });
-      let projectId = '';
-      await createTokenGatedProject(data['title'])
-        .then((res) => {
-          if (res.code === 0) {
-            projectId = res?.token_gate_project?.id;
-            setProjectId(projectId);
-          } else {
-            setIsLoading(false);
-            setStep(2);
-            setShowErrorModal(true);
-            setErrorMessage(res.message);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-          setIsLoading(false);
-          setStep(2);
-          setShowErrorModal(true);
-          setErrorMessage(err);
-        });
-      if (projectId !== '') {
-        event('update_token_gate_project', { category: 'token_gate' });
+      // create and then  update
+      if (createMode || createProject) {
+        event('create_token_gate_project', { category: 'token_gate' });
         TagManager.dataLayer({
           dataLayer: {
             event: 'click_event',
             category: 'token_gate',
-            pageTitle: 'update_token_gate_project',
+            pageTitle: 'create_token_gate_project',
           },
         });
-        payload.id = projectId;
-        await updateTokenGatedProject(payload)
+        let projectId = '';
+        await createTokenGatedProject(
+          data?.title ? data['title'] : getValues('title')
+        )
           .then((res) => {
             if (res.code === 0) {
-              setIsLoading(false);
-              setStep(2);
-              setShowSuccessModal(true);
+              projectId = res?.token_gate_project?.id;
+              if (createProject) {
+                payload.id = projectId;
+                updateTokenProject(payload);
+              }
+              setProjectId(projectId);
             } else {
               setIsLoading(false);
               setStep(2);
@@ -169,38 +163,59 @@ export default function Setting({
             setShowErrorModal(true);
             setErrorMessage(err);
           });
+        if (projectId !== '') {
+          event('update_token_gate_project', { category: 'token_gate' });
+          TagManager.dataLayer({
+            dataLayer: {
+              event: 'click_event',
+              category: 'token_gate',
+              pageTitle: 'update_token_gate_project',
+            },
+          });
+          payload.id = projectId;
+          await updateTokenProject(payload);
+        }
       }
+      // only  update
+      else {
+        payload.id = projectInfo?.id;
+        await updateTokenProject(payload);
+      }
+    } else {
+      setShowConnectModal(true);
+      setCreateProject(true);
     }
-    // only  update
-    else {
-      payload.id = projectInfo?.id;
-      await updateTokenGatedProject(payload)
-        .then((res) => {
-          if (res.code === 0) {
-            setIsLoading(false);
-            setStep(2);
-            setShowSuccessModal(true);
-          } else {
-            setIsLoading(false);
-            setStep(2);
-            setShowErrorModal(true);
-            setErrorMessage(res.message);
-          }
-        })
-        .catch((err) => {
+  };
+
+  const updateTokenProject = async (payload) => {
+    await updateTokenGatedProject(payload)
+      .then((res) => {
+        if (res.code === 0) {
+          setIsLoading(false);
+          setStep(2);
+          setShowSuccessModal(true);
+        } else {
           setIsLoading(false);
           setStep(2);
           setShowErrorModal(true);
-          setErrorMessage(err);
-        });
-    }
+          setErrorMessage(res.message);
+        }
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        setStep(2);
+        setShowErrorModal(true);
+        setErrorMessage(err);
+      });
   };
+
   const onSuccess = () => {
     if (!projectDeleted) {
       setShowSuccessModal(false);
       setStep(1);
       handleClose(false);
       settingSaved(projectId);
+      router.push(`/token-gated/${projectId}`);
     } else {
       router.push('/dashboard');
     }
@@ -428,12 +443,21 @@ export default function Setting({
           </Modal>
         </>
       )}
+      {showConnectModal && (
+        <WalletConnectModal
+          showModal={showConnectModal}
+          noRedirection={true}
+          closeModal={() => setShowConnectModal(false)}
+        />
+      )}
       {step === 2 && (
         <>
           {showSuccessModal && (
             <SuccessModal
               show={showSuccessModal}
-              handleClose={() => onSuccess()}
+              handleClose={() => {
+                onSuccess();
+              }}
               message={`Successfully  ${
                 projectDeleted ? 'Deleted' : 'Saved'
               }  Token Gated Project`}

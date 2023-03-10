@@ -5,10 +5,11 @@ import Link from 'next/link';
 import CreateNFTModal from 'components/Project/CreateDAOandNFT/components/CreateNFTModal.jsx';
 import NFTPublishingSteps from 'components/LandingPage/components/NFTPublishingSteps';
 import { formatNumber } from 'accounting';
+import { useRouter } from 'next/router';
 
 export default function CollectionTable({ tableData }) {
   const [showCreateNFTModal, setShowCreateNFTModal] = useState(false);
-
+  const router = useRouter();
   return (
     <>
       <div className='flex items-center gap-4 flex-wrap my-3'>
@@ -17,7 +18,7 @@ export default function CollectionTable({ tableData }) {
           NFT Collection
         </p>
         <button
-          onClick={() => setShowCreateNFTModal(true)}
+          onClick={() => router.push('/collection/create')}
           className='contained-button rounded ml-auto !text-white'
         >
           Create Collection

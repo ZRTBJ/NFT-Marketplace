@@ -32,11 +32,11 @@ export default function OnBoardingGuide() {
   };
 
   const redirectToNftCreatePage = () => {
-    if (userinfo?.id) {
-      setShowCreateNFTModal(true);
-    } else {
-      setShowWalletConnectModal(true);
-    }
+    // if (userinfo?.id) {
+    setShowCreateNFTModal(true);
+    // } else {
+    //   setShowWalletConnectModal(true);
+    // }
   };
 
   const getGasPrice = async () => {

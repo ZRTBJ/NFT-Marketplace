@@ -54,7 +54,7 @@ const Configuration = ({
       )}
       {content?.accessToAll ? (
         <div className='bg-primary-100 rounded-[12px] text-primary-900 font-black py-4 mt-2'>
-          <i className='fa-solid fa-circle-info ml-4 mr-2 text-[16px]'></i>{' '}
+          <i className='fa-solid fa-circle-info ml-4 mr-2 text-[10px]'></i>{' '}
           <span>Content Belongs to all Collection & Token ID</span>
         </div>
       ) : (

@@ -12,17 +12,20 @@ const Notifications = () => {
   const dispatch = useDispatch();
   const { notifications } = useSelector((state) => state.user);
   const router = useRouter();
-  const payload = {
-    page: 1,
-    limit: 10,
-  };
+
   useEffect(() => {
     dispatch(getUserNotification(isActive));
   }, [isActive]);
 
   useEffect(() => {
     let arr = Array.from({ length: notifications?.pageSize }, (v, k) => k + 1);
-    setPagination(arr);
+    console.log(arr);
+    const page = calculatePageCount(15, notifications?.total);
+    const pageList = [];
+    for (let index = 1; index <= page; index++) {
+      pageList.push(index);
+    }
+    setPagination(pageList);
   }, [notifications]);
   function markAsRead(notification) {
     if (notification?.data?.collection_id || notification?.data?.project_uid) {
@@ -49,6 +52,9 @@ const Notifications = () => {
 
   const handlePageClick = (event) => {
     setIsactive(event.selected + 1);
+  };
+  const calculatePageCount = (pageSize, totalItems) => {
+    return totalItems < pageSize ? 1 : Math.ceil(totalItems / pageSize);
   };
 
   return (

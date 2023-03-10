@@ -243,7 +243,7 @@ const WelcomeModal = ({ show, handleClose }) => {
           </div>
         </div>
         <div className='w-2/6 welcome-gradient-bg relative hidden md:block ml-[1px]'>
-          <h1 className='!text-[48px] mb-4 !leading-tight'>
+          <h1 className='!text-[47px] mb-4 !leading-tight'>
             No Code DAO Creation Platform
           </h1>
           <p className='!text-[32px] !leading-tight'>

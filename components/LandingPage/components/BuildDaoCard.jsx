@@ -9,11 +9,11 @@ export default function BuildDaoCard({ size }) {
   const userinfo = useSelector((state) => state.user.userinfo);
   const [showWalletConnectModal, setShowWalletConnectModal] = useState(false);
   const handelOnClick = async () => {
-    if (userinfo?.id) {
-      router.push(`/dao/create`);
-    } else {
-      setShowWalletConnectModal(true);
-    }
+    // if (userinfo?.id) {
+    router.push(`/dao/create`);
+    // } else {
+    //   setShowWalletConnectModal(true);
+    // }
   };
   return (
     <div>
@@ -37,7 +37,9 @@ export default function BuildDaoCard({ size }) {
           <p className=' text-[20px] font-black mb-1'>Build DAO community</p>
           <p
             className={`mb-4 break-word ${
-              size === 'lg' ? 'text-[14px] mb-10 mt-3' : 'max-w-[300px]'
+              size === 'lg'
+                ? 'text-[14px] mb-10 mt-3'
+                : 'max-w-[300px] text-textSubtle-200 pb-1'
             }`}
           >
             Build a vibrant web3 community designed for mutual benefits and

@@ -16,6 +16,7 @@ import ContentListTable from 'components/TokenGated/ContentListTable';
 import { isValidURL } from 'util/functions';
 import ReactTooltip from 'react-tooltip';
 import ContentLimitModal from './Modal/ContentLimitModal';
+import { useSelector } from 'react-redux';
 
 const sortingOptions = [
   { id: 1, value: '', name: 'Sort By' },
@@ -42,6 +43,7 @@ export default function TokenGatedContent({ query, createMode }) {
   const [showConfigure, setShowConfigure] = useState(null);
   const [isEditContent, setIsEditContent] = useState(false);
   const [showLimitModal, setShowLimitModal] = useState(false);
+  const userInfo = useSelector((state) => state.user.userinfo);
 
   const handleLinkDetails = (e) => {
     if (e.target.value.length && e.target.name === 'link') {
@@ -174,6 +176,7 @@ export default function TokenGatedContent({ query, createMode }) {
             project={project}
             createMode={createMode}
             settingSaved={onSettingSaved}
+            userId={userInfo?.id}
           />
           <div className='flex flex-wrap gap-4 items-start my-4 md:my-[50px]'>
             <div className='flex flex-wrap gap-4 items-start md:flex-1'>

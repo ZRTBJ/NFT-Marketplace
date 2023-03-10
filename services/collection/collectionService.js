@@ -27,6 +27,7 @@ export async function createCollection(payload) {
   payload?.name && bodyFormData.append('name', payload?.name);
   payload?.dao_id && bodyFormData.append('project_id', payload.dao_id);
   payload?.blockchain && bodyFormData.append('blockchain', payload.blockchain);
+  payload?.supply && bodyFormData.append('supply', payload.supply);
   bodyFormData.append('collection_type', payload.collection_type);
 
   return await client('POST', `/collection`, bodyFormData, 'formdata');

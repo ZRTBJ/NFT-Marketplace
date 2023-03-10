@@ -31,7 +31,8 @@ export default function TokenGatedBannerCard() {
           setIsLoading(false);
         });
     } else {
-      setShowWalletConnectModal(true);
+      // setShowWalletConnectModal(true);
+      router.push(`/token-gated/new-draft`);
     }
   };
   return (

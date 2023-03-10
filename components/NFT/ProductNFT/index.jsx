@@ -32,6 +32,8 @@ import { NETWORKS } from 'config/networks';
 import ConfirmationModal from 'components/Modals/ConfirmationModal';
 import { event } from 'nextjs-google-analytics';
 import TagManager from 'react-gtm-module';
+import WalletConnectModal from 'components/Login/WalletConnectModal';
+import { DebounceInput } from 'react-debounce-input';
 
 export default function ProductNFT({ query }) {
   const audioRef = useRef();
@@ -50,6 +52,9 @@ export default function ProductNFT({ query }) {
   const [jobId, setJobId] = useState('');
   const [showSteps, setShowSteps] = useState(false);
   const [step, setStep] = useState(1);
+  const [holdCreateNFT, setHoldCreateNFT] = useState(false);
+  const [supply, setSupply] = useState();
+
   const fileUploadNotification = useSelector((state) =>
     state?.notifications?.notificationData
       ? state?.notifications?.notificationData
@@ -88,6 +93,18 @@ export default function ProductNFT({ query }) {
     watch,
     formState: { errors },
   } = useForm();
+
+  const [showConnectModal, setShowConnectModal] = useState(false);
+
+  useEffect(() => {
+    if (holdCreateNFT) {
+      onSubmit();
+    }
+
+    return () => {
+      setHoldCreateNFT(false);
+    };
+  }, [userinfo?.id]);
 
   const useDebounceCallback = (delay = 100, cleaning = true) => {
     // or: delayed debounce callback
@@ -255,22 +272,33 @@ export default function ProductNFT({ query }) {
 
   const onSubmit = async (data) => {
     if (nftFile && nftFile.file) {
-      setShowConfirmation(true);
+      if (!userinfo?.id && !supply) {
+        setCheckedValidation(true);
+      } else {
+        setShowConfirmation(true);
+        setCheckedValidation(false);
+      }
+
       if (showConfirmation) {
-        setFileError(false);
-        setShowSteps(true);
-        if (!updateMode) {
-          if (!collectionId || collectionId === '') {
-            createNewProject();
-          } else {
-            await genUploadKey();
+        if (userinfo?.id) {
+          setFileError(false);
+          setShowSteps(true);
+          if (!updateMode) {
+            if (!collectionId || collectionId === '') {
+              createNewProject();
+            } else {
+              await genUploadKey();
+            }
+          } else if (updateMode) {
+            if (!asseteRemoveInUpdateMode) {
+              await updateNFT(nft.asset.path);
+            } else if (asseteRemoveInUpdateMode) {
+              await genUploadKey();
+            }
           }
-        } else if (updateMode) {
-          if (!asseteRemoveInUpdateMode) {
-            await updateNFT(nft.asset.path);
-          } else if (asseteRemoveInUpdateMode) {
-            await genUploadKey();
-          }
+        } else {
+          setShowConnectModal(true);
+          setHoldCreateNFT(true);
         }
       }
     } else {
@@ -525,6 +553,7 @@ export default function ProductNFT({ query }) {
     let createPayload = {
       blockchain: ls_GetChainID(),
       collection_type: 'product',
+      supply: supply,
     };
 
     createCollection(createPayload)
@@ -873,7 +902,7 @@ export default function ProductNFT({ query }) {
                     </p>
                   )}
                 </div>
-                {typeof window !== 'undefined' && (
+                {userinfo?.id && typeof window !== 'undefined' && (
                   <div className='mb-6'>
                     <div className='flex items-center mb-2'>
                       <Tooltip message='If you selecting a Collection, it will generate automatically'></Tooltip>
@@ -971,6 +1000,35 @@ export default function ProductNFT({ query }) {
                       </label>
                     </div>
                   </div>
+                  {!userinfo?.id ? (
+                    <div className='mb-6 '>
+                      <div className='flex items-center mb-2'>
+                        <Tooltip></Tooltip>
+                        <p className='txtblack text-[14px]'>Supply</p>
+                      </div>
+                      <>
+                        <DebounceInput
+                          minLength={1}
+                          debounceTimeout={0}
+                          className={`debounceInput mt-1 ${
+                            showConfirmation
+                              ? ' !border-none bg-transparent'
+                              : ''
+                          } `}
+                          disabled={showConfirmation}
+                          value={supply}
+                          type='number'
+                          onChange={(e) => setSupply(e.target.value)}
+                          placeholder='Supply for the NFT'
+                        />
+                        {checkedValidation && !supply && (
+                          <p className='text-red-500 text-xs font-medium'>
+                            Supply is required
+                          </p>
+                        )}
+                      </>
+                    </div>
+                  ) : null}
                   <div className='grid grid-cols-1 mt-2'>
                     {isListUpdate && (
                       <div className='text-center mt-3'>
@@ -1162,6 +1220,13 @@ export default function ProductNFT({ query }) {
             redirection={`/collection/${collectionId}`}
             show={showDeleteSuccessModal}
             handleClose={() => setShowDeleteSuccessModal(false)}
+          />
+        )}
+        {showConnectModal && (
+          <WalletConnectModal
+            showModal={showConnectModal}
+            noRedirection={true}
+            closeModal={() => setShowConnectModal(false)}
           />
         )}
       </>

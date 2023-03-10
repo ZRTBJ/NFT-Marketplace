@@ -12,11 +12,11 @@ export default function CreateNFTCard({ size }) {
   const [showWalletConnectModal, setShowWalletConnectModal] = useState(false);
   const [showCreateNFTModal, setShowCreateNFTModal] = useState(false);
   const handelOnClick = async () => {
-    if (userinfo?.id) {
-      setShowCreateNFTModal(true);
-    } else {
-      setShowWalletConnectModal(true);
-    }
+    // if (userinfo?.id) {
+    router.push(`/collection/create`);
+    // } else {
+    //   setShowWalletConnectModal(true);
+    // }
   };
   return (
     <div>
