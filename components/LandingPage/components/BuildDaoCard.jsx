@@ -24,7 +24,7 @@ export default function BuildDaoCard({ size }) {
         className={`relative justify-between bg-white flex  items-center gap-x-5 shadow rounded-2xl ${
           size === 'lg'
             ? 'flex-col gap-y-5 rounded-bl-2xl rounded-br-2xl'
-            : ' w-[515px] px-[30px] py-5'
+            : ' w-[515px] px-[30px] py-5 md:min-h-[200px]'
         }`}
       >
         <div
