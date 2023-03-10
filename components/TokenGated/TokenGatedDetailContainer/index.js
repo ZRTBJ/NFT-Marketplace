@@ -376,6 +376,7 @@ const TokenGatedContentDetailContainer = ({ query }) => {
       )}
       {showErrorModal && (
         <ErrorModal
+          errorType={!userinfo?.id ? 'user_not_logged_in' : ''}
           showCloseIcon={false}
           handleClose={() => onErrorHandel()}
           show={showErrorModal}
