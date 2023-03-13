@@ -40,7 +40,7 @@ const MemberListTable = ({
   useEffect(() => {
     if (newItems) {
       if (address && percentage && !isEdit) {
-        handleAutoFill();
+        // handleAutoFill();
         setNewItems([]);
         setAddress('');
         setPercentage('');
@@ -195,7 +195,7 @@ const MemberListTable = ({
                               <div className='flex flex-col'>
                                 <i
                                   className='fa-solid fa-check bg-green-400 rounded-[4px] text-white p-[2px] text-[18px] cursor-pointer'
-                                  onClick={handleAutoFill}
+                                  onClick={() => setIsEdit(null)}
                                 ></i>
                                 <i
                                   className='fa-solid fa-xmark bg-red-400 rounded-[4px] text-white p-[2px] pl-[4px] text-[20px] cursor-pointer'

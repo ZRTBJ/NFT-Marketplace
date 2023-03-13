@@ -8,6 +8,7 @@ import {
   getSplitterDetails,
   updateRoyaltySplitter,
 } from 'services/collection/collectionService';
+import { useSelector } from 'react-redux';
 import SuccessModal from 'components/Modals/SuccessModal';
 import ConfirmationModal from 'components/Modals/ConfirmationModal';
 import ImportWalletModal from 'components/Collection/RoyaltySplitter/ImportWalletModal/ImportWalletModal';
@@ -21,6 +22,7 @@ import { getCurrentNetworkId } from 'util/MetaMask';
 import NetworkHandlerModal from 'components/Modals/NetworkHandlerModal';
 import PublishRoyaltyConfirmModal from 'components/Collection/Publish/PublishRoyaltyConfirmModal';
 import Image from 'next/image';
+import WalletConnectModal from 'components/Login/WalletConnectModal';
 
 const TABLE_HEADERS = [
   { id: 0, label: 'Wallet Address' },
@@ -30,7 +32,16 @@ const TABLE_HEADERS = [
   { id: 4, label: 'Action' },
 ];
 
-const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
+const Splitter = ({
+  collectionId,
+  getProjectCollections,
+  projectNetwork,
+  isModal,
+  splitterName,
+  blockchain,
+  createSplitterClose,
+  setIsSubmitted,
+}) => {
   const [ShowPercentError, setShowPercentError] = useState(false);
   const [AutoAssign, setAutoAssign] = useState(false);
   const [isEdit, setIsEdit] = useState(null);
@@ -47,6 +58,8 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
   const [Collection, setCollection] = useState();
   const [projectID, setProjectID] = useState('');
   const [showNetworkHandler, setShowNetworkHandler] = useState(false);
+  const [showConnectModal, setShowConnectModal] = useState(false);
+  const [toCreateSplitter, setToCreateSplitter] = useState(false);
 
   const hasPublishedRoyaltySplitter = useMemo(
     () => Collection?.royalty_splitter?.status === 'published',
@@ -93,6 +106,17 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
   });
 
   const [showImportWallet, setShowImportWallet] = useState(false);
+  const userInfo = useSelector((state) => state.user.userinfo);
+
+  useEffect(() => {
+    if (toCreateSplitter) {
+      handleAutoFill();
+    }
+
+    return () => {
+      setToCreateSplitter(false);
+    };
+  }, [userInfo?.id]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -196,43 +220,61 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
   };
 
   const handleAutoFill = () => {
-    let members = royalityMembers.map((mem) => {
-      return {
-        wallet_address: mem.user_eoa,
-        royalty: mem.royalty_percent,
-      };
-    });
-    let formData = new FormData();
-    formData.append('royalty_data', JSON.stringify(members));
-    royalitySplitterId
-      ? formData.append('splitter_uid', royalitySplitterId)
-      : formData.append('collection_uid', Collection.id);
-    if (!ShowPercentError) {
-      setIsAutoFillLoading(true);
-      updateRoyaltySplitter(formData)
-        .then((resp) => {
-          if (resp.code === 0) {
-            toast.success('Royalty Percentage Updated Successfully');
-
-            setIsAutoFillLoading(false);
-            setAutoAssign(false);
-            setIsEdit(null);
-            setShowRoyalityErrorModal(false);
-            setShowRoyalityErrorMessage('');
-            getCollectionDetail();
-          } else {
+    if (isModal) {
+      setIsSubmitted(true);
+    }
+    if (userInfo?.id) {
+      let members = royalityMembers.map((mem) => {
+        return {
+          wallet_address: mem.user_eoa,
+          royalty: mem.royalty_percent,
+        };
+      });
+      let formData = new FormData();
+      formData.append('royalty_data', JSON.stringify(members));
+      splitterName && formData.append('name', splitterName);
+      blockchain && formData.append('blockchain', blockchain);
+      royalitySplitterId
+        ? formData.append('splitter_uid', royalitySplitterId)
+        : Collection?.id
+        ? formData.append('collection_uid', Collection?.id)
+        : null;
+      if (!ShowPercentError) {
+        setIsAutoFillLoading(true);
+        updateRoyaltySplitter(formData)
+          .then((resp) => {
+            if (resp.code === 0) {
+              toast.success(
+                isModal
+                  ? 'Royalty Splitter added Successfully'
+                  : 'Royalty Percentage Updated Successfully'
+              );
+              setIsAutoFillLoading(false);
+              setAutoAssign(false);
+              setIsEdit(null);
+              setShowRoyalityErrorModal(false);
+              setShowRoyalityErrorMessage('');
+              getCollectionDetail();
+              if (isModal) {
+                createSplitterClose();
+              }
+            } else {
+              setIsAutoFillLoading(false);
+              setRoyaltyUpdatedSuccessfully(false);
+              setShowRoyalityErrorModal(true);
+              setAutoAssign(false);
+              setShowRoyalityErrorMessage(resp.message);
+            }
+          })
+          .catch((err) => {
             setIsAutoFillLoading(false);
             setRoyaltyUpdatedSuccessfully(false);
-            setShowRoyalityErrorModal(true);
             setAutoAssign(false);
-            setShowRoyalityErrorMessage(resp.message);
-          }
-        })
-        .catch((err) => {
-          setIsAutoFillLoading(false);
-          setRoyaltyUpdatedSuccessfully(false);
-          setAutoAssign(false);
-        });
+          });
+      }
+    } else {
+      setShowConnectModal(true);
+      setToCreateSplitter(true);
     }
   };
 
@@ -297,7 +339,7 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
             setShowImportWallet(false);
             getCollectionDetail();
             getSplittedContributors(
-              royalitySplitterId ? royalitySplitterId : Collection.id,
+              royalitySplitterId ? royalitySplitterId : Collection?.id,
               royalitySplitterId ? 'splitter_id' : 'collection_id'
             );
           }}
@@ -313,6 +355,7 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
           setRoyaltyUpdatedSuccessfully={setRoyaltyUpdatedSuccessfully}
           setShowRoyalityErrorModal={setShowRoyalityErrorModal}
           setShowRoyalityErrorMessage={setShowRoyalityErrorMessage}
+          isModal={isModal}
         />
       )}
       {RoyaltyUpdatedSuccessfully && (
@@ -369,6 +412,14 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
           show={showPublishRoyaltySpliterErrorModal}
           title='Failed to publish royalty percentage!'
           handleClose={() => setShowPublishRoyaltySpliterErrorModal(false)}
+        />
+      )}
+
+      {showConnectModal && (
+        <WalletConnectModal
+          showModal={showConnectModal}
+          noRedirection={true}
+          closeModal={() => setShowConnectModal(false)}
         />
       )}
 
@@ -442,16 +493,22 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
           </div> */}
           {/* {CollectionDetail.is_owner &&
                 CollectionDetail.status !== "published" ? ( */}
-          <div className='w-full'>
+          <div className='w-full flex items-center justify-end'>
+            <div>
+              <button
+                onClick={handleAutoFill}
+                className='border-primary-900 border text-primary-900 p-3 font-black text-[14px]'
+                disabled={!royalityMembers.length}
+              >
+                Save draft
+              </button>
+            </div>
             {!hasPublishedRoyaltySplitter && (
               <button
-                className='block ml-auto bg-primary-100 text-primary-900 p-3 font-black text-[14px]'
+                className='block ml-4 border border-primary-100 bg-primary-100 text-primary-900 p-3 font-black text-[14px]'
                 onClick={handlePublishSpliter}
                 disabled={
-                  !canPublishRoyaltySplitter ||
-                  isPublishingRoyaltySplitter ||
-                  !royalityMembers.length ||
-                  !royalitySplitterId
+                  isPublishingRoyaltySplitter || !royalityMembers.length
                 }
               >
                 {isPublishingRoyaltySplitter

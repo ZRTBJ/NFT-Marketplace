@@ -46,13 +46,19 @@ const daoUseCase = {
     },
   ],
 };
-export default function LandingPage() {
+export default function LandingPage({ setShowCreateSplitter }) {
   return (
     <div>
       <OnBoardingGuide />
       <div className='w-full px-4 my-10 md:max-w-[1100px] mx-auto'>
         <TokenGatedBannerCard />
       </div>
+      <button
+        className='outlined-button'
+        onClick={() => setShowCreateSplitter(true)}
+      >
+        Create
+      </button>
       <div className='w-full px-4  pb-3 md:max-w-[1100px] mx-auto flex gap-x-8 my-10 overflow-x-auto flex-nowrap custom-scrollbar'>
         <CreateNFTCard size='md' />
         <BuildDaoCard size='md' />

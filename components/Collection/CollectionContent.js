@@ -1428,10 +1428,18 @@ const CollectionContent = ({ collectionId, userId }) => {
                       handleAutoFill={handleAutoFill}
                       isOwner={Collection?.is_owner}
                     />
-                    <div className='w-full'>
+                    <div className='w-full flex items-center justify-end'>
+                      <div>
+                        <button
+                          onClick={handleAutoFill}
+                          className='border-primary-900 border text-primary-900 p-3 font-black text-[14px]'
+                        >
+                          Save draft
+                        </button>
+                      </div>
                       {!hasPublishedRoyaltySplitter && (
                         <button
-                          className='block ml-auto bg-primary-100 text-primary-900 p-3 font-black text-[14px]'
+                          className='ml-4 bg-primary-100 border border-primary-100 text-primary-900 p-3 font-black text-[14px]'
                           onClick={handlePublishSpliter}
                           disabled={
                             !canPublishRoyaltySplitter ||

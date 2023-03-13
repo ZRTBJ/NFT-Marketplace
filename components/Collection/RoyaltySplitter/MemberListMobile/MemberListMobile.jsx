@@ -12,7 +12,7 @@ const MemberRowMobile = (props) => {
   const [isEdit, setIsEdit] = useState(false);
 
   const handleUpdatePercent = async (e) => {
-    await handleAutoFill(e);
+    // await handleAutoFill(e);
     setIsEdit(false);
   };
 
@@ -107,16 +107,17 @@ const MemeberListMobile = (props) => {
 
   return (
     <div>
-      {list?.length &&
-        list.map((item, index) => (
-          <MemberRowMobile
-            key={index}
-            item={item}
-            isLastItem={index === list.length - 1}
-            handleAutoFill={handleAutoFill}
-            handleValueChange={handleValueChange}
-          />
-        ))}
+      {list?.length
+        ? list.map((item, index) => (
+            <MemberRowMobile
+              key={index}
+              item={item}
+              isLastItem={index === list.length - 1}
+              handleAutoFill={handleAutoFill}
+              handleValueChange={handleValueChange}
+            />
+          ))
+        : null}
     </div>
   );
 };

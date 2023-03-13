@@ -10,8 +10,8 @@ import manImg from 'assets/images/image-default.svg';
 import fileUpload from 'assets/images/file-upload.svg';
 import Papa from 'papaparse';
 import ContributorsList from './ContributorsList';
-import csvFile from 'assets/csv/contributor-import-template.csv';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const ImportWalletModal = ({
   show,
@@ -23,6 +23,7 @@ const ImportWalletModal = ({
   setRoyaltyUpdatedSuccessfully,
   setShowRoyalityErrorModal,
   setShowRoyalityErrorMessage,
+  isModal,
 }) => {
   const [selectedTab, setSelectedTab] = useState(1);
   const [collections, setCollections] = useState([]);
@@ -33,6 +34,14 @@ const ImportWalletModal = ({
   const [showContributors, setShowContributors] = useState(false);
   const [csvError, setCSVError] = useState('');
   const userinfo = useSelector((state) => state.user.userinfo);
+
+  useEffect(() => {
+    if (isModal) {
+      setSelectedTab(2);
+    } else {
+      setSelectedTab(1);
+    }
+  }, [isModal]);
 
   useEffect(() => {
     getCollections('project', projectId)
@@ -235,31 +244,33 @@ const ImportWalletModal = ({
           data-tabs-toggle='#myTabContent'
           role='tablist'
         >
-          <li
-            className='mr-2'
-            role='presentation'
-            onClick={() => {
-              setSelectedTab(1);
-              setContributors();
-              setShowContributors(false);
-            }}
-          >
-            <button
-              className={`inline-block font-bold p-4 text-[16px] rounded-t-lg ${
-                selectedTab === 1
-                  ? 'border-b-2 border-primary-900 text-primary-900'
-                  : 'border-transparent text-textSubtle'
-              } hover:text-primary-600`}
-              id='nft'
-              data-tabs-target='#nft'
-              type='button'
-              role='tab'
-              aria-controls='nft'
-              aria-selected='true'
+          {!isModal ? (
+            <li
+              className='mr-2'
+              role='presentation'
+              onClick={() => {
+                setSelectedTab(1);
+                setContributors();
+                setShowContributors(false);
+              }}
             >
-              Collection
-            </button>
-          </li>
+              <button
+                className={`inline-block font-bold p-4 text-[16px] rounded-t-lg ${
+                  selectedTab === 1
+                    ? 'border-b-2 border-primary-900 text-primary-900'
+                    : 'border-transparent text-textSubtle'
+                } hover:text-primary-600`}
+                id='nft'
+                data-tabs-target='#nft'
+                type='button'
+                role='tab'
+                aria-controls='nft'
+                aria-selected='true'
+              >
+                Collection
+              </button>
+            </li>
+          ) : null}
           <li
             className='mr-2'
             role='presentation'
@@ -354,7 +365,17 @@ const ImportWalletModal = ({
                     <p className='text-red-400 text-[14px] mb-3'>{csvError}</p>
                   ) : null}
                   <p className='text-[14px] mb-2'>
-                    Get CSV template <a href={csvFile}>here</a>.
+                    Get CSV template{' '}
+                    <a
+                      href={'/csv/contributor-import-template.csv'}
+                      className='text-primary-900'
+                      download
+                      target='_blank'
+                      rel='noopener noreferrer'
+                    >
+                      here
+                    </a>
+                    .
                   </p>
                   <input
                     id='csv-upload'
@@ -364,7 +385,7 @@ const ImportWalletModal = ({
                     accept='.csv'
                   />
                   <label htmlFor={'csv-upload'}>
-                    <div className='bg-primary-100 border-[1px] border-primary-900 rounded-[12px] h-[230px] flex items-center justify-center cursor-pointer'>
+                    <div className='bg-primary-100 border-[1px] border-primary-900 rounded-[12px] h-[200px] flex items-center justify-center cursor-pointer'>
                       <div className='text-center'>
                         <Image
                           src={fileUpload}

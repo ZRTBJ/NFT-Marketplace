@@ -47,6 +47,7 @@ import UseCase from 'components/LandingPage/components/UseCase';
 import WelcomeModal from 'components/Commons/WelcomeModal/WelcomeModal';
 import { ls_SetNewUser, ls_GetNewUser } from 'util/ApplicationStorage';
 import TagManager from 'react-gtm-module';
+import CreateSplitter from './components/CreateSplitter';
 
 const nftUseCase = {
   usedFor: 'NFTs',
@@ -129,6 +130,7 @@ const Profile = ({ id }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [walletAddress, setWalletAddress] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showCreateSplitter, setShowCreateSplitter] = useState(false);
   const settings = {
     320: {
       slidesPerView: 2,
@@ -379,14 +381,24 @@ const Profile = ({ id }) => {
   return (
     <>
       <div className='bg-color-gray-light-300'>
-        {!id && <LandingPage userId={id} />}
+        {!id && (
+          <LandingPage
+            userId={id}
+            setShowCreateSplitter={setShowCreateSplitter}
+          />
+        )}
         {id && (
           <>
             <OnBoardingGuide />
             <div className='w-full px-4 mt-10 pb-10 md:max-w-[1100px] mx-auto'>
               <UserBasicInfo userInfo={user} sncList={sncList} />
               <BalanceInfo balanceInfo={balanceInfo} userInfo={user} />
-
+              <button
+                className='outlined-button'
+                onClick={() => setShowCreateSplitter(true)}
+              >
+                Create
+              </button>
               {/* token gated start */}
               <div className='my-20'>
                 {tokenGatedLoading ? (
@@ -443,7 +455,9 @@ const Profile = ({ id }) => {
                         </Swiper>
                       </>
                     ) : (
-                      <TokenGatedBannerCard />
+                      <>
+                        <TokenGatedBannerCard />
+                      </>
                     )}
                   </>
                 )}
@@ -554,6 +568,12 @@ const Profile = ({ id }) => {
       {showOverlayLoading && <div className='loading'></div>}
       {showWelcome && (
         <WelcomeModal show={showWelcome} handleClose={handleWelcomeModal} />
+      )}
+      {showCreateSplitter && (
+        <CreateSplitter
+          show={showCreateSplitter}
+          handleClose={setShowCreateSplitter}
+        />
       )}
     </>
   );
