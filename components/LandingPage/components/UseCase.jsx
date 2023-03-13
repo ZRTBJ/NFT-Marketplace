@@ -1,5 +1,8 @@
 import React from 'react';
 import bg from 'assets/images/profile/usecaseBg.svg';
+import Image from 'next/image';
+import Link from 'next/link';
+
 export default function UseCase({ data }) {
   return (
     <div className='bg-white rounded-2xl'>
@@ -21,19 +24,28 @@ export default function UseCase({ data }) {
               Use case of <br /> {data?.usedFor}
             </p>
             <p className='break-word text-txtblack'>{data?.text}</p>
-            {/* <div className=' mt-[52px] text-black font-black text-[14px]'>
-              Learn more{' '}
-              <i className='ml-2 fa-sharp fa-solid fa-arrow-right text-textSubtle-200 font-medium'></i>
-            </div> */}
           </div>
           {data?.steps?.map((step, index) => (
-            <div className='text-center' key={index}>
-              <div className='bg-color-gray-dark h-[88px] w-[88px] mx-auto shadow rounded-lg'></div>
+            <a
+              href={step?.url}
+              className='text-center !no-underline'
+              key={index}
+              target='_blank'
+              rel='noopener noreferrer'
+            >
+              <Image
+                src={step?.img}
+                height={88}
+                width={88}
+                alt='cover'
+                unoptimized
+                className='object-cover h-[88px] w-[88px] mx-auto shadow rounded-lg'
+              ></Image>
               <p className='text-black font-bold mt-4'>{step.title}</p>
               <p className=' break-word text-textSubtle-200'>
                 {step?.description}
               </p>
-            </div>
+            </a>
           ))}
         </div>
       </div>
