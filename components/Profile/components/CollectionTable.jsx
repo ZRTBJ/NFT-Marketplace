@@ -69,11 +69,17 @@ export default function CollectionTable({ tableData }) {
                       <p className='m-0 text-[10px] md:text-[12px]'>
                         Remaining / Supply
                       </p>
-                      <p className='m-0 text-[10px] md:text-[12px] font-black text-black truncate'>
-                        {parseInt(item?.total_supply) -
-                          parseInt(item?.summary?.sold_count)}
-                        /{item?.total_supply}
-                      </p>
+                      {item?.status === 'published' ? (
+                        <p className='m-0 text-[10px] md:text-[12px] font-black text-black truncate'>
+                          {parseInt(item?.total_supply) -
+                            parseInt(item?.summary?.sold_count)}
+                          /{item?.total_supply}
+                        </p>
+                      ) : (
+                        <p className='m-0 text-[10px] md:text-[12px] font-black text-black truncate'>
+                          Not for sale
+                        </p>
+                      )}
                     </div>
                     <div className='col-span-3 md:col-span-4 text-center'>
                       <p className='m-0 text-[10px] md:text-[12px]'>Owners</p>
