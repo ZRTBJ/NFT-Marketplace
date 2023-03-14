@@ -17,7 +17,12 @@ const PublishRoyaltyConfirmModal = ({ handleClose, show, publishProject }) => {
     }
   };
   return (
-    <Modal width={500} show={show} handleClose={() => handleClose(false)}>
+    <Modal
+      width={500}
+      show={show}
+      overflow='auto'
+      handleClose={() => handleClose(false)}
+    >
       <div className='text-center'>
         <Image
           className='h-[200px] md:w-[300px] mx-auto'

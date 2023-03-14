@@ -198,7 +198,6 @@ const Splitter = ({
     } catch (err) {
       setShowPublishRoyaltySpliterModal(false);
       setShowPublishRoyaltySpliterErrorModal(true);
-      console.error(err);
     }
   };
 
@@ -292,8 +291,11 @@ const Splitter = ({
   };
 
   const handlePublishSpliter = async () => {
+    let selectedNetwork = projectNetwork
+      ? Number(projectNetwork)
+      : Number(blockchain);
     let networkId = await getCurrentNetworkId();
-    if (Number(projectNetwork) === networkId) {
+    if (selectedNetwork === networkId) {
       let totalPercent = royalityMembers.reduce(
         (arr, val) => arr + val.royalty_percent,
         0
@@ -333,7 +335,7 @@ const Splitter = ({
         <NetworkHandlerModal
           show={showNetworkHandler}
           handleClose={() => setShowNetworkHandler(false)}
-          projectNetwork={projectNetwork}
+          projectNetwork={projectNetwork ? projectNetwork : blockchain}
         />
       )}
       {AutoAssign && (
@@ -391,7 +393,7 @@ const Splitter = ({
           show={showRoyalityErrorModal}
         />
       )}
-      {showPublishRoyaltySpliterConfirmModal && (
+      {/* {showPublishRoyaltySpliterConfirmModal && (
         <PublishCollectionModal
           show={showPublishRoyaltySpliterConfirmModal}
           handleClose={() => setShowPublishRoyaltySpliterConfirmModal(false)}
@@ -399,7 +401,7 @@ const Splitter = ({
           type='Royalty Splitter'
           isRoyaltyPublished={Collection?.royalty_splitter?.contract_address}
         />
-      )}
+      )} */}
       {showPublishRoyaltySpliterConfirmModal && (
         <PublishRoyaltyConfirmModal
           show={showPublishRoyaltySpliterConfirmModal}
