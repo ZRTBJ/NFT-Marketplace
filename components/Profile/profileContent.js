@@ -14,9 +14,7 @@ import { getUserInfo, getUserRevenue } from 'services/User/userService';
 import { getUserNotification } from 'redux/user/action';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import SuccessModal from 'components/Modals/SuccessModal';
 import { getUserCollectionSalesInformation } from 'services/User/userService';
-import ErrorModal from 'components/Modals/ErrorModal';
 import { getMintedNftListByUserId } from 'services/nft/nftService';
 import NFTListCard from 'components/Cards/NFTListCard';
 import { toast } from 'react-toastify';
@@ -26,7 +24,13 @@ import Image from 'next/image';
 
 import CreateNFTModal from 'components/Project/CreateDAOandNFT/components/CreateNFTModal.jsx';
 import emptyStateCommon from 'assets/images/profile/emptyStateCommon.svg';
-import Modal from 'components/Commons/Modal';
+import charity from 'assets/images/profile/charity.png';
+import dao from 'assets/images/profile/dao.png';
+import fashion from 'assets/images/profile/fashion.png';
+import invest from 'assets/images/profile/invest.png';
+import membership from 'assets/images/profile/membership.png';
+import pfp from 'assets/images/profile/pfp.png';
+
 import {
   createTokenGatedProject,
   getTokenGatedProjectList,
@@ -48,6 +52,10 @@ import WelcomeModal from 'components/Commons/WelcomeModal/WelcomeModal';
 import { ls_SetNewUser, ls_GetNewUser } from 'util/ApplicationStorage';
 import TagManager from 'react-gtm-module';
 import CreateSplitter from './components/CreateSplitter';
+import SplitterBanner from 'components/LandingPage/components/SplitterBanner';
+import { getSplitterList } from 'services/collection/collectionService';
+import ReactPaginate from 'react-paginate';
+import SplitterTable from './components/SplitterTable';
 
 const nftUseCase = {
   usedFor: 'NFTs',
@@ -57,16 +65,22 @@ const nftUseCase = {
       title: 'Membership NFT',
       description:
         'Offer personalized experiences through token-gated NFTs. Offer membership, design rewards, and create categories-based access services',
+      img: membership,
+      url: 'https://decir.io/decir-users-to-web3-asset-owners/',
     },
     {
       title: 'PFP',
       description:
         'PFP NFT helps your brand build and engage your online community. It is a great tool for brand identity',
+      img: pfp,
+      url: 'https://decir.io/what-are-pfp-nfts-used-for/',
     },
     {
       title: 'Digital Fashion',
       description:
         'Design the next set of virtual fashion collectibles tailored to the increasing demands of the virtual world',
+      img: fashion,
+      url: 'https://decir.io/introduction-of-nft-in-digital-fashion/',
     },
   ],
 };
@@ -78,19 +92,26 @@ const daoUseCase = {
       title: 'Build',
       description:
         'Build web3 projects to create diverse income streams for your members through the power of the DAO',
+      img: dao,
+      url: 'https://decir.io/decir-no-code-dao-tool/',
     },
     {
       title: 'Charity',
       description:
         'Create a DAO that caters to the needs of communities around the world. Support noble courses through the power of the collective.',
+      img: charity,
+      url: 'https://decir.io/decir-token-gated-dao-communities/',
     },
     {
       title: 'Invest',
       description:
         'Invest in web3 startups and in physical assets through a DAO. Forge shared prosperity through mutual benefits',
+      img: invest,
+      url: 'https://decir.io/decir-for-web3-project-fundraising/',
     },
   ],
 };
+
 const Profile = ({ id }) => {
   const dispatch = useDispatch();
 
@@ -129,7 +150,6 @@ const Profile = ({ id }) => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [walletAddress, setWalletAddress] = useState(null);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showCreateSplitter, setShowCreateSplitter] = useState(false);
   const settings = {
     320: {
@@ -164,15 +184,11 @@ const Profile = ({ id }) => {
     royalties: 0,
   });
 
-  useEffect(() => {
-    if (router?.query?.createNFT === 'true') {
-      setShowCreateNFT(true);
-    }
-  }, [router?.query]);
-
-  useEffect(() => {
-    dispatch(getUserNotification());
-  }, []);
+  // splitter start
+  const [pagination, setPagination] = useState([]);
+  const [splitterPage, setSplitterPage] = useState(1);
+  const [splitterList, setSplitterList] = useState([]);
+  const [isSplitterLoading, setIsSplitterLoading] = useState(true);
 
   // function start
   async function userInfo() {
@@ -339,6 +355,35 @@ const Profile = ({ id }) => {
         console.log(err);
       });
   };
+  const onGetSplitterList = async () => {
+    setIsSplitterLoading(true);
+    await getSplitterList(splitterPage)
+      .then((res) => {
+        setIsSplitterLoading(false);
+        if (res?.total && res?.total > 0) {
+          setSplitterList(res?.splitters);
+          const page = calculatePageCount(5, res?.total);
+          const pageList = [];
+          for (let index = 1; index <= page; index++) {
+            pageList.push(index);
+          }
+          setPagination(pageList);
+        }
+      })
+      .catch((res) => {
+        setIsSplitterLoading(false);
+      });
+  };
+  const calculatePageCount = (pageSize, totalItems) => {
+    return totalItems < pageSize ? 1 : Math.ceil(totalItems / pageSize);
+  };
+  const handlePageClick = (event) => {
+    setSplitterPage(event.selected + 1);
+  };
+  const handleWelcomeModal = () => {
+    setShowWelcome(false);
+    ls_SetNewUser(true);
+  };
 
   useEffect(() => {
     userInfo();
@@ -364,7 +409,6 @@ const Profile = ({ id }) => {
   useEffect(() => {
     OnGetTokenGatedProjectList();
   }, [id]);
-
   useEffect(() => {
     if (!ls_GetNewUser()) {
       setShowWelcome(true);
@@ -372,33 +416,30 @@ const Profile = ({ id }) => {
       setShowWelcome(false);
     }
   }, []);
-
-  const handleWelcomeModal = () => {
-    setShowWelcome(false);
-    ls_SetNewUser(true);
-  };
+  useEffect(() => {
+    if (id) {
+      onGetSplitterList();
+    }
+  }, [splitterPage]);
+  useEffect(() => {
+    if (router?.query?.createNFT === 'true') {
+      setShowCreateNFT(true);
+    }
+  }, [router?.query]);
+  useEffect(() => {
+    dispatch(getUserNotification());
+  }, []);
 
   return (
     <>
       <div className='bg-color-gray-light-300'>
-        {!id && (
-          <LandingPage
-            userId={id}
-            setShowCreateSplitter={setShowCreateSplitter}
-          />
-        )}
+        {!id && <LandingPage userId={id} />}
         {id && (
           <>
             <OnBoardingGuide />
             <div className='w-full px-4 mt-10 pb-10 md:max-w-[1100px] mx-auto'>
               <UserBasicInfo userInfo={user} sncList={sncList} />
               <BalanceInfo balanceInfo={balanceInfo} userInfo={user} />
-              <button
-                className='outlined-button'
-                onClick={() => setShowCreateSplitter(true)}
-              >
-                Create
-              </button>
               {/* token gated start */}
               <div className='my-20'>
                 {tokenGatedLoading ? (
@@ -543,8 +584,36 @@ const Profile = ({ id }) => {
               <div className='px-4 my-10'>
                 <UseCase data={nftUseCase} />
               </div>
-              <div className='px-4 pb-10 '>
+              <div className='px-4 my-10 '>
                 <UseCase data={daoUseCase} />
+              </div>
+              {/* splitter start */}
+              <div className='px-4 pb-10'>
+                {splitterList?.length === 0 ? (
+                  <SplitterBanner />
+                ) : (
+                  <div>
+                    <SplitterTable
+                      data={splitterList}
+                      isLoading={isSplitterLoading}
+                    ></SplitterTable>
+                    {pagination.length > 0 && (
+                      <ReactPaginate
+                        className='flex flex-wrap md:space-x-10 space-x-3 justify-center items-center my-6'
+                        pageClassName='px-3 py-1 font-satoshi-bold text-sm  bg-opacity-5 rounded hover:bg-opacity-7 !text-txtblack '
+                        breakLabel='...'
+                        nextLabel='>'
+                        onPageChange={handlePageClick}
+                        pageRangeDisplayed={3}
+                        pageCount={pagination.length}
+                        previousLabel='<'
+                        renderOnZeroPageCount={null}
+                        activeClassName='text-primary-900 bg-primary-900 !no-underline'
+                        activeLinkClassName='!text-txtblack !no-underline'
+                      />
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </>
