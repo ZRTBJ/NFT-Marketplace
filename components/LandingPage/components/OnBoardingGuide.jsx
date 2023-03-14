@@ -7,6 +7,10 @@ import { useSelector } from 'react-redux';
 import Link from 'next/link';
 import { NETWORKS } from 'config/networks';
 import { getCurrentNetworkId } from 'util/MetaMask';
+import {
+  ls_SetLatestGasPrice,
+  ls_GetLatestGasPrice,
+} from 'util/ApplicationStorage';
 
 export default function OnBoardingGuide() {
   const userinfo = useSelector((state) => state.user.userinfo);
@@ -21,9 +25,15 @@ export default function OnBoardingGuide() {
     usd: 0,
   });
 
+  let priceDetails = ls_GetLatestGasPrice();
+
   useEffect(() => {
-    getGasPrice();
-  }, []);
+    if (priceDetails) {
+      setGasPrice(JSON.parse(priceDetails));
+    } else {
+      getGasPrice();
+    }
+  }, [priceDetails]);
 
   const redirectToDiscord = () => {
     if (typeof window !== 'undefined') {
@@ -45,7 +55,7 @@ export default function OnBoardingGuide() {
     let data = await fetch(link?.scanApi);
     let response = await data.json();
     if (response?.message === 'OK') {
-      setGasPrice({
+      let priceDetails = {
         standard: response?.result?.suggestBaseFee,
         slow: response?.result?.SafeGasPrice,
         fast: response?.result?.FastGasPrice,
@@ -53,7 +63,9 @@ export default function OnBoardingGuide() {
           ? response.result.ProposeGasPrice
           : '-',
         usd: response?.result?.UsdPrice ? response.result.UsdPrice : '-',
-      });
+      };
+      setGasPrice(priceDetails);
+      ls_SetLatestGasPrice(JSON.stringify(priceDetails));
     }
   };
 
