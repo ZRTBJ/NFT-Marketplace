@@ -1,9 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable react/no-unescaped-entities */
 import { round } from 'lodash';
-import { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
+import { uniqBy } from 'lodash';
 import {
   getCollectionNFTs,
   getCollectionDetailsById,
@@ -12,7 +13,9 @@ import {
   getCollectionSales,
   getNetWorth,
   getProductNFTCollectionSalesSetupInformation,
+  addCollectionSplitter,
 } from 'services/collection/collectionService';
+import Spinner from 'components/Commons/Spinner';
 import Cover from 'assets/images/cover-default.svg';
 import manImg from 'assets/images/image-default.svg';
 import avatar from 'assets/images/dummy-img.svg';
@@ -54,6 +57,8 @@ import PublishRoyaltyConfirmModal from './Publish/PublishRoyaltyConfirmModal';
 import Image from 'next/image';
 import DaoConnectModal from 'components/Collection/DaoConnectModal/DaoConnectModal';
 import WithdrawModal from './WithdrawModal';
+import { getSplitterList } from 'services/collection/collectionService';
+import Select from 'react-select';
 
 const currency = {
   eth: Eth,
@@ -135,6 +140,49 @@ const CollectionContent = ({ collectionId, userId }) => {
     () => Collection?.royalty_splitter?.status === 'published',
     [Collection]
   );
+  const [splitter, setSplitter] = useState();
+  const [createNewSplitter, setCreateNewSplitter] = useState(false);
+  const [payload, setPayload] = useState({
+    page: 1,
+    perPage: 10,
+    keyword: '',
+    order_by: 'newer',
+  });
+  const [hasNextPageData, setHasNextPageData] = useState(true);
+  const [options, setOptions] = useState([]);
+  const [isSplitterLoading, setIsSplitterLoading] = useState(false);
+  const [addSplitterLoading, setAddSplitterLoading] = useState(false);
+
+  useEffect(() => {
+    if (hasNextPageData) {
+      getSplitters(Collection?.blockchain);
+    }
+  }, [payload]);
+
+  const getSplitters = (network) => {
+    setIsSplitterLoading(true);
+    getSplitterList(payload.page)
+      .then((res) => {
+        setIsSplitterLoading(false);
+        let chain = network ? network : Collection?.blockchain;
+        let filteredSplitters =
+          chain &&
+          res?.splitters.filter((split) => split?.blockchain === chain);
+        const splitterList = [...options];
+        const mergedSplitterList = [...splitterList, ...filteredSplitters];
+        const uniqSplitterList = uniqBy(mergedSplitterList, function (e) {
+          return e.id;
+        });
+
+        setOptions(uniqSplitterList);
+        if (res?.splitters?.length === 0) {
+          setHasNextPageData(false);
+        }
+      })
+      .catch((res) => {
+        setIsSplitterLoading(false);
+      });
+  };
 
   const hanldeUpdatePublishStatus = (status) => {
     if (status === 'success') {
@@ -171,6 +219,7 @@ const CollectionContent = ({ collectionId, userId }) => {
   useEffect(() => {
     if (collectionId) {
       getCollectionDetail();
+
       getNFTs();
       getCollectionSalesData();
       getCollectionNewWorth();
@@ -226,6 +275,9 @@ const CollectionContent = ({ collectionId, userId }) => {
       .then((resp) => {
         if (resp.code === 0) {
           setProjectID(resp?.collection?.project_uid);
+          if (resp?.collection?.blockchain) {
+            getSplitters(resp.collection.blockchain);
+          }
           setCollectionNetwork(resp?.collection?.blockchain);
           if (resp?.collection?.project_uid) {
             getProjectDetailsById({ id: resp?.collection?.project_uid }).then(
@@ -347,6 +399,24 @@ const CollectionContent = ({ collectionId, userId }) => {
     e.preventDefault();
     setShowOptions(null);
   };
+
+  const useDebounceCallback = (delay = 100, cleaning = true) => {
+    // or: delayed debounce callback
+    const ref = React.useRef();
+    React.useEffect(() => {
+      if (cleaning) {
+        // cleaning uncalled delayed callback with component destroying
+        return () => {
+          if (ref.current) clearTimeout(ref.current);
+        };
+      }
+    }, []);
+    return (callback) => {
+      if (ref.current) clearTimeout(ref.current);
+      ref.current = setTimeout(callback, delay);
+    };
+  };
+  const delayCallback = useDebounceCallback(500);
 
   async function salesPageModal(e, type, id, supply) {
     e.stopPropagation();
@@ -534,7 +604,43 @@ const CollectionContent = ({ collectionId, userId }) => {
     }
   };
 
+  function scrolledBottom() {
+    let oldPayload = { ...payload };
+    oldPayload.page = oldPayload.page + 1;
+    setPayload(oldPayload);
+  }
+
+  async function onSplitterSearch(keyword) {
+    delayCallback(() => {
+      let oldPayload = { ...payload };
+      oldPayload.keyword = keyword;
+      setPayload(oldPayload);
+    });
+  }
+
   let isSupplyOver = Collection?.total_supply <= NFTs?.length;
+
+  const handleSelectedSplitter = (e) => {
+    e.preventDefault();
+    if (splitter?.id) {
+      setAddSplitterLoading(true);
+      let data = {
+        id: Collection.id,
+        splitter: splitter.id,
+        supply: Collection.total_supply,
+      };
+      addCollectionSplitter(data)
+        .then((resp) => {
+          setAddSplitterLoading(false);
+          toast.success('Splitter added to collection Successfully');
+          getCollectionDetail();
+        })
+        .catch((err) => {
+          setAddSplitterLoading(false);
+          toast.error('Failed to add splitter. Please try again later.');
+        });
+    }
+  };
 
   return (
     <>
@@ -1372,90 +1478,154 @@ const CollectionContent = ({ collectionId, userId }) => {
                 </div>
               )}
               {selectedTab === 2 && (
-                <div className='mb-6  mb-6 md:mb-[100px]'>
+                <div className='mb-6 md:mb-[100px]'>
                   <div className='bg-white rounded-[12px] p-5 shadow-main'>
-                    <div className='flex items-start md:items-center justify-between pb-7 border-b-[1px] mb-6 border-[#E3DEEA]'>
-                      <h3 className='text-[18px] font-black'>Contributor</h3>
-                      {ShowPercentError ? (
-                        <p className='text-red-400 text-[14px] mt-1'>
-                          Total percent of contributors should equal to or
-                          lesser than 100%
-                        </p>
-                      ) : null}
-                      {/* {CollectionDetail?.is_owner && data?.members?.length ? ( */}
-                      <div className='flex items-center justify-center flex-col md:flex-row'>
-                        {!hasPublishedRoyaltySplitter && (
-                          <>
-                            <div className='form-check form-switch flex items-center'>
-                              <p className='text-[#303548] text-[12px] mr-3'>
-                                Split Evenly
-                              </p>
-                              <input
-                                className='form-check-input appearance-none w-9 rounded-full h-5 align-top bg-white bg-no-repeat bg-contain bg-gray-300 focus:outline-none cursor-pointer shadow-sm'
-                                type='checkbox'
-                                checked={AutoAssign}
-                                role='switch'
-                                onChange={handleAutoAssign}
+                    {!royalityMembers?.length ? (
+                      <div className='flex justify-center flex-col'>
+                        <label htmlFor='splitter-selector'>
+                          Select Splitter
+                        </label>
+                        <div className='flex items-center'>
+                          <div className='flex'>
+                            {typeof window !== 'undefined' && (
+                              <Select
+                                defaultValue={splitter}
+                                onChange={setSplitter}
+                                onKeyDown={(event) =>
+                                  onSplitterSearch(event.target.value)
+                                }
+                                options={options}
+                                styles={{
+                                  menuPortal: (base) => ({
+                                    ...base,
+                                    zIndex: 9999,
+                                  }),
+                                }}
+                                menuPortalTarget={document.body}
+                                placeholder='Select Splitter'
+                                isLoading={isSplitterLoading}
+                                noOptionsMessage={() => 'No Splitter Found'}
+                                loadingMessage={() => 'Loading,please wait...'}
+                                getOptionLabel={(option) => `${option.name}`}
+                                classNamePrefix='splitter-select'
+                                isClearable
+                                isSearchable
+                                menuShouldScrollIntoView
+                                onMenuScrollToBottom={() => scrolledBottom()}
                               />
-                            </div>
-                            <div
-                              className='mint-button mt-4 md:mt-0 ml-4 text-center font-satoshi-bold w-full text-[12px] md:w-fit flex'
-                              onClick={() => setShowImportWallet(true)}
+                            )}
+                            <button
+                              onClick={handleSelectedSplitter}
+                              className='bg-primary-100 text-primary-900 text-md ml-2 px-5 py-2 rounded w-[100px]'
                             >
-                              <Image
-                                src={PlusIcon}
-                                alt='add'
-                                width={14}
-                                height={14}
-                              />
-                              <span className='ml-1'>Import Contributor</span>
-                            </div>
-                          </>
-                        )}
+                              {addSplitterLoading ? (
+                                <Spinner forButton={true} />
+                              ) : (
+                                'Apply'
+                              )}
+                            </button>
+                          </div>
+                          <p className='mx-5 p-0'>or</p>
+                          <button
+                            className='bg-primary-100 text-primary-900 text-md px-5 py-2 rounded'
+                            onClick={() => setCreateNewSplitter(true)}
+                          >
+                            Create New
+                          </button>
+                        </div>
                       </div>
-                      {/* ) : null} */}
-                    </div>{' '}
-                    <MemberListTable
-                      collection={Collection}
-                      list={royalityMembers}
-                      headers={TABLE_HEADERS}
-                      // handlePublish={setShowPublish}
-                      setIsEdit={setIsEdit}
-                      setRoyalityMembers={setRoyalityMembers}
-                      showRoyalityErrorModal={showRoyalityErrorModal}
-                      isEdit={isEdit}
-                      handleValueChange={handleValueChange}
-                      handleAutoFill={handleAutoFill}
-                      isOwner={Collection?.is_owner}
-                    />
-                    <div className='w-full flex items-center justify-end'>
+                    ) : null}{' '}
+                    {createNewSplitter || royalityMembers?.length ? (
                       <div>
-                        <button
-                          onClick={handleAutoFill}
-                          className='border-primary-900 border text-primary-900 p-3 font-black text-[14px]'
-                        >
-                          Save draft
-                        </button>
+                        <div className='flex items-start md:items-center justify-between pb-5 mt-4 border-b-[1px] mb-2 border-[#E3DEEA]'>
+                          <h3 className='text-[18px] font-black'>
+                            Contributor
+                          </h3>
+                          {ShowPercentError ? (
+                            <p className='text-red-400 text-[14px] mt-1'>
+                              Total percent of contributors should equal to or
+                              lesser than 100%
+                            </p>
+                          ) : null}
+                          {/* {CollectionDetail?.is_owner && data?.members?.length ? ( */}
+                          <div className='flex items-center justify-center flex-col md:flex-row'>
+                            {!hasPublishedRoyaltySplitter && (
+                              <>
+                                <div className='form-check form-switch flex items-center'>
+                                  <p className='text-[#303548] text-[12px] mr-3'>
+                                    Split Evenly
+                                  </p>
+                                  <input
+                                    className='form-check-input appearance-none w-9 rounded-full h-5 align-top bg-white bg-no-repeat bg-contain bg-gray-300 focus:outline-none cursor-pointer shadow-sm'
+                                    type='checkbox'
+                                    checked={AutoAssign}
+                                    role='switch'
+                                    onChange={handleAutoAssign}
+                                  />
+                                </div>
+                                <div
+                                  className='mint-button mt-4 md:mt-0 ml-4 text-center font-satoshi-bold w-full text-[12px] md:w-fit flex'
+                                  onClick={() => setShowImportWallet(true)}
+                                >
+                                  <Image
+                                    src={PlusIcon}
+                                    alt='add'
+                                    width={14}
+                                    height={14}
+                                  />
+                                  <span className='ml-1'>
+                                    Import Contributor
+                                  </span>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                          {/* ) : null} */}
+                        </div>{' '}
+                        <MemberListTable
+                          collection={Collection}
+                          list={royalityMembers}
+                          headers={TABLE_HEADERS}
+                          // handlePublish={setShowPublish}
+                          setIsEdit={setIsEdit}
+                          setRoyalityMembers={setRoyalityMembers}
+                          showRoyalityErrorModal={showRoyalityErrorModal}
+                          isEdit={isEdit}
+                          handleValueChange={handleValueChange}
+                          handleAutoFill={handleAutoFill}
+                          isOwner={Collection?.is_owner}
+                        />
+                        <div className='w-full flex items-center justify-end'>
+                          <div>
+                            <button
+                              onClick={handleAutoFill}
+                              className='border-primary-900 border text-primary-900 p-3 font-black text-[14px]'
+                              disabled={!royalityMembers.length}
+                            >
+                              Save draft
+                            </button>
+                          </div>
+                          {!hasPublishedRoyaltySplitter && (
+                            <button
+                              className='ml-4 bg-primary-100 border border-primary-100 text-primary-900 p-3 font-black text-[14px]'
+                              onClick={handlePublishSpliter}
+                              disabled={
+                                !canPublishRoyaltySplitter ||
+                                isPublishingRoyaltySplitter ||
+                                !royalityMembers.length ||
+                                !royalitySplitterId
+                              }
+                            >
+                              {isPublishingRoyaltySplitter
+                                ? publishRoyaltySplitterStatus === 1
+                                  ? 'Creating contract'
+                                  : 'Publishing'
+                                : 'Lock Percentage'}
+                            </button>
+                          )}
+                        </div>
                       </div>
-                      {!hasPublishedRoyaltySplitter && (
-                        <button
-                          className='ml-4 bg-primary-100 border border-primary-100 text-primary-900 p-3 font-black text-[14px]'
-                          onClick={handlePublishSpliter}
-                          disabled={
-                            !canPublishRoyaltySplitter ||
-                            isPublishingRoyaltySplitter ||
-                            !royalityMembers.length ||
-                            !royalitySplitterId
-                          }
-                        >
-                          {isPublishingRoyaltySplitter
-                            ? publishRoyaltySplitterStatus === 1
-                              ? 'Creating contract'
-                              : 'Publishing'
-                            : 'Lock Percentage'}
-                        </button>
-                      )}
-                    </div>
+                    ) : null}
                   </div>
                 </div>
               )}

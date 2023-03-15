@@ -65,6 +65,20 @@ export async function updateCollection(payload) {
     'formdata'
   );
 }
+
+export async function addCollectionSplitter(payload) {
+  const bodyFormData = new FormData();
+  bodyFormData.append('splitter_uid', payload.splitter);
+  bodyFormData.append('total_supply', payload.supply);
+
+  return await client(
+    'PUT',
+    `/collection/${payload.id}`,
+    bodyFormData,
+    'formdata'
+  );
+}
+
 export async function connectCollectionToDAO(payload) {
   const bodyFormData = new FormData();
   for (const key in payload) {

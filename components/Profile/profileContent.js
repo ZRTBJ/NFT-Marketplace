@@ -189,6 +189,7 @@ const Profile = ({ id }) => {
   const [splitterPage, setSplitterPage] = useState(1);
   const [splitterList, setSplitterList] = useState([]);
   const [isSplitterLoading, setIsSplitterLoading] = useState(true);
+  const [isEditSplitter, setIsEditSplitter] = useState(null);
 
   // function start
   async function userInfo() {
@@ -596,6 +597,8 @@ const Profile = ({ id }) => {
                     <SplitterTable
                       data={splitterList}
                       isLoading={isSplitterLoading}
+                      setIsEditSplitter={setIsEditSplitter}
+                      setShowCreateSplitter={setShowCreateSplitter}
                     ></SplitterTable>
                     {pagination.length > 0 && (
                       <ReactPaginate
@@ -638,10 +641,13 @@ const Profile = ({ id }) => {
       {showWelcome && (
         <WelcomeModal show={showWelcome} handleClose={handleWelcomeModal} />
       )}
-      {showCreateSplitter && (
+      {(showCreateSplitter || isEditSplitter) && (
         <CreateSplitter
-          show={showCreateSplitter}
-          handleClose={setShowCreateSplitter}
+          show={showCreateSplitter || isEditSplitter}
+          handleClose={
+            showCreateSplitter ? setShowCreateSplitter : setIsEditSplitter
+          }
+          splitterId={isEditSplitter}
         />
       )}
     </>

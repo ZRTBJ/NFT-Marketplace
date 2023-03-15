@@ -39,6 +39,7 @@ const Splitter = ({
   projectNetwork,
   isModal,
   createSplitterClose,
+  splitterId,
 }) => {
   const [ShowPercentError, setShowPercentError] = useState(false);
   const [AutoAssign, setAutoAssign] = useState(false);
@@ -130,6 +131,12 @@ const Splitter = ({
     getCollectionDetail();
   }, [collectionId]);
 
+  useEffect(() => {
+    if (splitterId) {
+      getSplittedContributors(splitterId);
+    }
+  }, [splitterId]);
+
   // useEffect(() => {}, [payload]);
 
   const getCollectionDetail = () => {
@@ -158,6 +165,8 @@ const Splitter = ({
   const getSplittedContributors = (id, type) => {
     getSplitterDetails(id, type).then((data) => {
       if (data.code === 0) {
+        setSplitterName(data?.splitter?.name);
+        setBlockchain(data?.splitter?.blockchain);
         setRoyalityMembers(data?.members);
         if (data?.members?.length > 0) {
           const page = calculatePageCount(payload.limit, data.members.length);
@@ -239,8 +248,11 @@ const Splitter = ({
         formData.append('royalty_data', JSON.stringify(members));
         splitterName && formData.append('name', splitterName);
         blockchain && formData.append('blockchain', blockchain);
-        royalitySplitterId
-          ? formData.append('splitter_uid', royalitySplitterId)
+        royalitySplitterId || splitterId
+          ? formData.append(
+              'splitter_uid',
+              splitterId ? splitterId : royalitySplitterId
+            )
           : Collection?.id
           ? formData.append('collection_uid', Collection?.id)
           : null;

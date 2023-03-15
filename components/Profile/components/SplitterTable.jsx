@@ -6,8 +6,12 @@ import { walletAddressTruncate } from 'util/WalletUtils';
 import { NETWORKS } from 'config/networks';
 import Spinner from 'components/Commons/Spinner';
 
-export default function SplitterTable({ data, isLoading }) {
-  const [createSplitterModal, showCreateSplitterModal] = useState(false);
+export default function SplitterTable({
+  data,
+  isLoading,
+  setShowCreateSplitter,
+  setIsEditSplitter,
+}) {
   return (
     <>
       <div className='pt-20'>
@@ -16,7 +20,7 @@ export default function SplitterTable({ data, isLoading }) {
             Royalty Splitter
           </p>
           <button
-            onClick={() => showCreateSplitterModal(true)}
+            onClick={() => setShowCreateSplitter(true)}
             className=' gradient-text-deep-pueple font-black border w-[160px] text-center h-[40px] rounded-lg border-secondary-900'
           >
             <i className=' mr-2 fa-solid fa-plus'></i>
@@ -105,7 +109,7 @@ export default function SplitterTable({ data, isLoading }) {
                         <i
                           className='fa-solid text-[18px] cursor-pointer fa-pen-to-square'
                           onClick={() => {
-                            showCreateSplitterModal(true);
+                            setIsEditSplitter(element?.id);
                           }}
                         ></i>
                       </td>
@@ -117,12 +121,6 @@ export default function SplitterTable({ data, isLoading }) {
           </table>
         </div>
       </div>
-      {createSplitterModal && (
-        <CreateSplitter
-          show={createSplitterModal}
-          handleClose={() => showCreateSplitterModal(false)}
-        />
-      )}
     </>
   );
 }

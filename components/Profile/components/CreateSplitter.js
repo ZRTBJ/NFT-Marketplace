@@ -3,7 +3,7 @@ import React from 'react';
 
 import Splitter from 'components/Project/RoyaltySplitter/components/Splitter';
 
-export default function CreateSplitter({ handleClose, show }) {
+export default function CreateSplitter({ handleClose, show, splitterId }) {
   return (
     <>
       <Modal
@@ -19,7 +19,11 @@ export default function CreateSplitter({ handleClose, show }) {
             Create a Royalty Splitter
           </h3>
 
-          <Splitter isModal={true} createSplitterClose={handleClose} />
+          <Splitter
+            isModal={true}
+            createSplitterClose={handleClose}
+            splitterId={splitterId}
+          />
         </div>
       </Modal>
     </>
