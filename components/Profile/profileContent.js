@@ -24,6 +24,7 @@ import Image from 'next/image';
 
 import CreateNFTModal from 'components/Project/CreateDAOandNFT/components/CreateNFTModal.jsx';
 import emptyStateCommon from 'assets/images/profile/emptyStateCommon.svg';
+import Modal from 'components/Commons/Modal';
 import charity from 'assets/images/profile/charity.png';
 import dao from 'assets/images/profile/dao.png';
 import fashion from 'assets/images/profile/fashion.png';

@@ -10,6 +10,7 @@ const KEY_WALLET_TYPE = 'wallet';
 const KEY_WALLET_ADDRESS = 'walletAddress';
 const KEY_NETWORK_CHAIN = 'networkChain';
 const NEW_USER = 'newUser';
+const GAS_PRICE = 'gasPrice';
 
 //---------- User
 export function ls_GetUserToken() {
@@ -38,6 +39,14 @@ export function ls_GetUserID() {
 
 export function ls_SetUserID(uid) {
   typeof window !== 'undefined' && localStorage?.setItem(KEY_USER_ID, uid);
+}
+
+export function ls_SetLatestGasPrice(data) {
+  typeof window !== 'undefined' && localStorage.setItem(GAS_PRICE, data);
+}
+
+export function ls_GetLatestGasPrice() {
+  typeof window !== 'undefined' && localStorage.getItem(GAS_PRICE);
 }
 
 //------ Blockchain
