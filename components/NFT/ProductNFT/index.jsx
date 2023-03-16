@@ -272,7 +272,7 @@ export default function ProductNFT({ query }) {
 
   const onSubmit = async (data) => {
     if (nftFile && nftFile.file) {
-      if (!userinfo?.id && !supply) {
+      if (!collectionId && !supply) {
         setCheckedValidation(true);
       } else {
         setShowConfirmation(true);
@@ -1000,7 +1000,7 @@ export default function ProductNFT({ query }) {
                       </label>
                     </div>
                   </div>
-                  {!userinfo?.id ? (
+                  {!collectionId ? (
                     <div className='mb-6 '>
                       <div className='flex items-center mb-2'>
                         <Tooltip></Tooltip>
