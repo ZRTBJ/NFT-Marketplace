@@ -219,8 +219,9 @@ const ProfileSettingsForm = () => {
                     </div>
                     <div className='label'>Profile Picture</div>
                     <div className='label-grey mb-2'>
-                      Add your profile picture, you can use image like NFT or
-                      real picture and let user recognize yourself
+                      Add your profile picture. Set an image (JPEG or PNG) as
+                      your profile picture. You can also use an NFT for easy
+                      recognition
                     </div>
                     <div className='md:flex flex-wrap mb-6'>
                       {profileImage && profileImage.path.length < 1 && (
@@ -257,7 +258,7 @@ const ProfileSettingsForm = () => {
                   {/* cover */}
                   <div className='mb-6'>
                     <div className='label'>Cover Photo</div>
-                    <div className='label-grey mb-2'>Add your cover photo</div>
+                    <div className='label-grey mb-2'>Add a cover photo</div>
                     {coverPhoto && coverPhoto.path.length < 1 ? (
                       <FileDragAndDrop
                         maxFiles={1}
@@ -287,14 +288,10 @@ const ProfileSettingsForm = () => {
                     )}
                   </div>
                   <div className='mb-4'>
-                    <div className='label'>
-                      Username{' '}
-                      <small className='ml-2 text-red-500 text-xs'>
-                        * This field is required
-                      </small>
-                    </div>
+                    <div className='label'>Username</div>
                     <div className='label-grey'>
-                      you can use your name or your nickname
+                      You can use your name, your nickname, or your social media
+                      username here
                     </div>
                     <input
                       className={`block w-full border ${
@@ -322,8 +319,10 @@ const ProfileSettingsForm = () => {
                     )}
                   </div>
                   <div className='mb-4'>
-                    <div className='label'>Email</div>
-                    <div className='label-grey'>Enter your email address</div>
+                    <div className='label'>Email Address</div>
+                    <div className='label-grey'>
+                      Enter your personal mail or dedicated project mail address
+                    </div>
                     <input
                       className={`block w-full border ${
                         errors.email ? 'border-red-500' : 'border-dark-300'
@@ -349,7 +348,7 @@ const ProfileSettingsForm = () => {
                   </div>
                   <div className='mb-4'>
                     <div className='label'>Location</div>
-                    <div className='label-grey'>add your location</div>
+                    <div className='label-grey'>Add your location</div>
                     <input
                       className={`block w-full border border-dark-300 rounded py-3 px-4 mb-3 leading-tight`}
                       id='location-area'
@@ -363,8 +362,9 @@ const ProfileSettingsForm = () => {
                   <div className='mb-4'>
                     <div className='label'>Bio</div>
                     <div className='label-grey'>
-                      Tell your audience who you are, so they can easily know
-                      you.
+                      Your bio helps introduce you to your community, audience,
+                      and prospective collectors. Make it as powerful and
+                      concise as possible
                     </div>
                     <textarea
                       rows='6'
@@ -378,7 +378,9 @@ const ProfileSettingsForm = () => {
                   </div>
                   <div className='mb-4'>
                     <div className='label'>Job Description</div>
-                    <div className='label-grey'>Add your designation below</div>
+                    <div className='label-grey'>
+                      Add your role/designated position below
+                    </div>
                     <input
                       className={`block w-full border border-dark-300 rounded py-3 px-4 mb-3 leading-tight`}
                       id='job'
@@ -392,7 +394,7 @@ const ProfileSettingsForm = () => {
                   <div className='mb-4'>
                     <div className='label'>Social Link</div>
                     <div className='label-grey mb-2'>
-                      Add your social media or link below.
+                      Add the links to your social accounts below
                     </div>
                     <div className='inline-flex items-center w-full'>
                       <Image
