@@ -122,7 +122,7 @@ const MemberListTable = ({
     handleAutoFill();
     setToDelete(false);
   };
-
+  console.log(list);
   return (
     <>
       {toDelete && (

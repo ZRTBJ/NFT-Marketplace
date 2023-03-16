@@ -8,17 +8,19 @@ import step1 from 'assets/images/profile/splitter/step1.png';
 import step2 from 'assets/images/profile/splitter/step2.png';
 import step3 from 'assets/images/profile/splitter/step3.png';
 import step4 from 'assets/images/profile/splitter/step4.png';
-export default function SplitterBanner() {
+
+export default function SplitterBanner({ setShowCreateSplitter }) {
   const [showHelperModal, setShowHelperModal] = useState(false);
-  const [createSplitterModal, showCreateSplitterModal] = useState(false);
 
   const handelOnClick = async () => {
     setShowHelperModal(true);
   };
+
   const onCreateSplitter = () => {
     setShowHelperModal(false);
-    showCreateSplitterModal(true);
+    setShowCreateSplitter(true);
   };
+
   return (
     <div>
       <p className='textSubtle-100 text-[20px] font-black my-4'>
@@ -159,13 +161,6 @@ export default function SplitterBanner() {
             </div>
           </div>
         </Modal>
-      )}
-
-      {createSplitterModal && (
-        <CreateSplitter
-          show={createSplitterModal}
-          handleClose={() => showCreateSplitterModal(false)}
-        />
       )}
     </div>
   );

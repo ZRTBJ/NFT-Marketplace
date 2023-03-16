@@ -435,7 +435,12 @@ const Profile = ({ id }) => {
   return (
     <>
       <div className='bg-color-gray-light-300'>
-        {!id && <LandingPage userId={id} />}
+        {!id && (
+          <LandingPage
+            userId={id}
+            setShowCreateSplitter={setShowCreateSplitter}
+          />
+        )}
         {id && (
           <>
             <OnBoardingGuide />
@@ -649,6 +654,7 @@ const Profile = ({ id }) => {
             showCreateSplitter ? setShowCreateSplitter : setIsEditSplitter
           }
           splitterId={isEditSplitter}
+          onGetSplitterList={onGetSplitterList}
         />
       )}
     </>

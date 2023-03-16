@@ -66,7 +66,7 @@ const daoUseCase = {
     },
   ],
 };
-export default function LandingPage() {
+export default function LandingPage({ setShowCreateSplitter }) {
   return (
     <div>
       <OnBoardingGuide />
@@ -84,7 +84,7 @@ export default function LandingPage() {
         <UseCase data={daoUseCase} />
       </div>
       <div className='w-full px-4 pb-10 md:max-w-[1100px] mx-auto'>
-        <SplitterBanner />
+        <SplitterBanner setShowCreateSplitter={setShowCreateSplitter} />
       </div>
     </div>
   );

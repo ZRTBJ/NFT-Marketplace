@@ -40,6 +40,7 @@ const Splitter = ({
   isModal,
   createSplitterClose,
   splitterId,
+  onGetSplitterList,
 }) => {
   const [ShowPercentError, setShowPercentError] = useState(false);
   const [AutoAssign, setAutoAssign] = useState(false);
@@ -274,6 +275,7 @@ const Splitter = ({
                 getCollectionDetail();
                 if (isModal) {
                   createSplitterClose();
+                  onGetSplitterList();
                 }
               } else {
                 setIsAutoFillLoading(false);
@@ -539,7 +541,7 @@ const Splitter = ({
             isEdit={isEdit}
             handleValueChange={handleValueChange}
             handleAutoFill={handleAutoFill}
-            isOwner={Collection?.is_owner}
+            isOwner={Collection?.is_owner || isModal}
           />
           {/* <div className="mt-[30px]">
             {pagination.length > 0 && (
