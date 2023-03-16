@@ -575,8 +575,8 @@ function ProjectCreateContent({ search }) {
                         {!projectCreated ? 'Create New' : 'Update'} DAO
                       </h1>
                       <p className='text-[14px] text-textSubtle '>
-                        Fill the require form to{' '}
-                        {!projectCreated ? 'create' : 'update'} dao
+                        All fields are required to successfully{' '}
+                        {!projectCreated ? 'create' : 'update'} your DAO
                       </p>
                     </div>
                     {query.get('id') && !notOwner && !projectPublished && (
@@ -597,7 +597,7 @@ function ProjectCreateContent({ search }) {
                     onLogoPhotoSelect={onLogoPhotoSelect}
                     onLogoPhotoRemove={onLogoPhotoRemove}
                     // name
-                    nameLabel='DAO Name'
+                    nameLabel='DAO'
                     projectName={projectName}
                     emptyProjectName={emptyProjectName}
                     alreadyTakenProjectName={alreadyTakenProjectName}
