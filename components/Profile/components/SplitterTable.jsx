@@ -27,12 +27,12 @@ export default function SplitterTable({
             Create New
           </button>
         </div>
-        <div className='overflow-x- bg-white pt-4 rounded shadow auto '>
+        <div className='overflow-x-auto bg-white pt-4 rounded shadow '>
           <table className='w-full text-left !whitespace-nowrap  text-left text-sm font-light'>
             <thead className='border-b font-medium border-[#B1C1C8] '>
               <tr>
                 <th scope='col' className='py-3 px-6 text-[#727E83]'>
-                  NetWork
+                  Network
                 </th>
                 <th scope='col' className='py-3 px-6 text-[#727E83]'>
                   Splitter Name
@@ -62,17 +62,19 @@ export default function SplitterTable({
                   {data?.map((element, index) => (
                     <tr key={index} className='border-b border-[#B1C1C8]'>
                       <td className='py-4 px-6'>
-                        {element?.blockchain && (
+                        {element?.blockchain ? (
                           <Image
                             src={NETWORKS?.[element?.blockchain]?.icon}
                             alt='blockChain'
                             height={32}
                             width={32}
                           />
+                        ) : (
+                          'Not Set'
                         )}
                       </td>
                       <td className='py-4 px-6'>
-                        {element?.name ? element?.name : '-'}
+                        {element?.name ? element?.name : element?.id}
                       </td>
                       <td className='py-4 px-6'>
                         {element?.contract_address ? (

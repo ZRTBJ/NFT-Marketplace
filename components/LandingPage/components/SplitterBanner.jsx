@@ -76,9 +76,9 @@ export default function SplitterBanner() {
           handleClose={() => setShowHelperModal(false)}
           width={600}
           height={800}
-          overflow='scroll'
+          overflow={'auto'}
         >
-          <div className='p-4 !leading-relaxed !break-words'>
+          <div className='p-4 mt-5 md:mt-0 !leading-relaxed !break-words'>
             <p className='text-txtblack font-black text-[24px] mb-4'>
               The royalty splitter quick guide
             </p>
