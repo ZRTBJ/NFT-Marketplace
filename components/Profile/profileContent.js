@@ -69,7 +69,7 @@ const nftUseCase = {
     {
       title: 'PFP',
       description:
-        'PFP NFT helps your brand build and engage your online community. It is a great tool for brand identity',
+        'PFP NFT helps your brand to build and engage your online community. It is a great tool for brand identity',
       img: pfp,
       url: 'https://decir.io/what-are-pfp-nfts-used-for/',
     },
