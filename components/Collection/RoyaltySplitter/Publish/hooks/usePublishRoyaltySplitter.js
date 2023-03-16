@@ -61,15 +61,18 @@ export default function usePublishRoyaltySplitter(payload = {}) {
     return collection?.royalty_splitter?.status !== 'published';
   }, [collection]);
 
-  const callPublishApi = async () => {
-    return await collectionService.publishRoyaltySplitter(splitterId);
+  const callPublishApi = async (id) => {
+    return await collectionService.publishRoyaltySplitter(id ? id : splitterId);
   };
 
-  const updateOffChainData = async () => {
+  const updateOffChainData = async (id) => {
     const payload = new FormData();
-    payload.append('transaction_hash', txReceipt.current.transactionHash);
-    payload.append('block_number', txReceipt.current.blockNumber);
-    return collectionService.publishRoyaltySplitter(splitterId, payload);
+    payload.append('transaction_hash', txReceipt.current?.transactionHash);
+    payload.append('block_number', txReceipt.current?.blockNumber);
+    return collectionService.publishRoyaltySplitter(
+      id ? id : splitterId,
+      payload
+    );
   };
 
   const sendOnChainTransaction = async (data) => {
@@ -122,20 +125,19 @@ export default function usePublishRoyaltySplitter(payload = {}) {
       discountContract: discount,
       forwarder: minimalForwarder,
     };
-    console.log(functionPayload);
     const tx = await contract.current
-      .connect(signer)
-      .createRoyaltyProxy(functionPayload);
-    const res = await tx.wait();
+      ?.connect(signer)
+      ?.createRoyaltyProxy(functionPayload);
+    const res = await tx?.wait();
 
     return res;
   };
 
   const cleanUp = () => {
-    contract.current.off('ProxyCreated', listener.current);
+    contract?.current?.off('ProxyCreated', listener.current);
   };
 
-  const publish = async () => {
+  const publish = async (id) => {
     event('publish_royalty_splitter', { category: 'royalty_splitter' });
     TagManager.dataLayer({
       dataLayer: {
@@ -150,7 +152,7 @@ export default function usePublishRoyaltySplitter(payload = {}) {
       //   return;
       // }
       setIsLoading(true);
-      const publishData = await callPublishApi();
+      const publishData = await callPublishApi(id);
 
       if (gaslessMode === 'true') {
         transaction.current = await sendOnChainTransaction(publishData);
@@ -158,15 +160,15 @@ export default function usePublishRoyaltySplitter(payload = {}) {
       } else {
         txReceipt.current = await runTransaction(publishData);
       }
-      const publishResponse = await updateOffChainData();
-      if (publishResponse.function.status === 'failed') {
+      const publishResponse = await updateOffChainData(id);
+      if (publishResponse.function?.status === 'failed') {
         throw new Error(
           'Transaction failed. ' + publishResponse.function.message
         );
       }
 
       setStatus(2);
-      onUpdateStatus(publishResponse.function.status);
+      onUpdateStatus(publishResponse.function?.status);
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
@@ -182,5 +184,6 @@ export default function usePublishRoyaltySplitter(payload = {}) {
     isLoading,
     canPublish,
     publish,
+    setIsLoading,
   };
 }

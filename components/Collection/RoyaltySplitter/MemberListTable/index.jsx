@@ -18,7 +18,6 @@ const MemberListTable = ({
   isEdit,
   setIsEdit,
   handleValueChange,
-  handleAutoFill,
   isOwner,
   setRoyalityMembers,
   showRoyalityErrorModal,
@@ -40,7 +39,6 @@ const MemberListTable = ({
   useEffect(() => {
     if (newItems) {
       if (address && percentage && !isEdit) {
-        // handleAutoFill();
         setNewItems([]);
         setAddress('');
         setPercentage('');
@@ -115,24 +113,10 @@ const MemberListTable = ({
   const handleDeleteContributor = (id) => {
     let values = list.filter((item) => item.user_eoa !== id);
     setRoyalityMembers(values);
-    // setToDelete(true);
   };
-
-  // const deleteContributor = () => {
-  //   handleAutoFill();
-  //   setToDelete(false);
-  // };
 
   return (
     <>
-      {/* {toDelete && (
-        <ConfirmationModal
-          show={toDelete}
-          handleClose={setToDelete}
-          handleApply={deleteContributor}
-          message='Are you you want to delete this contributor?'
-        />
-      )} */}
       <div className='overflow-x-auto relative hidden md:block'>
         <table className='w-full text-left'>
           <thead>
@@ -257,7 +241,6 @@ const MemberListTable = ({
           handleDeleteContributor={handleDeleteContributor}
           isEdit={isEdit}
           handleValueChange={handleValueChange}
-          handleAutoFill={handleAutoFill}
           isOwner={isOwner}
         />
       </div>

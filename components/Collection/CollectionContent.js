@@ -156,6 +156,7 @@ const CollectionContent = ({ collectionId, userId }) => {
   const [blockchain, setBlockchain] = useState('');
   const [splitterName, setSplitterName] = useState('');
   const [isSplitterSubmitted, setIsSplitterSubmitted] = useState(false);
+  const [applySplitterSubmitted, setApplySplitterSubmitter] = useState(false);
 
   useEffect(() => {
     if (hasNextPageData) {
@@ -165,7 +166,7 @@ const CollectionContent = ({ collectionId, userId }) => {
 
   const getSplitters = (network) => {
     setIsSplitterLoading(true);
-    getSplitterList(payload.page)
+    getSplitterList(payload.page, payload.perPage)
       .then((res) => {
         setIsSplitterLoading(false);
         let chain = network ? network : Collection?.blockchain;
@@ -634,6 +635,7 @@ const CollectionContent = ({ collectionId, userId }) => {
   let isSupplyOver = Collection?.total_supply <= NFTs?.length;
 
   const handleSelectedSplitter = (e) => {
+    setApplySplitterSubmitter(true);
     e.preventDefault();
     if (splitter?.id) {
       setAddSplitterLoading(true);
@@ -647,9 +649,11 @@ const CollectionContent = ({ collectionId, userId }) => {
           setAddSplitterLoading(false);
           toast.success('Splitter added to collection Successfully');
           getCollectionDetail();
+          setApplySplitterSubmitter(false);
         })
         .catch((err) => {
           setAddSplitterLoading(false);
+          setApplySplitterSubmitter(false);
           toast.error('Failed to add splitter. Please try again later.');
         });
     }
@@ -1502,58 +1506,67 @@ const CollectionContent = ({ collectionId, userId }) => {
                 <div className='mb-6 md:mb-[100px]'>
                   <div className='bg-white rounded-[12px] p-5 shadow-main'>
                     {!createNewSplitter && !royalityMembers.length ? (
-                      <div className='flex justify-center flex-col'>
-                        <label htmlFor='splitter-selector'>
-                          Select Splitter
-                        </label>
-                        <div className='flex items-center'>
-                          <div className='flex'>
-                            {typeof window !== 'undefined' && (
-                              <Select
-                                defaultValue={splitter}
-                                onChange={setSplitter}
-                                onKeyDown={(event) =>
-                                  onSplitterSearch(event.target.value)
-                                }
-                                options={options}
-                                styles={{
-                                  menuPortal: (base) => ({
-                                    ...base,
-                                    zIndex: 9999,
-                                  }),
-                                }}
-                                menuPortalTarget={document.body}
-                                placeholder='Select Splitter'
-                                isLoading={isSplitterLoading}
-                                noOptionsMessage={() => 'No Splitter Found'}
-                                loadingMessage={() => 'Loading,please wait...'}
-                                getOptionLabel={(option) => `${option.name}`}
-                                classNamePrefix='splitter-select'
-                                isClearable
-                                isSearchable
-                                menuShouldScrollIntoView
-                                onMenuScrollToBottom={() => scrolledBottom()}
-                              />
-                            )}
-                            <button
-                              onClick={handleSelectedSplitter}
-                              className='bg-primary-100 text-primary-900 text-md ml-2 px-5 py-2 rounded w-[100px]'
-                            >
-                              {addSplitterLoading ? (
-                                <Spinner forButton={true} />
-                              ) : (
-                                'Apply'
+                      <div>
+                        <div className='flex justify-center flex-col'>
+                          <label htmlFor='splitter-selector'>
+                            Select Splitter
+                          </label>
+                          <div className='flex items-center'>
+                            <div className='flex'>
+                              {typeof window !== 'undefined' && (
+                                <Select
+                                  defaultValue={splitter}
+                                  onChange={setSplitter}
+                                  onKeyDown={(event) =>
+                                    onSplitterSearch(event.target.value)
+                                  }
+                                  options={options}
+                                  styles={{
+                                    menuPortal: (base) => ({
+                                      ...base,
+                                      zIndex: 9999,
+                                    }),
+                                  }}
+                                  menuPortalTarget={document.body}
+                                  placeholder='Select Splitter'
+                                  isLoading={isSplitterLoading}
+                                  noOptionsMessage={() => 'No Splitter Found'}
+                                  loadingMessage={() =>
+                                    'Loading,please wait...'
+                                  }
+                                  getOptionLabel={(option) => `${option.name}`}
+                                  classNamePrefix='splitter-select'
+                                  isClearable
+                                  isSearchable
+                                  menuShouldScrollIntoView
+                                  onMenuScrollToBottom={() => scrolledBottom()}
+                                />
                               )}
+                              <button
+                                onClick={handleSelectedSplitter}
+                                className='bg-primary-100 text-primary-900 text-md ml-2 px-5 py-2 rounded w-[100px]'
+                              >
+                                {addSplitterLoading ? (
+                                  <Spinner forButton={true} />
+                                ) : (
+                                  'Apply'
+                                )}
+                              </button>
+                            </div>
+                            <p className='mx-5 p-0'>or</p>
+                            <button
+                              className='bg-primary-100 text-primary-900 text-md px-5 py-2 rounded'
+                              onClick={() => setCreateNewSplitter(true)}
+                            >
+                              Create New
                             </button>
                           </div>
-                          <p className='mx-5 p-0'>or</p>
-                          <button
-                            className='bg-primary-100 text-primary-900 text-md px-5 py-2 rounded'
-                            onClick={() => setCreateNewSplitter(true)}
-                          >
-                            Create New
-                          </button>
                         </div>
+                        {applySplitterSubmitted && !splitter && (
+                          <p className='text-red-400 text-sm'>
+                            Please select a splitter to apply
+                          </p>
+                        )}
                       </div>
                     ) : null}{' '}
                     {createNewSplitter || royalityMembers?.length ? (

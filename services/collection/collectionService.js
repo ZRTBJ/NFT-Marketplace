@@ -139,8 +139,8 @@ export async function deleteUnpublishedCollection(id) {
 }
 
 //Royality Splitters
-export async function getSplitterList(page) {
-  return await client('GET', `/royalty/list?page=${page}&limit=5`);
+export async function getSplitterList(page, perPage = 5) {
+  return await client('GET', `/royalty/list?page=${page}&limit=${perPage}`);
 }
 
 export async function getSplitterDetails(id, type = 'splitter_id') {

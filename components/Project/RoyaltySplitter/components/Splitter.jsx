@@ -64,7 +64,7 @@ const Splitter = ({
   const [blockchain, setBlockchain] = useState('');
   const [splitterName, setSplitterName] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
-  // const [publishSplitterId, setPublishSplitterId] = use
+  const [isPublishLoading, setIsPublishLoading] = useState(false);
 
   useEffect(() => {
     if (projectNetwork) {
@@ -92,15 +92,18 @@ const Splitter = ({
 
   const hanldeUpdatePublishStatus = (status) => {
     if (status === 'success') {
-      if (Collection.royalty_splitter.status !== 'published') {
+      setIsPublishLoading(false);
+      if (Collection?.royalty_splitter?.status !== 'published') {
         setCollection({
           ...Collection,
           royalty_splitter: {
-            ...Collection.royalty_splitter,
+            ...Collection?.royalty_splitter,
             status: 'published',
           },
         });
-        getProjectCollections();
+        if (!isModal) {
+          getProjectCollections();
+        }
       }
     }
   };
@@ -110,6 +113,7 @@ const Splitter = ({
     status: publishRoyaltySplitterStatus,
     canPublish: canPublishRoyaltySplitter,
     publish: publishRoyaltySplitter,
+    setIsLoading: setPublishingSplitter,
   } = usePublishRoyaltySplitter({
     collection: Collection,
     splitters: royalityMembers,
@@ -205,12 +209,14 @@ const Splitter = ({
 
   const handlePublishRoyaltySplitter = async () => {
     try {
+      setPublishingSplitter(true);
       setShowPublishRoyaltySpliterConfirmModal(false);
       setShowPublishRoyaltySpliterModal(true);
-      if (!splitterId || !Collection) {
-        await handleAutoFill(true);
+      if (splitterId) {
+        publishRoyaltySplitter();
+      } else {
+        handleAutoFill(null, true);
       }
-      await publishRoyaltySplitter();
     } catch (err) {
       setShowPublishRoyaltySpliterModal(false);
       setShowPublishRoyaltySpliterErrorModal(true);
@@ -241,9 +247,9 @@ const Splitter = ({
     setRoyalityMembers(values);
   };
 
-  const handleAutoFill = (isPublish = false) => {
+  const handleAutoFill = (e, publish) => {
     setIsSubmitted(true);
-    if (splitterName && blockchain) {
+    if (splitterName && blockchain && royalityMembers.length) {
       if (userInfo?.id) {
         let members = royalityMembers.map((mem) => {
           return {
@@ -268,7 +274,9 @@ const Splitter = ({
           updateRoyaltySplitter(formData)
             .then((resp) => {
               if (resp.code === 0) {
-                if (isPublish) {
+                if (publish) {
+                  publishRoyaltySplitter(resp.splitter_id);
+                } else {
                   toast.success(
                     isModal
                       ? 'Royalty Splitter added Successfully'
@@ -313,22 +321,25 @@ const Splitter = ({
   };
 
   const handlePublishSpliter = async () => {
-    let selectedNetwork = projectNetwork
-      ? Number(projectNetwork)
-      : Number(blockchain);
-    let networkId = await getCurrentNetworkId();
-    if (selectedNetwork === networkId) {
-      let totalPercent = royalityMembers.reduce(
-        (arr, val) => arr + val.royalty_percent,
-        0
-      );
-      if (totalPercent === 100) {
-        setShowPublishRoyaltySpliterConfirmModal(true);
+    setIsSubmitted(true);
+    if (splitterName && blockchain && royalityMembers.length) {
+      let selectedNetwork = projectNetwork
+        ? Number(projectNetwork)
+        : Number(blockchain);
+      let networkId = await getCurrentNetworkId();
+      if (selectedNetwork === networkId) {
+        let totalPercent = royalityMembers.reduce(
+          (arr, val) => arr + val.royalty_percent,
+          0
+        );
+        if (totalPercent === 100) {
+          setShowPublishRoyaltySpliterConfirmModal(true);
+        } else {
+          toast.error('Total royalty percent should be 100 %');
+        }
       } else {
-        toast.error('Total royalty percent should be 100 %');
+        setShowNetworkHandler(true);
       }
-    } else {
-      setShowNetworkHandler(true);
     }
   };
 
@@ -358,6 +369,7 @@ const Splitter = ({
           show={showNetworkHandler}
           handleClose={() => setShowNetworkHandler(false)}
           projectNetwork={projectNetwork ? projectNetwork : blockchain}
+          type='Splitter'
         />
       )}
       {AutoAssign && (
@@ -441,6 +453,8 @@ const Splitter = ({
           onRequestClose={() => {
             getCollectionDetail();
             setShowPublishRoyaltySpliterModal(false);
+            createSplitterClose(false);
+            onGetSplitterList();
           }}
         />
       )}
@@ -550,7 +564,6 @@ const Splitter = ({
             showRoyalityErrorModal={showRoyalityErrorModal}
             isEdit={isEdit}
             handleValueChange={handleValueChange}
-            handleAutoFill={handleAutoFill}
             isOwner={Collection?.is_owner || isModal}
           />
           {/* <div className="mt-[30px]">
@@ -574,6 +587,11 @@ const Splitter = ({
           </div> */}
           {/* {CollectionDetail.is_owner &&
                 CollectionDetail.status !== "published" ? ( */}
+          {isSubmitted && !royalityMembers.length && (
+            <p className='text-red-400 text-sm mt-4'>
+              Please add members to save or publish
+            </p>
+          )}
           <div className='w-full flex items-center justify-end'>
             {!hasPublishedRoyaltySplitter && (
               <div>
@@ -586,7 +604,7 @@ const Splitter = ({
                 </button>
               </div>
             )}
-            {!hasPublishedRoyaltySplitter && (
+            {!hasPublishedRoyaltySplitter && userInfo?.id && (
               <button
                 className='flex items-center ml-4 border border-primary-100 bg-primary-100 text-primary-900 p-3 font-black text-[14px]'
                 onClick={handlePublishSpliter}
