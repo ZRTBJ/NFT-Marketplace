@@ -12,7 +12,7 @@ const CreateNFTModal = ({ handleClose, show }) => {
     <Modal show={show} handleClose={handleClose} width={680}>
       <div>
         <h3 className='text-[28px] text-black font-black mb-8'>
-          Create new NFT
+          Create Your NFT
         </h3>
         <div className='cursor-pointer flex bg-[#F9FCFF] border-[1px] border-[#C7CEE5] rounded-[12px] p-6 mb-6'>
           <div className='mr-6 h-[40px] md:h-[74px] w-[40px] md:w-[74px] bg-secondary-50 flex items-center justify-center rounded-[8px]'>
@@ -22,9 +22,9 @@ const CreateNFTModal = ({ handleClose, show }) => {
             <h3 className='text-[20px] md:text-[24px] font-bold text-[#303548]'>
               Membership NFT
             </h3>
-            <p className='hidden md:block text-[14px] text-[#5F6479] w-[470px] mt-2'>
-              Get fundraiser by creating NFT Membership and make your own
-              Decentralize Community
+            <p className='hidden md:block text-[14px] text-[#5F6479] w-[470px] mt-2 word-break'>
+              Launch a members-only community using NFT as access. Raise funds
+              and grant exclusive content through the power of membership NFT
             </p>
           </div>
         </div>
@@ -36,8 +36,8 @@ const CreateNFTModal = ({ handleClose, show }) => {
             <h3 className='text-[20px] md:text-[24px] font-bold text-[#303548]'>
               Product NFT
             </h3>
-            <p className='hidden md:block text-[14px] text-[#5F6479] w-[470px] mt-2'>
-              Start Creating your NFT and earn as a Creator
+            <p className='hidden md:block text-[14px] text-[#5F6479] w-[470px] mt-2 word-break'>
+              Create and mint your NFT to start earning as a creator
             </p>
           </div>
         </div>
