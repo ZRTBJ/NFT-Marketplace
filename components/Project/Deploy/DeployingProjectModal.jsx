@@ -8,6 +8,7 @@ import { createInstance } from 'config/ABI/genericProxyFactory';
 import Image from 'next/image';
 import { event } from 'nextjs-google-analytics';
 import Config from 'config/config';
+import TagManager from 'react-gtm-module';
 
 const DeployingProjectModal = ({
   handleClose,
@@ -34,6 +35,15 @@ const DeployingProjectModal = ({
 
   function publishThisProject(transactionData) {
     event('publish_dao', { category: 'dao' });
+
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'dao',
+        pageTitle: 'publish_dao',
+      },
+    });
+
     setIsLoading(true);
     let payload = new FormData();
     if (transactionData) {

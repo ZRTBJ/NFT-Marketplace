@@ -1,5 +1,5 @@
-import { projectSlice } from "./slice";
-import { getUserProjectListById } from "services/project/projectService";
+import { projectSlice } from './slice';
+import { getUserProjectListById } from 'services/project/projectService';
 
 const { projectLoading, getUserProjectList, addPollList } =
   projectSlice.actions;

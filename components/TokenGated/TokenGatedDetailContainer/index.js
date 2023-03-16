@@ -17,11 +17,15 @@ import Locked from 'assets/images/locked.svg';
 import Link from 'next/link';
 import ReportModal from 'components/Commons/ReportModal/ReportModal';
 import ErrorModal from 'components/Modals/ErrorModal';
+import { useSelector } from 'react-redux';
+import WalletConnectModal from 'components/Login/WalletConnectModal';
+
 const Waveform = dynamic(() => import('../public/components/card/Waveform'), {
   ssr: false,
 });
 
 const TokenGatedContentDetailContainer = ({ query }) => {
+  const userinfo = useSelector((state) => state.user.userinfo);
   const [data, setData] = useState(null);
   const [asset, setAsset] = useState(null);
   const [showError, setShowError] = useState(false);
@@ -36,9 +40,17 @@ const TokenGatedContentDetailContainer = ({ query }) => {
   const [collectionId, setCollectionId] = useState('');
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [showConnectModal, setShowConnectModal] = useState(false);
+
   useEffect(() => {
     if (query?.id) {
-      getContentDetail();
+      if (userinfo?.id) {
+        getContentDetail();
+      } else {
+        setShowOverLayLoading(false);
+        setShowErrorModal(true);
+        setErrorMessage('Please connect your wallet to see this content');
+      }
 
       return () => {
         setData(null);
@@ -122,7 +134,16 @@ const TokenGatedContentDetailContainer = ({ query }) => {
   };
 
   const handleBack = () => {
-    router.push(`/token-gated/public/${query.projectId}`);
+    if (typeof window !== 'undefined') {
+      window.history.back();
+    }
+  };
+
+  const onErrorHandel = () => {
+    setShowErrorModal(false);
+    if (!userinfo?.id) {
+      setShowConnectModal(true);
+    }
   };
 
   return (
@@ -355,11 +376,25 @@ const TokenGatedContentDetailContainer = ({ query }) => {
       )}
       {showErrorModal && (
         <ErrorModal
-          handleClose={() => setShowErrorModal(false)}
+          errorType={!userinfo?.id ? 'user_not_logged_in' : ''}
+          showCloseIcon={false}
+          handleClose={() => onErrorHandel()}
           show={showErrorModal}
           message={errorMessage}
-          buttomText='Close'
-          redirection={`/dashboard`}
+          buttomText={!userinfo?.id ? 'Connect Wallet' : 'Close'}
+          title={!userinfo?.id ? 'User login is required' : ''}
+          redirection={!userinfo?.id ? '' : `/dashboard`}
+        />
+      )}
+      {showConnectModal && (
+        <WalletConnectModal
+          showModal={showConnectModal}
+          noRedirection={true}
+          closeModal={() => {
+            setShowConnectModal(false);
+            getContentDetail();
+          }}
+          showCloseMenu={false}
         />
       )}
     </>

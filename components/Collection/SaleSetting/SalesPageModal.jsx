@@ -31,6 +31,7 @@ import NetworkHandlerModal from 'components/Modals/NetworkHandlerModal';
 import Image from 'next/image';
 import { event } from 'nextjs-google-analytics';
 import Config from 'config/config';
+import TagManager from 'react-gtm-module';
 
 //TODO: in the future, 1 network can support multiple currency, please fix this
 const CURRENCY = [
@@ -192,6 +193,16 @@ const SalesPageModal = ({
       let type = collectionType ? collectionType : currentCollection.type;
       if (agree && date?.length === 2) {
         event('set_sale_page', { category: 'nft', label: 'type', value: type });
+
+        TagManager.dataLayer({
+          dataLayer: {
+            event: 'click_event',
+            category: 'nft',
+            pageTitle: 'set_sale_page',
+            label: 'type',
+            value: type,
+          },
+        });
         const payload = {
           price: data?.['price'],
           startTime: getUnixTime(date?.[0]),

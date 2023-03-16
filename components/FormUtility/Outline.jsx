@@ -79,11 +79,13 @@ export default function Outline({
   projectCategory,
   emptyProjeCtCategory,
   onProjectCategoryChange,
+  emptyBlockchainCategory,
 
   // Blockchain
   blockchainCategory,
   onBlockchainCategoryChange,
   blockchainCategoryList,
+  setEmptyBlockchainCategory,
 
   // Freeze MetaData
   showFreezeMetadata,
@@ -114,6 +116,9 @@ export default function Outline({
   //network
   disableNetwork,
   collectionNetwork,
+  userId,
+  isNetworkEmpty,
+  setIsNetworkEmpty,
 }) {
   const [projectCategoryList, setProjectCategoryList] = useState([]);
   useEffect(() => {
@@ -121,6 +126,8 @@ export default function Outline({
       setProjectCategoryList(e.categories);
     });
   }, []);
+
+  let availableNetworks = Object.values(NETWORKS);
 
   let networkName = NETWORKS?.[Number(collectionNetwork)]?.networkName;
   return (
@@ -512,19 +519,24 @@ export default function Outline({
           <div className='select-wrapper'>
             <select
               value={blockchainCategory}
-              onChange={onBlockchainCategoryChange}
-              disabled
+              placeholder={'Select Blockchain'}
+              onChange={(e) => {
+                onBlockchainCategoryChange(e.target.value.toString());
+                setEmptyBlockchainCategory(false);
+              }}
+              disabled={!blockchainCategory || userId}
               className='h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3'
             >
-              <option value={blockchainCategory} defaultValue>
-                {NETWORKS?.[Number(blockchainCategory)]?.networkName}
-              </option>
-              {/* {blockchainCategoryList.map((e) => (
-            <option key={e.id} value={e.id}>
-              {e.name}
-            </option>
-          ))} */}
+              <option value={''}>Select Blockchain</option>
+              {availableNetworks.map((network) => (
+                <option key={network.network} value={network.network}>
+                  {network.networkName}
+                </option>
+              ))}
             </select>
+            {emptyBlockchainCategory && (
+              <div className='validationTag'>Blockchain is required</div>
+            )}
           </div>
         </div>
       )}
@@ -614,7 +626,7 @@ export default function Outline({
       )}
 
       {/*Network */}
-      {networkName && (
+      {collectionNetwork && (
         <div className='mb-6'>
           <div className='flex flex-wrap items-center mb-4'>
             <Tooltip message='This field will not be changeable after publishing on the blockchain.'></Tooltip>
@@ -623,23 +635,30 @@ export default function Outline({
           <div className='select-wrapper'>
             <select
               value={collectionNetwork}
-              onChange={onBlockchainCategoryChange}
-              disabled
+              onChange={(e) => {
+                onBlockchainCategoryChange(e.target.value.toString());
+                setIsNetworkEmpty(false);
+              }}
+              disabled={!collectionNetwork || userId}
               className='h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3'
             >
-              <option
+              {/* <option
                 value={blockchainCategory}
                 defaultValue
                 suppressHydrationWarning
               >
                 {networkName}
-              </option>
-              {/* {blockchainCategoryList.map((e) => (
-            <option key={e.id} value={e.id}>
-              {e.name}
-            </option>
-          ))} */}
+              </option> */}
+              <option value={''}>Select Blockchain</option>
+              {availableNetworks.map((network) => (
+                <option key={network.network} value={network.network}>
+                  {network.networkName}
+                </option>
+              ))}
             </select>
+            {isNetworkEmpty && (
+              <div className='validationTag'>Blockchain is required</div>
+            )}
           </div>
         </div>
       )}

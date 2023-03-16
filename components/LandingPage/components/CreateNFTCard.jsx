@@ -12,15 +12,17 @@ export default function CreateNFTCard({ size }) {
   const [showWalletConnectModal, setShowWalletConnectModal] = useState(false);
   const [showCreateNFTModal, setShowCreateNFTModal] = useState(false);
   const handelOnClick = async () => {
-    if (userinfo?.id) {
-      setShowCreateNFTModal(true);
-    } else {
-      setShowWalletConnectModal(true);
-    }
+    // if (userinfo?.id) {
+    router.push(`/collection/create`);
+    // } else {
+    //   setShowWalletConnectModal(true);
+    // }
   };
   return (
     <div>
-      <p className='textSubtle-100 text-[20px] font-black my-4'>NFT Projects</p>
+      <p className='textSubtle-100 text-[20px] font-black my-4'>
+        NFT Collection
+      </p>
       <div
         className={`relative justify-between bg-black flex  items-center gap-x-5 shadow rounded-2xl ${
           size === 'lg'
@@ -37,17 +39,18 @@ export default function CreateNFTCard({ size }) {
         <div
           className={`${
             size === 'lg'
-              ? 'bg-white text-black text-center px-4 py-6 rounded-bl-2xl rounded-br-2xl w-full'
+              ? 'bg-white text-black text-center px-4 py-[95px] rounded-bl-2xl rounded-br-2xl w-full'
               : ' text-white'
           }`}
         >
-          <p className=' text-[20px] font-black mb-1'>Create NFT project</p>
+          <p className=' text-[20px] font-black mb-1'>Create NFT Collection</p>
           <p
-            className={`mb-4  ${
+            className={`mb-4 break-word ${
               size === 'lg' ? 'text-[14px] mb-10 mt-3' : 'max-w-[300px]'
             }`}
           >
-            Lorem Ipsum is simply dummy text of the printing and Ipsum has been{' '}
+            Seamlessly launch your membership NFT, PFP, and generative art with
+            DeCir’s no-code interface.{' '}
           </p>
           <div
             className={`flex items-center ${
@@ -58,7 +61,7 @@ export default function CreateNFTCard({ size }) {
               onClick={() => handelOnClick()}
               className='gradient-text-deep-pueple font-black border w-[170px] h-[40px] rounded-lg border-secondary-900'
             >
-              Create Project
+              Create Collection
             </button>
             <a
               href='https://decir.gitbook.io/decir/nft-creation'
@@ -84,7 +87,8 @@ export default function CreateNFTCard({ size }) {
       <WalletConnectModal
         showModal={showWalletConnectModal}
         closeModal={() => setShowWalletConnectModal(false)}
-        noRedirection={true}
+        noRedirection={false}
+        navigateToPage={'dashboard?createNFT=true'}
       />
       {showCreateNFTModal && (
         <CreateNFTModal

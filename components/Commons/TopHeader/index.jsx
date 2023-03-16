@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import styles from './index.module.css';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import WalletDropDownMenu from './WalletDropdownMenu';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,6 +11,7 @@ import { getProjectListBySearch } from 'services/project/projectService';
 import SearchBarResult from './SearchBarResult';
 import { getNotificationData } from 'redux/notification';
 import NotificatioMenu from './NotificationMenu';
+import { searchContent } from 'services/User/userService';
 import { getUserNotifications } from 'services/notification/notificationService';
 import UserDropDownMenu from './UserDropDownMenu';
 import userImg from 'assets/images/defaultProfile.svg';
@@ -22,20 +23,18 @@ import Logo from 'assets/images/header/logo.svg';
 import AccountChangedModal from './Account/AccountChangedModal';
 import NetworkChangedModal from './Account/NetworkChangedModal';
 import { walletAddressTruncate } from 'util/WalletUtils';
+import ReactPaginate from 'react-paginate';
 import {
   ls_GetUserToken,
   ls_GetWalletAddress,
   ls_SetChainID,
   ls_GetChainID,
-  ls_SetNewUser,
-  ls_GetNewUser,
 } from 'util/ApplicationStorage';
 import { toast } from 'react-toastify';
 import { NETWORKS } from 'config/networks';
 import { logout } from 'redux/auth';
 import Image from 'next/image';
 import { getWalletAccount } from 'util/MetaMask';
-import WelcomeModal from 'components/Commons/WelcomeModal/WelcomeModal';
 import Search from 'assets/images/header/search.svg';
 import Globe from 'assets/images/header/globe.svg';
 import AvatarDefault from 'assets/images/avatar-default.svg';
@@ -53,6 +52,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const inputRef = useRef(null);
+  const outsideRef = useRef(null);
   const { user, walletAddress, token } = useSelector((state) => state.auth);
   const [userId, setUserId] = useState(user ? user : '');
   const userinfo = useSelector((state) => state.user.userinfo);
@@ -73,13 +73,52 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const [networkChangeDetected, setNetworkChangeDetected] = useState(false);
   const [networkId, setNetworkId] = useState();
   const [showSearchMobile, setShowSearchMobile] = useState(false);
-  const [showWelcome, setShowWelcome] = useState(false);
   const [showLang, setShowLang] = useState(false);
   const projectDeploy = useSelector((state) =>
     state?.notifications?.notificationData
       ? state?.notifications?.notificationData
       : []
   );
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [searchItems, setSearchItems] = useState([]);
+  const [searching, setSearching] = useState(false);
+  const [pagination, setPagination] = useState([1]);
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickedOutside);
+    return () => {
+      document.removeEventListener('click', handleClickedOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    handleSearch(null, searchKeyword);
+  }, [page]);
+
+  useEffect(() => {
+    let arr = Array.from({ length: searchItems?.total / 10 }, (v, k) => k + 1);
+    setPagination(arr);
+  }, [searchItems]);
+
+  useEffect(() => {
+    if (!searchKeyword) {
+      setPage(1);
+      setPagination([1]);
+    } else {
+      setPage(1);
+    }
+  }, [searchKeyword]);
+
+  const handlePageClick = (event) => {
+    setPage(event.selected + 1);
+  };
+
+  const handleClickedOutside = () => {
+    if (searchKeyword && outsideRef && outsideRef.current) {
+      setSearchKeyword('');
+    }
+  };
 
   useEffect(() => {
     var addScript = document.createElement('script');
@@ -108,14 +147,6 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
       'google_translate_element'
     );
   };
-
-  useEffect(() => {
-    if (!ls_GetNewUser()) {
-      setShowWelcome(true);
-    } else {
-      setShowWelcome(false);
-    }
-  }, []);
 
   useEffect(() => {
     let getLabel = document.querySelector('.goog-te-gadget-simple a span');
@@ -231,29 +262,29 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     }
   }, [showSearchMobile]);
 
-  useEffect(() => {
-    getNotificationList();
-  }, [projectDeploy]);
+  // useEffect(() => {
+  //   getNotificationList();
+  // }, [projectDeploy]);
 
-  function getNotificationList() {
-    setIsNotificationLoading(true);
-    getUserNotifications()
-      .then((res) => {
-        if (res && res.notifications) {
-          setNotificationList(res.notifications);
-          if (res.notifications.length > 0) {
-            const unreadNotifications = res.notifications.filter(
-              (n) => n.unread === true
-            );
-            setnotificationCount(unreadNotifications.length);
-          }
-        }
-        setIsNotificationLoading(false);
-      })
-      .catch(() => {
-        setIsNotificationLoading(false);
-      });
-  }
+  // function getNotificationList() {
+  //   setIsNotificationLoading(true);
+  //   getUserNotifications()
+  //     .then((res) => {
+  //       if (res && res.notifications) {
+  //         setNotificationList(res.notifications);
+  //         if (res.notifications.length > 0) {
+  //           const unreadNotifications = res.notifications.filter(
+  //             (n) => n.unread === true
+  //           );
+  //           setnotificationCount(unreadNotifications.length);
+  //         }
+  //       }
+  //       setIsNotificationLoading(false);
+  //     })
+  //     .catch(() => {
+  //       setIsNotificationLoading(false);
+  //     });
+  // }
 
   function showHideUserPopup() {
     const userDropDown = document.getElementById('userDropDown');
@@ -267,13 +298,13 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     setShowWalletpopup(!showWalletpopup);
   }
 
-  function showHideNotification() {
-    const userDropDown = document.getElementById('notificationDropdown');
-    userDropDown.classList.toggle('hidden');
-    if (!isNotificationLoading) {
-      getNotificationList();
-    }
-  }
+  // function showHideNotification() {
+  //   const userDropDown = document.getElementById('notificationDropdown');
+  //   userDropDown.classList.toggle('hidden');
+  //   if (!isNotificationLoading) {
+  //     getNotificationList();
+  //   }
+  // }
 
   function hideModal() {
     setShowModal(false);
@@ -411,13 +442,56 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     setShowSearchMobile(!showSearchMobile);
   };
 
-  const handleWelcomeModal = () => {
-    setShowWelcome(false);
-    ls_SetNewUser(true);
+  const handleSearch = (e, text) => {
+    setSearching(true);
+    let value = e?.target?.value ? e.target.value : text;
+    setSearchKeyword(value);
+    if (e?.target?.value || text) {
+      let payload = {
+        page: page,
+        keyword: value,
+      };
+      searchContent(payload).then((resp) => {
+        if (resp.code === 0) {
+          setSearchItems(resp);
+        }
+        setSearching(false);
+      });
+    }
   };
 
+  const handleSearchNavigation = (item) => {
+    if (item.id) {
+      setSearchKeyword('');
+      if (item.type === 'collection') {
+        router.push(`/collection/${item.id}`);
+      } else if (item.type === 'dao') {
+        router.push(`/dao/${item.id}`);
+      } else {
+        router.push(`/token-gated/${item.id}`);
+      }
+    }
+  };
+
+  const pageTitle = useMemo(() => {
+    let paths = router?.pathname?.split('/');
+    let queries = router?.query;
+
+    let title = queries?.type ? `${queries.type} ${paths[1]}` : paths[1];
+    return title;
+  }, [router]);
+
+  //TODO: Need to refactor
+  const isNewBg = useMemo(() => {
+    if (['/dashboard', '/transactions', '/'].includes(router.pathname)) {
+      return true;
+    } else {
+      return false;
+    }
+  }, [router]);
+
   return (
-    <header className='bg-[#e2ecf0]'>
+    <header className={`${isNewBg ? 'bg-[#e2ecf0]' : 'bg-[#fff]'}`}>
       <AccountChangedModal
         show={showAccountChanged}
         handleClose={() => setShowAccountChanged(false)}
@@ -427,9 +501,6 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
         handleClose={() => setShowNetworkChanged(false)}
         networkId={networkId}
       />
-      {showWelcome && (
-        <WelcomeModal show={showWelcome} handleClose={handleWelcomeModal} />
-      )}
       <div id='notificationDropdown' className='hidden'>
         {showNotificationPopup && (
           <NotificatioMenu
@@ -460,7 +531,9 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
             >
               <Image src={Logo} alt='DeCir' />
             </div> */}
-            <h1 className='!text-[24px] !font-black text-[#000]'>Dashboard</h1>
+            <h1 className='!text-[24px] !font-black text-[#000] capitalize'>
+              {pageTitle}
+            </h1>
 
             {/* <form className="mr-6 flex-1 hidden md:block">
               <label
@@ -494,16 +567,78 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                 )}
             </form> */}
           </div>
-          <div className='relative'>
+          <div className='relative' ref={outsideRef}>
             <Image
               src={Search}
               alt='Search'
               className='absolute top-2 left-3'
             />
             <input
-              className='bg-[#fff] w-[400px] pl-[40px] pr-[12px] py-[8px] rounded-[8px] text-[14px]'
+              value={searchKeyword}
+              onChange={handleSearch}
+              className='border-[1px] border-[#e2ecf0] bg-[#fff] w-[400px] pl-[40px] pr-[12px] py-[8px] rounded-[8px] text-[14px]'
               placeholder='How to create DAO community 🔥 '
             />
+            {searchKeyword?.length ? (
+              <div
+                className='absolute bg-[#fff] rounded-[8px] py-3 w-full top-11 z-[999]'
+                style={{ boxShadow: 'rgb(2 17 24 / 8%) 0px 16px 32px' }}
+              >
+                {searching ? <p className='text-center'>Loading...</p> : null}
+                {!searching && searchItems?.data?.length ? (
+                  searchItems?.data?.map((item) => (
+                    <div
+                      key={item.id}
+                      onClick={() => handleSearchNavigation(item)}
+                      className='flex items-center mb-1 hover:bg-[#ccc] cursor-pointer px-3 py-1'
+                    >
+                      <p
+                        style={{
+                          width: 240,
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                        }}
+                      >
+                        {item.name}
+                      </p>
+                      <p className='mt-0 text-[12px] bg-[#12b4ff] text-[#fff] rounded-[8px] px-1 ml-1'>
+                        {item?.type === 'token_gate_projects'
+                          ? 'Token Gate Project'
+                          : item?.type === 'dao'
+                          ? 'DAO'
+                          : 'Collection'}
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <>
+                    {!searching ? (
+                      <p className='text-center'>No data found</p>
+                    ) : (
+                      ''
+                    )}
+                  </>
+                )}
+                {!searching &&
+                  searchItems?.data?.length &&
+                  pagination.length > 0 && (
+                    <ReactPaginate
+                      className='flex flex-wrap md:space-x-10 space-x-3 justify-center items-center my-6'
+                      pageClassName='px-3 py-1 font-satoshi-bold text-sm  bg-opacity-5 rounded hover:bg-opacity-7 !text-txtblack '
+                      breakLabel='...'
+                      nextLabel='>'
+                      onPageChange={handlePageClick}
+                      pageRangeDisplayed={2}
+                      pageCount={pagination.length}
+                      previousLabel='<'
+                      renderOnZeroPageCount={null}
+                      activeClassName='text-primary-900 bg-primary-900 !no-underline'
+                      activeLinkClassName='!text-txtblack !no-underline'
+                    />
+                  )}
+              </div>
+            ) : null}
           </div>
 
           <div className='flex items-center' id='mobile-menu'>
@@ -515,7 +650,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
               {userinfo?.id && (
                 <>
                   <li>
-                    <a
+                    {/* <a
                       href='#'
                       onClick={(e) => {
                         e.preventDefault();
@@ -542,7 +677,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                           {notificationCount}
                         </span>
                       )}
-                    </a>
+                    </a> */}
                     {/* wallet popup */}
                   </li>
 
@@ -702,7 +837,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                 onClick={handleShowMobileSearch}
               />
             )} */}
-            {userinfo?.id ? (
+            {/* {userinfo?.id ? (
               <Image
                 src={bellImage}
                 alt='Notifications'
@@ -714,7 +849,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                   showHideNotification();
                 }}
               />
-            ) : null}
+            ) : null} */}
             <Image
               src={walletImage}
               alt='Wallet'

@@ -20,6 +20,7 @@ import emptyStateCommon from 'assets/images/profile/emptyStateCommon.svg';
 import Image from 'next/image';
 import TokenGatedProjectCard from 'components/Cards/TokenGatedProjectCard';
 import { getTokenGatedProjectList } from 'services/tokenGated/tokenGatedService';
+import { ls_GetUserID } from 'util/ApplicationStorage';
 
 function List({ query }) {
   SwiperCore.use([Autoplay]);
@@ -37,6 +38,7 @@ function List({ query }) {
     limit: 10,
     keyword: '',
   };
+
   const calculatePageCount = (pageSize, totalItems) => {
     return totalItems < pageSize ? 1 : Math.ceil(totalItems / pageSize);
   };
@@ -61,7 +63,7 @@ function List({ query }) {
       );
     } else if (query?.type === 'dao') {
       let payloadData = {
-        id: query?.user,
+        id: ls_GetUserID(),
         page: payload.page,
         perPage: 10,
         keyword: payload.keyword,
@@ -70,7 +72,7 @@ function List({ query }) {
       projectResponse = await getUserProjectListById(payloadData);
     } else if (query?.type === 'nft') {
       let payloadData = {
-        userId: query?.user,
+        userId: ls_GetUserID(),
         page: payload.page,
         limit: 10,
         keyword: payload.keyword,
@@ -84,7 +86,7 @@ function List({ query }) {
         listType = 'user';
       }
       let payloadData = {
-        id: query?.user,
+        id: ls_GetUserID(),
         page: payload.page,
         limit: 10,
         keyword: payload.keyword,
@@ -141,7 +143,7 @@ function List({ query }) {
       );
       // await getCollectionList();
     })();
-  }, [sortType]);
+  }, [sortType, query]);
 
   function handleSortType(type) {
     setSortType(type);
@@ -196,7 +198,7 @@ function List({ query }) {
     <>
       {isLoading && <div className='loading'></div>}
       <div className='text-txtblack'>
-        <h1 className='my-6 pl-4'>
+        {/* <h1 className='my-6 pl-4'>
           {query?.type === 'collection'
             ? 'Collection List'
             : query?.type === 'dao'
@@ -204,8 +206,8 @@ function List({ query }) {
             : query?.type === 'tokenGated'
             ? 'Token Gated Project List'
             : 'Minted NFT List'}
-        </h1>
-        <section className='flex px-4 mb-6'>
+        </h1> */}
+        <section className='flex px-4 mb-6 mt-6'>
           <div className='mr-4 flex-1'>
             <div className='relative'>
               <div className='flex absolute inset-y-0 left-0 items-center pl-4 pointer-events-none'>

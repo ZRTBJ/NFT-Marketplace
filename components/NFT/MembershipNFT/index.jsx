@@ -30,8 +30,9 @@ import MoonpayModal from 'components/Modals/MoonpayModal';
 import Image from 'next/image';
 import { NETWORKS } from 'config/networks';
 import ConfirmationModal from 'components/Modals/ConfirmationModal';
-import { event } from "nextjs-google-analytics";
-
+import { event } from 'nextjs-google-analytics';
+import TagManager from 'react-gtm-module';
+import WalletConnectModal from 'components/Login/WalletConnectModal';
 
 export default function MembershipNFT({ query }) {
   const fileUploadNotification = useSelector((state) =>
@@ -39,6 +40,7 @@ export default function MembershipNFT({ query }) {
       ? state?.notifications?.notificationData
       : []
   );
+  const [holdCreateNFT, setHoldCreateNFT] = useState(false);
   const dispatch = useDispatch();
   const userinfo = useSelector((state) => state.user.userinfo);
   const [isListUpdate, setIsListUpdate] = useState(false);
@@ -105,6 +107,18 @@ export default function MembershipNFT({ query }) {
   const [isLoading, setIsLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDeleteSuccessModal, setShowDeleteSuccessModal] = useState(false);
+  const [showConnectModal, setShowConnectModal] = useState(false);
+
+  useEffect(() => {
+    if (holdCreateNFT) {
+      nextHandle();
+    }
+
+    return () => {
+      setHoldCreateNFT(false);
+    };
+  }, [userinfo?.id]);
+
   function onTextfieldChange(index, fieldName, value) {
     setValue(index, fieldName, value);
   }
@@ -346,8 +360,20 @@ export default function MembershipNFT({ query }) {
     }, 50);
   }
   async function collectionCreate() {
-    event("create_collection", { category: "collection", label: "blockchain", value: ls_GetChainID() });
-
+    event('create_collection', {
+      category: 'collection',
+      label: 'blockchain',
+      value: ls_GetChainID(),
+    });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'collection',
+        pageTitle: 'create_collection',
+        label: 'blockchain',
+        value: ls_GetChainID(),
+      },
+    });
     let collection_id = '';
     let payload = {
       collection_type: 'membership',
@@ -397,7 +423,14 @@ export default function MembershipNFT({ query }) {
     request.append('benefit_array', JSON.stringify(benefit_array));
 
     if (!updateMode) {
-      event("create_membership_nft", { category: "nft"});
+      event('create_membership_nft', { category: 'nft' });
+      TagManager.dataLayer({
+        dataLayer: {
+          event: 'click_event',
+          category: 'nft',
+          pageTitle: 'create_membership_nft',
+        },
+      });
       await createMembershipNft(request)
         .then((res) => {
           if (res.code === 0) {
@@ -568,8 +601,13 @@ export default function MembershipNFT({ query }) {
     );
 
     if (isPreview) {
-      if (!projectCreated) {
-        await createBlock(validateNfts);
+      if (userinfo?.id) {
+        if (!projectCreated) {
+          await createBlock(validateNfts);
+        }
+      } else {
+        setShowConnectModal(true);
+        setHoldCreateNFT(true);
       }
     } else {
       setCheckedValidation(true);
@@ -1005,7 +1043,7 @@ export default function MembershipNFT({ query }) {
                   disabled={isPreview}
                 ></textarea>
               </div>
-              {typeof window !== 'undefined' && (
+              {userinfo?.id && typeof window !== 'undefined' && (
                 <div className='mb-6'>
                   <div className='flex items-center mb-2'>
                     <Tooltip message='If you selecting a Collection, it will generate automatically'></Tooltip>
@@ -1359,12 +1397,19 @@ export default function MembershipNFT({ query }) {
           message={errorMessage}
         />
       )}
-      {showMoonpayModal && process.env.NEXT_PUBLIC_ENV !== "production" && (
+      {showMoonpayModal && process.env.NEXT_PUBLIC_ENV !== 'production' && (
         <MoonpayModal
           handleClose={() => {
             setShowMoonpayModal(false);
           }}
           show={showMoonpayModal}
+        />
+      )}
+      {showConnectModal && (
+        <WalletConnectModal
+          showModal={showConnectModal}
+          noRedirection={true}
+          closeModal={() => setShowConnectModal(false)}
         />
       )}
       {showDataUploadingModal && (

@@ -10,7 +10,6 @@
 }
 
 .createSwiper {
-  margin-left: 1px !important;
   padding: 10px;
 }
 
@@ -22,7 +21,7 @@
   }
   .nftCard {
     width: 211px !important;
-    margin-right: 0px !important;
-    margin-left: 10px !important;
+    margin-right: 10px !important;
+    margin-left: 0px !important;
   }
 }

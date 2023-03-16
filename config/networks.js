@@ -41,6 +41,7 @@ const TESTNET = {
     discount: address.discountGoerli,
     scan: EthScan,
     alchamey: process.env.NEXT_PUBLIC_GOERLI_NFT_ALCHEMY_URL,
+    scanApi: `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${process.env.NEXT_PUBLIC_GOELRI_SCAN}`,
   },
   97: {
     networkName: 'BNB Testnet',
@@ -65,6 +66,7 @@ const TESTNET = {
     viewTxUrl: `https://testnet.bscscan.com/tx/`,
     decirTreasury: address.decirTreasuryBnbTest,
     discount: address.discountBnbTest,
+    scanApi: `https://api.bscscan.com/api?module=gastracker&action=gasoracle&apikey=${process.env.NEXT_PUBLIC_BNB_TESTNET_SCAN}`,
   },
   80001: {
     networkName: 'Polygon Testnet Mumbai',
@@ -91,6 +93,7 @@ const TESTNET = {
     discount: address.discountMumbai,
     scan: PolyScan,
     alchamey: process.env.NEXT_PUBLIC_MUMBAI_NFT_ALCHEMY_URL,
+    scanApi: `https://api.polygonscan.com/api?module=gastracker&action=gasoracle&apikey=${process.env.NEXT_PUBLIC_MUMBAI_SCAN}`,
   },
 };
 
@@ -120,6 +123,7 @@ const MAINNET = {
     discount: address.discountEthereum,
     scan: EthScan,
     alchamey: process.env.NEXT_PUBLIC_ETHEREUM_NFT_ALCHEMY_URL,
+    scanApi: `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${process.env.NEXT_PUBLIC_ETHEREUM_SCAN}`,
   },
   137: {
     networkName: 'Polygon Mainnet',
@@ -146,6 +150,7 @@ const MAINNET = {
     discount: address.discountPolygon,
     scan: PolyScan,
     alchamey: process.env.NEXT_PUBLIC_POLYGON_NFT_ALCHEMY_URL,
+    scanApi: `https://api.polygonscan.com/api?module=gastracker&action=gasoracle&apikey=${process.env.NEXT_PUBLIC_POLYGON_SCAN}`,
   },
   56: {
     networkName: 'BNB Mainnet',
@@ -169,6 +174,7 @@ const MAINNET = {
     viewTxUrl: `https://bscscan.com/tx/`,
     decirTreasury: address.decirTreasuryBnb,
     discount: address.discountBnb,
+    scanApi: `https://api.bscscan.com/api?module=gastracker&action=gasoracle&apikey=${process.env.NEXT_PUBLIC_BNB_SCAN}`,
   },
 };
 

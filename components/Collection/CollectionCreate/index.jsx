@@ -22,13 +22,27 @@ import { ls_GetChainID } from 'util/ApplicationStorage';
 import Outline from 'components/FormUtility/Outline';
 import Confirmation from 'components/FormUtility/Confirmation';
 import ConfirmationModal from 'components/Modals/ConfirmationModal';
-import { event } from "nextjs-google-analytics";
+import { event } from 'nextjs-google-analytics';
+import TagManager from 'react-gtm-module';
+import WalletConnectModal from 'components/Login/WalletConnectModal';
 
 export default function CollectionCreate({ query }) {
   // logo start
   const [logoPhoto, setLogoPhoto] = useState([]);
   const [logoPhotoUrl, setLogoPhotoUrl] = useState('');
-  const userinfo = useSelector((state) => state.user.userinfo);
+  const [showConnectModal, setShowConnectModal] = useState(false);
+  const [toCreateCollection, setToCreateCollection] = useState(false);
+  const userInfo = useSelector((state) => state.user.userinfo);
+
+  useEffect(() => {
+    if (toCreateCollection) {
+      saveDraft();
+    }
+
+    return () => {
+      setToCreateCollection(false);
+    };
+  }, [userInfo?.id]);
   const onLogoPhotoSelect = useCallback((acceptedFiles) => {
     if (acceptedFiles.length === 1) {
       setLogoPhoto(acceptedFiles);
@@ -281,6 +295,7 @@ export default function CollectionCreate({ query }) {
   const [notOwner, setNotOwner] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [network, setNetwork] = useState(chainId?.toString());
+  const [isNetworkEmpty, setIsNetworkEmpty] = useState(false);
   const [disableNetwork, setDisableNetwork] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [collectionPublished, setCollectionPublished] = useState(false);
@@ -320,28 +335,45 @@ export default function CollectionCreate({ query }) {
   }
 
   async function saveDraft() {
-    // outline
-    if (currentStep.length === 2) {
-      if (
-        projectName !== '' &&
-        projectCategory !== '' &&
-        alreadyTakenProjectName === false &&
-        daoSymbol !== '' &&
-        alreadyTakenDaoSymbol === false &&
-        isRoyaltyPercentageValid
-      ) {
-        let id = '';
-        if (!projectCreated) {
-          await createBlock(id);
-        } else if (projectCreated && projectId !== '') {
-          await updateBlock(projectId);
+    if (userInfo?.id) {
+      // outline
+      if (currentStep.length === 2) {
+        if (
+          projectName !== '' &&
+          projectCategory !== '' &&
+          alreadyTakenProjectName === false &&
+          daoSymbol !== '' &&
+          alreadyTakenDaoSymbol === false &&
+          isRoyaltyPercentageValid
+        ) {
+          let id = '';
+          if (!projectCreated) {
+            await createBlock(id);
+          } else if (projectCreated && projectId !== '') {
+            await updateBlock(projectId);
+          }
         }
       }
+    } else {
+      setShowConnectModal(true);
+      setToCreateCollection(true);
     }
   }
   async function createNewProject() {
-    event("create_collection", {category: "collection", label: "blockchain", value: network});
-
+    event('create_collection', {
+      category: 'collection',
+      label: 'blockchain',
+      value: network,
+    });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'collection',
+        pageTitle: 'create_collection',
+        label: 'blockchain',
+        value: network,
+      },
+    });
     let createPayload = {
       name: projectName,
       collection_type: collectionType,
@@ -369,7 +401,14 @@ export default function CollectionCreate({ query }) {
     return projectId;
   }
   async function updateExistingProject(id) {
-    event("update_collection", { category: "collection" });
+    event('update_collection', { category: 'collection' });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'collection',
+        pageTitle: 'update_collection',
+      },
+    });
     let updatePayload = {
       logo: logoPhoto.length > 0 ? logoPhoto[0] : null,
       name: projectName,
@@ -465,6 +504,9 @@ export default function CollectionCreate({ query }) {
       if (collectionType === '') {
         setEmptyCollectionType(true);
       }
+      if (network === '0') {
+        setIsNetworkEmpty(true);
+      }
       if (!supply) {
         setIsSupplyValid(false);
       }
@@ -476,7 +518,8 @@ export default function CollectionCreate({ query }) {
         alreadyTakenProjectName === false &&
         daoSymbol !== '' &&
         alreadyTakenDaoSymbol === false &&
-        isRoyaltyPercentageValid
+        isRoyaltyPercentageValid &&
+        network !== '0'
       ) {
         if (collectionType === 'product') {
           if (supply && isSupplyValid) {
@@ -497,7 +540,14 @@ export default function CollectionCreate({ query }) {
     }
   }
   async function deleteCollection() {
-    event("delete_collection", { category: "collection"});
+    event('delete_collection', { category: 'collection' });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'collection',
+        pageTitle: 'delete_collection',
+      },
+    });
     setDataIsLoading(true);
     await deleteDraftCollection(projectId)
       .then((res) => {
@@ -675,9 +725,13 @@ export default function CollectionCreate({ query }) {
                     supply={supply}
                     handleSupplyValue={handleSupplyValue}
                     supplyDisable={supplyDisable}
+                    onBlockchainCategoryChange={setNetwork}
                     collectionNetwork={network}
                     disableNetwork={disableNetwork}
                     isSupplyValid={isSupplyValid}
+                    userId={userInfo?.id}
+                    setIsNetworkEmpty={setIsNetworkEmpty}
+                    isNetworkEmpty={isNetworkEmpty}
                   />
                 </div>
               )}
@@ -794,6 +848,13 @@ export default function CollectionCreate({ query }) {
           handleClose={() => setShowDeleteModal(false)}
           handleApply={deleteCollection}
           message='Are you sure  to delete this Collection?'
+        />
+      )}
+      {showConnectModal && (
+        <WalletConnectModal
+          showModal={showConnectModal}
+          noRedirection={true}
+          closeModal={() => setShowConnectModal(false)}
         />
       )}
     </>

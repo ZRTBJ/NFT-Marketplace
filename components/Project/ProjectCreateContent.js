@@ -15,14 +15,18 @@ import SuccessModal from 'components/Modals/SuccessModal';
 import { getProjectCategory } from 'services/project/projectService';
 import { ls_GetChainID } from 'util/ApplicationStorage';
 import ConfirmationModal from 'components/Modals/ConfirmationModal';
-import { event } from "nextjs-google-analytics";
-
+import { event } from 'nextjs-google-analytics';
+import TagManager from 'react-gtm-module';
+import { useSelector } from 'react-redux';
+import WalletConnectModal from 'components/Login/WalletConnectModal';
 
 function ProjectCreateContent({ search }) {
   // Logo start
   // logo is the cover photo
+  const userInfo = useSelector((state) => state.user.userinfo);
   const [logoPhoto, setLogoPhoto] = useState([]);
   const [logoPhotoUrl, setLogoPhotoUrl] = useState('');
+  const [toCreateDAO, setToCreateDAO] = useState(false);
   const onLogoPhotoSelect = useCallback((acceptedFiles) => {
     if (acceptedFiles.length === 1) {
       setLogoPhoto(acceptedFiles);
@@ -110,6 +114,7 @@ function ProjectCreateContent({ search }) {
   const [photosLengthFromResponse, setPhotosLengthFromResponse] = useState(0);
   const [remainingPhotosName, setRemainingPhotosName] = useState([]);
   const [photos, setPhotos] = useState([]);
+  const [showConnectModal, setShowConnectModal] = useState(false);
   const [photosUrl, setPhotosUrl] = useState([]);
   const onPhotosSelect = useCallback((params, photos) => {
     if (photosLengthFromResponse + params.length > 7) {
@@ -213,6 +218,7 @@ function ProjectCreateContent({ search }) {
   // category start
   const [projectCategory, setProjectCategory] = useState('');
   const [emptyProjeCtCategory, setEmptyProjectCategory] = useState(false);
+  const [emptyBlockchainCategory, setEmptyBlockchainCategory] = useState(false);
   const [projectCategoryName, setProjectCategoryName] = useState('');
   function onProjectCategoryChange(event) {
     setProjectCategory(event.target.value);
@@ -244,6 +250,16 @@ function ProjectCreateContent({ search }) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [projectPublished, setProjectPublished] = useState(false);
   const [daoDeleted, setDaoDeleted] = useState(false);
+
+  useEffect(() => {
+    if (toCreateDAO) {
+      saveDraft();
+    }
+
+    return () => {
+      setToCreateDAO(false);
+    };
+  }, [userInfo?.id]);
 
   function handelClickBack() {
     let currentIndex = currentStep.pop();
@@ -282,26 +298,41 @@ function ProjectCreateContent({ search }) {
   }
 
   async function saveDraft() {
-    // outline
-    if (currentStep.length === 2) {
-      if (
-        projectName !== '' &&
-        // daoSymbol !== "" &&
-        projectCategory !== '' &&
-        alreadyTakenProjectName === false
-      ) {
-        let id = '';
-        if (!projectCreated) {
-          await createBlock(id);
-        } else if (projectCreated && projectId !== '') {
-          await updateBlock(projectId);
+    if (userInfo?.id) {
+      // outline
+      if (currentStep.length === 2) {
+        setToCreateDAO(false);
+        if (
+          projectName !== '' &&
+          // daoSymbol !== "" &&
+          projectCategory !== '' &&
+          alreadyTakenProjectName === false
+        ) {
+          let id = '';
+          if (!projectCreated) {
+            await createBlock(id);
+          } else if (projectCreated && projectId !== '') {
+            await updateBlock(projectId);
+          }
         }
       }
+    } else {
+      setShowConnectModal(true);
+      setToCreateDAO(true);
     }
   }
 
   async function createNewProject() {
-    event("create_dao", { category: "dao", label: "name", value: projectName });
+    event('create_dao', { category: 'dao', label: 'name', value: projectName });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'dao',
+        label: 'name',
+        value: projectName,
+        pageTitle: 'create_dao',
+      },
+    });
     let createPayload = {
       name: projectName,
       category_id: projectCategory,
@@ -327,7 +358,16 @@ function ProjectCreateContent({ search }) {
     return projectId;
   }
   async function updateExistingProject(id) {
-    event("update_dao", { category: "dao", label: "name", value: projectName });
+    event('update_dao', { category: 'dao', label: 'name', value: projectName });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'dao',
+        label: 'name',
+        value: projectName,
+        pageTitle: 'update_dao',
+      },
+    });
     try {
       let updatePayload = {
         logo: logoPhoto.length > 0 ? logoPhoto[0] : null,
@@ -410,6 +450,7 @@ function ProjectCreateContent({ search }) {
       }
     });
   }
+
   function handelClickNext() {
     // outline
     if (currentStep.length === 1) {
@@ -426,6 +467,9 @@ function ProjectCreateContent({ search }) {
       if (projectCategory === '') {
         setEmptyProjectCategory(true);
       }
+      if (blockchainCategory === '0') {
+        setEmptyBlockchainCategory(true);
+      }
       if (photos.length + photosLengthFromResponse > 7) {
         setShowErrorModal(true);
         setErrorMessage('Maximum 7 picture can be upload');
@@ -433,6 +477,7 @@ function ProjectCreateContent({ search }) {
         projectName !== '' &&
         // daoSymbol !== "" &&
         projectCategory !== '' &&
+        blockchainCategory !== '0' &&
         alreadyTakenProjectName === false
       ) {
         const payload = {
@@ -467,7 +512,16 @@ function ProjectCreateContent({ search }) {
     return React.useMemo(() => new URLSearchParams(search), [search]);
   }
   async function deleteDao() {
-    event("delete_dao", { category: "dao", label: "name", value: projectName });
+    event('delete_dao', { category: 'dao', label: 'name', value: projectName });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'dao',
+        label: 'name',
+        value: projectName,
+        pageTitle: 'delete_dao',
+      },
+    });
     setDataIsLoading(true);
     await deleteDraftDao(projectId)
       .then((res) => {
@@ -581,9 +635,13 @@ function ProjectCreateContent({ search }) {
                     projectCategory={projectCategory}
                     emptyProjeCtCategory={emptyProjeCtCategory}
                     onProjectCategoryChange={onProjectCategoryChange}
+                    onBlockchainCategoryChange={setBlockchaainCategory}
                     blockchainCategory={blockchainCategory}
+                    emptyBlockchainCategory={emptyBlockchainCategory}
+                    setEmptyBlockchainCategory={setEmptyBlockchainCategory}
                     // Freeze metadata
                     showFreezeMetadata={false}
+                    userId={userInfo?.id}
                   />
                 </div>
               )}
@@ -682,6 +740,13 @@ function ProjectCreateContent({ search }) {
           handleClose={() => setShowDeleteModal(false)}
           handleApply={deleteDao}
           message='Are you sure  to delete this DAO?'
+        />
+      )}
+      {showConnectModal && (
+        <WalletConnectModal
+          showModal={showConnectModal}
+          noRedirection={true}
+          closeModal={() => setShowConnectModal(false)}
         />
       )}
     </>

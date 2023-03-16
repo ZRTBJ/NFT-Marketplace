@@ -8,6 +8,7 @@ import NFT from 'assets/images/nft-grad.svg';
 import Royalty from 'assets/images/royalty.svg';
 import TokenGate from 'assets/images/token-gate.svg';
 import LogoBG from 'assets/images/bg-logo.svg';
+import Link from 'next/link';
 
 const WelcomeModal = ({ show, handleClose }) => {
   const [open, setOpen] = useState([]);
@@ -212,6 +213,7 @@ const WelcomeModal = ({ show, handleClose }) => {
                 className='text-[#E100FF] text-[14px] underline cursor-pointer'
                 href='https://metamask.io/'
                 target='_blank'
+                rel='noreferrer'
               >
                 I don’t have wallet account
               </a>
@@ -229,14 +231,19 @@ const WelcomeModal = ({ show, handleClose }) => {
                 Find it easy on our whitepaper. you can get all our features
                 knowledge
               </p>
-              <p className='text-[12px] font-bold mt-0'>
+              <Link
+                className='text-[12px] font-bold mt-0'
+                href='https://decir.gitbook.io/decir/'
+                passHref
+                target='_blank'
+              >
                 LEARN MORE <i className='fa-regular fa-arrow-right ml-1'></i>
-              </p>
+              </Link>
             </div>
           </div>
         </div>
-        <div className='w-2/6 welcome-gradient-bg relative hidden md:block'>
-          <h1 className='!text-[48px] mb-4 !leading-tight'>
+        <div className='w-2/6 welcome-gradient-bg relative hidden md:block ml-[1px]'>
+          <h1 className='!text-[47px] mb-4 !leading-tight'>
             No Code DAO Creation Platform
           </h1>
           <p className='!text-[32px] !leading-tight'>

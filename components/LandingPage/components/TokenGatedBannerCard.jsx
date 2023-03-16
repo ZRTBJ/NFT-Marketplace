@@ -31,7 +31,8 @@ export default function TokenGatedBannerCard() {
           setIsLoading(false);
         });
     } else {
-      setShowWalletConnectModal(true);
+      // setShowWalletConnectModal(true);
+      router.push(`/token-gated/new-draft`);
     }
   };
   return (
@@ -41,12 +42,12 @@ export default function TokenGatedBannerCard() {
         <div className='grid grid-cols-1 md:grid-cols-2 relative'>
           <div className='break-all'>
             {' '}
-            <p className='gradient-text-deep-pueple font-black text-[24px] md:text-[28px] mt-5'>
-              Create Token Gated
+            <p className='gradient-text-deep-pueple font-black text-[24px] md:text-[28px] mt-5 break-word'>
+              Create Token Gated Experience
             </p>
-            <p className='mb-6 text-[14px]'>
-              Lorem Ipsum is simply dummy text of the printing and Ipsum has
-              been{' '}
+            <p className='mb-6 text-[14px] break-word'>
+              Curate exclusive gated content for your users and sell your NFTs
+              as access.{' '}
             </p>
             <div className='flex flex-wrap items-center gap-4'>
               <button
@@ -54,15 +55,15 @@ export default function TokenGatedBannerCard() {
                 onClick={() => handelOnClick()}
                 className='gradient-text-deep-pueple font-black border w-[160px] text-center h-[40px] rounded-lg border-secondary-900'
               >
-                {isLoading ? <Spinner forButton={true} /> : `Let's get started`}
+                {isLoading ? <Spinner forButton={true} /> : `Get started`}
               </button>
               <a
                 href='https://decir.gitbook.io/decir/token-gated-contents/how-it-works'
                 target='_blank'
-                className='!no-underline text-black font-black text-[14px] pb-4 md:pb-0 cursor-pointer'
+                className='!no-underline text-black font-black text-[14px] cursor-pointer'
                 rel='noreferrer'
               >
-                How it work{' '}
+                How it works{' '}
                 <i className='ml-2 fa-sharp fa-solid fa-arrow-right text-textSubtle-200 font-medium'></i>
               </a>
             </div>

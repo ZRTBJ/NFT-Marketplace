@@ -5,7 +5,8 @@ import ConfirmationModal from 'components/Modals/ConfirmationModal';
 import SuccessModal from 'components/Modals/SuccessModal';
 import ErrorModal from 'components/Modals/ErrorModal';
 import { useState } from 'react';
-import { event } from "nextjs-google-analytics";
+import { event } from 'nextjs-google-analytics';
+import TagManager from 'react-gtm-module';
 
 export default function PublishContentModal({
   show,
@@ -22,7 +23,14 @@ export default function PublishContentModal({
   const [errorMessage, setErrorMessage] = useState('');
 
   const publish = async (content) => {
-    event("publish_tokengate_content", { category: "token_gate"});
+    event('publish_tokengate_content', { category: 'token_gate' });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'token_gate',
+        pageTitle: 'publish_tokengate_content',
+      },
+    });
     const data = {
       is_publish: checkUsedFor === 'publish' ? true : false,
     };

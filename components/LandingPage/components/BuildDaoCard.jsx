@@ -9,11 +9,11 @@ export default function BuildDaoCard({ size }) {
   const userinfo = useSelector((state) => state.user.userinfo);
   const [showWalletConnectModal, setShowWalletConnectModal] = useState(false);
   const handelOnClick = async () => {
-    if (userinfo?.id) {
-      router.push(`/dao/create`);
-    } else {
-      setShowWalletConnectModal(true);
-    }
+    // if (userinfo?.id) {
+    router.push(`/dao/create`);
+    // } else {
+    //   setShowWalletConnectModal(true);
+    // }
   };
   return (
     <div>
@@ -24,23 +24,26 @@ export default function BuildDaoCard({ size }) {
         className={`relative justify-between bg-white flex  items-center gap-x-5 shadow rounded-2xl ${
           size === 'lg'
             ? 'flex-col gap-y-5 rounded-bl-2xl rounded-br-2xl'
-            : ' w-[515px] px-[30px] py-5'
+            : ' w-[515px] px-[30px] py-5 md:min-h-[200px]'
         }`}
       >
         <div
           className={`${
             size === 'lg'
-              ? 'bg-white text-black text-center px-4 py-6 rounded-bl-2xl rounded-br-2xl w-full border-t'
+              ? 'bg-white text-black text-center px-4 py-[95px] rounded-bl-2xl rounded-br-2xl w-full border-t'
               : ' text-black'
           }`}
         >
           <p className=' text-[20px] font-black mb-1'>Build DAO community</p>
           <p
-            className={`mb-4  ${
-              size === 'lg' ? 'text-[14px] mb-10 mt-3' : 'max-w-[300px]'
+            className={`mb-4 break-word ${
+              size === 'lg'
+                ? 'text-[14px] mb-10 mt-3'
+                : 'max-w-[300px] text-textSubtle-200 pb-1'
             }`}
           >
-            Lorem Ipsum is simply dummy text of the printing and Ipsum has been{' '}
+            Build a vibrant web3 community designed for mutual benefits and
+            shared prosperity.{' '}
           </p>
           <div
             className={`flex items-center ${
@@ -77,7 +80,8 @@ export default function BuildDaoCard({ size }) {
       <WalletConnectModal
         showModal={showWalletConnectModal}
         closeModal={() => setShowWalletConnectModal(false)}
-        noRedirection={true}
+        noRedirection={false}
+        navigateToPage={'dao/create'}
       />
     </div>
   );

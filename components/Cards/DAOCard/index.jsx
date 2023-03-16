@@ -69,7 +69,11 @@ const DAOCard = ({ item }) => {
           : 'No name'}
       </h3>
       <p className='text-[13px] mt-0 md:mt-3 text-[#7D849D]'>
-        Value: {item.last_revenue.toFixed(2)} USD
+        Value:{' '}
+        {item?.summary?.holding_value_usd
+          ? `$${item?.summary?.holding_value_usd.toFixed(2)}`
+          : '$0'}{' '}
+        USD
       </p>
       <div className='flex mx-auto mt-3 mb-4 min-h-[40px]'>
         {item.members &&

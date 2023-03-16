@@ -17,6 +17,7 @@ import {
   configMultiContent,
   getTokenGatedContentDetail,
   getAssetDetail,
+  createTokenGatedProject,
 } from 'services/tokenGated/tokenGatedService';
 import { getNotificationData } from 'redux/notification';
 import axios from 'axios';
@@ -25,6 +26,9 @@ import SuccessModal from 'components/Modals/SuccessModal';
 import ErrorModal from 'components/Modals/ErrorModal';
 import { ls_GetUserToken } from 'util/ApplicationStorage';
 import { event } from 'nextjs-google-analytics';
+import TagManager from 'react-gtm-module';
+import WalletConnectModal from 'components/Login/WalletConnectModal';
+import { useRouter } from 'next/router';
 
 const STEPS = [
   { id: 1, label: 'Content' },
@@ -45,7 +49,10 @@ export default function AddNewContent({
   setLinkDetails,
   setIsEditContent,
 }) {
+  const [showConnectModal, setShowConnectModal] = useState(false);
+  const [createContent, setCreateContent] = useState(false);
   const [activeStep, setActiveStep] = useState(1);
+  const [projectID, setProjectID] = useState('');
   const [content, setContent] = useState({
     media: null,
     title: '',
@@ -96,8 +103,23 @@ export default function AddNewContent({
   const [setTimer, setSetTimer] = useState();
   const [uploadFileTrue, setUploadFileTrue] = useState(false);
   const userinfo = useSelector((state) => state.user.userinfo);
+  const router = useRouter();
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (createContent) {
+      if (publishNow) {
+        handlePublish();
+      } else {
+        handleDraft();
+      }
+    }
+
+    return () => {
+      setCreateContent(false);
+    };
+  }, [userinfo?.id]);
 
   useEffect(() => {
     let tokenRange = configurations.filter(
@@ -142,7 +164,6 @@ export default function AddNewContent({
         accessToAll: config_names?.length ? false : true,
       });
       if (contents?.[0]?.content_type === 'url') {
-        console.log(contents);
         let fileType =
           contents[0]?.file_type === 'movie' ? 'video' : contents[0]?.file_type;
         setLinkDetails({
@@ -175,6 +196,13 @@ export default function AddNewContent({
       }
     }
   }, [fileUploadNotification, jobId]);
+
+  const handleCreateProject = async () => {
+    const title = `Unnamed Project ${new Date().toISOString()}`;
+    let data = await createTokenGatedProject(title);
+    setProjectID(data?.token_gate_project?.id);
+    return data?.token_gate_project?.id;
+  };
 
   const getAssetStatus = (id) => {
     getAssetDetail(id).then((resp) => {
@@ -315,7 +343,6 @@ export default function AddNewContent({
   };
 
   const deleteConfiguration = (id) => {
-    console.log(id);
     let configures = configurations.filter((value) => value.id !== id);
     setConfigurations(configures);
     if (!configures.length) {
@@ -433,11 +460,23 @@ export default function AddNewContent({
 
   async function handleCreateContent(asset_id, isPublish) {
     event('create_tokengate_content', { category: 'token_gate' });
-    let payload = {
-      title: content?.title,
-      project_id: tokenProjectId,
-    };
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'token_gate',
+        pageTitle: 'create_tokengate_content',
+      },
+    });
+
     if (content?.title) {
+      let tokenProId =
+        tokenProjectId !== 'new-draft'
+          ? tokenProjectId
+          : await handleCreateProject();
+      let payload = {
+        title: content?.title,
+        project_id: tokenProId,
+      };
       await createTokenGatedContent(payload)
         .then((resp) => {
           if (setTimer) {
@@ -470,6 +509,13 @@ export default function AddNewContent({
 
   const handleUpdateContent = (id, asset_id, isDraft = false, isPublish) => {
     event('update_tokengate_content', { category: 'token_gate' });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'click_event',
+        category: 'token_gate',
+        pageTitle: 'update_tokengate_content',
+      },
+    });
     let config = configurations
       .map((item) => {
         return {
@@ -532,6 +578,14 @@ export default function AddNewContent({
           }
           if (publishNow || isPublishing || isPublish) {
             event('publish_tokengate_content', { category: 'token_gate' });
+            TagManager.dataLayer({
+              dataLayer: {
+                event: 'click_event',
+                category: 'token_gate',
+                pageTitle: 'publish_tokengate_content',
+              },
+            });
+
             const data = {
               is_publish: true,
             };
@@ -670,27 +724,38 @@ export default function AddNewContent({
   };
 
   async function handlePublish() {
-    await setPublishing();
-    await handleStates();
+    if (userinfo?.id) {
+      await setPublishing();
+      await handleStates();
+    } else {
+      setPublishing();
+      setCreateContent(true);
+      setShowConnectModal(true);
+    }
   }
 
   const handleDraft = () => {
-    setIsLoading(true);
-    if (!validationError) {
-      if (isEdit) {
-        if (uploadFileTrue) {
-          uploadAFile();
+    if (userinfo?.id) {
+      setIsLoading(true);
+      if (!validationError) {
+        if (isEdit) {
+          if (uploadFileTrue) {
+            uploadAFile();
+          } else {
+            let id = contents?.[0]?.id;
+            handleUpdateContent(id);
+          }
         } else {
-          let id = contents?.[0]?.id;
-          handleUpdateContent(id);
-        }
-      } else {
-        if (linkDetails?.link) {
-          handleCreateContent('');
-        } else {
-          uploadAFile();
+          if (linkDetails?.link) {
+            handleCreateContent('');
+          } else {
+            uploadAFile();
+          }
         }
       }
+    } else {
+      setCreateContent(true);
+      setShowConnectModal(true);
     }
   };
 
@@ -798,6 +863,15 @@ export default function AddNewContent({
           setShowSuccess(false);
           setIsPublishing(false);
           onContentAdded();
+          setCreateContent(false);
+          if (projectID) {
+            router.push(`/token-gated/${projectID}`);
+            setTimeout(() => {
+              if (typeof window !== 'undefined') {
+                window.location.reload();
+              }
+            }, 500);
+          }
         }}
         subMessage={
           isPublishing
@@ -825,6 +899,7 @@ export default function AddNewContent({
         handleClose={() => {
           setShowError(false);
           setIsPublishing(false);
+          setCreateContent(false);
         }}
         show={showError}
         message={
@@ -848,6 +923,16 @@ export default function AddNewContent({
         show={showErrorModal}
         title={errorTitle}
         message={errorMessage}
+      />
+    );
+  }
+
+  if (showConnectModal) {
+    return (
+      <WalletConnectModal
+        showModal={showConnectModal}
+        noRedirection={true}
+        closeModal={() => setShowConnectModal(false)}
       />
     );
   }
