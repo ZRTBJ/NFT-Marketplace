@@ -24,6 +24,7 @@ import PublishRoyaltyConfirmModal from 'components/Collection/Publish/PublishRoy
 import Image from 'next/image';
 import WalletConnectModal from 'components/Login/WalletConnectModal';
 import { NETWORKS } from 'config/networks';
+import Tooltip from 'components/Commons/Tooltip';
 
 const TABLE_HEADERS = [
   { id: 0, label: 'Wallet Address' },
@@ -63,6 +64,7 @@ const Splitter = ({
   const [blockchain, setBlockchain] = useState('');
   const [splitterName, setSplitterName] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  // const [publishSplitterId, setPublishSplitterId] = use
 
   useEffect(() => {
     if (projectNetwork) {
@@ -112,6 +114,7 @@ const Splitter = ({
     collection: Collection,
     splitters: royalityMembers,
     onUpdateStatus: hanldeUpdatePublishStatus,
+    royaltySplitterId: splitterId,
   });
 
   const [showImportWallet, setShowImportWallet] = useState(false);
@@ -204,6 +207,9 @@ const Splitter = ({
     try {
       setShowPublishRoyaltySpliterConfirmModal(false);
       setShowPublishRoyaltySpliterModal(true);
+      if (!splitterId || !Collection) {
+        await handleAutoFill(true);
+      }
       await publishRoyaltySplitter();
     } catch (err) {
       setShowPublishRoyaltySpliterModal(false);
@@ -235,7 +241,7 @@ const Splitter = ({
     setRoyalityMembers(values);
   };
 
-  const handleAutoFill = () => {
+  const handleAutoFill = (isPublish = false) => {
     setIsSubmitted(true);
     if (splitterName && blockchain) {
       if (userInfo?.id) {
@@ -262,20 +268,22 @@ const Splitter = ({
           updateRoyaltySplitter(formData)
             .then((resp) => {
               if (resp.code === 0) {
-                toast.success(
-                  isModal
-                    ? 'Royalty Splitter added Successfully'
-                    : 'Royalty Percentage Updated Successfully'
-                );
-                setIsAutoFillLoading(false);
-                setAutoAssign(false);
-                setIsEdit(null);
-                setShowRoyalityErrorModal(false);
-                setShowRoyalityErrorMessage('');
-                getCollectionDetail();
-                if (isModal) {
-                  createSplitterClose();
-                  onGetSplitterList();
+                if (isPublish) {
+                  toast.success(
+                    isModal
+                      ? 'Royalty Splitter added Successfully'
+                      : 'Royalty Percentage Updated Successfully'
+                  );
+                  setIsAutoFillLoading(false);
+                  setAutoAssign(false);
+                  setIsEdit(null);
+                  setShowRoyalityErrorModal(false);
+                  setShowRoyalityErrorMessage('');
+                  getCollectionDetail();
+                  if (isModal) {
+                    createSplitterClose();
+                    onGetSplitterList();
+                  }
                 }
               } else {
                 setIsAutoFillLoading(false);
@@ -456,12 +464,13 @@ const Splitter = ({
         <div className='bg-[#F8FCFE] rounded-[12px] p-5 mt-5'>
           <div className='flex items-center mb-8'>
             <div className='w-2/4 mr-1 relative'>
-              <label htmlFor='splitterName'>Splitter Name</label>
+              <label htmlFor='splitterName'>Splitter contributors</label>
               <input
                 id='splitterName'
                 name='splitterName'
                 value={splitterName}
                 className='mt-1 rounded-[3px]'
+                disabled={hasPublishedRoyaltySplitter}
                 style={{ height: 42 }}
                 type='text'
                 onChange={(e) => setSplitterName(e.target.value)}
@@ -477,6 +486,7 @@ const Splitter = ({
               <label htmlFor='blockchain'>Blockchain</label>
               <select
                 value={blockchain}
+                disabled={hasPublishedRoyaltySplitter}
                 onChange={(e) => setBlockchain(e.target.value)}
                 className='h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3'
               >
@@ -565,28 +575,36 @@ const Splitter = ({
           {/* {CollectionDetail.is_owner &&
                 CollectionDetail.status !== "published" ? ( */}
           <div className='w-full flex items-center justify-end'>
-            <div>
-              <button
-                onClick={handleAutoFill}
-                className='border-primary-900 border text-primary-900 p-3 font-black text-[14px]'
-                // disabled={!royalityMembers.length}
-              >
-                Save draft
-              </button>
-            </div>
+            {!hasPublishedRoyaltySplitter && (
+              <div>
+                <button
+                  onClick={handleAutoFill}
+                  className='border-primary-900 border text-primary-900 p-3 font-black text-[14px]'
+                  // disabled={!royalityMembers.length}
+                >
+                  Save draft
+                </button>
+              </div>
+            )}
             {!hasPublishedRoyaltySplitter && (
               <button
-                className='block ml-4 border border-primary-100 bg-primary-100 text-primary-900 p-3 font-black text-[14px]'
+                className='flex items-center ml-4 border border-primary-100 bg-primary-100 text-primary-900 p-3 font-black text-[14px]'
                 onClick={handlePublishSpliter}
                 disabled={
                   isPublishingRoyaltySplitter || !royalityMembers.length
                 }
               >
-                {isPublishingRoyaltySplitter
-                  ? publishRoyaltySplitterStatus === 1
-                    ? 'Creating contract'
-                    : 'Publishing'
-                  : 'Lock Percentage'}
+                <span className='mr-1'>
+                  {isPublishingRoyaltySplitter
+                    ? publishRoyaltySplitterStatus === 1
+                      ? 'Creating contract'
+                      : 'Publishing'
+                    : 'Publish to Blockchain'}
+                </span>
+                <Tooltip
+                  message='If you Publish to Blockchain, it will be visible on blockchain'
+                  place='left'
+                ></Tooltip>
               </button>
             )}
           </div>

@@ -59,6 +59,7 @@ import DaoConnectModal from 'components/Collection/DaoConnectModal/DaoConnectMod
 import WithdrawModal from './WithdrawModal';
 import { getSplitterList } from 'services/collection/collectionService';
 import Select from 'react-select';
+import { NETWORKS } from 'config/networks';
 
 const currency = {
   eth: Eth,
@@ -152,6 +153,9 @@ const CollectionContent = ({ collectionId, userId }) => {
   const [options, setOptions] = useState([]);
   const [isSplitterLoading, setIsSplitterLoading] = useState(false);
   const [addSplitterLoading, setAddSplitterLoading] = useState(false);
+  const [blockchain, setBlockchain] = useState('');
+  const [splitterName, setSplitterName] = useState('');
+  const [isSplitterSubmitted, setIsSplitterSubmitted] = useState(false);
 
   useEffect(() => {
     if (hasNextPageData) {
@@ -262,6 +266,8 @@ const CollectionContent = ({ collectionId, userId }) => {
   const getSplittedContributors = (id, type) => {
     getSplitterDetails(id, type).then((data) => {
       if (data.code === 0) {
+        setSplitterName(data?.splitter?.name);
+        setBlockchain(data?.splitter?.blockchain);
         setRoyalityMembers(data?.members);
       }
     });
@@ -448,44 +454,51 @@ const CollectionContent = ({ collectionId, userId }) => {
   };
 
   const handleAutoFill = () => {
-    let members = royalityMembers.map((mem) => {
-      return {
-        wallet_address: mem.user_eoa,
-        royalty: mem.royalty_percent,
-      };
-    });
-    let formData = new FormData();
-    formData.append('royalty_data', JSON.stringify(members));
-    royalitySplitterId
-      ? formData.append('splitter_uid', royalitySplitterId)
-      : formData.append('collection_uid', Collection.id);
-    if (!ShowPercentError) {
-      setIsAutoFillLoading(true);
-      updateRoyaltySplitter(formData)
-        .then((resp) => {
-          if (resp.code === 0) {
-            toast.success('Royalty Percentage Updated Successfully');
+    setIsSplitterSubmitted(true);
+    if (splitterName && blockchain && royalityMembers.length) {
+      let members = royalityMembers.map((mem) => {
+        return {
+          wallet_address: mem.user_eoa,
+          royalty: mem.royalty_percent,
+        };
+      });
+      let formData = new FormData();
+      formData.append('royalty_data', JSON.stringify(members));
+      splitterName && formData.append('name', splitterName);
+      blockchain && formData.append('blockchain', blockchain);
+      royalitySplitterId
+        ? formData.append('splitter_uid', royalitySplitterId)
+        : Collection?.id
+        ? formData.append('collection_uid', Collection.id)
+        : null;
+      if (!ShowPercentError) {
+        setIsAutoFillLoading(true);
+        updateRoyaltySplitter(formData)
+          .then((resp) => {
+            if (resp.code === 0) {
+              toast.success('Royalty Percentage Updated Successfully');
 
-            setIsAutoFillLoading(false);
-            setAutoAssign(false);
-            setIsEdit(null);
-            setShowRoyalityErrorModal(false);
-            setShowRoyalityErrorMessage('');
-            getSplittedContributors(royalitySplitterId);
-            getCollectionDetail();
-          } else {
+              setIsAutoFillLoading(false);
+              setAutoAssign(false);
+              setIsEdit(null);
+              setShowRoyalityErrorModal(false);
+              setShowRoyalityErrorMessage('');
+              getSplittedContributors(royalitySplitterId);
+              getCollectionDetail();
+            } else {
+              setIsAutoFillLoading(false);
+              setRoyaltyUpdatedSuccessfully(false);
+              setShowRoyalityErrorModal(true);
+              setAutoAssign(false);
+              setShowRoyalityErrorMessage(resp.message);
+            }
+          })
+          .catch((err) => {
             setIsAutoFillLoading(false);
             setRoyaltyUpdatedSuccessfully(false);
-            setShowRoyalityErrorModal(true);
             setAutoAssign(false);
-            setShowRoyalityErrorMessage(resp.message);
-          }
-        })
-        .catch((err) => {
-          setIsAutoFillLoading(false);
-          setRoyaltyUpdatedSuccessfully(false);
-          setAutoAssign(false);
-        });
+          });
+      }
     }
   };
 
@@ -642,6 +655,12 @@ const CollectionContent = ({ collectionId, userId }) => {
     }
   };
 
+  let validNetworks = NETWORKS
+    ? Object.values(NETWORKS).filter(
+        (net) => net.network !== 97 && net.network !== 56
+      )
+    : [];
+
   return (
     <>
       <div className='mx-4'>
@@ -795,6 +814,8 @@ const CollectionContent = ({ collectionId, userId }) => {
             setRoyaltyUpdatedSuccessfully={setRoyaltyUpdatedSuccessfully}
             setShowRoyalityErrorModal={setShowRoyalityErrorModal}
             setShowRoyalityErrorMessage={setShowRoyalityErrorMessage}
+            blockchain={blockchain}
+            splitterName={splitterName}
           />
         )}
         {collectionNotUpdatableModal && (
@@ -1480,7 +1501,7 @@ const CollectionContent = ({ collectionId, userId }) => {
               {selectedTab === 2 && (
                 <div className='mb-6 md:mb-[100px]'>
                   <div className='bg-white rounded-[12px] p-5 shadow-main'>
-                    {!royalityMembers?.length ? (
+                    {!createNewSplitter && !royalityMembers.length ? (
                       <div className='flex justify-center flex-col'>
                         <label htmlFor='splitter-selector'>
                           Select Splitter
@@ -1537,6 +1558,53 @@ const CollectionContent = ({ collectionId, userId }) => {
                     ) : null}{' '}
                     {createNewSplitter || royalityMembers?.length ? (
                       <div>
+                        <div className='flex items-center mb-8'>
+                          <div className='w-2/4 mr-1 relative'>
+                            <label htmlFor='splitterName'>Splitter Name</label>
+                            <input
+                              id='splitterName'
+                              name='splitterName'
+                              value={splitterName}
+                              disabled={hasPublishedRoyaltySplitter}
+                              className='mt-1 rounded-[3px]'
+                              style={{ height: 42 }}
+                              type='text'
+                              onChange={(e) => setSplitterName(e.target.value)}
+                              placeholder='Splitter Name'
+                            />
+                            {isSplitterSubmitted && !splitterName && (
+                              <p className='text-sm text-red-400 absolute'>
+                                Name is required
+                              </p>
+                            )}
+                          </div>
+                          <div className='w-2/4 ml-1 relative'>
+                            <label htmlFor='blockchain'>Blockchain</label>
+                            <select
+                              value={blockchain}
+                              onChange={(e) => setBlockchain(e.target.value)}
+                              disabled={hasPublishedRoyaltySplitter}
+                              className='h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3'
+                            >
+                              <option value={''} defaultValue>
+                                Select Blockchain
+                              </option>
+                              {validNetworks.map((network) => (
+                                <option
+                                  value={network?.network}
+                                  key={network?.network}
+                                >
+                                  {network?.networkName}
+                                </option>
+                              ))}
+                            </select>
+                            {isSplitterSubmitted && !blockchain && (
+                              <p className='text-sm text-red-400 absolute'>
+                                Blockchain is required
+                              </p>
+                            )}
+                          </div>
+                        </div>
                         <div className='flex items-start md:items-center justify-between pb-5 mt-4 border-b-[1px] mb-2 border-[#E3DEEA]'>
                           <h3 className='text-[18px] font-black'>
                             Contributor
@@ -1595,16 +1663,22 @@ const CollectionContent = ({ collectionId, userId }) => {
                           handleAutoFill={handleAutoFill}
                           isOwner={Collection?.is_owner}
                         />
+                        {isSplitterSubmitted && !royalityMembers.length && (
+                          <p className='text-red-400 text-sm mt-4'>
+                            Please add members to publish
+                          </p>
+                        )}
                         <div className='w-full flex items-center justify-end'>
-                          <div>
-                            <button
-                              onClick={handleAutoFill}
-                              className='border-primary-900 border text-primary-900 p-3 font-black text-[14px]'
-                              disabled={!royalityMembers.length}
-                            >
-                              Save draft
-                            </button>
-                          </div>
+                          {!hasPublishedRoyaltySplitter && (
+                            <div>
+                              <button
+                                onClick={handleAutoFill}
+                                className='border-primary-900 border text-primary-900 p-3 font-black text-[14px]'
+                              >
+                                Save draft
+                              </button>
+                            </div>
+                          )}
                           {!hasPublishedRoyaltySplitter && (
                             <button
                               className='ml-4 bg-primary-100 border border-primary-100 text-primary-900 p-3 font-black text-[14px]'

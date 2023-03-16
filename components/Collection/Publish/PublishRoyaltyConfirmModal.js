@@ -62,6 +62,7 @@ const PublishRoyaltyConfirmModal = ({ handleClose, show, publishProject }) => {
                 href='https://www.decir.io/termsandcondition'
                 target='_blank'
                 rel='noreferrer'
+                className='text-primary-900'
               >
                 terms and conditions
               </a>{' '}

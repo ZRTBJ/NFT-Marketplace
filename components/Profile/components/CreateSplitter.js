@@ -21,7 +21,9 @@ export default function CreateSplitter({
       >
         <div className='mt-2'>
           <h3 className='text-txtblack mb-4 !text-[22px]'>
-            Create a Royalty Splitter
+            {splitterId
+              ? 'Update royalty splitter'
+              : 'Create a Royalty Splitter'}
           </h3>
 
           <Splitter

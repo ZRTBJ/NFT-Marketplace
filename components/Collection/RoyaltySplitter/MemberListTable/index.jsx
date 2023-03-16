@@ -115,24 +115,24 @@ const MemberListTable = ({
   const handleDeleteContributor = (id) => {
     let values = list.filter((item) => item.user_eoa !== id);
     setRoyalityMembers(values);
-    setToDelete(true);
+    // setToDelete(true);
   };
 
-  const deleteContributor = () => {
-    handleAutoFill();
-    setToDelete(false);
-  };
-  console.log(list);
+  // const deleteContributor = () => {
+  //   handleAutoFill();
+  //   setToDelete(false);
+  // };
+
   return (
     <>
-      {toDelete && (
+      {/* {toDelete && (
         <ConfirmationModal
           show={toDelete}
           handleClose={setToDelete}
           handleApply={deleteContributor}
           message='Are you you want to delete this contributor?'
         />
-      )}
+      )} */}
       <div className='overflow-x-auto relative hidden md:block'>
         <table className='w-full text-left'>
           <thead>
@@ -254,6 +254,7 @@ const MemberListTable = ({
           list={list}
           // handlePublish={setShowPublish}
           setIsEdit={setIsEdit}
+          handleDeleteContributor={handleDeleteContributor}
           isEdit={isEdit}
           handleValueChange={handleValueChange}
           handleAutoFill={handleAutoFill}

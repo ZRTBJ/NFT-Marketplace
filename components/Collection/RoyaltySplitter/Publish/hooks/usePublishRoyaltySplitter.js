@@ -10,7 +10,12 @@ import Config from 'config/config';
 import TagManager from 'react-gtm-module';
 
 export default function usePublishRoyaltySplitter(payload = {}) {
-  const { collection, splitters, onUpdateStatus = () => {} } = payload;
+  const {
+    collection,
+    splitters,
+    onUpdateStatus = () => {},
+    royaltySplitterId,
+  } = payload;
 
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState(1);
@@ -21,6 +26,10 @@ export default function usePublishRoyaltySplitter(payload = {}) {
   const txReceipt = useRef();
   const listener = useRef();
   const { sendTransaction, waitTransactionResult } = useSendTransaction();
+
+  let splitterId = collection?.royalty_splitter?.id
+    ? collection.royalty_splitter.id
+    : royaltySplitterId;
 
   const gaslessMode = Config.GASLESS_ENABLE;
 
@@ -45,24 +54,22 @@ export default function usePublishRoyaltySplitter(payload = {}) {
   };
 
   const canPublish = useMemo(() => {
-    if (collection == null) {
-      return false;
-    }
+    // if (collection == null) {
+    //   return false;
+    // }
 
-    return collection.royalty_splitter.status !== 'published';
+    return collection?.royalty_splitter?.status !== 'published';
   }, [collection]);
 
   const callPublishApi = async () => {
-    const royaltySplitterId = collection.royalty_splitter.id;
-    return await collectionService.publishRoyaltySplitter(royaltySplitterId);
+    return await collectionService.publishRoyaltySplitter(splitterId);
   };
 
   const updateOffChainData = async () => {
-    const royaltySplitterId = collection.royalty_splitter.id;
     const payload = new FormData();
     payload.append('transaction_hash', txReceipt.current.transactionHash);
     payload.append('block_number', txReceipt.current.blockNumber);
-    return collectionService.publishRoyaltySplitter(royaltySplitterId, payload);
+    return collectionService.publishRoyaltySplitter(splitterId, payload);
   };
 
   const sendOnChainTransaction = async (data) => {
@@ -86,6 +93,7 @@ export default function usePublishRoyaltySplitter(payload = {}) {
         forwarder: minimalForwarder,
       },
     ];
+
     return sendTransaction({
       contract: contract.current,
       functionName: 'createRoyaltyProxy',
@@ -114,7 +122,7 @@ export default function usePublishRoyaltySplitter(payload = {}) {
       discountContract: discount,
       forwarder: minimalForwarder,
     };
-
+    console.log(functionPayload);
     const tx = await contract.current
       .connect(signer)
       .createRoyaltyProxy(functionPayload);
@@ -136,11 +144,11 @@ export default function usePublishRoyaltySplitter(payload = {}) {
         pageTitle: 'publish_royalty_splitter',
       },
     });
-    try {
-      if (!canPublish) {
-        return;
-      }
 
+    try {
+      // if (!canPublish) {
+      //   return;
+      // }
       setIsLoading(true);
       const publishData = await callPublishApi();
 

@@ -24,6 +24,9 @@ const ImportWalletModal = ({
   setShowRoyalityErrorModal,
   setShowRoyalityErrorMessage,
   isModal,
+  setRoyalityMembers,
+  splitterName,
+  blockchain,
 }) => {
   const [selectedTab, setSelectedTab] = useState(1);
   const [collections, setCollections] = useState([]);
@@ -198,37 +201,50 @@ const ImportWalletModal = ({
         royalty: mem.royalty,
       };
     });
-    let formData = new FormData();
-    formData.append('royalty_data', JSON.stringify(members));
-    royalitySplitterId
-      ? formData.append('splitter_uid', royalitySplitterId)
-      : formData.append('collection_uid', collectionId);
-    setIsLoading(true);
-    updateRoyaltySplitter(formData)
-      .then((resp) => {
-        if (resp.code === 0) {
-          setIsLoading(false);
-          setRoyaltyUpdatedSuccessfully(true);
-          setShowRoyalityErrorModal(false);
-          setShowRoyalityErrorMessage('');
-          handleClose();
-        } else {
+    if (!isModal) {
+      let formData = new FormData();
+      formData.append('royalty_data', JSON.stringify(members));
+      royalitySplitterId
+        ? formData.append('splitter_uid', royalitySplitterId)
+        : formData.append('collection_uid', collectionId);
+      splitterName && formData.append('name', splitterName);
+      blockchain && formData.append('blockchain', blockchain);
+      setIsLoading(true);
+      updateRoyaltySplitter(formData)
+        .then((resp) => {
+          if (resp.code === 0) {
+            setIsLoading(false);
+            setRoyaltyUpdatedSuccessfully(true);
+            setShowRoyalityErrorModal(false);
+            setShowRoyalityErrorMessage('');
+            handleClose();
+          } else {
+            setIsLoading(false);
+            setRoyaltyUpdatedSuccessfully(false);
+            setShowRoyalityErrorModal(true);
+            setShowRoyalityErrorMessage(resp.message);
+            handleClose();
+          }
+        })
+        .catch((err) => {
           setIsLoading(false);
           setRoyaltyUpdatedSuccessfully(false);
-          setShowRoyalityErrorModal(true);
-          setShowRoyalityErrorMessage(resp.message);
           handleClose();
-        }
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        setRoyaltyUpdatedSuccessfully(false);
-        handleClose();
+        });
+    } else {
+      let final = splitters.map((item) => {
+        return {
+          royalty_percent: item.royalty,
+          user_eoa: item.wallet_address,
+        };
       });
+      setRoyalityMembers(final);
+      handleClose();
+    }
   };
 
   return (
-    <Modal show={show} handleClose={handleClose} width={638}>
+    <Modal show={show} handleClose={handleClose} width={638} overflow={'auto'}>
       <h3 className='text-[16px] font-black'>Import Wallet</h3>
       <p className='text-[12px]'>
         Choose Collection to add member for {collectionName} Contributors

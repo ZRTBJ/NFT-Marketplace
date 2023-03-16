@@ -8,7 +8,13 @@ import { walletAddressTruncate } from 'util/WalletUtils';
 import Image from 'next/image';
 
 const MemberRowMobile = (props) => {
-  const { item, isLastItem, handleValueChange, handleAutoFill } = props;
+  const {
+    item,
+    isLastItem,
+    handleValueChange,
+    handleAutoFill,
+    handleDeleteContributor,
+  } = props;
   const [isEdit, setIsEdit] = useState(false);
 
   const handleUpdatePercent = async (e) => {
@@ -33,7 +39,10 @@ const MemberRowMobile = (props) => {
           </div>
         </div>
         {item.is_owner ? null : (
-          <div className='w-[32px] h-[32px] bg-[#FF3C3C] rounded-[4px] flex items-center justify-center cursor-pointer'>
+          <div
+            onClick={() => handleDeleteContributor(item.user_eoa)}
+            className='w-[32px] h-[32px] bg-[#FF3C3C] rounded-[4px] flex items-center justify-center cursor-pointer'
+          >
             <Image src={Trash} alt='delete' />
           </div>
         )}
@@ -103,7 +112,8 @@ const MemberRowMobile = (props) => {
 };
 
 const MemeberListMobile = (props) => {
-  const { list, handleAutoFill, handleValueChange } = props;
+  const { list, handleAutoFill, handleValueChange, handleDeleteContributor } =
+    props;
 
   return (
     <div>
@@ -115,6 +125,7 @@ const MemeberListMobile = (props) => {
               isLastItem={index === list.length - 1}
               handleAutoFill={handleAutoFill}
               handleValueChange={handleValueChange}
+              handleDeleteContributor={handleDeleteContributor}
             />
           ))
         : null}
