@@ -65,6 +65,7 @@ const Splitter = ({
   const [splitterName, setSplitterName] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isPublishLoading, setIsPublishLoading] = useState(false);
+  const [isPublished, setIsPublished] = useState(false);
 
   useEffect(() => {
     if (projectNetwork) {
@@ -173,6 +174,11 @@ const Splitter = ({
   const getSplittedContributors = (id, type) => {
     getSplitterDetails(id, type).then((data) => {
       if (data.code === 0) {
+        if (data?.splitter?.status === 'published') {
+          setIsPublished(true);
+        } else {
+          setIsPublished(false);
+        }
         setSplitterName(data?.splitter?.name);
         setBlockchain(data?.splitter?.blockchain);
         setRoyalityMembers(data?.members);
@@ -213,9 +219,9 @@ const Splitter = ({
       setShowPublishRoyaltySpliterConfirmModal(false);
       setShowPublishRoyaltySpliterModal(true);
       if (splitterId) {
-        publishRoyaltySplitter();
+        await publishRoyaltySplitter();
       } else {
-        handleAutoFill(null, true);
+        await handleAutoFill(null, true);
       }
     } catch (err) {
       setShowPublishRoyaltySpliterModal(false);
@@ -565,6 +571,7 @@ const Splitter = ({
             isEdit={isEdit}
             handleValueChange={handleValueChange}
             isOwner={Collection?.is_owner || isModal}
+            isPublished={isPublished}
           />
           {/* <div className="mt-[30px]">
             {pagination.length > 0 && (
@@ -593,7 +600,8 @@ const Splitter = ({
             </p>
           )}
           <div className='w-full flex items-center justify-end'>
-            {!hasPublishedRoyaltySplitter && (
+            {((!hasPublishedRoyaltySplitter && !isModal) ||
+              (!isPublished && isModal)) && (
               <div>
                 <button
                   onClick={handleAutoFill}
@@ -604,27 +612,28 @@ const Splitter = ({
                 </button>
               </div>
             )}
-            {!hasPublishedRoyaltySplitter && userInfo?.id && (
-              <button
-                className='flex items-center ml-4 border border-primary-100 bg-primary-100 text-primary-900 p-3 font-black text-[14px]'
-                onClick={handlePublishSpliter}
-                disabled={
-                  isPublishingRoyaltySplitter || !royalityMembers.length
-                }
-              >
-                <span className='mr-1'>
-                  {isPublishingRoyaltySplitter
-                    ? publishRoyaltySplitterStatus === 1
-                      ? 'Creating contract'
-                      : 'Publishing'
-                    : 'Publish to Blockchain'}
-                </span>
-                <Tooltip
-                  message='If you Publish to Blockchain, it will be visible on blockchain'
-                  place='left'
-                ></Tooltip>
-              </button>
-            )}
+            {(isModal && !isPublished) ||
+              (!isModal && !hasPublishedRoyaltySplitter && userInfo?.id && (
+                <button
+                  className='flex items-center ml-4 border border-primary-100 bg-primary-100 text-primary-900 p-3 font-black text-[14px]'
+                  onClick={handlePublishSpliter}
+                  disabled={
+                    isPublishingRoyaltySplitter || !royalityMembers.length
+                  }
+                >
+                  <span className='mr-1'>
+                    {isPublishingRoyaltySplitter
+                      ? publishRoyaltySplitterStatus === 1
+                        ? 'Creating contract'
+                        : 'Publishing'
+                      : 'Publish to Blockchain'}
+                  </span>
+                  <Tooltip
+                    message='If you Publish to Blockchain, it will be visible on blockchain'
+                    place='left'
+                  ></Tooltip>
+                </button>
+              ))}
           </div>
           {/* ) : null} */}
         </div>

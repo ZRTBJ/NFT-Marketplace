@@ -108,12 +108,21 @@ export default function SplitterTable({
                         )}
                       </td>
                       <td className='py-4 px-6'>
-                        <i
-                          className='fa-solid text-[18px] cursor-pointer fa-pen-to-square'
-                          onClick={() => {
-                            setIsEditSplitter(element?.id);
-                          }}
-                        ></i>
+                        {element?.status === 'published' ? (
+                          <i
+                            className='fa-solid text-[18px] cursor-pointer fa-eye'
+                            onClick={() => {
+                              setIsEditSplitter(element?.id);
+                            }}
+                          ></i>
+                        ) : (
+                          <i
+                            onClick={() => {
+                              setIsEditSplitter(element?.id);
+                            }}
+                            class='fa-solid  text-[18px] fa-pen-to-square cursor-pointer'
+                          ></i>
+                        )}
                       </td>
                     </tr>
                   ))}

@@ -22,6 +22,7 @@ const MemberListTable = ({
   setRoyalityMembers,
   showRoyalityErrorModal,
   onShowError = () => {},
+  isPublished,
 }) => {
   const [newItems, setNewItems] = useState(null);
   const [address, setAddress] = useState('');
@@ -186,7 +187,7 @@ const MemberListTable = ({
                                   onClick={() => setIsEdit(null)}
                                 ></i>
                               </div>
-                            ) : !hasPublishedRoyaltySplitter ? (
+                            ) : !hasPublishedRoyaltySplitter && !isPublished ? (
                               <Image
                                 src={Edit}
                                 alt='edit'
@@ -296,7 +297,8 @@ const MemberListTable = ({
           <p className='text-red-400 text-[14px] mt-1 ml-4'>{addError}</p>
         )}
       </div>
-      {!newItems && !hasPublishedRoyaltySplitter ? (
+      {(!newItems && !hasPublishedRoyaltySplitter && !isOwner) ||
+      (!isPublished && !newItems && isOwner) ? (
         <button
           className='outlined-button font-satoshi-bold ml-0 md:ml-4'
           onClick={addNewContributorField}

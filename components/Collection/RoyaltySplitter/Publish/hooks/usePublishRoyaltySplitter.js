@@ -33,15 +33,6 @@ export default function usePublishRoyaltySplitter(payload = {}) {
 
   const gaslessMode = Config.GASLESS_ENABLE;
 
-  useEffect(() => {
-    const init = async () => {
-      provider.current = await getProvider();
-      contract.current = RoyaltySplitter.createInstance(provider.current);
-    };
-
-    init();
-  }, []);
-
   const getProvider = async () => {
     if (!window.ethereum) {
       throw new Error(`User wallet not found`);
@@ -52,6 +43,15 @@ export default function usePublishRoyaltySplitter(payload = {}) {
     const userNetwork = await newProvider.getNetwork();
     return newProvider;
   };
+
+  useEffect(() => {
+    const init = async () => {
+      provider.current = await getProvider();
+      contract.current = RoyaltySplitter.createInstance(provider.current);
+    };
+
+    init();
+  }, [getProvider()]);
 
   const canPublish = useMemo(() => {
     // if (collection == null) {

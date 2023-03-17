@@ -157,6 +157,7 @@ const CollectionContent = ({ collectionId, userId }) => {
   const [splitterName, setSplitterName] = useState('');
   const [isSplitterSubmitted, setIsSplitterSubmitted] = useState(false);
   const [applySplitterSubmitted, setApplySplitterSubmitter] = useState(false);
+  const [isSplitterAdded, setIsSplitterAdded] = useState(false);
 
   useEffect(() => {
     if (hasNextPageData) {
@@ -270,6 +271,9 @@ const CollectionContent = ({ collectionId, userId }) => {
         setSplitterName(data?.splitter?.name);
         setBlockchain(data?.splitter?.blockchain);
         setRoyalityMembers(data?.members);
+        if (data?.members?.length) {
+          setIsSplitterAdded(true);
+        }
       }
     });
   };
@@ -1505,7 +1509,7 @@ const CollectionContent = ({ collectionId, userId }) => {
               {selectedTab === 2 && (
                 <div className='mb-6 md:mb-[100px]'>
                   <div className='bg-white rounded-[12px] p-5 shadow-main'>
-                    {!createNewSplitter && !royalityMembers.length ? (
+                    {!createNewSplitter && !isSplitterAdded ? (
                       <div>
                         <div className='flex justify-center flex-col'>
                           <label htmlFor='splitter-selector'>
@@ -1534,7 +1538,9 @@ const CollectionContent = ({ collectionId, userId }) => {
                                   loadingMessage={() =>
                                     'Loading,please wait...'
                                   }
-                                  getOptionLabel={(option) => `${option.name}`}
+                                  getOptionLabel={(option) =>
+                                    `${option.name ? option.name : option.id}`
+                                  }
                                   classNamePrefix='splitter-select'
                                   isClearable
                                   isSearchable
@@ -1569,7 +1575,7 @@ const CollectionContent = ({ collectionId, userId }) => {
                         )}
                       </div>
                     ) : null}{' '}
-                    {createNewSplitter || royalityMembers?.length ? (
+                    {createNewSplitter || isSplitterAdded ? (
                       <div>
                         <div className='flex items-center mb-8'>
                           <div className='w-2/4 mr-1 relative'>

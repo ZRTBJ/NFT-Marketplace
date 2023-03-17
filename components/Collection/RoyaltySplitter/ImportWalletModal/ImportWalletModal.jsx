@@ -363,7 +363,7 @@ const ImportWalletModal = ({
             </div>
           )}
           {selectedTab === 2 && (
-            <div className='mt-8'>
+            <div className='mt-4'>
               {showContributors ? (
                 <ContributorsList
                   handleAddWallet={handleAddWallet}
@@ -380,7 +380,7 @@ const ImportWalletModal = ({
                   {csvError ? (
                     <p className='text-red-400 text-[14px] mb-3'>{csvError}</p>
                   ) : null}
-                  <p className='text-[14px] mb-2'>
+                  <p className='text-[14px] mb-1'>
                     Get CSV template{' '}
                     <a
                       href={'/csv/contributor-import-template.csv'}
@@ -392,6 +392,10 @@ const ImportWalletModal = ({
                       here
                     </a>
                     .
+                  </p>
+                  <p className='text-xs mb-1'>
+                    Note: Please don't add Current user wallet address in the
+                    CSV. It will be added to the list by default
                   </p>
                   <input
                     id='csv-upload'
