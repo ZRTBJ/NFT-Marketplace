@@ -12,7 +12,7 @@ import membership from 'assets/images/profile/membership.png';
 import pfp from 'assets/images/profile/pfp.png';
 
 const nftUseCase = {
-  usedFor: 'NFTs',
+  usedFor: 'NFT',
   text: 'Here are a few ways your project can deploy NFT',
   steps: [
     {
