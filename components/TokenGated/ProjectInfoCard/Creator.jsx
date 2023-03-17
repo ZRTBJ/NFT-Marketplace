@@ -87,8 +87,8 @@ export default function Creator({ project, createMode, settingSaved, userId }) {
           </button>
           {userId && (
             <>
-              <p className='mt-5 mb-3'>Share on social media</p>
-              <div className='flex items-center gap-y-4'>
+              <p className='mt-5 mb-3'></p>
+              <div className='flex items-center gap-y-4 '>
                 <FacebookShareButton url={publicDetailsLink} quote={'NFT'}>
                   <div className='cursor-pointer rounded-[4px] bg-primary-50 h-[35px] w-[35px] flex items-center justify-center mr-2'>
                     <Image height={16} width={16} src={FB} alt='facebook' />

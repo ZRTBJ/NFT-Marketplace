@@ -33,10 +33,10 @@ const PublishRoyaltyConfirmModal = ({ handleClose, show, publishProject }) => {
         ></Image>
         <div className='md:mx-16'>
           <div className='font-black text-[28px] font-black'>
-            Are you sure want to lock the splitter?
+            Are you sure want to publish the splitter?
           </div>
           <div className='text-[#9499AE] mt-[12px]'>
-            By creating this splitter, you agree that following fees will be
+            By publishing this splitter, you agree that following fees will be
             deducted from your royalties when it will be collected.
           </div>
           <div className='text-[#9499AE] text-[14px] mt-[12px] flex items-center justify-between border-b-[1px] pb-2'>

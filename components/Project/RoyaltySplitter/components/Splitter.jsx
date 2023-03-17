@@ -478,7 +478,7 @@ const Splitter = ({
         <div className='bg-[#F8FCFE] rounded-[12px] p-5 mt-5'>
           <div className='flex items-center mb-8'>
             <div className='w-2/4 mr-1 relative'>
-              <label htmlFor='splitterName'>Splitter contributors</label>
+              <label htmlFor='splitterName'>Splitter name</label>
               <input
                 id='splitterName'
                 name='splitterName'
@@ -521,7 +521,7 @@ const Splitter = ({
             </div>
           </div>
           <div className='flex items-start md:items-center justify-between pb-7 '>
-            <h3 className='text-[18px] font-black'>Splitter Information</h3>
+            <h3 className='text-[18px] font-black'>Contributors</h3>
             {ShowPercentError ? (
               <p className='text-red-400 text-[14px] mt-1'>
                 Total percent of contributors should equal to or lesser than

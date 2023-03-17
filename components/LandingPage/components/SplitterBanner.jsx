@@ -89,16 +89,14 @@ export default function SplitterBanner({ setShowCreateSplitter }) {
             </p>
             <ul className='list-disc text-textSubtle ml-4 mt-4 '>
               <li>
-                The royalty splitter is the smart contract that the project
-                owner is able to share the "creator royalty" with your team
-                members from the secondary marketplaces.
+                The royalty splitter is the smart contract that help the NFT
+                creators to be able to share the "creator royalty" with team
+                members from the secondary marketplaces and earn unlimited revenue.
               </li>
-              <li>Currently, we are only supporting Opensea and Rarible.</li>
               <li>
                 {' '}
-                This is the royalty splitter setting page for the NFT collection
-                which already exists.(if you are going to create the NFT
-                Collection ahead, please go to “Create collection”.)
+                This is the setting page to create new royalty splitter independently. If you are going to create the NFT
+                Collection ahead, please go to “Create collection”, then you can also add royalty splitter later.
               </li>
             </ul>
             <div className='text-[20px] font-semibold mt-4 text-txtblack !break-words'>
@@ -124,8 +122,7 @@ export default function SplitterBanner({ setShowCreateSplitter }) {
             ></Image>
 
             <div className='text-[20px] font-semibold mt-8 text-txtblack !break-words'>
-              Step 3: Press “Lock Percentage” to lock the royalty splitter and
-              publish.
+              Step 3: Press "Publish to Blockchain" to put the royalty splitter on chain.
             </div>
             <Image
               src={step3}
