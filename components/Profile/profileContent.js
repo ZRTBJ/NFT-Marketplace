@@ -386,6 +386,12 @@ const Profile = ({ id }) => {
     setShowWelcome(false);
     ls_SetNewUser(true);
   };
+  const onSplitterModalClose = async () => {
+    if (showCreateSplitter) {
+      setShowCreateSplitter(false);
+    } else if (isEditSplitter) setIsEditSplitter(false);
+    await onGetSplitterList();
+  };
 
   useEffect(() => {
     userInfo();
@@ -650,9 +656,7 @@ const Profile = ({ id }) => {
       {(showCreateSplitter || isEditSplitter) && (
         <CreateSplitter
           show={showCreateSplitter || isEditSplitter}
-          handleClose={
-            showCreateSplitter ? setShowCreateSplitter : setIsEditSplitter
-          }
+          handleClose={() => onSplitterModalClose()}
           splitterId={isEditSplitter}
           onGetSplitterList={onGetSplitterList}
         />

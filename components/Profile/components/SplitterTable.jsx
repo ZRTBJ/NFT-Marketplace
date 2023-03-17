@@ -27,7 +27,7 @@ export default function SplitterTable({
             Create New
           </button>
         </div>
-        <div className='overflow-x-auto bg-white pt-4 rounded shadow '>
+        <div className='custom-scrollbar overflow-x-auto bg-white pt-4 rounded shadow '>
           <table className='w-full text-left !whitespace-nowrap  text-left text-sm font-light'>
             <thead className='border-b font-medium border-[#B1C1C8] '>
               <tr>
