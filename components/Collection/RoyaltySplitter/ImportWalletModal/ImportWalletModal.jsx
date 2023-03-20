@@ -95,19 +95,13 @@ const ImportWalletModal = ({
                 (e) => duplicateValues[e.id]
               );
               if (!hasDuplicate.length) {
-                const owner = {
-                  wallet_address: userinfo?.eoa,
-                  royalty: 100,
-                  selected: true,
-                  name: userinfo?.display_name,
-                };
                 const result = data.map((item) => ({
                   wallet_address: item[0],
                   royalty: parseInt(item[1]),
                   selected: false,
                 }));
                 setShowContributors(true);
-                let values = [owner, ...result];
+                let values = [...result];
                 setContributors(values);
                 setCSVError('');
               } else {
@@ -392,10 +386,6 @@ const ImportWalletModal = ({
                       here
                     </a>
                     .
-                  </p>
-                  <p className='text-xs mb-1'>
-                    Note: Please don't add Current user wallet address in the
-                    CSV. It will be added to the list by default
                   </p>
                   <input
                     id='csv-upload'

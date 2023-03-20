@@ -32,11 +32,6 @@ const MemberListTable = ({
   const [isAdded, setIsAdded] = useState(false);
   const [addError, setAddError] = useState('');
 
-  const hasPublishedRoyaltySplitter = useMemo(
-    () => collection?.royalty_splitter?.status === 'published',
-    [collection]
-  );
-
   useEffect(() => {
     if (newItems) {
       if (address && percentage && !isEdit) {
@@ -187,7 +182,7 @@ const MemberListTable = ({
                                   onClick={() => setIsEdit(null)}
                                 ></i>
                               </div>
-                            ) : !hasPublishedRoyaltySplitter && !isPublished ? (
+                            ) : !isPublished ? (
                               <Image
                                 src={Edit}
                                 alt='edit'
@@ -214,7 +209,7 @@ const MemberListTable = ({
                       </p>
                     </td>
                     <td className='py-4 px-5'>
-                      {r.is_owner || hasPublishedRoyaltySplitter ? null : (
+                      {r.is_owner || isPublished ? null : (
                         <div
                           className='w-[32px] h-[32px] bg-[#FF3C3C] rounded-[4px] flex items-center justify-center cursor-pointer'
                           onClick={() => handleDeleteContributor(r.user_eoa)}
@@ -297,8 +292,7 @@ const MemberListTable = ({
           <p className='text-red-400 text-[14px] mt-1 ml-4'>{addError}</p>
         )}
       </div>
-      {(!newItems && !hasPublishedRoyaltySplitter && !isOwner) ||
-      (!isPublished && !newItems && isOwner) ? (
+      {!isPublished && !newItems && isOwner ? (
         <button
           className='outlined-button font-satoshi-bold ml-0 md:ml-4'
           onClick={addNewContributorField}

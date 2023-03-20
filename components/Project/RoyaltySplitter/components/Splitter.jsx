@@ -25,6 +25,11 @@ import Image from 'next/image';
 import WalletConnectModal from 'components/Login/WalletConnectModal';
 import { NETWORKS } from 'config/networks';
 import Tooltip from 'components/Commons/Tooltip';
+import { walletAddressTruncate } from 'util/WalletUtils';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCopy } from '@fortawesome/free-solid-svg-icons';
+import Link from 'next/link';
 
 const TABLE_HEADERS = [
   { id: 0, label: 'Wallet Address' },
@@ -66,6 +71,10 @@ const Splitter = ({
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isPublishLoading, setIsPublishLoading] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [toPublishSplitter, setToPublishSplitter] = useState(false);
+  const [splitterAddress, setSplitterAddress] = useState('');
+  const [isMembersCreated, setIsMembersCreated] = useState(false);
 
   useEffect(() => {
     if (projectNetwork) {
@@ -115,6 +124,7 @@ const Splitter = ({
     canPublish: canPublishRoyaltySplitter,
     publish: publishRoyaltySplitter,
     setIsLoading: setPublishingSplitter,
+    contractAddress,
   } = usePublishRoyaltySplitter({
     collection: Collection,
     splitters: royalityMembers,
@@ -132,6 +142,16 @@ const Splitter = ({
 
     return () => {
       setToCreateSplitter(false);
+    };
+  }, [userInfo?.id]);
+
+  useEffect(() => {
+    if (toPublishSplitter) {
+      handlePublishRoyaltySplitter();
+    }
+
+    return () => {
+      setToPublishSplitter(false);
     };
   }, [userInfo?.id]);
 
@@ -182,6 +202,12 @@ const Splitter = ({
         setSplitterName(data?.splitter?.name);
         setBlockchain(data?.splitter?.blockchain);
         setRoyalityMembers(data?.members);
+        if (data?.members?.length && splitterId) {
+          setIsMembersCreated(true);
+        } else {
+          setIsMembersCreated(false);
+        }
+        setSplitterAddress(data?.splitter?.contract_address);
         if (data?.members?.length > 0) {
           const page = calculatePageCount(payload.limit, data.members.length);
           const pageList = [];
@@ -214,18 +240,23 @@ const Splitter = ({
   };
 
   const handlePublishRoyaltySplitter = async () => {
-    try {
-      setPublishingSplitter(true);
-      setShowPublishRoyaltySpliterConfirmModal(false);
-      setShowPublishRoyaltySpliterModal(true);
-      if (splitterId) {
-        await publishRoyaltySplitter();
-      } else {
-        await handleAutoFill(null, true);
+    if (userInfo?.id) {
+      try {
+        setPublishingSplitter(true);
+        setShowPublishRoyaltySpliterConfirmModal(false);
+        setShowPublishRoyaltySpliterModal(true);
+        if (isMembersCreated) {
+          await publishRoyaltySplitter();
+        } else {
+          await handleAutoFill(null, true);
+        }
+      } catch (err) {
+        setShowPublishRoyaltySpliterModal(false);
+        setShowPublishRoyaltySpliterErrorModal(true);
       }
-    } catch (err) {
-      setShowPublishRoyaltySpliterModal(false);
-      setShowPublishRoyaltySpliterErrorModal(true);
+    } else {
+      setToPublishSplitter(true);
+      setShowConnectModal(true);
     }
   };
 
@@ -255,7 +286,7 @@ const Splitter = ({
 
   const handleAutoFill = (e, publish) => {
     setIsSubmitted(true);
-    if (splitterName && blockchain && royalityMembers.length) {
+    if (splitterName && blockchain) {
       if (userInfo?.id) {
         let members = royalityMembers.map((mem) => {
           return {
@@ -327,7 +358,7 @@ const Splitter = ({
   };
 
   const handlePublishSpliter = async () => {
-    setIsSubmitted(true);
+    setIsPublishing(true);
     if (splitterName && blockchain && royalityMembers.length) {
       let selectedNetwork = projectNetwork
         ? Number(projectNetwork)
@@ -462,6 +493,7 @@ const Splitter = ({
             createSplitterClose(false);
             onGetSplitterList();
           }}
+          contractAddress={contractAddress}
         />
       )}
       {showPublishRoyaltySpliterErrorModal && (
@@ -482,7 +514,7 @@ const Splitter = ({
 
       {!loading && (
         <div className='bg-[#F8FCFE] rounded-[12px] p-5 mt-5'>
-          <div className='flex items-center mb-8'>
+          <div className='flex items-center mb-2'>
             <div className='w-2/4 mr-1 relative'>
               <label htmlFor='splitterName'>Splitter name</label>
               <input
@@ -490,13 +522,14 @@ const Splitter = ({
                 name='splitterName'
                 value={splitterName}
                 className='mt-1 rounded-[3px]'
-                disabled={hasPublishedRoyaltySplitter}
+                disabled={hasPublishedRoyaltySplitter || isPublished}
                 style={{ height: 42 }}
                 type='text'
                 onChange={(e) => setSplitterName(e.target.value)}
                 placeholder='Splitter Name'
               />
-              {isSubmitted && !splitterName && (
+              {((isSubmitted && !splitterName) ||
+                (isPublishing && !splitterName)) && (
                 <p className='text-sm text-red-400 absolute'>
                   Name is required
                 </p>
@@ -506,7 +539,7 @@ const Splitter = ({
               <label htmlFor='blockchain'>Blockchain</label>
               <select
                 value={blockchain}
-                disabled={hasPublishedRoyaltySplitter}
+                disabled={hasPublishedRoyaltySplitter || isPublished}
                 onChange={(e) => setBlockchain(e.target.value)}
                 className='h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3'
               >
@@ -519,13 +552,26 @@ const Splitter = ({
                   </option>
                 ))}
               </select>
-              {isSubmitted && !blockchain && (
+              {((isSubmitted && !blockchain) ||
+                (isPublishing && !blockchain)) && (
                 <p className='text-sm text-red-400 absolute'>
                   Blockchain is required
                 </p>
               )}
             </div>
           </div>
+          {isModal && isPublished ? (
+            <div className='flex items-center mb-6'>
+              <p className='text-sm'>
+                Contract Address: {walletAddressTruncate(splitterAddress)}{' '}
+              </p>
+              <CopyToClipboard text={splitterAddress}>
+                <button className='ml-1 w-[32px] h-[32px] rounded-[4px] flex items-center justify-center cursor-pointer text-[#A3D7EF] active:text-black'>
+                  <FontAwesomeIcon className='' icon={faCopy} />
+                </button>
+              </CopyToClipboard>
+            </div>
+          ) : null}
           <div className='flex items-start md:items-center justify-between pb-7 '>
             <h3 className='text-[18px] font-black'>Contributors</h3>
             {ShowPercentError ? (
@@ -571,7 +617,7 @@ const Splitter = ({
             isEdit={isEdit}
             handleValueChange={handleValueChange}
             isOwner={Collection?.is_owner || isModal}
-            isPublished={isPublished}
+            isPublished={isPublished || hasPublishedRoyaltySplitter}
           />
           {/* <div className="mt-[30px]">
             {pagination.length > 0 && (
@@ -594,7 +640,7 @@ const Splitter = ({
           </div> */}
           {/* {CollectionDetail.is_owner &&
                 CollectionDetail.status !== "published" ? ( */}
-          {isSubmitted && !royalityMembers.length && (
+          {isPublishing && !royalityMembers.length && (
             <p className='text-red-400 text-sm mt-4'>
               Please add members to save or publish
             </p>
@@ -612,30 +658,37 @@ const Splitter = ({
                 </button>
               </div>
             )}
-            {(isModal && !isPublished) ||
-              (!isModal && !hasPublishedRoyaltySplitter && userInfo?.id && (
-                <button
-                  className='flex items-center ml-4 border border-primary-100 bg-primary-100 text-primary-900 p-3 font-black text-[14px]'
-                  onClick={handlePublishSpliter}
-                  disabled={
-                    isPublishingRoyaltySplitter || !royalityMembers.length
-                  }
-                >
-                  <span className='mr-1'>
-                    {isPublishingRoyaltySplitter
-                      ? publishRoyaltySplitterStatus === 1
-                        ? 'Creating contract'
-                        : 'Publishing'
-                      : 'Publish to Blockchain'}
-                  </span>
-                  <Tooltip
-                    message='If you Publish to Blockchain, it will be visible on blockchain'
-                    place='left'
-                  ></Tooltip>
-                </button>
-              ))}
+            {((isModal && !isPublished) ||
+              (!isModal && !hasPublishedRoyaltySplitter)) && (
+              <button
+                className='flex items-center ml-4 border border-primary-100 bg-primary-100 text-primary-900 p-3 font-black text-[14px]'
+                onClick={handlePublishSpliter}
+                disabled={isPublishingRoyaltySplitter}
+              >
+                <span className='mr-1'>
+                  {isPublishingRoyaltySplitter
+                    ? publishRoyaltySplitterStatus === 1
+                      ? 'Creating contract'
+                      : 'Publishing'
+                    : 'Publish to Blockchain'}
+                </span>
+                <Tooltip
+                  message='If you Publish to Blockchain, it will be visible on blockchain'
+                  place='left'
+                ></Tooltip>
+              </button>
+            )}
           </div>
           {/* ) : null} */}
+          <div className='text-right text-primary-900 mt-8'>
+            <Link
+              href='https://decir.gitbook.io/whitepaper/royalty-splitter/how-to-create-the-royalty-splitter.'
+              passHref
+              target='_blank'
+            >
+              How to set splitter on marketplace?
+            </Link>
+          </div>
         </div>
       )}
     </>

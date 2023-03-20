@@ -8,6 +8,7 @@ import { ls_GetChainID } from 'util/ApplicationStorage';
 import { event } from 'nextjs-google-analytics';
 import Config from 'config/config';
 import TagManager from 'react-gtm-module';
+import web3 from 'web3';
 
 export default function usePublishRoyaltySplitter(payload = {}) {
   const {
@@ -19,6 +20,7 @@ export default function usePublishRoyaltySplitter(payload = {}) {
 
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState(1);
+  const [contractAddress, setContractAddress] = useState('');
   const provider = useRef();
   const contract = useRef();
   const transaction = useRef();
@@ -169,6 +171,9 @@ export default function usePublishRoyaltySplitter(payload = {}) {
 
       setStatus(2);
       onUpdateStatus(publishResponse.function?.status);
+      setContractAddress(
+        publishResponse.function?.response_data?.contract_address
+      );
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
@@ -185,5 +190,6 @@ export default function usePublishRoyaltySplitter(payload = {}) {
     canPublish,
     publish,
     setIsLoading,
+    contractAddress,
   };
 }
