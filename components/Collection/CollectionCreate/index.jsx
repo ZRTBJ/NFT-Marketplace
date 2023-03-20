@@ -17,6 +17,7 @@ import SuccessModal from 'components/Modals/SuccessModal';
 import {
   getProjectCategory,
   createProject,
+  getProjectDetailsById,
 } from 'services/project/projectService';
 import { ls_GetChainID } from 'util/ApplicationStorage';
 import Outline from 'components/FormUtility/Outline';
@@ -300,6 +301,7 @@ export default function CollectionCreate({ query }) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [collectionPublished, setCollectionPublished] = useState(false);
   const [collectionDeleted, setCollectionDeleted] = useState(false);
+  const [daoDetails, setDaoDetails] = useState({});
 
   function handelClickBack() {
     let currentIndex = currentStep.pop();
@@ -309,11 +311,9 @@ export default function CollectionCreate({ query }) {
     try {
       setDataIsLoading(true);
       id = await createNewProject();
-      await updateExistingProject(id);
-      setShowSuccessModal(true);
-
-      setDataIsLoading(false);
-      // await projectDetails(id);
+      if (id) {
+        await updateExistingProject(id);
+      }
     } catch (err) {
       setDataIsLoading(false);
       setShowSuccessModal(false);
@@ -323,10 +323,7 @@ export default function CollectionCreate({ query }) {
   async function updateBlock(id) {
     try {
       setDataIsLoading(true);
-      await updateExistingProject(id);
-      // await projectDetails(id);
-      setDataIsLoading(false);
-      setShowSuccessModal(true);
+      const data = await updateExistingProject(id);
     } catch (err) {
       setDataIsLoading(false);
       setShowSuccessModal(false);
@@ -396,7 +393,7 @@ export default function CollectionCreate({ query }) {
       })
       .catch((err) => {
         setDataIsLoading(false);
-        console.log(err);
+        setShowErrorModal(true);
       });
     return projectId;
   }
@@ -426,7 +423,20 @@ export default function CollectionCreate({ query }) {
       total_supply: supply,
       id: id,
     };
-    await updateCollection(updatePayload);
+    await updateCollection(updatePayload)
+      .then((res) => {
+        setDataIsLoading(false);
+        if (res?.code === 0) {
+          setShowSuccessModal(true);
+        } else {
+          setShowErrorModal(true);
+          setErrorMessage(res.message);
+        }
+      })
+      .catch((error) => {
+        setDataIsLoading(false);
+        setShowErrorModal(true);
+      });
   }
   async function projectDetails(id) {
     let payload = {
@@ -601,6 +611,15 @@ export default function CollectionCreate({ query }) {
     }
     if (query?.dao_id) {
       setDao_id(query?.dao_id);
+      let payload = {
+        id: query?.dao_id,
+      };
+      getProjectDetailsById(payload).then((e) => {
+        if (e?.code === 0) {
+          setDaoDetails(e.project);
+          setNetwork(e?.project?.blockchain);
+        }
+      });
     }
     if (query?.type) {
       setCollectionType(query?.type);

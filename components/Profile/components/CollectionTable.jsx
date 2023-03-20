@@ -6,7 +6,7 @@ import CreateNFTModal from 'components/Project/CreateDAOandNFT/components/Create
 import NFTPublishingSteps from 'components/LandingPage/components/NFTPublishingSteps';
 import { formatNumber } from 'accounting';
 import { useRouter } from 'next/router';
-
+import { NETWORKS } from 'config/networks';
 export default function CollectionTable({ tableData }) {
   const [showCreateNFTModal, setShowCreateNFTModal] = useState(false);
   const router = useRouter();
@@ -34,18 +34,29 @@ export default function CollectionTable({ tableData }) {
                 key={index}
                 className='flex md:items-center gap-2 md:gap-4 mb-6 !no-underline hover:text-black text-black'
               >
-                <Image
-                  className='w-[88px] h-[88px] rounded-xl object-cover'
-                  src={
-                    item && item?.assets && item?.assets[0]
-                      ? item?.assets[0]?.path
-                      : thumbIcon
-                  }
-                  alt='cover'
-                  width={88}
-                  height={88}
-                  unoptimized
-                />
+                <div>
+                  <Image
+                    className='w-[88px] h-[88px] rounded-xl object-cover'
+                    src={
+                      item && item?.assets && item?.assets[0]
+                        ? item?.assets[0]?.path
+                        : thumbIcon
+                    }
+                    alt='cover'
+                    width={88}
+                    height={88}
+                    unoptimized
+                  />
+                  {item?.blockchain && (
+                    <Image
+                      className={`rounded-full -mt-[15px] -ml-[6px]`}
+                      src={NETWORKS?.[item?.blockchain]?.icon}
+                      alt='blockChain'
+                      height={25}
+                      width={25}
+                    />
+                  )}
+                </div>
                 <div className='flex-1'>
                   <p className='!font-black text-black text-[20px] mt-1 mb-4'>
                     {item?.name?.length > 24
