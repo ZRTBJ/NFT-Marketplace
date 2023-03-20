@@ -69,8 +69,9 @@ export async function updateCollection(payload) {
 export async function addCollectionSplitter(payload) {
   const bodyFormData = new FormData();
   bodyFormData.append('splitter_uid', payload.splitter);
-  bodyFormData.append('total_supply', payload.supply);
-
+  if (payload?.supply) {
+    bodyFormData.append('total_supply', payload.supply);
+  }
   return await client(
     'PUT',
     `/collection/${payload.id}`,
@@ -205,4 +206,7 @@ export async function getCollectionByContractAddress(id) {
     'GET',
     `/collection?page=1&limit=10&col_contract_address=${id}`
   );
+}
+export async function deleteUnpublishedSplitter(id) {
+  return await client('DELETE', `/royalty/${id}`);
 }

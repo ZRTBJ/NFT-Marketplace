@@ -14,6 +14,7 @@ import {
   getNetWorth,
   getProductNFTCollectionSalesSetupInformation,
   addCollectionSplitter,
+  deleteUnpublishedSplitter,
 } from 'services/collection/collectionService';
 import Spinner from 'components/Commons/Spinner';
 import Cover from 'assets/images/cover-default.svg';
@@ -158,6 +159,15 @@ const CollectionContent = ({ collectionId, userId }) => {
   const [isSplitterSubmitted, setIsSplitterSubmitted] = useState(false);
   const [applySplitterSubmitted, setApplySplitterSubmitter] = useState(false);
   const [isSplitterAdded, setIsSplitterAdded] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmModalMessage, setConformModalMessage] = useState('');
+  const [detachOrDeleteAction, setDetachOrDeleteAction] = useState('');
+  const [showGlobalSuccessModal, setShowGlobalSuccessModal] = useState(false);
+  const [showGlobalErrorModal, setShowGlobalErrorModal] = useState(false);
+  const [showGlobalSuccessModalMessage, setShowGlobalSuccessModalMessage] =
+    useState('');
+  const [showGlobalErrorModalMessage, setShowGlobalErrorModalMessage] =
+    useState('');
 
   useEffect(() => {
     if (hasNextPageData) {
@@ -165,9 +175,9 @@ const CollectionContent = ({ collectionId, userId }) => {
     }
   }, [payload]);
 
-  const getSplitters = (network) => {
+  const getSplitters = async (network) => {
     setIsSplitterLoading(true);
-    getSplitterList(payload.page, payload.perPage)
+    await getSplitterList(payload.page, payload.perPage)
       .then((res) => {
         setIsSplitterLoading(false);
         let chain = network ? network : Collection?.blockchain;
@@ -241,7 +251,7 @@ const CollectionContent = ({ collectionId, userId }) => {
   const getCollectionNewWorth = () => {
     setBalanceLoading(true);
     getNetWorth(collectionId).then((resp) => {
-      if (resp.code === 0) {
+      if (resp?.code === 0) {
         setBalanceLoading(false);
         setNetWorth({
           balance: resp.balance,
@@ -258,7 +268,7 @@ const CollectionContent = ({ collectionId, userId }) => {
   const getNFTs = () => {
     getCollectionNFTs(collectionId)
       .then((resp) => {
-        if (resp.code === 0) {
+        if (resp?.code === 0) {
           setNFTs(resp.lnfts);
         }
       })
@@ -278,13 +288,13 @@ const CollectionContent = ({ collectionId, userId }) => {
     });
   };
 
-  const getCollectionDetail = () => {
+  const getCollectionDetail = async () => {
     let payload = {
       id: collectionId,
     };
-    getCollectionDetailsById(payload)
+    await getCollectionDetailsById(payload)
       .then((resp) => {
-        if (resp.code === 0) {
+        if (resp?.code === 0) {
           setProjectID(resp?.collection?.project_uid);
           if (resp?.collection?.blockchain) {
             getSplitters(resp.collection.blockchain);
@@ -480,7 +490,7 @@ const CollectionContent = ({ collectionId, userId }) => {
         setIsAutoFillLoading(true);
         updateRoyaltySplitter(formData)
           .then((resp) => {
-            if (resp.code === 0) {
+            if (resp?.code === 0) {
               toast.success('Royalty Percentage Updated Successfully');
 
               setIsAutoFillLoading(false);
@@ -669,6 +679,62 @@ const CollectionContent = ({ collectionId, userId }) => {
       )
     : [];
 
+  const onConfirmFromModal = async () => {
+    setConformModalMessage('');
+    setShowConfirmModal(false);
+    setDataLoading(true);
+    if (detachOrDeleteAction === 'detach') {
+      let data = {
+        id: Collection.id,
+        splitter: '',
+      };
+      await addCollectionSplitter(data)
+        .then(async (resp) => {
+          setDataLoading(false);
+          if (resp?.code === 0) {
+            setIsSplitterAdded(false);
+            await getCollectionDetail();
+            setShowGlobalSuccessModalMessage('Successfully Detached Splitter');
+            setShowGlobalSuccessModal(true);
+          } else {
+            setShowGlobalErrorModalMessage(resp?.message);
+            setShowGlobalErrorModal(true);
+          }
+        })
+        .catch((err) => {
+          setDataLoading(false);
+        });
+    } else if (detachOrDeleteAction === 'delete') {
+      await deleteUnpublishedSplitter(Collection?.royalty_splitter?.id)
+        .then(async (res) => {
+          setDataLoading(false);
+          if (res?.code === 0) {
+            setIsSplitterAdded(false);
+            await getCollectionDetail();
+            setShowGlobalSuccessModalMessage('Successfully Deleted Splitter');
+            setShowGlobalSuccessModal(true);
+          } else {
+            setShowGlobalErrorModalMessage(res?.message);
+            setShowGlobalErrorModal(true);
+          }
+        })
+        .catch((err) => {
+          setDataLoading(false);
+          console.log(er);
+        });
+    }
+  };
+  const detachSplitter = async () => {
+    setDetachOrDeleteAction('detach');
+    setConformModalMessage('Are you sure to detach this splitter?');
+    setShowConfirmModal(true);
+  };
+  const deleteSplitter = async () => {
+    setDetachOrDeleteAction('delete');
+    setConformModalMessage('Are you sure to delete this splitter?');
+    setShowConfirmModal(true);
+  };
+
   return (
     <>
       <div className='mx-4'>
@@ -846,6 +912,40 @@ const CollectionContent = ({ collectionId, userId }) => {
             collection={Collection}
             dao={daoInfo}
             onSuccessFullyConnect={() => getCollectionDetail()}
+          />
+        )}
+        {showConfirmModal && (
+          <ConfirmationModal
+            show={showConfirmModal}
+            handleClose={() => {
+              setDetachOrDeleteAction('');
+              setConformModalMessage('');
+              setShowConfirmModal(false);
+            }}
+            handleApply={() => onConfirmFromModal()}
+            message={confirmModalMessage}
+          />
+        )}
+        {showGlobalSuccessModal && (
+          <SuccessModal
+            show={showGlobalSuccessModal}
+            handleClose={() => {
+              setShowGlobalSuccessModalMessage('');
+              setShowGlobalSuccessModal(false);
+            }}
+            message={showGlobalSuccessModalMessage}
+            btnText='Close'
+          />
+        )}
+        {showGlobalErrorModal && (
+          <ErrorModal
+            title={'Opps, Something went wrong'}
+            message={showGlobalErrorModalMessage}
+            handleClose={() => {
+              setShowGlobalErrorModalMessage('');
+              setShowGlobalErrorModal(false);
+            }}
+            show={showGlobalErrorModal}
           />
         )}
         <section className='mt-6'>
@@ -1687,7 +1787,38 @@ const CollectionContent = ({ collectionId, userId }) => {
                             Please add members to publish
                           </p>
                         )}
-                        <div className='w-full flex items-center justify-end'>
+                        <div className='w-full flex items-center justify-end gap-4'>
+                          <div className=''>
+                            <div className='token-gated-dropdown relative'>
+                              <button className='flex transition duration-150 ease-in-out  border-primary-900 border text-primary-900 p-3 font-black text-[14px]'>
+                                ...
+                              </button>
+                              <div className='opacity-0 text-[14px] visible token-gated-dropdown-menu transition-all duration-300 transform origin-top-right -translate-y-2 scale-95'>
+                                <div className='absolute z-1 right-0 w-[120px]  origin-top-right mt-3 shadow  bg-white border outline-none'>
+                                  <ul className='py-3  flex flex-col divide-y gap-4'>
+                                    {Collection?.status === 'draft' && (
+                                      <li
+                                        className='cursor-pointer px-4'
+                                        onClick={() => detachSplitter()}
+                                      >
+                                        <i className='fa-solid fa-link-slash mr-2'></i>
+                                        Detach
+                                      </li>
+                                    )}
+                                    {!hasPublishedRoyaltySplitter && (
+                                      <li
+                                        onClick={() => deleteSplitter()}
+                                        className='cursor-pointer px-4 pt-3'
+                                      >
+                                        <i className='fa-solid fa-trash mr-2'></i>
+                                        Delete
+                                      </li>
+                                    )}
+                                  </ul>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                           {!hasPublishedRoyaltySplitter && (
                             <div>
                               <button
@@ -1700,7 +1831,7 @@ const CollectionContent = ({ collectionId, userId }) => {
                           )}
                           {!hasPublishedRoyaltySplitter && (
                             <button
-                              className='ml-4 bg-primary-100 border border-primary-100 text-primary-900 p-3 font-black text-[14px]'
+                              className='bg-primary-100 border border-primary-100 text-primary-900 p-3 font-black text-[14px]'
                               onClick={handlePublishSpliter}
                               disabled={
                                 !canPublishRoyaltySplitter ||
