@@ -77,10 +77,8 @@ export default function SplitterBanner({ setShowCreateSplitter }) {
           show={showHelperModal}
           handleClose={() => setShowHelperModal(false)}
           width={600}
-          height={800}
-          overflow={'auto'}
         >
-          <div className='p-4 mt-5 md:mt-0 !leading-relaxed !break-words'>
+          <div className='p-4 mt-5 md:mt-0 !leading-relaxed !break-words overflow-y-auto h-auto max-h-[500px] md:max-h-[500px] custom-scrollbar'>
             <p className='text-txtblack font-black text-[24px] mb-4'>
               The royalty splitter quick guide
             </p>
@@ -91,12 +89,15 @@ export default function SplitterBanner({ setShowCreateSplitter }) {
               <li>
                 The royalty splitter is the smart contract that help the NFT
                 creators to be able to share the "creator royalty" with team
-                members from the secondary marketplaces and earn unlimited revenue.
+                members from the secondary marketplaces and earn unlimited
+                revenue.
               </li>
               <li>
                 {' '}
-                This is the setting page to create new royalty splitter independently. If you are going to create the NFT
-                Collection ahead, please go to “Create collection”, then you can also add royalty splitter later.
+                This is the setting page to create new royalty splitter
+                independently. If you are going to create the NFT Collection
+                ahead, please go to “Create collection”, then you can also add
+                royalty splitter later.
               </li>
             </ul>
             <div className='text-[20px] font-semibold mt-4 text-txtblack !break-words'>
@@ -122,7 +123,8 @@ export default function SplitterBanner({ setShowCreateSplitter }) {
             ></Image>
 
             <div className='text-[20px] font-semibold mt-8 text-txtblack !break-words'>
-              Step 3: Press "Publish to Blockchain" to put the royalty splitter on chain.
+              Step 3: Press "Publish to Blockchain" to put the royalty splitter
+              on chain.
             </div>
             <Image
               src={step3}
@@ -147,15 +149,14 @@ export default function SplitterBanner({ setShowCreateSplitter }) {
               className='rounded object-cover mt-4 w-full '
               alt='step 4'
             ></Image>
-
-            <div className='mt-10 text-right'>
-              <button
-                onClick={() => onCreateSplitter()}
-                className='btn bg-primary-50 text-primary-900 btn-sm mr-4 w-[120px]'
-              >
-                Start
-              </button>
-            </div>
+          </div>
+          <div className='mt-10 text-right'>
+            <button
+              onClick={() => onCreateSplitter()}
+              className='btn bg-primary-50 text-primary-900 btn-sm mr-4 w-[120px]'
+            >
+              Start
+            </button>
           </div>
         </Modal>
       )}
