@@ -75,6 +75,7 @@ const ImportWalletModal = ({
     if (files) {
       Papa.parse(files, {
         complete: function (results) {
+          console.log(results)
           const headers = results.data.find((data, index) => index === 0);
           if (
             headers.length === 2 &&

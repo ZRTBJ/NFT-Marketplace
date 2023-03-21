@@ -581,7 +581,7 @@ const Splitter = ({
               </p>
             ) : null}
             <div className='flex items-center justify-center flex-col md:flex-row'>
-              {!hasPublishedRoyaltySplitter && (
+              {!hasPublishedRoyaltySplitter || (isModal && !isPublished) && (
                 <>
                   <div className='form-check form-switch flex items-center'>
                     <p className='text-[#303548] text-[12px] mr-3'>

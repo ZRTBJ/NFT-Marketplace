@@ -296,9 +296,7 @@ const CollectionContent = ({ collectionId, userId }) => {
         } else {
           setIsMembersCreated(false);
         }
-        if (data?.members?.length) {
-          setIsSplitterAdded(true);
-        }
+     
       }
     });
   };
@@ -326,6 +324,9 @@ const CollectionContent = ({ collectionId, userId }) => {
           if (resp?.collection?.royalty_splitter?.id) {
             setRoyalitySpliterId(resp.collection.royalty_splitter.id);
             getSplittedContributors(resp.collection.royalty_splitter.id);
+
+              setIsSplitterAdded(true);
+          
           }
           setCollection(resp.collection);
           setCollectionType(resp.collection.type);
@@ -510,6 +511,7 @@ const CollectionContent = ({ collectionId, userId }) => {
                 publishRoyaltySplitter(resp.splitter_id);
               } else {
                 toast.success('Royalty Percentage Updated Successfully');
+
                 setIsAutoFillLoading(false);
                 setAutoAssign(false);
                 setIsEdit(null);
