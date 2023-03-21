@@ -296,7 +296,6 @@ const CollectionContent = ({ collectionId, userId }) => {
         } else {
           setIsMembersCreated(false);
         }
-     
       }
     });
   };
@@ -325,8 +324,7 @@ const CollectionContent = ({ collectionId, userId }) => {
             setRoyalitySpliterId(resp.collection.royalty_splitter.id);
             getSplittedContributors(resp.collection.royalty_splitter.id);
 
-              setIsSplitterAdded(true);
-          
+            setIsSplitterAdded(true);
           }
           setCollection(resp.collection);
           setCollectionType(resp.collection.type);
@@ -1432,27 +1430,33 @@ const CollectionContent = ({ collectionId, userId }) => {
                   </button>
                 </li>
                 {Collection?.is_owner && (
-                  <li
-                    className='mr-2'
-                    role='presentation'
-                    onClick={() => setSelectedTab(2)}
-                  >
-                    <button
-                      className={`inline-block p-4 text-lg rounded-t-lg ${
-                        selectedTab === 2
-                          ? 'border-b-2 border-primary-900 text-primary-900'
-                          : 'border-transparent text-textSubtle'
-                      } hover:text-primary-900`}
-                      id='dashboard'
-                      data-tabs-target='#dashboard'
-                      type='button'
-                      role='tab'
-                      aria-controls='dashboard'
-                      aria-selected='false'
-                    >
-                      Royalty Splitter
-                    </button>
-                  </li>
+                  <>
+                    {((Collection?.status !== 'published' && splitterAddress) ||
+                      (Collection?.status !== 'published' &&
+                        !splitterAddress)) && (
+                      <li
+                        className='mr-2'
+                        role='presentation'
+                        onClick={() => setSelectedTab(2)}
+                      >
+                        <button
+                          className={`inline-block p-4 text-lg rounded-t-lg ${
+                            selectedTab === 2
+                              ? 'border-b-2 border-primary-900 text-primary-900'
+                              : 'border-transparent text-textSubtle'
+                          } hover:text-primary-900`}
+                          id='dashboard'
+                          data-tabs-target='#dashboard'
+                          type='button'
+                          role='tab'
+                          aria-controls='dashboard'
+                          aria-selected='false'
+                        >
+                          Royalty Splitter
+                        </button>
+                      </li>
+                    )}
+                  </>
                 )}
                 {Collection?.is_owner && (
                   <li
