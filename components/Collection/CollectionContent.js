@@ -732,6 +732,8 @@ const CollectionContent = ({ collectionId, userId }) => {
         .then(async (res) => {
           setDataLoading(false);
           if (res?.code === 0) {
+            setOptions([]);
+            setSplitter();
             setIsSplitterAdded(false);
             await getCollectionDetail();
             setShowGlobalSuccessModalMessage('Successfully Deleted Splitter');
@@ -1859,7 +1861,8 @@ const CollectionContent = ({ collectionId, userId }) => {
                                 : 'Publish to Blockchain'}
                             </button>
                           )}
-                          <div className=''>
+                          {Collection?.status === 'draft' ||
+                          !hasPublishedRoyaltySplitter ? (
                             <div className='token-gated-dropdown relative'>
                               <button className='flex transition duration-150 ease-in-out  border-primary-900 border text-primary-900 p-3 font-black text-[14px]'>
                                 &#xFE19;
@@ -1889,7 +1892,7 @@ const CollectionContent = ({ collectionId, userId }) => {
                                 </div>
                               </div>
                             </div>
-                          </div>
+                          ) : null}
                         </div>
                       </div>
                     ) : null}
