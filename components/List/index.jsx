@@ -31,7 +31,7 @@ function List({ query }) {
   const [projectList, setProjectList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [sortType, setSortType] = useState('newer');
-  const [pagination, SetPagination] = useState([1, 2]);
+  const [pagination, SetPagination] = useState([]);
   const [isActive, setIsactive] = useState(1);
 
   const payload = {

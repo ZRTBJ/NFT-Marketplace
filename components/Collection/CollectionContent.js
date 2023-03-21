@@ -15,6 +15,7 @@ import {
   getProductNFTCollectionSalesSetupInformation,
   addCollectionSplitter,
   deleteUnpublishedSplitter,
+  detachSplitterFormCollection,
 } from 'services/collection/collectionService';
 import Spinner from 'components/Commons/Spinner';
 import Cover from 'assets/images/cover-default.svg';
@@ -708,12 +709,9 @@ const CollectionContent = ({ collectionId, userId }) => {
     setConformModalMessage('');
     setShowConfirmModal(false);
     setDataLoading(true);
+
     if (detachOrDeleteAction === 'detach') {
-      let data = {
-        id: Collection.id,
-        splitter: '',
-      };
-      await addCollectionSplitter(data)
+      await detachSplitterFormCollection(Collection?.id)
         .then(async (resp) => {
           setDataLoading(false);
           if (resp?.code === 0) {
@@ -1701,7 +1699,7 @@ const CollectionContent = ({ collectionId, userId }) => {
                       </div>
                     ) : null}{' '}
                     {createNewSplitter || isSplitterAdded ? (
-                      <div>
+                      <div className='mb-8'>
                         <div className='flex items-center mb-8'>
                           <div className='w-2/4 mr-1 relative'>
                             <label htmlFor='splitterName'>Splitter Name</label>
@@ -1828,11 +1826,37 @@ const CollectionContent = ({ collectionId, userId }) => {
                             Please add members to publish
                           </p>
                         )}
-                        <div className='w-full flex items-center justify-end gap-4'>
+                        <div className='w-full flex items-center justify-end gap-4 pb-10'>
+                          {!hasPublishedRoyaltySplitter && (
+                            <div>
+                              <button
+                                onClick={handleAutoFill}
+                                className='border-primary-900 border text-primary-900 p-3 font-black text-[14px]'
+                              >
+                                Save draft
+                              </button>
+                            </div>
+                          )}
+                          {!hasPublishedRoyaltySplitter && (
+                            <button
+                              className='bg-primary-100 border border-primary-100 text-primary-900 p-3 font-black text-[14px]'
+                              onClick={handlePublishSpliter}
+                              disabled={
+                                !canPublishRoyaltySplitter ||
+                                isPublishingRoyaltySplitter
+                              }
+                            >
+                              {isPublishingRoyaltySplitter
+                                ? publishRoyaltySplitterStatus === 1
+                                  ? 'Creating contract'
+                                  : 'Publishing'
+                                : 'Publish to Blockchain'}
+                            </button>
+                          )}
                           <div className=''>
                             <div className='token-gated-dropdown relative'>
                               <button className='flex transition duration-150 ease-in-out  border-primary-900 border text-primary-900 p-3 font-black text-[14px]'>
-                                ...
+                                &#xFE19;
                               </button>
                               <div className='opacity-0 text-[14px] visible token-gated-dropdown-menu transition-all duration-300 transform origin-top-right -translate-y-2 scale-95'>
                                 <div className='absolute z-1 right-0 w-[120px]  origin-top-right mt-3 shadow  bg-white border outline-none'>
@@ -1860,32 +1884,6 @@ const CollectionContent = ({ collectionId, userId }) => {
                               </div>
                             </div>
                           </div>
-                          {!hasPublishedRoyaltySplitter && (
-                            <div>
-                              <button
-                                onClick={handleAutoFill}
-                                className='border-primary-900 border text-primary-900 p-3 font-black text-[14px]'
-                              >
-                                Save draft
-                              </button>
-                            </div>
-                          )}
-                          {!hasPublishedRoyaltySplitter && (
-                            <button
-                              className='bg-primary-100 border border-primary-100 text-primary-900 p-3 font-black text-[14px]'
-                              onClick={handlePublishSpliter}
-                              disabled={
-                                !canPublishRoyaltySplitter ||
-                                isPublishingRoyaltySplitter
-                              }
-                            >
-                              {isPublishingRoyaltySplitter
-                                ? publishRoyaltySplitterStatus === 1
-                                  ? 'Creating contract'
-                                  : 'Publishing'
-                                : 'Publish to Blockchain'}
-                            </button>
-                          )}
                         </div>
                       </div>
                     ) : null}

@@ -210,3 +210,7 @@ export async function getCollectionByContractAddress(id) {
 export async function deleteUnpublishedSplitter(id) {
   return await client('DELETE', `/royalty/${id}`);
 }
+export async function detachSplitterFormCollection(id) {
+  console.log('here');
+  return await client('PUT', `/collection/${id}/detach-splitter`);
+}
