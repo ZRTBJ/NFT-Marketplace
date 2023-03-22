@@ -1433,9 +1433,9 @@ const CollectionContent = ({ collectionId, userId }) => {
                 </li>
                 {Collection?.is_owner && (
                   <>
-                    {((Collection?.status !== 'published' && splitterAddress) ||
+                    {(royalitySplitterId ||
                       (Collection?.status !== 'published' &&
-                        !splitterAddress)) && (
+                        !royalitySplitterId)) && (
                       <li
                         className='mr-2'
                         role='presentation'
