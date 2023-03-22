@@ -8,12 +8,19 @@ import { ls_GetChainID } from 'util/ApplicationStorage';
 import { event } from 'nextjs-google-analytics';
 import Config from 'config/config';
 import TagManager from 'react-gtm-module';
+import web3 from 'web3';
 
 export default function usePublishRoyaltySplitter(payload = {}) {
-  const { collection, splitters, onUpdateStatus = () => {} } = payload;
+  const {
+    collection,
+    splitters,
+    onUpdateStatus = () => {},
+    royaltySplitterId,
+  } = payload;
 
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState(1);
+  const [contractAddress, setContractAddress] = useState('');
   const provider = useRef();
   const contract = useRef();
   const transaction = useRef();
@@ -22,16 +29,11 @@ export default function usePublishRoyaltySplitter(payload = {}) {
   const listener = useRef();
   const { sendTransaction, waitTransactionResult } = useSendTransaction();
 
+  let splitterId = collection?.royalty_splitter?.id
+    ? collection.royalty_splitter.id
+    : royaltySplitterId;
+
   const gaslessMode = Config.GASLESS_ENABLE;
-
-  useEffect(() => {
-    const init = async () => {
-      provider.current = await getProvider();
-      contract.current = RoyaltySplitter.createInstance(provider.current);
-    };
-
-    init();
-  }, []);
 
   const getProvider = async () => {
     if (!window.ethereum) {
@@ -44,25 +46,35 @@ export default function usePublishRoyaltySplitter(payload = {}) {
     return newProvider;
   };
 
-  const canPublish = useMemo(() => {
-    if (collection == null) {
-      return false;
-    }
+  useEffect(() => {
+    const init = async () => {
+      provider.current = await getProvider();
+      contract.current = RoyaltySplitter.createInstance(provider.current);
+    };
 
-    return collection.royalty_splitter.status !== 'published';
+    init();
+  }, [getProvider()]);
+
+  const canPublish = useMemo(() => {
+    // if (collection == null) {
+    //   return false;
+    // }
+
+    return collection?.royalty_splitter?.status !== 'published';
   }, [collection]);
 
-  const callPublishApi = async () => {
-    const royaltySplitterId = collection.royalty_splitter.id;
-    return await collectionService.publishRoyaltySplitter(royaltySplitterId);
+  const callPublishApi = async (id) => {
+    return await collectionService.publishRoyaltySplitter(id ? id : splitterId);
   };
 
-  const updateOffChainData = async () => {
-    const royaltySplitterId = collection.royalty_splitter.id;
+  const updateOffChainData = async (id) => {
     const payload = new FormData();
-    payload.append('transaction_hash', txReceipt.current.transactionHash);
-    payload.append('block_number', txReceipt.current.blockNumber);
-    return collectionService.publishRoyaltySplitter(royaltySplitterId, payload);
+    payload.append('transaction_hash', txReceipt.current?.transactionHash);
+    payload.append('block_number', txReceipt.current?.blockNumber);
+    return collectionService.publishRoyaltySplitter(
+      id ? id : splitterId,
+      payload
+    );
   };
 
   const sendOnChainTransaction = async (data) => {
@@ -86,6 +98,7 @@ export default function usePublishRoyaltySplitter(payload = {}) {
         forwarder: minimalForwarder,
       },
     ];
+
     return sendTransaction({
       contract: contract.current,
       functionName: 'createRoyaltyProxy',
@@ -114,20 +127,19 @@ export default function usePublishRoyaltySplitter(payload = {}) {
       discountContract: discount,
       forwarder: minimalForwarder,
     };
-
     const tx = await contract.current
-      .connect(signer)
-      .createRoyaltyProxy(functionPayload);
-    const res = await tx.wait();
+      ?.connect(signer)
+      ?.createRoyaltyProxy(functionPayload);
+    const res = await tx?.wait();
 
     return res;
   };
 
   const cleanUp = () => {
-    contract.current.off('ProxyCreated', listener.current);
+    contract?.current?.off('ProxyCreated', listener.current);
   };
 
-  const publish = async () => {
+  const publish = async (id) => {
     event('publish_royalty_splitter', { category: 'royalty_splitter' });
     TagManager.dataLayer({
       dataLayer: {
@@ -136,13 +148,13 @@ export default function usePublishRoyaltySplitter(payload = {}) {
         pageTitle: 'publish_royalty_splitter',
       },
     });
-    try {
-      if (!canPublish) {
-        return;
-      }
 
+    try {
+      // if (!canPublish) {
+      //   return;
+      // }
       setIsLoading(true);
-      const publishData = await callPublishApi();
+      const publishData = await callPublishApi(id);
 
       if (gaslessMode === 'true') {
         transaction.current = await sendOnChainTransaction(publishData);
@@ -150,15 +162,18 @@ export default function usePublishRoyaltySplitter(payload = {}) {
       } else {
         txReceipt.current = await runTransaction(publishData);
       }
-      const publishResponse = await updateOffChainData();
-      if (publishResponse.function.status === 'failed') {
+      const publishResponse = await updateOffChainData(id);
+      if (publishResponse.function?.status === 'failed') {
         throw new Error(
           'Transaction failed. ' + publishResponse.function.message
         );
       }
 
       setStatus(2);
-      onUpdateStatus(publishResponse.function.status);
+      onUpdateStatus(publishResponse.function?.status);
+      setContractAddress(
+        publishResponse.function?.response_data?.contract_address
+      );
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
@@ -174,5 +189,7 @@ export default function usePublishRoyaltySplitter(payload = {}) {
     isLoading,
     canPublish,
     publish,
+    setIsLoading,
+    contractAddress,
   };
 }

@@ -5,6 +5,7 @@ import Image from 'next/image';
 
 function Tooltip({
   message = 'This field will not be changeable after publishing on the blockchain.',
+  place = 'top',
 }) {
   return (
     <div className='relative'>
@@ -14,7 +15,7 @@ function Tooltip({
         src={TooltipIcon}
         alt=''
       />
-      <ReactTooltip place='top' type='info' effect='solid' />
+      <ReactTooltip place={place} type='info' effect='solid' />
     </div>
   );
 }

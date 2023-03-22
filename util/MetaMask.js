@@ -112,7 +112,6 @@ export const handleSwitchNetwork = async (projectNetwork) => {
   if (typeof window !== 'undefined') {
     if (window?.ethereum) {
       try {
-        Web3?.utils?.toHex;
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
           params: [{ chainId: Web3?.utils?.toHex(projectNetwork) }],

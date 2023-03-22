@@ -8,11 +8,11 @@ import { walletAddressTruncate } from 'util/WalletUtils';
 import Image from 'next/image';
 
 const MemberRowMobile = (props) => {
-  const { item, isLastItem, handleValueChange, handleAutoFill } = props;
+  const { item, isLastItem, handleValueChange, handleDeleteContributor, isPublished } =
+    props;
   const [isEdit, setIsEdit] = useState(false);
 
   const handleUpdatePercent = async (e) => {
-    await handleAutoFill(e);
     setIsEdit(false);
   };
 
@@ -32,11 +32,14 @@ const MemberRowMobile = (props) => {
             </CopyToClipboard>
           </div>
         </div>
-        {item.is_owner ? null : (
-          <div className='w-[32px] h-[32px] bg-[#FF3C3C] rounded-[4px] flex items-center justify-center cursor-pointer'>
+        {isPublished ? null : (
+          <div
+            onClick={() => handleDeleteContributor(item.user_eoa)}
+            className='w-[32px] h-[32px] bg-[#FF3C3C] rounded-[4px] flex items-center justify-center cursor-pointer'
+          >
             <Image src={Trash} alt='delete' />
           </div>
-        )}
+         )} 
       </div>
       <div className='flex items-center justify-between'>
         <div className=''>
@@ -53,12 +56,13 @@ const MemberRowMobile = (props) => {
                 <span className='text-[13px] mt-0'>
                   {item.royalty_percent ? `${item.royalty_percent}%` : '-'}
                 </span>
+                {!isPublished ? 
                 <Image
                   className='ml-2 cursor-pointer'
                   src={Edit}
                   alt='edit'
                   onClick={() => setIsEdit(true)}
-                />
+                /> : null}
               </>
             )}
             {isEdit && (
@@ -103,20 +107,22 @@ const MemberRowMobile = (props) => {
 };
 
 const MemeberListMobile = (props) => {
-  const { list, handleAutoFill, handleValueChange } = props;
+  const { list, handleValueChange, handleDeleteContributor, isPublished } = props;
 
   return (
     <div>
-      {list?.length &&
-        list.map((item, index) => (
-          <MemberRowMobile
-            key={index}
-            item={item}
-            isLastItem={index === list.length - 1}
-            handleAutoFill={handleAutoFill}
-            handleValueChange={handleValueChange}
-          />
-        ))}
+      {list?.length
+        ? list.map((item, index) => (
+            <MemberRowMobile
+              key={index}
+              item={item}
+              isLastItem={index === list.length - 1}
+              handleValueChange={handleValueChange}
+              handleDeleteContributor={handleDeleteContributor}
+              isPublished={isPublished}
+            />
+          ))
+        : null}
     </div>
   );
 };

@@ -4,6 +4,7 @@ import CreateNFTCard from './components/CreateNFTCard';
 import BuildDaoCard from './components/BuildDaoCard';
 import UseCase from './components/UseCase';
 import TokenGatedBannerCard from './components/TokenGatedBannerCard';
+import SplitterBanner from 'components/LandingPage/components/SplitterBanner';
 import charity from 'assets/images/profile/charity.png';
 import dao from 'assets/images/profile/dao.png';
 import fashion from 'assets/images/profile/fashion.png';
@@ -65,7 +66,7 @@ const daoUseCase = {
     },
   ],
 };
-export default function LandingPage() {
+export default function LandingPage({ setShowCreateSplitter }) {
   return (
     <div>
       <OnBoardingGuide />
@@ -81,6 +82,9 @@ export default function LandingPage() {
       </div>
       <div className='w-full px-4 pb-10 md:max-w-[1100px] mx-auto'>
         <UseCase data={daoUseCase} />
+      </div>
+      <div className='w-full px-4 pb-10 md:max-w-[1100px] mx-auto'>
+        <SplitterBanner setShowCreateSplitter={setShowCreateSplitter} />
       </div>
     </div>
   );

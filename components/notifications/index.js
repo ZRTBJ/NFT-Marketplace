@@ -19,7 +19,6 @@ const Notifications = () => {
 
   useEffect(() => {
     let arr = Array.from({ length: notifications?.pageSize }, (v, k) => k + 1);
-    console.log(arr);
     const page = calculatePageCount(15, notifications?.total);
     const pageList = [];
     for (let index = 1; index <= page; index++) {

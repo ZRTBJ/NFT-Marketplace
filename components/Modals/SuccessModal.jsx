@@ -14,6 +14,7 @@ const SuccessModal = ({
   redirection = '',
   showCloseIcon = false,
   link = '',
+  contractAddress,
 }) => {
   const router = useRouter();
 

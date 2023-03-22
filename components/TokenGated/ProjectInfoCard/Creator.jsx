@@ -5,6 +5,15 @@ import SocialLink from 'components/Commons/SocialLink';
 import SettingModal from 'components/TokenGated/Modal/Setting';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
+import {
+  FacebookShareButton,
+  TwitterShareButton,
+  RedditShareButton,
+} from 'react-share';
+import FB from 'assets/images/facebook.svg';
+import twitter from 'assets/images/twitter.svg';
+import reddit from 'assets/images/reddit.svg';
+
 export default function Creator({ project, createMode, settingSaved, userId }) {
   const origin =
     typeof window !== 'undefined' && window.location.origin
@@ -13,6 +22,7 @@ export default function Creator({ project, createMode, settingSaved, userId }) {
   const hostURL = `${origin}`;
   const publicDetailsLink = `${hostURL}/token-gated/public/${project?.slug}/${project?.id}`;
   const [showSettingModal, setShowSettingModal] = useState(false);
+
   const onSettingClick = async () => {
     setShowSettingModal(true);
   };
@@ -75,6 +85,28 @@ export default function Creator({ project, createMode, settingSaved, userId }) {
             <i className='fa-solid fa-gear mr-2'></i>
             Setting
           </button>
+          {userId && (
+            <>
+              <p className='mt-5 mb-3'></p>
+              <div className='flex items-center gap-y-4 '>
+                <FacebookShareButton url={publicDetailsLink} quote={'NFT'}>
+                  <div className='cursor-pointer rounded-[4px] bg-primary-50 h-[35px] w-[35px] flex items-center justify-center mr-2'>
+                    <Image height={16} width={16} src={FB} alt='facebook' />
+                  </div>
+                </FacebookShareButton>
+                <TwitterShareButton url={publicDetailsLink}>
+                  <div className='cursor-pointer rounded-[4px] bg-primary-50 h-[35px] w-[35px] flex items-center justify-center mr-2'>
+                    <Image height={16} width={16} src={twitter} alt='twitter' />
+                  </div>
+                </TwitterShareButton>
+                <RedditShareButton url={publicDetailsLink}>
+                  <div className='cursor-pointer rounded-[4px] bg-primary-50 h-[35px] w-[35px] flex items-center justify-center'>
+                    <Image height={16} width={16} src={reddit} alt='reddit' />
+                  </div>
+                </RedditShareButton>
+              </div>
+            </>
+          )}
         </div>
       </div>
       {showSettingModal && (

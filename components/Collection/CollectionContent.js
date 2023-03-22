@@ -1,9 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable react/no-unescaped-entities */
 import { round } from 'lodash';
-import { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
+import { uniqBy } from 'lodash';
 import {
   getCollectionNFTs,
   getCollectionDetailsById,
@@ -12,7 +13,11 @@ import {
   getCollectionSales,
   getNetWorth,
   getProductNFTCollectionSalesSetupInformation,
+  addCollectionSplitter,
+  deleteUnpublishedSplitter,
+  detachSplitterFormCollection,
 } from 'services/collection/collectionService';
+import Spinner from 'components/Commons/Spinner';
 import Cover from 'assets/images/cover-default.svg';
 import manImg from 'assets/images/image-default.svg';
 import avatar from 'assets/images/dummy-img.svg';
@@ -54,6 +59,12 @@ import PublishRoyaltyConfirmModal from './Publish/PublishRoyaltyConfirmModal';
 import Image from 'next/image';
 import DaoConnectModal from 'components/Collection/DaoConnectModal/DaoConnectModal';
 import WithdrawModal from './WithdrawModal';
+import { getSplitterList } from 'services/collection/collectionService';
+import Select from 'react-select';
+import { NETWORKS } from 'config/networks';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCopy } from '@fortawesome/free-solid-svg-icons';
 
 const currency = {
   eth: Eth,
@@ -135,6 +146,66 @@ const CollectionContent = ({ collectionId, userId }) => {
     () => Collection?.royalty_splitter?.status === 'published',
     [Collection]
   );
+  const [splitter, setSplitter] = useState();
+  const [createNewSplitter, setCreateNewSplitter] = useState(false);
+  const [payload, setPayload] = useState({
+    page: 1,
+    perPage: 10,
+    keyword: '',
+    order_by: 'newer',
+  });
+  const [hasNextPageData, setHasNextPageData] = useState(true);
+  const [options, setOptions] = useState([]);
+  const [isSplitterLoading, setIsSplitterLoading] = useState(false);
+  const [addSplitterLoading, setAddSplitterLoading] = useState(false);
+  const [blockchain, setBlockchain] = useState('');
+  const [splitterName, setSplitterName] = useState('');
+  const [isSplitterSubmitted, setIsSplitterSubmitted] = useState(false);
+  const [applySplitterSubmitted, setApplySplitterSubmitter] = useState(false);
+  const [isSplitterAdded, setIsSplitterAdded] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [isMembersCreated, setIsMembersCreated] = useState(false);
+  const [splitterAddress, setSplitterAddress] = useState('');
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmModalMessage, setConformModalMessage] = useState('');
+  const [detachOrDeleteAction, setDetachOrDeleteAction] = useState('');
+  const [showGlobalSuccessModal, setShowGlobalSuccessModal] = useState(false);
+  const [showGlobalErrorModal, setShowGlobalErrorModal] = useState(false);
+  const [showGlobalSuccessModalMessage, setShowGlobalSuccessModalMessage] =
+    useState('');
+  const [showGlobalErrorModalMessage, setShowGlobalErrorModalMessage] =
+    useState('');
+
+  useEffect(() => {
+    if (hasNextPageData) {
+      getSplitters(Collection?.blockchain);
+    }
+  }, [payload]);
+
+  const getSplitters = async (network) => {
+    setIsSplitterLoading(true);
+    await getSplitterList(payload.page, payload.perPage)
+      .then((res) => {
+        setIsSplitterLoading(false);
+        let chain = network ? network : Collection?.blockchain;
+        let filteredSplitters =
+          chain &&
+          res?.splitters.filter((split) => split?.blockchain === chain);
+        const splitterList = [...options];
+        const mergedSplitterList = [...splitterList, ...filteredSplitters];
+        const uniqSplitterList = uniqBy(mergedSplitterList, function (e) {
+          return e.id;
+        });
+
+        setOptions(uniqSplitterList);
+        if (res?.splitters?.length === 0) {
+          setHasNextPageData(false);
+        }
+      })
+      .catch((res) => {
+        setIsSplitterLoading(false);
+      });
+  };
 
   const hanldeUpdatePublishStatus = (status) => {
     if (status === 'success') {
@@ -155,6 +226,8 @@ const CollectionContent = ({ collectionId, userId }) => {
     status: publishRoyaltySplitterStatus,
     canPublish: canPublishRoyaltySplitter,
     publish: publishRoyaltySplitter,
+    contractAddress,
+    setIsLoading: setPublishingSplitter,
   } = usePublishRoyaltySplitter({
     collection: Collection,
     splitters: royalityMembers,
@@ -171,6 +244,7 @@ const CollectionContent = ({ collectionId, userId }) => {
   useEffect(() => {
     if (collectionId) {
       getCollectionDetail();
+
       getNFTs();
       getCollectionSalesData();
       getCollectionNewWorth();
@@ -186,7 +260,7 @@ const CollectionContent = ({ collectionId, userId }) => {
   const getCollectionNewWorth = () => {
     setBalanceLoading(true);
     getNetWorth(collectionId).then((resp) => {
-      if (resp.code === 0) {
+      if (resp?.code === 0) {
         setBalanceLoading(false);
         setNetWorth({
           balance: resp.balance,
@@ -203,7 +277,7 @@ const CollectionContent = ({ collectionId, userId }) => {
   const getNFTs = () => {
     getCollectionNFTs(collectionId)
       .then((resp) => {
-        if (resp.code === 0) {
+        if (resp?.code === 0) {
           setNFTs(resp.lnfts);
         }
       })
@@ -213,19 +287,30 @@ const CollectionContent = ({ collectionId, userId }) => {
   const getSplittedContributors = (id, type) => {
     getSplitterDetails(id, type).then((data) => {
       if (data.code === 0) {
+        setSplitterName(data?.splitter?.name);
+        setBlockchain(data?.splitter?.blockchain);
         setRoyalityMembers(data?.members);
+        setSplitterAddress(data?.splitter?.contract_address);
+        if (data?.members?.length) {
+          setIsMembersCreated(true);
+        } else {
+          setIsMembersCreated(false);
+        }
       }
     });
   };
 
-  const getCollectionDetail = () => {
+  const getCollectionDetail = async () => {
     let payload = {
       id: collectionId,
     };
-    getCollectionDetailsById(payload)
+    await getCollectionDetailsById(payload)
       .then((resp) => {
-        if (resp.code === 0) {
+        if (resp?.code === 0) {
           setProjectID(resp?.collection?.project_uid);
+          if (resp?.collection?.blockchain) {
+            getSplitters(resp.collection.blockchain);
+          }
           setCollectionNetwork(resp?.collection?.blockchain);
           if (resp?.collection?.project_uid) {
             getProjectDetailsById({ id: resp?.collection?.project_uid }).then(
@@ -238,6 +323,8 @@ const CollectionContent = ({ collectionId, userId }) => {
           if (resp?.collection?.royalty_splitter?.id) {
             setRoyalitySpliterId(resp.collection.royalty_splitter.id);
             getSplittedContributors(resp.collection.royalty_splitter.id);
+
+            setIsSplitterAdded(true);
           }
           setCollection(resp.collection);
           setCollectionType(resp.collection.type);
@@ -348,6 +435,24 @@ const CollectionContent = ({ collectionId, userId }) => {
     setShowOptions(null);
   };
 
+  const useDebounceCallback = (delay = 100, cleaning = true) => {
+    // or: delayed debounce callback
+    const ref = React.useRef();
+    React.useEffect(() => {
+      if (cleaning) {
+        // cleaning uncalled delayed callback with component destroying
+        return () => {
+          if (ref.current) clearTimeout(ref.current);
+        };
+      }
+    }, []);
+    return (callback) => {
+      if (ref.current) clearTimeout(ref.current);
+      ref.current = setTimeout(callback, delay);
+    };
+  };
+  const delayCallback = useDebounceCallback(500);
+
   async function salesPageModal(e, type, id, supply) {
     e.stopPropagation();
     e.preventDefault();
@@ -377,45 +482,56 @@ const CollectionContent = ({ collectionId, userId }) => {
     }
   };
 
-  const handleAutoFill = () => {
-    let members = royalityMembers.map((mem) => {
-      return {
-        wallet_address: mem.user_eoa,
-        royalty: mem.royalty_percent,
-      };
-    });
-    let formData = new FormData();
-    formData.append('royalty_data', JSON.stringify(members));
-    royalitySplitterId
-      ? formData.append('splitter_uid', royalitySplitterId)
-      : formData.append('collection_uid', Collection.id);
-    if (!ShowPercentError) {
-      setIsAutoFillLoading(true);
-      updateRoyaltySplitter(formData)
-        .then((resp) => {
-          if (resp.code === 0) {
-            toast.success('Royalty Percentage Updated Successfully');
+  const handleAutoFill = (e, publish) => {
+    setIsSplitterSubmitted(true);
+    if (splitterName && blockchain) {
+      let members = royalityMembers.map((mem) => {
+        return {
+          wallet_address: mem.user_eoa,
+          royalty: mem.royalty_percent,
+        };
+      });
+      let formData = new FormData();
+      formData.append('royalty_data', JSON.stringify(members));
+      splitterName && formData.append('name', splitterName);
+      blockchain && formData.append('blockchain', blockchain);
+      royalitySplitterId
+        ? formData.append('splitter_uid', royalitySplitterId)
+        : Collection?.id
+        ? formData.append('collection_uid', Collection.id)
+        : null;
+      if (!ShowPercentError) {
+        setIsAutoFillLoading(true);
+        updateRoyaltySplitter(formData)
+          .then((resp) => {
+            if (resp.code === 0) {
+              if (publish) {
+                publishRoyaltySplitter(resp.splitter_id);
+              } else {
+                toast.success('Royalty Percentage Updated Successfully');
 
-            setIsAutoFillLoading(false);
-            setAutoAssign(false);
-            setIsEdit(null);
-            setShowRoyalityErrorModal(false);
-            setShowRoyalityErrorMessage('');
-            getSplittedContributors(royalitySplitterId);
-            getCollectionDetail();
-          } else {
+                setIsAutoFillLoading(false);
+                setAutoAssign(false);
+                setIsEdit(null);
+                setShowRoyalityErrorModal(false);
+                setShowRoyalityErrorMessage('');
+                getSplittedContributors(royalitySplitterId);
+                getCollectionDetail();
+              }
+            } else {
+              setIsAutoFillLoading(false);
+              setRoyaltyUpdatedSuccessfully(false);
+              setShowRoyalityErrorModal(true);
+              setAutoAssign(false);
+              setShowRoyalityErrorMessage(resp.message);
+            }
+          })
+          .catch((err) => {
             setIsAutoFillLoading(false);
             setRoyaltyUpdatedSuccessfully(false);
-            setShowRoyalityErrorModal(true);
             setAutoAssign(false);
-            setShowRoyalityErrorMessage(resp.message);
-          }
-        })
-        .catch((err) => {
-          setIsAutoFillLoading(false);
-          setRoyaltyUpdatedSuccessfully(false);
-          setAutoAssign(false);
-        });
+          });
+      }
     }
   };
 
@@ -449,10 +565,15 @@ const CollectionContent = ({ collectionId, userId }) => {
   };
 
   const handlePublishRoyaltySplitter = async () => {
+    setPublishingSplitter(true);
     try {
       setShowPublishRoyaltySpliterConfirmModal(false);
       setShowPublishRoyaltySpliterModal(true);
-      await publishRoyaltySplitter();
+      if (isMembersCreated) {
+        await publishRoyaltySplitter();
+      } else {
+        await handleAutoFill(null, true);
+      }
     } catch (err) {
       setShowPublishRoyaltySpliterModal(false);
       setShowPublishRoyaltySpliterErrorModal(true);
@@ -480,19 +601,22 @@ const CollectionContent = ({ collectionId, userId }) => {
   };
 
   const handlePublishSpliter = async () => {
-    let networkId = await getCurrentNetworkId();
-    if (Number(collectionNetwork) === networkId) {
-      let totalPercent = royalityMembers.reduce(
-        (arr, val) => arr + val.royalty_percent,
-        0
-      );
-      if (totalPercent === 100) {
-        setShowPublishRoyaltySpliterConfirmModal(true);
+    setIsPublishing(true);
+    if (blockchain && splitterName && royalityMembers.length) {
+      let networkId = await getCurrentNetworkId();
+      if (Number(collectionNetwork) === networkId) {
+        let totalPercent = royalityMembers.reduce(
+          (arr, val) => arr + val.royalty_percent,
+          0
+        );
+        if (totalPercent === 100) {
+          setShowPublishRoyaltySpliterConfirmModal(true);
+        } else {
+          toast.error('Total royalty percent should be 100 %');
+        }
       } else {
-        toast.error('Total royalty percent should be 100 %');
+        setShowNetworkHandler(true);
       }
-    } else {
-      setShowNetworkHandler(true);
     }
   };
 
@@ -534,7 +658,107 @@ const CollectionContent = ({ collectionId, userId }) => {
     }
   };
 
+  function scrolledBottom() {
+    let oldPayload = { ...payload };
+    oldPayload.page = oldPayload.page + 1;
+    setPayload(oldPayload);
+  }
+
+  async function onSplitterSearch(keyword) {
+    delayCallback(() => {
+      let oldPayload = { ...payload };
+      oldPayload.keyword = keyword;
+      setPayload(oldPayload);
+    });
+  }
+
   let isSupplyOver = Collection?.total_supply <= NFTs?.length;
+
+  const handleSelectedSplitter = (e) => {
+    setApplySplitterSubmitter(true);
+    e.preventDefault();
+    if (splitter?.id) {
+      setAddSplitterLoading(true);
+      let data = {
+        id: Collection.id,
+        splitter: splitter.id,
+        supply: Collection.total_supply,
+      };
+      addCollectionSplitter(data)
+        .then((resp) => {
+          setAddSplitterLoading(false);
+          toast.success('Splitter added to collection Successfully');
+          getCollectionDetail();
+          setApplySplitterSubmitter(false);
+        })
+        .catch((err) => {
+          setAddSplitterLoading(false);
+          setApplySplitterSubmitter(false);
+          toast.error('Failed to add splitter. Please try again later.');
+        });
+    }
+  };
+
+  let validNetworks = NETWORKS
+    ? Object.values(NETWORKS).filter(
+        (net) => net.network !== 97 && net.network !== 56
+      )
+    : [];
+
+  const onConfirmFromModal = async () => {
+    setConformModalMessage('');
+    setShowConfirmModal(false);
+    setDataLoading(true);
+
+    if (detachOrDeleteAction === 'detach') {
+      await detachSplitterFormCollection(Collection?.id)
+        .then(async (resp) => {
+          setDataLoading(false);
+          if (resp?.code === 0) {
+            setIsSplitterAdded(false);
+            await getCollectionDetail();
+            setShowGlobalSuccessModalMessage('Successfully Detached Splitter');
+            setShowGlobalSuccessModal(true);
+          } else {
+            setShowGlobalErrorModalMessage(resp?.message);
+            setShowGlobalErrorModal(true);
+          }
+        })
+        .catch((err) => {
+          setDataLoading(false);
+        });
+    } else if (detachOrDeleteAction === 'delete') {
+      await deleteUnpublishedSplitter(Collection?.royalty_splitter?.id)
+        .then(async (res) => {
+          setDataLoading(false);
+          if (res?.code === 0) {
+            setOptions([]);
+            setSplitter();
+            setIsSplitterAdded(false);
+            await getCollectionDetail();
+            setShowGlobalSuccessModalMessage('Successfully Deleted Splitter');
+            setShowGlobalSuccessModal(true);
+          } else {
+            setShowGlobalErrorModalMessage(res?.message);
+            setShowGlobalErrorModal(true);
+          }
+        })
+        .catch((err) => {
+          setDataLoading(false);
+          console.log(er);
+        });
+    }
+  };
+  const detachSplitter = async () => {
+    setDetachOrDeleteAction('detach');
+    setConformModalMessage('Are you sure to detach this splitter?');
+    setShowConfirmModal(true);
+  };
+  const deleteSplitter = async () => {
+    setDetachOrDeleteAction('delete');
+    setConformModalMessage('Are you sure to delete this splitter?');
+    setShowConfirmModal(true);
+  };
 
   return (
     <>
@@ -689,6 +913,8 @@ const CollectionContent = ({ collectionId, userId }) => {
             setRoyaltyUpdatedSuccessfully={setRoyaltyUpdatedSuccessfully}
             setShowRoyalityErrorModal={setShowRoyalityErrorModal}
             setShowRoyalityErrorMessage={setShowRoyalityErrorMessage}
+            blockchain={blockchain}
+            splitterName={splitterName}
           />
         )}
         {collectionNotUpdatableModal && (
@@ -711,6 +937,40 @@ const CollectionContent = ({ collectionId, userId }) => {
             collection={Collection}
             dao={daoInfo}
             onSuccessFullyConnect={() => getCollectionDetail()}
+          />
+        )}
+        {showConfirmModal && (
+          <ConfirmationModal
+            show={showConfirmModal}
+            handleClose={() => {
+              setDetachOrDeleteAction('');
+              setConformModalMessage('');
+              setShowConfirmModal(false);
+            }}
+            handleApply={() => onConfirmFromModal()}
+            message={confirmModalMessage}
+          />
+        )}
+        {showGlobalSuccessModal && (
+          <SuccessModal
+            show={showGlobalSuccessModal}
+            handleClose={() => {
+              setShowGlobalSuccessModalMessage('');
+              setShowGlobalSuccessModal(false);
+            }}
+            message={showGlobalSuccessModalMessage}
+            btnText='Close'
+          />
+        )}
+        {showGlobalErrorModal && (
+          <ErrorModal
+            title={'Opps, Something went wrong'}
+            message={showGlobalErrorModalMessage}
+            handleClose={() => {
+              setShowGlobalErrorModalMessage('');
+              setShowGlobalErrorModal(false);
+            }}
+            show={showGlobalErrorModal}
           />
         )}
         <section className='mt-6'>
@@ -1172,27 +1432,33 @@ const CollectionContent = ({ collectionId, userId }) => {
                   </button>
                 </li>
                 {Collection?.is_owner && (
-                  <li
-                    className='mr-2'
-                    role='presentation'
-                    onClick={() => setSelectedTab(2)}
-                  >
-                    <button
-                      className={`inline-block p-4 text-lg rounded-t-lg ${
-                        selectedTab === 2
-                          ? 'border-b-2 border-primary-900 text-primary-900'
-                          : 'border-transparent text-textSubtle'
-                      } hover:text-primary-900`}
-                      id='dashboard'
-                      data-tabs-target='#dashboard'
-                      type='button'
-                      role='tab'
-                      aria-controls='dashboard'
-                      aria-selected='false'
-                    >
-                      Royalty Splitter
-                    </button>
-                  </li>
+                  <>
+                    {((Collection?.status !== 'published' && splitterAddress) ||
+                      (Collection?.status !== 'published' &&
+                        !splitterAddress)) && (
+                      <li
+                        className='mr-2'
+                        role='presentation'
+                        onClick={() => setSelectedTab(2)}
+                      >
+                        <button
+                          className={`inline-block p-4 text-lg rounded-t-lg ${
+                            selectedTab === 2
+                              ? 'border-b-2 border-primary-900 text-primary-900'
+                              : 'border-transparent text-textSubtle'
+                          } hover:text-primary-900`}
+                          id='dashboard'
+                          data-tabs-target='#dashboard'
+                          type='button'
+                          role='tab'
+                          aria-controls='dashboard'
+                          aria-selected='false'
+                        >
+                          Royalty Splitter
+                        </button>
+                      </li>
+                    )}
+                  </>
                 )}
                 {Collection?.is_owner && (
                   <li
@@ -1372,82 +1638,264 @@ const CollectionContent = ({ collectionId, userId }) => {
                 </div>
               )}
               {selectedTab === 2 && (
-                <div className='mb-6  mb-6 md:mb-[100px]'>
+                <div className='mb-6 md:mb-[100px]'>
                   <div className='bg-white rounded-[12px] p-5 shadow-main'>
-                    <div className='flex items-start md:items-center justify-between pb-7 border-b-[1px] mb-6 border-[#E3DEEA]'>
-                      <h3 className='text-[18px] font-black'>Contributor</h3>
-                      {ShowPercentError ? (
-                        <p className='text-red-400 text-[14px] mt-1'>
-                          Total percent of contributors should equal to or
-                          lesser than 100%
-                        </p>
-                      ) : null}
-                      {/* {CollectionDetail?.is_owner && data?.members?.length ? ( */}
-                      <div className='flex items-center justify-center flex-col md:flex-row'>
-                        {!hasPublishedRoyaltySplitter && (
-                          <>
-                            <div className='form-check form-switch flex items-center'>
-                              <p className='text-[#303548] text-[12px] mr-3'>
-                                Split Evenly
-                              </p>
-                              <input
-                                className='form-check-input appearance-none w-9 rounded-full h-5 align-top bg-white bg-no-repeat bg-contain bg-gray-300 focus:outline-none cursor-pointer shadow-sm'
-                                type='checkbox'
-                                checked={AutoAssign}
-                                role='switch'
-                                onChange={handleAutoAssign}
-                              />
+                    {!createNewSplitter && !isSplitterAdded ? (
+                      <div>
+                        <div className='flex justify-center flex-col'>
+                          <label htmlFor='splitter-selector'>
+                            Select Splitter
+                          </label>
+                          <div className='flex items-center'>
+                            <div className='flex'>
+                              {typeof window !== 'undefined' && (
+                                <Select
+                                  defaultValue={splitter}
+                                  onChange={setSplitter}
+                                  onKeyDown={(event) =>
+                                    onSplitterSearch(event.target.value)
+                                  }
+                                  options={options}
+                                  styles={{
+                                    menuPortal: (base) => ({
+                                      ...base,
+                                      zIndex: 9999,
+                                    }),
+                                  }}
+                                  menuPortalTarget={document.body}
+                                  placeholder='Select Splitter'
+                                  isLoading={isSplitterLoading}
+                                  noOptionsMessage={() => 'No Splitter Found'}
+                                  loadingMessage={() =>
+                                    'Loading,please wait...'
+                                  }
+                                  getOptionLabel={(option) =>
+                                    `${option.name ? option.name : option.id}`
+                                  }
+                                  classNamePrefix='splitter-select'
+                                  isClearable
+                                  isSearchable
+                                  menuShouldScrollIntoView
+                                  onMenuScrollToBottom={() => scrolledBottom()}
+                                />
+                              )}
+                              <button
+                                onClick={handleSelectedSplitter}
+                                className='bg-primary-100 text-primary-900 text-md ml-2 px-5 py-2 rounded w-[100px]'
+                              >
+                                {addSplitterLoading ? (
+                                  <Spinner forButton={true} />
+                                ) : (
+                                  'Apply'
+                                )}
+                              </button>
                             </div>
-                            <div
-                              className='mint-button mt-4 md:mt-0 ml-4 text-center font-satoshi-bold w-full text-[12px] md:w-fit flex'
-                              onClick={() => setShowImportWallet(true)}
+                            <p className='mx-5 p-0'>or</p>
+                            <button
+                              className='bg-primary-100 text-primary-900 text-md px-5 py-2 rounded'
+                              onClick={() => setCreateNewSplitter(true)}
                             >
-                              <Image
-                                src={PlusIcon}
-                                alt='add'
-                                width={14}
-                                height={14}
-                              />
-                              <span className='ml-1'>Import Contributor</span>
-                            </div>
-                          </>
+                              Create New
+                            </button>
+                          </div>
+                        </div>
+                        {applySplitterSubmitted && !splitter && (
+                          <p className='text-red-400 text-sm'>
+                            Please select a splitter to apply
+                          </p>
                         )}
                       </div>
-                      {/* ) : null} */}
-                    </div>{' '}
-                    <MemberListTable
-                      collection={Collection}
-                      list={royalityMembers}
-                      headers={TABLE_HEADERS}
-                      // handlePublish={setShowPublish}
-                      setIsEdit={setIsEdit}
-                      setRoyalityMembers={setRoyalityMembers}
-                      showRoyalityErrorModal={showRoyalityErrorModal}
-                      isEdit={isEdit}
-                      handleValueChange={handleValueChange}
-                      handleAutoFill={handleAutoFill}
-                      isOwner={Collection?.is_owner}
-                    />
-                    <div className='w-full'>
-                      {!hasPublishedRoyaltySplitter && (
-                        <button
-                          className='block ml-auto bg-primary-100 text-primary-900 p-3 font-black text-[14px]'
-                          onClick={handlePublishSpliter}
-                          disabled={
-                            !canPublishRoyaltySplitter ||
-                            isPublishingRoyaltySplitter ||
-                            !royalityMembers.length ||
-                            !royalitySplitterId
-                          }
-                        >
-                          {isPublishingRoyaltySplitter
-                            ? publishRoyaltySplitterStatus === 1
-                              ? 'Creating contract'
-                              : 'Publishing'
-                            : 'Lock Percentage'}
-                        </button>
-                      )}
-                    </div>
+                    ) : null}{' '}
+                    {createNewSplitter || isSplitterAdded ? (
+                      <div className='mb-8'>
+                        <div className='flex items-center mb-8'>
+                          <div className='w-2/4 mr-1 relative'>
+                            <label htmlFor='splitterName'>Splitter Name</label>
+                            <input
+                              id='splitterName'
+                              name='splitterName'
+                              value={splitterName}
+                              disabled={hasPublishedRoyaltySplitter}
+                              className='mt-1 rounded-[3px]'
+                              style={{ height: 42 }}
+                              type='text'
+                              onChange={(e) => setSplitterName(e.target.value)}
+                              placeholder='Splitter Name'
+                            />
+                            {((isSplitterSubmitted && !splitterName) ||
+                              (!blockchain && isPublishing)) && (
+                              <p className='text-sm text-red-400 absolute'>
+                                Name is required
+                              </p>
+                            )}
+                          </div>
+                          <div className='w-2/4 ml-1 relative'>
+                            <label htmlFor='blockchain'>Blockchain</label>
+                            <select
+                              value={blockchain}
+                              onChange={(e) => setBlockchain(e.target.value)}
+                              disabled={hasPublishedRoyaltySplitter}
+                              className='h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3'
+                            >
+                              <option value={''} defaultValue>
+                                Select Blockchain
+                              </option>
+                              {validNetworks.map((network) => (
+                                <option
+                                  value={network?.network}
+                                  key={network?.network}
+                                >
+                                  {network?.networkName}
+                                </option>
+                              ))}
+                            </select>
+                            {((isSplitterSubmitted && !blockchain) ||
+                              (isPublishing && !blockchain)) && (
+                              <p className='text-sm text-red-400 absolute'>
+                                Blockchain is required
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                        {hasPublishedRoyaltySplitter ? (
+                          <div className='flex items-center mb-6'>
+                            <p className='text-sm'>
+                              Contract Address:{' '}
+                              {walletAddressTruncate(splitterAddress)}{' '}
+                            </p>
+                            <CopyToClipboard text={splitterAddress}>
+                              <button className='ml-1 w-[32px] h-[32px] rounded-[4px] flex items-center justify-center cursor-pointer text-[#A3D7EF] active:text-black'>
+                                <FontAwesomeIcon className='' icon={faCopy} />
+                              </button>
+                            </CopyToClipboard>
+                          </div>
+                        ) : null}
+                        <div className='flex items-start md:items-center justify-between pb-5 mt-4 border-b-[1px] mb-2 border-[#E3DEEA]'>
+                          <h3 className='text-[18px] font-black'>
+                            Contributor
+                          </h3>
+                          {ShowPercentError ? (
+                            <p className='text-red-400 text-[14px] mt-1'>
+                              Total percent of contributors should equal to or
+                              lesser than 100%
+                            </p>
+                          ) : null}
+                          {/* {CollectionDetail?.is_owner && data?.members?.length ? ( */}
+                          <div className='flex items-center justify-center flex-col md:flex-row'>
+                            {!hasPublishedRoyaltySplitter && (
+                              <>
+                                <div className='form-check form-switch flex items-center'>
+                                  <p className='text-[#303548] text-[12px] mr-3'>
+                                    Split Evenly
+                                  </p>
+                                  <input
+                                    className='form-check-input appearance-none w-9 rounded-full h-5 align-top bg-white bg-no-repeat bg-contain bg-gray-300 focus:outline-none cursor-pointer shadow-sm'
+                                    type='checkbox'
+                                    checked={AutoAssign}
+                                    role='switch'
+                                    onChange={handleAutoAssign}
+                                  />
+                                </div>
+                                <div
+                                  className='mint-button mt-4 md:mt-0 ml-4 text-center font-satoshi-bold w-full text-[12px] md:w-fit flex'
+                                  onClick={() => setShowImportWallet(true)}
+                                >
+                                  <Image
+                                    src={PlusIcon}
+                                    alt='add'
+                                    width={14}
+                                    height={14}
+                                  />
+                                  <span className='ml-1'>
+                                    Import Contributor
+                                  </span>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                          {/* ) : null} */}
+                        </div>{' '}
+                        <MemberListTable
+                          collection={Collection}
+                          list={royalityMembers}
+                          headers={TABLE_HEADERS}
+                          // handlePublish={setShowPublish}
+                          setIsEdit={setIsEdit}
+                          setRoyalityMembers={setRoyalityMembers}
+                          showRoyalityErrorModal={showRoyalityErrorModal}
+                          isEdit={isEdit}
+                          handleValueChange={handleValueChange}
+                          handleAutoFill={handleAutoFill}
+                          isOwner={Collection?.is_owner}
+                          isPublished={hasPublishedRoyaltySplitter}
+                        />
+                        {isPublishing && !royalityMembers.length && (
+                          <p className='text-red-400 text-sm mt-4'>
+                            Please add members to publish
+                          </p>
+                        )}
+                        <div className='w-full flex items-center justify-end gap-4 pb-10'>
+                          {!hasPublishedRoyaltySplitter && (
+                            <div>
+                              <button
+                                onClick={handleAutoFill}
+                                className='border-primary-900 border text-primary-900 p-3 font-black text-[14px]'
+                              >
+                                Save draft
+                              </button>
+                            </div>
+                          )}
+                          {!hasPublishedRoyaltySplitter && (
+                            <button
+                              className='bg-primary-100 border border-primary-100 text-primary-900 p-3 font-black text-[14px]'
+                              onClick={handlePublishSpliter}
+                              disabled={
+                                !canPublishRoyaltySplitter ||
+                                isPublishingRoyaltySplitter
+                              }
+                            >
+                              {isPublishingRoyaltySplitter
+                                ? publishRoyaltySplitterStatus === 1
+                                  ? 'Creating contract'
+                                  : 'Publishing'
+                                : 'Publish to Blockchain'}
+                            </button>
+                          )}
+                          {Collection?.status === 'draft' ||
+                          !hasPublishedRoyaltySplitter ? (
+                            <div className='token-gated-dropdown relative'>
+                              <button className='flex transition duration-150 ease-in-out  border-primary-900 border text-primary-900 p-3 font-black text-[14px]'>
+                                &#xFE19;
+                              </button>
+                              <div className='opacity-0 text-[14px] visible token-gated-dropdown-menu transition-all duration-300 transform origin-top-right -translate-y-2 scale-95'>
+                                <div className='absolute z-1 right-0 w-[120px]  origin-top-right mt-3 shadow  bg-white border outline-none'>
+                                  <ul className='py-3  flex flex-col divide-y gap-4'>
+                                    {Collection?.status === 'draft' && (
+                                      <li
+                                        className='cursor-pointer px-4'
+                                        onClick={() => detachSplitter()}
+                                      >
+                                        <i className='fa-solid fa-link-slash mr-2'></i>
+                                        Detach
+                                      </li>
+                                    )}
+                                    {!hasPublishedRoyaltySplitter && (
+                                      <li
+                                        onClick={() => deleteSplitter()}
+                                        className='cursor-pointer px-4 pt-3'
+                                      >
+                                        <i className='fa-solid fa-trash mr-2'></i>
+                                        Delete
+                                      </li>
+                                    )}
+                                  </ul>
+                                </div>
+                              </div>
+                            </div>
+                          ) : null}
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               )}
@@ -1515,6 +1963,7 @@ const CollectionContent = ({ collectionId, userId }) => {
               getCollectionDetail();
               setShowPublishRoyaltySpliterModal(false);
             }}
+            contractAddress={contractAddress}
           />
         )}
 
