@@ -596,13 +596,13 @@ const Splitter = ({
                       onChange={handleAutoAssign}
                     />
                   </div>
-                  <div
+                  {/* <div
                     className='mint-button mt-4 md:mt-0 ml-4 text-center font-satoshi-bold w-full text-[12px] md:w-fit flex'
                     onClick={() => setShowImportWallet(true)}
                   >
                     <Image src={PlusIcon} alt='add' width={12} height={12} />
                     <span className='ml-1'>Import Contributor</span>
-                  </div>
+                  </div> */}
                 </>
               )}
             </div>
