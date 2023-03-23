@@ -16,12 +16,15 @@ import {
   ls_SetChainID,
   ls_SetWalletAddress,
 } from 'util/ApplicationStorage';
-import { NETWORKS } from 'config/networks';
+import { NETWORKS, temporaryBlocked } from 'config/networks';
 import WrongNetwork from './components/WrongNetwork';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Lottie from 'react-lottie';
 import lottieJson from 'assets/lottieFiles/circle-loader.json';
+import { omit } from 'lodash';
+
+const NETWORKS_LIST = omit(NETWORKS, temporaryBlocked);
 
 const WalletConnectModal = ({
   showModal,
@@ -72,7 +75,7 @@ const WalletConnectModal = ({
             window?.ethereum
           );
           const userNetwork = await userProvider.getNetwork();
-          if (NETWORKS?.[userNetwork.chainId]) {
+          if (NETWORKS_LIST?.[userNetwork.chainId]) {
             setIsWrongNetwork(false);
             if (isConnected && account && account.length > 5) {
               setMetamaskConnectAttempt(0);

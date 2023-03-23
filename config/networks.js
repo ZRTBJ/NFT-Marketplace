@@ -179,5 +179,6 @@ const MAINNET = {
 };
 
 let NETWORKS = process.env.NEXT_PUBLIC_ENV === 'production' ? MAINNET : TESTNET;
+let temporaryBlocked = process.env.NEXT_PUBLIC_ENV === 'production' ? '1' : '';
 
-export { NETWORKS };
+export { NETWORKS, temporaryBlocked };
