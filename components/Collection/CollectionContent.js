@@ -1433,9 +1433,9 @@ const CollectionContent = ({ collectionId, userId }) => {
                 </li>
                 {Collection?.is_owner && (
                   <>
-                    {((Collection?.status !== 'published' && splitterAddress) ||
+                    {(royalitySplitterId ||
                       (Collection?.status !== 'published' &&
-                        !splitterAddress)) && (
+                        !royalitySplitterId)) && (
                       <li
                         className='mr-2'
                         role='presentation'
@@ -1796,7 +1796,7 @@ const CollectionContent = ({ collectionId, userId }) => {
                                     onChange={handleAutoAssign}
                                   />
                                 </div>
-                                <div
+                                {/* <div
                                   className='mint-button mt-4 md:mt-0 ml-4 text-center font-satoshi-bold w-full text-[12px] md:w-fit flex'
                                   onClick={() => setShowImportWallet(true)}
                                 >
@@ -1809,7 +1809,7 @@ const CollectionContent = ({ collectionId, userId }) => {
                                   <span className='ml-1'>
                                     Import Contributor
                                   </span>
-                                </div>
+                                </div> */}
                               </>
                             )}
                           </div>

@@ -75,7 +75,6 @@ const ImportWalletModal = ({
     if (files) {
       Papa.parse(files, {
         complete: function (results) {
-          console.log(results)
           const headers = results.data.find((data, index) => index === 0);
           if (
             headers.length === 2 &&
@@ -378,7 +377,7 @@ const ImportWalletModal = ({
                   <p className='text-[14px] mb-1'>
                     Get CSV template{' '}
                     <a
-                      href={'/csv/contributor-import-template.csv'}
+                      href={'/csv/contributors-import-template.csv'}
                       className='text-primary-900'
                       download
                       target='_blank'
