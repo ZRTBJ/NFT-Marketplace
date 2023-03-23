@@ -31,6 +31,8 @@ import Image from 'next/image';
 import { getWalletAccount } from 'util/MetaMask';
 import Search from 'assets/images/header/search.svg';
 import AvatarDefault from 'assets/images/avatar-default.svg';
+import { getCurrentNetworkId, handleSwitchNetwork } from 'util/MetaMask';
+import useComponentVisible from 'hooks/useComponentVisible';
 
 const LANGS = {
   'en|en': 'English',
@@ -75,6 +77,29 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const [searching, setSearching] = useState(false);
   const [pagination, setPagination] = useState([1]);
   const [page, setPage] = useState(1);
+  const [currentSelectedNetwork, setCurrentSelectedNetwork] = useState();
+
+  const { ref, setIsComponentVisible, isComponentVisible } =
+    useComponentVisible();
+
+  useEffect(() => {
+    setDefaultNetwork();
+  }, []);
+
+  let networkList = Object.values(NETWORKS);
+
+  const setDefaultNetwork = async () => {
+    let networkValue = await getCurrentNetworkId();
+    let currentNetwork = await networkList.find(
+      (network) => network.network === networkValue
+    );
+
+    setCurrentSelectedNetwork({
+      name: currentNetwork.networkName,
+      value: currentNetwork.network,
+      icon: currentNetwork.icon,
+    });
+  };
 
   useEffect(() => {
     document.addEventListener('click', handleClickedOutside);
@@ -449,6 +474,16 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     }
   }, [router]);
 
+  const handleNetworkSelection = async (data) => {
+    await handleSwitchNetwork(data.network);
+    setCurrentSelectedNetwork({
+      name: data.networkName,
+      value: data.network,
+      icon: data.icon,
+    });
+    setIsComponentVisible(false);
+  };
+
   return (
     <header className={`${isNewBg ? 'bg-[#e2ecf0]' : 'bg-[#fff]'}`}>
       <AccountChangedModal
@@ -568,6 +603,46 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                 userId ? '' : 'sm:py-2'
               }`}
             >
+              <li className='relative w-[181px]' ref={ref}>
+                <div
+                  onClick={() => setIsComponentVisible(!isComponentVisible)}
+                  className='cursor-pointer flex place-items-center rounded-2xl px-3 py-2 bg-primary-100 border-primary-900'
+                >
+                  <Image
+                    className='rounded-full border-gray-100 shadow-sm mr-2'
+                    src={currentSelectedNetwork?.icon?.src}
+                    height={18}
+                    width={18}
+                    alt='user icon'
+                  />{' '}
+                  <span className='mr-2 font-semibold'>
+                    {currentSelectedNetwork?.name}
+                  </span>
+                  <i className='fa-solid fa-angle-down'></i>
+                </div>
+                {isComponentVisible ? (
+                  <div className='absolute z-[1000] w-full overflow-hidden rounded-lg shadow-lg'>
+                    {networkList.map((list) => (
+                      <div
+                        key={list?.network}
+                        onClick={() => handleNetworkSelection(list)}
+                        className='cursor-pointer flex place-items-center px-3 py-2 bg-primary-100 border-primary-900 hover:bg-primary-400'
+                      >
+                        <Image
+                          className='rounded-full border-gray-100 shadow-sm mr-2'
+                          src={list?.icon?.src}
+                          height={18}
+                          width={18}
+                          alt='user icon'
+                        />{' '}
+                        <span className='mr-2 font-semibold'>
+                          {list?.networkName}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+              </li>
               {userinfo?.id && (
                 <>
                   <li className='relative'>

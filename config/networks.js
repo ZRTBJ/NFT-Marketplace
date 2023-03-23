@@ -18,7 +18,7 @@ const openSeaNFTDetailsUrl =
 
 const TESTNET = {
   5: {
-    networkName: 'Goerli Testnet',
+    networkName: 'Goerli',
     cryto: 'GoerliETH',
     quickNodeURL: process.env.NEXT_PUBLIC_GOERLI_QUICKNODE_URL,
     value: 'eth',
@@ -69,7 +69,7 @@ const TESTNET = {
     scanApi: `https://api.bscscan.com/api?module=gastracker&action=gasoracle&apikey=${process.env.NEXT_PUBLIC_BNB_TESTNET_SCAN}`,
   },
   80001: {
-    networkName: 'Polygon Testnet Mumbai',
+    networkName: 'Polygon Mumbai',
     cryto: 'MATIC',
     quickNodeURL: process.env.NEXT_PUBLIC_MUMBAI_QUICKNODE_URL,
     value: 'matic',
