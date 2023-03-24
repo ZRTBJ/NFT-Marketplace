@@ -33,6 +33,8 @@ import ConfirmationModal from 'components/Modals/ConfirmationModal';
 import { event } from 'nextjs-google-analytics';
 import TagManager from 'react-gtm-module';
 import WalletConnectModal from 'components/Login/WalletConnectModal';
+import { getCurrentNetworkId } from 'util/MetaMask';
+import NetworkSwitchModal from 'components/Commons/NetworkSwitchModal/NetworkSwitchModal';
 
 export default function MembershipNFT({ query }) {
   const fileUploadNotification = useSelector((state) =>
@@ -44,6 +46,7 @@ export default function MembershipNFT({ query }) {
   const dispatch = useDispatch();
   const userinfo = useSelector((state) => state.user.userinfo);
   const [isListUpdate, setIsListUpdate] = useState(false);
+  const [showNetworkSwitch, setShowNetworkSwitch] = useState(false);
   const nftList = [
     {
       tierName: '',
@@ -606,8 +609,13 @@ export default function MembershipNFT({ query }) {
           await createBlock(validateNfts);
         }
       } else {
-        setShowConnectModal(true);
-        setHoldCreateNFT(true);
+        let currentNetwork = await getCurrentNetworkId();
+        if (NETWORKS?.[currentNetwork]) {
+          setShowConnectModal(true);
+          setHoldCreateNFT(true);
+        } else {
+          setShowNetworkSwitch(true);
+        }
       }
     } else {
       setCheckedValidation(true);
@@ -1446,6 +1454,12 @@ export default function MembershipNFT({ query }) {
           redirection={`/collection/${collection_id}`}
           show={showDeleteSuccessModal}
           handleClose={() => setShowDeleteSuccessModal(false)}
+        />
+      )}
+      {showNetworkSwitch && (
+        <NetworkSwitchModal
+          show={showNetworkSwitch}
+          handleClose={() => setShowNetworkSwitch(false)}
         />
       )}
     </>

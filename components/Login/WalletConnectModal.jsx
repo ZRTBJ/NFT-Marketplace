@@ -16,15 +16,12 @@ import {
   ls_SetChainID,
   ls_SetWalletAddress,
 } from 'util/ApplicationStorage';
-import { NETWORKS, temporaryBlocked } from 'config/networks';
+import { NETWORKS } from 'config/networks';
 import WrongNetwork from './components/WrongNetwork';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Lottie from 'react-lottie';
 import lottieJson from 'assets/lottieFiles/circle-loader.json';
-import { omit } from 'lodash';
-
-const NETWORKS_LIST = omit(NETWORKS, temporaryBlocked);
 
 const WalletConnectModal = ({
   showModal,
@@ -75,26 +72,26 @@ const WalletConnectModal = ({
             window?.ethereum
           );
           const userNetwork = await userProvider.getNetwork();
-          if (NETWORKS_LIST?.[userNetwork.chainId]) {
-            setIsWrongNetwork(false);
-            if (isConnected && account && account.length > 5) {
-              setMetamaskConnectAttempt(0);
-              setMetamaskAccount(account);
-              getPersonalSign()
-                .then((signature) => {
-                  userLogin(account, signature, 'metamask');
-                })
-                .catch((error) => {
-                  // alert(error.message);
-                });
-            } else {
-              if (!isConnected && !account) {
-                window?.location.reload();
-              }
-            }
+          // if (NETWORKS_LIST?.[userNetwork.chainId]) {
+          //   setIsWrongNetwork(false);
+          if (isConnected && account && account.length > 5) {
+            setMetamaskConnectAttempt(0);
+            setMetamaskAccount(account);
+            getPersonalSign()
+              .then((signature) => {
+                userLogin(account, signature, 'metamask');
+              })
+              .catch((error) => {
+                // alert(error.message);
+              });
           } else {
-            setIsWrongNetwork(true);
+            if (!isConnected && !account) {
+              window?.location.reload();
+            }
           }
+          // } else {
+          //   setIsWrongNetwork(true);
+          // }
         }
       }
     } else {

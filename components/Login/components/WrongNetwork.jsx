@@ -1,12 +1,11 @@
 import Modal from 'components/Commons/Modal';
-import { NETWORKS, temporaryBlocked } from 'config/networks';
+import { NETWORKS } from 'config/networks';
 import { useRouter } from 'next/router';
 import { logout } from 'redux/auth';
 import { useDispatch } from 'react-redux';
 import { omit } from 'lodash';
 
-const NETWORKS_LIST = omit(NETWORKS, temporaryBlocked);
-
+const NETWORKS_LIST = NETWORKS;
 const WrongNetwork = ({ show, handleClose }) => {
   const dispatch = useDispatch();
   let router = useRouter();

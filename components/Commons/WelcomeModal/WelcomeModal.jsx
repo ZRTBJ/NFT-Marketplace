@@ -242,7 +242,11 @@ const WelcomeModal = ({ show, handleClose }) => {
             </div>
           </div>
         </div>
-        <div className='w-2/6 welcome-gradient-bg relative hidden md:block ml-[1px]'>
+        <div className='w-2/6 welcome-gradient-bg relative hidden md:block ml-[1px] relative'>
+          <i
+            onClick={handleClose}
+            class='fa-regular fa-xmark absolute right-4 top-4 text-xl cursor-pointer'
+          ></i>
           <h1 className='!text-[47px] mb-4 !leading-tight'>
             No Code DAO Creation Platform
           </h1>

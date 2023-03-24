@@ -33,6 +33,7 @@ import Search from 'assets/images/header/search.svg';
 import AvatarDefault from 'assets/images/avatar-default.svg';
 import { getCurrentNetworkId, handleSwitchNetwork } from 'util/MetaMask';
 import useComponentVisible from 'hooks/useComponentVisible';
+import ReactTooltip from 'react-tooltip';
 
 const LANGS = {
   'en|en': 'English',
@@ -95,9 +96,9 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     );
 
     setCurrentSelectedNetwork({
-      name: currentNetwork.networkName,
-      value: currentNetwork.network,
-      icon: currentNetwork.icon,
+      name: currentNetwork?.networkName,
+      value: currentNetwork?.network,
+      icon: currentNetwork?.icon,
     });
   };
 
@@ -210,13 +211,16 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
         setNetworkChangeDetected(true);
         setNetworkId(networkId);
         ls_SetChainID(networkId);
+        setDefaultNetwork();
         if (NETWORKS[networkId]) {
           toast.success(
             `Your network got changed to ${NETWORKS?.[networkId]?.networkName}`,
             { toastId: 'network-change-deduction' }
           );
         } else {
-          setShowNetworkChanged(true);
+          toast.error(`Your network got changed to an unsupported network`, {
+            toastId: 'network-change-deduction-error',
+          });
         }
       });
     }
@@ -232,8 +236,8 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     if (!networkChangeDetected && networkId && localChainId) {
       if (Number(networkId) !== Number(localChainId)) {
         dispatch(logout());
-        router.push('/');
-        window?.location.reload();
+        setNetworkId(networkId);
+        ls_SetChainID(networkId);
       }
     }
   }, [networkId, localChainId]);
@@ -248,7 +252,10 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
 
         if (localAccountAddress && account) {
           if (localAccountAddress !== account) {
-            setShowAccountChanged(true);
+            // setShowAccountChanged(true);
+            dispatch(logout());
+            router.push('/');
+            window?.location.reload();
           }
         }
       }
@@ -267,7 +274,8 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
         accounts.length > 0 &&
         accounts[0] != ls_GetWalletAddress()
       ) {
-        setShowAccountChanged(true);
+        // setShowAccountChanged(true);
+        setShowModal(true);
       }
     });
   }, []);
@@ -475,21 +483,25 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   }, [router]);
 
   const handleNetworkSelection = async (data) => {
-    await handleSwitchNetwork(data.network);
-    setCurrentSelectedNetwork({
-      name: data.networkName,
-      value: data.network,
-      icon: data.icon,
-    });
-    setIsComponentVisible(false);
+    if (data?.network !== currentSelectedNetwork?.value) {
+      await handleSwitchNetwork(data.network);
+      setCurrentSelectedNetwork({
+        name: data.networkName,
+        value: data.network,
+        icon: data.icon,
+      });
+      setIsComponentVisible(false);
+    } else {
+      setIsComponentVisible(false);
+    }
   };
 
   return (
     <header className={`${isNewBg ? 'bg-[#e2ecf0]' : 'bg-[#fff]'}`}>
-      <AccountChangedModal
+      {/* <AccountChangedModal
         show={showAccountChanged}
         handleClose={() => setShowAccountChanged(false)}
-      />
+      /> */}
       <NetworkChangedModal
         show={showNetworkChanged}
         handleClose={() => setShowNetworkChanged(false)}
@@ -604,21 +616,47 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
               }`}
             >
               <li className='relative w-[181px]' ref={ref}>
+                {!currentSelectedNetwork?.name ? (
+                  <ReactTooltip type='info' effect='solid' />
+                ) : null}
                 <div
+                  data-tip={
+                    currentSelectedNetwork?.name
+                      ? ''
+                      : 'You have selected/connected with an unsupported network. Please select a supported network from the dropdown'
+                  }
                   onClick={() => setIsComponentVisible(!isComponentVisible)}
-                  className='cursor-pointer flex place-items-center rounded-2xl px-3 py-2 bg-primary-100 border-primary-900'
+                  className={`cursor-pointer flex place-items-center rounded-2xl px-3 py-2 border-primary-900 ${
+                    currentSelectedNetwork?.name
+                      ? 'bg-primary-100'
+                      : 'bg-red-100'
+                  }`}
                 >
-                  <Image
-                    className='rounded-full border-gray-100 shadow-sm mr-2'
-                    src={currentSelectedNetwork?.icon?.src}
-                    height={18}
-                    width={18}
-                    alt='user icon'
-                  />{' '}
-                  <span className='mr-2 font-semibold'>
-                    {currentSelectedNetwork?.name}
+                  {currentSelectedNetwork?.icon?.src ? (
+                    <Image
+                      className='rounded-full border-gray-100 shadow-sm mr-2'
+                      src={currentSelectedNetwork.icon.src}
+                      height={18}
+                      width={18}
+                      alt='user icon'
+                    />
+                  ) : (
+                    <i class='fa-solid fa-triangle-exclamation mr-2 text-red-400'></i>
+                  )}{' '}
+                  <span
+                    className={`mr-2 font-semibold ${
+                      !currentSelectedNetwork?.name ? 'text-red-400' : ''
+                    }`}
+                  >
+                    {currentSelectedNetwork?.name
+                      ? currentSelectedNetwork.name
+                      : 'Unsupported'}
                   </span>
-                  <i className='fa-solid fa-angle-down'></i>
+                  <i
+                    className={`fa-solid fa-angle-down ml-auto ${
+                      !currentSelectedNetwork?.name ? 'text-red-400' : ''
+                    }`}
+                  ></i>
                 </div>
                 {isComponentVisible ? (
                   <div className='absolute z-[1000] w-full overflow-hidden rounded-lg shadow-lg'>

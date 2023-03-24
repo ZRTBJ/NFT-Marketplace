@@ -34,6 +34,8 @@ import { event } from 'nextjs-google-analytics';
 import TagManager from 'react-gtm-module';
 import WalletConnectModal from 'components/Login/WalletConnectModal';
 import { DebounceInput } from 'react-debounce-input';
+import { getCurrentNetworkId } from 'util/MetaMask';
+import NetworkSwitchModal from 'components/Commons/NetworkSwitchModal/NetworkSwitchModal';
 
 export default function ProductNFT({ query }) {
   const audioRef = useRef();
@@ -85,6 +87,7 @@ export default function ProductNFT({ query }) {
   const [options, setOptions] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDeleteSuccessModal, setShowDeleteSuccessModal] = useState(false);
+  const [showNetworkSwitch, setShowNetworkSwitch] = useState(false);
 
   const {
     register,
@@ -297,8 +300,13 @@ export default function ProductNFT({ query }) {
             }
           }
         } else {
-          setShowConnectModal(true);
-          setHoldCreateNFT(true);
+          let currentNetwork = await getCurrentNetworkId();
+          if (NETWORKS?.[currentNetwork]) {
+            setShowConnectModal(true);
+            setHoldCreateNFT(true);
+          } else {
+            setShowNetworkSwitch(true);
+          }
         }
       }
     } else {
@@ -1227,6 +1235,12 @@ export default function ProductNFT({ query }) {
             showModal={showConnectModal}
             noRedirection={true}
             closeModal={() => setShowConnectModal(false)}
+          />
+        )}
+        {showNetworkSwitch && (
+          <NetworkSwitchModal
+            show={showNetworkSwitch}
+            handleClose={() => setShowNetworkSwitch(false)}
           />
         )}
       </>

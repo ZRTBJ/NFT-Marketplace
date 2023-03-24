@@ -4,17 +4,30 @@ import Image from 'next/image';
 import Link from 'next/link';
 import MaintainDaoCommunitySteps from 'components/LandingPage/components/MaintainDaoCommunitySteps';
 import { NETWORKS } from 'config/networks';
-export default function DaoTable({ tableData }) {
+import { getCurrentNetworkId } from 'util/MetaMask';
+import { useRouter } from 'next/router';
+
+export default function DaoTable({ tableData, setSwitchNetwork }) {
+  const router = useRouter();
+  const handleNavigation = async () => {
+    let currentNetwork = await getCurrentNetworkId();
+    if (NETWORKS?.[currentNetwork]) {
+      router.push(`/dao/create`);
+    } else {
+      setSwitchNetwork(true);
+    }
+  };
+
   return (
     <>
       <div className='flex items-center gap-4 flex-wrap my-3'>
         <p className='textSubtle-100 text-[20px] font-black '>DAO Community</p>
-        <Link
-          href={`/dao/create`}
+        <button
           className='contained-button rounded ml-auto !text-white'
+          onClick={handleNavigation}
         >
           Create DAO
-        </Link>
+        </button>
       </div>
       <div className='relative gradient-border-new pt-5  md:h-[670px] custom-scrollbar hover:overflow-y-auto overflow-y-hidden'>
         <div className='mb-5'>

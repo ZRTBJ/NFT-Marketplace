@@ -57,6 +57,9 @@ import SplitterBanner from 'components/LandingPage/components/SplitterBanner';
 import { getSplitterList } from 'services/collection/collectionService';
 import ReactPaginate from 'react-paginate';
 import SplitterTable from './components/SplitterTable';
+import { NETWORKS } from 'config/networks';
+import { getCurrentNetworkId } from 'util/MetaMask';
+import NetworkSwitchModal from 'components/Commons/NetworkSwitchModal/NetworkSwitchModal';
 
 const nftUseCase = {
   usedFor: 'NFTs',
@@ -191,6 +194,7 @@ const Profile = ({ id }) => {
   const [splitterList, setSplitterList] = useState([]);
   const [isSplitterLoading, setIsSplitterLoading] = useState(true);
   const [isEditSplitter, setIsEditSplitter] = useState(null);
+  const [switchNetwork, setSwitchNetwork] = useState(false);
 
   // function start
   async function userInfo() {
@@ -314,29 +318,35 @@ const Profile = ({ id }) => {
     setTokenGatedLoading(false);
   }
   const onCreateTokenGatedProject = async () => {
-    event('create_token_gate_project', { category: 'token_gate' });
-    TagManager.dataLayer({
-      dataLayer: {
-        event: 'click_event',
-        category: 'token_gate',
-        pageTitle: 'create_token_gate_project',
-      },
-    });
-    setShowOverlayLoading(true);
-    let title = `Unnamed Project ${new Date().toISOString()}`;
-    await createTokenGatedProject(title)
-      .then((res) => {
-        setShowOverlayLoading(false);
-        if (res.code === 0) {
-          router.push(`/token-gated/${res?.token_gate_project?.id}`);
-        } else {
-          toast.error(`Failed, ${res?.message}`);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        setShowOverlayLoading(false);
+    let currentNetwork = await getCurrentNetworkId();
+    if (NETWORKS?.[currentNetwork]) {
+      setSwitchNetwork(false);
+      event('create_token_gate_project', { category: 'token_gate' });
+      TagManager.dataLayer({
+        dataLayer: {
+          event: 'click_event',
+          category: 'token_gate',
+          pageTitle: 'create_token_gate_project',
+        },
       });
+      setShowOverlayLoading(true);
+      let title = `Unnamed Project ${new Date().toISOString()}`;
+      await createTokenGatedProject(title)
+        .then((res) => {
+          setShowOverlayLoading(false);
+          if (res.code === 0) {
+            router.push(`/token-gated/${res?.token_gate_project?.id}`);
+          } else {
+            toast.error(`Failed, ${res?.message}`);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          setShowOverlayLoading(false);
+        });
+    } else {
+      setSwitchNetwork(true);
+    }
   };
   const onUserRevenueGet = async () => {
     await getUserRevenue(id)
@@ -449,7 +459,7 @@ const Profile = ({ id }) => {
         )}
         {id && (
           <>
-            <OnBoardingGuide />
+            <OnBoardingGuide setSwitchNetwork={setSwitchNetwork} />
             <div className='w-full px-4 mt-10 pb-10 md:max-w-[1100px] mx-auto'>
               <UserBasicInfo userInfo={user} sncList={sncList} />
               <BalanceInfo balanceInfo={balanceInfo} userInfo={user} />
@@ -522,16 +532,30 @@ const Profile = ({ id }) => {
               <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                 <div>
                   {collectionList?.length === 0 ? (
-                    <CreateNFTCard size='lg' />
+                    <CreateNFTCard
+                      size='lg'
+                      setSwitchNetwork={setSwitchNetwork}
+                    />
                   ) : (
-                    <CollectionTable userId={id} tableData={collectionList} />
+                    <CollectionTable
+                      userId={id}
+                      tableData={collectionList}
+                      setSwitchNetwork={setSwitchNetwork}
+                    />
                   )}
                 </div>
                 <div>
                   {projectList?.length === 0 ? (
-                    <BuildDaoCard size='lg' />
+                    <BuildDaoCard
+                      size='lg'
+                      setSwitchNetwork={setSwitchNetwork}
+                    />
                   ) : (
-                    <DaoTable userId={id} tableData={projectList} />
+                    <DaoTable
+                      userId={id}
+                      tableData={projectList}
+                      setSwitchNetwork={setSwitchNetwork}
+                    />
                   )}
                 </div>
               </div>
@@ -603,10 +627,11 @@ const Profile = ({ id }) => {
               {/* splitter start */}
               <div className='px-4 pb-10'>
                 {splitterList?.length === 0 ? (
-                  <SplitterBanner />
+                  <SplitterBanner setSwitchNetwork={setSwitchNetwork} />
                 ) : (
                   <div>
                     <SplitterTable
+                      setSwitchNetwork={setSwitchNetwork}
                       data={splitterList}
                       isLoading={isSplitterLoading}
                       setIsEditSplitter={setIsEditSplitter}
@@ -659,6 +684,12 @@ const Profile = ({ id }) => {
           handleClose={() => onSplitterModalClose()}
           splitterId={isEditSplitter}
           onGetSplitterList={onGetSplitterList}
+        />
+      )}
+      {switchNetwork && (
+        <NetworkSwitchModal
+          show={switchNetwork}
+          handleClose={() => setSwitchNetwork(false)}
         />
       )}
     </>

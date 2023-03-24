@@ -98,33 +98,33 @@ const TESTNET = {
 };
 
 const MAINNET = {
-  1: {
-    networkName: 'Ethereum Mainnet',
-    crypto: 'ETH',
-    quickNodeURL: process.env.NEXT_PUBLIC_ETHEREUM_QUICKNODE_URL,
-    value: 'eth',
-    label: 'ETH',
-    icon: Eth,
-    forwarder: address.MinimalForwarderEthereum,
-    webhook: process.env.NEXT_PUBLIC_WEBHOOK_URL_ETHEREUM,
-    genericProxyFacotory: address.GenericProxyFactoryEthereum,
-    masterCopyDAO: address.CreatorDAOMasterCopyEthereum,
-    masterCopyCollection: address.CreateCollectionMasterCopyEthereum,
-    masterMembershipCollection:
-      address.CreateMembershipCollectionMasterCopyEthereum,
-    masterRoyaltySplitter: address.RoyaltySplitterMasterCopyEthereum,
-    network: 1,
-    gnosis: `${gnosisFundTransferUrl}/eth`,
-    raribleNFTDetailsUrl: raribleNFTDetailsUrl,
-    openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/ethereum/`,
-    viewContractAddressUrl: `https://etherscan.io/address/`,
-    viewTxUrl: 'https://etherscan.io/tx/',
-    decirTreasury: address.decirTreasuryEthereum,
-    discount: address.discountEthereum,
-    scan: EthScan,
-    alchamey: process.env.NEXT_PUBLIC_ETHEREUM_NFT_ALCHEMY_URL,
-    scanApi: `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${process.env.NEXT_PUBLIC_ETHEREUM_SCAN}`,
-  },
+  // 1: {
+  //   networkName: 'Ethereum Mainnet',
+  //   crypto: 'ETH',
+  //   quickNodeURL: process.env.NEXT_PUBLIC_ETHEREUM_QUICKNODE_URL,
+  //   value: 'eth',
+  //   label: 'ETH',
+  //   icon: Eth,
+  //   forwarder: address.MinimalForwarderEthereum,
+  //   webhook: process.env.NEXT_PUBLIC_WEBHOOK_URL_ETHEREUM,
+  //   genericProxyFacotory: address.GenericProxyFactoryEthereum,
+  //   masterCopyDAO: address.CreatorDAOMasterCopyEthereum,
+  //   masterCopyCollection: address.CreateCollectionMasterCopyEthereum,
+  //   masterMembershipCollection:
+  //     address.CreateMembershipCollectionMasterCopyEthereum,
+  //   masterRoyaltySplitter: address.RoyaltySplitterMasterCopyEthereum,
+  //   network: 1,
+  //   gnosis: `${gnosisFundTransferUrl}/eth`,
+  //   raribleNFTDetailsUrl: raribleNFTDetailsUrl,
+  //   openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/ethereum/`,
+  //   viewContractAddressUrl: `https://etherscan.io/address/`,
+  //   viewTxUrl: 'https://etherscan.io/tx/',
+  //   decirTreasury: address.decirTreasuryEthereum,
+  //   discount: address.discountEthereum,
+  //   scan: EthScan,
+  //   alchamey: process.env.NEXT_PUBLIC_ETHEREUM_NFT_ALCHEMY_URL,
+  //   scanApi: `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${process.env.NEXT_PUBLIC_ETHEREUM_SCAN}`,
+  // },
   137: {
     networkName: 'Polygon Mainnet',
     crypto: 'MATIC',
@@ -179,6 +179,5 @@ const MAINNET = {
 };
 
 let NETWORKS = process.env.NEXT_PUBLIC_ENV === 'production' ? MAINNET : TESTNET;
-let temporaryBlocked = process.env.NEXT_PUBLIC_ENV === 'production' ? '1' : '';
 
-export { NETWORKS, temporaryBlocked };
+export { NETWORKS };

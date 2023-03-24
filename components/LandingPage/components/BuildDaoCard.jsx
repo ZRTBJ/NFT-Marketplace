@@ -4,15 +4,19 @@ import frame from 'assets/images/profile/daoFrame.svg';
 import WalletConnectModal from 'components/Login/WalletConnectModal';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
-export default function BuildDaoCard({ size }) {
+import { NETWORKS } from 'config/networks';
+import { getCurrentNetworkId } from 'util/MetaMask';
+
+export default function BuildDaoCard({ size, setSwitchNetwork }) {
   const router = useRouter();
   const userinfo = useSelector((state) => state.user.userinfo);
   const [showWalletConnectModal, setShowWalletConnectModal] = useState(false);
   const handelOnClick = async () => {
-    // if (userinfo?.id) {
+    // let currentNetwork = await getCurrentNetworkId();
+    // if (NETWORKS?.[currentNetwork]) {
     router.push(`/dao/create`);
     // } else {
-    //   setShowWalletConnectModal(true);
+    //   setSwitchNetwork(true);
     // }
   };
   return (

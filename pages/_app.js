@@ -24,6 +24,10 @@ import Maintenance from 'components/Commons/Maintenance';
 import { GoogleAnalytics } from 'nextjs-google-analytics';
 import FloatingContactForm from 'components/Commons/FloatingContactForm';
 import TagManager from 'react-gtm-module';
+import Link from 'next/link';
+import { IS_PRODUCTION } from 'config/config';
+import { NETWORKS } from 'config/networks';
+import { getCurrentNetworkId } from 'util/MetaMask';
 
 dynamic(() => import('tw-elements'), { ssr: false });
 
@@ -37,13 +41,36 @@ function MyApp({ Component, pageProps }) {
   const [isContentView, setIsContentView] = useState(false);
   const [isTokenGatedProjectPublicView, setIsTokenGatedProjectPublicView] =
     useState(false);
+  const [isWrongNetwork, setIsWrongNetwork] = useState(false);
   const router = useRouter();
+
+  /** Metamask network change detection */
+  useEffect(() => {
+    if (window?.ethereum) {
+      window?.ethereum?.on('networkChanged', function (networkId) {
+        getCurrentNetwork();
+      });
+    }
+  }, []);
 
   useEffect(() => {
     TagManager.initialize({
       gtmId: process.env.NEXT_PUBLIC_GOOGLE_TAG_KEY,
     });
   }, []);
+
+  useEffect(() => {
+    getCurrentNetwork();
+  }, []);
+
+  const getCurrentNetwork = async () => {
+    let networkValue = await getCurrentNetworkId();
+    if (NETWORKS?.[networkValue]) {
+      setIsWrongNetwork(false);
+    } else {
+      setIsWrongNetwork(true);
+    }
+  };
 
   useEffect(() => {
     const use = async () => {
@@ -109,6 +136,41 @@ function MyApp({ Component, pageProps }) {
             ) : (
               <Auth>
                 <div className='bg-light'>
+                  {isWrongNetwork ? (
+                    <div className='bg-red-500 text-white py-1 relative'>
+                      <p className='text-center'>
+                        You're viewing {IS_PRODUCTION ? 'Main' : 'test'}{' '}
+                        network, but your wallet is connected to the{' '}
+                        {IS_PRODUCTION ? 'test' : 'main'} or unsupported
+                        network. To use Decir, either switch to a supported
+                        network or go to{' '}
+                        {IS_PRODUCTION ? (
+                          <Link
+                            href={'https://testnet.decir.io/'}
+                            passHref
+                            target={'_blank'}
+                            className='underline'
+                          >
+                            testnet.decir.io
+                          </Link>
+                        ) : (
+                          <Link
+                            href={'https://app.decir.io/'}
+                            passHref
+                            target={'_blank'}
+                            className='underline'
+                          >
+                            app.decir.io
+                          </Link>
+                        )}{' '}
+                        .
+                        <i
+                          onClick={() => setIsWrongNetwork(false)}
+                          class='fa-solid fa-xmark-large text-right cursor-pointer text-sm absolute right-2 bottom-2'
+                        ></i>
+                      </p>
+                    </div>
+                  ) : null}
                   <main
                     className='container min-h-[calc(100vh-71px)]'
                     style={{ width: '100%', maxWidth: '100%' }}
