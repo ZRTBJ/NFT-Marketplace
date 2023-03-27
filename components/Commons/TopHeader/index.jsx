@@ -483,16 +483,21 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   }, [router]);
 
   const handleNetworkSelection = async (data) => {
-    if (data?.network !== currentSelectedNetwork?.value) {
-      await handleSwitchNetwork(data.network);
-      setCurrentSelectedNetwork({
-        name: data.networkName,
-        value: data.network,
-        icon: data.icon,
-      });
+    try {
+      if (data?.network !== currentSelectedNetwork?.value) {
+        await handleSwitchNetwork(data.network);
+        setCurrentSelectedNetwork({
+          name: data?.networkName,
+          value: data?.network,
+          icon: data?.icon,
+        });
+        setIsComponentVisible(false);
+      } else {
+        setIsComponentVisible(false);
+      }
+    } catch (err) {
       setIsComponentVisible(false);
-    } else {
-      setIsComponentVisible(false);
+      return;
     }
   };
 
@@ -734,7 +739,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                     >
                       <i className='fa-solid fa-angle-down'></i>
                     </button>
-                    <div className='ml-3' id='google_translate_element'></div>
+                    {/* <div className='ml-3' id='google_translate_element'></div> */}
                   </div>
                 )}
               </li>
