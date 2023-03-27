@@ -130,8 +130,12 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
         </div>
       )}
       <div className='p-4'>
+        <div className='flex items-center justify-between mb-4'>
+          <p>Language</p>
+          <LanguageChanger />
+        </div>
         {userinfo?.id && (
-          <div className='flex items-center justify-between mb-4'>
+          <div className='flex items-center justify-between'>
             <p>Log Out</p>
             <div
               onClick={handleLogout}
@@ -141,10 +145,6 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
             </div>
           </div>
         )}
-        <div className='flex items-center justify-between'>
-          <p>Language</p>
-          <LanguageChanger />
-        </div>
       </div>
     </div>
   );

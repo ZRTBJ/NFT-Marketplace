@@ -632,19 +632,25 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                       : 'bg-red-100'
                   }`}
                 >
-                  <Image
-                    className='rounded-full border-gray-100 shadow-sm mr-2'
-                    src={
-                      currentSelectedNetwork?.icon?.src
-                        ? currentSelectedNetwork?.icon?.src
-                        : AvatarDefault
-                    }
-                    height={18}
-                    width={18}
-                    alt='user icon'
-                  />{' '}
-                  <span className='mr-2 font-semibold'>
-                    {currentSelectedNetwork?.name}
+                  {currentSelectedNetwork?.icon?.src ? (
+                    <Image
+                      className='rounded-full border-gray-100 shadow-sm mr-2'
+                      src={currentSelectedNetwork.icon.src}
+                      height={18}
+                      width={18}
+                      alt='user icon'
+                    />
+                  ) : (
+                    <i class='fa-solid fa-triangle-exclamation mr-2 text-red-400'></i>
+                  )}{' '}
+                  <span
+                    className={`mr-2 font-semibold ${
+                      !currentSelectedNetwork?.name ? 'text-red-400' : ''
+                    }`}
+                  >
+                    {currentSelectedNetwork?.name
+                      ? currentSelectedNetwork.name
+                      : 'Unsupported'}
                   </span>
                   <i
                     className={`fa-solid fa-angle-down ml-auto ${
