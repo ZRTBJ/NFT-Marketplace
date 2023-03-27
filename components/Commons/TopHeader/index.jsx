@@ -528,6 +528,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
           <></>
         )}
       </div>
+      {/* for dekstop */}
       <nav className='pl-5 pr-7 hidden md:block lg:pl-10 lg:pr-12'>
         <div className='flex justify-between items-center min-h-[71px]'>
           <div className='flex items-center'>
@@ -608,7 +609,6 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
               </div>
             ) : null}
           </div>
-
           <div className='flex items-center' id='mobile-menu'>
             <ul
               className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${
@@ -632,25 +632,19 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                       : 'bg-red-100'
                   }`}
                 >
-                  {currentSelectedNetwork?.icon?.src ? (
-                    <Image
-                      className='rounded-full border-gray-100 shadow-sm mr-2'
-                      src={currentSelectedNetwork.icon.src}
-                      height={18}
-                      width={18}
-                      alt='user icon'
-                    />
-                  ) : (
-                    <i class='fa-solid fa-triangle-exclamation mr-2 text-red-400'></i>
-                  )}{' '}
-                  <span
-                    className={`mr-2 font-semibold ${
-                      !currentSelectedNetwork?.name ? 'text-red-400' : ''
-                    }`}
-                  >
-                    {currentSelectedNetwork?.name
-                      ? currentSelectedNetwork.name
-                      : 'Unsupported'}
+                  <Image
+                    className='rounded-full border-gray-100 shadow-sm mr-2'
+                    src={
+                      currentSelectedNetwork?.icon?.src
+                        ? currentSelectedNetwork?.icon?.src
+                        : AvatarDefault
+                    }
+                    height={18}
+                    width={18}
+                    alt='user icon'
+                  />{' '}
+                  <span className='mr-2 font-semibold'>
+                    {currentSelectedNetwork?.name}
                   </span>
                   <i
                     className={`fa-solid fa-angle-down ml-auto ${
@@ -681,9 +675,9 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                   </div>
                 ) : null}
               </li>
-              {userinfo?.id && (
-                <>
-                  <li className='relative'>
+              <li className='relative'>
+                {userinfo?.id ? (
+                  <>
                     <div
                       className='cp'
                       onClick={(e) => {
@@ -715,24 +709,26 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                         </div>
                       )}
                     </div>
-                  </li>
-                </>
-              )}
-
-              <li className='md:ml-2'>
-                {userinfo?.id ? (
-                  <div className='flex space-x-2 items-center'>
-                    <div id='google_translate_element'></div>
-                  </div>
+                  </>
                 ) : (
                   <div className='flex items-center'>
                     <button
                       onClick={() => setShowModal(true)}
-                      className={`flex place-items-center ${styles.walletInfo} !w-auto contained-button-new`}
+                      className={`flex place-items-center ${styles.walletInfo} !w-auto contained-button-new rounded-tr-none rounded-br-none`}
                     >
                       <span className='font-bold ml-2'>Connect Wallet</span>
                     </button>
-                    <div id='google_translate_element' className='ml-3'></div>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        showHideUserPopupWallet();
+                      }}
+                      className={`flex place-items-center bg-white p-3 rounded-[0.5rem] border border-secondary-900 w-auto  rounded-tl-none rounded-bl-none`}
+                    >
+                      <i className='fa-solid fa-angle-down'></i>
+                    </button>
+                    <div className='ml-3' id='google_translate_element'></div>
                   </div>
                 )}
               </li>
@@ -740,6 +736,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
           </div>
         </div>
       </nav>
+      {/* for mobile */}
       <nav className='block md:hidden'>
         <div className='h-[56px] p-4 flex items-center justify-between'>
           <Image src={barImage} alt='Menu' onClick={handleSidebar} />
