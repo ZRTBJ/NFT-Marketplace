@@ -649,9 +649,7 @@ export default function Outline({
               >
                 {networkName}
               </option> */}
-              <option disabled value={''}>
-                Select Blockchain
-              </option>
+              <option value={''}>Select Blockchain</option>
               {availableNetworks.map((network) => (
                 <option key={network.network} value={network.network}>
                   {network.networkName}

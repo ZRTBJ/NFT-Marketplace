@@ -35,7 +35,6 @@ import TagManager from 'react-gtm-module';
 import WalletConnectModal from 'components/Login/WalletConnectModal';
 import { getCurrentNetworkId } from 'util/MetaMask';
 import NetworkSwitchModal from 'components/Commons/NetworkSwitchModal/NetworkSwitchModal';
-import CollectionCreateModal from 'components/Collection/CollectionCreate/CollectionCreateModal';
 
 export default function MembershipNFT({ query }) {
   const fileUploadNotification = useSelector((state) =>
@@ -112,8 +111,6 @@ export default function MembershipNFT({ query }) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDeleteSuccessModal, setShowDeleteSuccessModal] = useState(false);
   const [showConnectModal, setShowConnectModal] = useState(false);
-  const [showCollectionCreateModal, setShowCollectionCreateModal] =
-    useState(true);
 
   useEffect(() => {
     if (holdCreateNFT) {
@@ -1463,12 +1460,6 @@ export default function MembershipNFT({ query }) {
         <NetworkSwitchModal
           show={showNetworkSwitch}
           handleClose={() => setShowNetworkSwitch(false)}
-        />
-      )}
-      {showCollectionCreateModal && (
-        <CollectionCreateModal
-          show={showCollectionCreateModal}
-          handleClose={() => setShowCollectionCreateModal(false)}
         />
       )}
     </>
