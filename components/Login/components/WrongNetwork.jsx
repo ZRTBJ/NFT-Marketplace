@@ -3,7 +3,9 @@ import { NETWORKS } from 'config/networks';
 import { useRouter } from 'next/router';
 import { logout } from 'redux/auth';
 import { useDispatch } from 'react-redux';
+import { omit } from 'lodash';
 
+const NETWORKS_LIST = NETWORKS;
 const WrongNetwork = ({ show, handleClose }) => {
   const dispatch = useDispatch();
   let router = useRouter();
@@ -18,7 +20,8 @@ const WrongNetwork = ({ show, handleClose }) => {
     handleClose();
   };
 
-  let networks = Object.values(NETWORKS);
+  let networks = Object.values(NETWORKS_LIST);
+
   return (
     <Modal
       show={show}
@@ -28,7 +31,7 @@ const WrongNetwork = ({ show, handleClose }) => {
     >
       <div className='text-center'>
         <p className='text-lg word-break'>
-          The selected network in your Metmask wallet is not supported by our
+          The selected network in your Metamask wallet is not supported by our
           application. Please select any one of the following network in
           Metamask and try again.
         </p>

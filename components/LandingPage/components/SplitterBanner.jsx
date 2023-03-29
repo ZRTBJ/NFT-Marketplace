@@ -8,12 +8,22 @@ import step1 from 'assets/images/profile/splitter/step1.png';
 import step2 from 'assets/images/profile/splitter/step2.png';
 import step3 from 'assets/images/profile/splitter/step3.png';
 import step4 from 'assets/images/profile/splitter/step4.png';
+import { NETWORKS } from 'config/networks';
+import { getCurrentNetworkId } from 'util/MetaMask';
 
-export default function SplitterBanner({ setShowCreateSplitter }) {
+export default function SplitterBanner({
+  setShowCreateSplitter,
+  setSwitchNetwork,
+}) {
   const [showHelperModal, setShowHelperModal] = useState(false);
 
   const handelOnClick = async () => {
+    // let currentNetwork = await getCurrentNetworkId();
+    // if (NETWORKS?.[currentNetwork]) {
     setShowHelperModal(true);
+    // } else {
+    //   setSwitchNetwork(true);
+    // }
   };
 
   const onCreateSplitter = () => {

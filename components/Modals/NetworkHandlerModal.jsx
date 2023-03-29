@@ -44,7 +44,9 @@ const NetworkHandlerModal = ({
         <p className='break-normal'>
           Your current wallet network is{' '}
           <span className='text-primary-900'>
-            {NETWORKS?.[currentNetwork]?.networkName}
+            {NETWORKS?.[currentNetwork]?.networkName
+              ? NETWORKS[currentNetwork].networkName
+              : 'Unsupported'}
           </span>
           . But, the current {type} supports only{' '}
           <span className='text-primary-900'>

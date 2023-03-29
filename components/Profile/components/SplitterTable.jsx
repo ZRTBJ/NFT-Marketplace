@@ -5,13 +5,23 @@ import Link from 'next/link';
 import { walletAddressTruncate } from 'util/WalletUtils';
 import { NETWORKS } from 'config/networks';
 import Spinner from 'components/Commons/Spinner';
+import { getCurrentNetworkId } from 'util/MetaMask';
 
 export default function SplitterTable({
   data,
   isLoading,
   setShowCreateSplitter,
   setIsEditSplitter,
+  setSwitchNetwork,
 }) {
+  const handleShowCreateSplitter = async () => {
+    let currentNetwork = await getCurrentNetworkId();
+    if (NETWORKS?.[currentNetwork]) {
+      setShowCreateSplitter(true);
+    } else {
+      setSwitchNetwork(true);
+    }
+  };
   return (
     <>
       <div className='pt-20'>
@@ -20,7 +30,7 @@ export default function SplitterTable({
             Royalty Splitter
           </p>
           <button
-            onClick={() => setShowCreateSplitter(true)}
+            onClick={handleShowCreateSplitter}
             className=' gradient-text-deep-pueple font-black border w-[160px] text-center h-[40px] rounded-lg border-secondary-900'
           >
             <i className=' mr-2 fa-solid fa-plus'></i>

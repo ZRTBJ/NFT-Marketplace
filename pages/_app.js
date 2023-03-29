@@ -24,6 +24,10 @@ import Maintenance from 'components/Commons/Maintenance';
 import { GoogleAnalytics } from 'nextjs-google-analytics';
 import FloatingContactForm from 'components/Commons/FloatingContactForm';
 import TagManager from 'react-gtm-module';
+import Link from 'next/link';
+import { NETWORKS } from 'config/networks';
+import { getCurrentNetworkId } from 'util/MetaMask';
+import WarningBar from 'components/Commons/WarningBar/WarningBar';
 
 dynamic(() => import('tw-elements'), { ssr: false });
 
@@ -37,13 +41,39 @@ function MyApp({ Component, pageProps }) {
   const [isContentView, setIsContentView] = useState(false);
   const [isTokenGatedProjectPublicView, setIsTokenGatedProjectPublicView] =
     useState(false);
+  const [currentNetwork, setCurrentNetwork] = useState();
+  const [isWrongNetwork, setIsWrongNetwork] = useState(false);
   const router = useRouter();
+
+  /** Metamask network change detection */
+  useEffect(() => {
+    if (window?.ethereum) {
+      window?.ethereum?.on('networkChanged', function (networkId) {
+        getCurrentNetwork();
+        setCurrentNetwork(networkId);
+      });
+    }
+  }, []);
 
   useEffect(() => {
     TagManager.initialize({
       gtmId: process.env.NEXT_PUBLIC_GOOGLE_TAG_KEY,
     });
   }, []);
+
+  useEffect(() => {
+    getCurrentNetwork();
+  }, []);
+
+  const getCurrentNetwork = async () => {
+    let networkValue = await getCurrentNetworkId();
+    setCurrentNetwork(networkValue);
+    if (NETWORKS?.[networkValue] && networkValue !== 1) {
+      setIsWrongNetwork(false);
+    } else {
+      setIsWrongNetwork(true);
+    }
+  };
 
   useEffect(() => {
     const use = async () => {
@@ -109,6 +139,12 @@ function MyApp({ Component, pageProps }) {
             ) : (
               <Auth>
                 <div className='bg-light'>
+                  {isWrongNetwork ? (
+                    <WarningBar
+                      setIsWrongNetwork={setIsWrongNetwork}
+                      currentNetwork={currentNetwork}
+                    />
+                  ) : null}
                   <main
                     className='container min-h-[calc(100vh-71px)]'
                     style={{ width: '100%', maxWidth: '100%' }}

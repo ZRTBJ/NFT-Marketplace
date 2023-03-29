@@ -72,26 +72,26 @@ const WalletConnectModal = ({
             window?.ethereum
           );
           const userNetwork = await userProvider.getNetwork();
-          if (NETWORKS?.[userNetwork.chainId]) {
-            setIsWrongNetwork(false);
-            if (isConnected && account && account.length > 5) {
-              setMetamaskConnectAttempt(0);
-              setMetamaskAccount(account);
-              getPersonalSign()
-                .then((signature) => {
-                  userLogin(account, signature, 'metamask');
-                })
-                .catch((error) => {
-                  // alert(error.message);
-                });
-            } else {
-              if (!isConnected && !account) {
-                window?.location.reload();
-              }
-            }
+          // if (NETWORKS_LIST?.[userNetwork.chainId]) {
+          //   setIsWrongNetwork(false);
+          if (isConnected && account && account.length > 5) {
+            setMetamaskConnectAttempt(0);
+            setMetamaskAccount(account);
+            getPersonalSign()
+              .then((signature) => {
+                userLogin(account, signature, 'metamask');
+              })
+              .catch((error) => {
+                // alert(error.message);
+              });
           } else {
-            setIsWrongNetwork(true);
+            if (!isConnected && !account) {
+              window?.location.reload();
+            }
           }
+          // } else {
+          //   setIsWrongNetwork(true);
+          // }
         }
       }
     } else {

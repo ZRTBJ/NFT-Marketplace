@@ -12,7 +12,7 @@ import {
   ls_GetLatestGasPrice,
 } from 'util/ApplicationStorage';
 
-export default function OnBoardingGuide() {
+export default function OnBoardingGuide({ setSwitchNetwork }) {
   const userinfo = useSelector((state) => state.user.userinfo);
   const [open, setOPen] = useState(true);
   const [showWalletConnectModal, setShowWalletConnectModal] = useState(false);
@@ -41,11 +41,12 @@ export default function OnBoardingGuide() {
     }
   };
 
-  const redirectToNftCreatePage = () => {
-    // if (userinfo?.id) {
+  const redirectToNftCreatePage = async () => {
+    // let currentNetwork = await getCurrentNetworkId();
+    // if (NETWORKS?.[currentNetwork]) {
     setShowCreateNFTModal(true);
     // } else {
-    //   setShowWalletConnectModal(true);
+    //   setSwitchNetwork(true);
     // }
   };
 

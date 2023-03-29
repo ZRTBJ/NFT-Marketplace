@@ -7,9 +7,21 @@ import NFTPublishingSteps from 'components/LandingPage/components/NFTPublishingS
 import { formatNumber } from 'accounting';
 import { useRouter } from 'next/router';
 import { NETWORKS } from 'config/networks';
-export default function CollectionTable({ tableData }) {
+import { getCurrentNetworkId } from 'util/MetaMask';
+
+export default function CollectionTable({ tableData, setSwitchNetwork }) {
   const [showCreateNFTModal, setShowCreateNFTModal] = useState(false);
   const router = useRouter();
+
+  const handleCreateCollection = async () => {
+    let currentNetwork = await getCurrentNetworkId();
+    if (NETWORKS?.[currentNetwork]) {
+      router.push(`/collection/create`);
+      setSwitchNetwork(false);
+    } else {
+      setSwitchNetwork(true);
+    }
+  };
   return (
     <>
       <div className='flex items-center gap-4 flex-wrap my-3'>
@@ -18,7 +30,7 @@ export default function CollectionTable({ tableData }) {
           NFT Collection
         </p>
         <button
-          onClick={() => router.push('/collection/create')}
+          onClick={handleCreateCollection}
           className='contained-button rounded ml-auto !text-white'
         >
           Create Collection
