@@ -22,6 +22,9 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Lottie from 'react-lottie';
 import lottieJson from 'assets/lottieFiles/circle-loader.json';
+import { useAccount, useSigner } from 'wagmi';
+import { useWeb3Modal } from '@web3modal/react';
+import WalletConnect from 'assets/images/wallet-connect.svg';
 
 const WalletConnectModal = ({
   showModal,
@@ -40,7 +43,18 @@ const WalletConnectModal = ({
   const [metamaskConnectAttempt, setMetamaskConnectAttempt] = useState(0);
   const [metamaskAccount, setMetamaskAccount] = useState('');
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
-
+  const {
+    address: walletAddress,
+    signature: userSign,
+    isConnected: isAdded,
+  } = useAccount();
+  const { refetch } = useSigner({
+    onError(error) {
+      console.log('Error', error);
+    },
+  });
+  console.log(walletAddress, userSign, isAdded);
+  const { isOpen, open, close, setDefaultChain } = useWeb3Modal();
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -50,6 +64,18 @@ const WalletConnectModal = ({
     },
   };
 
+  useEffect(() => {
+    if (isAdded) {
+      handleWalletConnection();
+    }
+  }, [isAdded]);
+
+  const handleWalletConnection = () => {
+    if (isAdded && walletAddress && walletAddress.length > 5) {
+      setMetamaskAccount(walletAddress);
+      userLogin(walletAddress, userSign, 'WalletConnect');
+    }
+  };
   /** Connection to wallet
    * Login mechanism: We let user to login using metamask, then will login to our server to get JWT token.
    * From then , all action will rely on JWT Token.
@@ -160,6 +186,15 @@ const WalletConnectModal = ({
     setshowMessage(false);
   }
 
+  const handleWalletConnect = async () => {
+    if (isTermsAndConditionsChecked) {
+      await open();
+      await refetch();
+    } else {
+      setshowMessage(true);
+    }
+  };
+
   return (
     <div>
       <Modal
@@ -247,6 +282,23 @@ const WalletConnectModal = ({
                     {/* <div className="ml-auto bg-primary-900 px-2 py-1 text-[10px] rounded-lg font-satoshi-bold font-black text-white">
                   Popular
                 </div> */}
+                  </div>
+                </div>
+                <div
+                  onClick={handleWalletConnect}
+                  className='w-full cursor-pointer  h-[72px] rounded-[12px] block mx-auto px-[14px] bg-[#fff] flex items-center connect-wallet mt-3'
+                >
+                  <div className='flex items-center ml-1'>
+                    <div className='flex items-center'>
+                      <Image
+                        className='h-12 w-12'
+                        src={WalletConnect}
+                        alt='metamask wallet login button'
+                      />
+                      <div className='ml-[10px] font-satoshi-bold font-black text-[24px]'>
+                        <p className='text-[18px]'>WalletConnect</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

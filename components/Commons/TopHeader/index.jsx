@@ -620,7 +620,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                 userId ? '' : 'sm:py-2'
               }`}
             >
-              <li className='relative w-[181px]' ref={ref}>
+              <li className='relative w-[185px]' ref={ref}>
                 {!currentSelectedNetwork?.name ? (
                   <ReactTooltip type='info' effect='solid' />
                 ) : null}
