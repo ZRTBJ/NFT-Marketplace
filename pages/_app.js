@@ -28,6 +28,7 @@ import Link from 'next/link';
 import { IS_PRODUCTION } from 'config/config';
 import { NETWORKS } from 'config/networks';
 import { getCurrentNetworkId } from 'util/MetaMask';
+import WarningBar from 'components/Commons/WarningBar/WarningBar';
 
 dynamic(() => import('tw-elements'), { ssr: false });
 
@@ -65,7 +66,7 @@ function MyApp({ Component, pageProps }) {
 
   const getCurrentNetwork = async () => {
     let networkValue = await getCurrentNetworkId();
-    if (NETWORKS?.[networkValue]) {
+    if (NETWORKS?.[networkValue] || networkValue !== 1) {
       setIsWrongNetwork(false);
     } else {
       setIsWrongNetwork(true);
@@ -137,39 +138,10 @@ function MyApp({ Component, pageProps }) {
               <Auth>
                 <div className='bg-light'>
                   {isWrongNetwork ? (
-                    <div className='bg-red-500 text-white py-1 relative'>
-                      <p className='text-center'>
-                        You're viewing {IS_PRODUCTION ? 'Main' : 'test'}{' '}
-                        network, but your wallet is connected to the{' '}
-                        {IS_PRODUCTION ? 'test' : 'main'} or unsupported
-                        network. To use Decir, either switch to a supported
-                        network or go to{' '}
-                        {IS_PRODUCTION ? (
-                          <Link
-                            href={'https://testnet.decir.io/'}
-                            passHref
-                            target={'_blank'}
-                            className='underline'
-                          >
-                            testnet.decir.io
-                          </Link>
-                        ) : (
-                          <Link
-                            href={'https://app.decir.io/'}
-                            passHref
-                            target={'_blank'}
-                            className='underline'
-                          >
-                            app.decir.io
-                          </Link>
-                        )}{' '}
-                        .
-                        <i
-                          onClick={() => setIsWrongNetwork(false)}
-                          class='fa-solid fa-xmark-large text-right cursor-pointer text-sm absolute right-2 bottom-2'
-                        ></i>
-                      </p>
-                    </div>
+                    <WarningBar
+                      setIsWrongNetwork={setIsWrongNetwork}
+                      IS_PRODUCTION={IS_PRODUCTION}
+                    />
                   ) : null}
                   <main
                     className='container min-h-[calc(100vh-71px)]'
