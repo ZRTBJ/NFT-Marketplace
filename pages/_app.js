@@ -66,7 +66,10 @@ function MyApp({ Component, pageProps }) {
 
   const getCurrentNetwork = async () => {
     let networkValue = await getCurrentNetworkId();
-    if (NETWORKS?.[networkValue] || networkValue !== 1) {
+    if (
+      NETWORKS?.[networkValue] ||
+      (NETWORKS?.[networkValue] && networkValue !== 1)
+    ) {
       setIsWrongNetwork(false);
     } else {
       setIsWrongNetwork(true);
