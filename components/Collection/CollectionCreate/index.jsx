@@ -676,7 +676,7 @@ export default function CollectionCreate({ query }) {
                     emptyCollectionType={emptyCollectionType}
                     onCollectionTypeSelect={onCollectionTypeSelect}
                     // name
-                    nameLabel='Collection Name'
+                    nameLabel='Collection'
                     projectName={projectName}
                     emptyProjectName={emptyProjectName}
                     alreadyTakenProjectName={alreadyTakenProjectName}

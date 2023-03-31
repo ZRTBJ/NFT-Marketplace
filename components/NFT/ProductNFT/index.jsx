@@ -275,7 +275,7 @@ export default function ProductNFT({ query }) {
 
   const onSubmit = async (data) => {
     if (nftFile && nftFile.file) {
-      if (!userinfo?.id && !supply) {
+      if (!collectionId && !supply) {
         setCheckedValidation(true);
       } else {
         setShowConfirmation(true);
@@ -684,10 +684,10 @@ export default function ProductNFT({ query }) {
                     : 'Create '}
                   Product NFT
                 </h1>
-                <p className='text-[14px] text-textSubtle '>
+                <p className='text-[14px] text-textSubtle word-break'>
                   {showConfirmation
                     ? 'Preview the NFT'
-                    : 'Please fill this require data for setup your NFT'}
+                    : 'Please fill in all required data to create your NFT'}
                 </p>
               </div>
               <div className='ml-auto'>
@@ -713,10 +713,11 @@ export default function ProductNFT({ query }) {
                     className='block text-[16px] font-bold font-satoshi-bold'
                     htmlFor='dropzone-file'
                   >
-                    Upload Assets
+                    Upload assets
                   </label>
-                  <p className='block text-[14px] text-textSubtle mb-4'>
-                    you can use format PNG, GIF, WEBP, MP4 or MP3. Max 100MB.
+                  <p className='block text-[14px] text-textSubtle mb-4 word-break'>
+                    You can upload assets in any of these formats. PNG, GIF,
+                    WEBP, MP3, or MP4. Max 100 MB.
                   </p>
                   <div
                     className={`flex justify-center items-center max-w-full  ${
@@ -836,7 +837,7 @@ export default function ProductNFT({ query }) {
                   </div>
                   {isFileError && (
                     <p className='text-red-500 text-xs font-medium mt-2'>
-                      Please select a vaild file.
+                      Please select a valid file.
                     </p>
                   )}
                 </div>
@@ -869,7 +870,9 @@ export default function ProductNFT({ query }) {
                   </>
                 </div>
                 <div className='mb-6'>
-                  <div className='txtblack text-[14px]'>External Links</div>
+                  <div className='txtblack text-[14px]'>
+                    Project External link (if available)
+                  </div>
                   <input
                     id='externalLink'
                     name='externalLink'
@@ -897,7 +900,7 @@ export default function ProductNFT({ query }) {
                     cols='30'
                     rows='6'
                     className={`p-4 ${showConfirmation ? 'hidden' : ''}`}
-                    placeholder='Add brief description about this NFT'
+                    placeholder='Add a brief description of your product NFT'
                     {...register('description')}
                     defaultValue={nft ? nft.description : ''}
                   ></textarea>
@@ -965,14 +968,15 @@ export default function ProductNFT({ query }) {
                 <div className='mb-6'>
                   <div className='text-txtblack font-bold '>Properties</div>
                   <div className='text-textSubtle text-[14px] mb-[16px]'>
-                    Add the properties on your NFT.
+                    Add the properties of your NFT below
                   </div>
                   <div className='flex py-3 border-b border-b-divider'>
                     <i className='fa-regular fa-grip-lines'></i>
                     <div className='flex-1 px-3'>
-                      <p className='-mt-1'>Properties</p>
-                      <small className='text-textSubtle'>
-                        Add NFT properties
+                      <p className='-mt-1'>Add NFT Properties</p>
+                      <small className='text-textSubtle word-break'>
+                        Add the properties and values of your NFT. You can add
+                        more NFT properties as you deem fit.
                       </small>
                     </div>
                     <i
@@ -987,7 +991,7 @@ export default function ProductNFT({ query }) {
                     <div className='flex-1 px-3'>
                       <p className='-mt-1'>Sensitive Content</p>
                       <small className='text-textSubtle'>
-                        Defined properties on your NFT
+                        Specify if your NFT content is rated 18
                       </small>
                     </div>
                     <div className='flex flex-wrap items-center'>
@@ -1008,7 +1012,7 @@ export default function ProductNFT({ query }) {
                       </label>
                     </div>
                   </div>
-                  {!userinfo?.id ? (
+                  {!collectionId ? (
                     <div className='mb-6 '>
                       <div className='flex items-center mb-2'>
                         <Tooltip></Tooltip>
@@ -1027,7 +1031,7 @@ export default function ProductNFT({ query }) {
                           value={supply}
                           type='number'
                           onChange={(e) => setSupply(e.target.value)}
-                          placeholder='Supply for the NFT'
+                          placeholder='Specify the total supply of your NFT'
                         />
                         {checkedValidation && !supply && (
                           <p className='text-red-500 text-xs font-medium'>

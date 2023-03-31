@@ -826,10 +826,10 @@ export default function MembershipNFT({ query }) {
                 ? 'Update Membership NFT'
                 : 'Create Membership NFT'}
             </h1>
-            <p className='text-[14px] text-textSubtle '>
+            <p className='text-[14px] text-textSubtle word-break'>
               {isPreview
                 ? ' Preview the NFT'
-                : ' Please fill this require data for setup your NFT'}
+                : ' Please fill in all required data to create your NFT'}
             </p>
           </div>
           <div className='ml-auto'>
@@ -876,10 +876,12 @@ export default function MembershipNFT({ query }) {
                     onChange={(e) =>
                       onTextfieldChange(index, 'tierName', e.target.value)
                     }
-                    placeholder='Tier name for the NFT'
+                    placeholder='Specify the tier name for the NFT'
                   />
                   {checkedValidation && nft.tierName === '' && (
-                    <p className='validationTag'>Tier Name is required</p>
+                    <p className='validationTag text-sm'>
+                      Tier field is required
+                    </p>
                   )}
                 </>
               </div>
@@ -888,10 +890,11 @@ export default function MembershipNFT({ query }) {
                   className='block text-[16px] font-bold font-satoshi-bold'
                   htmlFor='dropzone-file'
                 >
-                  Upload Assets
+                  Upload assets
                 </label>
-                <p className='block text-[14px] text-textSubtle mb-4'>
-                  you can use format PNG, GIF, WEBP, MP4 or MP3. Max 100MB.
+                <p className='block text-[14px] text-textSubtle mb-4 word-break'>
+                  You can upload assets in any of these formats. PNG, GIF, WEBP,
+                  MP3, or MP4. Max 100 MB
                 </p>
                 <div
                   className={`flex justify-center items-center max-w-full ${
@@ -1004,19 +1007,25 @@ export default function MembershipNFT({ query }) {
                   </label>
                 </div>
                 {nft.assets.isFileError && (
-                  <p className='validationTag'>Please select a valid file.</p>
+                  <p className='validationTag text-sm'>
+                    Please select a valid file.
+                  </p>
                 )}
                 {checkedValidation && !nft.assets.file && (
-                  <p className='validationTag'>Assets is required.</p>
+                  <p className='validationTag text-sm'>
+                    Asset field is required
+                  </p>
                 )}
                 {nft.assets.limitExceeded && (
-                  <p className='validationTag'>
+                  <p className='validationTag text-sm'>
                     {`You can upload your assets up to 100 MB`}
                   </p>
                 )}
               </div>
               <div className='mb-6'>
-                <p className='txtblack text-[14px]'>External Links</p>
+                <p className='txtblack text-[14px]'>
+                  Project External link (if available)
+                </p>
                 <>
                   <DebounceInput
                     minLength={1}
@@ -1044,7 +1053,7 @@ export default function MembershipNFT({ query }) {
                   id='description'
                   cols='30'
                   rows='6'
-                  placeholder='Add brief description about this NFT'
+                  placeholder='Add a brief description of your membership NFT'
                   className={`mt-1 p-4 ${
                     isPreview ? ' !border-none bg-transparent' : ''
                   } `}
@@ -1105,7 +1114,7 @@ export default function MembershipNFT({ query }) {
                 </div>
               )}
               <div className='mb-6'>
-                <p className='txtblack text-[14px]'>Benefit</p>
+                <p className='txtblack text-[14px]'>List Benefits</p>
                 {nft.benefits.map((benefit, benefitIndex) => (
                   <div
                     className='md:mb-6 mb-3 flex items-center'
@@ -1139,7 +1148,7 @@ export default function MembershipNFT({ query }) {
                     onClick={() => addMoreBenefits(index)}
                     className='h-[43px] mb-4 mr-4 px-4 py-2 text-[14px]  bg-primary-900/[.20] font-black  rounded text-primary-900   '
                   >
-                    Add More Benefit
+                    Add more benefits
                   </button>
                 )}
               </div>
@@ -1147,14 +1156,15 @@ export default function MembershipNFT({ query }) {
               <div className='mb-6'>
                 <p className='text-txtblack font-bold '>Properties</p>
                 <p className='text-textSubtle text-[14px] mb-[16px]'>
-                  Add the properties on your NFT.
+                  Add the properties of your NFT below
                 </p>
                 <div className='flex py-3 border-b border-b-divider'>
                   <i className='fa-regular fa-grip-lines'></i>
                   <div className='flex-1 px-3'>
-                    <p className='-mt-1'>Properties</p>
-                    <small className='text-textSubtle'>
-                      Add NFT properties
+                    <p className='-mt-1'>Add NFT Properties</p>
+                    <small className='text-textSubtle word-break'>
+                      Add the properties and values of your NFT. You can add
+                      more NFT properties as you deem fit
                     </small>
                   </div>
                   <>
@@ -1171,7 +1181,7 @@ export default function MembershipNFT({ query }) {
                   <div className='flex-1 px-3'>
                     <p className='-mt-1'>Sensitive Content</p>
                     <small className='text-textSubtle'>
-                      Defined properties on your NFT
+                      Specify if your NFT content is rated 18
                     </small>
                   </div>
                   {isPreview ? (
@@ -1267,10 +1277,10 @@ export default function MembershipNFT({ query }) {
                     onChange={(e) =>
                       onTextfieldChange(index, 'supply', e.target.value)
                     }
-                    placeholder='Supply for the NFT'
+                    placeholder='Specify the total supply of your NFT'
                   />
                   {checkedValidation && nft.supply === '' && (
-                    <p className='validationTag'>Supply is required</p>
+                    <p className='validationTag text-sm'>Supply is required</p>
                   )}
                 </>
               </div>

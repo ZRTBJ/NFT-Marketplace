@@ -103,7 +103,7 @@ export default function OnBoardingGuide({ setSwitchNetwork }) {
                 <div className='flex items-center px-6 pb-3 -mt-4 gap-4 '>
                   <div>
                     <div className='gradient-text-deep-pueple font-black text-[18px]'>
-                      Create Your NFT
+                      Create NFT
                     </div>
                     <p className='text-textSubtle-100 text-[14px] break-word '>
                       Find out how to create NFTs on DeCir

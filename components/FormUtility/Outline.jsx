@@ -206,7 +206,7 @@ export default function Outline({
       <div className='mb-6'>
         <div className='flex flex-wrap items-center mb-4'>
           <Tooltip message='This field will not be changeable after publishing on the blockchain.'></Tooltip>
-          <div className='txtblack text-[14px]'>{nameLabel}</div>
+          <div className='txtblack text-[14px]'>{nameLabel} Name</div>
         </div>
 
         {!projectNameDisabled && (
@@ -217,15 +217,17 @@ export default function Outline({
               onChange={(e) => onProjectNameChange(e.target.value)}
               className='debounceInput mt-1'
               value={projectName}
-              placeholder={nameLabel}
+              placeholder={nameLabel + ' name'}
             />
             {emptyProjectName && (
               <div className='validationTag'>
-                Unique {nameLabel} is required
+                Unique {nameLabel + ' name'} is required
               </div>
             )}
             {alreadyTakenProjectName && (
-              <div className='validationTag'>{nameLabel} has already taken</div>
+              <div className='validationTag'>
+                {nameLabel + ' name'} has already taken
+              </div>
             )}
           </>
         )}
@@ -270,7 +272,7 @@ export default function Outline({
           <div className='flex flex-wrap items-center mb-4'>
             <Tooltip message='Enter gnosis-safe address or leave it empty'></Tooltip>
             <div className='txtblack text-[14px]'>
-              Treasury Contract Address
+              Treasury contract address
             </div>
           </div>
           {!daoWalletDisable && (
@@ -281,10 +283,10 @@ export default function Outline({
                 onChange={(e) => onDaoWalletChange(e.target.value)}
                 className='debounceInput mt-1'
                 value={daoWallet}
-                placeholder='Add gnosis-safe Address'
+                placeholder='Add gnosis-safe address'
               />
               <p className='font-black text-[14px] text-textSubtle word-break w-[35px] md:w-[25px] mx-2'>
-                Or
+                or
               </p>
               <div className='relative'>
                 <p className='text-[12px] text-normal absolute -top-[24px]'>
@@ -320,7 +322,7 @@ export default function Outline({
           id='description'
           cols='30'
           rows='6'
-          placeholder='Description'
+          placeholder={`Describe your ${nameLabel} and its utility to your audience`}
           maxLength={1000}
         ></textarea>
       </div>
@@ -328,11 +330,10 @@ export default function Outline({
       {/* photo */}
       {showPhotos && (
         <div>
-          <div className='txtblack text-[14px] mb-[6px]'>
-            Upload Gallery Picture
-          </div>
+          <div className='txtblack text-[14px] mb-[6px]'>Upload Gallery</div>
           <div className='text-textSubtle text-[13px] mb-4'>
-            PNG, GIF, JPG, SVG, JPEG. Max 7 pictures of total 28 MB.
+            Supported formats include PNG, GIF, JPG, SVG, and JPEG. Not more
+            than 7 images. Max 28MB
           </div>
           <div className='md:flex md:flex-wrap mb-6'>
             <div className='w-full md:w-[165px] mr-3 mb-2'>
@@ -457,7 +458,9 @@ export default function Outline({
       {/* web Links*/}
       {showWebLinks && (
         <div className='mb-3'>
-          <div className='txtblack text-[14px] mb-4'>Add Social Link</div>
+          <div className='txtblack text-[14px] mb-4'>
+            Add social media links
+          </div>
           <div className=''>
             {webLinks.map((link, index) => (
               <div key={index} className='inline-flex items-center w-full mb-4'>
@@ -504,7 +507,7 @@ export default function Outline({
             </select>
           </div>
           {emptyProjeCtCategory && (
-            <div className='validationTag'>Project category is required</div>
+            <div className='validationTag'>Category is required</div>
           )}
         </div>
       )}
@@ -514,7 +517,7 @@ export default function Outline({
         <div className='mb-6'>
           <div className='flex flex-wrap items-center mb-4'>
             <Tooltip message='This field will not be changeable after publishing on the blockchain.'></Tooltip>
-            <div className='txtblack text-[14px] mb-[6px]'>Blockchain</div>
+            <div className='txtblack text-[14px]'>Blockchain</div>
           </div>
           <div className='select-wrapper'>
             <select
@@ -589,7 +592,7 @@ export default function Outline({
 
       {showFreezeMetadata && (
         <div className='mb-6 flex flex-wrap items-center'>
-          <p className='text-txtSubtle text-[14px]'>Metadata update</p>
+          <p className='text-txtSubtle text-[14px]'>Metadata Update</p>
           {freezeMetadataDisabled ? (
             <label
               htmlFor='metadata-update'

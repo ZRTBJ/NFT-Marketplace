@@ -25,7 +25,6 @@ import { GoogleAnalytics } from 'nextjs-google-analytics';
 import FloatingContactForm from 'components/Commons/FloatingContactForm';
 import TagManager from 'react-gtm-module';
 import Link from 'next/link';
-import { IS_PRODUCTION } from 'config/config';
 import { NETWORKS } from 'config/networks';
 import { getCurrentNetworkId } from 'util/MetaMask';
 import {
@@ -42,6 +41,7 @@ import {
   polygonMumbai,
   goerli,
 } from 'wagmi/chains';
+import WarningBar from 'components/Commons/WarningBar/WarningBar';
 
 dynamic(() => import('tw-elements'), { ssr: false });
 
@@ -72,6 +72,7 @@ function MyApp({ Component, pageProps }) {
   const [isContentView, setIsContentView] = useState(false);
   const [isTokenGatedProjectPublicView, setIsTokenGatedProjectPublicView] =
     useState(false);
+  const [currentNetwork, setCurrentNetwork] = useState();
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
   const router = useRouter();
 
@@ -80,6 +81,7 @@ function MyApp({ Component, pageProps }) {
     if (window?.ethereum) {
       window?.ethereum?.on('networkChanged', function (networkId) {
         getCurrentNetwork();
+        setCurrentNetwork(networkId);
       });
     }
   }, []);
@@ -96,7 +98,8 @@ function MyApp({ Component, pageProps }) {
 
   const getCurrentNetwork = async () => {
     let networkValue = await getCurrentNetworkId();
-    if (NETWORKS?.[networkValue]) {
+    setCurrentNetwork(networkValue);
+    if (NETWORKS?.[networkValue] && networkValue !== 1) {
       setIsWrongNetwork(false);
     } else {
       setIsWrongNetwork(true);

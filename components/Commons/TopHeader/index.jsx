@@ -646,7 +646,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                       alt='user icon'
                     />
                   ) : (
-                    <i class='fa-solid fa-triangle-exclamation mr-2 text-red-400'></i>
+                    <i className='fa-solid fa-triangle-exclamation mr-2 text-red-400'></i>
                   )}{' '}
                   <span
                     className={`mr-2 font-semibold ${

@@ -13,7 +13,7 @@ import membership from 'assets/images/profile/membership.png';
 import pfp from 'assets/images/profile/pfp.png';
 
 const nftUseCase = {
-  usedFor: 'NFTs',
+  usedFor: 'NFT',
   text: 'Here are a few ways your project can deploy NFT',
   steps: [
     {
@@ -26,7 +26,7 @@ const nftUseCase = {
     {
       title: 'PFP',
       description:
-        'PFP NFT helps your brand build and engage your online community. It is a great tool for brand identity',
+        'PFP NFT helps your brand to build and engage your online community. It is a great tool for brand identity',
       img: pfp,
       url: 'https://decir.io/what-are-pfp-nfts-used-for/',
     },
