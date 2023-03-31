@@ -22,7 +22,7 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Lottie from 'react-lottie';
 import lottieJson from 'assets/lottieFiles/circle-loader.json';
-import { useAccount, useSigner } from 'wagmi';
+import { useAccount, useSignMessage } from 'wagmi';
 import { useWeb3Modal } from '@web3modal/react';
 import WalletConnect from 'assets/images/wallet-connect.svg';
 
@@ -43,18 +43,14 @@ const WalletConnectModal = ({
   const [metamaskConnectAttempt, setMetamaskConnectAttempt] = useState(0);
   const [metamaskAccount, setMetamaskAccount] = useState('');
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
-  const {
-    address: walletAddress,
-    signature: userSign,
-    isConnected: isAdded,
-  } = useAccount();
-  const { refetch } = useSigner({
-    onError(error) {
-      console.log('Error', error);
-    },
+  const { address: walletAddress, isConnected: isAdded } = useAccount({
+    onConnect,
   });
-  console.log(walletAddress, userSign, isAdded);
+
   const { isOpen, open, close, setDefaultChain } = useWeb3Modal();
+  const { signMessage, data } = useSignMessage({
+    onSuccess,
+  });
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -64,17 +60,26 @@ const WalletConnectModal = ({
     },
   };
 
-  useEffect(() => {
-    if (isAdded) {
-      handleWalletConnection();
+  async function onConnect(address, connector, isReconnected) {
+    if (address?.address && address.address?.length > 5) {
+      await handleWalletConnection(address?.address);
     }
-  }, [isAdded]);
+  }
 
-  const handleWalletConnection = () => {
-    if (isAdded && walletAddress && walletAddress.length > 5) {
-      setMetamaskAccount(walletAddress);
-      userLogin(walletAddress, userSign, 'WalletConnect');
-    }
+  // useEffect(() => {
+  //   if (isAdded && walletAddress && walletAddress.length > 5) {
+  //     // handleWalletConnection(walletAddress);
+  //     console.log(1);
+  //   }
+  // }, [isAdded]);
+
+  async function onSuccess(data, variables) {
+    await userLogin(walletAddress?.toLowerCase(), data, 'metamask');
+  }
+
+  const handleWalletConnection = async (address) => {
+    setMetamaskAccount(address);
+    await signMessage({ message: `You're signing to the decir.io` });
   };
   /** Connection to wallet
    * Login mechanism: We let user to login using metamask, then will login to our server to get JWT token.
@@ -189,7 +194,6 @@ const WalletConnectModal = ({
   const handleWalletConnect = async () => {
     if (isTermsAndConditionsChecked) {
       await open();
-      await refetch();
     } else {
       setshowMessage(true);
     }

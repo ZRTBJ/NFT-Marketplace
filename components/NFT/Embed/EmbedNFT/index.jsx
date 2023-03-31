@@ -243,11 +243,13 @@ function EmbedNFT({ type, id }) {
                 : 'Connect Wallet'}
             </button>
           </div>
-          <WalletConnectModal
-            showModal={showModal}
-            closeModal={hideModal}
-            noRedirection={true}
-          />
+          {showModal && (
+            <WalletConnectModal
+              showModal={showModal}
+              closeModal={hideModal}
+              noRedirection={true}
+            />
+          )}
         </>
       )}
     </>

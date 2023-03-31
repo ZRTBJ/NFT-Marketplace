@@ -81,12 +81,14 @@ export default function BuildDaoCard({ size, setSwitchNetwork }) {
           ></Image>
         </div>
       </div>
-      <WalletConnectModal
-        showModal={showWalletConnectModal}
-        closeModal={() => setShowWalletConnectModal(false)}
-        noRedirection={false}
-        navigateToPage={'dao/create'}
-      />
+      {showWalletConnectModal && (
+        <WalletConnectModal
+          showModal={showWalletConnectModal}
+          closeModal={() => setShowWalletConnectModal(false)}
+          noRedirection={false}
+          navigateToPage={'dao/create'}
+        />
+      )}
     </div>
   );
 }

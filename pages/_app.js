@@ -57,7 +57,7 @@ const wagmiClient = createClient({
   autoConnect: true,
   connectors: w3mConnectors({
     projectId: Config.WALLET_CONNECT_PROJECT_ID,
-    version: 1,
+    version: 2,
     chains,
   }),
   provider,

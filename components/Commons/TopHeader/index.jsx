@@ -735,7 +735,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                         e.stopPropagation();
                         showHideUserPopupWallet();
                       }}
-                      className={`flex place-items-center bg-white p-3 rounded-[0.5rem] border border-secondary-900 w-auto  rounded-tl-none rounded-bl-none`}
+                      className={`flex place-items-center bg-white px-2 py-3 rounded-[0.5rem] border border-secondary-900 w-auto  rounded-tl-none rounded-bl-none`}
                     >
                       <i className='fa-solid fa-angle-down'></i>
                     </button>
@@ -777,7 +777,10 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
           </div>
         </div>
       </nav>
-      <WalletConnectModal showModal={showModal} closeModal={hideModal} />
+
+      {showModal && (
+        <WalletConnectModal showModal={showModal} closeModal={hideModal} />
+      )}
     </header>
   );
 };
