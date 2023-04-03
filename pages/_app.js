@@ -28,6 +28,7 @@ import Link from 'next/link';
 import { NETWORKS } from 'config/networks';
 import { getCurrentNetworkId } from 'util/MetaMask';
 import WarningBar from 'components/Commons/WarningBar/WarningBar';
+import { ls_GetChainID } from 'util/ApplicationStorage';
 
 dynamic(() => import('tw-elements'), { ssr: false });
 
@@ -49,7 +50,7 @@ function MyApp({ Component, pageProps }) {
   useEffect(() => {
     if (window?.ethereum) {
       window?.ethereum?.on('networkChanged', function (networkId) {
-        getCurrentNetwork();
+        getCurrentNetwork(networkId);
         setCurrentNetwork(networkId);
       });
     }
@@ -65,10 +66,12 @@ function MyApp({ Component, pageProps }) {
     getCurrentNetwork();
   }, []);
 
-  const getCurrentNetwork = async () => {
-    let networkValue = await getCurrentNetworkId();
-    setCurrentNetwork(networkValue);
-    if (NETWORKS?.[networkValue] && networkValue !== 1) {
+  const getCurrentNetwork = async (networkId) => {
+    let networkValue = await ls_GetChainID();
+
+    let id = networkId ? Number(networkId) : Number(networkValue);
+    setCurrentNetwork(id);
+    if (NETWORKS?.[id] && id !== 1) {
       setIsWrongNetwork(false);
     } else {
       setIsWrongNetwork(true);

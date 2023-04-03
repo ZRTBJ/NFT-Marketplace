@@ -89,12 +89,12 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
 
   let networkList = Object.values(NETWORKS);
 
-  const setDefaultNetwork = async () => {
-    let networkValue = await getCurrentNetworkId();
+  const setDefaultNetwork = async (networkId) => {
+    let networkValue = await ls_GetChainID();
+    let id = networkId ? networkId : networkValue;
     let currentNetwork = await networkList.find(
-      (network) => network.network === networkValue
+      (network) => network.network === Number(id)
     );
-
     setCurrentSelectedNetwork({
       name: currentNetwork?.networkName,
       value: currentNetwork?.network,
@@ -211,7 +211,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
         setNetworkChangeDetected(true);
         setNetworkId(networkId);
         ls_SetChainID(networkId);
-        setDefaultNetwork();
+        setDefaultNetwork(networkId);
         if (NETWORKS[networkId]) {
           toast.success(
             `Your network got changed to ${NETWORKS?.[networkId]?.networkName}`,
