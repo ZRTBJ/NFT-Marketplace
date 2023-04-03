@@ -1,4 +1,3 @@
-import styles from './index.module.css';
 import { logout } from 'redux/auth';
 import { useRouter } from 'next/router';
 import { useSelector, useDispatch } from 'react-redux';
@@ -8,6 +7,10 @@ import { useDetectClickOutside } from 'react-detect-click-outside';
 import { NETWORKS } from 'config/networks';
 import Image from 'next/image';
 import { getAccountBalance } from 'util/MetaMask';
+import { walletAddressTruncate } from 'util/WalletUtils';
+import AvatarDefault from 'assets/images/avatar-default.svg';
+import { toast } from 'react-toastify';
+import LanguageChanger from 'components/Commons/LanguageChanger';
 
 const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
   let router = useRouter();
@@ -40,6 +43,12 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
     router.push('/');
     window?.location.reload();
   }
+  const copyToClipboard = (text) => {
+    if (typeof window !== 'undefined') {
+      navigator.clipboard.writeText(text);
+      toast.success(`Link successfully copied`);
+    }
+  };
 
   useEffect(() => {
     setWallet(userWallet ? userWallet : '');
@@ -60,53 +69,84 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
   };
 
   return (
-    <>
-      <div
-        ref={ref}
-        className='h-auto md:h-auto md:border border-slate-300  bg-[#fff] rounded-xl absolute top-14 right-6 md:right-36 z-20'
-      >
-        <div className='pl-10 pr-3 py-3 border-b border-slate-300'>
-          <h3 className='txtblack text-sm  mb-6 '>Wallet</h3>
-          <p className='txtblack flex content-center mb-2'>
-            <Image
-              src={metamaskIcon}
-              alt='mask'
-              width={21}
-              height={21}
-              className='mr-2'
-            />
-            <span>Total Balance </span>
-          </p>
-          <h4 className='text-sm '>
-            {NETWORKS[networkId] && (
-              <div>{NETWORKS[networkId].networkName}</div>
-            )}
-          </h4>
-          <h4 className='txtblack text-xl  mb-6 tracking-wide'>
+    <div
+      ref={ref}
+      className='border-slate-300  min-w-[250px] bg-[#fff] rounded-xl absolute top-[62px] right-6 md:right-[44px] z-20 shadow border'
+    >
+      {userinfo?.id && (
+        <div className='p-4 border-b border-slate-300'>
+          <div className='flex items-center justify-between flex-wrap mb-5'>
+            <div className='flex items-center gap-2'>
+              <Image
+                unoptimized
+                className='rounded-full w-[24px] h-[24px]'
+                src={userinfo['avatar'] ? userinfo['avatar'] : AvatarDefault}
+                height={24}
+                width={24}
+                alt='user icon'
+              />
+              <p className='font-bold'>
+                {walletAddressTruncate(walletAddress)}
+              </p>
+            </div>
+            <div className='flex items-center gap-2'>
+              <div
+                onClick={() => copyToClipboard(walletAddress)}
+                className='h-[28px] w-[28px] bg-[#E8ECFB] rounded-full flex items-center justify-center'
+              >
+                <i className='fa-solid fa-copy cursor-pointer'></i>
+              </div>
+            </div>
+          </div>
+          <div className='text-center mb-4'>
+            <p className='text-textSubtle font-semibold text-[14px]'>
+              {NETWORKS[networkId] ? NETWORKS[networkId].cryto : ''} Balance
+            </p>
+          </div>
+
+          <div className='text-textSubtle-200 text-[24px] font-semibold text-center'>
             {isLoadingBalance && (
               <i className='fa fa-spinner fa-pulse fa-fw'></i>
             )}
-            <span>
-              {balance && Number(balance)?.toFixed(4)}{' '}
-              {NETWORKS[networkId] ? NETWORKS[networkId].cryto : ''}
-            </span>
-          </h4>
-
-          {/* <a className={styles.btnFund} href="#">
-            <span>Add Funds</span>
-          </a> */}
-        </div>
-        <div className='pl-10 pr-3 py-3'>
-          <div
-            onClick={handleLogout}
-            className='items-center txtblack flex content-center font-base text-sm cursor-pointer'
-          >
-            <i className='fa-solid fa-right-from-bracket'></i>
-            <span className='ml-2'>Log Out</span>
+            {!isLoadingBalance && (
+              <span>
+                {balance && Number(balance)?.toFixed(4)}{' '}
+                {NETWORKS[networkId] ? NETWORKS[networkId].cryto : ''}
+              </span>
+            )}
           </div>
+          {NETWORKS[networkId] && (
+            <div className='text-center text-[14px] text-textSubtle font-semibold text-[14px] flex items-center justify-center gap-2'>
+              <Image
+                className='rounded-full'
+                src={NETWORKS[networkId]?.icon?.src}
+                height={18}
+                width={18}
+                alt='network icon'
+              />
+              <p>{NETWORKS[networkId].networkName}</p>
+            </div>
+          )}
         </div>
+      )}
+      <div className='p-4'>
+        <div className='flex items-center justify-between mb-4'>
+          <p>Language</p>
+          <LanguageChanger />
+        </div>
+        {userinfo?.id && (
+          <div className='flex items-center justify-between'>
+            <p>Log Out</p>
+            <div
+              onClick={handleLogout}
+              className='h-[28px] w-[28px] bg-[#E8ECFB] rounded-full flex items-center justify-center'
+            >
+              <i className='fa-solid fa-right-from-bracket cursor-pointer'></i>
+            </div>
+          </div>
+        )}
       </div>
-    </>
+    </div>
   );
 };
 export default WalletDropDownMenu;

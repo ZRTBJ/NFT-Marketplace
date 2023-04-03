@@ -1,6 +1,7 @@
 import MetaMaskOnboarding from '@metamask/onboarding';
 import { ethers } from 'ethers';
 import Web3 from 'web3';
+import { NETWORKS } from 'config/networks';
 
 const currentUrl =
   typeof window !== 'undefined' && new URL(window.location.href);
@@ -112,13 +113,17 @@ export const handleSwitchNetwork = async (projectNetwork) => {
   if (typeof window !== 'undefined') {
     if (window?.ethereum) {
       try {
-        Web3?.utils?.toHex;
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
           params: [{ chainId: Web3?.utils?.toHex(projectNetwork) }],
         });
       } catch (error) {
-        console.log(error);
+        if (error.code === 4902) {
+          let config = NETWORKS?.[projectNetwork]?.config;
+          await createNetworkInMetamask(config);
+        } else {
+          throw error;
+        }
       }
     } else {
       onBoardBrowserPlugin();
@@ -141,6 +146,25 @@ export const getAccountBalance = async () => {
       } catch (error) {
         console.log(error.message);
         return;
+      }
+    } else {
+      onBoardBrowserPlugin();
+      return;
+    }
+  }
+};
+
+//To create network in metamask
+export const createNetworkInMetamask = async (config) => {
+  if (typeof window !== 'undefined') {
+    if (window.ethereum) {
+      try {
+        window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [config],
+        });
+      } catch (err) {
+        throw err;
       }
     } else {
       onBoardBrowserPlugin();

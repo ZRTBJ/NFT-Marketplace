@@ -3,18 +3,31 @@ import thumbIcon from 'assets/images/profile/card.svg';
 import Image from 'next/image';
 import Link from 'next/link';
 import MaintainDaoCommunitySteps from 'components/LandingPage/components/MaintainDaoCommunitySteps';
+import { NETWORKS } from 'config/networks';
+import { getCurrentNetworkId } from 'util/MetaMask';
+import { useRouter } from 'next/router';
 
-export default function DaoTable({ tableData }) {
+export default function DaoTable({ tableData, setSwitchNetwork }) {
+  const router = useRouter();
+  const handleNavigation = async () => {
+    let currentNetwork = await getCurrentNetworkId();
+    if (NETWORKS?.[currentNetwork]) {
+      router.push(`/dao/create`);
+    } else {
+      setSwitchNetwork(true);
+    }
+  };
+
   return (
     <>
       <div className='flex items-center gap-4 flex-wrap my-3'>
         <p className='textSubtle-100 text-[20px] font-black '>DAO Community</p>
-        <Link
-          href={`/dao/create`}
+        <button
           className='contained-button rounded ml-auto !text-white'
+          onClick={handleNavigation}
         >
           Create DAO
-        </Link>
+        </button>
       </div>
       <div className='relative gradient-border-new pt-5  md:h-[670px] custom-scrollbar hover:overflow-y-auto overflow-y-hidden'>
         <div className='mb-5'>
@@ -25,18 +38,29 @@ export default function DaoTable({ tableData }) {
                 key={index}
                 className='flex w-full md:items-center gap-2 md:gap-4 mb-6 !no-underline hover:text-black text-black'
               >
-                <Image
-                  src={
-                    item.assets?.find((pic) => pic.name === 'cover')
-                      ? item.assets?.find((pic) => pic.name === 'cover').path
-                      : thumbIcon
-                  }
-                  width={88}
-                  height={88}
-                  alt={item.name}
-                  className='rounded-xl h-[88px] w-[88px] object-cover '
-                  unoptimized
-                />
+                <div>
+                  <Image
+                    src={
+                      item.assets?.find((pic) => pic.name === 'cover')
+                        ? item.assets?.find((pic) => pic.name === 'cover').path
+                        : thumbIcon
+                    }
+                    width={88}
+                    height={88}
+                    alt={item.name}
+                    className='rounded-xl h-[88px] w-[88px] object-cover '
+                    unoptimized
+                  />{' '}
+                  {item?.blockchain && (
+                    <Image
+                      className={`rounded-full -mt-[15px] -ml-[6px]`}
+                      src={NETWORKS?.[item?.blockchain]?.icon}
+                      alt='blockChain'
+                      height={25}
+                      width={25}
+                    />
+                  )}
+                </div>
                 <div className='flex-1'>
                   <p className='!font-black text-black text-[20px] mt-1 mb-4'>
                     {item?.name?.length > 24

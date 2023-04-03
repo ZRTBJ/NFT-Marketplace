@@ -18,7 +18,7 @@ const openSeaNFTDetailsUrl =
 
 const TESTNET = {
   5: {
-    networkName: 'Goerli Testnet',
+    networkName: 'Goerli',
     cryto: 'GoerliETH',
     quickNodeURL: process.env.NEXT_PUBLIC_GOERLI_QUICKNODE_URL,
     value: 'eth',
@@ -42,9 +42,20 @@ const TESTNET = {
     scan: EthScan,
     alchamey: process.env.NEXT_PUBLIC_GOERLI_NFT_ALCHEMY_URL,
     scanApi: `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${process.env.NEXT_PUBLIC_GOELRI_SCAN}`,
+    config: {
+      chainId: '0x5',
+      rpcUrls: ['https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'],
+      chainName: 'Goerli Test Network',
+      nativeCurrency: {
+        name: 'GoerliETH',
+        symbol: 'GoerliETH',
+        decimals: 18,
+      },
+      blockExplorerUrls: ['https://goerli.etherscan.io/'],
+    },
   },
   97: {
-    networkName: 'BNB Testnet',
+    networkName: 'BSC Testnet',
     cryto: 'BNB',
     quickNodeURL: process.env.NEXT_PUBLIC_BNBTEST_QUICKNODE_URL,
     value: 'bnb',
@@ -67,9 +78,20 @@ const TESTNET = {
     decirTreasury: address.decirTreasuryBnbTest,
     discount: address.discountBnbTest,
     scanApi: `https://api.bscscan.com/api?module=gastracker&action=gasoracle&apikey=${process.env.NEXT_PUBLIC_BNB_TESTNET_SCAN}`,
+    config: {
+      chainId: '0x61',
+      rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
+      chainName: 'BSC Testnet',
+      nativeCurrency: {
+        name: 'BNB',
+        symbol: 'BNB',
+        decimals: 18,
+      },
+      blockExplorerUrls: ['https://testnet.bscscan.com'],
+    },
   },
   80001: {
-    networkName: 'Polygon Testnet Mumbai',
+    networkName: 'Polygon Mumbai',
     cryto: 'MATIC',
     quickNodeURL: process.env.NEXT_PUBLIC_MUMBAI_QUICKNODE_URL,
     value: 'matic',
@@ -94,6 +116,17 @@ const TESTNET = {
     scan: PolyScan,
     alchamey: process.env.NEXT_PUBLIC_MUMBAI_NFT_ALCHEMY_URL,
     scanApi: `https://api.polygonscan.com/api?module=gastracker&action=gasoracle&apikey=${process.env.NEXT_PUBLIC_MUMBAI_SCAN}`,
+    config: {
+      chainId: '0x13881',
+      rpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
+      chainName: 'Mumbai Testnet Polygon',
+      nativeCurrency: {
+        name: 'MATIC',
+        symbol: 'MATIC',
+        decimals: 18,
+      },
+      blockExplorerUrls: ['https://mumbai.polygonscan.com/'],
+    },
   },
 };
 
@@ -124,6 +157,17 @@ const MAINNET = {
     scan: EthScan,
     alchamey: process.env.NEXT_PUBLIC_ETHEREUM_NFT_ALCHEMY_URL,
     scanApi: `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${process.env.NEXT_PUBLIC_ETHEREUM_SCAN}`,
+    config: {
+      chainId: '0x1',
+      rpcUrls: ['https://mainnet.infura.io/v3/'],
+      chainName: 'Ethereum Mainnet',
+      nativeCurrency: {
+        name: 'ETH',
+        symbol: 'ETH',
+        decimals: 18,
+      },
+      blockExplorerUrls: ['https://etherscan.io'],
+    },
   },
   137: {
     networkName: 'Polygon Mainnet',
@@ -151,9 +195,20 @@ const MAINNET = {
     scan: PolyScan,
     alchamey: process.env.NEXT_PUBLIC_POLYGON_NFT_ALCHEMY_URL,
     scanApi: `https://api.polygonscan.com/api?module=gastracker&action=gasoracle&apikey=${process.env.NEXT_PUBLIC_POLYGON_SCAN}`,
+    config: {
+      chainId: '0x89',
+      rpcUrls: ['https://polygon-rpc.com/'],
+      chainName: 'Polygon Mainnet',
+      nativeCurrency: {
+        name: 'MATIC',
+        symbol: 'MATIC',
+        decimals: 18,
+      },
+      blockExplorerUrls: ['https://polygonscan.com/'],
+    },
   },
   56: {
-    networkName: 'BNB Mainnet',
+    networkName: 'Binance Smart Chain',
     cryto: 'BNB',
     quickNodeURL: process.env.NEXT_PUBLIC_BNB_QUICKNODE_URL,
     value: 'bnb',
@@ -175,6 +230,17 @@ const MAINNET = {
     decirTreasury: address.decirTreasuryBnb,
     discount: address.discountBnb,
     scanApi: `https://api.bscscan.com/api?module=gastracker&action=gasoracle&apikey=${process.env.NEXT_PUBLIC_BNB_SCAN}`,
+    config: {
+      chainId: '0x38',
+      rpcUrls: ['https://bsc-dataseed1.defibit.io'],
+      chainName: 'Binance Smart Chain',
+      nativeCurrency: {
+        name: 'BNB',
+        symbol: 'BNB',
+        decimals: 18,
+      },
+      blockExplorerUrls: ['https://bscscan.com'],
+    },
   },
 };
 

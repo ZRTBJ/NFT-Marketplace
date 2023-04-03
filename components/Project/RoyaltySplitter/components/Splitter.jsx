@@ -8,6 +8,7 @@ import {
   getSplitterDetails,
   updateRoyaltySplitter,
 } from 'services/collection/collectionService';
+import { useSelector } from 'react-redux';
 import SuccessModal from 'components/Modals/SuccessModal';
 import ConfirmationModal from 'components/Modals/ConfirmationModal';
 import ImportWalletModal from 'components/Collection/RoyaltySplitter/ImportWalletModal/ImportWalletModal';
@@ -21,6 +22,14 @@ import { getCurrentNetworkId } from 'util/MetaMask';
 import NetworkHandlerModal from 'components/Modals/NetworkHandlerModal';
 import PublishRoyaltyConfirmModal from 'components/Collection/Publish/PublishRoyaltyConfirmModal';
 import Image from 'next/image';
+import WalletConnectModal from 'components/Login/WalletConnectModal';
+import { NETWORKS } from 'config/networks';
+import Tooltip from 'components/Commons/Tooltip';
+import { walletAddressTruncate } from 'util/WalletUtils';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCopy } from '@fortawesome/free-solid-svg-icons';
+import Link from 'next/link';
 
 const TABLE_HEADERS = [
   { id: 0, label: 'Wallet Address' },
@@ -30,7 +39,15 @@ const TABLE_HEADERS = [
   { id: 4, label: 'Action' },
 ];
 
-const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
+const Splitter = ({
+  collectionId,
+  getProjectCollections,
+  projectNetwork,
+  isModal,
+  createSplitterClose,
+  splitterId,
+  onGetSplitterList,
+}) => {
   const [ShowPercentError, setShowPercentError] = useState(false);
   const [AutoAssign, setAutoAssign] = useState(false);
   const [isEdit, setIsEdit] = useState(null);
@@ -47,6 +64,23 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
   const [Collection, setCollection] = useState();
   const [projectID, setProjectID] = useState('');
   const [showNetworkHandler, setShowNetworkHandler] = useState(false);
+  const [showConnectModal, setShowConnectModal] = useState(false);
+  const [toCreateSplitter, setToCreateSplitter] = useState(false);
+  const [blockchain, setBlockchain] = useState('');
+  const [splitterName, setSplitterName] = useState('');
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isPublishLoading, setIsPublishLoading] = useState(false);
+  const [isPublished, setIsPublished] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [toPublishSplitter, setToPublishSplitter] = useState(false);
+  const [splitterAddress, setSplitterAddress] = useState('');
+  const [isMembersCreated, setIsMembersCreated] = useState(false);
+
+  useEffect(() => {
+    if (projectNetwork) {
+      setBlockchain(projectNetwork);
+    }
+  }, [projectNetwork]);
 
   const hasPublishedRoyaltySplitter = useMemo(
     () => Collection?.royalty_splitter?.status === 'published',
@@ -68,15 +102,18 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
 
   const hanldeUpdatePublishStatus = (status) => {
     if (status === 'success') {
-      if (Collection.royalty_splitter.status !== 'published') {
+      setIsPublishLoading(false);
+      if (Collection?.royalty_splitter?.status !== 'published') {
         setCollection({
           ...Collection,
           royalty_splitter: {
-            ...Collection.royalty_splitter,
+            ...Collection?.royalty_splitter,
             status: 'published',
           },
         });
-        getProjectCollections();
+        if (!isModal) {
+          getProjectCollections();
+        }
       }
     }
   };
@@ -86,18 +123,48 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
     status: publishRoyaltySplitterStatus,
     canPublish: canPublishRoyaltySplitter,
     publish: publishRoyaltySplitter,
+    setIsLoading: setPublishingSplitter,
+    contractAddress,
   } = usePublishRoyaltySplitter({
     collection: Collection,
     splitters: royalityMembers,
     onUpdateStatus: hanldeUpdatePublishStatus,
+    royaltySplitterId: splitterId,
   });
 
   const [showImportWallet, setShowImportWallet] = useState(false);
+  const userInfo = useSelector((state) => state.user.userinfo);
+
+  useEffect(() => {
+    if (toCreateSplitter) {
+      handleAutoFill();
+    }
+
+    return () => {
+      setToCreateSplitter(false);
+    };
+  }, [userInfo?.id]);
+
+  useEffect(() => {
+    if (toPublishSplitter) {
+      handlePublishRoyaltySplitter();
+    }
+
+    return () => {
+      setToPublishSplitter(false);
+    };
+  }, [userInfo?.id]);
 
   useEffect(() => {
     setIsLoading(true);
     getCollectionDetail();
   }, [collectionId]);
+
+  useEffect(() => {
+    if (splitterId) {
+      getSplittedContributors(splitterId);
+    }
+  }, [splitterId]);
 
   // useEffect(() => {}, [payload]);
 
@@ -127,7 +194,20 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
   const getSplittedContributors = (id, type) => {
     getSplitterDetails(id, type).then((data) => {
       if (data.code === 0) {
+        if (data?.splitter?.status === 'published') {
+          setIsPublished(true);
+        } else {
+          setIsPublished(false);
+        }
+        setSplitterName(data?.splitter?.name);
+        setBlockchain(data?.splitter?.blockchain);
         setRoyalityMembers(data?.members);
+        if (data?.members?.length && splitterId) {
+          setIsMembersCreated(true);
+        } else {
+          setIsMembersCreated(false);
+        }
+        setSplitterAddress(data?.splitter?.contract_address);
         if (data?.members?.length > 0) {
           const page = calculatePageCount(payload.limit, data.members.length);
           const pageList = [];
@@ -160,14 +240,23 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
   };
 
   const handlePublishRoyaltySplitter = async () => {
-    try {
-      setShowPublishRoyaltySpliterConfirmModal(false);
-      setShowPublishRoyaltySpliterModal(true);
-      await publishRoyaltySplitter();
-    } catch (err) {
-      setShowPublishRoyaltySpliterModal(false);
-      setShowPublishRoyaltySpliterErrorModal(true);
-      console.error(err);
+    if (userInfo?.id) {
+      try {
+        setPublishingSplitter(true);
+        setShowPublishRoyaltySpliterConfirmModal(false);
+        setShowPublishRoyaltySpliterModal(true);
+        if (isMembersCreated) {
+          await publishRoyaltySplitter();
+        } else {
+          await handleAutoFill(null, true);
+        }
+      } catch (err) {
+        setShowPublishRoyaltySpliterModal(false);
+        setShowPublishRoyaltySpliterErrorModal(true);
+      }
+    } else {
+      setToPublishSplitter(true);
+      setShowConnectModal(true);
     }
   };
 
@@ -195,44 +284,70 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
     setRoyalityMembers(values);
   };
 
-  const handleAutoFill = () => {
-    let members = royalityMembers.map((mem) => {
-      return {
-        wallet_address: mem.user_eoa,
-        royalty: mem.royalty_percent,
-      };
-    });
-    let formData = new FormData();
-    formData.append('royalty_data', JSON.stringify(members));
-    royalitySplitterId
-      ? formData.append('splitter_uid', royalitySplitterId)
-      : formData.append('collection_uid', Collection.id);
-    if (!ShowPercentError) {
-      setIsAutoFillLoading(true);
-      updateRoyaltySplitter(formData)
-        .then((resp) => {
-          if (resp.code === 0) {
-            toast.success('Royalty Percentage Updated Successfully');
-
-            setIsAutoFillLoading(false);
-            setAutoAssign(false);
-            setIsEdit(null);
-            setShowRoyalityErrorModal(false);
-            setShowRoyalityErrorMessage('');
-            getCollectionDetail();
-          } else {
-            setIsAutoFillLoading(false);
-            setRoyaltyUpdatedSuccessfully(false);
-            setShowRoyalityErrorModal(true);
-            setAutoAssign(false);
-            setShowRoyalityErrorMessage(resp.message);
-          }
-        })
-        .catch((err) => {
-          setIsAutoFillLoading(false);
-          setRoyaltyUpdatedSuccessfully(false);
-          setAutoAssign(false);
+  const handleAutoFill = (e, publish) => {
+    setIsSubmitted(true);
+    if (splitterName && blockchain) {
+      if (userInfo?.id) {
+        let members = royalityMembers.map((mem) => {
+          return {
+            wallet_address: mem.user_eoa,
+            royalty: mem.royalty_percent,
+          };
         });
+        let formData = new FormData();
+        formData.append('royalty_data', JSON.stringify(members));
+        splitterName && formData.append('name', splitterName);
+        blockchain && formData.append('blockchain', blockchain);
+        royalitySplitterId || splitterId
+          ? formData.append(
+              'splitter_uid',
+              splitterId ? splitterId : royalitySplitterId
+            )
+          : Collection?.id
+          ? formData.append('collection_uid', Collection?.id)
+          : null;
+        if (!ShowPercentError) {
+          setIsAutoFillLoading(true);
+          updateRoyaltySplitter(formData)
+            .then((resp) => {
+              if (resp.code === 0) {
+                if (publish) {
+                  publishRoyaltySplitter(resp.splitter_id);
+                } else {
+                  toast.success(
+                    isModal
+                      ? 'Royalty Splitter added Successfully'
+                      : 'Royalty Percentage Updated Successfully'
+                  );
+                  setIsAutoFillLoading(false);
+                  setAutoAssign(false);
+                  setIsEdit(null);
+                  setShowRoyalityErrorModal(false);
+                  setShowRoyalityErrorMessage('');
+                  getCollectionDetail();
+                  if (isModal) {
+                    createSplitterClose();
+                    onGetSplitterList();
+                  }
+                }
+              } else {
+                setIsAutoFillLoading(false);
+                setRoyaltyUpdatedSuccessfully(false);
+                setShowRoyalityErrorModal(true);
+                setAutoAssign(false);
+                setShowRoyalityErrorMessage(resp.message);
+              }
+            })
+            .catch((err) => {
+              setIsAutoFillLoading(false);
+              setRoyaltyUpdatedSuccessfully(false);
+              setAutoAssign(false);
+            });
+        }
+      } else {
+        setShowConnectModal(true);
+        setToCreateSplitter(true);
+      }
     }
   };
 
@@ -243,19 +358,25 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
   };
 
   const handlePublishSpliter = async () => {
-    let networkId = await getCurrentNetworkId();
-    if (Number(projectNetwork) === networkId) {
-      let totalPercent = royalityMembers.reduce(
-        (arr, val) => arr + val.royalty_percent,
-        0
-      );
-      if (totalPercent === 100) {
-        setShowPublishRoyaltySpliterConfirmModal(true);
+    setIsPublishing(true);
+    if (splitterName && blockchain && royalityMembers.length) {
+      let selectedNetwork = projectNetwork
+        ? Number(projectNetwork)
+        : Number(blockchain);
+      let networkId = await getCurrentNetworkId();
+      if (selectedNetwork === networkId) {
+        let totalPercent = royalityMembers.reduce(
+          (arr, val) => arr + val.royalty_percent,
+          0
+        );
+        if (totalPercent === 100) {
+          setShowPublishRoyaltySpliterConfirmModal(true);
+        } else {
+          toast.error('Total royalty percent should be 100 %');
+        }
       } else {
-        toast.error('Total royalty percent should be 100 %');
+        setShowNetworkHandler(true);
       }
-    } else {
-      setShowNetworkHandler(true);
     }
   };
 
@@ -266,6 +387,12 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
   const currentMembers =
     royalityMembers?.length &&
     royalityMembers.slice(indexOfFirstPost, indexOfLastPost);
+
+  let validNetworks = NETWORKS
+    ? Object.values(NETWORKS).filter(
+        (net) => net.network !== 97 && net.network !== 56
+      )
+    : [];
 
   return (
     <>
@@ -278,7 +405,8 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
         <NetworkHandlerModal
           show={showNetworkHandler}
           handleClose={() => setShowNetworkHandler(false)}
-          projectNetwork={projectNetwork}
+          projectNetwork={projectNetwork ? projectNetwork : blockchain}
+          type='Splitter'
         />
       )}
       {AutoAssign && (
@@ -297,7 +425,7 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
             setShowImportWallet(false);
             getCollectionDetail();
             getSplittedContributors(
-              royalitySplitterId ? royalitySplitterId : Collection.id,
+              royalitySplitterId ? royalitySplitterId : Collection?.id,
               royalitySplitterId ? 'splitter_id' : 'collection_id'
             );
           }}
@@ -313,6 +441,7 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
           setRoyaltyUpdatedSuccessfully={setRoyaltyUpdatedSuccessfully}
           setShowRoyalityErrorModal={setShowRoyalityErrorModal}
           setShowRoyalityErrorMessage={setShowRoyalityErrorMessage}
+          isModal={isModal}
         />
       )}
       {RoyaltyUpdatedSuccessfully && (
@@ -335,7 +464,7 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
           show={showRoyalityErrorModal}
         />
       )}
-      {showPublishRoyaltySpliterConfirmModal && (
+      {/* {showPublishRoyaltySpliterConfirmModal && (
         <PublishCollectionModal
           show={showPublishRoyaltySpliterConfirmModal}
           handleClose={() => setShowPublishRoyaltySpliterConfirmModal(false)}
@@ -343,7 +472,7 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
           type='Royalty Splitter'
           isRoyaltyPublished={Collection?.royalty_splitter?.contract_address}
         />
-      )}
+      )} */}
       {showPublishRoyaltySpliterConfirmModal && (
         <PublishRoyaltyConfirmModal
           show={showPublishRoyaltySpliterConfirmModal}
@@ -361,7 +490,10 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
           onRequestClose={() => {
             getCollectionDetail();
             setShowPublishRoyaltySpliterModal(false);
+            createSplitterClose(false);
+            onGetSplitterList();
           }}
+          contractAddress={contractAddress}
         />
       )}
       {showPublishRoyaltySpliterErrorModal && (
@@ -372,10 +504,76 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
         />
       )}
 
+      {showConnectModal && (
+        <WalletConnectModal
+          showModal={showConnectModal}
+          noRedirection={true}
+          closeModal={() => setShowConnectModal(false)}
+        />
+      )}
+
       {!loading && (
         <div className='bg-[#F8FCFE] rounded-[12px] p-5 mt-5'>
+          <div className='flex items-center mb-2'>
+            <div className='w-2/4 mr-1 relative'>
+              <label htmlFor='splitterName'>Splitter name</label>
+              <input
+                id='splitterName'
+                name='splitterName'
+                value={splitterName}
+                className='mt-1 rounded-[3px]'
+                disabled={hasPublishedRoyaltySplitter || isPublished}
+                style={{ height: 42 }}
+                type='text'
+                onChange={(e) => setSplitterName(e.target.value)}
+                placeholder='Splitter Name'
+              />
+              {((isSubmitted && !splitterName) ||
+                (isPublishing && !splitterName)) && (
+                <p className='text-sm text-red-400 absolute'>
+                  Name is required
+                </p>
+              )}
+            </div>
+            <div className='w-2/4 ml-1 relative'>
+              <label htmlFor='blockchain'>Blockchain</label>
+              <select
+                value={blockchain}
+                disabled={hasPublishedRoyaltySplitter || isPublished}
+                onChange={(e) => setBlockchain(e.target.value)}
+                className='h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3'
+              >
+                <option value={''} defaultValue>
+                  Select Blockchain
+                </option>
+                {validNetworks.map((network) => (
+                  <option value={network?.network} key={network?.network}>
+                    {network?.networkName}
+                  </option>
+                ))}
+              </select>
+              {((isSubmitted && !blockchain) ||
+                (isPublishing && !blockchain)) && (
+                <p className='text-sm text-red-400 absolute'>
+                  Blockchain is required
+                </p>
+              )}
+            </div>
+          </div>
+          {isModal && isPublished ? (
+            <div className='flex items-center mb-6'>
+              <p className='text-sm'>
+                Contract Address: {walletAddressTruncate(splitterAddress)}{' '}
+              </p>
+              <CopyToClipboard text={splitterAddress}>
+                <button className='ml-1 w-[32px] h-[32px] rounded-[4px] flex items-center justify-center cursor-pointer text-[#A3D7EF] active:text-black'>
+                  <FontAwesomeIcon className='' icon={faCopy} />
+                </button>
+              </CopyToClipboard>
+            </div>
+          ) : null}
           <div className='flex items-start md:items-center justify-between pb-7 '>
-            <h3 className='text-[18px] font-black'>Splitter Information</h3>
+            <h3 className='text-[18px] font-black'>Contributors</h3>
             {ShowPercentError ? (
               <p className='text-red-400 text-[14px] mt-1'>
                 Total percent of contributors should equal to or lesser than
@@ -383,7 +581,8 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
               </p>
             ) : null}
             <div className='flex items-center justify-center flex-col md:flex-row'>
-              {!hasPublishedRoyaltySplitter && (
+              {((!isModal && !hasPublishedRoyaltySplitter) ||
+                (isModal && !isPublished)) && (
                 <>
                   <div className='form-check form-switch flex items-center'>
                     <p className='text-[#303548] text-[12px] mr-3'>
@@ -397,13 +596,13 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
                       onChange={handleAutoAssign}
                     />
                   </div>
-                  <div
+                  {/* <div
                     className='mint-button mt-4 md:mt-0 ml-4 text-center font-satoshi-bold w-full text-[12px] md:w-fit flex'
                     onClick={() => setShowImportWallet(true)}
                   >
                     <Image src={PlusIcon} alt='add' width={12} height={12} />
                     <span className='ml-1'>Import Contributor</span>
-                  </div>
+                  </div> */}
                 </>
               )}
             </div>
@@ -418,8 +617,8 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
             showRoyalityErrorModal={showRoyalityErrorModal}
             isEdit={isEdit}
             handleValueChange={handleValueChange}
-            handleAutoFill={handleAutoFill}
-            isOwner={Collection?.is_owner}
+            isOwner={Collection?.is_owner || isModal}
+            isPublished={isPublished || hasPublishedRoyaltySplitter}
           />
           {/* <div className="mt-[30px]">
             {pagination.length > 0 && (
@@ -442,27 +641,55 @@ const Splitter = ({ collectionId, getProjectCollections, projectNetwork }) => {
           </div> */}
           {/* {CollectionDetail.is_owner &&
                 CollectionDetail.status !== "published" ? ( */}
-          <div className='w-full'>
-            {!hasPublishedRoyaltySplitter && (
+          {isPublishing && !royalityMembers.length && (
+            <p className='text-red-400 text-sm mt-4'>
+              Please add members to save or publish
+            </p>
+          )}
+          <div className='w-full flex items-center justify-end'>
+            {((!hasPublishedRoyaltySplitter && !isModal) ||
+              (!isPublished && isModal)) && (
+              <div>
+                <button
+                  onClick={handleAutoFill}
+                  className='border-primary-900 border text-primary-900 p-3 font-black text-[14px]'
+                  // disabled={!royalityMembers.length}
+                >
+                  Save draft
+                </button>
+              </div>
+            )}
+            {((isModal && !isPublished) ||
+              (!isModal && !hasPublishedRoyaltySplitter)) && (
               <button
-                className='block ml-auto bg-primary-100 text-primary-900 p-3 font-black text-[14px]'
+                className='flex items-center ml-4 border border-primary-100 bg-primary-100 text-primary-900 p-3 font-black text-[14px]'
                 onClick={handlePublishSpliter}
-                disabled={
-                  !canPublishRoyaltySplitter ||
-                  isPublishingRoyaltySplitter ||
-                  !royalityMembers.length ||
-                  !royalitySplitterId
-                }
+                disabled={isPublishingRoyaltySplitter}
               >
-                {isPublishingRoyaltySplitter
-                  ? publishRoyaltySplitterStatus === 1
-                    ? 'Creating contract'
-                    : 'Publishing'
-                  : 'Lock Percentage'}
+                <span className='mr-1'>
+                  {isPublishingRoyaltySplitter
+                    ? publishRoyaltySplitterStatus === 1
+                      ? 'Creating contract'
+                      : 'Publishing'
+                    : 'Publish to Blockchain'}
+                </span>
+                <Tooltip
+                  message='If you Publish to Blockchain, it will be visible on blockchain'
+                  place='left'
+                ></Tooltip>
               </button>
             )}
           </div>
           {/* ) : null} */}
+          <div className='text-right text-primary-900 mt-8'>
+            <Link
+              href='https://decir.gitbook.io/whitepaper/royalty-splitter/how-to-create-the-royalty-splitter.'
+              passHref
+              target='_blank'
+            >
+              How to set splitter on marketplace?
+            </Link>
+          </div>
         </div>
       )}
     </>

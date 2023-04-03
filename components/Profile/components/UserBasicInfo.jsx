@@ -25,7 +25,7 @@ export default function UserBasicInfo({ userInfo, sncList }) {
         unoptimized
         className='w-full h-[198px] object-cover rounded-tl-2xl rounded-tr-2xl'
       ></Image>
-      <div className='md:flex md:justify-between pt-5 px-4 md:px-10 pb-10'>
+      <div className='md:flex md:justify-between pt-5 px-4 md:px-10 pb-5'>
         <div className='md:flex gap-4  mb-4 md:mb-0'>
           <Image
             src={userInfo?.avatar ? userInfo?.avatar : DefaultProfilePicture}
@@ -53,17 +53,6 @@ export default function UserBasicInfo({ userInfo, sncList }) {
                 {userInfo?.job ? userInfo?.job : 'Job: Add you profession'}
               </span>
             </div>
-            <div className='w-full md:max-w-[342px] mt-2 text-[14px]'>
-              <ReactReadMoreReadLess
-                charLimit={80}
-                readMoreText={'Read more ▼'}
-                readLessText={'Read less ▲'}
-                readMoreClassName='font-bold'
-                readLessClassName='font-bold'
-              >
-                {bio}
-              </ReactReadMoreReadLess>
-            </div>
           </div>
         </div>
         <div className='flex flex-col gap-4 items-end'>
@@ -78,6 +67,17 @@ export default function UserBasicInfo({ userInfo, sncList }) {
           </Link>
           <SocialLink links={sncList} />
         </div>
+      </div>
+      <div className='text-[14px] md:ml-[206px] pb-5 px-4 md:px-0'>
+        <ReactReadMoreReadLess
+          charLimit={200}
+          readMoreText={'Read more ▼'}
+          readLessText={'Read less ▲'}
+          readMoreClassName='font-bold'
+          readLessClassName='font-bold'
+        >
+          {bio}
+        </ReactReadMoreReadLess>
       </div>
     </div>
   );

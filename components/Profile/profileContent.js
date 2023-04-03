@@ -14,9 +14,7 @@ import { getUserInfo, getUserRevenue } from 'services/User/userService';
 import { getUserNotification } from 'redux/user/action';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import SuccessModal from 'components/Modals/SuccessModal';
 import { getUserCollectionSalesInformation } from 'services/User/userService';
-import ErrorModal from 'components/Modals/ErrorModal';
 import { getMintedNftListByUserId } from 'services/nft/nftService';
 import NFTListCard from 'components/Cards/NFTListCard';
 import { toast } from 'react-toastify';
@@ -54,6 +52,14 @@ import UseCase from 'components/LandingPage/components/UseCase';
 import WelcomeModal from 'components/Commons/WelcomeModal/WelcomeModal';
 import { ls_SetNewUser, ls_GetNewUser } from 'util/ApplicationStorage';
 import TagManager from 'react-gtm-module';
+import CreateSplitter from './components/CreateSplitter';
+import SplitterBanner from 'components/LandingPage/components/SplitterBanner';
+import { getSplitterList } from 'services/collection/collectionService';
+import ReactPaginate from 'react-paginate';
+import SplitterTable from './components/SplitterTable';
+import { NETWORKS } from 'config/networks';
+import { getCurrentNetworkId } from 'util/MetaMask';
+import NetworkSwitchModal from 'components/Commons/NetworkSwitchModal/NetworkSwitchModal';
 
 const nftUseCase = {
   usedFor: 'NFTs',
@@ -69,7 +75,7 @@ const nftUseCase = {
     {
       title: 'PFP',
       description:
-        'PFP NFT helps your brand build and engage your online community. It is a great tool for brand identity',
+        'PFP NFT helps your brand to build and engage your online community. It is a great tool for brand identity',
       img: pfp,
       url: 'https://decir.io/what-are-pfp-nfts-used-for/',
     },
@@ -109,6 +115,7 @@ const daoUseCase = {
     },
   ],
 };
+
 const Profile = ({ id }) => {
   const dispatch = useDispatch();
 
@@ -147,7 +154,7 @@ const Profile = ({ id }) => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [walletAddress, setWalletAddress] = useState(null);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showCreateSplitter, setShowCreateSplitter] = useState(false);
   const settings = {
     320: {
       slidesPerView: 2,
@@ -181,15 +188,13 @@ const Profile = ({ id }) => {
     royalties: 0,
   });
 
-  useEffect(() => {
-    if (router?.query?.createNFT === 'true') {
-      setShowCreateNFT(true);
-    }
-  }, [router?.query]);
-
-  useEffect(() => {
-    dispatch(getUserNotification());
-  }, []);
+  // splitter start
+  const [pagination, setPagination] = useState([]);
+  const [splitterPage, setSplitterPage] = useState(1);
+  const [splitterList, setSplitterList] = useState([]);
+  const [isSplitterLoading, setIsSplitterLoading] = useState(true);
+  const [isEditSplitter, setIsEditSplitter] = useState(null);
+  const [switchNetwork, setSwitchNetwork] = useState(false);
 
   // function start
   async function userInfo() {
@@ -313,29 +318,35 @@ const Profile = ({ id }) => {
     setTokenGatedLoading(false);
   }
   const onCreateTokenGatedProject = async () => {
-    event('create_token_gate_project', { category: 'token_gate' });
-    TagManager.dataLayer({
-      dataLayer: {
-        event: 'click_event',
-        category: 'token_gate',
-        pageTitle: 'create_token_gate_project',
-      },
-    });
-    setShowOverlayLoading(true);
-    let title = `Unnamed Project ${new Date().toISOString()}`;
-    await createTokenGatedProject(title)
-      .then((res) => {
-        setShowOverlayLoading(false);
-        if (res.code === 0) {
-          router.push(`/token-gated/${res?.token_gate_project?.id}`);
-        } else {
-          toast.error(`Failed, ${res?.message}`);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        setShowOverlayLoading(false);
+    let currentNetwork = await getCurrentNetworkId();
+    if (NETWORKS?.[currentNetwork]) {
+      setSwitchNetwork(false);
+      event('create_token_gate_project', { category: 'token_gate' });
+      TagManager.dataLayer({
+        dataLayer: {
+          event: 'click_event',
+          category: 'token_gate',
+          pageTitle: 'create_token_gate_project',
+        },
       });
+      setShowOverlayLoading(true);
+      let title = `Unnamed Project ${new Date().toISOString()}`;
+      await createTokenGatedProject(title)
+        .then((res) => {
+          setShowOverlayLoading(false);
+          if (res.code === 0) {
+            router.push(`/token-gated/${res?.token_gate_project?.id}`);
+          } else {
+            toast.error(`Failed, ${res?.message}`);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          setShowOverlayLoading(false);
+        });
+    } else {
+      setSwitchNetwork(true);
+    }
   };
   const onUserRevenueGet = async () => {
     await getUserRevenue(id)
@@ -355,6 +366,41 @@ const Profile = ({ id }) => {
       .catch((err) => {
         console.log(err);
       });
+  };
+  const onGetSplitterList = async () => {
+    setIsSplitterLoading(true);
+    await getSplitterList(splitterPage)
+      .then((res) => {
+        setIsSplitterLoading(false);
+        if (res?.total && res?.total > 0) {
+          setSplitterList(res?.splitters);
+          const page = calculatePageCount(5, res?.total);
+          const pageList = [];
+          for (let index = 1; index <= page; index++) {
+            pageList.push(index);
+          }
+          setPagination(pageList);
+        }
+      })
+      .catch((res) => {
+        setIsSplitterLoading(false);
+      });
+  };
+  const calculatePageCount = (pageSize, totalItems) => {
+    return totalItems < pageSize ? 1 : Math.ceil(totalItems / pageSize);
+  };
+  const handlePageClick = (event) => {
+    setSplitterPage(event.selected + 1);
+  };
+  const handleWelcomeModal = () => {
+    setShowWelcome(false);
+    ls_SetNewUser(true);
+  };
+  const onSplitterModalClose = async () => {
+    if (showCreateSplitter) {
+      setShowCreateSplitter(false);
+    } else if (isEditSplitter) setIsEditSplitter(false);
+    await onGetSplitterList();
   };
 
   useEffect(() => {
@@ -381,7 +427,6 @@ const Profile = ({ id }) => {
   useEffect(() => {
     OnGetTokenGatedProjectList();
   }, [id]);
-
   useEffect(() => {
     if (!ls_GetNewUser()) {
       setShowWelcome(true);
@@ -389,23 +434,35 @@ const Profile = ({ id }) => {
       setShowWelcome(false);
     }
   }, []);
-
-  const handleWelcomeModal = () => {
-    setShowWelcome(false);
-    ls_SetNewUser(true);
-  };
+  useEffect(() => {
+    if (id) {
+      onGetSplitterList();
+    }
+  }, [splitterPage]);
+  useEffect(() => {
+    if (router?.query?.createNFT === 'true') {
+      setShowCreateNFT(true);
+    }
+  }, [router?.query]);
+  useEffect(() => {
+    dispatch(getUserNotification());
+  }, []);
 
   return (
     <>
       <div className='bg-color-gray-light-300'>
-        {!id && <LandingPage userId={id} />}
+        {!id && (
+          <LandingPage
+            userId={id}
+            setShowCreateSplitter={setShowCreateSplitter}
+          />
+        )}
         {id && (
           <>
-            <OnBoardingGuide />
+            <OnBoardingGuide setSwitchNetwork={setSwitchNetwork} />
             <div className='w-full px-4 mt-10 pb-10 md:max-w-[1100px] mx-auto'>
               <UserBasicInfo userInfo={user} sncList={sncList} />
               <BalanceInfo balanceInfo={balanceInfo} userInfo={user} />
-
               {/* token gated start */}
               <div className='my-20'>
                 {tokenGatedLoading ? (
@@ -462,7 +519,9 @@ const Profile = ({ id }) => {
                         </Swiper>
                       </>
                     ) : (
-                      <TokenGatedBannerCard />
+                      <>
+                        <TokenGatedBannerCard />
+                      </>
                     )}
                   </>
                 )}
@@ -473,16 +532,30 @@ const Profile = ({ id }) => {
               <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                 <div>
                   {collectionList?.length === 0 ? (
-                    <CreateNFTCard size='lg' />
+                    <CreateNFTCard
+                      size='lg'
+                      setSwitchNetwork={setSwitchNetwork}
+                    />
                   ) : (
-                    <CollectionTable userId={id} tableData={collectionList} />
+                    <CollectionTable
+                      userId={id}
+                      tableData={collectionList}
+                      setSwitchNetwork={setSwitchNetwork}
+                    />
                   )}
                 </div>
                 <div>
                   {projectList?.length === 0 ? (
-                    <BuildDaoCard size='lg' />
+                    <BuildDaoCard
+                      size='lg'
+                      setSwitchNetwork={setSwitchNetwork}
+                    />
                   ) : (
-                    <DaoTable userId={id} tableData={projectList} />
+                    <DaoTable
+                      userId={id}
+                      tableData={projectList}
+                      setSwitchNetwork={setSwitchNetwork}
+                    />
                   )}
                 </div>
               </div>
@@ -548,8 +621,39 @@ const Profile = ({ id }) => {
               <div className='px-4 my-10'>
                 <UseCase data={nftUseCase} />
               </div>
-              <div className='px-4 pb-10 '>
+              <div className='px-4 my-10 '>
                 <UseCase data={daoUseCase} />
+              </div>
+              {/* splitter start */}
+              <div className='px-4 pb-10'>
+                {splitterList?.length === 0 ? (
+                  <SplitterBanner setSwitchNetwork={setSwitchNetwork} />
+                ) : (
+                  <div>
+                    <SplitterTable
+                      setSwitchNetwork={setSwitchNetwork}
+                      data={splitterList}
+                      isLoading={isSplitterLoading}
+                      setIsEditSplitter={setIsEditSplitter}
+                      setShowCreateSplitter={setShowCreateSplitter}
+                    ></SplitterTable>
+                    {pagination.length > 0 && (
+                      <ReactPaginate
+                        className='flex flex-wrap md:space-x-10 space-x-3 justify-center items-center my-6'
+                        pageClassName='px-3 py-1 font-satoshi-bold text-sm  bg-opacity-5 rounded hover:bg-opacity-7 !text-txtblack '
+                        breakLabel='...'
+                        nextLabel='>'
+                        onPageChange={handlePageClick}
+                        pageRangeDisplayed={3}
+                        pageCount={pagination.length}
+                        previousLabel='<'
+                        renderOnZeroPageCount={null}
+                        activeClassName='text-primary-900 bg-primary-900 !no-underline'
+                        activeLinkClassName='!text-txtblack !no-underline'
+                      />
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </>
@@ -573,6 +677,20 @@ const Profile = ({ id }) => {
       {showOverlayLoading && <div className='loading'></div>}
       {showWelcome && (
         <WelcomeModal show={showWelcome} handleClose={handleWelcomeModal} />
+      )}
+      {(showCreateSplitter || isEditSplitter) && (
+        <CreateSplitter
+          show={showCreateSplitter || isEditSplitter}
+          handleClose={() => onSplitterModalClose()}
+          splitterId={isEditSplitter}
+          onGetSplitterList={onGetSplitterList}
+        />
+      )}
+      {switchNetwork && (
+        <NetworkSwitchModal
+          show={switchNetwork}
+          handleClose={() => setSwitchNetwork(false)}
+        />
       )}
     </>
   );

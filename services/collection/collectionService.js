@@ -65,6 +65,21 @@ export async function updateCollection(payload) {
     'formdata'
   );
 }
+
+export async function addCollectionSplitter(payload) {
+  const bodyFormData = new FormData();
+  bodyFormData.append('splitter_uid', payload.splitter);
+  if (payload?.supply) {
+    bodyFormData.append('total_supply', payload.supply);
+  }
+  return await client(
+    'PUT',
+    `/collection/${payload.id}`,
+    bodyFormData,
+    'formdata'
+  );
+}
+
 export async function connectCollectionToDAO(payload) {
   const bodyFormData = new FormData();
   for (const key in payload) {
@@ -125,6 +140,10 @@ export async function deleteUnpublishedCollection(id) {
 }
 
 //Royality Splitters
+export async function getSplitterList(page, perPage = 5) {
+  return await client('GET', `/royalty/list?page=${page}&limit=${perPage}`);
+}
+
 export async function getSplitterDetails(id, type = 'splitter_id') {
   return await client('GET', `/royalty?${type}=${id}`);
 }
@@ -187,4 +206,11 @@ export async function getCollectionByContractAddress(id) {
     'GET',
     `/collection?page=1&limit=10&col_contract_address=${id}`
   );
+}
+export async function deleteUnpublishedSplitter(id) {
+  return await client('DELETE', `/royalty/${id}`);
+}
+export async function detachSplitterFormCollection(id) {
+  console.log('here');
+  return await client('PUT', `/collection/${id}/detach-splitter`);
 }

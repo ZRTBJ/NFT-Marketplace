@@ -12,7 +12,7 @@ import {
   ls_GetLatestGasPrice,
 } from 'util/ApplicationStorage';
 
-export default function OnBoardingGuide() {
+export default function OnBoardingGuide({ setSwitchNetwork }) {
   const userinfo = useSelector((state) => state.user.userinfo);
   const [open, setOPen] = useState(true);
   const [showWalletConnectModal, setShowWalletConnectModal] = useState(false);
@@ -41,11 +41,12 @@ export default function OnBoardingGuide() {
     }
   };
 
-  const redirectToNftCreatePage = () => {
-    // if (userinfo?.id) {
+  const redirectToNftCreatePage = async () => {
+    // let currentNetwork = await getCurrentNetworkId();
+    // if (NETWORKS?.[currentNetwork]) {
     setShowCreateNFTModal(true);
     // } else {
-    //   setShowWalletConnectModal(true);
+    //   setSwitchNetwork(true);
     // }
   };
 
@@ -102,7 +103,7 @@ export default function OnBoardingGuide() {
                 <div className='flex items-center px-6 pb-3 -mt-4 gap-4 '>
                   <div>
                     <div className='gradient-text-deep-pueple font-black text-[18px]'>
-                      Create Your NFT
+                      Create NFT
                     </div>
                     <p className='text-textSubtle-100 text-[14px] break-word '>
                       Find out how to create NFTs on DeCir

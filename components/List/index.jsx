@@ -12,7 +12,7 @@ import DAOCard from 'components/Cards/DAOCard';
 import CollectionCard from 'components/Cards/CollectionCard';
 import NFTListCard from 'components/Cards/NFTListCard';
 import Sort from 'assets/images/icons/sort.svg';
-
+import { toast } from 'react-toastify';
 import { getCollections } from 'services/collection/collectionService';
 import ReactPaginate from 'react-paginate';
 import { getMintedNftListByUserId } from 'services/nft/nftService';
@@ -21,15 +21,17 @@ import Image from 'next/image';
 import TokenGatedProjectCard from 'components/Cards/TokenGatedProjectCard';
 import { getTokenGatedProjectList } from 'services/tokenGated/tokenGatedService';
 import { ls_GetUserID } from 'util/ApplicationStorage';
-
+import { useRouter } from 'next/router';
+import { createTokenGatedProject } from 'services/tokenGated/tokenGatedService';
 function List({ query }) {
   SwiperCore.use([Autoplay]);
+  const router = useRouter();
   const [searchKeyword, setSearchKeyword] = useState([]);
   const [searchList, setSearchList] = useState([]);
   const [projectList, setProjectList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [sortType, setSortType] = useState('newer');
-  const [pagination, SetPagination] = useState([1, 2]);
+  const [pagination, SetPagination] = useState([]);
   const [isActive, setIsactive] = useState(1);
 
   const payload = {
@@ -184,6 +186,29 @@ function List({ query }) {
   const handlePageClick = (event) => {
     setIsactive(event.selected + 1);
   };
+  const onCreateItems = async (type) => {
+    if (type === 'dao') {
+      router.push('/dao/create');
+    } else if (type === 'collection') {
+      router.push('/collection/create');
+    } else if (type === 'tokenGated') {
+      setIsLoading(true);
+      const title = `Unnamed Project ${new Date().toISOString()}`;
+      await createTokenGatedProject(title)
+        .then((res) => {
+          setIsLoading(false);
+          if (res.code === 0) {
+            router.push(`/token-gated/${res?.token_gate_project?.id}`);
+          } else {
+            toast.error(`Failed, ${res?.message}`);
+          }
+        })
+        .catch((err) => {
+          toast.error(`Failed, ${err}`);
+          setIsLoading(false);
+        });
+    }
+  };
 
   useEffect(() => {
     payload.page = isActive;
@@ -282,7 +307,7 @@ function List({ query }) {
         </section>
         <section>
           {isSearching ? (
-            <h4>
+            <h4 className='ml-4 mb-5'>
               {`Showing result for "${searchKeyword}"`}{' '}
               <p
                 className='text-primary-900 font-light cursor-pointer'
@@ -302,7 +327,23 @@ function List({ query }) {
                   height={210}
                   width={315}
                 />
-                <p className='text-subtitle font-bold'>Nothing Found</p>
+                <p className='text-subtitle font-bold mb-10'>Nothing Found</p>
+                {query?.type !== 'nft' && (
+                  <button
+                    onClick={() => onCreateItems(query?.type)}
+                    className='contained-button rounded ml-auto !text-white !py-3 !no-underline'
+                  >
+                    <i className='fa-solid fa-plus mr-2'></i>
+                    Create{' '}
+                    {query?.type === 'collection'
+                      ? 'Collection'
+                      : query?.type === 'dao'
+                      ? 'DAO'
+                      : query?.type === 'tokenGated'
+                      ? 'Token Gated Project'
+                      : ''}
+                  </button>
+                )}
               </div>
             </div>
           ) : null}
@@ -392,9 +433,33 @@ function List({ query }) {
                         height={210}
                         width={210}
                       />
-                      <p className='text-subtitle font-bold'>
-                        You don`t have any {query?.type} yet
+                      <p className='text-subtitle font-bold mb-10'>
+                        You don`t have any{' '}
+                        {query?.type === 'collection'
+                          ? 'Collection'
+                          : query?.type === 'dao'
+                          ? 'DAO'
+                          : query?.type === 'tokenGated'
+                          ? 'Token Gated Project'
+                          : 'Minted NFT'}{' '}
+                        yet
                       </p>
+                      {query?.type !== 'nft' && (
+                        <button
+                          onClick={() => onCreateItems(query?.type)}
+                          className='contained-button rounded ml-auto !text-white !py-3 !no-underline'
+                        >
+                          <i className='fa-solid fa-plus mr-2'></i>
+                          Create{' '}
+                          {query?.type === 'collection'
+                            ? 'Collection'
+                            : query?.type === 'dao'
+                            ? 'DAO'
+                            : query?.type === 'tokenGated'
+                            ? 'Token Gated Project'
+                            : ''}
+                        </button>
+                      )}
                     </div>
                   </div>
                 </>

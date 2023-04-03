@@ -167,7 +167,7 @@ export default function AddNewContent({
         let fileType =
           contents[0]?.file_type === 'movie' ? 'video' : contents[0]?.file_type;
         setLinkDetails({
-          link: `${contents[0]?.consumable_data}?token=${token}`,
+          link: `${contents[0]?.data}`,
           type: fileType,
         });
       } else {

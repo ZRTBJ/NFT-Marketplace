@@ -6,16 +6,21 @@ import { useSelector } from 'react-redux';
 import bg from 'assets/images/profile/bg-gradient.svg';
 import { useRouter } from 'next/router';
 import CreateNFTModal from 'components/Project/CreateDAOandNFT/components/CreateNFTModal.jsx';
-export default function CreateNFTCard({ size }) {
+import { getCurrentNetworkId } from 'util/MetaMask';
+import { NETWORKS } from 'config/networks';
+
+export default function CreateNFTCard({ size, setSwitchNetwork }) {
   const router = useRouter();
   const userinfo = useSelector((state) => state.user.userinfo);
   const [showWalletConnectModal, setShowWalletConnectModal] = useState(false);
   const [showCreateNFTModal, setShowCreateNFTModal] = useState(false);
   const handelOnClick = async () => {
-    // if (userinfo?.id) {
+    let currentNetwork = await getCurrentNetworkId();
+    // if (NETWORKS?.[currentNetwork]) {
     router.push(`/collection/create`);
+    //   setSwitchNetwork(false);
     // } else {
-    //   setShowWalletConnectModal(true);
+    //   setSwitchNetwork(true);
     // }
   };
   return (

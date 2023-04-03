@@ -10,6 +10,7 @@ const TOKEN_GATED_FILE_ENDPOINT =
 const MOONPAY_GCP = process.env.NEXT_PUBLIC_MOONPAY_GCP;
 const GASLESS_ENABLE = process.env.NEXT_PUBLIC_GASLESS_ENABLE;
 const SLACK_WEBHOOK = process.env.NEXT_PUBLIC_SLACK_WEBHOOK_URL;
+const ENVIROMENT = process.env.NEXT_PUBLIC_ENV;
 
 const Config = {
   API_ENDPOINT: BASE_URL,
@@ -23,6 +24,7 @@ const Config = {
   MOONPAY_GCP: MOONPAY_GCP,
   GASLESS_ENABLE: GASLESS_ENABLE,
   SLACK_WEBHOOK,
+  IS_PRODUCTION: ENVIROMENT === 'production',
 };
 
 export default Config;
