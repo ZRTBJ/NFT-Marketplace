@@ -28,7 +28,7 @@ import Link from 'next/link';
 import { NETWORKS } from 'config/networks';
 import { getCurrentNetworkId } from 'util/MetaMask';
 import WarningBar from 'components/Commons/WarningBar/WarningBar';
-import { ls_GetChainID } from 'util/ApplicationStorage';
+import { ls_GetChainID, ls_GetUserID } from 'util/ApplicationStorage';
 
 dynamic(() => import('tw-elements'), { ssr: false });
 
@@ -46,15 +46,19 @@ function MyApp({ Component, pageProps }) {
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
   const router = useRouter();
 
+  let userId = ls_GetUserID();
+
   /** Metamask network change detection */
   useEffect(() => {
-    if (window?.ethereum) {
-      window?.ethereum?.on('networkChanged', function (networkId) {
-        getCurrentNetwork(networkId);
-        setCurrentNetwork(networkId);
-      });
+    if (userId) {
+      if (window?.ethereum) {
+        window?.ethereum?.on('networkChanged', function (networkId) {
+          getCurrentNetwork(networkId);
+          setCurrentNetwork(networkId);
+        });
+      }
     }
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     TagManager.initialize({
@@ -63,12 +67,14 @@ function MyApp({ Component, pageProps }) {
   }, []);
 
   useEffect(() => {
-    getCurrentNetwork();
-  }, []);
+    if (userId) {
+      getCurrentNetwork();
+    }
+  }, [userId]);
 
   const getCurrentNetwork = async (networkId) => {
     let networkValue = await ls_GetChainID();
-
+    let currentchain = await getCurrentNetworkId();
     let id = networkId ? Number(networkId) : Number(networkValue);
     setCurrentNetwork(id);
     if (NETWORKS?.[id] && id !== 1) {
@@ -142,7 +148,7 @@ function MyApp({ Component, pageProps }) {
             ) : (
               <Auth>
                 <div className='bg-light'>
-                  {isWrongNetwork ? (
+                  {userId && isWrongNetwork ? (
                     <WarningBar
                       setIsWrongNetwork={setIsWrongNetwork}
                       currentNetwork={currentNetwork}

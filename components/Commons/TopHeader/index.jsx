@@ -84,8 +84,16 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     useComponentVisible();
 
   useEffect(() => {
-    setDefaultNetwork();
-  }, []);
+    if (userinfo?.id) {
+      setDefaultNetwork();
+    } else {
+      setCurrentSelectedNetwork({
+        name: networkList?.[0]?.networkName,
+        value: networkList?.[0]?.network,
+        icon: networkList?.[0]?.icon,
+      });
+    }
+  }, [userinfo?.id]);
 
   let networkList = Object.values(NETWORKS);
 
@@ -212,15 +220,17 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
         setNetworkId(networkId);
         ls_SetChainID(networkId);
         setDefaultNetwork(networkId);
-        if (NETWORKS[networkId]) {
-          toast.success(
-            `Your network got changed to ${NETWORKS?.[networkId]?.networkName}`,
-            { toastId: 'network-change-deduction' }
-          );
-        } else {
-          toast.error(`Your network got changed to an unsupported network`, {
-            toastId: 'network-change-deduction-error',
-          });
+        if (userinfo?.id) {
+          if (NETWORKS[networkId]) {
+            toast.success(
+              `Your network got changed to ${NETWORKS?.[networkId]?.networkName}`,
+              { toastId: 'network-change-deduction' }
+            );
+          } else {
+            toast.error(`Your network got changed to an unsupported network`, {
+              toastId: 'network-change-deduction-error',
+            });
+          }
         }
       });
     }
