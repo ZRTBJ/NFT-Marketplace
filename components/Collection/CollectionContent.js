@@ -404,7 +404,7 @@ const CollectionContent = ({ collectionId, userId }) => {
     e.preventDefault();
     setShowOptions(null);
 
-    if (Collection?.status === 'draft') {
+    if (Collection?.status === 'draft' || Collection?.status === 'publishing') {
       router.push(
         `${
           Collection?.type === 'product'
@@ -417,8 +417,8 @@ const CollectionContent = ({ collectionId, userId }) => {
         router.push(
           `/nft/membership/create?collection_id=${collectionId}&nftId=${nft.id}`
         );
-      } else if (Collection.type === 'product') {
-        if (Collection?.updatable && !nft.freeze_metadata) {
+      } else if (Collection?.type === 'product') {
+        if (Collection?.updatable && !nft?.freeze_metadata) {
           router.push(
             `/nft/product/create?collectionId=${collectionId}&nftId=${nft.id}`
           );
@@ -919,10 +919,8 @@ const CollectionContent = ({ collectionId, userId }) => {
         )}
         {collectionNotUpdatableModal && (
           <ErrorModal
-            title={
-              'NFT is not updatable once its collection is published or its metadata was freezed'
-            }
-            message={`  `}
+            title={'NFT is not updatable'}
+            message={`once its collection is published or its metadata was freezed`}
             handleClose={() => {
               setCollectionNotUpdatableModal(false);
             }}
@@ -1557,7 +1555,12 @@ const CollectionContent = ({ collectionId, userId }) => {
                                             onClick={(e) =>
                                               handleEditNFT(e, nft)
                                             }
-                                            className='py-2 pl-3 block hover:bg-gray-100 cursor-pointer'
+                                            className={`py-2 pl-3 block hover:bg-gray-100 ${
+                                              Collection?.type === 'product' &&
+                                              nft?.freeze_metadata
+                                                ? 'cursor-not-allowed'
+                                                : 'cursor-pointer'
+                                            }`}
                                           >
                                             Edit NFT
                                           </div>
