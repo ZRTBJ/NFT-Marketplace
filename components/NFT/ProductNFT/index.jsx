@@ -36,10 +36,12 @@ import WalletConnectModal from 'components/Login/WalletConnectModal';
 import { DebounceInput } from 'react-debounce-input';
 import { getCurrentNetworkId } from 'util/MetaMask';
 import NetworkSwitchModal from 'components/Commons/NetworkSwitchModal/NetworkSwitchModal';
+import { useRouter } from 'next/router';
 
 export default function ProductNFT({ query }) {
   const audioRef = useRef();
   const dispatch = useDispatch();
+  const router = useRouter();
   const userinfo = useSelector((state) => state.user.userinfo);
   const [isLoading, setIsLoading] = useState(false);
   const [showPropertyModal, setShowPropertyModal] = useState(false);
@@ -89,6 +91,7 @@ export default function ProductNFT({ query }) {
   const [showDeleteSuccessModal, setShowDeleteSuccessModal] = useState(false);
   const [showNetworkSwitch, setShowNetworkSwitch] = useState(false);
   const [redirection, setRedirection] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const {
     register,
@@ -617,12 +620,6 @@ export default function ProductNFT({ query }) {
           setValue('sensitiveContent', nft.sensitive_content);
           setPropertyList(nft.attributes);
           setIsNftLoading(false);
-          if (resp.lnft?.freeze_metadata) {
-            setRedirection(true);
-            setErrorTitle('NFT can not update');
-            setErrorMessage('This nft is freezed');
-            setShowErrorModal(true);
-          }
         } else {
           setIsNftLoading(false);
         }
@@ -639,12 +636,6 @@ export default function ProductNFT({ query }) {
       .then((resp) => {
         if (resp?.code === 0) {
           setCollection(resp?.collection);
-          if (!resp?.collection?.updatable) {
-            setRedirection(true);
-            setErrorTitle('NFT can not update');
-            setErrorMessage('NFT updatable is turned off from the Collection');
-            setShowErrorModal(true);
-          }
         } else {
           setErrorTitle('Unexpected Error, please try again');
           setErrorMessage(resp?.message);
@@ -687,6 +678,27 @@ export default function ProductNFT({ query }) {
       }
     } catch {}
   }, []);
+
+  useEffect(() => {
+    if (collection?.id && !collection?.updatable) {
+      setRedirection(true);
+      setErrorTitle('NFT can not update');
+      setErrorMessage('NFT updatable is turned off from the Collection');
+      setShowErrorModal(true);
+    } else if (
+      collection?.id &&
+      collection?.status === 'published' &&
+      nft?.id &&
+      !nft.freeze_metadata
+    ) {
+      setShowConfirmModal(true);
+    } else if (nft?.id && nft.freeze_metadata) {
+      setRedirection(true);
+      setErrorTitle('NFT can not update');
+      setErrorMessage('This nft is freezed');
+      setShowErrorModal(true);
+    }
+  }, [collection, nft]);
 
   let curCollection = collectionId
     ? options.find((item) => item.id === collectionId)
@@ -1274,6 +1286,17 @@ export default function ProductNFT({ query }) {
           <NetworkSwitchModal
             show={showNetworkSwitch}
             handleClose={() => setShowNetworkSwitch(false)}
+          />
+        )}
+        {showConfirmModal && (
+          <ConfirmationModal
+            show={showConfirmModal}
+            handleClose={() => {
+              setShowConfirmModal(false);
+              router.push(`/collection/${collection?.id}`);
+            }}
+            handleApply={() => setShowConfirmModal(false)}
+            message='The NFT will be frozen after this update, continue?'
           />
         )}
       </>

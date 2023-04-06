@@ -324,15 +324,13 @@ const Profile = ({ id }) => {
     };
     await getMintedNftListByUserId(payload)
       .then((e) => {
-        if (e.code === 0 && e.data !== null) {
-          e.data.forEach((element) => {
-            element.loading = false;
-          });
-
+        if (e?.code === 0 && e?.data !== null) {
           setMintedNftList(e.data);
           setIsLoading(false);
+          setNftLoading(false);
         } else {
           setIsLoading(false);
+          setNftLoading(false);
           setMintedNftList([]);
         }
       })
@@ -340,7 +338,6 @@ const Profile = ({ id }) => {
         setIsLoading(false);
         setNftLoading(false);
       });
-    setNftLoading(false);
   }
   async function OnGetTokenGatedProjectList() {
     const payload = {
@@ -454,6 +451,59 @@ const Profile = ({ id }) => {
     await onGetSplitterList();
   };
 
+  useEffect(() => {
+    userInfo();
+  }, [id]);
+  useEffect(() => {
+    setUser(user);
+    setWalletAddress(user?.eao);
+  }, [user]);
+  useEffect(() => {
+    if (id) {
+      onUserRevenueGet();
+    }
+  }, []);
+  useEffect(() => {
+    if (id) {
+      getProjectList();
+    }
+  }, [id]);
+  useEffect(() => {
+    if (id) {
+      getCollectionList();
+    }
+  }, [id]);
+  useEffect(() => {
+    if (id) {
+      getNftList();
+    }
+  }, [id]);
+  useEffect(() => {
+    if (id) {
+      OnGetTokenGatedProjectList();
+    }
+  }, [id]);
+  useEffect(() => {
+    if (!ls_GetNewUser()) {
+      setShowWelcome(true);
+    } else {
+      setShowWelcome(false);
+    }
+  }, []);
+  useEffect(() => {
+    if (id) {
+      onGetSplitterList();
+    }
+  }, [splitterPage]);
+  useEffect(() => {
+    if (router?.query?.createNFT === 'true') {
+      setShowCreateNFT(true);
+    }
+  }, [router?.query]);
+  useEffect(() => {
+    dispatch(getUserNotification());
+  }, []);
+
   return (
     <>
       <div className='bg-color-gray-light-300'>
@@ -499,12 +549,7 @@ const Profile = ({ id }) => {
                             View All
                           </Link>
                         </div>
-                        <Swiper
-                          breakpoints={settings}
-                          navigation={false}
-                          modules={[Navigation]}
-                          className={styles.createSwiper}
-                        >
+                        <Swiper className={styles.createSwiper}>
                           <div>
                             {tokenGatedProjectList.map(
                               (tokenGatedProject, index) => (
@@ -588,20 +633,20 @@ const Profile = ({ id }) => {
                 ) : (
                   <>
                     {mintedNftList.length > 0 ? (
-                      <Swiper
-                        breakpoints={settings}
-                        navigation={false}
-                        modules={[Navigation]}
-                        className={styles.createSwiper}
-                      >
+                      <Swiper id='nft' className={styles.createSwiper}>
                         <div>
-                          {mintedNftList.map((nft) => (
-                            <SwiperSlide
-                              className={styles.nftCard}
-                              key={`${nft.id}-${nft.token_id}`}
-                            >
-                              <NFTListCard nft={nft} />
-                            </SwiperSlide>
+                          {mintedNftList.map((nft, index) => (
+                            <div key={index}>
+                              <SwiperSlide
+                                key={index}
+                                className={styles.nftCard}
+                              >
+                                <NFTListCard
+                                  nft={nft}
+                                  key={index}
+                                ></NFTListCard>
+                              </SwiperSlide>
+                            </div>
                           ))}
                         </div>
                       </Swiper>
