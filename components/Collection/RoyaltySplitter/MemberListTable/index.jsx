@@ -11,11 +11,6 @@ import ConfirmationModal from 'components/Modals/ConfirmationModal';
 import { walletAddressTruncate } from 'util/WalletUtils';
 import Image from 'next/image';
 
-const ROLES = [
-  { id: 'contributor', label: 'Contributor' },
-  { id: 'owner', label: 'Owner' },
-];
-
 const MemberListTable = ({
   collection,
   headers,
@@ -39,7 +34,7 @@ const MemberListTable = ({
   const [isAdded, setIsAdded] = useState(false);
   const [addError, setAddError] = useState('');
   const [name, setName] = useState('');
-  const [role, setRole] = useState('contributor');
+  const [role, setRole] = useState('');
 
   useEffect(() => {
     if (newItems) {
@@ -82,7 +77,7 @@ const MemberListTable = ({
 
   const addNewContributorData = async () => {
     setIsAdded(true);
-    if (address && percentage) {
+    if (address && percentage && role) {
       let userAddress = address;
 
       if (!ethers.utils.isAddress(address)) {
@@ -90,23 +85,25 @@ const MemberListTable = ({
           const provider = new ethers.providers.Web3Provider(window.ethereum);
           userAddress = await provider.resolveName(address);
         } catch (error) {
-          setAddError('Invalid address or ENS');
+          setAddError('Invalid Wallet address or ENS');
           return;
         }
       }
 
       if (userAddress === null) {
-        setAddError('Invalid address or ENS');
+        setAddError('Invalid Wallet address or ENS');
         return;
       }
 
       let value = {
         user_eoa: userAddress,
         royalty_percent: parseFloat(percentage),
-        user_name: name,
-        role: role,
+        custom_name: name,
+        custom_role: role,
       };
       setRoyalityMembers([...list, value]);
+      setName('');
+      setRole('');
     }
   };
 
@@ -216,7 +213,7 @@ const MemberListTable = ({
                             : ' text-success-1 bg-[#32E865]'
                         }`}
                       >
-                        {r.is_owner ? 'Owner' : 'Contributor'}
+                        {r.custom_role}
                       </p>
                     </td>
                     <td className='py-4 px-5'>
@@ -287,21 +284,15 @@ const MemberListTable = ({
               />
             </div>
             <div className='w-[20%] mr-2'>
-              {' '}
-              <select
+              <input
+                id={'role'}
+                type='text'
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                className='h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3'
-              >
-                <option value={''} defaultValue disabled>
-                  Select Role
-                </option>
-                {ROLES.map((role) => (
-                  <option value={role.id} key={role.id}>
-                    {role.label}
-                  </option>
-                ))}
-              </select>
+                maxlength='50'
+                placeholder='Role'
+                className='w-full bg-secondary rounded-[6px] text-[12px] px-[10px] py-[14px] text-text-base'
+              />
             </div>
             <button
               className='outlined-button font-satoshi-bold'
@@ -318,7 +309,7 @@ const MemberListTable = ({
         ) : null}
         {(isAdded && !percentage) || (isAdded && !address) ? (
           <p className='text-red-400 text-[14px] mt-1 ml-4'>
-            Wallet Address or ENS and Percentage are required
+            Wallet Address or ENS, Percentage and Role are required
           </p>
         ) : null}
         {showError ? (
