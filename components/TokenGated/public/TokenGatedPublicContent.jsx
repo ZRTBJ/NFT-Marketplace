@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import PublicProjectInfoCard from 'components/TokenGated/ProjectInfoCard/Public';
 import TabComponent from 'components/TokenGated/public/TabComponent';
 import { getTokenGatedProject } from 'services/tokenGated/tokenGatedService';
+import { useSelector } from 'react-redux';
 
 export default function TokenGatedPublicContent({ query, userId }) {
+  const userInfo = useSelector((state) => state.user.userinfo);
   const [showOverLayLoading, setShowOverLayLoading] = useState(false);
   const [project, setProject] = useState({});
   const onGetTokenGatedProject = async (id) => {
@@ -49,7 +51,7 @@ export default function TokenGatedPublicContent({ query, userId }) {
   };
   useEffect(() => {
     onGetTokenGatedProject(query?.id);
-  }, [query?.id]);
+  }, [query?.id, userInfo?.id]);
   return (
     <div>
       {showOverLayLoading && <div className='loading'></div>}

@@ -60,6 +60,7 @@ import SplitterTable from './components/SplitterTable';
 import { NETWORKS } from 'config/networks';
 import { getCurrentNetworkId } from 'util/MetaMask';
 import NetworkSwitchModal from 'components/Commons/NetworkSwitchModal/NetworkSwitchModal';
+import { el } from 'date-fns/locale';
 
 const nftUseCase = {
   usedFor: 'NFTs',
@@ -180,7 +181,7 @@ const Profile = ({ id }) => {
   const [mintedNftList, setMintedNftList] = useState([]);
   const [ShowCreateNFT, setShowCreateNFT] = useState(false);
   const [showOverlayLoading, setShowOverlayLoading] = useState(false);
-  const [tokenGatedProjectList, setTokenGatedProjectList] = useState(true);
+  const [tokenGatedProjectList, setTokenGatedProjectList] = useState([]);
   const [balanceInfo, setBalanceInfo] = useState({
     dao_nft_splitter_amount: 0,
     dao_treasury: 0,
@@ -195,6 +196,50 @@ const Profile = ({ id }) => {
   const [isSplitterLoading, setIsSplitterLoading] = useState(true);
   const [isEditSplitter, setIsEditSplitter] = useState(null);
   const [switchNetwork, setSwitchNetwork] = useState(false);
+
+  useEffect(() => {
+    userInfo();
+  }, [id]);
+  useEffect(() => {
+    setUser(user);
+    setWalletAddress(user?.eao);
+  }, [user]);
+  useEffect(() => {
+    if (id) {
+      onUserRevenueGet();
+    }
+  }, [id]);
+  useEffect(() => {
+    getProjectList();
+    getCollectionList();
+  }, [id]);
+
+  useEffect(() => {
+    getNftList();
+  }, [id]);
+  useEffect(() => {
+    OnGetTokenGatedProjectList();
+  }, [id]);
+  useEffect(() => {
+    if (!ls_GetNewUser()) {
+      setShowWelcome(true);
+    } else {
+      setShowWelcome(false);
+    }
+  }, []);
+  useEffect(() => {
+    if (id) {
+      onGetSplitterList();
+    }
+  }, [splitterPage, id]);
+  useEffect(() => {
+    if (router?.query?.createNFT === 'true') {
+      setShowCreateNFT(true);
+    }
+  }, [router?.query]);
+  useEffect(() => {
+    dispatch(getUserNotification());
+  }, [id]);
 
   // function start
   async function userInfo() {
@@ -239,6 +284,7 @@ const Profile = ({ id }) => {
           setProjectList(e.data);
         } else {
           setIsLoading(false);
+          setProjectList([]);
         }
       })
       .catch(() => {
@@ -261,6 +307,7 @@ const Profile = ({ id }) => {
           setIsLoading(false);
         } else {
           setIsLoading(false);
+          setCollectionList([]);
         }
       })
       .catch(() => {
@@ -286,6 +333,7 @@ const Profile = ({ id }) => {
           setIsLoading(false);
         } else {
           setIsLoading(false);
+          setMintedNftList([]);
         }
       })
       .catch(() => {
@@ -309,6 +357,7 @@ const Profile = ({ id }) => {
         } else {
           setIsLoading(false);
           setTokenGatedLoading(false);
+          setTokenGatedProjectList([]);
         }
       })
       .catch(() => {
@@ -380,6 +429,8 @@ const Profile = ({ id }) => {
             pageList.push(index);
           }
           setPagination(pageList);
+        } else {
+          setSplitterList([]);
         }
       })
       .catch((res) => {
@@ -402,51 +453,6 @@ const Profile = ({ id }) => {
     } else if (isEditSplitter) setIsEditSplitter(false);
     await onGetSplitterList();
   };
-
-  useEffect(() => {
-    userInfo();
-  }, [id]);
-  useEffect(() => {
-    setUser(user);
-    setWalletAddress(user?.eao);
-  }, [user]);
-  useEffect(() => {
-    if (id) {
-      onUserRevenueGet();
-    }
-  }, []);
-  useEffect(() => {
-    getProjectList();
-  }, [id]);
-  useEffect(() => {
-    getCollectionList();
-  }, []);
-  useEffect(() => {
-    getNftList();
-  }, [id]);
-  useEffect(() => {
-    OnGetTokenGatedProjectList();
-  }, [id]);
-  useEffect(() => {
-    if (!ls_GetNewUser()) {
-      setShowWelcome(true);
-    } else {
-      setShowWelcome(false);
-    }
-  }, []);
-  useEffect(() => {
-    if (id) {
-      onGetSplitterList();
-    }
-  }, [splitterPage]);
-  useEffect(() => {
-    if (router?.query?.createNFT === 'true') {
-      setShowCreateNFT(true);
-    }
-  }, [router?.query]);
-  useEffect(() => {
-    dispatch(getUserNotification());
-  }, []);
 
   return (
     <>
@@ -627,7 +633,10 @@ const Profile = ({ id }) => {
               {/* splitter start */}
               <div className='px-4 pb-10'>
                 {splitterList?.length === 0 ? (
-                  <SplitterBanner setSwitchNetwork={setSwitchNetwork} />
+                  <SplitterBanner
+                    setSwitchNetwork={setSwitchNetwork}
+                    setShowCreateSplitter={setShowCreateSplitter}
+                  />
                 ) : (
                   <div>
                     <SplitterTable

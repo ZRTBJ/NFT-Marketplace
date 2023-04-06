@@ -11,6 +11,11 @@ import ConfirmationModal from 'components/Modals/ConfirmationModal';
 import { walletAddressTruncate } from 'util/WalletUtils';
 import Image from 'next/image';
 
+const ROLES = [
+  { id: 'contributor', label: 'Contributor' },
+  { id: 'owner', label: 'Owner' },
+];
+
 const MemberListTable = ({
   collection,
   headers,
@@ -24,13 +29,17 @@ const MemberListTable = ({
   onShowError = () => {},
   isPublished,
 }) => {
-  const [newItems, setNewItems] = useState(null);
+  const [newItems, setNewItems] = useState([
+    { eoa: '', royalty_percent: 0, type: 'new' },
+  ]);
   const [address, setAddress] = useState('');
   const [percentage, setPercentage] = useState();
   const [toDelete, setToDelete] = useState(false);
   const [showError, setShowError] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
   const [addError, setAddError] = useState('');
+  const [name, setName] = useState('');
+  const [role, setRole] = useState('contributor');
 
   useEffect(() => {
     if (newItems) {
@@ -94,6 +103,8 @@ const MemberListTable = ({
       let value = {
         user_eoa: userAddress,
         royalty_percent: parseFloat(percentage),
+        user_name: name,
+        role: role,
       };
       setRoyalityMembers([...list, value]);
     }
@@ -116,7 +127,7 @@ const MemberListTable = ({
       <div className='overflow-x-auto relative hidden md:block'>
         <table className='w-full text-left'>
           <thead>
-            <tr className='text-textSubtle text-[12px] '>
+            <tr className='text-textSubtle text-[12px] pb-4'>
               {headers.map((item) => (
                 <th
                   scope='col'
@@ -195,7 +206,7 @@ const MemberListTable = ({
                       </div>
                     </td>
                     <td className='py-4 px-5'>
-                      {r.user_name ? r.user_name : '-'}
+                      {r.custom_name ? r.custom_name : '-'}
                     </td>
                     <td className={`py-4 px-5`}>
                       <p
@@ -243,8 +254,8 @@ const MemberListTable = ({
       </div>
       <div className='mb-4'>
         {newItems ? (
-          <div className='flex items-center ml-0 md:ml-4'>
-            <div className='w-[250px] mr-4 md:mr-8'>
+          <div className='flex items-center ml-0 md:ml-4 mt-3'>
+            <div className='w-[20%] mr-2'>
               <input
                 id={'address'}
                 type='text'
@@ -254,16 +265,43 @@ const MemberListTable = ({
                 className='w-full bg-secondary rounded-[6px] text-[12px] px-[10px] py-[14px] text-text-base'
               />
             </div>
-            <div className='w-[150px] mr-4 md:mr-8 relative'>
+            <div className='w-[20%] mr-2 relative'>
               <input
                 id={'percentage'}
                 type='number'
                 value={percentage}
                 onChange={(e) => setPercentage(e.target.value)}
                 placeholder='-'
-                className='w-full bg-secondary rounded-[6px] text-[12px] pl-[10px] !pr-[30px] py-[14px] text-text-base'
+                className='w-full bg-secondary rounded-[6px] text-[12px] pl-[10px] !pr-[30px] h-[40px] py-[14px] text-text-base'
               />
-              <p className='absolute top-3 right-4'>%</p>
+              <p className='absolute top-2 right-4'>%</p>
+            </div>
+            <div className='w-[20%] mr-2'>
+              <input
+                id={'name'}
+                type='text'
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder='Name'
+                className='w-full bg-secondary rounded-[6px] text-[12px] px-[10px] py-[14px] text-text-base'
+              />
+            </div>
+            <div className='w-[20%] mr-2'>
+              {' '}
+              <select
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                className='h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3'
+              >
+                <option value={''} defaultValue disabled>
+                  Select Role
+                </option>
+                {ROLES.map((role) => (
+                  <option value={role.id} key={role.id}>
+                    {role.label}
+                  </option>
+                ))}
+              </select>
             </div>
             <button
               className='outlined-button font-satoshi-bold'

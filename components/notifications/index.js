@@ -12,10 +12,11 @@ const Notifications = () => {
   const dispatch = useDispatch();
   const { notifications } = useSelector((state) => state.user);
   const router = useRouter();
+  const userinfo = useSelector((state) => state.user.userinfo);
 
   useEffect(() => {
     dispatch(getUserNotification(isActive));
-  }, [isActive]);
+  }, [isActive, userinfo?.id]);
 
   useEffect(() => {
     let arr = Array.from({ length: notifications?.pageSize }, (v, k) => k + 1);

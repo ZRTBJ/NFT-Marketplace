@@ -180,7 +180,11 @@ const CollectionContent = ({ collectionId, userId }) => {
     if (hasNextPageData) {
       getSplitters(Collection?.blockchain);
     }
-  }, [payload]);
+  }, [payload, userId]);
+
+  useEffect(() => {
+    setSelectedTab(1);
+  }, [userId]);
 
   const getSplitters = async (network) => {
     setIsSplitterLoading(true);
@@ -249,7 +253,7 @@ const CollectionContent = ({ collectionId, userId }) => {
       getCollectionSalesData();
       getCollectionNewWorth();
     }
-  }, [collectionId]);
+  }, [collectionId, userId]);
 
   const getCollectionSalesData = () => {
     getCollectionSales(collectionId).then((data) =>
@@ -489,6 +493,8 @@ const CollectionContent = ({ collectionId, userId }) => {
         return {
           wallet_address: mem.user_eoa,
           royalty: mem.royalty_percent,
+          role: mem.role,
+          name: mem.user_name,
         };
       });
       let formData = new FormData();

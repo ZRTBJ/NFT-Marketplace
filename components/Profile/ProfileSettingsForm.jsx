@@ -39,7 +39,7 @@ const ProfileSettingsForm = () => {
       setIsLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [userinfo?.id]);
 
   async function getUserDetails(userID) {
     setIsLoading(true);
