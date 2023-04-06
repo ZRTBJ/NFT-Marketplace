@@ -292,8 +292,8 @@ const Splitter = ({
           return {
             wallet_address: mem.user_eoa,
             royalty: mem.royalty_percent,
-            role: mem.role,
-            name: mem.user_name,
+            role: mem.custom_role,
+            name: mem.custom_name,
           };
         });
         let formData = new FormData();
