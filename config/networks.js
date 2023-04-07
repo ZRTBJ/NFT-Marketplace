@@ -1,28 +1,28 @@
-import Eth from 'assets/images/eth.svg';
-import Matic from 'assets/images/polygon.svg';
-import Bnb from 'assets/images/bnb.svg';
-import { address } from './contractAddresses.js';
-import PolyScan from 'assets/images/poly-scan.png';
-import EthScan from 'assets/images/eth-scan.png';
+import Eth from "assets/images/eth.svg";
+import Matic from "assets/images/polygon.svg";
+import Bnb from "assets/images/bnb.svg";
+import { address } from "./contractAddresses.js";
+import PolyScan from "assets/images/poly-scan.png";
+import EthScan from "assets/images/eth-scan.png";
 
-const gnosisFundTransferUrl = 'https://app.safe.global';
+const gnosisFundTransferUrl = "https://app.safe.global";
 
 const raribleNFTDetailsUrl =
-  process.env.NEXT_PUBLIC_ENV === 'production'
-    ? 'https://rarible.com/token/'
-    : 'https://testnet.rarible.com/token/';
+  process.env.NEXT_PUBLIC_ENV === "production"
+    ? "https://rarible.com/token/"
+    : "https://testnet.rarible.com/token/";
 const openSeaNFTDetailsUrl =
-  process.env.NEXT_PUBLIC_ENV === 'production'
-    ? 'https://opensea.io/assets/'
-    : 'https://testnets.opensea.io/assets';
+  process.env.NEXT_PUBLIC_ENV === "production"
+    ? "https://opensea.io/assets/"
+    : "https://testnets.opensea.io/assets";
 
 const TESTNET = {
   5: {
-    networkName: 'Goerli',
-    cryto: 'GoerliETH',
+    networkName: "Goerli",
+    cryto: "GoerliETH",
     quickNodeURL: process.env.NEXT_PUBLIC_GOERLI_QUICKNODE_URL,
-    value: 'eth',
-    label: 'ETH',
+    value: "eth",
+    label: "ETH",
     icon: Eth,
     forwarder: address.MinimalForwarderGoerli,
     webhook: process.env.NEXT_PUBLIC_WEBHOOK_URL_GOERLI,
@@ -42,24 +42,25 @@ const TESTNET = {
     scan: EthScan,
     alchamey: process.env.NEXT_PUBLIC_GOERLI_NFT_ALCHEMY_URL,
     scanApi: `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${process.env.NEXT_PUBLIC_GOELRI_SCAN}`,
+    priceApi: `https://api.etherscan.io/api?module=stats&action=ethprice&apikey=${process.env.NEXT_PUBLIC_GOELRI_SCAN}`,
     config: {
-      chainId: '0x5',
-      rpcUrls: ['https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'],
-      chainName: 'Goerli Test Network',
+      chainId: "0x5",
+      rpcUrls: ["https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"],
+      chainName: "Goerli Test Network",
       nativeCurrency: {
-        name: 'GoerliETH',
-        symbol: 'GoerliETH',
+        name: "GoerliETH",
+        symbol: "GoerliETH",
         decimals: 18,
       },
-      blockExplorerUrls: ['https://goerli.etherscan.io/'],
+      blockExplorerUrls: ["https://goerli.etherscan.io/"],
     },
   },
   97: {
-    networkName: 'BSC Testnet',
-    cryto: 'BNB',
+    networkName: "BSC Testnet",
+    cryto: "BNB",
     quickNodeURL: process.env.NEXT_PUBLIC_BNBTEST_QUICKNODE_URL,
-    value: 'bnb',
-    label: 'BNB',
+    value: "bnb",
+    label: "BNB",
     icon: Bnb,
     forwarder: address.MinimalForwarderBnbTest,
     webhook: process.env.NEXT_PUBLIC_WEBHOOK_URL_BNBTEST,
@@ -78,24 +79,25 @@ const TESTNET = {
     decirTreasury: address.decirTreasuryBnbTest,
     discount: address.discountBnbTest,
     scanApi: `https://api.bscscan.com/api?module=gastracker&action=gasoracle&apikey=${process.env.NEXT_PUBLIC_BNB_TESTNET_SCAN}`,
+    priceApi: ``,
     config: {
-      chainId: '0x61',
-      rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
-      chainName: 'BSC Testnet',
+      chainId: "0x61",
+      rpcUrls: ["https://data-seed-prebsc-1-s1.binance.org:8545/"],
+      chainName: "BSC Testnet",
       nativeCurrency: {
-        name: 'BNB',
-        symbol: 'BNB',
+        name: "BNB",
+        symbol: "BNB",
         decimals: 18,
       },
-      blockExplorerUrls: ['https://testnet.bscscan.com'],
+      blockExplorerUrls: ["https://testnet.bscscan.com"],
     },
   },
   80001: {
-    networkName: 'Polygon Mumbai',
-    cryto: 'MATIC',
+    networkName: "Polygon Mumbai",
+    cryto: "MATIC",
     quickNodeURL: process.env.NEXT_PUBLIC_MUMBAI_QUICKNODE_URL,
-    value: 'matic',
-    label: 'MATIC',
+    value: "matic",
+    label: "MATIC",
     icon: Matic,
     forwarder: address.MinimalForwarderMumbai,
     webhook: process.env.NEXT_PUBLIC_WEBHOOK_URL_MUMBAI,
@@ -117,26 +119,26 @@ const TESTNET = {
     alchamey: process.env.NEXT_PUBLIC_MUMBAI_NFT_ALCHEMY_URL,
     scanApi: `https://api.polygonscan.com/api?module=gastracker&action=gasoracle&apikey=${process.env.NEXT_PUBLIC_MUMBAI_SCAN}`,
     config: {
-      chainId: '0x13881',
-      rpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
-      chainName: 'Mumbai Testnet Polygon',
+      chainId: "0x13881",
+      rpcUrls: ["https://rpc-mumbai.maticvigil.com/"],
+      chainName: "Mumbai Testnet Polygon",
       nativeCurrency: {
-        name: 'MATIC',
-        symbol: 'MATIC',
+        name: "MATIC",
+        symbol: "MATIC",
         decimals: 18,
       },
-      blockExplorerUrls: ['https://mumbai.polygonscan.com/'],
+      blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
     },
   },
 };
 
 const MAINNET = {
   137: {
-    networkName: 'Polygon Mainnet',
-    crypto: 'MATIC',
+    networkName: "Polygon Mainnet",
+    crypto: "MATIC",
     quickNodeURL: process.env.NEXT_PUBLIC_POLYGON_QUICKNODE_URL,
-    value: 'matic',
-    label: 'MATIC',
+    value: "matic",
+    label: "MATIC",
     icon: Matic,
     forwarder: address.MinimalForwarderPolygon,
     webhook: process.env.NEXT_PUBLIC_WEBHOOK_URL_POLYGON,
@@ -151,30 +153,30 @@ const MAINNET = {
     raribleNFTDetailsUrl: raribleNFTDetailsUrl,
     openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/matic/`,
     viewContractAddressUrl: `https://polygonscan.com/address/`,
-    viewTxUrl: 'https://polygonscan.com/tx/',
+    viewTxUrl: "https://polygonscan.com/tx/",
     decirTreasury: address.decirTreasuryPolygon,
     discount: address.discountPolygon,
     scan: PolyScan,
     alchamey: process.env.NEXT_PUBLIC_POLYGON_NFT_ALCHEMY_URL,
     scanApi: `https://api.polygonscan.com/api?module=gastracker&action=gasoracle&apikey=${process.env.NEXT_PUBLIC_POLYGON_SCAN}`,
     config: {
-      chainId: '0x89',
-      rpcUrls: ['https://polygon-rpc.com/'],
-      chainName: 'Polygon Mainnet',
+      chainId: "0x89",
+      rpcUrls: ["https://polygon-rpc.com/"],
+      chainName: "Polygon Mainnet",
       nativeCurrency: {
-        name: 'MATIC',
-        symbol: 'MATIC',
+        name: "MATIC",
+        symbol: "MATIC",
         decimals: 18,
       },
-      blockExplorerUrls: ['https://polygonscan.com/'],
+      blockExplorerUrls: ["https://polygonscan.com/"],
     },
   },
   1: {
-    networkName: 'Ethereum Mainnet',
-    crypto: 'ETH',
+    networkName: "Ethereum Mainnet",
+    crypto: "ETH",
     quickNodeURL: process.env.NEXT_PUBLIC_ETHEREUM_QUICKNODE_URL,
-    value: 'eth',
-    label: 'ETH',
+    value: "eth",
+    label: "ETH",
     icon: Eth,
     forwarder: address.MinimalForwarderEthereum,
     webhook: process.env.NEXT_PUBLIC_WEBHOOK_URL_ETHEREUM,
@@ -189,30 +191,30 @@ const MAINNET = {
     raribleNFTDetailsUrl: raribleNFTDetailsUrl,
     openSeaNFTDetailsUrl: `${openSeaNFTDetailsUrl}/ethereum/`,
     viewContractAddressUrl: `https://etherscan.io/address/`,
-    viewTxUrl: 'https://etherscan.io/tx/',
+    viewTxUrl: "https://etherscan.io/tx/",
     decirTreasury: address.decirTreasuryEthereum,
     discount: address.discountEthereum,
     scan: EthScan,
     alchamey: process.env.NEXT_PUBLIC_ETHEREUM_NFT_ALCHEMY_URL,
     scanApi: `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${process.env.NEXT_PUBLIC_ETHEREUM_SCAN}`,
     config: {
-      chainId: '0x1',
-      rpcUrls: ['https://mainnet.infura.io/v3/'],
-      chainName: 'Ethereum Mainnet',
+      chainId: "0x1",
+      rpcUrls: ["https://mainnet.infura.io/v3/"],
+      chainName: "Ethereum Mainnet",
       nativeCurrency: {
-        name: 'ETH',
-        symbol: 'ETH',
+        name: "ETH",
+        symbol: "ETH",
         decimals: 18,
       },
-      blockExplorerUrls: ['https://etherscan.io'],
+      blockExplorerUrls: ["https://etherscan.io"],
     },
   },
   56: {
-    networkName: 'Binance Smart Chain',
-    cryto: 'BNB',
+    networkName: "Binance Smart Chain",
+    cryto: "BNB",
     quickNodeURL: process.env.NEXT_PUBLIC_BNB_QUICKNODE_URL,
-    value: 'bnb',
-    label: 'BNB',
+    value: "bnb",
+    label: "BNB",
     icon: Bnb,
     forwarder: address.MinimalForwarderBnb,
     webhook: process.env.NEXT_PUBLIC_WEBHOOK_URL_BNB,
@@ -231,19 +233,19 @@ const MAINNET = {
     discount: address.discountBnb,
     scanApi: `https://api.bscscan.com/api?module=gastracker&action=gasoracle&apikey=${process.env.NEXT_PUBLIC_BNB_SCAN}`,
     config: {
-      chainId: '0x38',
-      rpcUrls: ['https://bsc-dataseed1.defibit.io'],
-      chainName: 'Binance Smart Chain',
+      chainId: "0x38",
+      rpcUrls: ["https://bsc-dataseed1.defibit.io"],
+      chainName: "Binance Smart Chain",
       nativeCurrency: {
-        name: 'BNB',
-        symbol: 'BNB',
+        name: "BNB",
+        symbol: "BNB",
         decimals: 18,
       },
-      blockExplorerUrls: ['https://bscscan.com'],
+      blockExplorerUrls: ["https://bscscan.com"],
     },
   },
 };
 
-let NETWORKS = process.env.NEXT_PUBLIC_ENV === 'production' ? MAINNET : TESTNET;
+let NETWORKS = process.env.NEXT_PUBLIC_ENV === "production" ? MAINNET : TESTNET;
 
 export { NETWORKS };
