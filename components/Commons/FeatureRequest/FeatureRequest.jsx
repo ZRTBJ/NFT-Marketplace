@@ -1,23 +1,23 @@
-import Modal from "../Modal";
-import { useState } from "react";
-import { sendMessage } from "services/User/userService";
-import Spinner from "components/Commons/Spinner";
-import { toast } from "react-toastify";
+import Modal from '../Modal';
+import { useState } from 'react';
+import { sendMessage } from 'services/User/userService';
+import Spinner from 'components/Commons/Spinner';
+import { toast } from 'react-toastify';
 
 const FeatureRequest = ({ show, handleClose }) => {
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [name, setName] = useState("");
-  const [title, setTitle] = useState("");
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [name, setName] = useState('');
+  const [title, setTitle] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const resetState = () => {
     setIsSubmitted(false);
-    setMessage("");
-    setEmail("");
-    setName("");
-    setTitle("");
+    setMessage('');
+    setEmail('');
+    setName('');
+    setTitle('');
     setIsLoading(false);
     handleClose();
   };
@@ -28,7 +28,7 @@ const FeatureRequest = ({ show, handleClose }) => {
     if ((email, message)) {
       setIsLoading(true);
       let payload = {
-        type: "feature_request",
+        type: 'feature_request',
         email,
         message,
         name,
@@ -65,64 +65,64 @@ const FeatureRequest = ({ show, handleClose }) => {
       gradientBg={true}
     >
       <div className={`px-[11px] md:px-[0px] text-black`}>
-        <h1 className="text-[30px] md:text-[46px]">Request a New Feature</h1>
+        <h1 className='text-[30px] md:text-[46px]'>Request a New Feature</h1>
         <div>
           <form onSubmit={handleSend}>
-            <div className="p-6">
-              <div className="mb-6">
+            <div className='p-6'>
+              <div className='mb-6'>
                 <input
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="p-4 mb-1"
-                  name="message"
-                  type="email"
-                  placeholder="Email"
+                  className='p-4 mb-1'
+                  name='message'
+                  type='email'
+                  placeholder='Email'
                 />
                 {validEmail && (
-                  <p className="text-red-400 text-sm">Email is required</p>
+                  <p className='text-red-400 text-sm'>Email is required</p>
                 )}
               </div>
-              <div className="mb-6">
+              <div className='mb-6'>
                 <input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="p-4 mb-1"
-                  name="message"
-                  type="text"
-                  placeholder="Name"
+                  className='p-4 mb-1'
+                  name='message'
+                  type='text'
+                  placeholder='Name'
                 />
                 {validName && (
-                  <p className="text-red-400 text-sm">Name is required</p>
+                  <p className='text-red-400 text-sm'>Name is required</p>
                 )}
               </div>
-              <div className="mb-6">
+              <div className='mb-6'>
                 <input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="p-4 mb-1"
-                  name="message"
-                  type="text"
-                  placeholder="Title"
+                  className='p-4 mb-1'
+                  name='message'
+                  type='text'
+                  placeholder='Title'
                 />
                 {validTitle && (
-                  <p className="text-red-400 text-sm">Title is required</p>
+                  <p className='text-red-400 text-sm'>Title is required</p>
                 )}
               </div>
-              <div className="mb-6">
+              <div className='mb-6'>
                 <textarea
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className="p-3"
-                  name="message"
-                  cols="30"
-                  rows="6"
-                  placeholder="Message"
+                  className='p-3'
+                  name='message'
+                  cols='30'
+                  rows='6'
+                  placeholder='Message'
                 ></textarea>
                 {validMessage && (
-                  <p className="text-red-400 text-sm">Message is required</p>
+                  <p className='text-red-400 text-sm'>Message is required</p>
                 )}
               </div>
-              <button type="submit" className="contained-button-new w-full">
+              <button type='submit' className='contained-button-new w-full'>
                 {isLoading ? <Spinner /> : <span>Send Request</span>}
               </button>
             </div>

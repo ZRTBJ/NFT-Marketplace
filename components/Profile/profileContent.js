@@ -1,117 +1,117 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore, { Autoplay } from "swiper";
-import { useSelector, useDispatch } from "react-redux";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
-import styles from "./style.module.css";
-import { Navigation } from "swiper";
-import { getUserProjectListById } from "services/project/projectService";
-import { getUserInfo, getUserRevenue } from "services/User/userService";
-import { getUserNotification } from "redux/user/action";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { getUserCollectionSalesInformation } from "services/User/userService";
-import { getMintedNftListByUserId } from "services/nft/nftService";
-import NFTListCard from "components/Cards/NFTListCard";
-import { toast } from "react-toastify";
-import Spinner from "components/Commons/Spinner";
-import NetworkHandlerModal from "components/Modals/NetworkHandlerModal";
-import Image from "next/image";
+import { useState, useEffect } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import SwiperCore, { Autoplay } from 'swiper';
+import { useSelector, useDispatch } from 'react-redux';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import styles from './style.module.css';
+import { Navigation } from 'swiper';
+import { getUserProjectListById } from 'services/project/projectService';
+import { getUserInfo, getUserRevenue } from 'services/User/userService';
+import { getUserNotification } from 'redux/user/action';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { getUserCollectionSalesInformation } from 'services/User/userService';
+import { getMintedNftListByUserId } from 'services/nft/nftService';
+import NFTListCard from 'components/Cards/NFTListCard';
+import { toast } from 'react-toastify';
+import Spinner from 'components/Commons/Spinner';
+import NetworkHandlerModal from 'components/Modals/NetworkHandlerModal';
+import Image from 'next/image';
 
-import CreateNFTModal from "components/Project/CreateDAOandNFT/components/CreateNFTModal.jsx";
-import emptyStateCommon from "assets/images/profile/emptyStateCommon.svg";
-import Modal from "components/Commons/Modal";
-import charity from "assets/images/profile/charity.png";
-import dao from "assets/images/profile/dao.png";
-import fashion from "assets/images/profile/fashion.png";
-import invest from "assets/images/profile/invest.png";
-import membership from "assets/images/profile/membership.png";
-import pfp from "assets/images/profile/pfp.png";
+import CreateNFTModal from 'components/Project/CreateDAOandNFT/components/CreateNFTModal.jsx';
+import emptyStateCommon from 'assets/images/profile/emptyStateCommon.svg';
+import Modal from 'components/Commons/Modal';
+import charity from 'assets/images/profile/charity.png';
+import dao from 'assets/images/profile/dao.png';
+import fashion from 'assets/images/profile/fashion.png';
+import invest from 'assets/images/profile/invest.png';
+import membership from 'assets/images/profile/membership.png';
+import pfp from 'assets/images/profile/pfp.png';
 
 import {
   createTokenGatedProject,
   getTokenGatedProjectList,
-} from "services/tokenGated/tokenGatedService";
-import TokenGatedProjectCard from "components/Cards/TokenGatedProjectCard";
-import { event } from "nextjs-google-analytics";
-import NewUserProfileModal from "./components/NewUserProfileModal";
-import LandingPage from "components/LandingPage/LandingPage";
-import OnBoardingGuide from "components/LandingPage/components/OnBoardingGuide";
-import UserBasicInfo from "./components/UserBasicInfo";
-import BalanceInfo from "./components/BalanceInfo";
-import TokenGatedBannerCard from "components/LandingPage/components/TokenGatedBannerCard";
-import CreateNFTCard from "components/LandingPage/components/CreateNFTCard";
-import BuildDaoCard from "components/LandingPage/components/BuildDaoCard";
-import CollectionTable from "./components/CollectionTable";
-import DaoTable from "./components/DaoTable";
-import UseCase from "components/LandingPage/components/UseCase";
-import WelcomeModal from "components/Commons/WelcomeModal/WelcomeModal";
-import { ls_SetNewUser, ls_GetNewUser } from "util/ApplicationStorage";
-import TagManager from "react-gtm-module";
-import CreateSplitter from "./components/CreateSplitter";
-import SplitterBanner from "components/LandingPage/components/SplitterBanner";
-import { getSplitterList } from "services/collection/collectionService";
-import ReactPaginate from "react-paginate";
-import SplitterTable from "./components/SplitterTable";
-import { NETWORKS } from "config/networks";
-import { getCurrentNetworkId } from "util/MetaMask";
-import NetworkSwitchModal from "components/Commons/NetworkSwitchModal/NetworkSwitchModal";
+} from 'services/tokenGated/tokenGatedService';
+import TokenGatedProjectCard from 'components/Cards/TokenGatedProjectCard';
+import { event } from 'nextjs-google-analytics';
+import NewUserProfileModal from './components/NewUserProfileModal';
+import LandingPage from 'components/LandingPage/LandingPage';
+import OnBoardingGuide from 'components/LandingPage/components/OnBoardingGuide';
+import UserBasicInfo from './components/UserBasicInfo';
+import BalanceInfo from './components/BalanceInfo';
+import TokenGatedBannerCard from 'components/LandingPage/components/TokenGatedBannerCard';
+import CreateNFTCard from 'components/LandingPage/components/CreateNFTCard';
+import BuildDaoCard from 'components/LandingPage/components/BuildDaoCard';
+import CollectionTable from './components/CollectionTable';
+import DaoTable from './components/DaoTable';
+import UseCase from 'components/LandingPage/components/UseCase';
+import WelcomeModal from 'components/Commons/WelcomeModal/WelcomeModal';
+import { ls_SetNewUser, ls_GetNewUser } from 'util/ApplicationStorage';
+import TagManager from 'react-gtm-module';
+import CreateSplitter from './components/CreateSplitter';
+import SplitterBanner from 'components/LandingPage/components/SplitterBanner';
+import { getSplitterList } from 'services/collection/collectionService';
+import ReactPaginate from 'react-paginate';
+import SplitterTable from './components/SplitterTable';
+import { NETWORKS } from 'config/networks';
+import { getCurrentNetworkId } from 'util/MetaMask';
+import NetworkSwitchModal from 'components/Commons/NetworkSwitchModal/NetworkSwitchModal';
 
 const nftUseCase = {
-  usedFor: "NFTs",
-  text: "Here are a few ways your project can deploy NFT",
+  usedFor: 'NFTs',
+  text: 'Here are a few ways your project can deploy NFT',
   steps: [
     {
-      title: "Membership NFT",
+      title: 'Membership NFT',
       description:
-        "Offer personalized experiences through token-gated NFTs. Offer membership, design rewards, and create categories-based access services",
+        'Offer personalized experiences through token-gated NFTs. Offer membership, design rewards, and create categories-based access services',
       img: membership,
-      url: "https://decir.io/decir-users-to-web3-asset-owners/",
+      url: 'https://decir.io/decir-users-to-web3-asset-owners/',
     },
     {
-      title: "PFP",
+      title: 'PFP',
       description:
-        "PFP NFT helps your brand to build and engage your online community. It is a great tool for brand identity",
+        'PFP NFT helps your brand to build and engage your online community. It is a great tool for brand identity',
       img: pfp,
-      url: "https://decir.io/what-are-pfp-nfts-used-for/",
+      url: 'https://decir.io/what-are-pfp-nfts-used-for/',
     },
     {
-      title: "Digital Fashion",
+      title: 'Digital Fashion',
       description:
-        "Design the next set of virtual fashion collectibles tailored to the increasing demands of the virtual world",
+        'Design the next set of virtual fashion collectibles tailored to the increasing demands of the virtual world',
       img: fashion,
-      url: "https://decir.io/introduction-of-nft-in-digital-fashion/",
+      url: 'https://decir.io/introduction-of-nft-in-digital-fashion/',
     },
   ],
 };
 const daoUseCase = {
-  usedFor: "a DAO",
-  text: "DAOs can be made to serve specific purposes. What’s yours?",
+  usedFor: 'a DAO',
+  text: 'DAOs can be made to serve specific purposes. What’s yours?',
   steps: [
     {
-      title: "Build",
+      title: 'Build',
       description:
-        "Build web3 projects to create diverse income streams for your members through the power of the DAO",
+        'Build web3 projects to create diverse income streams for your members through the power of the DAO',
       img: dao,
-      url: "https://decir.io/decir-no-code-dao-tool/",
+      url: 'https://decir.io/decir-no-code-dao-tool/',
     },
     {
-      title: "Charity",
+      title: 'Charity',
       description:
-        "Create a DAO that caters to the needs of communities around the world. Support noble courses through the power of the collective.",
+        'Create a DAO that caters to the needs of communities around the world. Support noble courses through the power of the collective.',
       img: charity,
-      url: "https://decir.io/decir-token-gated-dao-communities/",
+      url: 'https://decir.io/decir-token-gated-dao-communities/',
     },
     {
-      title: "Invest",
+      title: 'Invest',
       description:
-        "Invest in web3 startups and in physical assets through a DAO. Forge shared prosperity through mutual benefits",
+        'Invest in web3 startups and in physical assets through a DAO. Forge shared prosperity through mutual benefits',
       img: invest,
-      url: "https://decir.io/decir-for-web3-project-fundraising/",
+      url: 'https://decir.io/decir-for-web3-project-fundraising/',
     },
   ],
 };
@@ -133,11 +133,11 @@ const Profile = ({ id }) => {
   const [sncList, setsncList] = useState([]);
   const [showWelcome, setShowWelcome] = useState(false);
   const socialLinks = [
-    { title: "linkInsta", icon: "instagram", value: "" },
-    { title: "linkReddit", icon: "reddit", value: "" },
-    { title: "linkTwitter", icon: "twitter", value: "" },
-    { title: "linkFacebook", icon: "facebook", value: "" },
-    { title: "webLink1", icon: "link", value: "" },
+    { title: 'linkInsta', icon: 'instagram', value: '' },
+    { title: 'linkReddit', icon: 'reddit', value: '' },
+    { title: 'linkTwitter', icon: 'twitter', value: '' },
+    { title: 'linkFacebook', icon: 'facebook', value: '' },
+    { title: 'webLink1', icon: 'link', value: '' },
   ];
   const [showNetworkHandler, setShowNetworkHandler] = useState(false);
 
@@ -148,7 +148,7 @@ const Profile = ({ id }) => {
   // collection end
   // Royalties start
 
-  const [daoNetwork, setDAONetwork] = useState("");
+  const [daoNetwork, setDAONetwork] = useState('');
 
   // Royalties End
 
@@ -203,15 +203,15 @@ const Profile = ({ id }) => {
         setUser(response?.user);
         setRoyaltyEarned(response?.royalty_earned);
         setWalletAddress(response?.user.eao);
-        if (response?.user["web"]) {
+        if (response?.user['web']) {
           try {
-            const webs = JSON.parse(response.user["web"]);
+            const webs = JSON.parse(response.user['web']);
             const weblist = [...webs].map((e) => ({
               title: Object.keys(e)[0],
               url: Object.values(e)[0],
               value: Object.values(e)[0],
             }));
-            const sociallinks = JSON.parse(response.user["social"]);
+            const sociallinks = JSON.parse(response.user['social']);
             const sncs = [...sociallinks].map((e) => ({
               title: Object.keys(e)[0],
               url: Object.values(e)[0],
@@ -252,7 +252,7 @@ const Profile = ({ id }) => {
       id: id,
       page: 1,
       limit: 5,
-      order_by: "newer",
+      order_by: 'newer',
     };
     await getUserCollectionSalesInformation(payload)
       .then((e) => {
@@ -321,12 +321,12 @@ const Profile = ({ id }) => {
     let currentNetwork = await getCurrentNetworkId();
     if (NETWORKS?.[currentNetwork]) {
       setSwitchNetwork(false);
-      event("create_token_gate_project", { category: "token_gate" });
+      event('create_token_gate_project', { category: 'token_gate' });
       TagManager.dataLayer({
         dataLayer: {
-          event: "click_event",
-          category: "token_gate",
-          pageTitle: "create_token_gate_project",
+          event: 'click_event',
+          category: 'token_gate',
+          pageTitle: 'create_token_gate_project',
         },
       });
       setShowOverlayLoading(true);
@@ -440,7 +440,7 @@ const Profile = ({ id }) => {
     }
   }, [splitterPage]);
   useEffect(() => {
-    if (router?.query?.createNFT === "true") {
+    if (router?.query?.createNFT === 'true') {
       setShowCreateNFT(true);
     }
   }, [router?.query]);
@@ -449,7 +449,7 @@ const Profile = ({ id }) => {
   }, []);
   return (
     <>
-      <div className="bg-color-gray-light-300">
+      <div className='bg-color-gray-light-300'>
         {!id && (
           <LandingPage
             userId={id}
@@ -459,27 +459,27 @@ const Profile = ({ id }) => {
         {id && (
           <>
             <OnBoardingGuide setSwitchNetwork={setSwitchNetwork} />
-            <div className="w-full px-4 mt-10 pb-10 md:max-w-[1100px] mx-auto">
+            <div className='w-full px-4 mt-10 pb-10 md:max-w-[1100px] mx-auto'>
               <UserBasicInfo userInfo={user} sncList={sncList} />
               <BalanceInfo balanceInfo={balanceInfo} userInfo={user} />
               {/* token gated start */}
-              <div className="my-20">
+              <div className='my-20'>
                 {tokenGatedLoading ? (
-                  <div className="text-center">
+                  <div className='text-center'>
                     <Spinner />
                   </div>
                 ) : (
                   <>
                     {tokenGatedProjectList.length > 0 ? (
                       <>
-                        <div className="mb-5 flex  flex-wrap">
-                          <div className="flex flex-wrap items-center gap-4">
-                            <p className="text-[24px] text-txtblack font-black">
+                        <div className='mb-5 flex  flex-wrap'>
+                          <div className='flex flex-wrap items-center gap-4'>
+                            <p className='text-[24px] text-txtblack font-black'>
                               Your Token Gated Project
                             </p>
                             <button
                               onClick={() => onCreateTokenGatedProject()}
-                              className="contained-button rounded ml-auto !text-white"
+                              className='contained-button rounded ml-auto !text-white'
                               // className=" gradient-text-deep-pueple font-black border w-[160px] text-center h-[40px] rounded-lg border-secondary-900"
                             >
                               {/* <i className=" mr-2 fa-solid fa-plus"></i> */}
@@ -488,7 +488,7 @@ const Profile = ({ id }) => {
                           </div>
                           <Link
                             href={`/list?type=tokenGated&user=true`}
-                            className="gradient-text-deep-pueple font-black border w-[160px] text-center h-[40px] rounded-lg border-secondary-900 ml-auto mt-2 flex items-center justify-center"
+                            className='gradient-text-deep-pueple font-black border w-[160px] text-center h-[40px] rounded-lg border-secondary-900 ml-auto mt-2 flex items-center justify-center'
                           >
                             View All
                           </Link>
@@ -529,11 +529,11 @@ const Profile = ({ id }) => {
               {/* token gated end */}
 
               {/* collection and dao start */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                 <div>
                   {collectionList?.length === 0 ? (
                     <CreateNFTCard
-                      size="lg"
+                      size='lg'
                       setSwitchNetwork={setSwitchNetwork}
                     />
                   ) : (
@@ -547,7 +547,7 @@ const Profile = ({ id }) => {
                 <div>
                   {projectList?.length === 0 ? (
                     <BuildDaoCard
-                      size="lg"
+                      size='lg'
                       setSwitchNetwork={setSwitchNetwork}
                     />
                   ) : (
@@ -562,21 +562,21 @@ const Profile = ({ id }) => {
               {/* collection and dao end */}
 
               {/* minted NFT start */}
-              <div className="mt-[50px]">
-                <div className="mb-5 flex  flex-wrap">
-                  <div className="text-[24px] text-txtblack font-black">
+              <div className='mt-[50px]'>
+                <div className='mb-5 flex  flex-wrap'>
+                  <div className='text-[24px] text-txtblack font-black'>
                     Minted NFT
                   </div>
                   <Link
                     href={`/list?type=nft&user=true`}
-                    className="gradient-text-deep-pueple font-black border w-[160px] text-center h-[40px] rounded-lg border-secondary-900 ml-auto mt-2 flex items-center justify-center"
+                    className='gradient-text-deep-pueple font-black border w-[160px] text-center h-[40px] rounded-lg border-secondary-900 ml-auto mt-2 flex items-center justify-center'
                   >
                     View All
                   </Link>
                 </div>
 
                 {nftLoading ? (
-                  <div className="text-center">
+                  <div className='text-center'>
                     <Spinner />
                   </div>
                 ) : (
@@ -600,15 +600,15 @@ const Profile = ({ id }) => {
                         </div>
                       </Swiper>
                     ) : (
-                      <div className="text-center mt-6 text-textSubtle">
+                      <div className='text-center mt-6 text-textSubtle'>
                         <Image
                           src={emptyStateCommon}
-                          className="h-[210px] w-[315px] m-auto"
-                          alt=""
+                          className='h-[210px] w-[315px] m-auto'
+                          alt=''
                           height={210}
                           width={315}
                         />
-                        <p className="text-subtitle font-bold">
+                        <p className='text-subtitle font-bold'>
                           You have no NFT minted
                         </p>
                       </div>
@@ -618,7 +618,7 @@ const Profile = ({ id }) => {
               </div>
               {/* minted nft end */}
               {/* splitter start */}
-              <div className="px-4 pb-10">
+              <div className='px-4 pb-10'>
                 {splitterList?.length === 0 ? (
                   <SplitterBanner setSwitchNetwork={setSwitchNetwork} />
                 ) : (
@@ -632,26 +632,26 @@ const Profile = ({ id }) => {
                     ></SplitterTable>
                     {pagination.length > 0 && (
                       <ReactPaginate
-                        className="flex flex-wrap md:space-x-10 space-x-3 justify-center items-center my-6"
-                        pageClassName="px-3 py-1 font-satoshi-bold text-sm  bg-opacity-5 rounded hover:bg-opacity-7 !text-txtblack "
-                        breakLabel="..."
-                        nextLabel=">"
+                        className='flex flex-wrap md:space-x-10 space-x-3 justify-center items-center my-6'
+                        pageClassName='px-3 py-1 font-satoshi-bold text-sm  bg-opacity-5 rounded hover:bg-opacity-7 !text-txtblack '
+                        breakLabel='...'
+                        nextLabel='>'
                         onPageChange={handlePageClick}
                         pageRangeDisplayed={3}
                         pageCount={pagination.length}
-                        previousLabel="<"
+                        previousLabel='<'
                         renderOnZeroPageCount={null}
-                        activeClassName="text-primary-900 bg-primary-900 !no-underline"
-                        activeLinkClassName="!text-txtblack !no-underline"
+                        activeClassName='text-primary-900 bg-primary-900 !no-underline'
+                        activeLinkClassName='!text-txtblack !no-underline'
                       />
                     )}
                   </div>
                 )}
               </div>
-              <div className="px-4 my-10">
+              <div className='px-4 my-10'>
                 <UseCase data={nftUseCase} />
               </div>
-              <div className="px-4 my-10 ">
+              <div className='px-4 my-10 '>
                 <UseCase data={daoUseCase} />
               </div>
             </div>
@@ -673,7 +673,7 @@ const Profile = ({ id }) => {
           projectNetwork={daoNetwork}
         />
       )}
-      {showOverlayLoading && <div className="loading"></div>}
+      {showOverlayLoading && <div className='loading'></div>}
       {showWelcome && (
         <WelcomeModal show={showWelcome} handleClose={handleWelcomeModal} />
       )}
