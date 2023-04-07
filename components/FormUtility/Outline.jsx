@@ -593,7 +593,7 @@ export default function Outline({
       {showFreezeMetadata && (
         <div className='mb-6 flex flex-wrap items-center'>
           <p className='text-txtSubtle text-[14px]'>
-            NFT as mystery box, updated once after publishing
+            NFT can be updated once after publishing (Mystery box)
           </p>
           {freezeMetadataDisabled ? (
             <label

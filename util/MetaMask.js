@@ -70,7 +70,7 @@ export async function getPersonalSign() {
       } catch (error) {
         if (error.code === 4001) {
           // EIP-1193 userRejectedRequest error
-          window.alert('Please connect to MetaMask.');
+          throw error;
         } else {
           console.error(error.message);
         }

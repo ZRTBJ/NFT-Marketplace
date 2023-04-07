@@ -6,6 +6,7 @@ import Trash from 'assets/images/icons/trash.svg';
 import Edit from 'assets/images/icons/edit.svg';
 import { walletAddressTruncate } from 'util/WalletUtils';
 import Image from 'next/image';
+import { ls_GetWalletAddress } from 'util/ApplicationStorage';
 
 const MemberRowMobile = (props) => {
   const {
@@ -20,6 +21,10 @@ const MemberRowMobile = (props) => {
   const handleUpdatePercent = async (e) => {
     setIsEdit(false);
   };
+
+  let currentAddress = ls_GetWalletAddress();
+  let owner =
+    currentAddress === item.user_eoa.toLowerCase() ? 'Owner' : 'Contributor';
 
   return (
     <div className={`${isLastItem ? 'border-b' : ''} pb-4 mb-4`}>
@@ -99,12 +104,12 @@ const MemberRowMobile = (props) => {
           <p className='text-[14px] font-bold'>Roles</p>
           <p
             className={`text-[13px] mt-0 bg-opacity-[0.2] py-1 px-2 w-fit rounded-[4px] font-bold ${
-              item.is_owner
+              item.is_owner || currentAddress === item.user_eoa.toLowerCase()
                 ? 'text-info-1 bg-[#46A6FF]'
                 : ' text-success-1 bg-[#32E865]'
             }`}
           >
-            {item?.custom_role ? item.custom_role : '-'}
+            {item.custom_role ? item.custom_role : owner}
           </p>
         </div>
       </div>

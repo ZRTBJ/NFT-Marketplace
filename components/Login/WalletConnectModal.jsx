@@ -22,6 +22,7 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Lottie from 'react-lottie';
 import lottieJson from 'assets/lottieFiles/circle-loader.json';
+import SignRejectionModal from 'components/Commons/TopHeader/Account/SignRejectModal';
 
 const WalletConnectModal = ({
   showModal,
@@ -40,7 +41,7 @@ const WalletConnectModal = ({
   const [metamaskConnectAttempt, setMetamaskConnectAttempt] = useState(0);
   const [metamaskAccount, setMetamaskAccount] = useState('');
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
-
+  const [showSignReject, setShowSignReject] = useState(false);
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -49,6 +50,7 @@ const WalletConnectModal = ({
       preserveAspectRatio: 'xMidYMid slice',
     },
   };
+  const userinfo = useSelector((state) => state.user.userinfo);
 
   /** Connection to wallet
    * Login mechanism: We let user to login using metamask, then will login to our server to get JWT token.
@@ -82,7 +84,9 @@ const WalletConnectModal = ({
                 userLogin(account, signature, 'metamask');
               })
               .catch((error) => {
-                // alert(error.message);
+                if (userinfo?.id) {
+                  setShowSignReject(account);
+                }
               });
           } else {
             if (!isConnected && !account) {
@@ -160,6 +164,15 @@ const WalletConnectModal = ({
     setshowMessage(false);
   }
 
+  if (showSignReject) {
+    return (
+      <SignRejectionModal
+        show={!!showSignReject}
+        closeModal={() => setShowSignReject(false)}
+        handleTryAgain={handleConnectWallet}
+      />
+    );
+  }
   return (
     <div>
       <Modal
