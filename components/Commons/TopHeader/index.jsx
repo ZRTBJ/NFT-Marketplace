@@ -44,6 +44,7 @@ import { loginUser } from 'redux/auth';
 import { ethers } from 'ethers';
 import { setUserInfo, setUserLoading, handleNewUser } from 'redux/user';
 import { getUserInfo, getUserData } from 'services/User/userService';
+import SignRejectionModal from './Account/SignRejectModal';
 
 const LANGS = {
   'en|en': 'English',
@@ -89,6 +90,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const [page, setPage] = useState(1);
   const [currentSelectedNetwork, setCurrentSelectedNetwork] = useState();
   const { isNewUser } = useSelector((state) => state.user);
+  const [showSignReject, setShowSignReject] = useState('');
 
   const { ref, setIsComponentVisible, isComponentVisible } =
     useComponentVisible();
@@ -294,16 +296,18 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
         accounts.length > 0 &&
         accounts[0] != ls_GetWalletAddress()
       ) {
-        existingAccountChange(accounts[0]);
+        existingAccountChange(null, accounts[0]);
       }
     });
   }, []);
 
-  const existingAccountChange = async (address) => {
-    const userDetails = await getUserData(address);
+  const existingAccountChange = async (data, address) => {
+    let addressData = address ? address : showSignReject;
+    const userDetails = await getUserData(addressData);
     if (userDetails?.data) {
       const isConnected = await isWalletConnected();
       const account = await getWalletAccount();
+      setShowSignReject('');
       if (typeof window !== 'undefined') {
         if (window.ethereum) {
           if (isConnected && account && account.length > 5) {
@@ -311,7 +315,9 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
               .then((signature) => {
                 userLogin(account, signature, 'metamask');
               })
-              .catch((error) => {});
+              .catch((error) => {
+                setShowSignReject(addressData);
+              });
           }
         }
       }
@@ -596,7 +602,6 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
           />
         )}
       </div>
-
       {/* wallet popup */}
       <div id='userDropDownWallet' className='hidden'>
         {userLoadingStatus === 'idle' && showWalletpopup ? (
@@ -852,7 +857,16 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
           </div>
         </div>
       </nav>
-      <WalletConnectModal showModal={showModal} closeModal={hideModal} />
+      {showModal && (
+        <WalletConnectModal showModal={showModal} closeModal={hideModal} />
+      )}
+      {showSignReject && (
+        <SignRejectionModal
+          show={!!showSignReject}
+          closeModal={() => setShowSignReject(false)}
+          handleTryAgain={existingAccountChange}
+        />
+      )}
     </header>
   );
 };
