@@ -23,7 +23,6 @@ import {
   ls_GetWalletAddress,
   ls_SetChainID,
   ls_GetChainID,
-  ls_SetWalletAddress,
 } from 'util/ApplicationStorage';
 
 import { toast } from 'react-toastify';
@@ -33,17 +32,13 @@ import Image from 'next/image';
 import Search from 'assets/images/header/search.svg';
 import AvatarDefault from 'assets/images/avatar-default.svg';
 import {
-  getPersonalSign,
   isWalletConnected,
   getWalletAccount,
   handleSwitchNetwork,
 } from 'util/MetaMask';
 import useComponentVisible from 'hooks/useComponentVisible';
 import ReactTooltip from 'react-tooltip';
-import { loginUser } from 'redux/auth';
-import { ethers } from 'ethers';
-import { setUserInfo, setUserLoading, handleNewUser } from 'redux/user';
-import { getUserInfo, getUserData } from 'services/User/userService';
+import { getUserData } from 'services/User/userService';
 import SignRejectionModal from './Account/SignRejectModal';
 
 const LANGS = {
@@ -89,11 +84,13 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const [pagination, setPagination] = useState([1]);
   const [page, setPage] = useState(1);
   const [currentSelectedNetwork, setCurrentSelectedNetwork] = useState();
-  const { isNewUser } = useSelector((state) => state.user);
   const [showSignReject, setShowSignReject] = useState('');
 
   const { ref, setIsComponentVisible, isComponentVisible } =
     useComponentVisible();
+
+  /** Detect account whenever user come back to site */
+  let localAccountAddress = ls_GetWalletAddress();
 
   useEffect(() => {
     if (userinfo?.id) {
@@ -264,27 +261,6 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     }
   }, [networkId, localChainId]);
 
-  /** Detect account whenever user come back to site */
-  let localAccountAddress = ls_GetWalletAddress();
-
-  useEffect(() => {
-    const handleAccountDifference = async () => {
-      if (window?.ethereum) {
-        const account = await getWalletAccount();
-
-        if (localAccountAddress && account) {
-          if (localAccountAddress !== account) {
-            // setShowAccountChanged(true);
-            dispatch(logout());
-            router.push('/');
-            window?.location.reload();
-          }
-        }
-      }
-    };
-    handleAccountDifference();
-  }, []);
-
   /** Metamask account change detection. It will show logout popup if user signin with new address
    * In case if user re-login, if same account with wallet address, nothing will happen
    * In case accounts == null, mean metamask logged out, no smartcontract interaction can be called
@@ -311,13 +287,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
       if (typeof window !== 'undefined') {
         if (window.ethereum) {
           if (isConnected && account && account.length > 5) {
-            getPersonalSign()
-              .then((signature) => {
-                userLogin(account, signature, 'metamask');
-              })
-              .catch((error) => {
-                setShowSignReject(addressData);
-              });
+            setShowSignReject(addressData);
           }
         }
       }
@@ -325,41 +295,6 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
       setShowModal(true);
     }
   };
-
-  async function userLogin(address, signature, wallet) {
-    const request = {
-      address,
-      signature,
-      wallet,
-    };
-    try {
-      let response = await dispatch(loginUser(request));
-      const userProvider = new ethers.providers.Web3Provider(window.ethereum);
-      const userNetwork = await userProvider.getNetwork();
-      ls_SetWalletAddress(address);
-      ls_SetChainID(userNetwork.chainId);
-      getUserDetails(response['user_id']);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  async function getUserDetails(userID) {
-    dispatch(setUserLoading('loading'));
-    const response = await getUserInfo(userID);
-    let userinfoResponse;
-    try {
-      userinfoResponse = response['user'];
-      if (!userinfoResponse?.last_login_time) {
-        dispatch(handleNewUser(true));
-      } else {
-        dispatch(handleNewUser(false));
-      }
-    } catch {
-      dispatch(setUserLoading('idle'));
-    }
-    dispatch(setUserInfo(userinfoResponse));
-  }
 
   useEffect(() => {
     if (showSearchMobile) {
@@ -862,7 +797,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
       )}
       {showSignReject && (
         <SignRejectionModal
-          show={!!showSignReject}
+          show={showSignReject}
           closeModal={() => setShowSignReject(false)}
           handleTryAgain={existingAccountChange}
         />
