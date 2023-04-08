@@ -7,6 +7,12 @@ export async function getUserNotifications(isActive = 1) {
   );
 }
 
+export async function markAllNotificationAsRead(notificationList) {
+  const request = new FormData();
+  request.append('notifications', notificationList);
+  return await client('PUT', `/user/notifications`, request, 'formdata');
+}
+
 export async function markNotificationAsRead(uuid) {
   const request = new FormData();
   request.append('read', 'true');

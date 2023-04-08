@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { getUserNotification } from 'redux/user/action';
-import { markNotificationAsRead } from 'services/notification/notificationService';
+import {
+  markNotificationAsRead,
+  markAllNotificationAsRead,
+} from 'services/notification/notificationService';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import ReactPaginate from 'react-paginate';
@@ -20,6 +23,19 @@ const Notifications = () => {
     dispatch(getUserNotification(isActive));
   }, [isActive, userinfo?.id]);
 
+  const markAll = async () => {
+    const unreadNotifications = notifications?.notifications?.filter(
+      (x) => x.unread
+    );
+    if (unreadNotifications?.length > 0) {
+      const ids = unreadNotifications.map((r) => {
+        return r.uuid;
+      });
+      await markAllNotificationAsRead(ids);
+      dispatch(getUserNotification(isActive));
+    }
+  };
+
   useEffect(() => {
     let arr = Array.from({ length: notifications?.pageSize }, (v, k) => k + 1);
     const page = calculatePageCount(15, notifications?.total);
@@ -28,24 +44,23 @@ const Notifications = () => {
       pageList.push(index);
     }
     setPagination(pageList);
+    markAll();
   }, [notifications]);
   async function markAsRead(notification) {
-    console.log(notification);
-    if (notification?.unread) {
-      await markNotificationAsRead(notification.uuid)
-        .then((res) => {
-          if (res?.code === 0) {
-            toast.success('Marked as read');
-          } else {
-            toast.error(res?.message);
-          }
-          console.log(res);
-        })
-        .catch((err) => {
-          toast.error(err);
-        });
-      dispatch(getUserNotification(isActive));
-    }
+    // if (notification?.unread) {
+    //   await markNotificationAsRead(notification.uuid)
+    //     .then((res) => {
+    //       if (res?.code === 0) {
+    //         toast.success('Marked as read');
+    //       } else {
+    //         toast.error(res?.message);
+    //       }
+    //     })
+    //     .catch((err) => {
+    //       toast.error(err);
+    //     });
+    //   dispatch(getUserNotification(isActive));
+    // }
     if (notification?.type === 'CollectionPublish') {
       router.push(
         `/collection/${
