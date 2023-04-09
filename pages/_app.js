@@ -24,11 +24,15 @@ import Maintenance from 'components/Commons/Maintenance';
 import { GoogleAnalytics } from 'nextjs-google-analytics';
 import FloatingContactForm from 'components/Commons/FloatingContactForm';
 import TagManager from 'react-gtm-module';
-import Link from 'next/link';
 import { NETWORKS } from 'config/networks';
-import { getCurrentNetworkId } from 'util/MetaMask';
 import WarningBar from 'components/Commons/WarningBar/WarningBar';
-import { ls_GetChainID, ls_GetUserID } from 'util/ApplicationStorage';
+import {
+  ls_GetChainID,
+  ls_GetUserID,
+  ls_GetWalletAddress,
+} from 'util/ApplicationStorage';
+import { getWalletAccount } from 'util/MetaMask';
+import SignRejectionModal from 'components/Commons/TopHeader/Account/SignRejectModal';
 
 dynamic(() => import('tw-elements'), { ssr: false });
 
@@ -42,11 +46,28 @@ function MyApp({ Component, pageProps }) {
   const [isContentView, setIsContentView] = useState(false);
   const [isTokenGatedProjectPublicView, setIsTokenGatedProjectPublicView] =
     useState(false);
+  const [showSignReject, setShowSignReject] = useState('');
   const [currentNetwork, setCurrentNetwork] = useState();
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
   const router = useRouter();
 
   let userId = ls_GetUserID();
+  let localAccountAddress = ls_GetWalletAddress();
+
+  const handleAccountDifference = async () => {
+    const account = await getWalletAccount();
+    if (localAccountAddress && account) {
+      if (localAccountAddress !== account) {
+        if (!showModal) {
+          setShowSignReject(account);
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    handleAccountDifference();
+  });
 
   /** Metamask network change detection */
   useEffect(() => {
@@ -74,7 +95,6 @@ function MyApp({ Component, pageProps }) {
 
   const getCurrentNetwork = async (networkId) => {
     let networkValue = await ls_GetChainID();
-    let currentchain = await getCurrentNetworkId();
     let id = networkId ? Number(networkId) : Number(networkValue);
     setCurrentNetwork(id);
     if (NETWORKS?.[id] && id !== 1) {
@@ -193,7 +213,12 @@ function MyApp({ Component, pageProps }) {
                         )}
                         <Component {...pageProps} />
                         {!isEmbedView && <FloatingContactForm />}
-
+                        {showSignReject && (
+                          <SignRejectionModal
+                            show={showSignReject}
+                            closeModal={() => setShowSignReject(false)}
+                          />
+                        )}
                         <ToastContainer
                           className='impct-toast'
                           position='top-right'

@@ -167,9 +167,13 @@ const WalletConnectModal = ({
   if (showSignReject) {
     return (
       <SignRejectionModal
-        show={!!showSignReject}
-        closeModal={() => setShowSignReject(false)}
+        show={showSignReject}
+        closeModal={() => {
+          setShowSignReject(false);
+          closeModal();
+        }}
         handleTryAgain={handleConnectWallet}
+        reject={true}
       />
     );
   }
