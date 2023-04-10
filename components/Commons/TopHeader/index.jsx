@@ -35,6 +35,7 @@ import {
   isWalletConnected,
   getWalletAccount,
   handleSwitchNetwork,
+  getCurrentNetworkId,
 } from 'util/MetaMask';
 import useComponentVisible from 'hooks/useComponentVisible';
 import ReactTooltip from 'react-tooltip';
@@ -109,7 +110,29 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     if (userinfo?.id) {
       handleAccountDifference();
     }
-  }, []);
+  }, [userinfo?.id]);
+
+  /** Here if unsupport network is found, logout automatically */
+  let localChainId = ls_GetChainID();
+
+  const handleChainDifference = async () => {
+    if (window?.ethereum) {
+      const network = await getCurrentNetworkId();
+      if (localChainId && network) {
+        if (!networkChangeDetected && localChainId !== network) {
+          setNetworkId(network);
+          ls_SetChainID(network);
+          handleSwitchNetwork(network);
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (userinfo?.id) {
+      handleChainDifference();
+    }
+  }, [userinfo?.id]);
 
   useEffect(() => {
     if (userinfo?.id) {
@@ -267,18 +290,6 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
       setNetworkChangeDetected(false);
     };
   }, []);
-
-  /** Here if unsupport network is found, logout automatically */
-  let localChainId = ls_GetChainID();
-  useEffect(() => {
-    if (!networkChangeDetected && networkId && localChainId) {
-      if (Number(networkId) !== Number(localChainId)) {
-        dispatch(logout());
-        setNetworkId(networkId);
-        ls_SetChainID(networkId);
-      }
-    }
-  }, [networkId, localChainId]);
 
   /** Metamask account change detection. It will show logout popup if user signin with new address
    * In case if user re-login, if same account with wallet address, nothing will happen
