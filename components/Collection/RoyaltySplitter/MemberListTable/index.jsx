@@ -138,6 +138,9 @@ const MemberListTable = ({
                     } text-left text-[13px]`}
                   >
                     <td className='py-4 px-5'>
+                      {r.user_name ? r.user_name : '-'}
+                    </td>
+                    <td className='py-4 px-5'>
                       <div className='inline-flex items-center'>
                         <span>{walletAddressTruncate(r.user_eoa)}</span>
                         <CopyToClipboard text={r.user_eoa}>
@@ -194,10 +197,8 @@ const MemberListTable = ({
                         )}
                       </div>
                     </td>
-                    <td className='py-4 px-5'>
-                      {r.user_name ? r.user_name : '-'}
-                    </td>
-                    <td className={`py-4 px-5`}>
+
+                    {/* <td className={`py-4 px-5`}>
                       <p
                         className={`text-[13px] bg-opacity-[0.2] py-1 px-2 w-fit rounded-[4px] font-bold ${
                           r.is_owner
@@ -207,7 +208,7 @@ const MemberListTable = ({
                       >
                         {r.is_owner ? 'Owner' : 'Contributor'}
                       </p>
-                    </td>
+                    </td> */}
                     <td className='py-4 px-5'>
                       {isPublished ? null : (
                         <div
@@ -286,7 +287,7 @@ const MemberListTable = ({
         {showError ? (
           <p className='text-red-400 text-[14px] mt-1 ml-4'>
             {' '}
-            Total percent of contributors should equal to or lesser than 100%.
+            Royalties should add to 100%.
           </p>
         ) : null}
         {addError && (
@@ -298,7 +299,7 @@ const MemberListTable = ({
           className='outlined-button font-satoshi-bold ml-0 md:ml-4'
           onClick={addNewContributorField}
         >
-          <span>Add More</span>
+          <span>Add recipient</span>
         </button>
       ) : null}
     </>

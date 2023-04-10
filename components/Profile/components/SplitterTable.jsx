@@ -6,6 +6,9 @@ import { walletAddressTruncate } from 'util/WalletUtils';
 import { NETWORKS } from 'config/networks';
 import Spinner from 'components/Commons/Spinner';
 import { getCurrentNetworkId } from 'util/MetaMask';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCopy } from '@fortawesome/free-solid-svg-icons';
 
 export default function SplitterTable({
   data,
@@ -88,7 +91,7 @@ export default function SplitterTable({
                       </td>
                       <td className='py-4 px-6'>
                         {element?.contract_address ? (
-                          <>
+                          <div className='flex items-center'>
                             {' '}
                             <a
                               target='_blank'
@@ -101,7 +104,12 @@ export default function SplitterTable({
                             >
                               {walletAddressTruncate(element.contract_address)}
                             </a>{' '}
-                          </>
+                            <CopyToClipboard text={element.contract_address}>
+                              <button className='ml-1 w-[32px] h-[32px] rounded-[4px] flex items-center justify-center cursor-pointer text-[#A3D7EF] active:text-black'>
+                                <FontAwesomeIcon className='' icon={faCopy} />
+                              </button>
+                            </CopyToClipboard>
+                          </div>
                         ) : (
                           '-'
                         )}

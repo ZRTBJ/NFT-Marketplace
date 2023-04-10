@@ -89,7 +89,7 @@ const nftUseCase = {
   ],
 };
 const daoUseCase = {
-  usedFor: 'a DAO',
+  usedFor: 'DAO',
   text: 'DAOs can be made to serve specific purposes. What’s yours?',
   steps: [
     {
@@ -447,6 +447,7 @@ const Profile = ({ id }) => {
   useEffect(() => {
     dispatch(getUserNotification());
   }, []);
+
   return (
     <>
       <div className='bg-color-gray-light-300'>
@@ -620,7 +621,10 @@ const Profile = ({ id }) => {
               {/* splitter start */}
               <div className='px-4 pb-10'>
                 {splitterList?.length === 0 ? (
-                  <SplitterBanner setSwitchNetwork={setSwitchNetwork} />
+                  <SplitterBanner
+                    setSwitchNetwork={setSwitchNetwork}
+                    setShowCreateSplitter={setShowCreateSplitter}
+                  />
                 ) : (
                   <div>
                     <SplitterTable
