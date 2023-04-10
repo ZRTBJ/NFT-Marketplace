@@ -52,24 +52,25 @@ function MyApp({ Component, pageProps }) {
   const router = useRouter();
 
   let userId = ls_GetUserID();
-  let localAccountAddress = ls_GetWalletAddress();
+  // let localAccountAddress = ls_GetWalletAddress();
 
-  const handleAccountDifference = async () => {
-    const account = await getWalletAccount();
-    if (localAccountAddress && account) {
-      if (localAccountAddress !== account) {
-        if (!showModal) {
-          setShowSignReject(account);
-        }
-      }
-    }
-  };
+  // const handleAccountDifference = async () => {
+  //   const account = await getWalletAccount();
+  //   if (localAccountAddress && account) {
+  //     if (localAccountAddress !== account) {
+  //       if (!showModal) {
+  //         setShowSignReject(account);
+  //       }
+  //     }
+  //   }
+  // };
 
-  useEffect(() => {
-    handleAccountDifference();
-  });
+  // useEffect(() => {
+  //   handleAccountDifference();
+  // });
 
   /** Metamask network change detection */
+
   useEffect(() => {
     if (userId) {
       if (window?.ethereum) {

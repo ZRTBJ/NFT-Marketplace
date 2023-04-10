@@ -92,6 +92,25 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   /** Detect account whenever user come back to site */
   let localAccountAddress = ls_GetWalletAddress();
 
+  const handleAccountDifference = async () => {
+    if (window?.ethereum) {
+      const account = await getWalletAccount();
+      if (localAccountAddress && account) {
+        if (localAccountAddress !== account) {
+          if (!showModal) {
+            setShowSignReject(account);
+          }
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (userinfo?.id) {
+      handleAccountDifference();
+    }
+  }, []);
+
   useEffect(() => {
     if (userinfo?.id) {
       setDefaultNetwork();
