@@ -23,6 +23,7 @@ import { getTokenGatedProjectList } from 'services/tokenGated/tokenGatedService'
 import { ls_GetUserID } from 'util/ApplicationStorage';
 import { useRouter } from 'next/router';
 import { createTokenGatedProject } from 'services/tokenGated/tokenGatedService';
+import { useSelector } from 'react-redux';
 function List({ query }) {
   SwiperCore.use([Autoplay]);
   const router = useRouter();
@@ -33,7 +34,7 @@ function List({ query }) {
   const [sortType, setSortType] = useState('newer');
   const [pagination, SetPagination] = useState([]);
   const [isActive, setIsactive] = useState(1);
-
+  const userinfo = useSelector((state) => state.user.userinfo);
   const payload = {
     order_by: 'newer',
     page: 1,
@@ -145,7 +146,7 @@ function List({ query }) {
       );
       // await getCollectionList();
     })();
-  }, [sortType, query]);
+  }, [sortType, query, userinfo?.id]);
 
   function handleSortType(type) {
     setSortType(type);

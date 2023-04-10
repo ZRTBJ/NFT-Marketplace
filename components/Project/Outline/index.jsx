@@ -581,7 +581,9 @@ function Outline({
 
       {showFreezeMetadata && (
         <div className='mb-6 flex flex-wrap items-center'>
-          <p className='text-txtSubtle text-[14px]'>Metadata update</p>
+          <p className='text-txtSubtle text-[14px]'>
+            NFT as mystery box, updated once after publishing
+          </p>
           {freezeMetadataDisabled ? (
             <label
               htmlFor='metadata-update'

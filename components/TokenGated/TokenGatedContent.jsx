@@ -148,7 +148,7 @@ export default function TokenGatedContent({ query, createMode }) {
 
   useEffect(() => {
     onGetTokenGatedProject();
-  }, [payload]);
+  }, [payload, userInfo?.id]);
 
   useEffect(() => {
     if (

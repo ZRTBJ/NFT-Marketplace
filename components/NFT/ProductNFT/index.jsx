@@ -36,10 +36,12 @@ import WalletConnectModal from 'components/Login/WalletConnectModal';
 import { DebounceInput } from 'react-debounce-input';
 import { getCurrentNetworkId } from 'util/MetaMask';
 import NetworkSwitchModal from 'components/Commons/NetworkSwitchModal/NetworkSwitchModal';
+import { useRouter } from 'next/router';
 
 export default function ProductNFT({ query }) {
   const audioRef = useRef();
   const dispatch = useDispatch();
+  const router = useRouter();
   const userinfo = useSelector((state) => state.user.userinfo);
   const [isLoading, setIsLoading] = useState(false);
   const [showPropertyModal, setShowPropertyModal] = useState(false);
@@ -88,6 +90,8 @@ export default function ProductNFT({ query }) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDeleteSuccessModal, setShowDeleteSuccessModal] = useState(false);
   const [showNetworkSwitch, setShowNetworkSwitch] = useState(false);
+  const [redirection, setRedirection] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const {
     register,
@@ -320,12 +324,23 @@ export default function ProductNFT({ query }) {
     request.append('mime_type', nftFile.file.type);
     await generateUploadkeyGcp(request)
       .then((res) => {
-        if (res.code === 0 && res.signed_url && res.signed_url !== '') {
-          uploadAFile(res.signed_url, res.file_path, collectionID);
+        if (res?.code === 0) {
+          if (
+            res?.signed_url &&
+            res?.signed_url !== '' &&
+            res?.file_path &&
+            res?.file_path !== ''
+          ) {
+            uploadAFile(res.signed_url, res.file_path, collectionID);
+          } else {
+            handleErrorState(res?.message);
+          }
+        } else {
+          handleErrorState(res?.message);
         }
       })
       .catch((err) => {
-        console.log(err);
+        handleErrorState(err);
       });
   }
 
@@ -354,14 +369,12 @@ export default function ProductNFT({ query }) {
         }
       })
       .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
+        handleErrorState(err);
       });
   }
 
   const handleErrorState = (msg) => {
     setIsLoading(false);
-    setShowConfirmation(false);
     setShowSteps(false);
     setErrorTitle('Saving Product NFT Failed');
     setErrorMessage(msg);
@@ -424,7 +437,6 @@ export default function ProductNFT({ query }) {
             setStep(2);
             setIsNFTSaved(true);
             setIsLoading(false);
-            setShowSuccessModal(true);
           } else {
             handleErrorState(
               'Failed to create product NFT. Please try again later'
@@ -479,39 +491,42 @@ export default function ProductNFT({ query }) {
         .then((res) => {
           setSavingNFT(false);
           if (res['code'] === 0) {
-            if (res['function_uuid'] === '') {
-              setJobId('');
-              setStep(2);
-              setIsNFTSaved(true);
-              setIsLoading(false);
-              setShowSuccessModal(true);
-            } else {
-              setJobId(res['function_uuid']);
-              const notificationData = {
-                etherscan: '',
-                function_uuid: res['function_uuid'],
-                data: '',
-              };
-              dispatch(getNotificationData(notificationData));
-              recheckStatus(res['function_uuid']);
-            }
-          } else if (res['code'] === 4000) {
-            setShowSteps(false);
+            setJobId('');
+            setStep(2);
             setIsNFTSaved(true);
             setIsLoading(false);
-            setShowSuccessModal(true);
-          } else {
+            // if (res['function_uuid'] === '') {
+            //   setJobId('');
+            //   setStep(2);
+            //   setIsNFTSaved(true);
+            //   setIsLoading(false);
+            // } else {
+            //   setJobId(res['function_uuid']);
+            //   const notificationData = {
+            //     etherscan: '',
+            //     function_uuid: res['function_uuid'],
+            //     data: '',
+            //   };
+            //   dispatch(getNotificationData(notificationData));
+            //   recheckStatus(res['function_uuid']);
+            // }
+          }
+          // else if (res['code'] === 4000) {
+          //   setShowSteps(false);
+          //   setIsNFTSaved(true);
+          //   setIsLoading(false);
+          //   setShowSuccessModal(true);
+          // }
+          else {
             handleErrorState(res?.message);
           }
         })
         .catch((err) => {
-          handleErrorState(
-            'Failed to update product NFT. Please try again later'
-          );
+          handleErrorState(err);
         });
     } else {
       handleErrorState(
-        'AssetID and/or CollectionID not found. Please try again later'
+        'AssetID and/or CollectionID not found. Please try again'
       );
     }
   }
@@ -619,8 +634,12 @@ export default function ProductNFT({ query }) {
     };
     await getCollectionDetailsById(payload)
       .then((resp) => {
-        if (resp.code === 0) {
-          setCollection(resp.collection);
+        if (resp?.code === 0) {
+          setCollection(resp?.collection);
+        } else {
+          setErrorTitle('Unexpected Error, please try again');
+          setErrorMessage(resp?.message);
+          setShowErrorModal(true);
         }
       })
       .catch((err) => console.log(err));
@@ -659,6 +678,27 @@ export default function ProductNFT({ query }) {
       }
     } catch {}
   }, []);
+
+  useEffect(() => {
+    if (collection?.id && !collection?.updatable) {
+      setRedirection(true);
+      setErrorTitle('NFT can not update');
+      setErrorMessage('NFT updatable is turned off from the Collection');
+      setShowErrorModal(true);
+    } else if (
+      collection?.id &&
+      collection?.status === 'published' &&
+      nft?.id &&
+      !nft.freeze_metadata
+    ) {
+      setShowConfirmModal(true);
+    } else if (nft?.id && nft.freeze_metadata) {
+      setRedirection(true);
+      setErrorTitle('NFT can not update');
+      setErrorMessage('This nft is freezed');
+      setShowErrorModal(true);
+    }
+  }, [collection, nft]);
 
   let curCollection = collectionId
     ? options.find((item) => item.id === collectionId)
@@ -1190,6 +1230,7 @@ export default function ProductNFT({ query }) {
             show={showErrorModal}
             title={errorTitle}
             message={errorMessage}
+            redirection={redirection ? `/collection/${collection?.id}` : false}
           />
         )}
         {showSuccessModal && (
@@ -1245,6 +1286,17 @@ export default function ProductNFT({ query }) {
           <NetworkSwitchModal
             show={showNetworkSwitch}
             handleClose={() => setShowNetworkSwitch(false)}
+          />
+        )}
+        {showConfirmModal && (
+          <ConfirmationModal
+            show={showConfirmModal}
+            handleClose={() => {
+              setShowConfirmModal(false);
+              router.push(`/collection/${collection?.id}`);
+            }}
+            handleApply={() => setShowConfirmModal(false)}
+            message='The NFT will be frozen after this update, continue?'
           />
         )}
       </>

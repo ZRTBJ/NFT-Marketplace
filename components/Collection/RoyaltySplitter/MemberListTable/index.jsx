@@ -10,6 +10,7 @@ import MemeberListMobile from '../MemberListMobile/MemberListMobile';
 import ConfirmationModal from 'components/Modals/ConfirmationModal';
 import { walletAddressTruncate } from 'util/WalletUtils';
 import Image from 'next/image';
+import { ls_GetWalletAddress } from 'util/ApplicationStorage';
 
 const MemberListTable = ({
   collection,
@@ -24,13 +25,17 @@ const MemberListTable = ({
   onShowError = () => {},
   isPublished,
 }) => {
-  const [newItems, setNewItems] = useState(null);
+  const [newItems, setNewItems] = useState([
+    { eoa: '', royalty_percent: 0, type: 'new' },
+  ]);
   const [address, setAddress] = useState('');
   const [percentage, setPercentage] = useState();
   const [toDelete, setToDelete] = useState(false);
   const [showError, setShowError] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
   const [addError, setAddError] = useState('');
+  const [name, setName] = useState('');
+  const [role, setRole] = useState('');
 
   useEffect(() => {
     if (newItems) {
@@ -81,21 +86,25 @@ const MemberListTable = ({
           const provider = new ethers.providers.Web3Provider(window.ethereum);
           userAddress = await provider.resolveName(address);
         } catch (error) {
-          setAddError('Invalid address or ENS');
+          setAddError('Invalid Wallet address or ENS');
           return;
         }
       }
 
       if (userAddress === null) {
-        setAddError('Invalid address or ENS');
+        setAddError('Invalid Wallet address or ENS');
         return;
       }
 
       let value = {
         user_eoa: userAddress,
         royalty_percent: parseFloat(percentage),
+        custom_name: name,
+        custom_role: role,
       };
       setRoyalityMembers([...list, value]);
+      setName('');
+      setRole('');
     }
   };
 
@@ -116,7 +125,7 @@ const MemberListTable = ({
       <div className='overflow-x-auto relative hidden md:block'>
         <table className='w-full text-left'>
           <thead>
-            <tr className='text-textSubtle text-[12px] '>
+            <tr className='text-textSubtle text-[12px] pb-4'>
               {headers.map((item) => (
                 <th
                   scope='col'
@@ -130,101 +139,112 @@ const MemberListTable = ({
           </thead>
           <tbody>
             {list?.length
-              ? list.map((r, index) => (
-                  <tr
-                    key={r.user_eoa}
-                    className={`${
-                      index < list.length - 1 ? 'border-b' : ''
-                    } text-left text-[13px]`}
-                  >
-                    <td className='py-4 px-5'>
-                      <div className='inline-flex items-center'>
-                        <span>{walletAddressTruncate(r.user_eoa)}</span>
-                        <CopyToClipboard text={r.user_eoa}>
-                          <button className='ml-1 w-[32px] h-[32px] rounded-[4px] flex items-center justify-center cursor-pointer text-[#A3D7EF] active:text-black'>
-                            <FontAwesomeIcon className='' icon={faCopy} />
-                          </button>
-                        </CopyToClipboard>
-                      </div>
-                    </td>
-                    {/* <td className="py-4 px-5">{r.email}</td> */}
-                    <td className='py-4 px-5'>
-                      <div className='inline-flex items-center'>
-                        {isEdit === r.user_eoa && isOwner ? (
-                          <div className='w-[75px] mr-2'>
-                            <input
-                              type='number'
-                              value={r.royalty_percent}
-                              style={{ padding: '5px 10px' }}
-                              onChange={(e) => handleValueChange(e, r.user_eoa)}
+              ? list.map((r, index) => {
+                  let currentAddress = ls_GetWalletAddress();
+                  let owner =
+                    currentAddress === r.user_eoa.toLowerCase()
+                      ? 'Owner'
+                      : 'Contributor';
+
+                  return (
+                    <tr
+                      key={r.user_eoa}
+                      className={`${
+                        index < list.length - 1 ? 'border-b' : ''
+                      } text-left text-[13px]`}
+                    >
+                      <td className='py-4 px-5'>
+                        <div className='inline-flex items-center'>
+                          <span>{walletAddressTruncate(r.user_eoa)}</span>
+                          <CopyToClipboard text={r.user_eoa}>
+                            <button className='ml-1 w-[32px] h-[32px] rounded-[4px] flex items-center justify-center cursor-pointer text-[#A3D7EF] active:text-black'>
+                              <FontAwesomeIcon className='' icon={faCopy} />
+                            </button>
+                          </CopyToClipboard>
+                        </div>
+                      </td>
+                      {/* <td className="py-4 px-5">{r.email}</td> */}
+                      <td className='py-4 px-5'>
+                        <div className='inline-flex items-center'>
+                          {isEdit === r.user_eoa && isOwner ? (
+                            <div className='w-[75px] mr-2'>
+                              <input
+                                type='number'
+                                value={r.royalty_percent}
+                                style={{ padding: '5px 10px' }}
+                                onChange={(e) =>
+                                  handleValueChange(e, r.user_eoa)
+                                }
+                              />
+                            </div>
+                          ) : (
+                            <span className='w-[60px]'>
+                              {r.royalty_percent
+                                ? Intl.NumberFormat('en-US', {
+                                    style: 'percent',
+                                    minimumFractionDigits: 3,
+                                  }).format(r.royalty_percent / 100)
+                                : '-'}
+                            </span>
+                          )}
+                          {isOwner && (
+                            <>
+                              {isEdit === r.user_eoa ? (
+                                <div className='flex flex-col'>
+                                  <i
+                                    className='fa-solid fa-check bg-green-400 rounded-[4px] text-white p-[2px] text-[18px] cursor-pointer'
+                                    onClick={() => setIsEdit(null)}
+                                  ></i>
+                                  <i
+                                    className='fa-solid fa-xmark bg-red-400 rounded-[4px] text-white p-[2px] pl-[4px] text-[20px] cursor-pointer'
+                                    onClick={() => setIsEdit(null)}
+                                  ></i>
+                                </div>
+                              ) : !isPublished ? (
+                                <Image
+                                  src={Edit}
+                                  alt='edit'
+                                  className='cursor-pointer'
+                                  onClick={() => setIsEdit(r.user_eoa)}
+                                />
+                              ) : null}
+                            </>
+                          )}
+                        </div>
+                      </td>
+                      <td className='py-4 px-5'>
+                        {r.custom_name ? r.custom_name : '-'}
+                      </td>
+                      <td className={`py-4 px-5`}>
+                        <p
+                          className={`text-[13px] bg-opacity-[0.2] py-1 px-2 w-fit rounded-[4px] font-bold ${
+                            r.is_owner ||
+                            currentAddress === r.user_eoa.toLowerCase()
+                              ? 'text-info-1 bg-[#46A6FF]'
+                              : ' text-success-1 bg-[#32E865]'
+                          }`}
+                        >
+                          {r.custom_role ? r.custom_role : owner}
+                        </p>
+                      </td>
+                      <td className='py-4 px-5'>
+                        {isPublished ? null : (
+                          <div
+                            className='w-[32px] h-[32px] bg-[#FF3C3C] rounded-[4px] flex items-center justify-center cursor-pointer'
+                            onClick={() => handleDeleteContributor(r.user_eoa)}
+                          >
+                            <Image
+                              src={Trash}
+                              alt='delete'
+                              width={14}
+                              height={14}
                             />
                           </div>
-                        ) : (
-                          <span className='w-[60px]'>
-                            {r.royalty_percent
-                              ? Intl.NumberFormat('en-US', {
-                                  style: 'percent',
-                                  minimumFractionDigits: 3,
-                                }).format(r.royalty_percent / 100)
-                              : '-'}
-                          </span>
                         )}
-                        {isOwner && (
-                          <>
-                            {isEdit === r.user_eoa ? (
-                              <div className='flex flex-col'>
-                                <i
-                                  className='fa-solid fa-check bg-green-400 rounded-[4px] text-white p-[2px] text-[18px] cursor-pointer'
-                                  onClick={() => setIsEdit(null)}
-                                ></i>
-                                <i
-                                  className='fa-solid fa-xmark bg-red-400 rounded-[4px] text-white p-[2px] pl-[4px] text-[20px] cursor-pointer'
-                                  onClick={() => setIsEdit(null)}
-                                ></i>
-                              </div>
-                            ) : !isPublished ? (
-                              <Image
-                                src={Edit}
-                                alt='edit'
-                                className='cursor-pointer'
-                                onClick={() => setIsEdit(r.user_eoa)}
-                              />
-                            ) : null}
-                          </>
-                        )}
-                      </div>
-                    </td>
-                    <td className='py-4 px-5'>
-                      {r.user_name ? r.user_name : '-'}
-                    </td>
-                    <td className={`py-4 px-5`}>
-                      <p
-                        className={`text-[13px] bg-opacity-[0.2] py-1 px-2 w-fit rounded-[4px] font-bold ${
-                          r.is_owner
-                            ? 'text-info-1 bg-[#46A6FF]'
-                            : ' text-success-1 bg-[#32E865]'
-                        }`}
-                      >
-                        {r.is_owner ? 'Owner' : 'Contributor'}
-                      </p>
-                    </td>
-                    <td className='py-4 px-5'>
-                      {isPublished ? null : (
-                        <div
-                          className='w-[32px] h-[32px] bg-[#FF3C3C] rounded-[4px] flex items-center justify-center cursor-pointer'
-                          onClick={() => handleDeleteContributor(r.user_eoa)}
-                        >
-                          <Image
-                            src={Trash}
-                            alt='delete'
-                            width={14}
-                            height={14}
-                          />
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                ))
+                      </td>
+                    </tr>
+                  );
+                })
               : null}
           </tbody>
         </table>
@@ -243,8 +263,8 @@ const MemberListTable = ({
       </div>
       <div className='mb-4'>
         {newItems ? (
-          <div className='flex items-center ml-0 md:ml-4'>
-            <div className='w-[250px] mr-4 md:mr-8'>
+          <div className='flex items-center ml-0 md:ml-4 mt-3'>
+            <div className='w-[20%] mr-2'>
               <input
                 id={'address'}
                 type='text'
@@ -254,16 +274,37 @@ const MemberListTable = ({
                 className='w-full bg-secondary rounded-[6px] text-[12px] px-[10px] py-[14px] text-text-base'
               />
             </div>
-            <div className='w-[150px] mr-4 md:mr-8 relative'>
+            <div className='w-[20%] mr-2 relative'>
               <input
                 id={'percentage'}
                 type='number'
                 value={percentage}
                 onChange={(e) => setPercentage(e.target.value)}
                 placeholder='-'
-                className='w-full bg-secondary rounded-[6px] text-[12px] pl-[10px] !pr-[30px] py-[14px] text-text-base'
+                className='w-full bg-secondary rounded-[6px] text-[12px] pl-[10px] !pr-[30px] h-[40px] py-[14px] text-text-base'
               />
-              <p className='absolute top-3 right-4'>%</p>
+              <p className='absolute top-2 right-4'>%</p>
+            </div>
+            <div className='w-[20%] mr-2'>
+              <input
+                id={'name'}
+                type='text'
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder='Name'
+                className='w-full bg-secondary rounded-[6px] text-[12px] px-[10px] py-[14px] text-text-base'
+              />
+            </div>
+            <div className='w-[20%] mr-2'>
+              <input
+                id={'role'}
+                type='text'
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                maxlength='50'
+                placeholder='Role'
+                className='w-full bg-secondary rounded-[6px] text-[12px] px-[10px] py-[14px] text-text-base'
+              />
             </div>
             <button
               className='outlined-button font-satoshi-bold'

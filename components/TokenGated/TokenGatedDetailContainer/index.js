@@ -61,7 +61,7 @@ const TokenGatedContentDetailContainer = ({ query }) => {
         setErrorMessage('');
       };
     }
-  }, [query?.id]);
+  }, [query?.id, userinfo?.id]);
 
   const getContentAuth = (assetUrl) => {
     getUserAuthorization(assetUrl)
