@@ -1,21 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import Image from 'next/image';
 import Gas from 'assets/images/header/gas.svg';
 import WalletConnectModal from 'components/Login/WalletConnectModal';
 import CreateNFTModal from 'components/Project/CreateDAOandNFT/components/CreateNFTModal.jsx';
-import { useSelector } from 'react-redux';
-import Link from 'next/link';
 import { NETWORKS } from 'config/networks';
-import { getCurrentNetworkId } from 'util/MetaMask';
-import FloatingContactForm from 'components/Commons/FloatingContactForm';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
-  ls_SetLatestGasPrice,
   ls_GetLatestGasPrice,
+  ls_SetLatestGasPrice,
 } from 'util/ApplicationStorage';
 
 export default function OnBoardingGuide({ setSwitchNetwork }) {
-  const userinfo = useSelector((state) => state.user.userinfo);
+  const chainId = useSelector((state) => state.chain.chainId);
   const [open, setOPen] = useState(true);
   const [showWalletConnectModal, setShowWalletConnectModal] = useState(false);
   const [showCreateNFTModal, setShowCreateNFTModal] = useState(false);
@@ -26,19 +23,17 @@ export default function OnBoardingGuide({ setSwitchNetwork }) {
     rapid: 0,
     usd: 0,
   });
-
   let priceDetails = ls_GetLatestGasPrice();
-
   useEffect(() => {
     if (priceDetails) {
       setGasPrice(JSON.parse(priceDetails));
     } else {
       getGasPrice();
     }
-  }, [priceDetails]);
+  }, [priceDetails, chainId]);
 
   const openFeedbackModal = () => {
-    const button = document.getElementById('fetureRequestButton');
+    const button = document.getElementById('featureRequestButton');
     button.click();
   };
 
@@ -52,7 +47,7 @@ export default function OnBoardingGuide({ setSwitchNetwork }) {
   };
 
   const getGasPrice = async () => {
-    let networkId = await getCurrentNetworkId();
+    let networkId = chainId;
     if (!networkId)
       networkId = process.env.NEXT_PUBLIC_ENV === 'production' ? 137 : 5;
     let link = NETWORKS[networkId];

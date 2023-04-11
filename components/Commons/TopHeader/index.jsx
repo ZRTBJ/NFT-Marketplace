@@ -24,7 +24,7 @@ import {
   ls_SetChainID,
   ls_GetChainID,
 } from 'util/ApplicationStorage';
-
+import { setChain } from 'redux/chain';
 import { toast } from 'react-toastify';
 import { NETWORKS } from 'config/networks';
 import { logout } from 'redux/auth';
@@ -546,6 +546,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
           value: data?.network,
           icon: data?.icon,
         });
+        await dispatch(setChain(data?.network));
         setIsComponentVisible(false);
       } else {
         setIsComponentVisible(false);
