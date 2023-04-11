@@ -25,7 +25,6 @@ import { GoogleAnalytics } from 'nextjs-google-analytics';
 import FloatingContactForm from 'components/Commons/FloatingContactForm';
 import TagManager from 'react-gtm-module';
 import { NETWORKS } from 'config/networks';
-import { getCurrentNetworkId } from 'util/MetaMask';
 import {
   EthereumClient,
   w3mConnectors,
@@ -39,14 +38,10 @@ import {
   polygon,
   polygonMumbai,
   goerli,
+  bsc,
 } from 'wagmi/chains';
 import WarningBar from 'components/Commons/WarningBar/WarningBar';
-import {
-  ls_GetChainID,
-  ls_GetUserID,
-  ls_GetWalletAddress,
-} from 'util/ApplicationStorage';
-import { getWalletAccount } from 'util/MetaMask';
+import { ls_GetChainID, ls_GetUserID } from 'util/ApplicationStorage';
 import SignRejectionModal from 'components/Commons/TopHeader/Account/SignRejectModal';
 
 dynamic(() => import('tw-elements'), { ssr: false });
@@ -63,7 +58,7 @@ const wagmiClient = createClient({
   autoConnect: true,
   connectors: w3mConnectors({
     projectId: Config.WALLET_CONNECT_PROJECT_ID,
-    version: 2,
+    version: 1,
     chains,
   }),
   provider,
@@ -84,25 +79,8 @@ function MyApp({ Component, pageProps }) {
   const router = useRouter();
 
   let userId = ls_GetUserID();
-  // let localAccountAddress = ls_GetWalletAddress();
-
-  // const handleAccountDifference = async () => {
-  //   const account = await getWalletAccount();
-  //   if (localAccountAddress && account) {
-  //     if (localAccountAddress !== account) {
-  //       if (!showModal) {
-  //         setShowSignReject(account);
-  //       }
-  //     }
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   handleAccountDifference();
-  // });
 
   /** Metamask network change detection */
-
   useEffect(() => {
     if (userId) {
       if (window?.ethereum) {
@@ -193,76 +171,79 @@ function MyApp({ Component, pageProps }) {
         crossorigin='anonymous'
       ></Script>
       <WagmiConfig client={wagmiClient}>
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <DAppProvider config={{}}>
-            {isMaintenance ? (
-              <Maintenance />
-            ) : (
-              <Auth>
-                <div className='bg-light'>
-                  {userId && isWrongNetwork ? (
-                    <WarningBar
-                      setIsWrongNetwork={setIsWrongNetwork}
-                      currentNetwork={currentNetwork}
-                    />
-                  ) : null}
-                  <main
-                    className='container min-h-[calc(100vh-71px)]'
-                    style={{ width: '100%', maxWidth: '100%' }}
-                  >
-                    <div className='flex flex-row'>
-                      {isEmbedView ||
-                      isContentView ||
-                      isTokenGatedProjectPublicView ? null : (
-                        <div className='hidden md:block'>
-                          <Sidebar
-                            setShowModal={setShowModal}
-                            handleToggleSideBar={handleToggleSideBar}
+        <Provider store={store}>
+          <PersistGate loading={null} persistor={persistor}>
+            <DAppProvider config={{}}>
+              {isMaintenance ? (
+                <Maintenance />
+              ) : (
+                <Auth>
+                  <div className='bg-light'>
+                    {userId && isWrongNetwork ? (
+                      <WarningBar
+                        setIsWrongNetwork={setIsWrongNetwork}
+                        currentNetwork={currentNetwork}
+                      />
+                    ) : null}
+                    <main
+                      className='container min-h-[calc(100vh-71px)]'
+                      style={{ width: '100%', maxWidth: '100%' }}
+                    >
+                      <div className='flex flex-row'>
+                        {isEmbedView ||
+                        isContentView ||
+                        isTokenGatedProjectPublicView ? null : (
+                          <div className='hidden md:block'>
+                            <Sidebar
+                              setShowModal={setShowModal}
+                              handleToggleSideBar={handleToggleSideBar}
+                            />
+                          </div>
+                        )}
+                        {isEmbedView ||
+                        isContentView ||
+                        isTokenGatedProjectPublicView ? null : (
+                          <div
+                            className={`${
+                              showSideBar
+                                ? 'translate-x-0'
+                                : '-translate-x-full'
+                            } block md:hidden mr-4 absolute z-[100] ease-in-out duration-300`}
+                          >
+                            <Sidebar
+                              setShowModal={setShowModal}
+                              handleToggleSideBar={handleToggleSideBar}
+                            />
+                          </div>
+                        )}
+                        <div className='w-full min-w-[calc(100vw-300px)]'>
+                          {!isEmbedView && (
+                            <Header
+                              handleSidebar={handleToggleSideBar}
+                              setShowModal={setShowModal}
+                              showModal={showModal}
+                            />
+                          )}
+                          <Component {...pageProps} />
+                          {!isEmbedView && <FloatingContactForm />}
+                          {showSignReject && (
+                            <SignRejectionModal
+                              show={showSignReject}
+                              closeModal={() => setShowSignReject(false)}
+                            />
+                          )}
+                          <ToastContainer
+                            className='impct-toast'
+                            position='top-right'
+                            autoClose={3000}
+                            newestOnTop
+                            closeOnClick
+                            rtl={false}
+                            pauseOnVisibilityChange
+                            draggable={false}
+                            transition={Slide}
                           />
                         </div>
-                      )}
-                      {isEmbedView ||
-                      isContentView ||
-                      isTokenGatedProjectPublicView ? null : (
-                        <div
-                          className={`${
-                            showSideBar ? 'translate-x-0' : '-translate-x-full'
-                          } block md:hidden mr-4 absolute z-[100] ease-in-out duration-300`}
-                        >
-                          <Sidebar
-                            setShowModal={setShowModal}
-                            handleToggleSideBar={handleToggleSideBar}
-                          />
-                        </div>
-                      )}
-                      <div className='w-full min-w-[calc(100vw-300px)]'>
-                        {!isEmbedView && (
-                          <Header
-                            handleSidebar={handleToggleSideBar}
-                            setShowModal={setShowModal}
-                            showModal={showModal}
-                          />
-                        )}
-                        <Component {...pageProps} />
-                        {!isEmbedView && <FloatingContactForm />}
-                        {showSignReject && (
-                          <SignRejectionModal
-                            show={showSignReject}
-                            closeModal={() => setShowSignReject(false)}
-                          />
-                        )}
-                        <ToastContainer
-                          className='impct-toast'
-                          position='top-right'
-                          autoClose={3000}
-                          newestOnTop
-                          closeOnClick
-                          rtl={false}
-                          pauseOnVisibilityChange
-                          draggable={false}
-                          transition={Slide}
-                        />
                       </div>
                     </main>
                   </div>
