@@ -1,21 +1,40 @@
 import { useState, useEffect } from 'react';
 import { getUserNotification } from 'redux/user/action';
-import { markNotificationAsRead } from 'services/notification/notificationService';
+import {
+  markNotificationAsRead,
+  markAllNotificationAsRead,
+} from 'services/notification/notificationService';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import ReactPaginate from 'react-paginate';
 import emptyStateCommon from 'assets/images/profile/emptyStateCommon.svg';
 import Image from 'next/image';
+import { toast } from 'react-toastify';
+
 const Notifications = () => {
   const [pagination, setPagination] = useState([]);
   const [isActive, setIsactive] = useState(1);
   const dispatch = useDispatch();
   const { notifications } = useSelector((state) => state.user);
   const router = useRouter();
+  const userinfo = useSelector((state) => state.user.userinfo);
 
   useEffect(() => {
     dispatch(getUserNotification(isActive));
-  }, [isActive]);
+  }, [isActive, userinfo?.id]);
+
+  const markAll = async () => {
+    const unreadNotifications = notifications?.notifications?.filter(
+      (x) => x.unread
+    );
+    if (unreadNotifications?.length > 0) {
+      const ids = unreadNotifications.map((r) => {
+        return r.uuid;
+      });
+      await markAllNotificationAsRead(ids);
+      dispatch(getUserNotification(isActive));
+    }
+  };
 
   useEffect(() => {
     let arr = Array.from({ length: notifications?.pageSize }, (v, k) => k + 1);
@@ -25,27 +44,37 @@ const Notifications = () => {
       pageList.push(index);
     }
     setPagination(pageList);
+    markAll();
   }, [notifications]);
-  function markAsRead(notification) {
-    if (notification?.data?.collection_id || notification?.data?.project_uid) {
-      markNotificationAsRead(notification.uuid)
-        .then((res) => {})
-        .catch(() => {});
-      if (notification?.type === 'CollectionPublish') {
-        router.push(
-          `/collection/${
-            notification?.data?.collection_id
-              ? notification.data.collection_id
-              : ''
-          }`
-        );
-      } else if (notification?.type === 'projectPublish') {
-        router.push(
-          `/dao/${
-            notification?.data?.project_uid ? notification.data.project_uid : ''
-          }`
-        );
-      }
+  async function markAsRead(notification) {
+    // if (notification?.unread) {
+    //   await markNotificationAsRead(notification.uuid)
+    //     .then((res) => {
+    //       if (res?.code === 0) {
+    //         toast.success('Marked as read');
+    //       } else {
+    //         toast.error(res?.message);
+    //       }
+    //     })
+    //     .catch((err) => {
+    //       toast.error(err);
+    //     });
+    //   dispatch(getUserNotification(isActive));
+    // }
+    if (notification?.type === 'CollectionPublish') {
+      router.push(
+        `/collection/${
+          notification?.data?.collection_id
+            ? notification.data.collection_id
+            : ''
+        }`
+      );
+    } else if (notification?.type === 'projectPublish') {
+      router.push(
+        `/dao/${
+          notification?.data?.project_uid ? notification.data.project_uid : ''
+        }`
+      );
     }
   }
 
@@ -81,16 +110,16 @@ const Notifications = () => {
           <div className='grid grid-cols-1  px-0 md:px-4 mx-1 md:mx-4 mt-5 gap-5'>
             {notifications?.notifications?.map((notification, index) => (
               <div
-                className=' px-0 md:px-2 hover:bg-[#ccc] border-b mb-2'
+                className=' px-0 md:px-2  border-b mb-2'
                 key={`user-notification-${index}`}
               >
                 {notification.type === 'projectPublish' ? (
                   <div
-                    className='flex items-center'
+                    className='flex justify-between items-center cursor-pointer'
                     onClick={() => markAsRead(notification)}
                     onTouchStart={() => markAsRead(notification)}
                   >
-                    <div className='w-3/4 txtblack text-sm cursor-pointer'>
+                    <div className='flex-1 text-sm'>
                       <div className='flex items-center'>
                         <p className='ml-2 text-[16px]  font-bold border-r-[#000] pr-2 border-r-[1px] capitalize'>
                           {notification?.data?.project_name}
@@ -100,17 +129,17 @@ const Notifications = () => {
                         </p>
                       </div>
                     </div>
-                    <div className='w-1/4 text-right'>
+                    <div className='text-right'>
                       <i className='fa fa-angle-right text-[#199BD8]'></i>
                     </div>
                   </div>
                 ) : notification.type === 'CollectionPublish' ? (
                   <div
-                    className='flex items-center'
+                    className='flex items-center cursor-pointer justify-between'
                     onClick={() => markAsRead(notification)}
                     onTouchStart={() => markAsRead(notification)}
                   >
-                    <div className='w-3/4 txtblack text-sm cursor-pointer'>
+                    <div className='flex-1 txtblack text-sm'>
                       <div className='flex items-center'>
                         <p className='ml-2 text-[16px]  font-bold border-r-[#000] pr-2 border-r-[1px] capitalize'>
                           {notification?.data?.collection_name}
@@ -120,13 +149,16 @@ const Notifications = () => {
                         </p>
                       </div>
                     </div>
-                    <div className='w-1/4 text-right'>
+                    <div className='text-right'>
                       <i className='fa fa-angle-right text-[#199BD8]'></i>
                     </div>
                   </div>
                 ) : notification.type === 'NFTMinted' ? (
-                  <div className='flex items-center'>
-                    <div className='w-3/4 txtblack text-sm'>
+                  <div
+                    onClick={() => markAsRead(notification)}
+                    className='flex items-center justify-between cursor-pointer'
+                  >
+                    <div className='flex-1 txtblack text-sm'>
                       <div className='flex items-center'>
                         <p className='ml-2 text-[16px]  font-bold border-r-[#000] pr-2 border-r-[1px] capitalize'>
                           {notification?.title}
@@ -136,10 +168,13 @@ const Notifications = () => {
                         </p>
                       </div>
                     </div>
+                    {notification?.unread ? (
+                      <i className='fa-regular fa-envelope-open cursor-pointer'></i>
+                    ) : null}
                   </div>
                 ) : notification.type === 'fileUploadTokengatedNotification' ? (
-                  <div className='flex items-center'>
-                    <div className='w-3/4 txtblack text-sm'>
+                  <div className='flex items-center justify-between'>
+                    <div className='flex-1 txtblack text-sm'>
                       <div className='flex items-center'>
                         <p className='ml-2 text-[16px]  font-bold border-r-[#000] pr-2 border-r-[1px] capitalize'>
                           Token Gate File
@@ -149,10 +184,16 @@ const Notifications = () => {
                         </p>
                       </div>
                     </div>
+                    {notification?.unread ? (
+                      <i
+                        className='fa-regular fa-envelope-open cursor-pointer'
+                        onClick={() => markAsRead(notification)}
+                      ></i>
+                    ) : null}
                   </div>
                 ) : (
                   <div
-                    className='flex items-center'
+                    className='flex items-center cursor-pointer'
                     onClick={() => markAsRead(notification)}
                     onTouchStart={() => markAsRead(notification)}
                   >

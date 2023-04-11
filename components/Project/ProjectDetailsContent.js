@@ -18,6 +18,7 @@ import CoverGallery from './CoverGallery';
 import InfoCard from './InfoCard.jsx';
 import MembershipNFTTab from './MembershipNFTTab/MembershipNFTTab';
 import ProductNFTTab from './ProductNFTTab/ProductNFTTab';
+import { useSelector } from 'react-redux';
 
 const TABS = [
   { id: 1, label: 'Membership NFT' },
@@ -53,13 +54,14 @@ function ProjectDetailsContent({ id }) {
     balanceUSD: 0,
   });
   const [showNetworkHandler, setShowNetworkHandler] = useState(false);
+  const userInfo = useSelector((state) => state.user.userinfo);
 
   useEffect(() => {
     if (projectId) {
       projectDetails(projectId);
       getProjectNetWorth();
     }
-  }, [projectId]);
+  }, [projectId, userInfo?.id]);
 
   const getProjectNetWorth = () => {
     setBalanceLoading(true);
@@ -80,7 +82,7 @@ function ProjectDetailsContent({ id }) {
 
   useEffect(() => {
     getCollectionList();
-  }, []);
+  }, [userInfo?.id]);
 
   async function projectDetails(pid) {
     setIsLoading(true);

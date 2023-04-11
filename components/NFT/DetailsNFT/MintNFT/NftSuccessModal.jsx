@@ -10,6 +10,8 @@ import {
 } from 'react-share';
 import { walletAddressTruncate } from 'util/WalletUtils';
 import Image from 'next/image';
+import { useState } from 'react';
+import NewSuccess from 'assets/images/success-new.svg';
 const NftSuccessModal = ({
   handleClose,
   show,
@@ -32,6 +34,7 @@ const NftSuccessModal = ({
       copyEl.classList.toggle('hidden');
     }, 2000);
   };
+  const [imageSrc, setImageSrc] = useState(assetUrl);
   return (
     <Modal
       width={400}
@@ -48,8 +51,9 @@ const NftSuccessModal = ({
           <span className='font-black'>{collectionName}</span>
         </p>
         <Image
+          onError={() => setImageSrc(NewSuccess.src)}
           unoptimized
-          src={assetUrl}
+          src={imageSrc}
           alt='asset'
           height={150}
           width={150}

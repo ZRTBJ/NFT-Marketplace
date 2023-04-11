@@ -6,15 +6,25 @@ import Trash from 'assets/images/icons/trash.svg';
 import Edit from 'assets/images/icons/edit.svg';
 import { walletAddressTruncate } from 'util/WalletUtils';
 import Image from 'next/image';
+import { ls_GetWalletAddress } from 'util/ApplicationStorage';
 
 const MemberRowMobile = (props) => {
-  const { item, isLastItem, handleValueChange, handleDeleteContributor, isPublished } =
-    props;
+  const {
+    item,
+    isLastItem,
+    handleValueChange,
+    handleDeleteContributor,
+    isPublished,
+  } = props;
   const [isEdit, setIsEdit] = useState(false);
 
   const handleUpdatePercent = async (e) => {
     setIsEdit(false);
   };
+
+  let currentAddress = ls_GetWalletAddress();
+  let owner =
+    currentAddress === item.user_eoa.toLowerCase() ? 'Owner' : 'Contributor';
 
   return (
     <div className={`${isLastItem ? 'border-b' : ''} pb-4 mb-4`}>
@@ -39,13 +49,13 @@ const MemberRowMobile = (props) => {
           >
             <Image src={Trash} alt='delete' />
           </div>
-         )} 
+        )}
       </div>
       <div className='flex items-center justify-between'>
         <div className=''>
           <p className='text-[14px] font-bold'>Name</p>
           <p className='text-[13px] mt-0'>
-            {item.user_name ? item.user_name : '-'}
+            {item.custom_role ? item.custom_role : '-'}
           </p>
         </div>
         <div className=''>
@@ -56,13 +66,14 @@ const MemberRowMobile = (props) => {
                 <span className='text-[13px] mt-0'>
                   {item.royalty_percent ? `${item.royalty_percent}%` : '-'}
                 </span>
-                {!isPublished ? 
-                <Image
-                  className='ml-2 cursor-pointer'
-                  src={Edit}
-                  alt='edit'
-                  onClick={() => setIsEdit(true)}
-                /> : null}
+                {!isPublished ? (
+                  <Image
+                    className='ml-2 cursor-pointer'
+                    src={Edit}
+                    alt='edit'
+                    onClick={() => setIsEdit(true)}
+                  />
+                ) : null}
               </>
             )}
             {isEdit && (
@@ -93,12 +104,12 @@ const MemberRowMobile = (props) => {
           <p className='text-[14px] font-bold'>Roles</p>
           <p
             className={`text-[13px] mt-0 bg-opacity-[0.2] py-1 px-2 w-fit rounded-[4px] font-bold ${
-              item.is_owner
+              item.is_owner || currentAddress === item.user_eoa.toLowerCase()
                 ? 'text-info-1 bg-[#46A6FF]'
                 : ' text-success-1 bg-[#32E865]'
             }`}
           >
-            {item.is_owner ? 'Owner' : 'Contributor'}
+            {item.custom_role ? item.custom_role : owner}
           </p>
         </div>
       </div>
@@ -107,7 +118,8 @@ const MemberRowMobile = (props) => {
 };
 
 const MemeberListMobile = (props) => {
-  const { list, handleValueChange, handleDeleteContributor, isPublished } = props;
+  const { list, handleValueChange, handleDeleteContributor, isPublished } =
+    props;
 
   return (
     <div>
