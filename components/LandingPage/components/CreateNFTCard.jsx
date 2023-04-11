@@ -25,13 +25,13 @@ export default function CreateNFTCard({ size, setSwitchNetwork }) {
   };
   return (
     <div>
-      <p className='textSubtle-100 text-[20px] font-black my-4'>
+      <p className='textSubtle-100 text-[20px] font-black my-4 md:h-[37px]'>
         NFT Collection
       </p>
       <div
         className={`relative justify-between bg-black flex  items-center gap-x-5 shadow rounded-2xl ${
           size === 'lg'
-            ? 'flex-col gap-y-5 rounded-bl-2xl rounded-br-2xl'
+            ? 'flex-col gap-y-5 rounded-bl-2xl rounded-br-2xl md:h-[670px]'
             : ' w-[515px] px-[30px] py-5'
         }`}
         style={{
@@ -59,12 +59,12 @@ export default function CreateNFTCard({ size, setSwitchNetwork }) {
           </p>
           <div
             className={`flex items-center ${
-              size === 'lg' ? 'flex-col gap-y-6' : ''
+              size === 'lg' ? 'flex-col gap-y-6' : 'justify-between'
             }`}
           >
             <button
               onClick={() => handelOnClick()}
-              className='contained-button rounded m-auto !text-white'
+              className='contained-button rounded !text-white'
             >
               Create Collection
             </button>

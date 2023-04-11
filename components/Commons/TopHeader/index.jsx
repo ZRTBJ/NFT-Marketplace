@@ -49,6 +49,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const dispatch = useDispatch();
   const inputRef = useRef(null);
   const outsideRef = useRef(null);
+  const timer = useRef(null);
   const { user, walletAddress, token } = useSelector((state) => state.auth);
   const [userId, setUserId] = useState(user ? user : '');
   const userinfo = useSelector((state) => state.user.userinfo);
@@ -453,12 +454,20 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
         page: page,
         keyword: value,
       };
-      searchContent(payload).then((resp) => {
-        if (resp.code === 0) {
-          setSearchItems(resp);
-        }
-        setSearching(false);
-      });
+      if (timer.current) {
+        clearTimeout(timer.current);
+      }
+
+      timer.current = setTimeout(
+        () =>
+          searchContent(payload).then((resp) => {
+            if (resp.code === 0) {
+              setSearchItems(resp);
+            }
+            setSearching(false);
+          }),
+        2000
+      );
     }
   };
 

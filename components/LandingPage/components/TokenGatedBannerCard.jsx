@@ -55,7 +55,7 @@ export default function TokenGatedBannerCard() {
                 onClick={() => handelOnClick()}
                 className='gradient-text-deep-pueple font-black border w-[160px] text-center h-[40px] rounded-lg border-secondary-900'
               >
-                {isLoading ? <Spinner forButton={true} /> : `Get started`}
+                {isLoading ? <Spinner forButton={true} /> : `Get Started`}
               </button>
               <a
                 href='https://decir.gitbook.io/decir/token-gated-contents/how-it-works'

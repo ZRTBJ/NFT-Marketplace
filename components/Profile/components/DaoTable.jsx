@@ -20,7 +20,7 @@ export default function DaoTable({ tableData, setSwitchNetwork }) {
 
   return (
     <>
-      <div className='flex items-center gap-4 flex-wrap my-3'>
+      <div className='flex items-center gap-4 flex-wrap my-4 md:h-[37px]'>
         <p className='textSubtle-100 text-[20px] font-black '>DAO Community</p>
         <button
           className='contained-button rounded ml-auto !text-white'

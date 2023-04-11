@@ -60,7 +60,10 @@ const FeatureRequest = ({ show, handleClose }) => {
     <Modal
       width={500}
       show={show}
-      handleClose={() => handleClose()}
+      handleClose={() => {
+        resetState();
+        handleClose();
+      }}
       showCloseIcon={true}
       gradientBg={true}
     >
@@ -123,7 +126,7 @@ const FeatureRequest = ({ show, handleClose }) => {
                 )}
               </div>
               <button type='submit' className='contained-button-new w-full'>
-                {isLoading ? <Spinner /> : <span>Send Request</span>}
+                {isLoading ? <Spinner forButton /> : <span>Send Request</span>}
               </button>
             </div>
           </form>

@@ -133,6 +133,7 @@ const FloatingContactForm = () => {
       ) : null}
       <button
         onClick={() => setShowForm(!showForm)}
+        id='fetureRequestButton'
         className='cursor-pointer fixed bottom-5 flex items-center justify-center right-5 w-[50px] h-[50px] floating-button rounded-[50px]'
       >
         {showForm ? (

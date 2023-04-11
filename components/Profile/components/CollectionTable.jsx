@@ -23,7 +23,7 @@ export default function CollectionTable({ tableData, setSwitchNetwork }) {
   };
   return (
     <>
-      <div className='flex items-center gap-4 flex-wrap my-3'>
+      <div className='flex items-center gap-4 flex-wrap my-4'>
         <p className='textSubtle-100 text-[20px] font-black '>
           {' '}
           NFT Collection

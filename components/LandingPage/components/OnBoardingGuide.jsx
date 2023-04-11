@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import Link from 'next/link';
 import { NETWORKS } from 'config/networks';
 import { getCurrentNetworkId } from 'util/MetaMask';
+import FloatingContactForm from 'components/Commons/FloatingContactForm';
 import {
   ls_SetLatestGasPrice,
   ls_GetLatestGasPrice,
@@ -36,16 +37,9 @@ export default function OnBoardingGuide({ setSwitchNetwork }) {
     }
   }, [priceDetails]);
 
-  const redirectToDiscord = () => {
-    if (typeof window !== 'undefined') {
-      window
-        .open(
-          'https://discord.com/channels/989012893737566208/989012893737566215',
-          '_blank'
-        )
-        .focus();
-      // window.open('https://discord.com/invite/ST2tNtPvGY', '_blank').focus();
-    }
+  const openFeedbackModal = () => {
+    const button = document.getElementById('fetureRequestButton');
+    button.click();
   };
 
   const redirectToNftCreatePage = async () => {
@@ -66,7 +60,8 @@ export default function OnBoardingGuide({ setSwitchNetwork }) {
     let priceResponse = await priceData.json();
     if (response?.message === 'OK') {
       let priceDetails = {
-        standard: response?.result?.suggestBaseFee,
+        standard:
+          response?.result?.suggestBaseFee || response?.result?.SafeGasPrice,
         slow: response?.result?.SafeGasPrice,
         fast: response?.result?.FastGasPrice,
         rapid: response?.result?.ProposeGasPrice
@@ -154,7 +149,7 @@ export default function OnBoardingGuide({ setSwitchNetwork }) {
                 </div>
               </Link>
               <div
-                onClick={() => redirectToDiscord()}
+                onClick={() => openFeedbackModal()}
                 className='cursor-pointer  min-w-[86vw] md:min-w-[302px] rounded-[8px] bg-gradient-to-r from-white to-secondary-200/[0.8]'
               >
                 <div className='triangle'></div>
