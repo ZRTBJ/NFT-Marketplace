@@ -68,7 +68,9 @@ const FeatureRequest = ({ show, handleClose }) => {
       gradientBg={true}
     >
       <div className={`px-[11px] md:px-[0px] text-black`}>
-        <h1 className='text-[30px] md:text-[46px]'>Request a New Feature</h1>
+        <div className='text-[1.5rem] font-bold px-[1.5rem]'>
+          Request a New Feature
+        </div>
         <div>
           <form onSubmit={handleSend}>
             <div className='p-6'>

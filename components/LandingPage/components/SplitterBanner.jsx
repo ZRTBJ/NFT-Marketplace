@@ -44,7 +44,7 @@ export default function SplitterBanner({
               Create Royalty Splitter
             </p>
             <p className='mb-6 text-[14px] break-word'>
-              Create Once and use in any collection
+              Create once and use in any collection
             </p>
             <div className='flex flex-wrap items-center gap-4'>
               <button

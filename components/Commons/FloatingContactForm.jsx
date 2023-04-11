@@ -61,7 +61,7 @@ const FloatingContactForm = () => {
   return (
     <>
       {showForm ? (
-        <div className='w-[350px] contact-help-form fixed right-5 bottom-[8%] transition duration-150 ease-in-out rounded-[20px]'>
+        <div className='w-[350px] contact-help-form fixed right-5 bottom-[8%] transition duration-150 ease-in-out rounded-[20px] z-[10]'>
           <div className='contact-help-header bg-[#59cdff] p-5'>
             <h2 className='mb-2'>Hello! 👋</h2>
             <p>Need Help? Please write to us!</p>
