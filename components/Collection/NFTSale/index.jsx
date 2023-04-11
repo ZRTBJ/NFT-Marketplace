@@ -39,6 +39,7 @@ const headers = [
 ];
 
 const time = ['Day', 'Week', 'Month'];
+const imageRegex = new RegExp('image');
 
 const NFTSales = ({ items }) => {
   const [selectedTime, setSelectedTime] = useState('Day');
@@ -87,14 +88,28 @@ const NFTSales = ({ items }) => {
                 >
                   <td className='py-4 px-5'>
                     <div className='flex items-center'>
-                      <Image
-                        src={r?.nft_asset_path ? r.nft_asset_path : manImg}
-                        alt='nft'
-                        className='h-[33px] w-[33px] rounded'
-                        height={33}
-                        width={33}
-                        unoptimized
-                      />{' '}
+                      {imageRegex.test(r?.nft_asset_type) && (
+                        <Image
+                          src={r?.nft_asset_path ? r.nft_asset_path : manImg}
+                          alt='nft'
+                          className='h-[33px] w-[33px] rounded'
+                          height={33}
+                          width={33}
+                          unoptimized
+                        />
+                      )}
+                      {r?.nft_asset_type === 'movie' ||
+                      r?.nft_asset_type === 'video/mp4' ? (
+                        <div className='social-icon-button cursor-pointer w-9 h-9  flex justify-center items-center rounded-md ease-in-out duration-300'>
+                          <i className='fa-solid fa-circle-video gradient-text text-[20px]'></i>
+                        </div>
+                      ) : null}
+                      {r?.nft_asset_type === 'audio' ||
+                      r?.nft_asset_type === 'audio/mpeg' ? (
+                        <div className='social-icon-button cursor-pointer w-9 h-9  flex justify-center items-center rounded-md ease-in-out duration-300'>
+                          <i className='fa-solid fa-file-audio gradient-text text-[20px]'></i>
+                        </div>
+                      ) : null}
                       <span className='ml-2'>{r.nft_name}</span>
                     </div>
                   </td>

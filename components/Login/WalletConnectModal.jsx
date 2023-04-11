@@ -25,6 +25,7 @@ import lottieJson from 'assets/lottieFiles/circle-loader.json';
 import { useAccount, useSignMessage } from 'wagmi';
 import { useWeb3Modal } from '@web3modal/react';
 import WalletConnect from 'assets/images/wallet-connect.svg';
+import SignRejectionModal from 'components/Commons/TopHeader/Account/SignRejectModal';
 
 const WalletConnectModal = ({
   showModal,
@@ -51,6 +52,7 @@ const WalletConnectModal = ({
   const { signMessage, data } = useSignMessage({
     onSuccess,
   });
+  const [showSignReject, setShowSignReject] = useState(false);
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -59,6 +61,7 @@ const WalletConnectModal = ({
       preserveAspectRatio: 'xMidYMid slice',
     },
   };
+  const userinfo = useSelector((state) => state.user.userinfo);
 
   async function onConnect(address, connector, isReconnected) {
     if (address?.address && address.address?.length > 5) {
@@ -113,7 +116,9 @@ const WalletConnectModal = ({
                 userLogin(account, signature, 'metamask');
               })
               .catch((error) => {
-                // alert(error.message);
+                if (userinfo?.id) {
+                  setShowSignReject(account);
+                }
               });
           } else {
             if (!isConnected && !account) {
@@ -199,6 +204,19 @@ const WalletConnectModal = ({
     }
   };
 
+  if (showSignReject) {
+    return (
+      <SignRejectionModal
+        show={showSignReject}
+        closeModal={() => {
+          setShowSignReject(false);
+          closeModal();
+        }}
+        handleTryAgain={handleConnectWallet}
+        reject={true}
+      />
+    );
+  }
   return (
     <div>
       <Modal

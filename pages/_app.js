@@ -24,7 +24,6 @@ import Maintenance from 'components/Commons/Maintenance';
 import { GoogleAnalytics } from 'nextjs-google-analytics';
 import FloatingContactForm from 'components/Commons/FloatingContactForm';
 import TagManager from 'react-gtm-module';
-import Link from 'next/link';
 import { NETWORKS } from 'config/networks';
 import { getCurrentNetworkId } from 'util/MetaMask';
 import {
@@ -42,6 +41,13 @@ import {
   goerli,
 } from 'wagmi/chains';
 import WarningBar from 'components/Commons/WarningBar/WarningBar';
+import {
+  ls_GetChainID,
+  ls_GetUserID,
+  ls_GetWalletAddress,
+} from 'util/ApplicationStorage';
+import { getWalletAccount } from 'util/MetaMask';
+import SignRejectionModal from 'components/Commons/TopHeader/Account/SignRejectModal';
 
 dynamic(() => import('tw-elements'), { ssr: false });
 
@@ -72,19 +78,41 @@ function MyApp({ Component, pageProps }) {
   const [isContentView, setIsContentView] = useState(false);
   const [isTokenGatedProjectPublicView, setIsTokenGatedProjectPublicView] =
     useState(false);
+  const [showSignReject, setShowSignReject] = useState('');
   const [currentNetwork, setCurrentNetwork] = useState();
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
   const router = useRouter();
 
+  let userId = ls_GetUserID();
+  // let localAccountAddress = ls_GetWalletAddress();
+
+  // const handleAccountDifference = async () => {
+  //   const account = await getWalletAccount();
+  //   if (localAccountAddress && account) {
+  //     if (localAccountAddress !== account) {
+  //       if (!showModal) {
+  //         setShowSignReject(account);
+  //       }
+  //     }
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   handleAccountDifference();
+  // });
+
   /** Metamask network change detection */
+
   useEffect(() => {
-    if (window?.ethereum) {
-      window?.ethereum?.on('networkChanged', function (networkId) {
-        getCurrentNetwork();
-        setCurrentNetwork(networkId);
-      });
+    if (userId) {
+      if (window?.ethereum) {
+        window?.ethereum?.on('networkChanged', function (networkId) {
+          getCurrentNetwork(networkId);
+          setCurrentNetwork(networkId);
+        });
+      }
     }
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     TagManager.initialize({
@@ -93,13 +121,16 @@ function MyApp({ Component, pageProps }) {
   }, []);
 
   useEffect(() => {
-    getCurrentNetwork();
-  }, []);
+    if (userId) {
+      getCurrentNetwork();
+    }
+  }, [userId]);
 
-  const getCurrentNetwork = async () => {
-    let networkValue = await getCurrentNetworkId();
-    setCurrentNetwork(networkValue);
-    if (NETWORKS?.[networkValue] && networkValue !== 1) {
+  const getCurrentNetwork = async (networkId) => {
+    let networkValue = await ls_GetChainID();
+    let id = networkId ? Number(networkId) : Number(networkValue);
+    setCurrentNetwork(id);
+    if (NETWORKS?.[id] && id !== 1) {
       setIsWrongNetwork(false);
     } else {
       setIsWrongNetwork(true);
@@ -162,103 +193,76 @@ function MyApp({ Component, pageProps }) {
         crossorigin='anonymous'
       ></Script>
       <WagmiConfig client={wagmiClient}>
-        <Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
-            <DAppProvider config={{}}>
-              {isMaintenance ? (
-                <Maintenance />
-              ) : (
-                <Auth>
-                  <div className='bg-light'>
-                    {isWrongNetwork ? (
-                      <div className='bg-red-500 text-white py-1 relative'>
-                        <p className='text-center'>
-                          You're viewing {IS_PRODUCTION ? 'Main' : 'test'}{' '}
-                          network, but your wallet is connected to the{' '}
-                          {IS_PRODUCTION ? 'test' : 'main'} or unsupported
-                          network. To use Decir, either switch to a supported
-                          network or go to{' '}
-                          {IS_PRODUCTION ? (
-                            <Link
-                              href={'https://testnet.decir.io/'}
-                              passHref
-                              target={'_blank'}
-                              className='underline'
-                            >
-                              testnet.decir.io
-                            </Link>
-                          ) : (
-                            <Link
-                              href={'https://app.decir.io/'}
-                              passHref
-                              target={'_blank'}
-                              className='underline'
-                            >
-                              app.decir.io
-                            </Link>
-                          )}{' '}
-                          .
-                          <i
-                            onClick={() => setIsWrongNetwork(false)}
-                            class='fa-solid fa-xmark-large text-right cursor-pointer text-sm absolute right-2 bottom-2'
-                          ></i>
-                        </p>
-                      </div>
-                    ) : null}
-                    <main
-                      className='container min-h-[calc(100vh-71px)]'
-                      style={{ width: '100%', maxWidth: '100%' }}
-                    >
-                      <div className='flex flex-row'>
-                        {isEmbedView ||
-                        isContentView ||
-                        isTokenGatedProjectPublicView ? null : (
-                          <div className='hidden md:block'>
-                            <Sidebar
-                              setShowModal={setShowModal}
-                              handleToggleSideBar={handleToggleSideBar}
-                            />
-                          </div>
-                        )}
-                        {isEmbedView ||
-                        isContentView ||
-                        isTokenGatedProjectPublicView ? null : (
-                          <div
-                            className={`${
-                              showSideBar
-                                ? 'translate-x-0'
-                                : '-translate-x-full'
-                            } block md:hidden mr-4 absolute z-[100] ease-in-out duration-300`}
-                          >
-                            <Sidebar
-                              setShowModal={setShowModal}
-                              handleToggleSideBar={handleToggleSideBar}
-                            />
-                          </div>
-                        )}
-                        <div className='w-full min-w-[calc(100vw-300px)]'>
-                          {!isEmbedView && (
-                            <Header
-                              handleSidebar={handleToggleSideBar}
-                              setShowModal={setShowModal}
-                              showModal={showModal}
-                            />
-                          )}
-                          <Component {...pageProps} />
-                          {!isEmbedView && <FloatingContactForm />}
-
-                          <ToastContainer
-                            className='impct-toast'
-                            position='top-right'
-                            autoClose={3000}
-                            newestOnTop
-                            closeOnClick
-                            rtl={false}
-                            pauseOnVisibilityChange
-                            draggable={false}
-                            transition={Slide}
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <DAppProvider config={{}}>
+            {isMaintenance ? (
+              <Maintenance />
+            ) : (
+              <Auth>
+                <div className='bg-light'>
+                  {userId && isWrongNetwork ? (
+                    <WarningBar
+                      setIsWrongNetwork={setIsWrongNetwork}
+                      currentNetwork={currentNetwork}
+                    />
+                  ) : null}
+                  <main
+                    className='container min-h-[calc(100vh-71px)]'
+                    style={{ width: '100%', maxWidth: '100%' }}
+                  >
+                    <div className='flex flex-row'>
+                      {isEmbedView ||
+                      isContentView ||
+                      isTokenGatedProjectPublicView ? null : (
+                        <div className='hidden md:block'>
+                          <Sidebar
+                            setShowModal={setShowModal}
+                            handleToggleSideBar={handleToggleSideBar}
                           />
                         </div>
+                      )}
+                      {isEmbedView ||
+                      isContentView ||
+                      isTokenGatedProjectPublicView ? null : (
+                        <div
+                          className={`${
+                            showSideBar ? 'translate-x-0' : '-translate-x-full'
+                          } block md:hidden mr-4 absolute z-[100] ease-in-out duration-300`}
+                        >
+                          <Sidebar
+                            setShowModal={setShowModal}
+                            handleToggleSideBar={handleToggleSideBar}
+                          />
+                        </div>
+                      )}
+                      <div className='w-full min-w-[calc(100vw-300px)]'>
+                        {!isEmbedView && (
+                          <Header
+                            handleSidebar={handleToggleSideBar}
+                            setShowModal={setShowModal}
+                            showModal={showModal}
+                          />
+                        )}
+                        <Component {...pageProps} />
+                        {!isEmbedView && <FloatingContactForm />}
+                        {showSignReject && (
+                          <SignRejectionModal
+                            show={showSignReject}
+                            closeModal={() => setShowSignReject(false)}
+                          />
+                        )}
+                        <ToastContainer
+                          className='impct-toast'
+                          position='top-right'
+                          autoClose={3000}
+                          newestOnTop
+                          closeOnClick
+                          rtl={false}
+                          pauseOnVisibilityChange
+                          draggable={false}
+                          transition={Slide}
+                        />
                       </div>
                     </main>
                   </div>

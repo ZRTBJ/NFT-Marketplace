@@ -50,3 +50,7 @@ export async function getUserCollectionSalesInformation(payload) {
     `/collection/sales?page=${payload.page}&limit=${payload.limit}&order_by=${payload.order_by}`
   );
 }
+
+export async function getUserData(address) {
+  return await client('GET', `/search/user?wallet_address=${address}`);
+}

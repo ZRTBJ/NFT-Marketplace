@@ -65,6 +65,7 @@ import { NETWORKS } from 'config/networks';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
+import audioWeb from 'assets/images/token-gated/audioWeb.svg';
 
 const currency = {
   eth: Eth,
@@ -180,7 +181,11 @@ const CollectionContent = ({ collectionId, userId }) => {
     if (hasNextPageData) {
       getSplitters(Collection?.blockchain);
     }
-  }, [payload]);
+  }, [payload, userId]);
+
+  useEffect(() => {
+    setSelectedTab(1);
+  }, [userId]);
 
   const getSplitters = async (network) => {
     setIsSplitterLoading(true);
@@ -249,7 +254,7 @@ const CollectionContent = ({ collectionId, userId }) => {
       getCollectionSalesData();
       getCollectionNewWorth();
     }
-  }, [collectionId]);
+  }, [collectionId, userId]);
 
   const getCollectionSalesData = () => {
     getCollectionSales(collectionId).then((data) =>
@@ -404,7 +409,7 @@ const CollectionContent = ({ collectionId, userId }) => {
     e.preventDefault();
     setShowOptions(null);
 
-    if (Collection?.status === 'draft') {
+    if (Collection?.status === 'draft' || Collection?.status === 'publishing') {
       router.push(
         `${
           Collection?.type === 'product'
@@ -417,8 +422,8 @@ const CollectionContent = ({ collectionId, userId }) => {
         router.push(
           `/nft/membership/create?collection_id=${collectionId}&nftId=${nft.id}`
         );
-      } else if (Collection.type === 'product') {
-        if (Collection?.updatable && !nft.freeze_metadata) {
+      } else if (Collection?.type === 'product') {
+        if (Collection?.updatable && !nft?.freeze_metadata) {
           router.push(
             `/nft/product/create?collectionId=${collectionId}&nftId=${nft.id}`
           );
@@ -489,6 +494,8 @@ const CollectionContent = ({ collectionId, userId }) => {
         return {
           wallet_address: mem.user_eoa,
           royalty: mem.royalty_percent,
+          role: mem.custom_role,
+          name: mem.custom_name,
         };
       });
       let formData = new FormData();
@@ -919,10 +926,8 @@ const CollectionContent = ({ collectionId, userId }) => {
         )}
         {collectionNotUpdatableModal && (
           <ErrorModal
-            title={
-              'NFT is not updatable once its collection is published or its metadata was freezed'
-            }
-            message={`  `}
+            title={'NFT is not updatable'}
+            message={`once its collection is published or its metadata was freezed`}
             handleClose={() => {
               setCollectionNotUpdatableModal(false);
             }}
@@ -1509,7 +1514,7 @@ const CollectionContent = ({ collectionId, userId }) => {
                               {nft?.asset?.asset_type === 'movie' ||
                               nft?.asset?.asset_type === 'video/mp4' ? (
                                 <video
-                                  className='h-[176px] md:h-[276px] w-full'
+                                  className='h-[176px] md:h-[276px] w-full object-cover rounded-xl'
                                   controls
                                 >
                                   <source
@@ -1521,18 +1526,34 @@ const CollectionContent = ({ collectionId, userId }) => {
                               ) : null}
                               {nft?.asset?.asset_type === 'audio' ||
                               nft?.asset?.asset_type === 'audio/mpeg' ? (
-                                <audio
-                                  src={nft?.asset?.path}
-                                  controls
-                                  autoPlay={false}
-                                  className='h-[176px] md:h-[276px] w-full'
-                                />
+                                <div className='rounded-xl h-[176px] md:h-[276px] w-full bg-primary-900/[0.05] relative'>
+                                  <Image
+                                    src={audioWeb}
+                                    className='w-full  absolute  top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2'
+                                    height={100}
+                                    width={50}
+                                    unoptimized
+                                    alt='play png'
+                                  ></Image>
+
+                                  <audio
+                                    src={nft?.asset?.path}
+                                    controls
+                                    autoPlay={false}
+                                    className='w-full bottom-0 left-0 absolute'
+                                  />
+                                </div>
                               ) : null}
                             </Link>
                             <div className='py-2 md:py-5'>
                               <div className='flex '>
                                 <h3 className='mb-2 text-txtblack truncate flex-1 mr-3 m-w-0 text-[24px]'>
-                                  {nft?.name}
+                                  <Link
+                                    className='hover:text-txtblack !no-underline'
+                                    href={`/nft/${nft?.nft_type}/${nft.id}`}
+                                  >
+                                    {nft?.name}
+                                  </Link>
                                 </h3>
                                 <div className='relative'>
                                   {/* Dropdown menu  */}
@@ -1557,7 +1578,12 @@ const CollectionContent = ({ collectionId, userId }) => {
                                             onClick={(e) =>
                                               handleEditNFT(e, nft)
                                             }
-                                            className='py-2 pl-3 block hover:bg-gray-100 cursor-pointer'
+                                            className={`py-2 pl-3 block hover:bg-gray-100 ${
+                                              Collection?.type === 'product' &&
+                                              nft?.freeze_metadata
+                                                ? 'cursor-not-allowed'
+                                                : 'cursor-pointer'
+                                            }`}
                                           >
                                             Edit NFT
                                           </div>

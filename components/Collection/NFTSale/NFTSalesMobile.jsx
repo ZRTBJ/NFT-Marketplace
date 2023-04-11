@@ -5,7 +5,7 @@ import Polygon from 'assets/images/network/polygon.svg';
 import dayjs from 'dayjs';
 import Image from 'next/image';
 import { walletAddressTruncate } from 'util/WalletUtils';
-
+const imageRegex = new RegExp('image');
 const NFTSalesMobile = ({ items }) => {
   return (
     <>
@@ -24,13 +24,30 @@ const NFTSalesMobile = ({ items }) => {
                     Items
                   </span>
                   <div className='flex items-center'>
-                    <Image
-                      src={item?.nft_asset_path ? item.nft_asset_path : manImg}
-                      alt='nft'
-                      className='h-[33px] w-[33px]'
-                      height={33}
-                      width={33}
-                    />{' '}
+                    {imageRegex.test(item?.nft_asset_type) && (
+                      <Image
+                        src={
+                          item?.nft_asset_path ? item.nft_asset_path : manImg
+                        }
+                        alt='nft'
+                        className='h-[33px] w-[33px] rounded'
+                        height={33}
+                        width={33}
+                        unoptimized
+                      />
+                    )}
+                    {item?.nft_asset_type === 'movie' ||
+                    item?.nft_asset_type === 'video/mp4' ? (
+                      <div className='social-icon-button cursor-pointer w-9 h-9  flex justify-center items-center rounded-md ease-in-out duration-300'>
+                        <i className='fa-solid fa-circle-video gradient-text text-[20px]'></i>
+                      </div>
+                    ) : null}
+                    {item?.nft_asset_type === 'audio' ||
+                    item?.nft_asset_type === 'audio/mpeg' ? (
+                      <div className='social-icon-button cursor-pointer w-9 h-9  flex justify-center items-center rounded-md ease-in-out duration-300'>
+                        <i className='fa-solid fa-file-audio gradient-text text-[20px]'></i>
+                      </div>
+                    ) : null}
                     <span className='ml-2'>{item.nft_name}</span>
                   </div>
                 </div>
