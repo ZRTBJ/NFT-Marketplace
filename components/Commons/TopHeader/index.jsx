@@ -136,15 +136,18 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   }, [userinfo?.id]);
 
   useEffect(() => {
-    if (userinfo?.id) {
-      setDefaultNetwork();
-    } else {
-      setCurrentSelectedNetwork({
-        name: networkList?.[0]?.networkName,
-        value: networkList?.[0]?.network,
-        icon: networkList?.[0]?.icon,
-      });
-    }
+    (async () => {
+      // console.log('userInfo: ', userinfo?.id);
+      // if (userinfo?.id) {
+      await setDefaultNetwork();
+      // } else {
+      //   setCurrentSelectedNetwork({
+      //     name: networkList?.[0]?.networkName,
+      //     value: networkList?.[0]?.network,
+      //     icon: networkList?.[0]?.icon,
+      //   });
+      // }
+    })();
   }, [userinfo?.id]);
 
   let networkList = Object.values(NETWORKS);
