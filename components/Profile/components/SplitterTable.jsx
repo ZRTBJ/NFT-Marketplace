@@ -36,7 +36,7 @@ export default function SplitterTable({
             onClick={handleShowCreateSplitter}
             className='contained-button rounded !text-white'
           >
-            <i className=' mr-2 fa-solid fa-plus'></i>
+            {/* <i className=' mr-2 fa-solid fa-plus'></i> */}
             Create New
           </button>
         </div>
