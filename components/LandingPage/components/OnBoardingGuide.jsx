@@ -53,6 +53,8 @@ export default function OnBoardingGuide({ setSwitchNetwork }) {
 
   const getGasPrice = async () => {
     let networkId = await getCurrentNetworkId();
+    if (!networkId)
+      networkId = process.env.NEXT_PUBLIC_ENV === 'production' ? 137 : 5;
     let link = NETWORKS[networkId];
     let data = await fetch(link?.scanApi);
     let response = await data.json();
