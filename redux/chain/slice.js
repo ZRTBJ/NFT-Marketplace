@@ -1,9 +1,10 @@
 import { ls_GetChainID } from 'util/ApplicationStorage';
 import { createSlice } from '@reduxjs/toolkit';
+import { defaultNetworkId } from 'config/networks';
 
 let chainId = ls_GetChainID();
 const initialState = {
-  chainId: chainId || process.env.NEXT_PUBLIC_ENV === 'production' ? 137 : 5,
+  chainId: chainId || defaultNetworkId,
 };
 
 export const chainSlice = createSlice({

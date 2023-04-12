@@ -35,7 +35,7 @@ const TABLE_HEADERS = [
   { id: 0, label: 'Name' },
   { id: 1, label: 'Wallet Address' },
   { id: 2, label: 'Percentage' },
-  // { id: 3, label: 'Role' },
+  { id: 3, label: 'Role' },
   { id: 3, label: 'Action' },
 ];
 

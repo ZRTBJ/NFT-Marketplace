@@ -10,6 +10,7 @@ import {
   ls_GetLatestGasPrice,
   ls_SetLatestGasPrice,
 } from 'util/ApplicationStorage';
+import { defaultNetworkId } from 'config/networks';
 
 export default function OnBoardingGuide({ setSwitchNetwork }) {
   const chainId = useSelector((state) => state.chain.chainId);
@@ -48,8 +49,7 @@ export default function OnBoardingGuide({ setSwitchNetwork }) {
 
   const getGasPrice = async () => {
     let networkId = chainId;
-    if (!networkId)
-      networkId = process.env.NEXT_PUBLIC_ENV === 'production' ? 137 : 5;
+    if (!networkId) networkId = defaultNetworkId;
     let link = NETWORKS[networkId];
     let data = await fetch(link?.scanApi);
     let response = await data.json();

@@ -16,6 +16,9 @@ const openSeaNFTDetailsUrl =
     ? 'https://opensea.io/assets/'
     : 'https://testnets.opensea.io/assets';
 
+export const defaultNetworkId =
+  process.env.NEXT_PUBLIC_ENV === 'production' ? 137 : 5;
+
 const TESTNET = {
   5: {
     networkName: 'Goerli',
