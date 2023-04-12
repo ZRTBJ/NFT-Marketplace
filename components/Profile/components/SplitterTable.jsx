@@ -42,10 +42,10 @@ export default function SplitterTable({
             <thead className='border-b font-medium border-[#B1C1C8] '>
               <tr>
                 <th scope='col' className='py-3 px-6 text-[#727E83]'>
-                  Network
+                  Splitter Name
                 </th>
                 <th scope='col' className='py-3 px-6 text-[#727E83]'>
-                  Splitter Name
+                  Network
                 </th>
                 <th scope='col' className='py-3 px-6 text-[#727E83]'>
                   Contract Address
@@ -72,6 +72,9 @@ export default function SplitterTable({
                   {data?.map((element, index) => (
                     <tr key={index} className='border-b border-[#B1C1C8]'>
                       <td className='py-4 px-6'>
+                        {element?.name ? element?.name : element?.id}
+                      </td>
+                      <td className='py-4 px-6'>
                         {element?.blockchain ? (
                           <Image
                             src={NETWORKS?.[element?.blockchain]?.icon}
@@ -82,9 +85,6 @@ export default function SplitterTable({
                         ) : (
                           'Not Set'
                         )}
-                      </td>
-                      <td className='py-4 px-6'>
-                        {element?.name ? element?.name : element?.id}
                       </td>
                       <td className='py-4 px-6'>
                         {element?.contract_address ? (

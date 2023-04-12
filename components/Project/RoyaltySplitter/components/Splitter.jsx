@@ -30,6 +30,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
+import { ls_GetChainID } from 'util/ApplicationStorage';
 
 const TABLE_HEADERS = [
   { id: 0, label: 'Wallet Address' },
@@ -165,6 +166,11 @@ const Splitter = ({
       getSplittedContributors(splitterId);
     }
   }, [splitterId]);
+  useEffect(() => {
+    if (userInfo?.id) {
+      setBlockchain(ls_GetChainID());
+    }
+  }, [userInfo?.id]);
 
   // useEffect(() => {}, [payload]);
 

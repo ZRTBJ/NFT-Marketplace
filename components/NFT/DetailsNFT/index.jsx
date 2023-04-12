@@ -288,6 +288,15 @@ export default function DetailsNFT({ type, id }) {
       toast.success(`Link successfully copied`);
     }
   };
+  const openExternalLink = () => {
+    if (window !== 'undefined') {
+      let url = nft?.lnft?.external_url;
+      if (!url.match(/^https?:\/\//i)) {
+        url = 'https://' + url;
+      }
+      window.open(url, '_blank');
+    }
+  };
 
   let info = nft?.more_info;
 
@@ -582,9 +591,8 @@ export default function DetailsNFT({ type, id }) {
               {nft?.lnft?.external_url ? (
                 <>
                   <a
-                    href={nft?.lnft?.external_url}
-                    target='_blank'
-                    className='!no-underline'
+                    onClick={() => openExternalLink()}
+                    className='!no-underline cursor-pointer'
                     rel='noreferrer'
                   >
                     {nft?.lnft?.external_url}

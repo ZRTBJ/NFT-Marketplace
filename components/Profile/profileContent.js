@@ -691,7 +691,7 @@ const Profile = ({ id }) => {
                       setIsEditSplitter={setIsEditSplitter}
                       setShowCreateSplitter={setShowCreateSplitter}
                     ></SplitterTable>
-                    {pagination.length > 0 && (
+                    {pagination.length > 1 && (
                       <ReactPaginate
                         className='flex flex-wrap md:space-x-10 space-x-3 justify-center items-center my-6'
                         pageClassName='px-3 py-1 font-satoshi-bold text-sm  bg-opacity-5 rounded hover:bg-opacity-7 !text-txtblack '

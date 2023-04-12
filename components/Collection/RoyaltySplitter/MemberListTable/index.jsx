@@ -301,7 +301,7 @@ const MemberListTable = ({
                 type='text'
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                maxlength='50'
+                maxLength='50'
                 placeholder='Role'
                 className='w-full bg-secondary rounded-[6px] text-[12px] px-[10px] py-[14px] text-text-base'
               />
