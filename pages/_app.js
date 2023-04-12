@@ -41,17 +41,23 @@ import {
   bsc,
 } from 'wagmi/chains';
 import WarningBar from 'components/Commons/WarningBar/WarningBar';
-import { ls_GetChainID, ls_GetUserID } from 'util/ApplicationStorage';
+import {
+  ls_GetChainID,
+  ls_GetUserID,
+  ls_GetWalletType,
+} from 'util/ApplicationStorage';
 import SignRejectionModal from 'components/Commons/TopHeader/Account/SignRejectModal';
 
 dynamic(() => import('tw-elements'), { ssr: false });
 
 export const persistor = persistStore(store);
 
-let chains = [polygonMumbai, goerli, bscTestnet];
+let chains = [goerli, polygonMumbai, bscTestnet];
 
 const { provider } = configureChains(chains, [
-  w3mProvider({ projectId: Config.WALLET_CONNECT_PROJECT_ID }),
+  w3mProvider({
+    projectId: Config.WALLET_CONNECT_PROJECT_ID,
+  }),
 ]);
 
 const wagmiClient = createClient({
@@ -79,15 +85,18 @@ function MyApp({ Component, pageProps }) {
   const router = useRouter();
 
   let userId = ls_GetUserID();
+  let walletType = ls_GetWalletType();
 
   /** Metamask network change detection */
   useEffect(() => {
-    if (userId) {
-      if (window?.ethereum) {
-        window?.ethereum?.on('networkChanged', function (networkId) {
-          getCurrentNetwork(networkId);
-          setCurrentNetwork(networkId);
-        });
+    if (walletType === 'metamask') {
+      if (userId) {
+        if (window?.ethereum) {
+          window?.ethereum?.on('networkChanged', function (networkId) {
+            getCurrentNetwork(networkId);
+            setCurrentNetwork(networkId);
+          });
+        }
       }
     }
   }, [userId]);

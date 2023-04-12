@@ -26,7 +26,7 @@ import { useAccount, useSignMessage } from 'wagmi';
 import { useWeb3Modal } from '@web3modal/react';
 import WalletConnect from 'assets/images/wallet-connect.svg';
 import SignRejectionModal from 'components/Commons/TopHeader/Account/SignRejectModal';
-
+import { goerli } from 'wagmi/chains';
 const WalletConnectModal = ({
   showModal,
   closeModal,
@@ -63,6 +63,10 @@ const WalletConnectModal = ({
   };
   const userinfo = useSelector((state) => state.user.userinfo);
 
+  useEffect(() => {
+    setDefaultChain(goerli);
+  }, []);
+
   async function onConnect(address, connector, isReconnected) {
     if (address?.address && address.address?.length > 5) {
       await handleWalletConnection(address?.address);
@@ -77,7 +81,7 @@ const WalletConnectModal = ({
   // }, [isAdded]);
 
   async function onSuccess(data, variables) {
-    await userLogin(walletAddress?.toLowerCase(), data, 'metamask');
+    await userLogin(walletAddress?.toLowerCase(), data, 'walletconnect');
   }
 
   const handleWalletConnection = async (address) => {

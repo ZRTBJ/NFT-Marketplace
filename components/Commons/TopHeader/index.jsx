@@ -23,6 +23,7 @@ import {
   ls_GetWalletAddress,
   ls_SetChainID,
   ls_GetChainID,
+  ls_GetWalletType,
 } from 'util/ApplicationStorage';
 
 import { toast } from 'react-toastify';
@@ -56,7 +57,9 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const dispatch = useDispatch();
   const inputRef = useRef(null);
   const outsideRef = useRef(null);
-  const { user, walletAddress, token } = useSelector((state) => state.auth);
+  const { user, walletAddress, token, wallet } = useSelector(
+    (state) => state.auth
+  );
   const [userId, setUserId] = useState(user ? user : '');
   const userinfo = useSelector((state) => state.user.userinfo);
   const [messageHistory, setMessageHistory] = useState([]);
@@ -89,6 +92,8 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
 
   const { ref, setIsComponentVisible, isComponentVisible } =
     useComponentVisible();
+
+  let walletType = ls_GetWalletType();
 
   /** Detect account whenever user come back to site */
   let localAccountAddress = ls_GetWalletAddress();
@@ -263,27 +268,32 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
 
   /** Metamask network change detection */
   useEffect(() => {
-    setNetworkChangeDetected(false);
-    if (window?.ethereum) {
-      if (!networkId) setNetworkId(window.ethereum.networkVersion);
-      window?.ethereum?.on('networkChanged', function (networkId) {
-        setNetworkChangeDetected(true);
-        setNetworkId(networkId);
-        ls_SetChainID(networkId);
-        setDefaultNetwork(networkId);
-        if (userinfo?.id) {
-          if (NETWORKS[networkId]) {
-            toast.success(
-              `Your network got changed to ${NETWORKS?.[networkId]?.networkName}`,
-              { toastId: 'network-change-deduction' }
-            );
-          } else {
-            toast.error(`Your network got changed to an unsupported network`, {
-              toastId: 'network-change-deduction-error',
-            });
+    if (walletType === 'metamask') {
+      setNetworkChangeDetected(false);
+      if (window?.ethereum) {
+        if (!networkId) setNetworkId(window.ethereum.networkVersion);
+        window?.ethereum?.on('networkChanged', function (networkId) {
+          setNetworkChangeDetected(true);
+          setNetworkId(networkId);
+          ls_SetChainID(networkId);
+          setDefaultNetwork(networkId);
+          if (userinfo?.id) {
+            if (NETWORKS[networkId]) {
+              toast.success(
+                `Your network got changed to ${NETWORKS?.[networkId]?.networkName}`,
+                { toastId: 'network-change-deduction' }
+              );
+            } else {
+              toast.error(
+                `Your network got changed to an unsupported network`,
+                {
+                  toastId: 'network-change-deduction-error',
+                }
+              );
+            }
           }
-        }
-      });
+        });
+      }
     }
 
     return () => {
