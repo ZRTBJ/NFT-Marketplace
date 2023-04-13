@@ -7,6 +7,7 @@ import {
 import { ethers } from 'ethers';
 import Modal from 'components/Commons/Modal';
 import metamaskIcon from 'assets/images/modal/metamask.png';
+import MagicWallet from 'assets/images/magic-wallet.png';
 import { loginUser } from 'redux/auth';
 import { getUserInfo } from 'services/User/userService';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,11 +23,18 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Lottie from 'react-lottie';
 import lottieJson from 'assets/lottieFiles/circle-loader.json';
-import { useAccount, useSignMessage } from 'wagmi';
+import { useAccount, useSignMessage, useNetwork } from 'wagmi';
 import { useWeb3Modal } from '@web3modal/react';
 import WalletConnect from 'assets/images/wallet-connect.svg';
 import SignRejectionModal from 'components/Commons/TopHeader/Account/SignRejectModal';
 import { goerli } from 'wagmi/chains';
+import { formattedNetwork } from 'config/magicWallet/magic';
+import { Magic } from 'magic-sdk';
+import Web3 from 'web3';
+import { recoverPersonalSignature } from '@metamask/eth-sig-util';
+
+let MESSAGE = "You're signing to the decir.io";
+
 const WalletConnectModal = ({
   showModal,
   closeModal,
@@ -47,6 +55,7 @@ const WalletConnectModal = ({
   const { address: walletAddress, isConnected: isAdded } = useAccount({
     onConnect,
   });
+  const { chain } = useNetwork();
 
   const { isOpen, open, close, setDefaultChain } = useWeb3Modal();
   const { signMessage, data } = useSignMessage({
@@ -67,7 +76,7 @@ const WalletConnectModal = ({
     setDefaultChain(goerli);
   }, []);
 
-  async function onConnect(address, connector, isReconnected) {
+  async function onConnect(address) {
     if (address?.address && address.address?.length > 5) {
       await handleWalletConnection(address?.address);
     }
@@ -86,7 +95,7 @@ const WalletConnectModal = ({
 
   const handleWalletConnection = async (address) => {
     setMetamaskAccount(address);
-    await signMessage({ message: `You're signing to the decir.io` });
+    await signMessage({ message: MESSAGE });
   };
   /** Connection to wallet
    * Login mechanism: We let user to login using metamask, then will login to our server to get JWT token.
@@ -149,10 +158,14 @@ const WalletConnectModal = ({
     try {
       setIsLoading(true);
       let response = await dispatch(loginUser(request));
-      const userProvider = new ethers.providers.Web3Provider(window.ethereum);
-      const userNetwork = await userProvider.getNetwork();
       ls_SetWalletAddress(address);
-      ls_SetChainID(userNetwork.chainId);
+      if (wallet === 'metamask') {
+        const userProvider = new ethers.providers.Web3Provider(window.ethereum);
+        const userNetwork = await userProvider.getNetwork();
+        ls_SetChainID(userNetwork.chainId);
+      } else if (wallet === 'walletconnect') {
+        ls_SetChainID(chain);
+      }
       getUserDetails(response['user_id']);
     } catch (error) {
       setIsLoading(false);
@@ -205,6 +218,46 @@ const WalletConnectModal = ({
       await open();
     } else {
       setshowMessage(true);
+    }
+  };
+
+  //Magic Wallet connection
+
+  const magic = new Magic(process.env.NEXT_PUBLIC_MAGIC_API_KEY, {
+    network: formattedNetwork(),
+  });
+  const web3 = new Web3(magic.rpcProvider);
+  const handleMagicConnect = async () => {
+    try {
+      if (isTermsAndConditionsChecked) {
+        const accounts = await magic.wallet.connectWithUI();
+        // await magic.wallet.disconnect();
+        console.log(accounts);
+        const signedMessage = await web3.eth.personal.sign(
+          MESSAGE,
+          accounts[0],
+          ''
+        );
+        const recoveredAddress = recoverPersonalSignature({
+          data: MESSAGE,
+          signature: signedMessage,
+        });
+        if (
+          recoveredAddress.toLocaleLowerCase() ===
+          accounts[0].toLocaleLowerCase()
+        ) {
+          setMetamaskAccount(accounts[0]);
+          userLogin(
+            accounts[0].toLocaleLowerCase(),
+            signedMessage,
+            'magicwallet'
+          );
+        }
+      } else {
+        setshowMessage(true);
+      }
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -319,10 +372,27 @@ const WalletConnectModal = ({
                       <Image
                         className='h-12 w-12'
                         src={WalletConnect}
-                        alt='metamask wallet login button'
+                        alt='WalletConnect wallet login button'
                       />
                       <div className='ml-[10px] font-satoshi-bold font-black text-[24px]'>
                         <p className='text-[18px]'>WalletConnect</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  onClick={handleMagicConnect}
+                  className='w-full cursor-pointer  h-[72px] rounded-[12px] block mx-auto px-[14px] bg-[#fff] flex items-center connect-wallet mt-3'
+                >
+                  <div className='flex items-center ml-1'>
+                    <div className='flex items-center'>
+                      <Image
+                        className='h-12 w-12'
+                        src={MagicWallet}
+                        alt='Magic wallet login button'
+                      />
+                      <div className='ml-[10px] font-satoshi-bold font-black text-[24px]'>
+                        <p className='text-[18px]'>Magic Connect</p>
                       </div>
                     </div>
                   </div>

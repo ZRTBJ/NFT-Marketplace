@@ -42,6 +42,7 @@ import useComponentVisible from 'hooks/useComponentVisible';
 import ReactTooltip from 'react-tooltip';
 import { getUserData } from 'services/User/userService';
 import SignRejectionModal from './Account/SignRejectModal';
+import { useNetwork, useSwitchNetwork } from 'wagmi';
 
 const LANGS = {
   'en|en': 'English',
@@ -89,9 +90,11 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const [page, setPage] = useState(1);
   const [currentSelectedNetwork, setCurrentSelectedNetwork] = useState();
   const [showSignReject, setShowSignReject] = useState('');
-
   const { ref, setIsComponentVisible, isComponentVisible } =
     useComponentVisible();
+  const { chain } = useNetwork();
+  const { error, isLoading, pendingChainId, switchNetwork } =
+    useSwitchNetwork();
 
   let walletType = ls_GetWalletType();
 
@@ -113,7 +116,9 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
 
   useEffect(() => {
     if (userinfo?.id) {
-      handleAccountDifference();
+      if (walletType === 'metamask') {
+        handleAccountDifference();
+      }
     }
   }, [userinfo?.id]);
 
@@ -127,7 +132,11 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
         if (!networkChangeDetected && localChainId !== network) {
           setNetworkId(network);
           ls_SetChainID(network);
-          handleSwitchNetwork(network);
+          if (walletType === 'metamask') {
+            handleSwitchNetwork(network);
+          } else if (walletType === 'walletconnect') {
+            switchNetwork(network);
+          }
         }
       }
     }
@@ -306,15 +315,17 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
    * In case accounts == null, mean metamask logged out, no smartcontract interaction can be called
    */
   useEffect(() => {
-    window?.ethereum?.on('accountsChanged', function (accounts) {
-      if (
-        accounts != null &&
-        accounts.length > 0 &&
-        accounts[0] != ls_GetWalletAddress()
-      ) {
-        existingAccountChange(null, accounts[0]);
-      }
-    });
+    if (walletType === 'metamask') {
+      window?.ethereum?.on('accountsChanged', function (accounts) {
+        if (
+          accounts != null &&
+          accounts.length > 0 &&
+          accounts[0] != ls_GetWalletAddress()
+        ) {
+          existingAccountChange(null, accounts[0]);
+        }
+      });
+    }
   }, []);
 
   const existingAccountChange = async (data, address) => {
@@ -541,7 +552,11 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const handleNetworkSelection = async (data) => {
     try {
       if (data?.network !== currentSelectedNetwork?.value) {
-        await handleSwitchNetwork(data.network);
+        if (walletType === 'metamask') {
+          await handleSwitchNetwork(data.network);
+        } else if (walletType === 'walletconnect') {
+          await switchNetwork(data.network);
+        }
         setCurrentSelectedNetwork({
           name: data?.networkName,
           value: data?.network,

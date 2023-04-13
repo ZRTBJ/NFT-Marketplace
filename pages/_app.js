@@ -46,7 +46,6 @@ import {
   ls_GetUserID,
   ls_GetWalletType,
 } from 'util/ApplicationStorage';
-import SignRejectionModal from 'components/Commons/TopHeader/Account/SignRejectModal';
 
 dynamic(() => import('tw-elements'), { ssr: false });
 
@@ -64,8 +63,11 @@ const wagmiClient = createClient({
   autoConnect: true,
   connectors: w3mConnectors({
     projectId: Config.WALLET_CONNECT_PROJECT_ID,
-    version: 1,
+    version: 2,
     chains,
+    explorerDenyList: [
+      'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96',
+    ],
   }),
   provider,
 });
@@ -79,7 +81,6 @@ function MyApp({ Component, pageProps }) {
   const [isContentView, setIsContentView] = useState(false);
   const [isTokenGatedProjectPublicView, setIsTokenGatedProjectPublicView] =
     useState(false);
-  const [showSignReject, setShowSignReject] = useState('');
   const [currentNetwork, setCurrentNetwork] = useState();
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
   const router = useRouter();
@@ -235,12 +236,7 @@ function MyApp({ Component, pageProps }) {
                           )}
                           <Component {...pageProps} />
                           {!isEmbedView && <FloatingContactForm />}
-                          {showSignReject && (
-                            <SignRejectionModal
-                              show={showSignReject}
-                              closeModal={() => setShowSignReject(false)}
-                            />
-                          )}
+
                           <ToastContainer
                             className='impct-toast'
                             position='top-right'
