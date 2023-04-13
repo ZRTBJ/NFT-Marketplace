@@ -31,6 +31,7 @@ import fashion from 'assets/images/profile/fashion.png';
 import invest from 'assets/images/profile/invest.png';
 import membership from 'assets/images/profile/membership.png';
 import pfp from 'assets/images/profile/pfp.png';
+import confirmationSvg from 'assets/images/confirmation.svg';
 
 import {
   createTokenGatedProject,
@@ -54,7 +55,10 @@ import { ls_SetNewUser, ls_GetNewUser } from 'util/ApplicationStorage';
 import TagManager from 'react-gtm-module';
 import CreateSplitter from './components/CreateSplitter';
 import SplitterBanner from 'components/LandingPage/components/SplitterBanner';
-import { getSplitterList } from 'services/collection/collectionService';
+import {
+  getSplitterList,
+  deleteUnpublishedSplitter,
+} from 'services/collection/collectionService';
 import ReactPaginate from 'react-paginate';
 import SplitterTable from './components/SplitterTable';
 import { NETWORKS } from 'config/networks';
@@ -62,6 +66,8 @@ import { getCurrentNetworkId } from 'util/MetaMask';
 import NetworkSwitchModal from 'components/Commons/NetworkSwitchModal/NetworkSwitchModal';
 import { el } from 'date-fns/locale';
 import SuccessModal from 'components/Modals/SuccessModal';
+import ErrorModal from 'components/Modals/ErrorModal';
+
 const nftUseCase = {
   usedFor: 'NFTs',
   text: 'Here are a few ways your project can deploy NFT',
@@ -198,6 +204,12 @@ const Profile = ({ id }) => {
   const [switchNetwork, setSwitchNetwork] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successModalMessage, setSuccessModalMessage] = useState('');
+  const [showDeleteSplitterModal, setShowDeleteSplitterModal] = useState(false);
+  const [attachedCollectionsOfSplitter, setAttachedCollectionsOfSplitter] =
+    useState([]);
+  const [splitterIdForDelete, setSplitterIdForDelete] = useState(null);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     userInfo();
@@ -451,6 +463,36 @@ const Profile = ({ id }) => {
       setShowCreateSplitter(false);
     } else if (isEditSplitter) setIsEditSplitter(false);
     await onGetSplitterList();
+  };
+  const onDeleteSplitter = (data) => {
+    setSplitterIdForDelete(data?.splitterId);
+    setAttachedCollectionsOfSplitter(data?.connected_collections);
+    setIsEditSplitter(false);
+    setShowDeleteSplitterModal(true);
+  };
+  const confirmDeleteSplitter = async () => {
+    setShowOverlayLoading(true);
+    await deleteUnpublishedSplitter(splitterIdForDelete)
+      .then(async (res) => {
+        if (res?.code === 0) {
+          await onGetSplitterList();
+          setShowOverlayLoading(false);
+          setShowDeleteSplitterModal(false);
+          setSuccessModalMessage('Splitter Deleted Successfully');
+          setShowSuccessModal(true);
+        } else {
+          setShowOverlayLoading(false);
+          setShowDeleteSplitterModal(false);
+          setErrorMessage(res?.message);
+          setShowErrorModal(true);
+        }
+      })
+      .catch((err) => {
+        setShowOverlayLoading(false);
+        setShowDeleteSplitterModal(false);
+        setErrorMessage(err);
+        setShowErrorModal(true);
+      });
   };
 
   useEffect(() => {
@@ -744,6 +786,7 @@ const Profile = ({ id }) => {
             setShowSuccessModal(true);
             setSuccessModalMessage('Successfully Saved');
           }}
+          onDelete={(data) => onDeleteSplitter(data)}
         />
       )}
       {switchNetwork && (
@@ -760,6 +803,77 @@ const Profile = ({ id }) => {
             setSuccessModalMessage('');
           }}
           show={showSuccessModal}
+        />
+      )}
+      {showDeleteSplitterModal && (
+        <Modal
+          width={400}
+          overflow={'auto'}
+          show={showDeleteSplitterModal}
+          handleClose={() => {
+            setShowDeleteSplitterModal(false);
+            setIsEditSplitter(splitterIdForDelete);
+          }}
+          showCloseIcon={true}
+        >
+          <div className='px-4'>
+            <p className='text-[18px] font-black mb-4'>
+              Delete Royalty Splitter
+            </p>
+            <Image
+              src={confirmationSvg}
+              height={200}
+              width={200}
+              className='w-full'
+              alt='delete svg'
+            ></Image>
+            <p>Are you sure to delete this splitter ?</p>
+            {attachedCollectionsOfSplitter?.length > 0 && (
+              <>
+                <p>
+                  This splitter is attached to{' '}
+                  {attachedCollectionsOfSplitter?.length}{' '}
+                  {attachedCollectionsOfSplitter?.length > 1
+                    ? 'collections'
+                    : 'collection'}
+                </p>
+                <ul className='list-disc ml-8 mt-2'>
+                  {attachedCollectionsOfSplitter?.map((i, index) => (
+                    <li key={index} className='mb-1 text-[14px] font-bold'>
+                      {i.name}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+            <div className='flex flex-wrap items-center justify-end gap-4 mt-10'>
+              <button
+                onClick={() => {
+                  setShowDeleteSplitterModal(false);
+                  setIsEditSplitter(splitterIdForDelete);
+                }}
+                className='rounded-[4px] px-4 py-2 bg-primary-50 text-primary-900 text-[12px] font-black'
+              >
+                No
+              </button>
+              <button
+                onClick={() => confirmDeleteSplitter()}
+                className='rounded-[4px] bg-primary-900 text-white text-[12px] font-bold px-4 py-2'
+              >
+                Yes
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
+      {showErrorModal && (
+        <ErrorModal
+          show={showErrorModal}
+          message={errorMessage}
+          handleClose={() => {
+            setErrorMessage('');
+            setShowErrorModal(false);
+          }}
         />
       )}
     </>

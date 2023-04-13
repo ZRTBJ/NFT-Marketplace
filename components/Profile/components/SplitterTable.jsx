@@ -130,7 +130,7 @@ export default function SplitterTable({
                             onClick={() => {
                               setIsEditSplitter(element?.id);
                             }}
-                            class='fa-solid  text-[18px] fa-pen-to-square cursor-pointer'
+                            className='fa-solid  text-[18px] fa-pen-to-square cursor-pointer'
                           ></i>
                         )}
                       </td>

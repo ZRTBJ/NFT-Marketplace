@@ -9,6 +9,7 @@ export default function CreateSplitter({
   splitterId,
   onGetSplitterList,
   onDraftSave,
+  onDelete,
 }) {
   return (
     <>
@@ -33,6 +34,7 @@ export default function CreateSplitter({
             splitterId={splitterId}
             onGetSplitterList={onGetSplitterList}
             onDraftSave={onDraftSave}
+            onDelete={onDelete}
           />
         </div>
       </Modal>
