@@ -48,6 +48,7 @@ const Splitter = ({
   createSplitterClose,
   splitterId,
   onGetSplitterList,
+  onDraftSave,
 }) => {
   const [ShowPercentError, setShowPercentError] = useState(false);
   const [AutoAssign, setAutoAssign] = useState(false);
@@ -318,15 +319,13 @@ const Splitter = ({
           setIsAutoFillLoading(true);
           updateRoyaltySplitter(formData)
             .then((resp) => {
-              if (resp.code === 0) {
+              if (resp?.code === 0) {
                 if (publish) {
                   publishRoyaltySplitter(resp.splitter_id);
                 } else {
-                  toast.success(
-                    isModal
-                      ? 'Royalty Splitter added Successfully'
-                      : 'Royalty Percentage Updated Successfully'
-                  );
+                  if (!isModal) {
+                    toast.success('Royalty Percentage Updated Successfully');
+                  }
                   setIsAutoFillLoading(false);
                   setAutoAssign(false);
                   setIsEdit(null);
@@ -336,6 +335,7 @@ const Splitter = ({
                   if (isModal) {
                     createSplitterClose();
                     onGetSplitterList();
+                    onDraftSave();
                   }
                 }
               } else {
@@ -663,7 +663,7 @@ const Splitter = ({
                   className='border-primary-900 border text-primary-900 p-3 font-black text-[14px]'
                   // disabled={!royalityMembers.length}
                 >
-                  Save draft
+                  Save Draft
                 </button>
               </div>
             )}

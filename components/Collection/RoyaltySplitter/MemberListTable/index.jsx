@@ -124,12 +124,12 @@ const MemberListTable = ({
     <>
       <div className='overflow-x-auto relative hidden md:block'>
         <table className='w-full text-left'>
-          <thead>
+          <thead className='border-b'>
             <tr className='text-textSubtle text-[12px] pb-4'>
               {headers.map((item) => (
                 <th
                   scope='col'
-                  className={`px-5 text-[14px] text-[#303548] ${styles.tableHeader}`}
+                  className={`px-5 pb-4 text-[14px] text-[#303548] ${styles.tableHeader}`}
                   key={item.id}
                 >
                   {item.label}
@@ -137,7 +137,7 @@ const MemberListTable = ({
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody className='divide-y divide-slate-200'>
             {list?.length
               ? list.map((r, index) => {
                   let currentAddress = ls_GetWalletAddress();
@@ -261,7 +261,7 @@ const MemberListTable = ({
           isPublished={isPublished}
         />
       </div>
-      <div className='mb-4'>
+      <div className='mb-4 mt-10'>
         {newItems ? (
           <div className='flex items-center ml-0 md:ml-4 mt-3'>
             <div className='w-[20%] mr-2'>

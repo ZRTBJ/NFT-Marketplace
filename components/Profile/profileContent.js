@@ -61,7 +61,7 @@ import { NETWORKS } from 'config/networks';
 import { getCurrentNetworkId } from 'util/MetaMask';
 import NetworkSwitchModal from 'components/Commons/NetworkSwitchModal/NetworkSwitchModal';
 import { el } from 'date-fns/locale';
-
+import SuccessModal from 'components/Modals/SuccessModal';
 const nftUseCase = {
   usedFor: 'NFTs',
   text: 'Here are a few ways your project can deploy NFT',
@@ -196,6 +196,8 @@ const Profile = ({ id }) => {
   const [isSplitterLoading, setIsSplitterLoading] = useState(true);
   const [isEditSplitter, setIsEditSplitter] = useState(null);
   const [switchNetwork, setSwitchNetwork] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successModalMessage, setSuccessModalMessage] = useState('');
 
   useEffect(() => {
     userInfo();
@@ -738,12 +740,26 @@ const Profile = ({ id }) => {
           handleClose={() => onSplitterModalClose()}
           splitterId={isEditSplitter}
           onGetSplitterList={onGetSplitterList}
+          onDraftSave={() => {
+            setShowSuccessModal(true);
+            setSuccessModalMessage('Successfully Saved');
+          }}
         />
       )}
       {switchNetwork && (
         <NetworkSwitchModal
           show={switchNetwork}
           handleClose={() => setSwitchNetwork(false)}
+        />
+      )}
+      {showSuccessModal && (
+        <SuccessModal
+          message={successModalMessage}
+          handleClose={() => {
+            setShowSuccessModal(false);
+            setSuccessModalMessage('');
+          }}
+          show={showSuccessModal}
         />
       )}
     </>
