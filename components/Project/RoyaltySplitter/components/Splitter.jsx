@@ -36,7 +36,7 @@ const TABLE_HEADERS = [
   { id: 1, label: 'Wallet Address' },
   { id: 2, label: 'Percentage' },
   { id: 3, label: 'Role' },
-  { id: 3, label: 'Action' },
+  { id: 4, label: 'Action' },
 ];
 
 const Splitter = ({
