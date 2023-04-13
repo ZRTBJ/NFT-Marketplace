@@ -41,7 +41,7 @@ const WelcomeModal = ({ show, handleClose }) => {
       addPadding={false}
       overflow={'auto'}
     >
-      <div className='flex bg-[#E1ECF0] rounded-[20px]' ref={modalRef}>
+      <div className='flex bg-[#E1ECF0] rounded-[16px]' ref={modalRef}>
         <div className='w-full md:w-4/6 text-center py-[30px]'>
           <div className=' w-5/6 md:w-4/6 mx-auto'>
             <p className='text-[24px] font-bold text-[#021118]'>Welcome to</p>
