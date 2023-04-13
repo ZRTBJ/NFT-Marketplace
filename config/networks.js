@@ -163,7 +163,7 @@ const MAINNET = {
     scan: PolyScan,
     alchamey: process.env.NEXT_PUBLIC_POLYGON_NFT_ALCHEMY_URL,
     scanApi: `https://api.polygonscan.com/api?module=gastracker&action=gasoracle&apikey=${process.env.NEXT_PUBLIC_POLYGON_SCAN}`,
-    priceApi: `https://api.polygonscan.com/api?module=stats&action=ethprice&apikey=${process.env.NEXT_PUBLIC_MUMBAI_SCAN}`,
+    priceApi: `https://api.polygonscan.com/api?module=stats&action=ethprice&apikey=${process.env.NEXT_PUBLIC_POLYGON_SCAN}`,
     config: {
       chainId: '0x89',
       rpcUrls: ['https://polygon-rpc.com/'],
@@ -202,7 +202,7 @@ const MAINNET = {
     scan: EthScan,
     alchamey: process.env.NEXT_PUBLIC_ETHEREUM_NFT_ALCHEMY_URL,
     scanApi: `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=${process.env.NEXT_PUBLIC_ETHEREUM_SCAN}`,
-    priceApi: `https://api.etherscan.io/api?module=stats&action=ethprice&apikey=${process.env.NEXT_PUBLIC_GOELRI_SCAN}`,
+    priceApi: `https://api.etherscan.io/api?module=stats&action=ethprice&apikey=${process.env.NEXT_PUBLIC_ETHEREUM_SCAN}`,
     config: {
       chainId: '0x1',
       rpcUrls: ['https://mainnet.infura.io/v3/'],
@@ -238,7 +238,7 @@ const MAINNET = {
     decirTreasury: address.decirTreasuryBnb,
     discount: address.discountBnb,
     scanApi: `https://api.bscscan.com/api?module=gastracker&action=gasoracle&apikey=${process.env.NEXT_PUBLIC_BNB_SCAN}`,
-    priceApi: `https://api.bscscan.com/api?module=stats&action=bnbprice&apikey=${process.env.NEXT_PUBLIC_BNB_TESTNET_SCAN}`,
+    priceApi: `https://api.bscscan.com/api?module=stats&action=bnbprice&apikey=${process.env.NEXT_PUBLIC_BNB_SCAN}`,
     config: {
       chainId: '0x38',
       rpcUrls: ['https://bsc-dataseed1.defibit.io'],
