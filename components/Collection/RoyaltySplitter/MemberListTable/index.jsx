@@ -36,6 +36,7 @@ const MemberListTable = ({
   const [addError, setAddError] = useState('');
   const [name, setName] = useState('');
   const [role, setRole] = useState('');
+  const [duplicateAddress, setDuplicateAddress] = useState(false);
 
   useEffect(() => {
     if (newItems) {
@@ -78,33 +79,41 @@ const MemberListTable = ({
 
   const addNewContributorData = async () => {
     setIsAdded(true);
-    if (address && percentage) {
-      let userAddress = address;
 
-      if (!ethers.utils.isAddress(address)) {
-        try {
-          const provider = new ethers.providers.Web3Provider(window.ethereum);
-          userAddress = await provider.resolveName(address);
-        } catch (error) {
+    if (address && percentage) {
+      if (
+        list.some((data) => data?.user_eoa !== address) ||
+        newItems.some((data) => data.eoa !== address)
+      ) {
+        let userAddress = address;
+        setDuplicateAddress(false);
+        if (!ethers.utils.isAddress(address)) {
+          try {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            userAddress = await provider.resolveName(address);
+          } catch (error) {
+            setAddError('Invalid Wallet address or ENS');
+            return;
+          }
+        }
+
+        if (userAddress === null) {
           setAddError('Invalid Wallet address or ENS');
           return;
         }
-      }
 
-      if (userAddress === null) {
-        setAddError('Invalid Wallet address or ENS');
-        return;
+        let value = {
+          user_eoa: userAddress,
+          royalty_percent: parseFloat(percentage),
+          custom_name: name,
+          custom_role: role,
+        };
+        setRoyalityMembers([...list, value]);
+        setName('');
+        setRole('');
+      } else {
+        setDuplicateAddress(true);
       }
-
-      let value = {
-        user_eoa: userAddress,
-        royalty_percent: parseFloat(percentage),
-        custom_name: name,
-        custom_role: role,
-      };
-      setRoyalityMembers([...list, value]);
-      setName('');
-      setRole('');
     }
   };
 
@@ -330,6 +339,12 @@ const MemberListTable = ({
           <p className='text-red-400 text-[14px] mt-1 ml-4'>
             {' '}
             Royalties should add to 100%.
+          </p>
+        ) : null}
+        {duplicateAddress ? (
+          <p className='text-red-400 text-[14px] mt-1 ml-4'>
+            {' '}
+            Wallet address already added.
           </p>
         ) : null}
         {addError && (
