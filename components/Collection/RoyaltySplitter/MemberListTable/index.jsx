@@ -154,6 +154,9 @@ const MemberListTable = ({
                       } text-left text-[13px]`}
                     >
                       <td className='py-4 px-5'>
+                        {r.custom_name ? r.custom_name : '-'}
+                      </td>
+                      <td className='py-4 px-5'>
                         <div className='inline-flex items-center'>
                           <span>{walletAddressTruncate(r.user_eoa)}</span>
                           <CopyToClipboard text={r.user_eoa}>
@@ -212,9 +215,7 @@ const MemberListTable = ({
                           )}
                         </div>
                       </td>
-                      <td className='py-4 px-5'>
-                        {r.custom_name ? r.custom_name : '-'}
-                      </td>
+
                       <td className={`py-4 px-5`}>
                         <p
                           className={`text-[13px] bg-opacity-[0.2] py-1 px-2 w-fit rounded-[4px] font-bold ${
@@ -266,6 +267,16 @@ const MemberListTable = ({
           <div className='flex items-center ml-0 md:ml-4 mt-3'>
             <div className='w-[20%] mr-2'>
               <input
+                id={'name'}
+                type='text'
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder='Name'
+                className='w-full bg-secondary rounded-[6px] text-[12px] px-[10px] py-[14px] text-text-base'
+              />
+            </div>
+            <div className='w-[20%] mr-2'>
+              <input
                 id={'address'}
                 type='text'
                 value={address}
@@ -285,16 +296,7 @@ const MemberListTable = ({
               />
               <p className='absolute top-2 right-4'>%</p>
             </div>
-            <div className='w-[20%] mr-2'>
-              <input
-                id={'name'}
-                type='text'
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder='Name'
-                className='w-full bg-secondary rounded-[6px] text-[12px] px-[10px] py-[14px] text-text-base'
-              />
-            </div>
+
             <div className='w-[20%] mr-2'>
               <input
                 id={'role'}

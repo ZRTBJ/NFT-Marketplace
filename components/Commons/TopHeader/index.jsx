@@ -14,7 +14,6 @@ import { searchContent } from 'services/User/userService';
 import barImage from 'assets/images/bars.svg';
 import walletImage from 'assets/images/wallet.svg';
 import Logo from 'assets/images/header/logo.svg';
-import AccountChangedModal from './Account/AccountChangedModal';
 import NetworkChangedModal from './Account/NetworkChangedModal';
 import { walletAddressTruncate } from 'util/WalletUtils';
 import ReactPaginate from 'react-paginate';
@@ -603,7 +602,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
             </h1>
           </div>
           <div
-            className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'
+            className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${styles.searchInput}`}
             ref={outsideRef}
           >
             <Image
@@ -682,7 +681,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
             <ul
               className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${
                 userId ? '' : 'sm:py-2'
-              }`}
+              } ${styles.walletContainer}`}
             >
               <li className='relative w-[185px]' ref={ref}>
                 {!currentSelectedNetwork?.name ? (

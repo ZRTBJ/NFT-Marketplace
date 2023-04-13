@@ -5,3 +5,31 @@
   width: 190px;
   padding: 20px;
 }
+@media (max-width: 1385px) {
+  .searchInput {
+    left: 40% !important;
+  }
+}
+@media (max-width: 1180px) {
+  .searchInput {
+    left: 24% !important;
+  }
+}
+
+@media (max-width: 990px) {
+  .walletContainer {
+    display: block !important;
+    margin-top: 10px;
+  }
+  .searchInput {
+    left: 30% !important;
+  }
+
+  .walletContainer li:last-child {
+    margin-left: 0 !important;
+    margin-top: 10px;
+  }
+  .searchInput input {
+    width: 360px !important;
+  }
+}
