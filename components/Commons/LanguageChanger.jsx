@@ -57,7 +57,6 @@ export default function LanguageChanger() {
     if (typeof window !== 'undefined') {
       window.googleTranslateElementInit = googleTranslateElementInit;
     }
-
     return () => {
       let container = document.getElementById('google_translate_element');
       container?.remove();

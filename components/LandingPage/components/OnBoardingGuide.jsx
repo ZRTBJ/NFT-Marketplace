@@ -1,19 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
 import Gas from 'assets/images/header/gas.svg';
 import WalletConnectModal from 'components/Login/WalletConnectModal';
 import CreateNFTModal from 'components/Project/CreateDAOandNFT/components/CreateNFTModal.jsx';
-import { useSelector } from 'react-redux';
-import Link from 'next/link';
 import { NETWORKS } from 'config/networks';
-import { getCurrentNetworkId } from 'util/MetaMask';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
-  ls_SetLatestGasPrice,
   ls_GetLatestGasPrice,
+  ls_SetLatestGasPrice,
 } from 'util/ApplicationStorage';
+import { defaultNetworkId } from 'config/networks';
+import { getCurrentNetworkId } from 'util/MetaMask';
 
 export default function OnBoardingGuide({ setSwitchNetwork }) {
-  const userinfo = useSelector((state) => state.user.userinfo);
+  const chainId = useSelector((state) => state.user.chainId);
   const [open, setOPen] = useState(true);
   const [showWalletConnectModal, setShowWalletConnectModal] = useState(false);
   const [showCreateNFTModal, setShowCreateNFTModal] = useState(false);
@@ -24,21 +25,18 @@ export default function OnBoardingGuide({ setSwitchNetwork }) {
     rapid: 0,
     usd: 0,
   });
-
   let priceDetails = ls_GetLatestGasPrice();
-
   useEffect(() => {
     if (priceDetails) {
       setGasPrice(JSON.parse(priceDetails));
     } else {
       getGasPrice();
     }
-  }, [priceDetails]);
+  }, [priceDetails, chainId]);
 
-  const redirectToDiscord = () => {
-    if (typeof window !== 'undefined') {
-      window.open('https://discord.com/invite/ST2tNtPvGY', '_blank').focus();
-    }
+  const openFeedbackModal = () => {
+    const button = document.getElementById('featureRequestButton');
+    button.click();
   };
 
   const redirectToNftCreatePage = async () => {
@@ -51,19 +49,25 @@ export default function OnBoardingGuide({ setSwitchNetwork }) {
   };
 
   const getGasPrice = async () => {
-    let networkId = await getCurrentNetworkId();
+    let networkId = chainId;
+    if (!networkId) networkId = defaultNetworkId;
     let link = NETWORKS[networkId];
     let data = await fetch(link?.scanApi);
     let response = await data.json();
+    let priceData = await fetch(link?.priceApi);
+    let priceResponse = await priceData.json();
     if (response?.message === 'OK') {
       let priceDetails = {
-        standard: response?.result?.suggestBaseFee,
+        standard:
+          response?.result?.suggestBaseFee || response?.result?.SafeGasPrice,
         slow: response?.result?.SafeGasPrice,
         fast: response?.result?.FastGasPrice,
         rapid: response?.result?.ProposeGasPrice
           ? response.result.ProposeGasPrice
           : '-',
-        usd: response?.result?.UsdPrice ? response.result.UsdPrice : '-',
+        usd: priceResponse?.result?.ethusd
+          ? ((Number(priceResponse?.result?.ethusd) * 21) / 1000000).toFixed(2)
+          : '-',
       };
       setGasPrice(priceDetails);
       ls_SetLatestGasPrice(JSON.stringify(priceDetails));
@@ -143,7 +147,7 @@ export default function OnBoardingGuide({ setSwitchNetwork }) {
                 </div>
               </Link>
               <div
-                onClick={() => redirectToDiscord()}
+                onClick={() => openFeedbackModal()}
                 className='cursor-pointer  min-w-[86vw] md:min-w-[302px] rounded-[8px] bg-gradient-to-r from-white to-secondary-200/[0.8]'
               >
                 <div className='triangle'></div>
@@ -170,28 +174,32 @@ export default function OnBoardingGuide({ setSwitchNetwork }) {
         <div className='mx-6'>
           <p className=' text-[12px]'>
             <span className='font-black'>Standard</span>{' '}
-            {Number(gasPrice?.standard).toFixed(2)} GWei - ${gasPrice?.usd} | ~5
-            Mins
+            {Number(gasPrice?.standard).toFixed(2)} GWei - $
+            {(Number(gasPrice?.usd) * Number(gasPrice?.standard)).toFixed(2)} |
+            ~5 Mins
           </p>
         </div>
         <div className='mx-6'>
           <p className=' text-[12px]'>
             <span className='font-black'>Slow</span>{' '}
-            {Number(gasPrice?.slow).toFixed(2)} GWei - ${gasPrice?.usd} | ~5
+            {Number(gasPrice?.slow).toFixed(2)} GWei - $
+            {(Number(gasPrice?.usd) * Number(gasPrice?.slow)).toFixed(2)} | ~5
             Mins
           </p>
         </div>
         <div className='mx-6'>
           <p className=' text-[12px]'>
             <span className='font-black'>Fast</span>{' '}
-            {Number(gasPrice?.fast).toFixed(2)} GWei - ${gasPrice?.usd} | ~5
+            {Number(gasPrice?.fast).toFixed(2)} GWei - $
+            {(Number(gasPrice?.usd) * Number(gasPrice?.fast)).toFixed(2)} | ~5
             Mins
           </p>
         </div>
         <div>
           <p className=' text-[12px]'>
             <span className='font-black'>Rapid</span>{' '}
-            {Number(gasPrice?.rapid).toFixed(2)} GWei - ${gasPrice?.usd} | ~5
+            {Number(gasPrice?.rapid).toFixed(2)} GWei - $
+            {(Number(gasPrice?.usd) * Number(gasPrice?.rapid)).toFixed(2)} | ~5
             Mins
           </p>
         </div>

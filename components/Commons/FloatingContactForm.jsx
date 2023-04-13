@@ -6,6 +6,8 @@ const FloatingContactForm = () => {
   const [showForm, setShowForm] = useState(false);
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
+  const [name, setName] = useState('');
+  const [title, setTitle] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   useEffect(() => {
@@ -18,6 +20,8 @@ const FloatingContactForm = () => {
     setIsSubmitted(false);
     setMessage('');
     setEmail('');
+    setName('');
+    setTitle('');
   };
 
   const handleSend = (e) => {
@@ -28,6 +32,8 @@ const FloatingContactForm = () => {
         type: 'user_contact',
         email,
         message,
+        name,
+        title,
       };
       sendMessage(payload)
         .then((resp) => {
@@ -50,11 +56,12 @@ const FloatingContactForm = () => {
 
   let validEmail = isSubmitted && !email;
   let validMessage = isSubmitted && !message;
-
+  let validName = isSubmitted && !name;
+  let validTitle = isSubmitted && !title;
   return (
     <>
       {showForm ? (
-        <div className='w-[350px] contact-help-form fixed right-5 bottom-[8%] transition duration-150 ease-in-out rounded-[20px]'>
+        <div className='w-[350px] contact-help-form fixed right-5 bottom-[8%] transition duration-150 ease-in-out rounded-[20px] z-[10]'>
           <div className='contact-help-header bg-[#59cdff] p-5'>
             <h2 className='mb-2'>Hello! 👋</h2>
             <p>Need Help? Please write to us!</p>
@@ -72,6 +79,32 @@ const FloatingContactForm = () => {
                 />
                 {validEmail && (
                   <p className='text-red-400 text-sm'>Email is required</p>
+                )}
+              </div>
+              <div className='mb-6'>
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className='p-4 mb-1'
+                  name='message'
+                  type='text'
+                  placeholder='Name'
+                />
+                {validName && (
+                  <p className='text-red-400 text-sm'>Name is required</p>
+                )}
+              </div>
+              <div className='mb-6'>
+                <input
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className='p-4 mb-1'
+                  name='message'
+                  type='text'
+                  placeholder='Title'
+                />
+                {validTitle && (
+                  <p className='text-red-400 text-sm'>Title is required</p>
                 )}
               </div>
               <div className='mb-6'>
@@ -100,6 +133,7 @@ const FloatingContactForm = () => {
       ) : null}
       <button
         onClick={() => setShowForm(!showForm)}
+        id='featureRequestButton'
         className='cursor-pointer fixed bottom-5 flex items-center justify-center right-5 w-[50px] h-[50px] floating-button rounded-[50px]'
       >
         {showForm ? (

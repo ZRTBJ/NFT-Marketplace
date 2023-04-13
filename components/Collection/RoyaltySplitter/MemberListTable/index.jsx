@@ -36,6 +36,7 @@ const MemberListTable = ({
   const [addError, setAddError] = useState('');
   const [name, setName] = useState('');
   const [role, setRole] = useState('');
+  const [duplicateAddress, setDuplicateAddress] = useState(false);
 
   useEffect(() => {
     if (newItems) {
@@ -78,33 +79,41 @@ const MemberListTable = ({
 
   const addNewContributorData = async () => {
     setIsAdded(true);
-    if (address && percentage) {
-      let userAddress = address;
 
-      if (!ethers.utils.isAddress(address)) {
-        try {
-          const provider = new ethers.providers.Web3Provider(window.ethereum);
-          userAddress = await provider.resolveName(address);
-        } catch (error) {
+    if (address && percentage) {
+      if (
+        list.some((data) => data?.user_eoa !== address) ||
+        newItems.some((data) => data.eoa !== address)
+      ) {
+        let userAddress = address;
+        setDuplicateAddress(false);
+        if (!ethers.utils.isAddress(address)) {
+          try {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            userAddress = await provider.resolveName(address);
+          } catch (error) {
+            setAddError('Invalid Wallet address or ENS');
+            return;
+          }
+        }
+
+        if (userAddress === null) {
           setAddError('Invalid Wallet address or ENS');
           return;
         }
-      }
 
-      if (userAddress === null) {
-        setAddError('Invalid Wallet address or ENS');
-        return;
+        let value = {
+          user_eoa: userAddress,
+          royalty_percent: parseFloat(percentage),
+          custom_name: name,
+          custom_role: role,
+        };
+        setRoyalityMembers([...list, value]);
+        setName('');
+        setRole('');
+      } else {
+        setDuplicateAddress(true);
       }
-
-      let value = {
-        user_eoa: userAddress,
-        royalty_percent: parseFloat(percentage),
-        custom_name: name,
-        custom_role: role,
-      };
-      setRoyalityMembers([...list, value]);
-      setName('');
-      setRole('');
     }
   };
 
@@ -153,6 +162,9 @@ const MemberListTable = ({
                         index < list.length - 1 ? 'border-b' : ''
                       } text-left text-[13px]`}
                     >
+                      <td className='py-4 px-5'>
+                        {r.custom_name ? r.custom_name : '-'}
+                      </td>
                       <td className='py-4 px-5'>
                         <div className='inline-flex items-center'>
                           <span>{walletAddressTruncate(r.user_eoa)}</span>
@@ -212,9 +224,7 @@ const MemberListTable = ({
                           )}
                         </div>
                       </td>
-                      <td className='py-4 px-5'>
-                        {r.custom_name ? r.custom_name : '-'}
-                      </td>
+
                       <td className={`py-4 px-5`}>
                         <p
                           className={`text-[13px] bg-opacity-[0.2] py-1 px-2 w-fit rounded-[4px] font-bold ${
@@ -266,6 +276,16 @@ const MemberListTable = ({
           <div className='flex items-center ml-0 md:ml-4 mt-3'>
             <div className='w-[20%] mr-2'>
               <input
+                id={'name'}
+                type='text'
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder='Name'
+                className='w-full bg-secondary rounded-[6px] text-[12px] px-[10px] py-[14px] text-text-base'
+              />
+            </div>
+            <div className='w-[20%] mr-2'>
+              <input
                 id={'address'}
                 type='text'
                 value={address}
@@ -285,16 +305,7 @@ const MemberListTable = ({
               />
               <p className='absolute top-2 right-4'>%</p>
             </div>
-            <div className='w-[20%] mr-2'>
-              <input
-                id={'name'}
-                type='text'
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder='Name'
-                className='w-full bg-secondary rounded-[6px] text-[12px] px-[10px] py-[14px] text-text-base'
-              />
-            </div>
+
             <div className='w-[20%] mr-2'>
               <input
                 id={'role'}
@@ -327,7 +338,13 @@ const MemberListTable = ({
         {showError ? (
           <p className='text-red-400 text-[14px] mt-1 ml-4'>
             {' '}
-            Total percent of contributors should equal to or lesser than 100%.
+            Royalties should add to 100%.
+          </p>
+        ) : null}
+        {duplicateAddress ? (
+          <p className='text-red-400 text-[14px] mt-1 ml-4'>
+            {' '}
+            Wallet address already added.
           </p>
         ) : null}
         {addError && (
@@ -339,7 +356,7 @@ const MemberListTable = ({
           className='outlined-button font-satoshi-bold ml-0 md:ml-4'
           onClick={addNewContributorField}
         >
-          <span>Add More</span>
+          <span>Add recipient</span>
         </button>
       ) : null}
     </>

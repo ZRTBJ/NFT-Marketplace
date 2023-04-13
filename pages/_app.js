@@ -74,7 +74,7 @@ function MyApp({ Component, pageProps }) {
   useEffect(() => {
     if (userId) {
       if (window?.ethereum) {
-        window?.ethereum?.on('networkChanged', function (networkId) {
+        window?.ethereum?.on('chainChanged', function (networkId) {
           getCurrentNetwork(networkId);
           setCurrentNetwork(networkId);
         });

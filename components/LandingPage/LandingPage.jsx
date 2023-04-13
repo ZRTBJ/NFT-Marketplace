@@ -40,7 +40,7 @@ const nftUseCase = {
   ],
 };
 const daoUseCase = {
-  usedFor: 'a DAO',
+  usedFor: 'DAO',
   text: 'DAOs can be made to serve specific purposes. What’s yours?',
   steps: [
     {
@@ -77,14 +77,14 @@ export default function LandingPage({ setShowCreateSplitter }) {
         <CreateNFTCard size='md' />
         <BuildDaoCard size='md' />
       </div>
+      <div className='w-full px-4 pb-10 md:max-w-[1100px] mx-auto'>
+        <SplitterBanner setShowCreateSplitter={setShowCreateSplitter} />
+      </div>
       <div className='w-full px-4 mb-10 md:max-w-[1100px] mx-auto'>
         <UseCase data={nftUseCase} />
       </div>
       <div className='w-full px-4 pb-10 md:max-w-[1100px] mx-auto'>
         <UseCase data={daoUseCase} />
-      </div>
-      <div className='w-full px-4 pb-10 md:max-w-[1100px] mx-auto'>
-        <SplitterBanner setShowCreateSplitter={setShowCreateSplitter} />
       </div>
     </div>
   );

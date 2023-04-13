@@ -90,7 +90,7 @@ const nftUseCase = {
   ],
 };
 const daoUseCase = {
-  usedFor: 'a DAO',
+  usedFor: 'DAO',
   text: 'DAOs can be made to serve specific purposes. What’s yours?',
   steps: [
     {
@@ -536,15 +536,16 @@ const Profile = ({ id }) => {
                             </p>
                             <button
                               onClick={() => onCreateTokenGatedProject()}
-                              className=' gradient-text-deep-pueple font-black border w-[160px] text-center h-[40px] rounded-lg border-secondary-900'
+                              className='contained-button rounded ml-auto !text-white'
+                              // className=" gradient-text-deep-pueple font-black border w-[160px] text-center h-[40px] rounded-lg border-secondary-900"
                             >
-                              <i className=' mr-2 fa-solid fa-plus'></i>
+                              {/* <i className=" mr-2 fa-solid fa-plus"></i> */}
                               Create New
                             </button>
                           </div>
                           <Link
                             href={`/list?type=tokenGated&user=true`}
-                            className='contained-button rounded ml-auto mt-2'
+                            className='gradient-text-deep-pueple font-black border w-[160px] text-center h-[40px] rounded-lg border-secondary-900 ml-auto mt-2 flex items-center justify-center'
                           >
                             View All
                           </Link>
@@ -620,7 +621,7 @@ const Profile = ({ id }) => {
                   </div>
                   <Link
                     href={`/list?type=nft&user=true`}
-                    className='contained-button rounded ml-auto'
+                    className='gradient-text-deep-pueple font-black border w-[160px] text-center h-[40px] rounded-lg border-secondary-900 ml-auto mt-2 flex items-center justify-center'
                   >
                     View All
                   </Link>
@@ -668,13 +669,6 @@ const Profile = ({ id }) => {
                 )}
               </div>
               {/* minted nft end */}
-
-              <div className='px-4 my-10'>
-                <UseCase data={nftUseCase} />
-              </div>
-              <div className='px-4 my-10 '>
-                <UseCase data={daoUseCase} />
-              </div>
               {/* splitter start */}
               <div className='px-4 pb-10'>
                 {splitterList?.length === 0 ? (
@@ -708,6 +702,12 @@ const Profile = ({ id }) => {
                     )}
                   </div>
                 )}
+              </div>
+              <div className='px-4 my-10'>
+                <UseCase data={nftUseCase} />
+              </div>
+              <div className='px-4 my-10 '>
+                <UseCase data={daoUseCase} />
               </div>
             </div>
           </>

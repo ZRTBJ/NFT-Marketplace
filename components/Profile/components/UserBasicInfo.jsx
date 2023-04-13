@@ -14,7 +14,6 @@ export default function UserBasicInfo({ userInfo, sncList }) {
       ? userInfo?.biography
       : 'Add your bio,so that everyone can easily get to know you'
   }`;
-
   return (
     <div className='bg-white rounded-tl-2xl rounded-tr-2xl'>
       <Image
