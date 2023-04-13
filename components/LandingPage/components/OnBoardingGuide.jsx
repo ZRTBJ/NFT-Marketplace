@@ -14,7 +14,7 @@ import { defaultNetworkId } from 'config/networks';
 import { getCurrentNetworkId } from 'util/MetaMask';
 
 export default function OnBoardingGuide({ setSwitchNetwork }) {
-  const chainId = useSelector((state) => state.chain.chainId);
+  const chainId = useSelector((state) => state.user.chainId);
   const [open, setOPen] = useState(true);
   const [showWalletConnectModal, setShowWalletConnectModal] = useState(false);
   const [showCreateNFTModal, setShowCreateNFTModal] = useState(false);

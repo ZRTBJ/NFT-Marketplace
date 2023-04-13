@@ -9,6 +9,7 @@ const {
   getNotificationsLoading,
   getNotificationsSuccess,
   getNotificationsError,
+  setChainId,
 } = userSlice.actions;
 
 export const setUserInfo = (user) => (dispatch) => {
@@ -33,4 +34,7 @@ export const getUserNotification = (isActive) => async (dispatch) => {
   } catch (err) {
     dispatch(getNotificationsError());
   }
+};
+export const setChain = (id) => async (dispatch) => {
+  dispatch(setChainId(id));
 };
