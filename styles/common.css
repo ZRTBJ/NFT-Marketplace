@@ -609,7 +609,7 @@ video::-webkit-media-controls-panel {
 
 .welcome-gradient-bg {
   background: linear-gradient(26deg, #e100ff 0%, #12b4ff 104.17%);
-  border-radius: 20px;
+  border-radius: 16px;
   color: #fff;
   padding: 50px;
 }
