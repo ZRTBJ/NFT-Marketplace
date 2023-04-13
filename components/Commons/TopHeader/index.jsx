@@ -138,15 +138,15 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   useEffect(() => {
     (async () => {
       // console.log('userInfo: ', userinfo?.id);
-      // if (userinfo?.id) {
-      await setDefaultNetwork();
-      // } else {
-      //   setCurrentSelectedNetwork({
-      //     name: networkList?.[0]?.networkName,
-      //     value: networkList?.[0]?.network,
-      //     icon: networkList?.[0]?.icon,
-      //   });
-      // }
+      if (userinfo?.id) {
+        await setDefaultNetwork();
+      } else {
+        setCurrentSelectedNetwork({
+          name: networkList?.[0]?.networkName,
+          value: networkList?.[0]?.network,
+          icon: networkList?.[0]?.icon,
+        });
+      }
     })();
   }, [userinfo?.id]);
 

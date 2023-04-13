@@ -11,6 +11,7 @@ import {
   ls_SetLatestGasPrice,
 } from 'util/ApplicationStorage';
 import { defaultNetworkId } from 'config/networks';
+import { getCurrentNetworkId } from 'util/MetaMask';
 
 export default function OnBoardingGuide({ setSwitchNetwork }) {
   const chainId = useSelector((state) => state.chain.chainId);
