@@ -1,4 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { ls_GetChainID } from 'util/ApplicationStorage';
+import { defaultNetworkId } from 'config/networks';
+let chainId = ls_GetChainID();
+
 const initialState = {
   status: 'idle',
   userinfo: {},
@@ -8,6 +12,7 @@ const initialState = {
   notifications: [],
   notificationLoading: false,
   notificationError: false,
+  chainId: chainId || defaultNetworkId,
 };
 
 export const userSlice = createSlice({
@@ -36,6 +41,9 @@ export const userSlice = createSlice({
     },
     getNotificationsError(state, action) {
       state.notificationError = true;
+    },
+    setChainId(state, action) {
+      state.chainId = action.payload;
     },
   },
 });

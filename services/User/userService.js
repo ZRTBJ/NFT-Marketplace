@@ -31,6 +31,8 @@ export async function sendMessage(payload) {
   formData.append('noti_type', payload.type);
   formData.append('message', payload.message);
   formData.append('email', payload.email);
+  formData.append('name', payload.name);
+  formData.append('title', payload.title);
   return await client('POST', '/send-slack', formData, 'formdata');
 }
 

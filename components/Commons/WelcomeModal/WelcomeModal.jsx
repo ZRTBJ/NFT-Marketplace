@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Modal from 'components/Commons/Modal';
 import Image from 'next/image';
 import Logo from 'assets/images/header/logo.svg';
@@ -21,6 +21,17 @@ const WelcomeModal = ({ show, handleClose }) => {
       setOpen([...open, value]);
     }
   };
+  const modalRef = useRef(null);
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
+  const handleClickOutside = (e) => {
+    if (modalRef.current && !modalRef.current.contains(e.target)) {
+      handleClose();
+    }
+  };
   return (
     <Modal
       width={1250}
@@ -30,7 +41,7 @@ const WelcomeModal = ({ show, handleClose }) => {
       addPadding={false}
       overflow={'auto'}
     >
-      <div className='flex bg-[#E1ECF0] rounded-[20px]'>
+      <div className='flex bg-[#E1ECF0] rounded-[16px]' ref={modalRef}>
         <div className='w-full md:w-4/6 text-center py-[30px]'>
           <div className=' w-5/6 md:w-4/6 mx-auto'>
             <p className='text-[24px] font-bold text-[#021118]'>Welcome to</p>
@@ -69,7 +80,7 @@ const WelcomeModal = ({ show, handleClose }) => {
                     aria-controls={`configure-1`}
                     onClick={() => handleShowModal(1)}
                   >
-                    Create membership NFT
+                    Create Membership NFT
                     <span className='ml-auto h-5 w-5 shrink-0 rotate-[-180deg] fill-[#336dec] transition-transform duration-200 ease-in-out '>
                       {open.includes(1) ? (
                         <Image src={Minus} alt='Accordian Minus' />
@@ -121,7 +132,7 @@ const WelcomeModal = ({ show, handleClose }) => {
                     aria-controls={`configure-2`}
                     onClick={() => handleShowModal(2)}
                   >
-                    Create token-gated contents
+                    Create Token-gated Contents
                     <span className='ml-auto h-5 w-5 shrink-0 rotate-[-180deg] fill-[#336dec] transition-transform duration-200 ease-in-out '>
                       {open.includes(2) ? (
                         <Image src={Minus} alt='Accordian Minus' />
@@ -222,7 +233,7 @@ const WelcomeModal = ({ show, handleClose }) => {
                 className='contained-button-new mt-[28px] text-[16px] w-full md:w-[320px] flex items-center justify-between mx-auto h-[52px]'
                 onClick={handleClose}
               >
-                <span>Get started</span>
+                <span>Get Started</span>
                 <i className='fa-regular fa-arrow-right ml-1'></i>
               </button>
               <p className='font-black text-[16px] mt-[24px] '>

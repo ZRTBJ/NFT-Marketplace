@@ -33,9 +33,9 @@ import Link from 'next/link';
 import { ls_GetChainID } from 'util/ApplicationStorage';
 
 const TABLE_HEADERS = [
-  { id: 0, label: 'Wallet Address' },
-  { id: 1, label: 'Percentage' },
-  { id: 2, label: 'Name' },
+  { id: 0, label: 'Name' },
+  { id: 1, label: 'Wallet Address' },
+  { id: 2, label: 'Percentage' },
   { id: 3, label: 'Role' },
   { id: 4, label: 'Action' },
 ];

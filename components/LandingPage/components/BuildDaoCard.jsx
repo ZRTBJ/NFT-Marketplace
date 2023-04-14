@@ -21,13 +21,13 @@ export default function BuildDaoCard({ size, setSwitchNetwork }) {
   };
   return (
     <div>
-      <p className='textSubtle-100 text-[20px] font-black my-4'>
+      <p className='textSubtle-100 text-[20px] font-black my-4 md:h-[37px]'>
         DAO Community
       </p>
       <div
         className={`relative justify-between bg-white flex  items-center gap-x-5 shadow rounded-2xl ${
           size === 'lg'
-            ? 'flex-col gap-y-5 rounded-bl-2xl rounded-br-2xl'
+            ? 'flex-col gap-y-5 rounded-bl-2xl rounded-br-2xl md:h-[670px]'
             : ' w-[515px] px-[30px] py-5 md:min-h-[200px]'
         }`}
       >
@@ -38,25 +38,25 @@ export default function BuildDaoCard({ size, setSwitchNetwork }) {
               : ' text-black'
           }`}
         >
-          <p className=' text-[20px] font-black mb-1'>Build DAO community</p>
+          <p className=' text-[20px] font-black mb-1'>Build DAO Community</p>
           <p
             className={`mb-4 break-word ${
               size === 'lg'
                 ? 'text-[14px] mb-10 mt-3'
-                : 'max-w-[300px] text-textSubtle-200 pb-1'
+                : 'max-w-[300px] md:min-h-[72px]'
             }`}
           >
             Build a vibrant web3 community designed for mutual benefits and
-            shared prosperity.{' '}
+            shared prosperity.
           </p>
           <div
             className={`flex items-center ${
-              size === 'lg' ? 'flex-col gap-y-6' : ''
+              size === 'lg' ? 'flex-col gap-y-6' : 'justify-between'
             }`}
           >
             <button
               onClick={() => handelOnClick()}
-              className='gradient-text-deep-pueple font-black border w-[170px] h-[40px] rounded-lg border-secondary-900'
+              className='contained-button rounded !text-white'
             >
               Create DAO
             </button>
