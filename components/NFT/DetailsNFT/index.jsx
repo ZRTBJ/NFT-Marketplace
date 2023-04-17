@@ -46,6 +46,7 @@ import { getCollectionDetailsById } from 'services/collection/collectionService'
 import Image from 'next/image';
 import { event } from 'nextjs-google-analytics';
 import TagManager from 'react-gtm-module';
+import { ls_GetWalletType } from 'util/ApplicationStorage';
 
 const currency = {
   eth: Eth,
@@ -73,7 +74,7 @@ export default function DetailsNFT({ type, id }) {
   const provider = createProvider();
   const [usdValue, setUsdValue] = useState();
   const [collection, setCollection] = useState({});
-
+  let walletType = ls_GetWalletType();
   const handleContract = async (config) => {
     try {
       const mintContract = createMintInstance(config.contract, provider);
@@ -267,10 +268,14 @@ export default function DetailsNFT({ type, id }) {
       }
       let nftNetwork = await getCurrentNftNetwork();
       let networkId = await getCurrentNetworkId();
-      if (nftNetwork === networkId) {
+      if (walletType === 'metamask') {
+        if (nftNetwork === networkId) {
+          setTransactionModal(true);
+        } else {
+          setShowNetworkHandler(true);
+        }
+      } else if (walletType === 'magicwallet') {
         setTransactionModal(true);
-      } else {
-        setShowNetworkHandler(true);
       }
     } else {
       setShowModal(true);

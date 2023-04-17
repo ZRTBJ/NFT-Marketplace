@@ -11,6 +11,9 @@ import { walletAddressTruncate } from 'util/WalletUtils';
 import AvatarDefault from 'assets/images/avatar-default.svg';
 import { toast } from 'react-toastify';
 import LanguageChanger from 'components/Commons/LanguageChanger';
+import { ls_GetWalletType } from 'util/ApplicationStorage';
+import { etherMagicProvider } from 'config/magicWallet/magic';
+import { ethers } from 'ethers';
 
 const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
   let router = useRouter();
@@ -27,7 +30,7 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
   const userLoadingStatus = useSelector((state) => state.user.status);
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
   const ref = useDetectClickOutside({ onTriggered: handleWalletDropDownClose });
-
+  let walletType = ls_GetWalletType();
   function showHideUserPopup() {
     const userDropDown = document.getElementById('userDropDown');
     userDropDown.classList.toggle('hidden');
@@ -59,8 +62,14 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
     try {
       setIsLoadingBalance(true);
       if (walletAddress && walletAddress.length > 5) {
-        const accountBalance = await getAccountBalance();
-        setBalance(accountBalance);
+        if (walletType === 'metamask') {
+          const accountBalance = await getAccountBalance();
+          setBalance(accountBalance);
+        } else if (walletType === 'magicwallet') {
+          const balance = await etherMagicProvider.getBalance(walletAddress);
+          console.log(balance);
+          setBalance(ethers.utils.formatEther(balance));
+        }
         setIsLoadingBalance(false);
       }
     } catch {

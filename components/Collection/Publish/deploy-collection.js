@@ -2,7 +2,8 @@ import { ethers } from 'ethers';
 import { createInstance } from 'config/ABI/forwarder';
 import { signMetaTxRequest } from 'util/smartcontract/signer';
 import { NETWORKS } from 'config/networks';
-import { ls_GetChainID } from 'util/ApplicationStorage';
+import { ls_GetChainID, ls_GetWalletType } from 'util/ApplicationStorage';
+import { etherMagicProvider } from 'config/magicWallet/magic';
 import { address } from 'config/contractAddresses';
 
 async function sendMetaTx(
@@ -79,12 +80,16 @@ export async function createCollection(
   type,
   productPrice
 ) {
-  if (!window.ethereum) throw new Error(`User wallet not found`);
-
-  await window.ethereum.enable();
-  const userProvider = new ethers.providers.Web3Provider(window.ethereum);
-
-  const signer = userProvider.getSigner();
+  let walletType = await ls_GetWalletType();
+  let signer;
+  if (walletType === 'metamask') {
+    if (!window.ethereum) throw new Error(`User wallet not found`);
+    await window.ethereum.enable();
+    const userProvider = new ethers.providers.Web3Provider(window.ethereum);
+    signer = userProvider.getSigner();
+  } else if (walletType === 'magicwallet') {
+    signer = etherMagicProvider.getSigner();
+  }
 
   let output;
   const result = await sendMetaTx(
@@ -114,12 +119,16 @@ export async function createCollectionByCaller(
   type,
   productPrice
 ) {
-  if (!window.ethereum) throw new Error(`User wallet not found`);
-
-  await window.ethereum.enable();
-  const userProvider = new ethers.providers.Web3Provider(window.ethereum);
-
-  const signer = userProvider.getSigner();
+  let walletType = await ls_GetWalletType();
+  let signer;
+  if (walletType === 'metamask') {
+    if (!window.ethereum) throw new Error(`User wallet not found`);
+    await window.ethereum.enable();
+    const userProvider = new ethers.providers.Web3Provider(window.ethereum);
+    signer = userProvider.getSigner();
+  } else if (walletType === 'magicwallet') {
+    signer = etherMagicProvider.getSigner();
+  }
   const from = await signer.getAddress();
   console.log('singer: ', from);
   let chainId = ls_GetChainID();

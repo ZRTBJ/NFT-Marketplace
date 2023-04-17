@@ -4,6 +4,8 @@ import { signMetaTxRequest } from 'util/smartcontract/signer';
 import { addressGnosisSetup } from 'services/project/projectService';
 import { NETWORKS } from 'config/networks';
 import { address } from 'config/contractAddresses';
+import { ls_GetWalletType } from 'util/ApplicationStorage';
+import { etherMagicProvider } from 'config/magicWallet/magic';
 
 async function sendMetaTx(
   dao,
@@ -56,11 +58,16 @@ async function sendMetaTx(
 }
 
 export async function createDAO(dao, provider, name, treasuryAddress, chainId) {
-  if (!window.ethereum) throw new Error(`User wallet not found`);
-
-  await window.ethereum.enable();
-  const userProvider = new ethers.providers.Web3Provider(window.ethereum);
-  const signer = userProvider.getSigner();
+  let walletType = await ls_GetWalletType();
+  let signer;
+  if (walletType === 'metamask') {
+    if (!window.ethereum) throw new Error(`User wallet not found`);
+    await window.ethereum.enable();
+    const userProvider = new ethers.providers.Web3Provider(window.ethereum);
+    signer = userProvider.getSigner();
+  } else if (walletType === 'magicwallet') {
+    signer = etherMagicProvider.getSigner();
+  }
   let output;
   const result = await sendMetaTx(
     dao,
@@ -91,11 +98,16 @@ export async function createDAOByCaller(
   treasuryAddress,
   chainId
 ) {
-  if (!window.ethereum) throw new Error(`User wallet not found`);
-
-  await window.ethereum.enable();
-  const userProvider = new ethers.providers.Web3Provider(window.ethereum);
-  const signer = userProvider.getSigner();
+  let walletType = await ls_GetWalletType();
+  let signer;
+  if (walletType === 'metamask') {
+    if (!window.ethereum) throw new Error(`User wallet not found`);
+    await window.ethereum.enable();
+    const userProvider = new ethers.providers.Web3Provider(window.ethereum);
+    signer = userProvider.getSigner();
+  } else if (walletType === 'magicwallet') {
+    signer = etherMagicProvider.getSigner();
+  }
   const from = await signer.getAddress();
   let formData = new FormData();
   formData.append('addresses', from);

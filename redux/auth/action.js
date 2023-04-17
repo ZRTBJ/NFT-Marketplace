@@ -8,6 +8,7 @@ import {
 } from 'util/ApplicationStorage';
 import { authSlice } from './slice';
 import { persistor } from '../../pages/_app';
+import { magic } from 'config/magicWallet/magic';
 
 const { loadingLogin, loginSuccess, loginError, logginOut } = authSlice.actions;
 
@@ -49,6 +50,7 @@ export const loginUser = (loginPayload) => async (dispatch) => {
 export const logout = () => async (dispatch) => {
   dispatch(logginOut());
   ls_ClearLocalStorage();
+  magic.wallet.disconnect();
   persistor.pause();
   persistor.flush().then(() => {
     return persistor.purge();

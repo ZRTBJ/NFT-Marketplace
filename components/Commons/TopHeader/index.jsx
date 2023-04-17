@@ -95,7 +95,6 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const { chain } = useNetwork();
   const { error, isLoading, pendingChainId, switchNetwork } =
     useSwitchNetwork();
-
   let walletType = ls_GetWalletType();
 
   /** Detect account whenever user come back to site */
@@ -128,14 +127,15 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const handleChainDifference = async () => {
     if (window?.ethereum) {
       const network = await getCurrentNetworkId();
-      if (localChainId && network) {
-        if (!networkChangeDetected && localChainId !== network) {
-          setNetworkId(network);
-          ls_SetChainID(network);
+      let currentNetworkChain = walletType === 'metamask' ? network : chain;
+      if (localChainId && currentNetworkChain) {
+        if (!networkChangeDetected && localChainId !== currentNetworkChain) {
+          setNetworkId(currentNetworkChain);
+          ls_SetChainID(currentNetworkChain);
           if (walletType === 'metamask') {
-            handleSwitchNetwork(network);
+            handleSwitchNetwork(currentNetworkChain);
           } else if (walletType === 'walletconnect') {
-            switchNetwork(network);
+            switchNetwork(currentNetworkChain);
           }
         }
       }
@@ -144,7 +144,9 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
 
   useEffect(() => {
     if (userinfo?.id) {
-      handleChainDifference();
+      if (walletType !== 'magicwallet') {
+        handleChainDifference();
+      }
     }
   }, [userinfo?.id]);
 
@@ -700,12 +702,23 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                       ? ''
                       : 'You have selected/connected with an unsupported network. Please select a supported network from the dropdown'
                   }
-                  onClick={() => setIsComponentVisible(!isComponentVisible)}
+                  onClick={
+                    walletType === 'magicwallet'
+                      ? null
+                      : () => setIsComponentVisible(!isComponentVisible)
+                  }
                   className={`cursor-pointer flex place-items-center rounded-2xl px-3 py-2 border-primary-900 ${
                     currentSelectedNetwork?.name
                       ? 'bg-primary-100'
                       : 'bg-red-100'
-                  }`}
+                  } `}
+                  style={
+                    walletType === 'magicwallet'
+                      ? {
+                          filter: 'grayscale(1)',
+                        }
+                      : null
+                  }
                 >
                   {currentSelectedNetwork?.icon?.src ? (
                     <Image

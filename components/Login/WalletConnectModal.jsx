@@ -28,9 +28,7 @@ import { useWeb3Modal } from '@web3modal/react';
 import WalletConnect from 'assets/images/wallet-connect.svg';
 import SignRejectionModal from 'components/Commons/TopHeader/Account/SignRejectModal';
 import { goerli } from 'wagmi/chains';
-import { formattedNetwork } from 'config/magicWallet/magic';
-import { Magic } from 'magic-sdk';
-import Web3 from 'web3';
+import { magic, etherMagicProvider } from 'config/magicWallet/magic';
 import { recoverPersonalSignature } from '@metamask/eth-sig-util';
 
 let MESSAGE = "You're signing to the decir.io";
@@ -165,6 +163,9 @@ const WalletConnectModal = ({
         ls_SetChainID(userNetwork.chainId);
       } else if (wallet === 'walletconnect') {
         ls_SetChainID(chain);
+      } else if (wallet === 'magicwallet') {
+        let magicChainId = await etherMagicProvider.getNetwork();
+        ls_SetChainID(magicChainId?.chainId);
       }
       getUserDetails(response['user_id']);
     } catch (error) {
@@ -221,23 +222,12 @@ const WalletConnectModal = ({
     }
   };
 
-  //Magic Wallet connection
-
-  const magic = new Magic(process.env.NEXT_PUBLIC_MAGIC_API_KEY, {
-    network: formattedNetwork(),
-  });
-  const web3 = new Web3(magic.rpcProvider);
   const handleMagicConnect = async () => {
     try {
       if (isTermsAndConditionsChecked) {
         const accounts = await magic.wallet.connectWithUI();
-        // await magic.wallet.disconnect();
-        console.log(accounts);
-        const signedMessage = await web3.eth.personal.sign(
-          MESSAGE,
-          accounts[0],
-          ''
-        );
+        const signer = etherMagicProvider.getSigner();
+        const signedMessage = await signer.signMessage(MESSAGE);
         const recoveredAddress = recoverPersonalSignature({
           data: MESSAGE,
           signature: signedMessage,
@@ -375,7 +365,7 @@ const WalletConnectModal = ({
                         alt='WalletConnect wallet login button'
                       />
                       <div className='ml-[10px] font-satoshi-bold font-black text-[24px]'>
-                        <p className='text-[18px]'>WalletConnect</p>
+                        <p className='text-[18px]'>Wallet Connect</p>
                       </div>
                     </div>
                   </div>
