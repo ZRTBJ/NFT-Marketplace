@@ -45,7 +45,14 @@ export default function ProductNFT({ query }) {
   const userinfo = useSelector((state) => state.user.userinfo);
   const [isLoading, setIsLoading] = useState(false);
   const [showPropertyModal, setShowPropertyModal] = useState(false);
-  const [propertyList, setPropertyList] = useState([]);
+  const [propertyList, setPropertyList] = useState([
+    {
+      key: '',
+      value: '',
+      value_type: 'string',
+      display_type: 'properties',
+    },
+  ]);
   const [checkedValidation, setCheckedValidation] = useState(false);
   const [nftFile, setnftFile] = useState({ file: null, path: '' });
   const [errorTitle, setErrorTitle] = useState(null);
@@ -1010,7 +1017,7 @@ export default function ProductNFT({ query }) {
                   <div className='text-textSubtle text-[14px] mb-[16px]'>
                     Add the properties of your NFT below
                   </div>
-                  <div className='flex py-3 border-b border-b-divider'>
+                  <div className='flex py-3'>
                     <i className='fa-regular fa-grip-lines'></i>
                     <div className='flex-1 px-3'>
                       <p className='-mt-1'>Add NFT Properties</p>
@@ -1026,7 +1033,58 @@ export default function ProductNFT({ query }) {
                       onClick={() => setShowPropertyModal(true)}
                     ></i>
                   </div>
-                  <div className='flex py-3'>
+                  <div className='grid grid-cols-1 mt-2 mt-2 mb-4'>
+                    {isListUpdate && (
+                      <div className='text-center mt-3'>
+                        <i className='fa-solid fa-loader fa-spin text-primary-900'></i>
+                      </div>
+                    )}
+                    {!isListUpdate &&
+                      propertyList &&
+                      propertyList.map((property, index) => (
+                        <div key={`view-properties-${index}`}>
+                          {property?.key && property?.value && (
+                            <div className='flex items-center gap-4 mb-2'>
+                              <div>
+                                <p className='text-[14px] text-txtSubtle'>
+                                  Attribute
+                                </p>
+                                <input
+                                  name={`type-${index}`}
+                                  type={'text'}
+                                  className='w-32 bg-gray-200 disabled:cursor-not-allowed'
+                                  defaultValue={property.key}
+                                  disabled={true}
+                                />
+                              </div>
+
+                              <div>
+                                <p className='text-[14px] text-txtSubtle'>
+                                  Description
+                                </p>
+                                <input
+                                  name={`name-${index}`}
+                                  type={'text'}
+                                  className='w-32 bg-gray-200 disabled:cursor-not-allowed'
+                                  disabled={true}
+                                  defaultValue={property.value}
+                                />
+                              </div>
+                              {!showConfirmation &&
+                                propertyList?.length > 1 && (
+                                  <i
+                                    className={`fa-solid fa-trash cursor-pointer text-danger-1/[0.7] ${
+                                      showConfirmation ? 'hidden' : ''
+                                    }`}
+                                    onClick={() => removeProperty(index)}
+                                  ></i>
+                                )}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                  </div>
+                  <div className='flex py-3 mb-4 border-t border-t-divider border-b border-b-divider'>
                     <p className='text-txtblack text-[18px] font-black'>18+</p>
                     <div className='flex-1 px-3'>
                       <p className='-mt-1'>Sensitive Content</p>
@@ -1045,10 +1103,16 @@ export default function ProductNFT({ query }) {
                           name='sensitiveContent'
                           defaultChecked={nft ? nft.sensitive_content : false}
                           disabled={showConfirmation}
-                          className='sr-only peer outline-none'
+                          className='sr-only peer outline-none '
                           {...register('sensitiveContent')}
                         />
-                        <div className="w-11 outline-none h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-900"></div>
+                        <div
+                          className={` w-11 outline-none h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600  ${
+                            showConfirmation
+                              ? 'peer-checked:bg-gray-200'
+                              : 'peer-checked:bg-primary-900'
+                          }  `}
+                        ></div>
                       </label>
                     </div>
                   </div>
@@ -1081,42 +1145,6 @@ export default function ProductNFT({ query }) {
                       </>
                     </div>
                   ) : null}
-                  <div className='grid grid-cols-1 mt-2'>
-                    {isListUpdate && (
-                      <div className='text-center mt-3'>
-                        <i className='fa-solid fa-loader fa-spin text-primary-900'></i>
-                      </div>
-                    )}
-                    {!isListUpdate &&
-                      propertyList &&
-                      propertyList.map((property, index) => (
-                        <div key={`view-properties-${index}`}>
-                          <div className='flex items-center mt-3'>
-                            <input
-                              name={`type-${index}`}
-                              type={'text'}
-                              className='w-32 bg-gray-200 disabled:cursor-not-allowed'
-                              defaultValue={property.key}
-                              disabled={true}
-                            />
-
-                            <input
-                              name={`name-${index}`}
-                              type={'text'}
-                              className='ml-3 w-32 bg-gray-200 disabled:cursor-not-allowed'
-                              disabled={true}
-                              defaultValue={property.value}
-                            />
-                            <i
-                              className={`fa-solid fa-trash cursor-pointer ml-3 text-danger-1/[0.7] ${
-                                showConfirmation ? 'hidden' : ''
-                              }`}
-                              onClick={() => removeProperty(index)}
-                            ></i>
-                          </div>
-                        </div>
-                      ))}
-                  </div>
                 </div>
                 {showConfirmation === false && (
                   <button className='px-6 py-2 contained-button rounded font-black text-white-shade-900'>
@@ -1168,21 +1196,29 @@ export default function ProductNFT({ query }) {
                 propertyList.map((property, index) => (
                   <div key={`properties-${index}`}>
                     <div className='flex items-center mt-3'>
-                      <input
-                        name={`type-${index}`}
-                        type={'text'}
-                        className='w-32'
-                        defaultValue={property.key}
-                        onChange={(e) => handleOnChangePropertyType(e, index)}
-                      />
+                      <div>
+                        <p className='text-[14px] text-txtSubtle'>Attribute</p>
+                        <input
+                          name={`type-${index}`}
+                          type={'text'}
+                          className='w-32'
+                          defaultValue={property.key}
+                          onChange={(e) => handleOnChangePropertyType(e, index)}
+                        />
+                      </div>
 
-                      <input
-                        name={`name-${index}`}
-                        type={'text'}
-                        className='ml-3 w-32'
-                        defaultValue={property.value}
-                        onChange={(e) => handleOnChangePropertyName(e, index)}
-                      />
+                      <div className='ml-3'>
+                        <p className='text-[14px] text-txtSubtle'>
+                          Description
+                        </p>
+                        <input
+                          name={`name-${index}`}
+                          type={'text'}
+                          className='w-32'
+                          defaultValue={property.value}
+                          onChange={(e) => handleOnChangePropertyName(e, index)}
+                        />
+                      </div>
                       <i
                         className='fa-solid fa-trash cursor-pointer ml-3 text-danger-1/[0.7]'
                         onClick={() => removeProperty(index)}
@@ -1194,7 +1230,7 @@ export default function ProductNFT({ query }) {
               <div className='mt-5'>
                 <button
                   type='button'
-                  className='btn text-primary-900 btn-sm'
+                  className='text-primary-900 cursor-pointer ml-1'
                   onClick={() => addProperty()}
                 >
                   Add more +

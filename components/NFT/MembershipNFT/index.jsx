@@ -1158,7 +1158,7 @@ export default function MembershipNFT({ query }) {
                 <p className='text-textSubtle text-[14px] mb-[16px]'>
                   Add the properties of your NFT below
                 </p>
-                <div className='flex py-3 border-b border-b-divider'>
+                <div className='flex py-3 '>
                   <i className='fa-regular fa-grip-lines'></i>
                   <div className='flex-1 px-3'>
                     <p className='-mt-1'>Add NFT Properties</p>
@@ -1176,7 +1176,62 @@ export default function MembershipNFT({ query }) {
                     )}
                   </>
                 </div>
-                <div className='flex py-3 border-b border-b-divider'>
+
+                <div className='grid grid-cols-1 mt-2 mb-4'>
+                  {isListUpdate && (
+                    <div className='text-center mt-3'>
+                      <i className='fa-solid fa-loader fa-spin text-primary-900'></i>
+                    </div>
+                  )}
+                  {!isListUpdate &&
+                    nft.properties &&
+                    nft.properties.map((property, i) => (
+                      <div key={i}>
+                        {property?.key && property?.value && (
+                          <div key={i}>
+                            <div className='flex items-center gap-4 mb-2'>
+                              <div>
+                                <p className='text-[14px] text-txtSubtle'>
+                                  Attribute
+                                </p>
+                                <input
+                                  name={`preview-type-${i}`}
+                                  type={'text'}
+                                  className='w-32 bg-gray-200 disabled:cursor-not-allowed'
+                                  defaultValue={property.key}
+                                  disabled={true}
+                                />
+                              </div>
+                              <div>
+                                <p className='text-[14px] text-txtSubtle'>
+                                  Description
+                                </p>
+                                <input
+                                  name={`preview-name-${i}`}
+                                  type={'text'}
+                                  className=' w-32 bg-gray-200 disabled:cursor-not-allowed'
+                                  defaultValue={property.value}
+                                  disabled={true}
+                                />
+                              </div>
+                              <>
+                                {!isPreview && (
+                                  <i
+                                    className='cursor-pointer fa-solid fa-trash text-danger-1/[0.7]'
+                                    onClick={() => {
+                                      removePropertyOfTier(nft, i);
+                                    }}
+                                  ></i>
+                                )}
+                              </>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                </div>
+
+                <div className='flex  py-3 border-t border-t-divider border-b border-b-divider'>
                   <p className='text-txtblack text-[18px] font-black'>18+</p>
                   <div className='flex-1 px-3'>
                     <p className='-mt-1'>Sensitive Content</p>
@@ -1211,51 +1266,6 @@ export default function MembershipNFT({ query }) {
                       </label>
                     </div>
                   )}
-                </div>
-                <div className='grid grid-cols-1 mt-2'>
-                  {isListUpdate && (
-                    <div className='text-center mt-3'>
-                      <i className='fa-solid fa-loader fa-spin text-primary-900'></i>
-                    </div>
-                  )}
-                  {!isListUpdate &&
-                    nft.properties &&
-                    nft.properties.map((property, i) => (
-                      <div key={i}>
-                        {property.key && property.value && (
-                          <div key={i}>
-                            <div className='flex items-center mt-3'>
-                              <input
-                                name={`preview-type-${i}`}
-                                type={'text'}
-                                className='w-32 bg-gray-200 disabled:cursor-not-allowed'
-                                defaultValue={property.key}
-                                disabled={true}
-                              />
-
-                              <input
-                                name={`preview-name-${i}`}
-                                type={'text'}
-                                className='ml-4 w-32 bg-gray-200 disabled:cursor-not-allowed'
-                                defaultValue={property.value}
-                                disabled={true}
-                              />
-
-                              <>
-                                {!isPreview && (
-                                  <i
-                                    className='cursor-pointer fa-solid fa-trash text-danger-1/[0.7] ml-3'
-                                    onClick={() => {
-                                      removePropertyOfTier(nft, i);
-                                    }}
-                                  ></i>
-                                )}
-                              </>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    ))}
                 </div>
               </div>
 
@@ -1346,21 +1356,27 @@ export default function MembershipNFT({ query }) {
               propertyList.map((property, index) => (
                 <div key={index}>
                   <div className='flex items-center mt-3'>
-                    <input
-                      name={`type-${index}`}
-                      type={'text'}
-                      className='w-32'
-                      defaultValue={property.key}
-                      onChange={(e) => handleOnChangePropertyType(e, index)}
-                    />
+                    <div>
+                      <p className='text-[14px] text-txtSubtle'>Attribute</p>
+                      <input
+                        name={`type-${index}`}
+                        type={'text'}
+                        className='w-32'
+                        defaultValue={property.key}
+                        onChange={(e) => handleOnChangePropertyType(e, index)}
+                      />
+                    </div>
 
-                    <input
-                      name={`name-${index}`}
-                      type={'text'}
-                      className='ml-3 w-32'
-                      defaultValue={property.value}
-                      onChange={(e) => handleOnChangePropertyName(e, index)}
-                    />
+                    <div className='ml-3'>
+                      <p className='text-[14px] text-txtSubtle'>Description</p>
+                      <input
+                        name={`name-${index}`}
+                        type={'text'}
+                        className=' w-32'
+                        defaultValue={property.value}
+                        onChange={(e) => handleOnChangePropertyName(e, index)}
+                      />
+                    </div>
 
                     {propertyList.length > 1 && (
                       <i
@@ -1374,7 +1390,7 @@ export default function MembershipNFT({ query }) {
 
             <div className='mt-5'>
               <button
-                className='h-[38px] mb-4 mr-4 px-6 py-2 bg-primary-900/[.20] font-black  rounded text-primary-900'
+                className='text-primary-900 cursor-pointer ml-1'
                 onClick={() => addProperty()}
               >
                 Add more +
