@@ -847,7 +847,7 @@ export default function CollectionCreate({ query }) {
             !collectionDeleted ? 'saved' : 'deleted'
           }`}
           subMessage={!collectionDeleted ? "Let's explore the Collection" : ''}
-          buttonText={!collectionDeleted ? 'VIEW Collection' : 'Close'}
+          buttonText={!collectionDeleted ? 'View Collection' : 'Close'}
         />
       )}
       {showErrorModal && (

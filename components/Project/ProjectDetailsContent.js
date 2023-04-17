@@ -207,6 +207,12 @@ function ProjectDetailsContent({ id }) {
                     (!project?.is_owner && tab.label === 'Sales Settings')
                   )
                     return;
+                  if (
+                    !productCollectionList.length &&
+                    !membershipCollectionList.length &&
+                    tab.label === 'Royalty Splitter'
+                  )
+                    return;
 
                   return (
                     <li
