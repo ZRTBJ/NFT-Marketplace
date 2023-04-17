@@ -525,8 +525,22 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const pageTitle = useMemo(() => {
     let paths = router?.pathname?.split('/');
     let queries = router?.query;
-
     let title = queries?.type ? `${queries.type} ${paths[1]}` : paths[1];
+    if (title === 'dao list') {
+      title = 'DAO List';
+    }
+    if (title === 'product nft') {
+      title = 'Product NFT';
+    }
+    if (title === 'membership nft') {
+      title = 'Membership NFT';
+    }
+    if (title === 'tokenGated list') {
+      title = 'Token Gated Project';
+    }
+    if (title === 'nft list') {
+      title = 'Minted NFT List';
+    }
     return title;
   }, [router]);
 

@@ -399,16 +399,10 @@ const ProfileSettingsForm = () => {
                     <div className='label-grey mb-2'>
                       Add the links to your social accounts below
                     </div>
-                    <div className='inline-flex items-center w-full'>
-                      <Image
-                        className='cp mr-2 mb-3'
-                        src={require(`assets/images/profile/social/linkInsta.png`)}
-                        height={24}
-                        width={24}
-                        alt='social logo'
-                      />
+                    <div className='flex items-center w-full mb-3'>
+                      <i className='fa-brands fa-instagram text-[24px] text-primary-900 mr-2'></i>
                       <input
-                        className={`block w-full border border-dark-300 rounded py-3 px-4 mb-3 leading-tight`}
+                        className={`block w-full border border-dark-300 rounded py-3 px-4 leading-tight`}
                         id='link-insta'
                         name='linkInsta'
                         {...register('linkInsta')}
@@ -416,16 +410,10 @@ const ProfileSettingsForm = () => {
                         placeholder='https://'
                       />
                     </div>
-                    <div className='inline-flex items-center w-full'>
-                      <Image
-                        className='cp mr-2 mb-3'
-                        src={require(`assets/images/profile/social/linkReddit.png`)}
-                        height={24}
-                        width={24}
-                        alt='social logo'
-                      />
+                    <div className='flex items-center w-full mb-3'>
+                      <i className='fa-brands fa-reddit text-[24px] text-primary-900 mr-2'></i>
                       <input
-                        className={`block w-full border border-dark-300 rounded py-3 px-4 mb-3 leading-tight`}
+                        className={`block w-full border border-dark-300 rounded py-3 px-4 leading-tight`}
                         id='link-reddit'
                         name='linkReddit'
                         {...register('linkReddit')}
@@ -434,16 +422,10 @@ const ProfileSettingsForm = () => {
                         defaultValue={''}
                       />
                     </div>
-                    <div className='inline-flex items-center w-full'>
-                      <Image
-                        className='cp mr-2 mb-3'
-                        src={require(`assets/images/profile/social/linkTwitter.png`)}
-                        height={24}
-                        width={24}
-                        alt='social logo'
-                      />
+                    <div className='flex items-center w-full mb-3'>
+                      <i className='fa-brands fa-twitter text-[24px] text-primary-900 mr-2'></i>
                       <input
-                        className={`block w-full border border-dark-300 rounded py-3 px-4 mb-3 leading-tight`}
+                        className={`block w-full border border-dark-300 rounded py-3 px-4 leading-tight`}
                         id='link-twitter'
                         name='linkTwitter'
                         {...register('linkTwitter')}
@@ -452,16 +434,10 @@ const ProfileSettingsForm = () => {
                         defaultValue={''}
                       />
                     </div>
-                    <div className='inline-flex items-center w-full'>
-                      <Image
-                        className='cp mr-2 mb-3'
-                        src={require(`assets/images/profile/social/linkFacebook.png`)}
-                        height={24}
-                        width={24}
-                        alt='social logo'
-                      />
+                    <div className='flex items-center w-full mb-3'>
+                      <i className='fa-brands fa-facebook text-[24px] text-primary-900 mr-2'></i>
                       <input
-                        className={`block w-full border border-dark-300 rounded py-3 px-4 mb-3 leading-tight`}
+                        className={`block w-full border border-dark-300 rounded py-3 px-4 leading-tight`}
                         id='link-facebook'
                         name='linkFacebook'
                         {...register('linkFacebook')}
@@ -470,13 +446,10 @@ const ProfileSettingsForm = () => {
                         defaultValue={''}
                       />
                     </div>
-                    <div className='inline-flex items-center w-full'>
-                      <i
-                        className='fa fa-link mr-3 mb-3'
-                        aria-hidden='true'
-                      ></i>
+                    <div className='flex items-center w-full mb-3'>
+                      <i className='fa fa-link text-[20px] text-primary-900 mr-2'></i>
                       <input
-                        className={`block w-full border border-dark-300 rounded py-3 px-4 mb-3 leading-tight`}
+                        className={`block w-full border border-dark-300 rounded py-3 px-4  leading-tight`}
                         id='link-web'
                         name='webLink1'
                         {...register('webLink1')}
@@ -490,14 +463,11 @@ const ProfileSettingsForm = () => {
                       moreWebLink.map((link, index) => (
                         <div
                           key={`more-link-${index}`}
-                          className='inline-flex items-center w-full'
+                          className='inline-flex items-center w-full mb-3'
                         >
-                          <i
-                            className='fa fa-link mr-3 mb-3'
-                            aria-hidden='true'
-                          ></i>
+                          <i className='fa fa-link text-[20px] text-primary-900 mr-2'></i>
                           <input
-                            className={`block w-full border border-dark-300 rounded py-3 px-4 mb-3 leading-tight`}
+                            className={`block w-full border border-dark-300 rounded py-3 px-4  leading-tight`}
                             id={`more-link-web-${index + 1}`}
                             name={link.title}
                             {...register(link.title)}
