@@ -221,7 +221,7 @@ const ProfileSettingsForm = () => {
                     <div className='label-grey mb-2'>
                       Add your profile picture. Set an image (JPEG or PNG) as
                       your profile picture. You can also use an NFT for easy
-                      recognition
+                      recognition (180 x 180, Max 4 MB)
                     </div>
                     <div className='md:flex flex-wrap mb-6'>
                       {profileImage && profileImage.path.length < 1 && (
@@ -258,7 +258,9 @@ const ProfileSettingsForm = () => {
                   {/* cover */}
                   <div className='mb-6'>
                     <div className='label'>Cover Photo</div>
-                    <div className='label-grey mb-2'>Add a cover photo</div>
+                    <div className='label-grey mb-2'>
+                      Add a cover photo (672 x 320, Max 4 MB)
+                    </div>
                     {coverPhoto && coverPhoto.path.length < 1 ? (
                       <FileDragAndDrop
                         maxFiles={1}
@@ -379,7 +381,8 @@ const ProfileSettingsForm = () => {
                   <div className='mb-4'>
                     <div className='label'>Job Description</div>
                     <div className='label-grey'>
-                      Add your role/designated position below
+                      How would you like to express about yourself? (ex.
+                      Creator, Entrepreneur)
                     </div>
                     <input
                       className={`block w-full border border-dark-300 rounded py-3 px-4 mb-3 leading-tight`}
