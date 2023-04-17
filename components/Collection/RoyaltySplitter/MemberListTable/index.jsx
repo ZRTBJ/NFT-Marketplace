@@ -81,6 +81,7 @@ const MemberListTable = ({
     setIsAdded(true);
 
     if (address && percentage) {
+      setAddError('');
       if (
         list.some((data) => data?.user_eoa !== address) ||
         newItems.some((data) => data.eoa !== address)
@@ -122,6 +123,7 @@ const MemberListTable = ({
     setAddress('');
     setPercentage('');
     setIsAdded(false);
+    setAddError('');
   };
 
   const handleDeleteContributor = (id) => {

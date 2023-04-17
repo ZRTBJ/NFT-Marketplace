@@ -313,6 +313,7 @@ const CollectionContent = ({ collectionId, userId }) => {
           setProjectID(resp?.collection?.project_uid);
           if (resp?.collection?.blockchain) {
             getSplitters(resp.collection.blockchain);
+            setBlockchain(resp.collection.blockchain);
           }
           setCollectionNetwork(resp?.collection?.blockchain);
           if (resp?.collection?.project_uid) {
@@ -328,7 +329,10 @@ const CollectionContent = ({ collectionId, userId }) => {
             getSplittedContributors(resp.collection.royalty_splitter.id);
 
             setIsSplitterAdded(true);
+          } else if (!resp?.collection?.royalty_splitter?.id) {
+            setRoyalitySpliterId('');
           }
+
           setCollection(resp.collection);
           setCollectionType(resp.collection.type);
           if (resp?.collection?.assets && resp.collection.assets.length > 0) {
@@ -513,8 +517,10 @@ const CollectionContent = ({ collectionId, userId }) => {
               if (publish) {
                 publishRoyaltySplitter(resp.splitter_id);
               } else {
-                toast.success('Royalty Percentage Updated Successfully');
-
+                setShowGlobalSuccessModal(true);
+                setShowGlobalSuccessModalMessage(
+                  'Royalty Splitter Successfully Saved'
+                );
                 setIsAutoFillLoading(false);
                 setAutoAssign(false);
                 setIsEdit(null);
@@ -724,6 +730,8 @@ const CollectionContent = ({ collectionId, userId }) => {
             await getCollectionDetail();
             setShowGlobalSuccessModalMessage('Successfully Detached Splitter');
             setShowGlobalSuccessModal(true);
+            setSplitterName('');
+            setRoyalityMembers([]);
           } else {
             setShowGlobalErrorModalMessage(resp?.message);
             setShowGlobalErrorModal(true);
@@ -739,10 +747,14 @@ const CollectionContent = ({ collectionId, userId }) => {
           if (res?.code === 0) {
             setOptions([]);
             setSplitter();
+            setCreateNewSplitter(false);
             setIsSplitterAdded(false);
             await getCollectionDetail();
+
             setShowGlobalSuccessModalMessage('Successfully Deleted Splitter');
             setShowGlobalSuccessModal(true);
+            setSplitterName('');
+            setRoyalityMembers([]);
           } else {
             setShowGlobalErrorModalMessage(res?.message);
             setShowGlobalErrorModal(true);
@@ -1887,35 +1899,39 @@ const CollectionContent = ({ collectionId, userId }) => {
                           )}
                           {Collection?.status === 'draft' ||
                           !hasPublishedRoyaltySplitter ? (
-                            <div className='token-gated-dropdown relative'>
-                              <button className='flex transition duration-150 ease-in-out  border-primary-900 border text-primary-900 p-3 font-black text-[14px]'>
-                                &#xFE19;
-                              </button>
-                              <div className='opacity-0 text-[14px] visible token-gated-dropdown-menu transition-all duration-300 transform origin-top-right -translate-y-2 scale-95'>
-                                <div className='absolute z-1 right-0 w-[120px]  origin-top-right mt-3 shadow  bg-white border outline-none'>
-                                  <ul className='py-3  flex flex-col divide-y gap-4'>
-                                    {Collection?.status === 'draft' && (
-                                      <li
-                                        className='cursor-pointer px-4'
-                                        onClick={() => detachSplitter()}
-                                      >
-                                        <i className='fa-solid fa-link-slash mr-2'></i>
-                                        Detach
-                                      </li>
-                                    )}
-                                    {!hasPublishedRoyaltySplitter && (
-                                      <li
-                                        onClick={() => deleteSplitter()}
-                                        className='cursor-pointer px-4 pt-3'
-                                      >
-                                        <i className='fa-solid fa-trash mr-2'></i>
-                                        Delete
-                                      </li>
-                                    )}
-                                  </ul>
+                            <>
+                              {royalitySplitterId && (
+                                <div className='token-gated-dropdown relative'>
+                                  <button className='flex transition duration-150 ease-in-out  border-primary-900 border text-primary-900 p-3 font-black text-[14px]'>
+                                    &#xFE19;
+                                  </button>
+                                  <div className='opacity-0 text-[14px] visible token-gated-dropdown-menu transition-all duration-300 transform origin-top-right -translate-y-2 scale-95'>
+                                    <div className='absolute z-1 right-0 w-[120px]  origin-top-right mt-3 shadow  bg-white border outline-none'>
+                                      <ul className='py-3  flex flex-col divide-y gap-4'>
+                                        {Collection?.status === 'draft' && (
+                                          <li
+                                            className='cursor-pointer px-4'
+                                            onClick={() => detachSplitter()}
+                                          >
+                                            <i className='fa-solid fa-link-slash mr-2'></i>
+                                            Detach
+                                          </li>
+                                        )}
+                                        {!hasPublishedRoyaltySplitter && (
+                                          <li
+                                            onClick={() => deleteSplitter()}
+                                            className='cursor-pointer px-4 pt-3'
+                                          >
+                                            <i className='fa-solid fa-trash mr-2'></i>
+                                            Delete
+                                          </li>
+                                        )}
+                                      </ul>
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
-                            </div>
+                              )}
+                            </>
                           ) : null}
                         </div>
                       </div>
