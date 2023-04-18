@@ -34,26 +34,21 @@ import { Web3Modal } from '@web3modal/react';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import {
   bscTestnet,
-  mainnet,
   polygon,
   polygonMumbai,
   goerli,
   bsc,
+  mainnet,
 } from 'wagmi/chains';
-import WarningBar from 'components/Commons/WarningBar/WarningBar';
-import {
-  ls_GetChainID,
-  ls_GetUserID,
-  ls_GetWalletType,
-} from 'util/ApplicationStorage';
 
 dynamic(() => import('tw-elements'), { ssr: false });
 
 export const persistor = persistStore(store);
 
-let chains = [polygonMumbai, goerli, bscTestnet];
-
-const { provider } = configureChains(chains, [
+let chainsTestnet = [polygonMumbai, goerli, bscTestnet];
+let chainsMainnet = [polygon, bsc, mainnet];
+let supportedChains = Config?.IS_PRODUCTION ? chainsMainnet : chainsTestnet;
+const { provider } = configureChains(supportedChains, [
   w3mProvider({
     projectId: Config.WALLET_CONNECT_PROJECT_ID,
   }),
@@ -64,14 +59,11 @@ const wagmiClient = createClient({
   connectors: w3mConnectors({
     projectId: Config.WALLET_CONNECT_PROJECT_ID,
     version: 2,
-    chains,
-    explorerDenyList: [
-      'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96',
-    ],
+    supportedChains,
   }),
   provider,
 });
-const ethereumClient = new EthereumClient(wagmiClient, chains);
+const ethereumClient = new EthereumClient(wagmiClient, supportedChains);
 
 function MyApp({ Component, pageProps }) {
   const [showSideBar, setShowSideBar] = useState(false);
