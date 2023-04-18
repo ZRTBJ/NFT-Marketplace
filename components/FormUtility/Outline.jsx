@@ -689,7 +689,7 @@ export default function Outline({
             <div className='flex flex-wrap items-center mb-4'>
               <Tooltip></Tooltip>
               <div className='txtblack text-[14px]'>
-                Royalty Percentage (in Percentage)
+                Royalty Percentage % (for secondary market)
               </div>
             </div>
             {!royaltyPercentageDisable && (
