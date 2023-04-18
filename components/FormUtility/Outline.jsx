@@ -180,7 +180,9 @@ export default function Outline({
           <div className='mb-6'>
             <div className='flex flex-wrap items-center mb-4'>
               <Tooltip message='Please select the NFT type you would create.'></Tooltip>
-              <div className='txtblack text-[14px]'>NFT Type</div>
+              <div className='txtblack text-[14px]'>
+                NFT Type<span className='ml-1 text-danger-1 font-bold'>*</span>
+              </div>
             </div>
             <div className='select-wrapper'>
               <select
@@ -188,7 +190,7 @@ export default function Outline({
                 onChange={onCollectionTypeSelect}
                 className='h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3'
               >
-                <option value={'default'} defaultValue>
+                <option value={''} disabled defaultValue>
                   Select Type
                 </option>
                 <option value={'membership'}>Membership</option>
@@ -206,7 +208,10 @@ export default function Outline({
       <div className='mb-6'>
         <div className='flex flex-wrap items-center mb-4'>
           <Tooltip message='This field will not be changeable after publishing on the blockchain.'></Tooltip>
-          <div className='txtblack text-[14px]'>{nameLabel} Name</div>
+          <div className='txtblack text-[14px]'>
+            {nameLabel} Name{' '}
+            <span className='ml-1 text-danger-1 font-bold'>*</span>
+          </div>
         </div>
 
         {!projectNameDisabled && (
@@ -239,7 +244,10 @@ export default function Outline({
         <div className='mb-6' id='daoSymbol'>
           <div className='flex flex-wrap items-center mb-4'>
             <Tooltip></Tooltip>
-            <div className='txtblack text-[14px]'>{symbolTitle}</div>
+            <div className='txtblack text-[14px]'>
+              {symbolTitle}{' '}
+              <span className='ml-1 text-danger-1 font-bold'>*</span>
+            </div>
           </div>
           {!daoSymbolDisable && (
             <>
@@ -488,7 +496,9 @@ export default function Outline({
       {/* category */}
       {showProjectCategory && (
         <div className='mb-6'>
-          <div className='txtblack text-[14px] mb-4 '>Category</div>
+          <div className='txtblack text-[14px] mb-4 '>
+            Category <span className='ml-1 text-danger-1 font-bold'>*</span>
+          </div>
           <div className='select-wrapper'>
             <select
               value={projectCategory}
@@ -517,7 +527,9 @@ export default function Outline({
         <div className='mb-6'>
           <div className='flex flex-wrap items-center mb-4'>
             <Tooltip message='This field will not be changeable after publishing on the blockchain.'></Tooltip>
-            <div className='txtblack text-[14px]'>Blockchain</div>
+            <div className='txtblack text-[14px]'>
+              Blockchain <span className='ml-1 text-danger-1 font-bold'>*</span>
+            </div>
           </div>
           <div className='select-wrapper'>
             <select
@@ -635,7 +647,9 @@ export default function Outline({
         <div className='mb-6'>
           <div className='flex flex-wrap items-center mb-4'>
             <Tooltip message='This field will not be changeable after publishing on the blockchain.'></Tooltip>
-            <div className='txtblack text-[14px]'>Blockchain</div>
+            <div className='txtblack text-[14px]'>
+              Blockchain<span className='ml-1 text-danger-1 font-bold'>*</span>
+            </div>
           </div>
           <div className='select-wrapper'>
             <select
@@ -705,7 +719,9 @@ export default function Outline({
           <div className='mb-6'>
             <div className='flex flex-wrap items-center mb-4'>
               <Tooltip></Tooltip>
-              <div className='txtblack text-[14px]'>Supply</div>
+              <div className='txtblack text-[14px]'>
+                Supply <span className='ml-1 text-danger-1 font-bold'>*</span>
+              </div>
             </div>
             {!supplyDisable && (
               <>
