@@ -625,7 +625,18 @@ export default function ProductNFT({ query }) {
           setValue('externalLink', nft.external_url);
           setValue('description', nft.description);
           setValue('sensitiveContent', nft.sensitive_content);
-          setPropertyList(nft.attributes);
+          if (nft?.attributes?.length === 0) {
+            setPropertyList([
+              {
+                key: '',
+                value: '',
+                value_type: 'string',
+                display_type: 'properties',
+              },
+            ]);
+          } else {
+            setPropertyList(nft?.attributes);
+          }
           setIsNftLoading(false);
         } else {
           setIsNftLoading(false);

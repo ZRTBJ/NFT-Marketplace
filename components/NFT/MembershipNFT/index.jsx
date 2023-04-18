@@ -708,14 +708,14 @@ export default function MembershipNFT({ query }) {
           onTextfieldChange(0, 'externalLink', nft.external_url);
           onTextfieldChange(0, 'description', nft.description);
           try {
-            onTextfieldChange(
-              0,
-              'benefits',
-              JSON.parse(resp.more_info.benefits)
-            );
+            const benefit = JSON.parse(resp.more_info.benefits);
+            if (benefit && benefit?.length === 0) {
+              onTextfieldChange(0, 'benefits', [{ title: '' }]);
+            } else if (benefit && benefit?.length > 0) {
+              onTextfieldChange(0, 'benefits', benefit);
+            }
           } catch (error) {
-            console.log(error);
-            onTextfieldChange(0, 'benefits', []);
+            onTextfieldChange(0, 'benefits', [{ title: '' }]);
           }
           onTextfieldChange(0, 'properties', nft.attributes);
           onTextfieldChange(0, 'sensitiveContent', nft.sensitive_content);
