@@ -90,25 +90,22 @@ const MemberListTable = ({
       ) {
         let userAddress = address;
         setDuplicateAddress(false);
+
         if (!ethers.utils.isAddress(address)) {
           try {
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            userAddress = await provider.resolveName(address);
+            if (walletType === 'metamask') {
+              const provider = new ethers.providers.Web3Provider(
+                window.ethereum
+              );
+              userAddress = await provider.resolveName(address);
+            } else {
+              userAddress = await etherMagicProvider.resolveName(address);
+            }
           } catch (error) {
             setAddError('Invalid Wallet address or ENS');
             return;
           }
         }
-
-      if (!ethers.utils.isAddress(address)) {
-        try {
-          if (walletType === 'metamask') {
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            userAddress = await provider.resolveName(address);
-          } else {
-            userAddress = await etherMagicProvider.resolveName(address);
-          }
-        } catch (error) {
         if (userAddress === null) {
           setAddError('Invalid Wallet address or ENS');
           return;

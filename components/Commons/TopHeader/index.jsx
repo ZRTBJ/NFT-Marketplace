@@ -61,7 +61,6 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     (state) => state.auth
   );
   const timer = useRef(null);
-  const { user, walletAddress, token } = useSelector((state) => state.auth);
   const [userId, setUserId] = useState(user ? user : '');
   const userinfo = useSelector((state) => state.user.userinfo);
   const [messageHistory, setMessageHistory] = useState([]);
