@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
+import Search from 'assets/images/header/search.svg';
 import {
   getUserProjectListById,
   getProjectCategory,
@@ -262,7 +263,7 @@ function List({ query }) {
           <div className='mr-4 flex-1 hidden md:block'>
             <div className='relative'>
               <div className='flex absolute inset-y-0 left-0 items-center pl-4 pointer-events-none'>
-                <i className='fa-regular fa-magnifying-glass text-primary-900 text-lg'></i>
+                <Image src={Search} alt='Search' height={20} width={20} />
               </div>
               <input
                 type='text'
@@ -271,7 +272,7 @@ function List({ query }) {
                   paddingLeft: 40, // todo: use tailwind
                   border: 'none',
                 }}
-                className='text-lg shadow-main w-full rounded-lg placeholder-color-ass-4 h-[72px] text-[#000] pl-[40px]'
+                className='shadow-main w-full rounded-lg h-[72px] text-[14px] pl-[40px]'
                 placeholder='Search by name or title...'
                 onChange={searchProject}
                 value={searchKeyword}
@@ -330,22 +331,26 @@ function List({ query }) {
               </li>
             </ul>
           </div>
-          <button
-            onClick={() => onCreateItems(query?.type)}
-            className='contained-button rounded ml-[10px] !text-white !no-underline'
-          >
-            <i className='fa-solid fa-plus mr-2 font-bold'></i>
-            Create{' '}
-            {query?.type === 'collection'
-              ? 'Collection'
-              : query?.type === 'dao'
-              ? 'DAO'
-              : query?.type === 'tokenGated'
-              ? 'Token Gated Project'
-              : ''}
-          </button>
         </section>
         <section>
+          <div className='text-right mr-4 my-10'>
+            {query?.type !== 'nft' && (
+              <button
+                onClick={() => onCreateItems(query?.type)}
+                className='contained-button py-2'
+              >
+                <i className='fa-solid fa-plus mr-2 font-bold'></i>
+                Create{' '}
+                {query?.type === 'collection'
+                  ? 'Collection'
+                  : query?.type === 'dao'
+                  ? 'DAO'
+                  : query?.type === 'tokenGated'
+                  ? 'Token Gated Project'
+                  : ''}
+              </button>
+            )}
+          </div>
           {isSearching ? (
             <h4 className='ml-4 mb-5'>
               {`Showing result for "${searchKeyword}"`}{' '}

@@ -572,7 +572,7 @@ function ProjectCreateContent({ search }) {
                   <div className='flex flex-wrap items-center mb-[24px]'>
                     <div>
                       <h1 className='text-[28px] font-black mb-[6px]'>
-                        {!projectCreated ? 'Create New' : 'Update'} DAO
+                        {!projectCreated ? 'Create New' : 'Edit'} DAO
                       </h1>
                       <p className='text-[14px] text-textSubtle '>
                         All fields are required to successfully{' '}

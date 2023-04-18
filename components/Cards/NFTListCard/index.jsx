@@ -20,7 +20,7 @@ export default function NFTListCard({ nft }) {
       <Link href={`/minted-nft/${nft?.id}/${nft?.token_id}`}>
         {imageRegex.test(nft?.asset?.asset_type) && (
           <Image
-            className='rounded-xl h-[176px] md:h-[276px] w-full object-cover'
+            className='rounded-xl h-[176px] md:h-[276px] w-full object-cover shadow'
             src={nft?.asset?.path}
             alt='nft'
             width={276}

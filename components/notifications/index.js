@@ -177,10 +177,12 @@ const Notifications = () => {
                     <div className='flex-1 txtblack text-sm'>
                       <div className='flex items-center'>
                         <p className='ml-2 text-[16px]  font-bold border-r-[#000] pr-2 border-r-[1px] capitalize'>
-                          Token Gate File
+                          Gated contents
                         </p>
                         <p className='ml-2 text-[16xpx] md:text-[14px] mt-0'>
-                          {notification?.title}
+                          {notification?.title === 'File uploaded success'
+                            ? 'File uploaded successfully'
+                            : notification?.title}
                         </p>
                       </div>
                     </div>
