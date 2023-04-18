@@ -541,6 +541,14 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     if (title === 'nft list') {
       title = 'Minted NFT List';
     }
+    if (title === 'dao') {
+      title = 'DAO';
+    }
+    if (title === 'minted-nft') {
+      title = 'Minted NFT';
+    }
+    
+      
     return title;
   }, [router]);
 

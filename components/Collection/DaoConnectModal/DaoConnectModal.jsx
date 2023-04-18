@@ -151,7 +151,7 @@ export default function DaoConnectModal({
               className='max-w-[200px] max-h-[200px] rounded block mx-auto mb-2'
             />
             <h3 className='text-center text-txtblack mb-4 !text-[22px]'>
-              Connect Your Dao
+              Connect Your DAO
             </h3>
             <p className='text-sm break-normal px-4 mb-6 md:max-w-[400px] text-center mx-auto'>
               Connect your Collection with Existing DAO or create the new one.
@@ -227,7 +227,7 @@ export default function DaoConnectModal({
                 handleClose(false);
                 onSuccessFullyConnect();
               }}
-              message='Dao Successfully Connected'
+              message='DAO Successfully Connected'
               btnText='Close'
             />
           )}

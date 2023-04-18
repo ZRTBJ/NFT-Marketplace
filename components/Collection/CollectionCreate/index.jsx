@@ -646,11 +646,11 @@ export default function CollectionCreate({ query }) {
                   <div className='flex flex-wrap items-center mb-[24px]'>
                     <div>
                       <h1 className='txtblack text-[28px] font-black mb-[6px]'>
-                        {projectCreated ? 'Update' : 'Create New'} Collection
+                        {projectCreated ? 'Edit' : 'Create New'} Collection
                       </h1>
                       <p className='txtblack text-[14px] text-textSubtle'>
                         Fill the require form to{' '}
-                        {!projectCreated ? 'create ' : 'Update'} collection
+                        {!projectCreated ? 'create ' : 'Edit'} collection
                       </p>
                     </div>
                     {query?.id && !notOwner && !collectionPublished && (

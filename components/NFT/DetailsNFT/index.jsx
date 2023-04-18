@@ -613,7 +613,7 @@ export default function DetailsNFT({ type, id }) {
                 ? nft?.lnft?.description
                 : 'No description found'}
             </p>
-            <h3 className='txtblack mb-4'>Property : Attribute</h3>
+            <h3 className='txtblack mb-4'>Custom Property</h3>
             <div className='flex flex-wrap mb-6 md:max-w-[564px]'>
               {nft?.lnft?.attributes?.length ? (
                 nft?.lnft?.attributes.map((item, index) => (
@@ -634,7 +634,7 @@ export default function DetailsNFT({ type, id }) {
                   </div>
                 ))
               ) : (
-                <p>No attributes to show</p>
+                <p>No property set for this NFT</p>
               )}
             </div>
             {nft?.lnft?.nft_type === 'membership' && (
