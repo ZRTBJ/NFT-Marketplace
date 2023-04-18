@@ -80,10 +80,9 @@ export default function Creator({ project, createMode, settingSaved, userId }) {
         <div className='md:ml-auto'>
           <button
             onClick={() => onSettingClick()}
-            className='py-2 px-4 border  border-divider text-txtblack  font-bold rounded'
+            className='outlined-button w-[120px] text-center !px-0  cursor-pointer font-satoshi-bold'
           >
-            <i className='fa-solid fa-gear mr-2'></i>
-            Accessibility
+            <span className='gradient-text'>Edit</span>
           </button>
           {userId && (
             <>

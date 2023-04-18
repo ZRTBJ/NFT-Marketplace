@@ -32,7 +32,7 @@ import { useRouter } from 'next/router';
 
 const STEPS = [
   { id: 1, label: 'Content' },
-  { id: 2, label: 'Configuration' },
+  { id: 2, label: 'Accessibility' },
   { id: 3, label: 'Review' },
 ];
 

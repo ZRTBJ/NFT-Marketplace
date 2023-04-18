@@ -356,7 +356,7 @@ export default function ContentListTable({
                         className='py-2  border border-primary-900 text-primary-900 font-bold rounded w-[140px]'
                       >
                         <i className='fa-solid fa-screwdriver-wrench mr-2'></i>
-                        Configure
+                        Accessibility
                       </button>
                     </div>
                     <div
@@ -377,7 +377,7 @@ export default function ContentListTable({
                       className='md:hidden py-2  text-center border border-primary-900 text-primary-900 font-bold ml-auto rounded w-[130px]'
                     >
                       <i className='fa-solid fa-screwdriver-wrench mr-2'></i>
-                      Configure
+                      Accessibility
                     </div>
                   </td>
                 </tr>
