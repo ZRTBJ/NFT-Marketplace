@@ -264,24 +264,72 @@ export default function ContentListTable({
                       />
                       <div className='hidden md:block w-[40px]'>
                         {content?.file_type === 'movie' && (
-                          <div className='social-icon-button cursor-pointer w-9 h-9  flex justify-center items-center rounded-md ease-in-out duration-300'>
-                            <i className='fa-solid fa-circle-video gradient-text text-[20px]'></i>
-                          </div>
+                          <>
+                            {content?.thumbnail ? (
+                              <Image
+                                src={content?.thumbnail}
+                                className='h-[36px] w-[36px] object-fit rounded-md'
+                                alt='content thumbnail'
+                                height={36}
+                                width={36}
+                              ></Image>
+                            ) : (
+                              <div className='social-icon-button cursor-pointer w-9 h-9  flex justify-center items-center rounded-md ease-in-out duration-300'>
+                                <i className='fa-solid fa-circle-video gradient-text text-[20px]'></i>
+                              </div>
+                            )}
+                          </>
                         )}
                         {content?.file_type === 'audio' && (
-                          <div className='social-icon-button cursor-pointer w-9 h-9  flex justify-center items-center rounded-md ease-in-out duration-300'>
-                            <i className='fa-solid fa-file-audio gradient-text text-[20px]'></i>
-                          </div>
+                          <>
+                            {content?.thumbnail ? (
+                              <Image
+                                src={content?.thumbnail}
+                                className='h-[36px] w-[36px] object-fit rounded-md'
+                                alt='content thumbnail'
+                                height={36}
+                                width={36}
+                              ></Image>
+                            ) : (
+                              <div className='social-icon-button cursor-pointer w-9 h-9  flex justify-center items-center rounded-md ease-in-out duration-300'>
+                                <i className='fa-solid fa-file-audio gradient-text text-[20px]'></i>
+                              </div>
+                            )}
+                          </>
                         )}
                         {content?.file_type === 'image' && (
-                          <div className='social-icon-button cursor-pointer w-9 h-9  flex justify-center items-center rounded-md ease-in-out duration-300'>
-                            <i className='fa-solid fa-image gradient-text text-[20px]'></i>
-                          </div>
+                          <>
+                            {content?.thumbnail ? (
+                              <Image
+                                src={content?.thumbnail}
+                                className='h-[36px] w-[36px] object-fit rounded-md'
+                                alt='content thumbnail'
+                                height={36}
+                                width={36}
+                              ></Image>
+                            ) : (
+                              <div className='social-icon-button cursor-pointer w-9 h-9  flex justify-center items-center rounded-md ease-in-out duration-300'>
+                                <i className='fa-solid fa-image gradient-text text-[20px]'></i>
+                              </div>
+                            )}
+                          </>
                         )}
                         {content?.file_type === 'other' && (
-                          <div className='social-icon-button cursor-pointer w-9 h-9  flex justify-center items-center rounded-md ease-in-out duration-300'>
-                            <i className='fa-solid fa-file gradient-text text-[20px]'></i>
-                          </div>
+                          <>
+                            {content?.thumbnail ? (
+                              <Image
+                                src={content?.thumbnail}
+                                className='h-[36px] w-[36px] object-fit rounded-md'
+                                alt='content thumbnail'
+                                height={36}
+                                width={36}
+                              ></Image>
+                            ) : (
+                              <div className='social-icon-button cursor-pointer w-9 h-9  flex justify-center items-center rounded-md ease-in-out duration-300'>
+                                <i className='fa-solid fa-file gradient-text text-[20px]'></i>
+                              </div>
+                            )}
+                          </>
                         )}
                       </div>
                       <div>
