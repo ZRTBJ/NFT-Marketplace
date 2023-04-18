@@ -547,8 +547,10 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     if (title === 'minted-nft') {
       title = 'Minted NFT';
     }
-    
-      
+    if (title === 'nft') {
+      title = 'NFT';
+    }
+
     return title;
   }, [router]);
 
