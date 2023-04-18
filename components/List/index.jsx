@@ -233,8 +233,33 @@ function List({ query }) {
             ? 'Token Gated Project List'
             : 'Minted NFT List'}
         </h1> */}
+
+        <div className='mr-4 flex-1 block md:hidden'>
+          <div className='relative'>
+            <div className='flex absolute inset-y-0 left-0 items-center pl-4 pointer-events-none'>
+              <i className='fa-regular fa-magnifying-glass text-primary-900 text-lg'></i>
+            </div>
+            <input
+              type='text'
+              id='default-search'
+              style={{
+                paddingLeft: 40, // todo: use tailwind
+                border: 'none',
+              }}
+              className='text-lg shadow-main w-full rounded-lg placeholder-color-ass-4 h-[72px] text-[#000] pl-[40px]'
+              placeholder='Search by name or title...'
+              onChange={searchProject}
+              value={searchKeyword}
+              onKeyPress={(event) => {
+                if (event.key === 'Enter') {
+                  searchProject(event);
+                }
+              }}
+            />
+          </div>
+        </div>
         <section className='flex px-4 mb-6 mt-6'>
-          <div className='mr-4 flex-1'>
+          <div className='mr-4 flex-1 hidden md:block'>
             <div className='relative'>
               <div className='flex absolute inset-y-0 left-0 items-center pl-4 pointer-events-none'>
                 <i className='fa-regular fa-magnifying-glass text-primary-900 text-lg'></i>
@@ -259,17 +284,17 @@ function List({ query }) {
             </div>
           </div>
 
-          <div className='dropdown relative'>
+          <div className='dropdown relative w-1/2 md:w-auto'>
             <button
-              className='bg-white dropdown-toggle p-4 text-textSubtle font-black font-satoshi-bold rounded-lg shadow-main flex items-center justify-between w-15 md:w-44 h-[72px]'
+              className='bg-white dropdown-toggle p-4 text-textSubtle font-black font-satoshi-bold rounded-lg shadow-main flex items-center justify-between w-full md:w-15 md:w-44 h-[72px]'
               type='button'
               id='dropdownMenuButton1'
               data-bs-toggle='dropdown'
               aria-expanded='false'
             >
-              <span className='hidden md:block'> Sort Of</span>
+              <span className=''> Sort Of</span>
               <i className='fa-solid fa-angle-down hidden md:block'></i>
-              <Image src={Sort} alt='sort' className='block md:hidden' />
+              {/* <Image src={Sort} alt='sort' className='block md:hidden' /> */}
             </button>
 
             <ul
@@ -305,6 +330,20 @@ function List({ query }) {
               </li>
             </ul>
           </div>
+          <button
+            onClick={() => onCreateItems(query?.type)}
+            className='contained-button rounded ml-[10px] !text-white !no-underline'
+          >
+            <i className='fa-solid fa-plus mr-2 font-bold'></i>
+            Create{' '}
+            {query?.type === 'collection'
+              ? 'Collection'
+              : query?.type === 'dao'
+              ? 'DAO'
+              : query?.type === 'tokenGated'
+              ? 'Token Gated Project'
+              : ''}
+          </button>
         </section>
         <section>
           {isSearching ? (

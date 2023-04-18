@@ -14,7 +14,6 @@ import { searchContent } from 'services/User/userService';
 import barImage from 'assets/images/bars.svg';
 import walletImage from 'assets/images/wallet.svg';
 import Logo from 'assets/images/header/logo.svg';
-import AccountChangedModal from './Account/AccountChangedModal';
 import NetworkChangedModal from './Account/NetworkChangedModal';
 import { walletAddressTruncate } from 'util/WalletUtils';
 import ReactPaginate from 'react-paginate';
@@ -25,7 +24,7 @@ import {
   ls_GetChainID,
   ls_GetWalletType,
 } from 'util/ApplicationStorage';
-
+import { setChain } from 'redux/user';
 import { toast } from 'react-toastify';
 import { NETWORKS } from 'config/networks';
 import { logout } from 'redux/auth';
@@ -61,6 +60,8 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const { user, walletAddress, token, wallet } = useSelector(
     (state) => state.auth
   );
+  const timer = useRef(null);
+  const { user, walletAddress, token } = useSelector((state) => state.auth);
   const [userId, setUserId] = useState(user ? user : '');
   const userinfo = useSelector((state) => state.user.userinfo);
   const [messageHistory, setMessageHistory] = useState([]);
@@ -151,15 +152,18 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   }, [userinfo?.id]);
 
   useEffect(() => {
-    if (userinfo?.id) {
-      setDefaultNetwork();
-    } else {
-      setCurrentSelectedNetwork({
-        name: networkList?.[0]?.networkName,
-        value: networkList?.[0]?.network,
-        icon: networkList?.[0]?.icon,
-      });
-    }
+    (async () => {
+      // console.log('userInfo: ', userinfo?.id);
+      if (userinfo?.id) {
+        await setDefaultNetwork();
+      } else {
+        setCurrentSelectedNetwork({
+          name: networkList?.[0]?.networkName,
+          value: networkList?.[0]?.network,
+          icon: networkList?.[0]?.icon,
+        });
+      }
+    })();
   }, [userinfo?.id]);
 
   let networkList = Object.values(NETWORKS);
@@ -512,12 +516,20 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
         page: page,
         keyword: value,
       };
-      searchContent(payload).then((resp) => {
-        if (resp.code === 0) {
-          setSearchItems(resp);
-        }
-        setSearching(false);
-      });
+      if (timer.current) {
+        clearTimeout(timer.current);
+      }
+
+      timer.current = setTimeout(
+        () =>
+          searchContent(payload).then((resp) => {
+            if (resp.code === 0) {
+              setSearchItems(resp);
+            }
+            setSearching(false);
+          }),
+        2000
+      );
     }
   };
 
@@ -564,18 +576,23 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
           value: data?.network,
           icon: data?.icon,
         });
+        await dispatch(setChain(data?.network));
         setIsComponentVisible(false);
       } else {
         setIsComponentVisible(false);
       }
     } catch (err) {
       setIsComponentVisible(false);
+
       return;
     }
   };
 
   return (
-    <header className={`${isNewBg ? 'bg-[#e2ecf0]' : 'bg-[#fff]'}`}>
+    <header
+      className={`${isNewBg ? 'bg-[#e2ecf0]' : 'bg-[#fff]'}`}
+      style={{ position: 'relative', zIndex: '30' }}
+    >
       {/* <AccountChangedModal
         show={showAccountChanged}
         handleClose={() => setShowAccountChanged(false)}
@@ -607,13 +624,16 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
       </div>
       {/* for dekstop */}
       <nav className='pl-5 pr-7 hidden md:block lg:pl-10 lg:pr-12'>
-        <div className='flex justify-between items-center min-h-[71px]'>
+        <div className='flex justify-between items-center min-h-[71px] relative'>
           <div className='flex items-center'>
             <h1 className='!text-[24px] !font-black text-[#000] capitalize'>
               {pageTitle}
             </h1>
           </div>
-          <div className='relative' ref={outsideRef}>
+          <div
+            className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${styles.searchInput}`}
+            ref={outsideRef}
+          >
             <Image
               src={Search}
               alt='Search'
@@ -690,7 +710,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
             <ul
               className={`flex flex-wrap items-center justify-center md:flex-row space-x-4 md:space-x-8 md:text-sm md:font-medium ${
                 userId ? '' : 'sm:py-2'
-              }`}
+              } ${styles.walletContainer}`}
             >
               <li className='relative w-[185px]' ref={ref}>
                 {!currentSelectedNetwork?.name ? (

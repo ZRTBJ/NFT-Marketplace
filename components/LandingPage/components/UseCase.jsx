@@ -21,7 +21,7 @@ export default function UseCase({ data }) {
               style={{ wordBreak: 'break-word' }}
               className='text-black  text-[24px] md:text-[32px] leading-relaxed font-black'
             >
-              Use cases of <br /> {data?.usedFor}
+              Use Cases of <br /> {data?.usedFor}
             </p>
             <p className='break-word text-txtblack'>{data?.text}</p>
           </div>

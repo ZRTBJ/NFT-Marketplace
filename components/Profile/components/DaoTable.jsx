@@ -20,7 +20,7 @@ export default function DaoTable({ tableData, setSwitchNetwork }) {
 
   return (
     <>
-      <div className='flex items-center gap-4 flex-wrap my-3'>
+      <div className='flex items-center gap-4 flex-wrap my-4 md:h-[37px]'>
         <p className='textSubtle-100 text-[20px] font-black '>DAO Community</p>
         <button
           className='contained-button rounded ml-auto !text-white'
@@ -93,7 +93,7 @@ export default function DaoTable({ tableData, setSwitchNetwork }) {
         </div>
         {tableData?.length > 1 && (
           <Link
-            className='md:absolute  md:bottom-[10px] md:left-[50%] md:-translate-x-1/2 md:-translate-y-1/2  block mx-auto w-[100px] text-black font-black text-[14px] '
+            className='md:absolute md:left-[50%] md:-translate-x-1/2 md:-translate-y-1/2 absolute bottom-0  gradient-text-deep-pueple font-black border w-[160px] text-center h-[40px] rounded-lg border-secondary-900 ml-auto mt-2 flex items-center justify-center'
             href={`/list?type=dao`}
           >
             View All <i className=' ml-2 fa-sharp fa-solid fa-arrow-right'></i>

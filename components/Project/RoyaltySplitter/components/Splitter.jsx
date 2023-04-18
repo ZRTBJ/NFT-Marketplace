@@ -31,11 +31,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
 import { ls_GetWalletType } from 'util/ApplicationStorage';
+import { ls_GetChainID } from 'util/ApplicationStorage';
 
 const TABLE_HEADERS = [
-  { id: 0, label: 'Wallet Address' },
-  { id: 1, label: 'Percentage' },
-  { id: 2, label: 'Name' },
+  { id: 0, label: 'Name' },
+  { id: 1, label: 'Wallet Address' },
+  { id: 2, label: 'Percentage' },
   { id: 3, label: 'Role' },
   { id: 4, label: 'Action' },
 ];
@@ -48,6 +49,8 @@ const Splitter = ({
   createSplitterClose,
   splitterId,
   onGetSplitterList,
+  onDraftSave,
+  onDelete,
 }) => {
   const [ShowPercentError, setShowPercentError] = useState(false);
   const [AutoAssign, setAutoAssign] = useState(false);
@@ -77,6 +80,7 @@ const Splitter = ({
   const [splitterAddress, setSplitterAddress] = useState('');
   const [isMembersCreated, setIsMembersCreated] = useState(false);
   let walletType = ls_GetWalletType();
+  const [connectedCollections, setConnectedCollections] = useState([]);
   useEffect(() => {
     if (projectNetwork) {
       setBlockchain(projectNetwork);
@@ -166,6 +170,11 @@ const Splitter = ({
       getSplittedContributors(splitterId);
     }
   }, [splitterId]);
+  useEffect(() => {
+    if (userInfo?.id) {
+      setBlockchain(ls_GetChainID());
+    }
+  }, [userInfo?.id]);
 
   // useEffect(() => {}, [payload]);
 
@@ -217,6 +226,7 @@ const Splitter = ({
           }
           SetPagination(pageList);
         }
+        setConnectedCollections(data?.connected_collections);
       }
     });
   };
@@ -313,15 +323,13 @@ const Splitter = ({
           setIsAutoFillLoading(true);
           updateRoyaltySplitter(formData)
             .then((resp) => {
-              if (resp.code === 0) {
+              if (resp?.code === 0) {
                 if (publish) {
                   publishRoyaltySplitter(resp.splitter_id);
                 } else {
-                  toast.success(
-                    isModal
-                      ? 'Royalty Splitter added Successfully'
-                      : 'Royalty Percentage Updated Successfully'
-                  );
+                  if (!isModal) {
+                    toast.success('Royalty Percentage Updated Successfully');
+                  }
                   setIsAutoFillLoading(false);
                   setAutoAssign(false);
                   setIsEdit(null);
@@ -331,6 +339,7 @@ const Splitter = ({
                   if (isModal) {
                     createSplitterClose();
                     onGetSplitterList();
+                    onDraftSave();
                   }
                 }
               } else {
@@ -662,7 +671,22 @@ const Splitter = ({
               Please add members to save or publish
             </p>
           )}
-          <div className='w-full flex items-center justify-end'>
+          <div className='w-full flex items-center justify-end gap-4'>
+            {splitterId && isModal && !isPublished && (
+              <button
+                onClick={() => {
+                  const data = {
+                    splitterId: splitterId,
+                    connected_collections: connectedCollections,
+                  };
+                  onDelete(data);
+                }}
+                className='px-4 py-3 text-danger-1 border border-danger-1'
+              >
+                <i className='fa-solid fa-trash mr-1'></i>
+                <span>Delete</span>
+              </button>
+            )}
             {((!hasPublishedRoyaltySplitter && !isModal) ||
               (!isPublished && isModal)) && (
               <div>
@@ -671,14 +695,14 @@ const Splitter = ({
                   className='border-primary-900 border text-primary-900 p-3 font-black text-[14px]'
                   // disabled={!royalityMembers.length}
                 >
-                  Save draft
+                  Save Draft
                 </button>
               </div>
             )}
             {((isModal && !isPublished) ||
               (!isModal && !hasPublishedRoyaltySplitter)) && (
               <button
-                className='flex items-center ml-4 border border-primary-100 bg-primary-100 text-primary-900 p-3 font-black text-[14px]'
+                className='flex items-center border border-primary-100 bg-primary-100 text-primary-900 p-3 font-black text-[14px]'
                 onClick={handlePublishSpliter}
                 disabled={isPublishingRoyaltySplitter}
               >

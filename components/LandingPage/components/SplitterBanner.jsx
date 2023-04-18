@@ -44,14 +44,14 @@ export default function SplitterBanner({
               Create Royalty Splitter
             </p>
             <p className='mb-6 text-[14px] break-word'>
-              Create Once and in use any collection
+              Create once and use in any collection
             </p>
             <div className='flex flex-wrap items-center gap-4'>
               <button
                 onClick={() => handelOnClick()}
                 className='gradient-text-deep-pueple font-black border w-[160px] text-center h-[40px] rounded-lg border-secondary-900'
               >
-                Get started
+                Get Started
               </button>
               <a
                 href='https://decir.gitbook.io/whitepaper/royalty-splitter'

@@ -33,7 +33,7 @@ const Modal = ({
     >
       <section
         style={styleObj}
-        className={`${styles.modalMain} bg-white rounded-[25px] relative txtblack`}
+        className={`${styles.modalMain} bg-white rounded-2xl relative txtblack`}
       >
         <div
           className={`${gradientBg ? 'gradient-card-bg' : 'bg-white'} ${

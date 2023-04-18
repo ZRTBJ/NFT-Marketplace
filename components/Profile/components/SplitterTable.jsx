@@ -6,6 +6,9 @@ import { walletAddressTruncate } from 'util/WalletUtils';
 import { NETWORKS } from 'config/networks';
 import Spinner from 'components/Commons/Spinner';
 import { getCurrentNetworkId } from 'util/MetaMask';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCopy } from '@fortawesome/free-solid-svg-icons';
+import { toast } from 'react-toastify';
 
 export default function SplitterTable({
   data,
@@ -22,6 +25,12 @@ export default function SplitterTable({
       setSwitchNetwork(true);
     }
   };
+  const copyToClipboard = (text) => {
+    if (typeof window !== 'undefined') {
+      navigator.clipboard.writeText(text);
+      toast.success(`Link successfully copied`);
+    }
+  };
   return (
     <>
       <div className='pt-20'>
@@ -31,9 +40,9 @@ export default function SplitterTable({
           </p>
           <button
             onClick={handleShowCreateSplitter}
-            className=' gradient-text-deep-pueple font-black border w-[160px] text-center h-[40px] rounded-lg border-secondary-900'
+            className='contained-button rounded !text-white'
           >
-            <i className=' mr-2 fa-solid fa-plus'></i>
+            {/* <i className=' mr-2 fa-solid fa-plus'></i> */}
             Create New
           </button>
         </div>
@@ -42,10 +51,10 @@ export default function SplitterTable({
             <thead className='border-b font-medium border-[#B1C1C8] '>
               <tr>
                 <th scope='col' className='py-3 px-6 text-[#727E83]'>
-                  Network
+                  Splitter Name
                 </th>
                 <th scope='col' className='py-3 px-6 text-[#727E83]'>
-                  Splitter Name
+                  Network
                 </th>
                 <th scope='col' className='py-3 px-6 text-[#727E83]'>
                   Contract Address
@@ -72,6 +81,9 @@ export default function SplitterTable({
                   {data?.map((element, index) => (
                     <tr key={index} className='border-b border-[#B1C1C8]'>
                       <td className='py-4 px-6'>
+                        {element?.name ? element?.name : element?.id}
+                      </td>
+                      <td className='py-4 px-6'>
                         {element?.blockchain ? (
                           <Image
                             src={NETWORKS?.[element?.blockchain]?.icon}
@@ -84,11 +96,8 @@ export default function SplitterTable({
                         )}
                       </td>
                       <td className='py-4 px-6'>
-                        {element?.name ? element?.name : element?.id}
-                      </td>
-                      <td className='py-4 px-6'>
                         {element?.contract_address ? (
-                          <>
+                          <div className='flex items-center'>
                             {' '}
                             <a
                               target='_blank'
@@ -101,7 +110,15 @@ export default function SplitterTable({
                             >
                               {walletAddressTruncate(element.contract_address)}
                             </a>{' '}
-                          </>
+                            <button
+                              onClick={() =>
+                                copyToClipboard(element.contract_address)
+                              }
+                              className='ml-1 w-[32px] h-[32px] rounded-[4px] flex items-center justify-center cursor-pointer text-[#A3D7EF] active:text-black'
+                            >
+                              <FontAwesomeIcon className='' icon={faCopy} />
+                            </button>
+                          </div>
                         ) : (
                           '-'
                         )}
@@ -130,7 +147,7 @@ export default function SplitterTable({
                             onClick={() => {
                               setIsEditSplitter(element?.id);
                             }}
-                            class='fa-solid  text-[18px] fa-pen-to-square cursor-pointer'
+                            className='fa-solid  text-[18px] fa-pen-to-square cursor-pointer'
                           ></i>
                         )}
                       </td>

@@ -93,7 +93,7 @@ function MyApp({ Component, pageProps }) {
     if (walletType === 'metamask') {
       if (userId) {
         if (window?.ethereum) {
-          window?.ethereum?.on('networkChanged', function (networkId) {
+          window?.ethereum?.on('chainChanged', function (networkId) {
             getCurrentNetwork(networkId);
             setCurrentNetwork(networkId);
           });
