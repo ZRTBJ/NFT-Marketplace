@@ -48,6 +48,7 @@ import { event } from 'nextjs-google-analytics';
 import TagManager from 'react-gtm-module';
 import { ls_GetWalletType } from 'util/ApplicationStorage';
 import { useSigner } from 'wagmi';
+import Tooltip from 'components/Commons/Tooltip';
 
 const currency = {
   eth: Eth,
@@ -544,7 +545,7 @@ export default function DetailsNFT({ type, id }) {
                   </a>
                 </p>
               </div>
-              <div className='mt-6'>
+              <div className='mt-6 flex items-center gap-2'>
                 <button
                   disabled={
                     nft?.lnft?.minted_amount >= nft?.lnft?.supply ||
@@ -561,6 +562,10 @@ export default function DetailsNFT({ type, id }) {
                 >
                   {availableSupply > 0 ? 'BUY NOW' : 'SOLD OUT'}
                 </button>
+                {nft?.lnft?.minted_amount >= nft?.lnft?.supply ||
+                  (!nft?.more_info?.currency && (
+                    <Tooltip message='You need publish in order to sell your NFT'></Tooltip>
+                  ))}
               </div>
             </div>
 
@@ -617,7 +622,7 @@ export default function DetailsNFT({ type, id }) {
                 ? nft?.lnft?.description
                 : 'No description found'}
             </p>
-            <h3 className='txtblack mb-4'>Attribute</h3>
+            <h3 className='txtblack mb-4'>Custom Property</h3>
             <div className='flex flex-wrap mb-6 md:max-w-[564px]'>
               {nft?.lnft?.attributes?.length ? (
                 nft?.lnft?.attributes.map((item, index) => (
@@ -638,7 +643,7 @@ export default function DetailsNFT({ type, id }) {
                   </div>
                 ))
               ) : (
-                <p>No attributes to show</p>
+                <p>No property set for this NFT</p>
               )}
             </div>
             {nft?.lnft?.nft_type === 'membership' && (

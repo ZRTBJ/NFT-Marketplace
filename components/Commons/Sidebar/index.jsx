@@ -43,7 +43,7 @@ const MENU_ITEMS = [
   },
   {
     id: 4,
-    label: '🔒 Gated contents',
+    label: '🔒 Gated Contents',
     path: '/list?type=tokenGated&user=true',
     external: false,
     isAuthenticated: true,

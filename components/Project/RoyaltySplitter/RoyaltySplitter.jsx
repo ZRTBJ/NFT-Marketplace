@@ -156,7 +156,8 @@ const RoyaltySplitter = ({ projectNetwork }) => {
                         height={210}
                       />
                       <p className='text-subtitle font-bold'>
-                        No royalty splitter found
+                        Please create collection first and attach royalty
+                        splitter to it
                       </p>
                     </div>
                   </div>

@@ -83,11 +83,11 @@ export default function Creator({ project, createMode, settingSaved, userId }) {
             className='py-2 px-4 border  border-divider text-txtblack  font-bold rounded'
           >
             <i className='fa-solid fa-gear mr-2'></i>
-            Setting
+            Accessibility
           </button>
           {userId && (
             <>
-              <p className='mt-5 mb-3'></p>
+              <p className='mt-5 mb-3 text-[14px]'>Share on Social Media</p>
               <div className='flex items-center gap-y-4 '>
                 <FacebookShareButton url={publicDetailsLink} quote={'NFT'}>
                   <div className='cursor-pointer rounded-[4px] bg-primary-50 h-[35px] w-[35px] flex items-center justify-center mr-2'>

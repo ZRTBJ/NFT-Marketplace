@@ -1098,9 +1098,10 @@ const CollectionContent = ({ collectionId, userId }) => {
                               {Collection?.status === 'draft' && (
                                 <span
                                   onClick={() => setShowDaoConnectModal(true)}
-                                  className='rounded cursor-pointer social-icon-button text-primary-900  md:ml-2 px-2'
+                                  className='py-1 rounded cursor-pointer social-icon-button text-primary-900  md:ml-2 px-2'
                                 >
                                   <i className='fa-solid  fa-pen-to-square '></i>
+                                  Change DAO
                                 </span>
                               )}
                             </p>
@@ -1245,14 +1246,6 @@ const CollectionContent = ({ collectionId, userId }) => {
                     </a>
                   </div>
                 )}
-              {Collection?.is_owner && (
-                <Link
-                  href={`/collection/create/?id=${collectionId}`}
-                  className='ml-4'
-                >
-                  <Image src={editImage} alt='edit' />
-                </Link>
-              )}
             </div>
           </div>
 
@@ -1276,10 +1269,7 @@ const CollectionContent = ({ collectionId, userId }) => {
                   'Please add description to show here'
                 )}
               </div>
-              <div className='mt-6 flex items-center'>
-                {/* <a className='inline-block ml-4 bg-primary-900 bg-opacity-10 p-3 text-primary-900  font-black text-sm leading-4 font-satoshi-bold rounded cursor-pointer  hover:bg-opacity-100 hover:text-white focus:outline-none focus:ring-0 transition duration-150 ease-in-out'>
-                Sales Setting
-              </a> */}
+              <div className='mt-6 flex items-center gap-4'>
                 {Collection?.type === 'product' &&
                   Collection?.is_owner &&
                   Collection?.status != 'published' && (
@@ -1289,19 +1279,11 @@ const CollectionContent = ({ collectionId, userId }) => {
                           ? null
                           : (e) => salesPageModal(e, 'product')
                       }
-                      className='outlined-button ml-0 mr-4 font-satoshi-bold cursor-pointer'
+                      className='mint-button font-satoshi-bold cursor-pointer'
                     >
                       <span>Sales Setting</span>
                     </div>
                   )}
-                {/* {Collection?.is_owner && (
-                  <Link
-                    href={`/collection/create/?id=${collectionId}`}
-                    className='outlined-button ml-4 font-satoshi-bold'
-                  >
-                    <span>Edit Collection</span>
-                  </Link>
-                )} */}
                 {Collection?.status !== 'published' && Collection?.is_owner && (
                   <a
                     onClick={handlePublishModal}
@@ -1309,6 +1291,14 @@ const CollectionContent = ({ collectionId, userId }) => {
                   >
                     Publish
                   </a>
+                )}
+                {Collection?.is_owner && (
+                  <Link
+                    href={`/collection/create/?id=${collectionId}`}
+                    className='outlined-button font-satoshi-bold'
+                  >
+                    <span>Edit Collection</span>
+                  </Link>
                 )}
               </div>
               <div className='flex items-center mt-3'>
@@ -1340,15 +1330,6 @@ const CollectionContent = ({ collectionId, userId }) => {
             </div>
 
             <div className='flex items-start md:items-end flex-col mt-3 justify-center md:justify-end md:w-1/3  md:mt-0'>
-              {/* <div className='gray-linear-gradient-card-bg  ml-0 md:ml-3 rounded-md p-3 px-5 relative w-56'>
-
-                <button
-                  onClick={() => setShowWithdrawModal(true)}
-                  className='mt-2 border-[1px] rounded-[4px] border-primary-900 py-1 px-2 bg-primary-900/[0.08] w-fit text-[12px] text-primary-900 font-bold'
-                >
-                  Withdraw Funds
-                </button>
-              </div> */}
               <div className='gray-linear-gradient-card-bg  ml-0 md:ml-3 rounded-md p-3 px-5 relative w-[330px]'>
                 <div className='flex'>
                   <p className=' text-textSubtle mt-1 text-[14px]'>
