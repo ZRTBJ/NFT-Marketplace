@@ -207,6 +207,21 @@ export default function CollectionCreate({ query }) {
     oldLinks[index].value = url;
     setWebLinks(oldLinks);
   }
+  function addMoreSocialLink() {
+    let oldLinks = [...webLinks];
+    oldLinks.push({
+      title: `customLinks${webLinks?.length + 1}`,
+      icon: 'link',
+      value: '',
+    });
+    setWebLinks(oldLinks);
+  }
+  function deleteSocialLinks(index) {
+    let oldLinks = [...webLinks];
+    oldLinks?.splice(index, 1);
+    setWebLinks(oldLinks);
+  }
+
   // webLinks end
 
   // category start
@@ -406,6 +421,7 @@ export default function CollectionCreate({ query }) {
         pageTitle: 'update_collection',
       },
     });
+    const allWebLinks = [...webLinks];
     let updatePayload = {
       logo: logoPhoto.length > 0 ? logoPhoto[0] : null,
       name: projectName,
@@ -713,6 +729,8 @@ export default function CollectionCreate({ query }) {
                     showWebLinks={showWebLinks}
                     webLinks={webLinks}
                     onSocialLinkChange={onSocialLinkChange}
+                    addMoreSocialLink={addMoreSocialLink}
+                    deleteSocialLinks={deleteSocialLinks}
                     // category
                     showProjectCategory={
                       collectionType === 'right_attach' ? false : true

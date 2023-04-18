@@ -195,6 +195,12 @@ const ProfileSettingsForm = () => {
     }
   };
 
+  const deleteAdditionalLink = (link) => {
+    let oldData = [...moreWebLink];
+    const newData = oldData?.filter((item) => item?.title !== link?.title);
+    setMoreWebLink(newData);
+  };
+
   return (
     /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
     <>
@@ -473,8 +479,11 @@ const ProfileSettingsForm = () => {
                             {...register(link.title)}
                             type='text'
                             placeholder='https://'
-                            defaultValue={'https://'}
                           />
+                          <i
+                            onClick={() => deleteAdditionalLink(link)}
+                            className='fa-solid  fa-trash text-[18px] text-danger-1 ml-2 cursor-pointer'
+                          ></i>
                         </div>
                       ))}
                   </div>

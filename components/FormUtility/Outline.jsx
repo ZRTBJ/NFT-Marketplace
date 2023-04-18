@@ -73,6 +73,8 @@ export default function Outline({
   webLinks,
   onSocialLinkChange,
   showWebLinks,
+  addMoreSocialLink,
+  deleteSocialLinks,
 
   // category
   showProjectCategory,
@@ -465,7 +467,7 @@ export default function Outline({
 
       {/* web Links*/}
       {showWebLinks && (
-        <div className='mb-3'>
+        <div className='mb-6'>
           <div className='txtblack text-[14px] mb-4'>
             Add social media links
           </div>
@@ -487,9 +489,21 @@ export default function Outline({
                     onSocialLinkChange(event.target.value, index)
                   }
                 />
+                {index > 4 && (
+                  <i
+                    onClick={() => deleteSocialLinks(index)}
+                    className='cursor-pointer fa-solid fa-trash text-danger-1 text-[16px] text-primary-900  ml-2 '
+                  ></i>
+                )}
               </div>
             ))}
           </div>
+          <button
+            onClick={() => addMoreSocialLink()}
+            className='text-primary-900 font-black text-[12px] ml-[35px]'
+          >
+            + Add More Link
+          </button>
         </div>
       )}
 
