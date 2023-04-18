@@ -19,7 +19,7 @@ const SettingContent = ({
 
   let mediaPath = linkDetails?.link ? linkDetails.link : content?.media?.path;
   const [audioRef, setAudioref] = useState();
-  console.log(linkDetails);
+
   return (
     <div className='mt-6'>
       <p className='mb-2 text-[14px]'>Media</p>

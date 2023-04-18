@@ -48,13 +48,14 @@ export default function AddNewContent({
   allContents,
   setLinkDetails,
   setIsEditContent,
+  mediaFromDropFile,
 }) {
   const [showConnectModal, setShowConnectModal] = useState(false);
   const [createContent, setCreateContent] = useState(false);
   const [activeStep, setActiveStep] = useState(1);
   const [projectID, setProjectID] = useState('');
   const [content, setContent] = useState({
-    media: null,
+    media: mediaFromDropFile ? mediaFromDropFile : null,
     title: '',
     description: '',
     isExplicit: false,

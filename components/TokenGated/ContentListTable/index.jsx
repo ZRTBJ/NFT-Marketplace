@@ -18,6 +18,7 @@ export default function ContentListTable({
   linkDetails,
   setShowUploadByLinkModal = { setShowUploadByLinkModal },
   setIsEditContent,
+  onContentDrop,
 }) {
   const [project, setProject] = useState(projectInfo);
   const [selectedContents, setSelectedContents] = useState([]);
@@ -30,7 +31,7 @@ export default function ContentListTable({
   const [showConfigureAllModal, setShowConfigureAllModal] = useState(false);
 
   const onDrop = async (e) => {
-    console.log(e, 'dropped');
+    onContentDrop(e);
   };
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
     onDrop,

@@ -44,6 +44,7 @@ export default function TokenGatedContent({ query, createMode }) {
   const [isEditContent, setIsEditContent] = useState(false);
   const [showLimitModal, setShowLimitModal] = useState(false);
   const userInfo = useSelector((state) => state.user.userinfo);
+  const [mediaFromDropFile, setMediaFromDropFile] = useState(null);
 
   const handleLinkDetails = (e) => {
     if (e.target.value.length && e.target.name === 'link') {
@@ -146,6 +147,16 @@ export default function TokenGatedContent({ query, createMode }) {
       });
   };
 
+  const onContentDrop = (file) => {
+    if (file && file[0]) {
+      setMediaFromDropFile({
+        file: file[0],
+        path: URL.createObjectURL(file[0]),
+      });
+      setShowAddNewContentModal(true);
+    }
+  };
+
   useEffect(() => {
     onGetTokenGatedProject();
   }, [payload, userInfo?.id]);
@@ -225,6 +236,7 @@ export default function TokenGatedContent({ query, createMode }) {
             linkDetails={linkDetails}
             setShowUploadByLinkModal={setShowUploadByLinkModal}
             setIsEditContent={setIsEditContent}
+            onContentDrop={onContentDrop}
           ></ContentListTable>
         </div>
       )}
@@ -235,13 +247,18 @@ export default function TokenGatedContent({ query, createMode }) {
             setShowAddNewContentModal(false);
             setLinkDetails({ link: '', type: 'image' });
             setIsEditContent(false);
+            setMediaFromDropFile(null);
           }}
           tokenProjectId={query?.id}
-          onContentAdded={() => onGetTokenGatedProject(query?.id)}
+          onContentAdded={() => {
+            setMediaFromDropFile(null);
+            onGetTokenGatedProject(query?.id);
+          }}
           setShowUploadByLinkModal={setShowUploadByLinkModal}
           linkDetails={linkDetails}
           setIsEditContent={setIsEditContent}
           setLinkDetails={setLinkDetails}
+          mediaFromDropFile={mediaFromDropFile}
         />
       )}
       {showUploadByLinkModal && (
