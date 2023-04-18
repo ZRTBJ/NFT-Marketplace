@@ -2,7 +2,13 @@ import { ethers } from 'ethers';
 import { ls_GetWalletType } from 'util/ApplicationStorage';
 import { etherMagicProvider } from 'config/magicWallet/magic';
 
-export async function createMintNFT(mintContract, url, price, provider) {
+export async function createMintNFT(
+  mintContract,
+  url,
+  price,
+  provider,
+  wagmiSigner
+) {
   let walletType = await ls_GetWalletType();
   let signer;
   if (walletType === 'metamask') {
@@ -12,6 +18,8 @@ export async function createMintNFT(mintContract, url, price, provider) {
     signer = userProvider.getSigner();
   } else if (walletType === 'magicwallet') {
     signer = etherMagicProvider.getSigner();
+  } else if (walletType === 'walletconnect') {
+    signer = wagmiSigner;
   }
 
   const from = await signer.getAddress();

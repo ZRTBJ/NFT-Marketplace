@@ -24,6 +24,7 @@ import { getCollectionDetailsById } from 'services/collection/collectionService'
 import tickIcon from 'assets/images/tick.svg';
 import Config from 'config/config';
 import Image from 'next/image';
+import { useSigner } from 'wagmi';
 
 export default function DetailsNFT({ nftId, tokenId }) {
   const provider = createProvider();
@@ -36,7 +37,7 @@ export default function DetailsNFT({ nftId, tokenId }) {
   const [nftErrorModal, setNftErrorModal] = useState(false);
   const [showRefreshButton, setShowRefreshButton] = useState(false);
   const [collection, setCollection] = useState({});
-
+  const { data: wagmiSigner } = useSigner();
   useEffect(() => {
     if (nftId && tokenId) {
       nftDetails();
@@ -159,7 +160,8 @@ export default function DetailsNFT({ nftId, tokenId }) {
         const result = await updateMetadata(
           erc721CollectionContract,
           provider,
-          config
+          config,
+          wagmiSigner
         );
         if (result) {
           const data = {

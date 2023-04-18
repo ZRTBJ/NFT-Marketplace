@@ -51,7 +51,7 @@ dynamic(() => import('tw-elements'), { ssr: false });
 
 export const persistor = persistStore(store);
 
-let chains = [goerli, polygonMumbai, bscTestnet];
+let chains = [polygonMumbai, goerli, bscTestnet];
 
 const { provider } = configureChains(chains, [
   w3mProvider({
@@ -81,49 +81,13 @@ function MyApp({ Component, pageProps }) {
   const [isContentView, setIsContentView] = useState(false);
   const [isTokenGatedProjectPublicView, setIsTokenGatedProjectPublicView] =
     useState(false);
-  const [currentNetwork, setCurrentNetwork] = useState();
-  const [isWrongNetwork, setIsWrongNetwork] = useState(false);
   const router = useRouter();
-
-  let userId = ls_GetUserID();
-  let walletType = ls_GetWalletType();
-
-  /** Metamask network change detection */
-  useEffect(() => {
-    if (walletType === 'metamask') {
-      if (userId) {
-        if (window?.ethereum) {
-          window?.ethereum?.on('chainChanged', function (networkId) {
-            getCurrentNetwork(networkId);
-            setCurrentNetwork(networkId);
-          });
-        }
-      }
-    }
-  }, [userId]);
 
   useEffect(() => {
     TagManager.initialize({
       gtmId: process.env.NEXT_PUBLIC_GOOGLE_TAG_KEY,
     });
   }, []);
-
-  useEffect(() => {
-    if (userId) {
-      getCurrentNetwork();
-    }
-  }, [userId]);
-
-  const getCurrentNetwork = async (networkId) => {
-    let networkValue = await ls_GetChainID();
-    let id = networkId ? Number(networkId) : Number(networkValue);
-    setCurrentNetwork(id);
-    if (NETWORKS?.[id] && id !== 1) {
-      setIsWrongNetwork(false);
-    } else {
-      setIsWrongNetwork(true);
-    }
-  };
 
   useEffect(() => {
     const use = async () => {
@@ -189,12 +153,6 @@ function MyApp({ Component, pageProps }) {
               ) : (
                 <Auth>
                   <div className='bg-light'>
-                    {userId && isWrongNetwork ? (
-                      <WarningBar
-                        setIsWrongNetwork={setIsWrongNetwork}
-                        currentNetwork={currentNetwork}
-                      />
-                    ) : null}
                     <main
                       className='container min-h-[calc(100vh-71px)]'
                       style={{ width: '100%', maxWidth: '100%' }}

@@ -2,7 +2,7 @@ import { ethers } from 'ethers';
 import { ls_GetWalletType } from 'util/ApplicationStorage';
 import { etherMagicProvider } from 'config/magicWallet/magic';
 
-export async function withdrawFund(mintContract, provider) {
+export async function withdrawFund(mintContract, provider, wagmiSigner) {
   try {
     let walletType = await ls_GetWalletType();
     let signer;
@@ -13,6 +13,8 @@ export async function withdrawFund(mintContract, provider) {
       signer = userProvider.getSigner();
     } else if (walletType === 'magicwallet') {
       signer = etherMagicProvider.getSigner();
+    } else if (walletType === 'walletconnect') {
+      signer = wagmiSigner;
     }
     const contract = mintContract.connect(signer);
     const result = await contract.withdraw();

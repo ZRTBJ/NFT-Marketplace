@@ -25,7 +25,7 @@ async function sendMetaTx(contract, provider, signer, tier) {
   });
 }
 
-export async function setMemNFTPrice(collection, provider, tier) {
+export async function setMemNFTPrice(collection, provider, tier, wagmiSigner) {
   let walletType = await ls_GetWalletType();
   let signer;
   if (walletType === 'metamask') {
@@ -35,6 +35,8 @@ export async function setMemNFTPrice(collection, provider, tier) {
     signer = userProvider.getSigner();
   } else if (walletType === 'magicwallet') {
     signer = etherMagicProvider.getSigner();
+  } else if (walletType === 'walletconnect') {
+    signer = wagmiSigner;
   }
   let output;
   const result = await sendMetaTx(collection, provider, signer, tier);
@@ -52,7 +54,12 @@ export async function setMemNFTPrice(collection, provider, tier) {
   return output;
 }
 
-export async function setMemNFTPriceByCaller(collection, provider, tier) {
+export async function setMemNFTPriceByCaller(
+  collection,
+  provider,
+  tier,
+  wagmiSigner
+) {
   let walletType = await ls_GetWalletType();
   let signer;
   if (walletType === 'metamask') {
@@ -62,6 +69,8 @@ export async function setMemNFTPriceByCaller(collection, provider, tier) {
     signer = userProvider.getSigner();
   } else if (walletType === 'magicwallet') {
     signer = etherMagicProvider.getSigner();
+  } else if (walletType === 'walletconnect') {
+    signer = wagmiSigner;
   }
   const tx = await collection.connect(signer).setTiers(tier);
   const res = await tx.wait();

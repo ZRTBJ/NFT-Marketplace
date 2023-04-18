@@ -27,6 +27,7 @@ const WithdrawModal = ({
   type,
   id,
   getCollectionNewWorth,
+  wagmiSigner,
 }) => {
   const [dollarValue, setDollarValue] = useState();
   const [value, setValue] = useState(0);
@@ -61,8 +62,12 @@ const WithdrawModal = ({
       );
       const response =
         type === 'membership'
-          ? await withdrawMembershipFund(membershipwithdrawContract, provider)
-          : await withdrawFund(withdrawContract, provider);
+          ? await withdrawMembershipFund(
+              membershipwithdrawContract,
+              provider,
+              wagmiSigner
+            )
+          : await withdrawFund(withdrawContract, provider, wagmiSigner);
       if (response?.status === 1) {
         postWithdrawDetails(response?.transactionHash, response?.gasUsed);
       } else {

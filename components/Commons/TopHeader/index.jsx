@@ -41,7 +41,9 @@ import useComponentVisible from 'hooks/useComponentVisible';
 import ReactTooltip from 'react-tooltip';
 import { getUserData } from 'services/User/userService';
 import SignRejectionModal from './Account/SignRejectModal';
-import { useNetwork, useSwitchNetwork } from 'wagmi';
+import { useNetwork, useSwitchNetwork, useDisconnect } from 'wagmi';
+import { useAccount } from 'wagmi';
+import WarningBar from '../WarningBar/WarningBar';
 
 const LANGS = {
   'en|en': 'English',
@@ -53,6 +55,7 @@ const LANGS = {
 };
 
 const Header = ({ handleSidebar, showModal, setShowModal }) => {
+  const { disconnect } = useDisconnect();
   const router = useRouter();
   const dispatch = useDispatch();
   const inputRef = useRef(null);
@@ -93,10 +96,11 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const { ref, setIsComponentVisible, isComponentVisible } =
     useComponentVisible();
   const { chain } = useNetwork();
+  const { address } = useAccount();
+  const [isWrongNetwork, setIsWrongNetwork] = useState(false);
   const { error, isLoading, pendingChainId, switchNetwork } =
     useSwitchNetwork();
   let walletType = ls_GetWalletType();
-
   /** Detect account whenever user come back to site */
   let localAccountAddress = ls_GetWalletAddress();
 
@@ -126,8 +130,14 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
 
   const handleChainDifference = async () => {
     if (window?.ethereum) {
-      const network = await getCurrentNetworkId();
-      let currentNetworkChain = walletType === 'metamask' ? network : chain;
+      let currentNetworkChain;
+      if (walletType === 'metamask') {
+        const network = await getCurrentNetworkId();
+        currentNetworkChain = network;
+      } else if (walletType === 'walletconnect') {
+        currentNetworkChain = chain?.id;
+      }
+
       if (localChainId && currentNetworkChain) {
         if (!networkChangeDetected && localChainId !== currentNetworkChain) {
           setNetworkId(currentNetworkChain);
@@ -141,6 +151,26 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
       }
     }
   };
+
+  useEffect(() => {
+    if (userinfo?.id) {
+      if (walletType === 'walletconnect') {
+        getCurrentNetwork(chain?.id);
+        handleChainDifference();
+        setDefaultNetwork(chain?.id);
+      }
+    }
+  }, [userinfo?.id, chain]);
+
+  useEffect(() => {
+    if (userinfo?.id) {
+      if (walletType === 'walletconnect') {
+        if (address != ls_GetWalletAddress()) {
+          existingAccountChange(null, address);
+        }
+      }
+    }
+  }, [address]);
 
   useEffect(() => {
     if (userinfo?.id) {
@@ -280,6 +310,22 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     return cookies[name];
   }
 
+  useEffect(() => {
+    if (userinfo?.id) {
+      getCurrentNetwork();
+    }
+  }, [userinfo?.id]);
+
+  const getCurrentNetwork = async (networkId) => {
+    let networkValue = await ls_GetChainID();
+    let id = networkId ? Number(networkId) : Number(networkValue);
+    if (NETWORKS?.[id] && id !== 1) {
+      setIsWrongNetwork(false);
+    } else {
+      setIsWrongNetwork(true);
+    }
+  };
+
   /** Metamask network change detection */
   useEffect(() => {
     if (walletType === 'metamask') {
@@ -292,6 +338,8 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
           ls_SetChainID(networkId);
           setDefaultNetwork(networkId);
           if (userinfo?.id) {
+            getCurrentNetwork(networkId);
+            console.log(NETWORKS[networkId]);
             if (NETWORKS[networkId]) {
               toast.success(
                 `Your network got changed to ${NETWORKS?.[networkId]?.networkName}`,
@@ -592,6 +640,12 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
       className={`${isNewBg ? 'bg-[#e2ecf0]' : 'bg-[#fff]'}`}
       style={{ position: 'relative', zIndex: '30' }}
     >
+      {userinfo?.id && isWrongNetwork ? (
+        <WarningBar
+          setIsWrongNetwork={setIsWrongNetwork}
+          currentNetwork={networkId}
+        />
+      ) : null}
       {/* <AccountChangedModal
         show={showAccountChanged}
         handleClose={() => setShowAccountChanged(false)}
@@ -616,6 +670,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
           <WalletDropDownMenu
             handleWalletDropDownClose={showHideUserPopupWallet}
             networkId={networkId}
+            disconnect={disconnect}
           />
         ) : (
           <></>

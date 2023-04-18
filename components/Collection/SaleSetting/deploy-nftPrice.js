@@ -29,7 +29,7 @@ async function sendMetaTx(contract, provider, signer, price) {
   });
 }
 
-export async function setNFTPrice(collection, provider, price) {
+export async function setNFTPrice(collection, provider, price, wagmiSigner) {
   let walletType = await ls_GetWalletType();
   let signer;
   if (walletType === 'metamask') {
@@ -39,6 +39,8 @@ export async function setNFTPrice(collection, provider, price) {
     signer = userProvider.getSigner();
   } else if (walletType === 'magicwallet') {
     signer = etherMagicProvider.getSigner();
+  } else if (walletType === 'walletconnect') {
+    signer = wagmiSigner;
   }
 
   let output;
@@ -57,7 +59,12 @@ export async function setNFTPrice(collection, provider, price) {
   return output;
 }
 
-export async function setNFTPriceByCaller(collection, provider, price) {
+export async function setNFTPriceByCaller(
+  collection,
+  provider,
+  price,
+  wagmiSigner
+) {
   console.log('Sales: ', collection, price);
   let walletType = await ls_GetWalletType();
   let signer;
@@ -68,6 +75,8 @@ export async function setNFTPriceByCaller(collection, provider, price) {
     signer = userProvider.getSigner();
   } else if (walletType === 'magicwallet') {
     signer = etherMagicProvider.getSigner();
+  } else if (walletType === 'walletconnect') {
+    signer = wagmiSigner;
   }
 
   let output;

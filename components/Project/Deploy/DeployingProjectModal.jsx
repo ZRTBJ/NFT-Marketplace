@@ -16,14 +16,13 @@ const DeployingProjectModal = ({
   projectId,
   publishStep,
   errorClose,
+  wagmiSigner,
 }) => {
   const [step, setStep] = useState(publishStep ? publishStep : 0);
   const [statusStep, setStatusStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-
   const provider = createProvider();
   const dao = createInstance(provider);
-
   const gaslessMode = Config.GASLESS_ENABLE;
 
   useEffect(() => {
@@ -95,7 +94,8 @@ const DeployingProjectModal = ({
           provider,
           name,
           treasuryAddress,
-          chainId
+          chainId,
+          wagmiSigner
         );
       } else {
         response = await createDAOByCaller(
@@ -103,9 +103,11 @@ const DeployingProjectModal = ({
           provider,
           name,
           treasuryAddress,
-          chainId
+          chainId,
+          wagmiSigner
         );
       }
+
       let hash;
       if (response?.txReceipt) {
         hash = response.txReceipt;

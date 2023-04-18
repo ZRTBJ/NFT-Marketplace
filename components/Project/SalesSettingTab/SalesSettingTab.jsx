@@ -19,6 +19,7 @@ import SalesPageModal from 'components/Collection/SaleSetting/SalesPageModal';
 import SalesSuccessModal from 'components/Collection/SaleSetting/SalesSuccessModal';
 import emptyStateCommon from 'assets/images/profile/emptyStateCommon.svg';
 import Image from 'next/image';
+import { useSigner } from 'wagmi';
 
 const SalesSettingsTab = ({ projectNetwork }) => {
   const router = useRouter();
@@ -43,6 +44,7 @@ const SalesSettingsTab = ({ projectNetwork }) => {
   const [nftShareURL, setNFTShareURL] = useState('');
   const [showSalesModal, setShowSalesModal] = useState(false);
   const [collection, setCollection] = useState({});
+  const { data: wagmiSigner } = useSigner();
   function handleSortType(order_by) {
     const newPayload = { ...payload };
     newPayload.order_by = order_by;
@@ -368,6 +370,7 @@ const SalesSettingsTab = ({ projectNetwork }) => {
           projectNetwork={projectNetwork}
           setNFTShareURL={setNFTShareURL}
           setMembershipNFTId={setMembershipNFTId}
+          wagmiSigner={wagmiSigner}
         />
       )}
       {toDelete && (

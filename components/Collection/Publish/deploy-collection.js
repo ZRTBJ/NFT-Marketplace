@@ -78,7 +78,8 @@ export async function createCollection(
   provider,
   config,
   type,
-  productPrice
+  productPrice,
+  wagmiSigner
 ) {
   let walletType = await ls_GetWalletType();
   let signer;
@@ -89,6 +90,8 @@ export async function createCollection(
     signer = userProvider.getSigner();
   } else if (walletType === 'magicwallet') {
     signer = etherMagicProvider.getSigner();
+  } else if (walletType === 'walletconnect') {
+    signer = wagmiSigner;
   }
 
   let output;
@@ -117,7 +120,8 @@ export async function createCollectionByCaller(
   collection,
   config,
   type,
-  productPrice
+  productPrice,
+  wagmiSigner
 ) {
   let walletType = await ls_GetWalletType();
   let signer;
@@ -128,6 +132,8 @@ export async function createCollectionByCaller(
     signer = userProvider.getSigner();
   } else if (walletType === 'magicwallet') {
     signer = etherMagicProvider.getSigner();
+  } else if (walletType === 'walletconnect') {
+    signer = wagmiSigner;
   }
   const from = await signer.getAddress();
   console.log('singer: ', from);

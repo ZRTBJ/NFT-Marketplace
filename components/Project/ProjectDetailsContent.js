@@ -20,6 +20,7 @@ import MembershipNFTTab from './MembershipNFTTab/MembershipNFTTab';
 import ProductNFTTab from './ProductNFTTab/ProductNFTTab';
 import { useSelector } from 'react-redux';
 import { ls_GetWalletType } from 'util/ApplicationStorage';
+import { useSigner } from 'wagmi';
 
 const TABS = [
   { id: 1, label: 'Membership NFT' },
@@ -57,6 +58,7 @@ function ProjectDetailsContent({ id }) {
   const [showNetworkHandler, setShowNetworkHandler] = useState(false);
   const userInfo = useSelector((state) => state.user.userinfo);
   let walletType = ls_GetWalletType();
+  const { data: wagmiSigner } = useSigner();
   useEffect(() => {
     if (projectId) {
       projectDetails(projectId);
@@ -292,6 +294,7 @@ function ProjectDetailsContent({ id }) {
               projectId={projectId}
               projectName={project?.name}
               publishStep={publishStep}
+              wagmiSigner={wagmiSigner}
             />
           ) : null}
           {showSuccessModal && (

@@ -162,7 +162,7 @@ const WalletConnectModal = ({
         const userNetwork = await userProvider.getNetwork();
         ls_SetChainID(userNetwork.chainId);
       } else if (wallet === 'walletconnect') {
-        ls_SetChainID(chain);
+        ls_SetChainID(chain?.id);
       } else if (wallet === 'magicwallet') {
         let magicChainId = await etherMagicProvider.getNetwork();
         ls_SetChainID(magicChainId?.chainId);

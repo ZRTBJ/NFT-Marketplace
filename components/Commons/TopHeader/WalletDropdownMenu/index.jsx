@@ -14,8 +14,13 @@ import LanguageChanger from 'components/Commons/LanguageChanger';
 import { ls_GetWalletType } from 'util/ApplicationStorage';
 import { etherMagicProvider } from 'config/magicWallet/magic';
 import { ethers } from 'ethers';
+import { useBalance } from 'wagmi';
 
-const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
+const WalletDropDownMenu = ({
+  handleWalletDropDownClose,
+  networkId,
+  disconnect,
+}) => {
   let router = useRouter();
   const dispatch = useDispatch();
   const { walletAddress, wallet: userWallet } = useSelector(
@@ -31,6 +36,10 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
   const ref = useDetectClickOutside({ onTriggered: handleWalletDropDownClose });
   let walletType = ls_GetWalletType();
+
+  const { data, isError, isLoading } = useBalance({
+    address: walletAddress,
+  });
   function showHideUserPopup() {
     const userDropDown = document.getElementById('userDropDown');
     userDropDown.classList.toggle('hidden');
@@ -43,6 +52,9 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
   function handleLogout() {
     dispatch(logout());
     // showHideUserPopup();
+    if (walletType === 'walletconnect') {
+      disconnect();
+    }
     router.push('/');
     window?.location.reload();
   }
@@ -69,6 +81,8 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
           const balance = await etherMagicProvider.getBalance(walletAddress);
           console.log(balance);
           setBalance(ethers.utils.formatEther(balance));
+        } else if (walletType === 'walletconnect') {
+          setBalance(data?.formatted);
         }
         setIsLoadingBalance(false);
       }
@@ -114,10 +128,10 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
           </div>
 
           <div className='text-textSubtle-200 text-[24px] font-semibold text-center'>
-            {isLoadingBalance && (
+            {(isLoadingBalance || isLoading) && (
               <i className='fa fa-spinner fa-pulse fa-fw'></i>
             )}
-            {!isLoadingBalance && (
+            {(!isLoadingBalance || !isLoading) && (
               <span>
                 {balance && Number(balance)?.toFixed(4)}{' '}
                 {NETWORKS[networkId] ? NETWORKS[networkId].cryto : ''}

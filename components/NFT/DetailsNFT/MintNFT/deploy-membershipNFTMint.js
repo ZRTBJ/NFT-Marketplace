@@ -7,7 +7,8 @@ export async function createMembershipMintNFT(
   url,
   tier,
   provider,
-  value
+  value,
+  wagmiSigner
 ) {
   if (!window.ethereum) throw new Error(`User wallet not found`);
   let walletType = await ls_GetWalletType();
@@ -19,6 +20,8 @@ export async function createMembershipMintNFT(
     signer = userProvider.getSigner();
   } else if (walletType === 'magicwallet') {
     signer = etherMagicProvider.getSigner();
+  } else if (walletType === 'walletconnect') {
+    signer = wagmiSigner;
   }
   const contract = mintContract.connect(signer);
   try {
