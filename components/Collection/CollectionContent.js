@@ -65,7 +65,7 @@ import { NETWORKS } from 'config/networks';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
-import { ls_GetWalletType } from 'util/ApplicationStorage';
+import { ls_GetWalletType, ls_GetChainID } from 'util/ApplicationStorage';
 import audioWeb from 'assets/images/token-gated/audioWeb.svg';
 
 const currency = {
@@ -612,16 +612,21 @@ const CollectionContent = ({ collectionId, userId }) => {
         setShowNetworkHandler(true);
       }
     } else if (walletType === 'magicwallet') {
-      setShowSuccessModal(false);
-      if (Collection?.type === 'product') {
-        if (salesSetupInfo?.price) {
-          setShowPublishModal(true);
-          setIsSalesPrice(false);
+      let chainId = await ls_GetChainID();
+      if (Number(collectionNetwork) === chainId) {
+        setShowSuccessModal(false);
+        if (Collection?.type === 'product') {
+          if (salesSetupInfo?.price) {
+            setShowPublishModal(true);
+            setIsSalesPrice(false);
+          } else {
+            setIsSalesPrice(true);
+          }
         } else {
-          setIsSalesPrice(true);
+          setShowPublishModal(true);
         }
       } else {
-        setShowPublishModal(true);
+        setShowNetworkHandler(true);
       }
     }
   };
@@ -645,14 +650,19 @@ const CollectionContent = ({ collectionId, userId }) => {
           setShowNetworkHandler(true);
         }
       } else if (walletType === 'magicwallet') {
-        let totalPercent = royalityMembers.reduce(
-          (arr, val) => arr + val.royalty_percent,
-          0
-        );
-        if (totalPercent === 100) {
-          setShowPublishRoyaltySpliterConfirmModal(true);
+        let chainId = await ls_GetChainID();
+        if (Number(collectionNetwork) === chainId) {
+          let totalPercent = royalityMembers.reduce(
+            (arr, val) => arr + val.royalty_percent,
+            0
+          );
+          if (totalPercent === 100) {
+            setShowPublishRoyaltySpliterConfirmModal(true);
+          } else {
+            toast.error('Total royalty percent should be 100 %');
+          }
         } else {
-          toast.error('Total royalty percent should be 100 %');
+          setShowNetworkHandler(true);
         }
       }
     }
@@ -696,7 +706,12 @@ const CollectionContent = ({ collectionId, userId }) => {
         setShowNetworkHandler(true);
       }
     } else if (walletType === 'magicwallet') {
-      setShowWithdrawModal(true);
+      let chainId = await ls_GetChainID();
+      if (Number(collectionNetwork) === chainId) {
+        setShowWithdrawModal(true);
+      } else {
+        setShowNetworkHandler(true);
+      }
     }
   };
 

@@ -68,7 +68,7 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
           setBalance(accountBalance);
         } else if (walletType === 'magicwallet') {
           const balance = await etherMagicProvider.getBalance(walletAddress);
-          console.log(balance);
+          console.log(balance, ethers.utils.formatEther(balance));
           setBalance(ethers.utils.formatEther(balance));
         }
         setIsLoadingBalance(false);

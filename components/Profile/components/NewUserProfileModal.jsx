@@ -1,5 +1,5 @@
 import Modal from 'components/Commons/Modal';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { handleNewUser } from 'redux/user';
 import { updateUserInfo } from 'services/User/userService';
@@ -9,7 +9,17 @@ const NewUserProfileModal = () => {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
-  const { isNewUser, userinfo } = useSelector((state) => state.user);
+  const {
+    isNewUser,
+    userinfo,
+    email: userEmail,
+  } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (userEmail) {
+      setEmail(userEmail);
+    }
+  }, [userEmail]);
 
   const handleSubmitData = (e) => {
     e.preventDefault();

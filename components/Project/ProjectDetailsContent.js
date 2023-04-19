@@ -19,7 +19,7 @@ import InfoCard from './InfoCard.jsx';
 import MembershipNFTTab from './MembershipNFTTab/MembershipNFTTab';
 import ProductNFTTab from './ProductNFTTab/ProductNFTTab';
 import { useSelector } from 'react-redux';
-import { ls_GetWalletType } from 'util/ApplicationStorage';
+import { ls_GetChainID, ls_GetWalletType } from 'util/ApplicationStorage';
 
 const TABS = [
   { id: 1, label: 'Membership NFT' },
@@ -147,7 +147,12 @@ function ProjectDetailsContent({ id }) {
 
   const handlePublishModal = async () => {
     if (walletType === 'magicwallet') {
-      setShowPublishModal(true);
+      let chainId = await ls_GetChainID();
+      if (Number(project?.blockchain) === chainId) {
+        setShowPublishModal(true);
+      } else {
+        setShowNetworkHandler(true);
+      }
     } else {
       let networkId = await getCurrentNetworkId();
       if (Number(project?.blockchain) === networkId) {

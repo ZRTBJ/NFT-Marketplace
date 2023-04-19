@@ -392,14 +392,19 @@ const Splitter = ({
           setShowNetworkHandler(true);
         }
       } else if (walletType === 'magicwallet') {
-        let totalPercent = royalityMembers.reduce(
-          (arr, val) => arr + val.royalty_percent,
-          0
-        );
-        if (totalPercent === 100) {
-          setShowPublishRoyaltySpliterConfirmModal(true);
+        let chainId = await ls_GetChainID();
+        if (selectedNetwork === chainId) {
+          let totalPercent = royalityMembers.reduce(
+            (arr, val) => arr + val.royalty_percent,
+            0
+          );
+          if (totalPercent === 100) {
+            setShowPublishRoyaltySpliterConfirmModal(true);
+          } else {
+            toast.error('Total royalty percent should be 100 %');
+          }
         } else {
-          toast.error('Total royalty percent should be 100 %');
+          setShowNetworkHandler(true);
         }
       }
     }

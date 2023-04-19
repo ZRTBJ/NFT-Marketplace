@@ -3,6 +3,7 @@ import Modal from 'components/Commons/Modal';
 import { NETWORKS } from 'config/networks';
 import Image from 'next/image';
 import { handleSwitchNetwork } from 'util/MetaMask';
+import { ls_GetWalletType } from 'util/ApplicationStorage';
 
 export default function NetworkSwitchModal({ show, handleClose }) {
   let networkList = Object.values(NETWORKS);

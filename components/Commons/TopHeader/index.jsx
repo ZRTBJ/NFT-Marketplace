@@ -97,6 +97,13 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   /** Detect account whenever user come back to site */
   let localAccountAddress = ls_GetWalletAddress();
 
+  let networkList = Object.values(NETWORKS);
+
+  let finalList =
+    walletType === 'magicwallet'
+      ? networkList.filter((list) => list.network !== 56 && list.network !== 97)
+      : networkList;
+
   const handleAccountDifference = async () => {
     if (window?.ethereum) {
       const account = await getWalletAccount();
@@ -156,20 +163,18 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
         await setDefaultNetwork();
       } else {
         setCurrentSelectedNetwork({
-          name: networkList?.[0]?.networkName,
-          value: networkList?.[0]?.network,
-          icon: networkList?.[0]?.icon,
+          name: finalList?.[0]?.networkName,
+          value: finalList?.[0]?.network,
+          icon: finalList?.[0]?.icon,
         });
       }
     })();
   }, [userinfo?.id]);
 
-  let networkList = Object.values(NETWORKS);
-
   const setDefaultNetwork = async (networkId) => {
     let networkValue = await ls_GetChainID();
     let id = networkId ? networkId : networkValue;
-    let currentNetwork = await networkList.find(
+    let currentNetwork = await finalList.find(
       (network) => network.network === Number(id)
     );
     setCurrentSelectedNetwork({
@@ -608,6 +613,15 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
       if (data?.network !== currentSelectedNetwork?.value) {
         if (walletType === 'metamask') {
           await handleSwitchNetwork(data.network);
+        } else if (walletType === 'magicwallet') {
+          ls_SetChainID(data?.network);
+          window.location.reload();
+          toast.success(
+            `Your network got changed to ${
+              NETWORKS?.[data?.network]?.networkName
+            }`,
+            { toastId: 'network-change-deduction' }
+          );
         }
         setCurrentSelectedNetwork({
           name: data?.networkName,
@@ -766,23 +780,12 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                       ? ''
                       : 'You have selected/connected with an unsupported network. Please select a supported network from the dropdown'
                   }
-                  onClick={
-                    walletType === 'magicwallet'
-                      ? null
-                      : () => setIsComponentVisible(!isComponentVisible)
-                  }
+                  onClick={() => setIsComponentVisible(!isComponentVisible)}
                   className={`cursor-pointer flex place-items-center rounded-2xl px-3 py-2 border-primary-900 ${
                     currentSelectedNetwork?.name
                       ? 'bg-primary-100'
                       : 'bg-red-100'
                   } `}
-                  style={
-                    walletType === 'magicwallet'
-                      ? {
-                          filter: 'grayscale(1)',
-                        }
-                      : null
-                  }
                 >
                   {currentSelectedNetwork?.icon?.src ? (
                     <Image
@@ -812,7 +815,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                 </div>
                 {isComponentVisible ? (
                   <div className='absolute z-[1000] w-full overflow-hidden rounded-lg shadow-lg'>
-                    {networkList.map((list) => (
+                    {finalList.map((list) => (
                       <div
                         key={list?.network}
                         onClick={() => handleNetworkSelection(list)}

@@ -4,6 +4,7 @@ import {
   setUserLoading,
   handleNewUser,
   setChain,
+  setUserEmail,
 } from './action';
 import { userSlice } from './slice';
 
@@ -14,4 +15,5 @@ export {
   setUserLoading,
   handleNewUser,
   setChain,
+  setUserEmail,
 };

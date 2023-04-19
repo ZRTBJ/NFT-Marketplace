@@ -22,7 +22,7 @@ import DAOList from './components/DAOList';
 import CollectionList from './components/CollectionList';
 import SplitterList from './components/SplitterList';
 import Tabs from './components/Tabs';
-import { ls_GetWalletType } from 'util/ApplicationStorage';
+import { ls_GetWalletType, ls_GetChainID } from 'util/ApplicationStorage';
 
 const ITEMS = {
   dao: {
@@ -231,7 +231,12 @@ export default function TransactionDetailsContent({ query }) {
         setShowNetworkHandler(true);
       }
     } else if (walletType === 'magicwallet') {
-      setShowWithdrawModal(true);
+      let chainId = await ls_GetChainID();
+      if (Number(list?.blockchain) === chainId) {
+        setShowWithdrawModal(true);
+      } else {
+        setShowNetworkHandler(true);
+      }
     }
   };
 
@@ -312,46 +317,51 @@ export default function TransactionDetailsContent({ query }) {
         setShowNetworkHandler(true);
       }
     } else if (walletType === 'magicwallet') {
-      setRoyaltyData(royalty, 'loadingTrue');
-      const payload = {
-        royalty_uid: royalty.royalty_id,
-      };
-      let config = {};
-      let hasConfig = false;
-      await claimRoyalty(payload)
-        .then((res) => {
-          if (res.code === 0) {
-            config = res.config;
-            hasConfig = true;
-          } else {
+      let chainId = await ls_GetChainID();
+      if (Number(royalty.blockchain) === chainId) {
+        setRoyaltyData(royalty, 'loadingTrue');
+        const payload = {
+          royalty_uid: royalty.royalty_id,
+        };
+        let config = {};
+        let hasConfig = false;
+        await claimRoyalty(payload)
+          .then((res) => {
+            if (res.code === 0) {
+              config = res.config;
+              hasConfig = true;
+            } else {
+              setErrorModal(true);
+              setRoyaltyErrormessage(res.message);
+              setRoyaltyData(royalty, 'loadingFalse');
+            }
+          })
+          .catch(() => {
             setErrorModal(true);
-            setRoyaltyErrormessage(res.message);
-            setRoyaltyData(royalty, 'loadingFalse');
-          }
-        })
-        .catch(() => {
-          setErrorModal(true);
-        });
-      if (hasConfig) {
-        const result = await royaltyClaim(provider, config);
-        if (result) {
-          const data = {
-            id: royalty.royalty_id,
-            transaction_hash: result,
-          };
-          await claimRoyaltyWithtnx(data).then((res) => {
-            if (res.function.status === 'success') {
-              setRoyaltyData(royalty, 'loadingFalse');
-              setRoyaltyData(royalty, 'claimButtonDisable');
-              toast.success(
-                `Successfully claimed for  ${royalty.project_name}`
-              );
-            }
-            if (res.function.status === 'failed') {
-              setRoyaltyData(royalty, 'loadingFalse');
-              toast.error(`Failed, ${res.function.message}`);
-            }
           });
+        if (hasConfig) {
+          const result = await royaltyClaim(provider, config);
+          if (result) {
+            const data = {
+              id: royalty.royalty_id,
+              transaction_hash: result,
+            };
+            await claimRoyaltyWithtnx(data).then((res) => {
+              if (res.function.status === 'success') {
+                setRoyaltyData(royalty, 'loadingFalse');
+                setRoyaltyData(royalty, 'claimButtonDisable');
+                toast.success(
+                  `Successfully claimed for  ${royalty.project_name}`
+                );
+              }
+              if (res.function.status === 'failed') {
+                setRoyaltyData(royalty, 'loadingFalse');
+                toast.error(`Failed, ${res.function.message}`);
+              }
+            });
+          }
+        } else {
+          setShowNetworkHandler(true);
         }
       } else {
         // setErrorModal(true);

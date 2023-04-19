@@ -268,15 +268,21 @@ export default function DetailsNFT({ type, id }) {
         return;
       }
       let nftNetwork = await getCurrentNftNetwork();
-      let networkId = await getCurrentNetworkId();
+
       if (walletType === 'metamask') {
+        let networkId = await getCurrentNetworkId();
         if (nftNetwork === networkId) {
           setTransactionModal(true);
         } else {
           setShowNetworkHandler(true);
         }
       } else if (walletType === 'magicwallet') {
-        setTransactionModal(true);
+        let chainId = await ls_GetChainID();
+        if (nftNetwork === chainId) {
+          setTransactionModal(true);
+        } else {
+          setShowNetworkHandler(true);
+        }
       }
     } else {
       setShowModal(true);
