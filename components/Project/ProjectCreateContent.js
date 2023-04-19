@@ -213,6 +213,20 @@ function ProjectCreateContent({ search }) {
     oldLinks[index].value = url;
     setWebLinks(oldLinks);
   }
+  function addMoreSocialLink() {
+    let oldLinks = [...webLinks];
+    oldLinks.push({
+      title: `customLinks${webLinks?.length + 1}`,
+      icon: 'link',
+      value: '',
+    });
+    setWebLinks(oldLinks);
+  }
+  function deleteSocialLinks(index) {
+    let oldLinks = [...webLinks];
+    oldLinks?.splice(index, 1);
+    setWebLinks(oldLinks);
+  }
   // webLinks end
 
   // category start
@@ -630,6 +644,8 @@ function ProjectCreateContent({ search }) {
                     showWebLinks={true}
                     webLinks={webLinks}
                     onSocialLinkChange={onSocialLinkChange}
+                    addMoreSocialLink={addMoreSocialLink}
+                    deleteSocialLinks={deleteSocialLinks}
                     // category
                     showProjectCategory={true}
                     projectCategory={projectCategory}

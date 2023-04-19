@@ -270,27 +270,36 @@ export default function Setting({
                 <p className='font-black text-txtblack text-[22px] mb-4'>
                   Project Settings
                 </p>
-                {/* cover */}
+                {/* icon */}
                 <div className='mb-6'>
-                  <div className='label-grey mb-2'>Add cover photo</div>
+                  <div className='label-grey mb-2'>Add Icon</div>
                   {coverPhoto && coverPhoto.path.length < 1 ? (
-                    <div className='w-full md:max-w-[186px]'>
+                    <div className='w-[131px]'>
                       <FileDragAndDrop
                         maxFiles={1}
-                        height='160px'
+                        height='85px'
+                        width='85px'
+                        rounded={true}
                         onDrop={(e) => coverPhotoSelect(e)}
-                        sizePlaceholder='1300X600'
+                        sizePlaceholder=''
                         maxSize={4000000}
+                        type='logo'
                       />
+                      <div className='text-color-ass-8 text-[12px]  mt-[14px]'>
+                        Add Image/Drag from
+                      </div>
+                      <div className=' text-primary-900 text-[12px] font-bold'>
+                        Computer
+                      </div>
                     </div>
                   ) : (
-                    <div className='relative w-[180px] h-[180px] '>
+                    <div className='relative w-[85px] h-[85px] '>
                       <Image
-                        className='coverPreview block w-[180px] h-[180px] rounded-xl object-cover'
+                        className='coverPreview block w-[85px] h-[85px] rounded-full object-cover'
                         src={coverPhoto.path}
-                        alt="user's cover picture"
-                        width={200}
-                        height={230}
+                        alt='gated icon'
+                        width={85}
+                        height={85}
                         unoptimized={true}
                       />
                       <Image
@@ -348,7 +357,7 @@ export default function Setting({
 
                 {/* photo */}
                 <div className='mb-6'>
-                  <div className='label-grey mb-2'>Add project photo</div>
+                  <div className='label-grey mb-2'>Add Cover Photo</div>
                   {projectPhoto && projectPhoto.path.length < 1 ? (
                     <FileDragAndDrop
                       maxFiles={1}

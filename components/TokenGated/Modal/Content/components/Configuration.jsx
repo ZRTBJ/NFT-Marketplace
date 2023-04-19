@@ -97,7 +97,7 @@ const Configuration = ({
                         aria-expanded='true'
                         aria-controls={`configure-${item.id}`}
                       >
-                        Configuration {item.id}
+                        Accessibility {item.id}
                       </button>
                       {!reviewScreen ? (
                         <Image
@@ -259,7 +259,7 @@ const Configuration = ({
                   configurations.length >= 2 ? () => {} : addConfigurations
                 }
               >
-                Add Configuration
+                Add Accessibility
               </button>
             </div>
           )}

@@ -54,7 +54,7 @@ export default function UserBasicInfo({ userInfo, sncList }) {
             </div>
           </div>
         </div>
-        <div className='flex flex-col gap-4 items-end'>
+        <div className='flex flex-col gap-4 items-end w-full md:max-w-[400px]'>
           <Link href='/profile/settings'>
             <Image
               src={penIcon}
