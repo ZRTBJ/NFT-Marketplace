@@ -59,7 +59,7 @@ const TESTNET = {
     },
   },
   97: {
-    networkName: 'BSC Testnet',
+    networkName: 'BNB Testnet',
     cryto: 'BNB',
     quickNodeURL: process.env.NEXT_PUBLIC_BNBTEST_QUICKNODE_URL,
     value: 'bnb',
@@ -96,7 +96,7 @@ const TESTNET = {
     },
   },
   80001: {
-    networkName: 'Polygon Mumbai',
+    networkName: 'Mumbai',
     cryto: 'MATIC',
     quickNodeURL: process.env.NEXT_PUBLIC_MUMBAI_QUICKNODE_URL,
     value: 'matic',
@@ -138,7 +138,7 @@ const TESTNET = {
 
 const MAINNET = {
   137: {
-    networkName: 'Polygon Mainnet',
+    networkName: 'Polygon',
     crypto: 'MATIC',
     quickNodeURL: process.env.NEXT_PUBLIC_POLYGON_QUICKNODE_URL,
     value: 'matic',
@@ -177,7 +177,7 @@ const MAINNET = {
     },
   },
   1: {
-    networkName: 'Ethereum Mainnet',
+    networkName: 'Ethereum',
     crypto: 'ETH',
     quickNodeURL: process.env.NEXT_PUBLIC_ETHEREUM_QUICKNODE_URL,
     value: 'eth',
@@ -216,7 +216,7 @@ const MAINNET = {
     },
   },
   56: {
-    networkName: 'Binance Smart Chain',
+    networkName: 'BNB Chain',
     cryto: 'BNB',
     quickNodeURL: process.env.NEXT_PUBLIC_BNB_QUICKNODE_URL,
     value: 'bnb',
