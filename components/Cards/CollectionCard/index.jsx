@@ -36,8 +36,8 @@ export default function CollectionCard({ collection }) {
               <Image src={tickSvg} alt='published svg' height={17} width={17} />
             )}
             <p className='text-txtblack truncate text-[18px] font-black'>
-              {collection?.name && collection?.name?.length > 20
-                ? collection?.name.substring(0, 17) + '...'
+              {collection?.name && collection?.name?.length > 16
+                ? collection?.name.substring(0, 14) + '...'
                 : collection?.name}
             </p>
           </div>
