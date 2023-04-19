@@ -19,8 +19,6 @@
     "@sentry/react": "^7.21.1",
     "@sentry/tracing": "^7.21.1",
     "@usedapp/core": "^1.2.2",
-    "@web3modal/ethereum": "^2.2.2",
-    "@web3modal/react": "^2.2.2",
     "accounting": "^0.4.1",
     "axios": "^1.2.0",
     "date-fns": "^2.29.3",
@@ -63,7 +61,6 @@
     "sharp": "^0.31.2",
     "swiper": "^8.4.5",
     "tw-elements": "^1.0.0-alpha12",
-    "wagmi": "^0.12.7",
     "wavesurfer.js": "^6.4.0",
     "web3": "^1.7.4"
   },

@@ -23,7 +23,6 @@ import CollectionList from './components/CollectionList';
 import SplitterList from './components/SplitterList';
 import Tabs from './components/Tabs';
 import { ls_GetWalletType } from 'util/ApplicationStorage';
-import { useSigner } from 'wagmi';
 
 const ITEMS = {
   dao: {
@@ -87,7 +86,7 @@ export default function TransactionDetailsContent({ query }) {
   const [paginationCollection, setPaginationCollection] = useState([]);
   const [paginationSplitter, setPaginationSplitter] = useState([]);
   const provider = createProvider();
-  const { data: wagmiSigner } = useSigner();
+
   let walletType = ls_GetWalletType();
   useEffect(() => {
     setSelectedTab(query?.tab);
@@ -285,7 +284,7 @@ export default function TransactionDetailsContent({ query }) {
             setErrorModal(true);
           });
         if (hasConfig) {
-          const result = await royaltyClaim(provider, config, wagmiSigner);
+          const result = await royaltyClaim(provider, config);
           if (result) {
             const data = {
               id: royalty.royalty_id,
@@ -334,7 +333,7 @@ export default function TransactionDetailsContent({ query }) {
           setErrorModal(true);
         });
       if (hasConfig) {
-        const result = await royaltyClaim(provider, config, wagmiSigner);
+        const result = await royaltyClaim(provider, config);
         if (result) {
           const data = {
             id: royalty.royalty_id,
@@ -380,7 +379,6 @@ export default function TransactionDetailsContent({ query }) {
           contractAddress={collection?.contract_address}
           type={collection?.type}
           getCollectionNewWorth={getCollectionList}
-          wagmiSigner={wagmiSigner}
         />
       )}
       {showDAOClaim && (

@@ -47,7 +47,6 @@ import Image from 'next/image';
 import { event } from 'nextjs-google-analytics';
 import TagManager from 'react-gtm-module';
 import { ls_GetWalletType } from 'util/ApplicationStorage';
-import { useSigner } from 'wagmi';
 import Tooltip from 'components/Commons/Tooltip';
 
 const currency = {
@@ -77,7 +76,6 @@ export default function DetailsNFT({ type, id }) {
   const [usdValue, setUsdValue] = useState();
   const [collection, setCollection] = useState({});
   let walletType = ls_GetWalletType();
-  const { data: wagmiSigner } = useSigner();
   const handleContract = async (config) => {
     try {
       const mintContract = createMintInstance(config.contract, provider);
@@ -95,15 +93,13 @@ export default function DetailsNFT({ type, id }) {
                 config.metadataUrl,
                 id,
                 provider,
-                config.price,
-                wagmiSigner
+                config.price
               )
             : await createMintNFT(
                 mintContract,
                 config.metadataUrl,
                 config.price,
-                provider,
-                wagmiSigner
+                provider
               );
         if (response) {
           setHash(response?.transactionHash);

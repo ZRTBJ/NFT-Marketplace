@@ -17,17 +17,12 @@ import {
   ls_SetChainID,
   ls_SetWalletAddress,
 } from 'util/ApplicationStorage';
-import { NETWORKS } from 'config/networks';
 import WrongNetwork from './components/WrongNetwork';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Lottie from 'react-lottie';
 import lottieJson from 'assets/lottieFiles/circle-loader.json';
-import { useAccount, useSignMessage, useNetwork } from 'wagmi';
-import { useWeb3Modal } from '@web3modal/react';
-import WalletConnect from 'assets/images/wallet-connect.svg';
 import SignRejectionModal from 'components/Commons/TopHeader/Account/SignRejectModal';
-import { goerli } from 'wagmi/chains';
 import { magic, etherMagicProvider } from 'config/magicWallet/magic';
 import { recoverPersonalSignature } from '@metamask/eth-sig-util';
 
@@ -50,15 +45,7 @@ const WalletConnectModal = ({
   const [metamaskConnectAttempt, setMetamaskConnectAttempt] = useState(0);
   const [metamaskAccount, setMetamaskAccount] = useState('');
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
-  const { address: walletAddress, isConnected: isAdded } = useAccount({
-    onConnect,
-  });
-  const { chain } = useNetwork();
 
-  const { isOpen, open, close, setDefaultChain } = useWeb3Modal();
-  const { signMessage, data } = useSignMessage({
-    onSuccess,
-  });
   const [showSignReject, setShowSignReject] = useState(false);
   const defaultOptions = {
     loop: true,
@@ -70,31 +57,6 @@ const WalletConnectModal = ({
   };
   const userinfo = useSelector((state) => state.user.userinfo);
 
-  useEffect(() => {
-    setDefaultChain(goerli);
-  }, []);
-
-  async function onConnect(address) {
-    if (address?.address && address.address?.length > 5) {
-      await handleWalletConnection(address?.address);
-    }
-  }
-
-  // useEffect(() => {
-  //   if (isAdded && walletAddress && walletAddress.length > 5) {
-  //     // handleWalletConnection(walletAddress);
-  //     console.log(1);
-  //   }
-  // }, [isAdded]);
-
-  async function onSuccess(data, variables) {
-    await userLogin(walletAddress?.toLowerCase(), data, 'walletconnect');
-  }
-
-  const handleWalletConnection = async (address) => {
-    setMetamaskAccount(address);
-    await signMessage({ message: MESSAGE });
-  };
   /** Connection to wallet
    * Login mechanism: We let user to login using metamask, then will login to our server to get JWT token.
    * From then , all action will rely on JWT Token.
@@ -161,8 +123,6 @@ const WalletConnectModal = ({
         const userProvider = new ethers.providers.Web3Provider(window.ethereum);
         const userNetwork = await userProvider.getNetwork();
         ls_SetChainID(userNetwork.chainId);
-      } else if (wallet === 'walletconnect') {
-        ls_SetChainID(chain?.id);
       } else if (wallet === 'magicwallet') {
         let magicChainId = await etherMagicProvider.getNetwork();
         ls_SetChainID(magicChainId?.chainId);
@@ -213,14 +173,6 @@ const WalletConnectModal = ({
     setModalKey((pre) => pre + 1);
     setshowMessage(false);
   }
-
-  const handleWalletConnect = async () => {
-    if (isTermsAndConditionsChecked) {
-      await open();
-    } else {
-      setshowMessage(true);
-    }
-  };
 
   const handleMagicConnect = async () => {
     try {
@@ -351,23 +303,6 @@ const WalletConnectModal = ({
                     {/* <div className="ml-auto bg-primary-900 px-2 py-1 text-[10px] rounded-lg font-satoshi-bold font-black text-white">
                   Popular
                 </div> */}
-                  </div>
-                </div>
-                <div
-                  onClick={handleWalletConnect}
-                  className='w-full cursor-pointer  h-[72px] rounded-[12px] block mx-auto px-[14px] bg-[#fff] flex items-center connect-wallet mt-3'
-                >
-                  <div className='flex items-center ml-1'>
-                    <div className='flex items-center'>
-                      <Image
-                        className='h-12 w-12'
-                        src={WalletConnect}
-                        alt='WalletConnect wallet login button'
-                      />
-                      <div className='ml-[10px] font-satoshi-bold font-black text-[24px]'>
-                        <p className='text-[18px]'>Wallet Connect</p>
-                      </div>
-                    </div>
                   </div>
                 </div>
                 <div

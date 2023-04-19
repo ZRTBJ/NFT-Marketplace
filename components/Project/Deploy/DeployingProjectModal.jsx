@@ -16,7 +16,6 @@ const DeployingProjectModal = ({
   projectId,
   publishStep,
   errorClose,
-  wagmiSigner,
 }) => {
   const [step, setStep] = useState(publishStep ? publishStep : 0);
   const [statusStep, setStatusStep] = useState(1);
@@ -94,8 +93,7 @@ const DeployingProjectModal = ({
           provider,
           name,
           treasuryAddress,
-          chainId,
-          wagmiSigner
+          chainId
         );
       } else {
         response = await createDAOByCaller(
@@ -103,8 +101,7 @@ const DeployingProjectModal = ({
           provider,
           name,
           treasuryAddress,
-          chainId,
-          wagmiSigner
+          chainId
         );
       }
 

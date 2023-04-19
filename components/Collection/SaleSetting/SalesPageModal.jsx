@@ -99,7 +99,6 @@ const SalesPageModal = ({
   setNFTShareURL,
   setMembershipNFTId,
   setMemNFTPrice,
-  wagmiSigner,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -255,29 +254,21 @@ const SalesPageModal = ({
                     ? await setMemNFTPrice(
                         membershipPriceContract,
                         provider,
-                        nftId ? tiers : allTiers,
-                        wagmiSigner
+                        nftId ? tiers : allTiers
                       )
-                    : await setNFTPrice(
-                        priceContract,
-                        provider,
-                        data['price'],
-                        wagmiSigner
-                      );
+                    : await setNFTPrice(priceContract, provider, data['price']);
               } else {
                 response =
                   type === 'membership'
                     ? await setMemNFTPriceByCaller(
                         membershipPriceContract,
                         provider,
-                        nftId ? tiers : allTiers,
-                        wagmiSigner
+                        nftId ? tiers : allTiers
                       )
                     : await setNFTPriceByCaller(
                         priceContract,
                         provider,
-                        data['price'],
-                        wagmiSigner
+                        data['price']
                       );
               }
               if (response?.txReceipt) {
@@ -404,29 +395,21 @@ const SalesPageModal = ({
                   ? await setMemNFTPrice(
                       membershipPriceContract,
                       provider,
-                      nftId ? tiers : allTiers,
-                      wagmiSigner
+                      nftId ? tiers : allTiers
                     )
-                  : await setNFTPrice(
-                      priceContract,
-                      provider,
-                      data['price'],
-                      wagmiSigner
-                    );
+                  : await setNFTPrice(priceContract, provider, data['price']);
             } else {
               response =
                 type === 'membership'
                   ? await setMemNFTPriceByCaller(
                       membershipPriceContract,
                       provider,
-                      nftId ? tiers : allTiers,
-                      wagmiSigner
+                      nftId ? tiers : allTiers
                     )
                   : await setNFTPriceByCaller(
                       priceContract,
                       provider,
-                      data['price'],
-                      wagmiSigner
+                      data['price']
                     );
             }
             if (response?.txReceipt) {

@@ -41,7 +41,7 @@ async function sendMetaTx(provider, signer, config) {
   } catch (error) {}
 }
 
-export async function royaltyClaim(provider, config, wagmiSigner) {
+export async function royaltyClaim(provider, config) {
   return new Promise(async (resolve, reject) => {
     try {
       let tnxHash = '';
@@ -55,8 +55,6 @@ export async function royaltyClaim(provider, config, wagmiSigner) {
         signer = userProvider.getSigner();
       } else if (walletType === 'magicwallet') {
         signer = etherMagicProvider.getSigner();
-      } else if (walletType === 'walletconnect') {
-        signer = wagmiSigner;
       }
 
       const result = await sendMetaTx(provider, signer, config);

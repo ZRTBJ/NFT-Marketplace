@@ -24,46 +24,10 @@ import Maintenance from 'components/Commons/Maintenance';
 import { GoogleAnalytics } from 'nextjs-google-analytics';
 import FloatingContactForm from 'components/Commons/FloatingContactForm';
 import TagManager from 'react-gtm-module';
-import { NETWORKS } from 'config/networks';
-import {
-  EthereumClient,
-  w3mConnectors,
-  w3mProvider,
-} from '@web3modal/ethereum';
-import { Web3Modal } from '@web3modal/react';
-import { configureChains, createClient, WagmiConfig } from 'wagmi';
-import {
-  bscTestnet,
-  polygon,
-  polygonMumbai,
-  goerli,
-  bsc,
-  mainnet,
-} from 'wagmi/chains';
 
 dynamic(() => import('tw-elements'), { ssr: false });
 
 export const persistor = persistStore(store);
-
-let chainsTestnet = [polygonMumbai, goerli, bscTestnet];
-let chainsMainnet = [polygon, bsc, mainnet];
-let supportedChains = Config?.IS_PRODUCTION ? chainsMainnet : chainsTestnet;
-const { provider } = configureChains(supportedChains, [
-  w3mProvider({
-    projectId: Config.WALLET_CONNECT_PROJECT_ID,
-  }),
-]);
-
-const wagmiClient = createClient({
-  autoConnect: true,
-  connectors: w3mConnectors({
-    projectId: Config.WALLET_CONNECT_PROJECT_ID,
-    version: 2,
-    supportedChains,
-  }),
-  provider,
-});
-const ethereumClient = new EthereumClient(wagmiClient, supportedChains);
 
 function MyApp({ Component, pageProps }) {
   const [showSideBar, setShowSideBar] = useState(false);
@@ -136,84 +100,74 @@ function MyApp({ Component, pageProps }) {
         src='https://kit.fontawesome.com/6ebe0998e8.js'
         crossorigin='anonymous'
       ></Script>
-      <WagmiConfig client={wagmiClient}>
-        <Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
-            <DAppProvider config={{}}>
-              {isMaintenance ? (
-                <Maintenance />
-              ) : (
-                <Auth>
-                  <div className='bg-light'>
-                    <main
-                      className='container min-h-[calc(100vh-71px)]'
-                      style={{ width: '100%', maxWidth: '100%' }}
-                    >
-                      <div className='flex flex-row'>
-                        {isEmbedView ||
-                        isContentView ||
-                        isTokenGatedProjectPublicView ? null : (
-                          <div className='hidden md:block'>
-                            <Sidebar
-                              setShowModal={setShowModal}
-                              handleToggleSideBar={handleToggleSideBar}
-                            />
-                          </div>
-                        )}
-                        {isEmbedView ||
-                        isContentView ||
-                        isTokenGatedProjectPublicView ? null : (
-                          <div
-                            className={`${
-                              showSideBar
-                                ? 'translate-x-0'
-                                : '-translate-x-full'
-                            } block md:hidden mr-4 absolute z-[100] ease-in-out duration-300`}
-                          >
-                            <Sidebar
-                              setShowModal={setShowModal}
-                              handleToggleSideBar={handleToggleSideBar}
-                            />
-                          </div>
-                        )}
-                        <div className='w-full min-w-[calc(100vw-300px)]'>
-                          {!isEmbedView && (
-                            <Header
-                              handleSidebar={handleToggleSideBar}
-                              setShowModal={setShowModal}
-                              showModal={showModal}
-                            />
-                          )}
-                          <Component {...pageProps} />
-                          {!isEmbedView && <FloatingContactForm />}
-
-                          <ToastContainer
-                            className='impct-toast'
-                            position='top-right'
-                            autoClose={3000}
-                            newestOnTop
-                            closeOnClick
-                            rtl={false}
-                            pauseOnVisibilityChange
-                            draggable={false}
-                            transition={Slide}
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <DAppProvider config={{}}>
+            {isMaintenance ? (
+              <Maintenance />
+            ) : (
+              <Auth>
+                <div className='bg-light'>
+                  <main
+                    className='container min-h-[calc(100vh-71px)]'
+                    style={{ width: '100%', maxWidth: '100%' }}
+                  >
+                    <div className='flex flex-row'>
+                      {isEmbedView ||
+                      isContentView ||
+                      isTokenGatedProjectPublicView ? null : (
+                        <div className='hidden md:block'>
+                          <Sidebar
+                            setShowModal={setShowModal}
+                            handleToggleSideBar={handleToggleSideBar}
                           />
                         </div>
+                      )}
+                      {isEmbedView ||
+                      isContentView ||
+                      isTokenGatedProjectPublicView ? null : (
+                        <div
+                          className={`${
+                            showSideBar ? 'translate-x-0' : '-translate-x-full'
+                          } block md:hidden mr-4 absolute z-[100] ease-in-out duration-300`}
+                        >
+                          <Sidebar
+                            setShowModal={setShowModal}
+                            handleToggleSideBar={handleToggleSideBar}
+                          />
+                        </div>
+                      )}
+                      <div className='w-full min-w-[calc(100vw-300px)]'>
+                        {!isEmbedView && (
+                          <Header
+                            handleSidebar={handleToggleSideBar}
+                            setShowModal={setShowModal}
+                            showModal={showModal}
+                          />
+                        )}
+                        <Component {...pageProps} />
+                        {!isEmbedView && <FloatingContactForm />}
+
+                        <ToastContainer
+                          className='impct-toast'
+                          position='top-right'
+                          autoClose={3000}
+                          newestOnTop
+                          closeOnClick
+                          rtl={false}
+                          pauseOnVisibilityChange
+                          draggable={false}
+                          transition={Slide}
+                        />
                       </div>
-                    </main>
-                  </div>
-                </Auth>
-              )}
-            </DAppProvider>
-          </PersistGate>
-        </Provider>
-      </WagmiConfig>
-      <Web3Modal
-        projectId={Config.WALLET_CONNECT_PROJECT_ID}
-        ethereumClient={ethereumClient}
-        themeMode='light'
-        themeVariables={{ '--w3m-z-index': '110' }}
-      />
+                    </div>
+                  </main>
+                </div>
+              </Auth>
+            )}
+          </DAppProvider>
+        </PersistGate>
+      </Provider>
     </>
   );
 }

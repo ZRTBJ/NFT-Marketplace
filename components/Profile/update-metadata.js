@@ -33,12 +33,7 @@ async function sendMetaTx(contract, provider, signer, nftInfo) {
   } catch (error) {}
 }
 
-export async function updateMetadata(
-  collection,
-  provider,
-  nftInfo,
-  wagmiSigner
-) {
+export async function updateMetadata(collection, provider, nftInfo) {
   return new Promise(async (resolve, reject) => {
     try {
       let tnxHash = '';
@@ -52,8 +47,6 @@ export async function updateMetadata(
         signer = userProvider.getSigner();
       } else if (walletType === 'magicwallet') {
         signer = etherMagicProvider.getSigner();
-      } else if (walletType === 'walletconnect') {
-        signer = wagmiSigner;
       }
       const result = await sendMetaTx(collection, provider, signer, nftInfo);
       if (result) {

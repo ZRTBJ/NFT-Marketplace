@@ -3,18 +3,14 @@ import Modal from 'components/Commons/Modal';
 import { NETWORKS } from 'config/networks';
 import Image from 'next/image';
 import { handleSwitchNetwork } from 'util/MetaMask';
-import { useSwitchNetwork } from 'wagmi';
 
 export default function NetworkSwitchModal({ show, handleClose }) {
   let networkList = Object.values(NETWORKS);
-  const { error, isLoading, pendingChainId, switchNetwork } =
-    useSwitchNetwork();
+
   let walletType = ls_GetWalletType();
   const handleNetworkSelection = async (data) => {
     if (walletType === 'metamask') {
       await handleSwitchNetwork(network);
-    } else if (walletType === 'walletconnect') {
-      await switchNetwork(network);
     }
     handleClose();
   };

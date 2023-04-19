@@ -17,7 +17,6 @@ import {
 } from 'util/MetaMask';
 import { NETWORKS } from 'config/networks';
 import Image from 'next/image';
-import { useSigner } from 'wagmi';
 
 const imageRegex = new RegExp('image');
 
@@ -30,7 +29,6 @@ function EmbedNFT({ type, id }) {
   const [nft, setNft] = useState({});
   const userinfo = useSelector((state) => state.user.userinfo);
   const provider = createProvider();
-  const { data: wagmiSigner } = useSigner();
 
   useEffect(() => {
     if (id) {
@@ -75,15 +73,13 @@ function EmbedNFT({ type, id }) {
                 config.metadataUrl,
                 id,
                 provider,
-                config.price,
-                wagmiSigner
+                config.price
               )
             : await createMintNFT(
                 mintContract,
                 config.metadataUrl,
                 config.price,
-                provider,
-                wagmiSigner
+                provider
               );
         if (response) {
           let data = {

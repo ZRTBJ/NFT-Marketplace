@@ -57,14 +57,7 @@ async function sendMetaTx(
   });
 }
 
-export async function createDAO(
-  dao,
-  provider,
-  name,
-  treasuryAddress,
-  chainId,
-  wagmiSigner
-) {
+export async function createDAO(dao, provider, name, treasuryAddress, chainId) {
   let walletType = await ls_GetWalletType();
   let signer;
   if (walletType === 'metamask') {
@@ -74,8 +67,6 @@ export async function createDAO(
     signer = userProvider.getSigner();
   } else if (walletType === 'magicwallet') {
     signer = etherMagicProvider.getSigner();
-  } else if (walletType === 'walletconnect') {
-    signer = wagmiSigner;
   }
   let output;
   const result = await sendMetaTx(
@@ -105,8 +96,7 @@ export async function createDAOByCaller(
   provider,
   name,
   treasuryAddress,
-  chainId,
-  wagmiSigner
+  chainId
 ) {
   let walletType = await ls_GetWalletType();
   let signer;
@@ -117,8 +107,6 @@ export async function createDAOByCaller(
     signer = userProvider.getSigner();
   } else if (walletType === 'magicwallet') {
     signer = etherMagicProvider.getSigner();
-  } else if (walletType === 'walletconnect') {
-    signer = wagmiSigner;
   }
 
   const from = await signer.getAddress();

@@ -14,13 +14,8 @@ import LanguageChanger from 'components/Commons/LanguageChanger';
 import { ls_GetWalletType } from 'util/ApplicationStorage';
 import { etherMagicProvider } from 'config/magicWallet/magic';
 import { ethers } from 'ethers';
-import { useBalance } from 'wagmi';
 
-const WalletDropDownMenu = ({
-  handleWalletDropDownClose,
-  networkId,
-  disconnect,
-}) => {
+const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
   let router = useRouter();
   const dispatch = useDispatch();
   const { walletAddress, wallet: userWallet } = useSelector(
@@ -37,9 +32,6 @@ const WalletDropDownMenu = ({
   const ref = useDetectClickOutside({ onTriggered: handleWalletDropDownClose });
   let walletType = ls_GetWalletType();
 
-  const { data, isError, isLoading } = useBalance({
-    address: walletAddress,
-  });
   function showHideUserPopup() {
     const userDropDown = document.getElementById('userDropDown');
     userDropDown.classList.toggle('hidden');
@@ -52,9 +44,6 @@ const WalletDropDownMenu = ({
   function handleLogout() {
     dispatch(logout());
     // showHideUserPopup();
-    if (walletType === 'walletconnect') {
-      disconnect();
-    }
     router.push('/');
     window?.location.reload();
   }
@@ -81,8 +70,6 @@ const WalletDropDownMenu = ({
           const balance = await etherMagicProvider.getBalance(walletAddress);
           console.log(balance);
           setBalance(ethers.utils.formatEther(balance));
-        } else if (walletType === 'walletconnect') {
-          setBalance(data?.formatted);
         }
         setIsLoadingBalance(false);
       }
@@ -128,10 +115,10 @@ const WalletDropDownMenu = ({
           </div>
 
           <div className='text-textSubtle-200 text-[24px] font-semibold text-center'>
-            {(isLoadingBalance || isLoading) && (
+            {isLoadingBalance && (
               <i className='fa fa-spinner fa-pulse fa-fw'></i>
             )}
-            {(!isLoadingBalance || !isLoading) && (
+            {!isLoadingBalance && (
               <span>
                 {balance && Number(balance)?.toFixed(4)}{' '}
                 {NETWORKS[networkId] ? NETWORKS[networkId].cryto : ''}

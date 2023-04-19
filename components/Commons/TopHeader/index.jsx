@@ -41,8 +41,6 @@ import useComponentVisible from 'hooks/useComponentVisible';
 import ReactTooltip from 'react-tooltip';
 import { getUserData } from 'services/User/userService';
 import SignRejectionModal from './Account/SignRejectModal';
-import { useNetwork, useSwitchNetwork, useDisconnect } from 'wagmi';
-import { useAccount } from 'wagmi';
 import WarningBar from '../WarningBar/WarningBar';
 
 const LANGS = {
@@ -55,7 +53,6 @@ const LANGS = {
 };
 
 const Header = ({ handleSidebar, showModal, setShowModal }) => {
-  const { disconnect } = useDisconnect();
   const router = useRouter();
   const dispatch = useDispatch();
   const inputRef = useRef(null);
@@ -95,11 +92,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const [showSignReject, setShowSignReject] = useState('');
   const { ref, setIsComponentVisible, isComponentVisible } =
     useComponentVisible();
-  const { chain } = useNetwork();
-  const { address } = useAccount();
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
-  const { error, isLoading, pendingChainId, switchNetwork } =
-    useSwitchNetwork();
   let walletType = ls_GetWalletType();
   /** Detect account whenever user come back to site */
   let localAccountAddress = ls_GetWalletAddress();
@@ -134,8 +127,6 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
       if (walletType === 'metamask') {
         const network = await getCurrentNetworkId();
         currentNetworkChain = network;
-      } else if (walletType === 'walletconnect') {
-        currentNetworkChain = chain?.id;
       }
 
       if (localChainId && currentNetworkChain) {
@@ -144,33 +135,11 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
           ls_SetChainID(currentNetworkChain);
           if (walletType === 'metamask') {
             handleSwitchNetwork(currentNetworkChain);
-          } else if (walletType === 'walletconnect') {
-            switchNetwork(currentNetworkChain);
           }
         }
       }
     }
   };
-
-  useEffect(() => {
-    if (userinfo?.id) {
-      if (walletType === 'walletconnect') {
-        getCurrentNetwork(chain?.id);
-        handleChainDifference();
-        setDefaultNetwork(chain?.id);
-      }
-    }
-  }, [userinfo?.id, chain]);
-
-  useEffect(() => {
-    if (userinfo?.id) {
-      if (walletType === 'walletconnect') {
-        if (address != ls_GetWalletAddress()) {
-          existingAccountChange(null, address);
-        }
-      }
-    }
-  }, [address]);
 
   useEffect(() => {
     if (userinfo?.id) {
@@ -639,8 +608,6 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
       if (data?.network !== currentSelectedNetwork?.value) {
         if (walletType === 'metamask') {
           await handleSwitchNetwork(data.network);
-        } else if (walletType === 'walletconnect') {
-          await switchNetwork(data.network);
         }
         setCurrentSelectedNetwork({
           name: data?.networkName,
@@ -694,7 +661,6 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
           <WalletDropDownMenu
             handleWalletDropDownClose={showHideUserPopupWallet}
             networkId={networkId}
-            disconnect={disconnect}
           />
         ) : (
           <></>

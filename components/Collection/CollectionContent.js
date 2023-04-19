@@ -67,7 +67,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import { ls_GetWalletType } from 'util/ApplicationStorage';
 import audioWeb from 'assets/images/token-gated/audioWeb.svg';
-import { useSigner } from 'wagmi';
 
 const currency = {
   eth: Eth,
@@ -177,7 +176,6 @@ const CollectionContent = ({ collectionId, userId }) => {
   const [showGlobalErrorModalMessage, setShowGlobalErrorModalMessage] =
     useState('');
   let walletType = ls_GetWalletType();
-  const { data: wagmiSigner } = useSigner();
   useEffect(() => {
     if (hasNextPageData) {
       getSplitters(Collection?.blockchain);
@@ -831,7 +829,6 @@ const CollectionContent = ({ collectionId, userId }) => {
             contractAddress={Collection?.contract_address}
             type={Collection?.type}
             getCollectionNewWorth={getCollectionNewWorth}
-            wagmiSigner={wagmiSigner}
           />
         )}
         {ShowPublishModal && (
@@ -933,7 +930,6 @@ const CollectionContent = ({ collectionId, userId }) => {
             collectionType={Collection?.type}
             publishStep={publishStep}
             productPrice={salesSetupInfo?.price}
-            wagmiSigner={wagmiSigner}
           />
         )}
         {showTransferNFT && (
@@ -1985,7 +1981,6 @@ const CollectionContent = ({ collectionId, userId }) => {
             setNFTShareURL={setNFTShareURL}
             setMembershipNFTId={setMembershipNFTId}
             salesSetupInfo={salesSetupInfo}
-            wagmiSigner={wagmiSigner}
           />
         )}
         {showSuccessModal && (

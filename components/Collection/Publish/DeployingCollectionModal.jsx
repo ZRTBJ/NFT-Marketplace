@@ -32,7 +32,6 @@ const DeployingCollectiontModal = ({
   collectionType,
   publishStep,
   productPrice,
-  wagmiSigner,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [statusStep, setStatusStep] = useState(1);
@@ -139,16 +138,14 @@ const DeployingCollectiontModal = ({
           provider,
           config,
           collectionType,
-          productPrice,
-          wagmiSigner
+          productPrice
         );
       } else {
         response = await createCollectionByCaller(
           collectionContract,
           config,
           collectionType,
-          productPrice,
-          wagmiSigner
+          productPrice
         );
       }
       let hash;
