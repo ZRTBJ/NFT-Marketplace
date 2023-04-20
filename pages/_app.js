@@ -24,15 +24,6 @@ import Maintenance from 'components/Commons/Maintenance';
 import { GoogleAnalytics } from 'nextjs-google-analytics';
 import FloatingContactForm from 'components/Commons/FloatingContactForm';
 import TagManager from 'react-gtm-module';
-import { NETWORKS } from 'config/networks';
-import WarningBar from 'components/Commons/WarningBar/WarningBar';
-import {
-  ls_GetChainID,
-  ls_GetUserID,
-  ls_GetWalletAddress,
-} from 'util/ApplicationStorage';
-import { getWalletAccount } from 'util/MetaMask';
-import SignRejectionModal from 'components/Commons/TopHeader/Account/SignRejectModal';
 
 dynamic(() => import('tw-elements'), { ssr: false });
 
@@ -46,64 +37,13 @@ function MyApp({ Component, pageProps }) {
   const [isContentView, setIsContentView] = useState(false);
   const [isTokenGatedProjectPublicView, setIsTokenGatedProjectPublicView] =
     useState(false);
-  const [showSignReject, setShowSignReject] = useState('');
-  const [currentNetwork, setCurrentNetwork] = useState();
-  const [isWrongNetwork, setIsWrongNetwork] = useState(false);
   const router = useRouter();
-
-  let userId = ls_GetUserID();
-  // let localAccountAddress = ls_GetWalletAddress();
-
-  // const handleAccountDifference = async () => {
-  //   const account = await getWalletAccount();
-  //   if (localAccountAddress && account) {
-  //     if (localAccountAddress !== account) {
-  //       if (!showModal) {
-  //         setShowSignReject(account);
-  //       }
-  //     }
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   handleAccountDifference();
-  // });
-
-  /** Metamask network change detection */
-
-  useEffect(() => {
-    if (userId) {
-      if (window?.ethereum) {
-        window?.ethereum?.on('networkChanged', function (networkId) {
-          getCurrentNetwork(networkId);
-          setCurrentNetwork(networkId);
-        });
-      }
-    }
-  }, [userId]);
 
   useEffect(() => {
     TagManager.initialize({
       gtmId: process.env.NEXT_PUBLIC_GOOGLE_TAG_KEY,
     });
   }, []);
-
-  useEffect(() => {
-    if (userId) {
-      getCurrentNetwork();
-    }
-  }, [userId]);
-
-  const getCurrentNetwork = async (networkId) => {
-    let networkValue = await ls_GetChainID();
-    let id = networkId ? Number(networkId) : Number(networkValue);
-    setCurrentNetwork(id);
-    if (NETWORKS?.[id] && id !== 1) {
-      setIsWrongNetwork(false);
-    } else {
-      setIsWrongNetwork(true);
-    }
-  };
 
   useEffect(() => {
     const use = async () => {
@@ -160,7 +100,6 @@ function MyApp({ Component, pageProps }) {
         src='https://kit.fontawesome.com/6ebe0998e8.js'
         crossorigin='anonymous'
       ></Script>
-
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <DAppProvider config={{}}>
@@ -169,12 +108,6 @@ function MyApp({ Component, pageProps }) {
             ) : (
               <Auth>
                 <div className='bg-light'>
-                  {userId && isWrongNetwork ? (
-                    <WarningBar
-                      setIsWrongNetwork={setIsWrongNetwork}
-                      currentNetwork={currentNetwork}
-                    />
-                  ) : null}
                   <main
                     className='container min-h-[calc(100vh-71px)]'
                     style={{ width: '100%', maxWidth: '100%' }}
@@ -214,12 +147,7 @@ function MyApp({ Component, pageProps }) {
                         )}
                         <Component {...pageProps} />
                         {!isEmbedView && <FloatingContactForm />}
-                        {showSignReject && (
-                          <SignRejectionModal
-                            show={showSignReject}
-                            closeModal={() => setShowSignReject(false)}
-                          />
-                        )}
+
                         <ToastContainer
                           className='impct-toast'
                           position='top-right'

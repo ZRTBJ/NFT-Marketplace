@@ -1,8 +1,9 @@
-import { ethers } from "ethers";
-import axios from "axios";
-import * as Forwarder from "config/ABI/forwarder";
-import { NETWORKS } from "config/networks";
-import { ls_GetChainID } from "util/ApplicationStorage";
+import { ethers } from 'ethers';
+import axios from 'axios';
+import * as Forwarder from 'config/ABI/forwarder';
+import { NETWORKS } from 'config/networks';
+import { ls_GetChainID, ls_GetWalletType } from 'util/ApplicationStorage';
+import { etherMagicProvider } from 'config/magicWallet/magic';
 
 class RequestSigner {
   constructor(payload) {
@@ -74,27 +75,27 @@ class RequestSigner {
     return {
       types: {
         EIP712Domain: [
-          { name: "name", type: "string" },
-          { name: "version", type: "string" },
-          { name: "chainId", type: "uint256" },
-          { name: "verifyingContract", type: "address" },
+          { name: 'name', type: 'string' },
+          { name: 'version', type: 'string' },
+          { name: 'chainId', type: 'uint256' },
+          { name: 'verifyingContract', type: 'address' },
         ],
         ForwardRequest: [
-          { name: "from", type: "address" },
-          { name: "to", type: "address" },
-          { name: "value", type: "uint256" },
-          { name: "gas", type: "uint256" },
-          { name: "nonce", type: "uint256" },
-          { name: "data", type: "bytes" },
+          { name: 'from', type: 'address' },
+          { name: 'to', type: 'address' },
+          { name: 'value', type: 'uint256' },
+          { name: 'gas', type: 'uint256' },
+          { name: 'nonce', type: 'uint256' },
+          { name: 'data', type: 'bytes' },
         ],
       },
       domain: {
         chainId,
-        name: "MinimalForwarder",
-        version: "0.0.1",
+        name: 'MinimalForwarder',
+        version: '0.0.1',
         verifyingContract: this._forwarder.address,
       },
-      primaryType: "ForwardRequest",
+      primaryType: 'ForwardRequest',
       message: this.request,
     };
   }
@@ -103,7 +104,7 @@ class RequestSigner {
     try {
       const signData = await this._createForwarderData();
       this.signature = await this._signer.provider.send(
-        "eth_signTypedData_v4",
+        'eth_signTypedData_v4',
         [this._from, JSON.stringify(signData)]
       );
     } catch (err) {
@@ -114,14 +115,19 @@ class RequestSigner {
 
 export default function useSendTransaction() {
   const getProvider = async () => {
-    if (!window.ethereum) {
-      throw new Error(`User wallet not found`);
+    let walletType = await ls_GetWalletType();
+    if (walletType === 'metamask') {
+      if (!window.ethereum) {
+        throw new Error(`User wallet not found`);
+      }
+
+      await window.ethereum.enable();
+      const newProvider = new ethers.providers.Web3Provider(window.ethereum);
+
+      return newProvider;
+    } else {
+      return etherMagicProvider;
     }
-
-    await window.ethereum.enable();
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-
-    return provider;
   };
 
   const signRequest = async (payload) => {
@@ -152,11 +158,11 @@ export default function useSendTransaction() {
       signature,
     });
 
-    if (response.status === "success") {
+    if (response.status === 'success') {
       const transaction = JSON.parse(response.result);
       return transaction;
     } else {
-      throw new Error("Error publishing splitter: " + response.message);
+      throw new Error('Error publishing splitter: ' + response.message);
     }
   };
 

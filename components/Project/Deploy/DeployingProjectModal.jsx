@@ -20,10 +20,8 @@ const DeployingProjectModal = ({
   const [step, setStep] = useState(publishStep ? publishStep : 0);
   const [statusStep, setStatusStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-
   const provider = createProvider();
   const dao = createInstance(provider);
-
   const gaslessMode = Config.GASLESS_ENABLE;
 
   useEffect(() => {
@@ -106,6 +104,7 @@ const DeployingProjectModal = ({
           chainId
         );
       }
+
       let hash;
       if (response?.txReceipt) {
         hash = response.txReceipt;

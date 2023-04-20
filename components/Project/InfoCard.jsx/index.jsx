@@ -111,7 +111,7 @@ const InfoCard = ({
             <div className={`flex mt-4 mb-4 md:mb-0`}>
               {project?.is_owner && (
                 <>
-                  {project?.project_status === 'published' ? (
+                  {project?.status === 'published' ? (
                     <>
                       <button
                         onClick={() => setShowTransferFundModal(true)}

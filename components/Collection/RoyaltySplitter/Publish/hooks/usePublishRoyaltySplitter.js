@@ -4,11 +4,12 @@ import * as collectionService from 'services/collection/collectionService';
 import * as RoyaltySplitter from 'config/ABI/genericProxyFactory';
 import useSendTransaction from './useSendTransaction';
 import { NETWORKS } from 'config/networks';
-import { ls_GetChainID } from 'util/ApplicationStorage';
+import { ls_GetChainID, ls_GetWalletType } from 'util/ApplicationStorage';
 import { event } from 'nextjs-google-analytics';
 import Config from 'config/config';
 import TagManager from 'react-gtm-module';
 import web3 from 'web3';
+import { etherMagicProvider } from 'config/magicWallet/magic';
 
 export default function usePublishRoyaltySplitter(payload = {}) {
   const {
@@ -36,14 +37,20 @@ export default function usePublishRoyaltySplitter(payload = {}) {
   const gaslessMode = Config.GASLESS_ENABLE;
 
   const getProvider = async () => {
-    if (!window.ethereum) {
-      throw new Error(`User wallet not found`);
-    }
+    let walletType = await ls_GetWalletType();
+    if (walletType === 'metamask') {
+      if (!window.ethereum) {
+        throw new Error(`User wallet not found`);
+      }
 
-    await window.ethereum.enable();
-    const newProvider = new ethers.providers.Web3Provider(window.ethereum);
-    const userNetwork = await newProvider.getNetwork();
-    return newProvider;
+      await window.ethereum.enable();
+      const newProvider = new ethers.providers.Web3Provider(window.ethereum);
+      const userNetwork = await newProvider.getNetwork();
+
+      return newProvider;
+    } else {
+      return etherMagicProvider;
+    }
   };
 
   useEffect(() => {

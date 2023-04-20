@@ -36,7 +36,6 @@ export default function DetailsNFT({ nftId, tokenId }) {
   const [nftErrorModal, setNftErrorModal] = useState(false);
   const [showRefreshButton, setShowRefreshButton] = useState(false);
   const [collection, setCollection] = useState({});
-
   useEffect(() => {
     if (nftId && tokenId) {
       nftDetails();

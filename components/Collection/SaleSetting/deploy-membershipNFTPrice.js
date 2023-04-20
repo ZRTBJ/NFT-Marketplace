@@ -2,7 +2,8 @@ import { ethers } from 'ethers';
 import { createInstance } from 'config/ABI/forwarder';
 import { signMetaTxRequest } from 'util/smartcontract/signer';
 import { NETWORKS } from 'config/networks';
-import { ls_GetChainID } from 'util/ApplicationStorage';
+import { ls_GetChainID, ls_GetWalletType } from 'util/ApplicationStorage';
+import { etherMagicProvider } from 'config/magicWallet/magic';
 
 async function sendMetaTx(contract, provider, signer, tier) {
   const forwarder = createInstance(provider);
@@ -25,12 +26,16 @@ async function sendMetaTx(contract, provider, signer, tier) {
 }
 
 export async function setMemNFTPrice(collection, provider, tier) {
-  if (!window.ethereum) throw new Error(`User wallet not found`);
-
-  await window.ethereum.enable();
-  const userProvider = new ethers.providers.Web3Provider(window.ethereum);
-
-  const signer = userProvider.getSigner();
+  let walletType = await ls_GetWalletType();
+  let signer;
+  if (walletType === 'metamask') {
+    if (!window.ethereum) throw new Error(`User wallet not found`);
+    await window.ethereum.enable();
+    const userProvider = new ethers.providers.Web3Provider(window.ethereum);
+    signer = userProvider.getSigner();
+  } else if (walletType === 'magicwallet') {
+    signer = etherMagicProvider.getSigner();
+  }
   let output;
   const result = await sendMetaTx(collection, provider, signer, tier);
 
@@ -48,12 +53,16 @@ export async function setMemNFTPrice(collection, provider, tier) {
 }
 
 export async function setMemNFTPriceByCaller(collection, provider, tier) {
-  if (!window.ethereum) throw new Error(`User wallet not found`);
-
-  await window.ethereum.enable();
-  const userProvider = new ethers.providers.Web3Provider(window.ethereum);
-
-  const signer = userProvider.getSigner();
+  let walletType = await ls_GetWalletType();
+  let signer;
+  if (walletType === 'metamask') {
+    if (!window.ethereum) throw new Error(`User wallet not found`);
+    await window.ethereum.enable();
+    const userProvider = new ethers.providers.Web3Provider(window.ethereum);
+    signer = userProvider.getSigner();
+  } else if (walletType === 'magicwallet') {
+    signer = etherMagicProvider.getSigner();
+  }
   const tx = await collection.connect(signer).setTiers(tier);
   const res = await tx.wait();
   return {

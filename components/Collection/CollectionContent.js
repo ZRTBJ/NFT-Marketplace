@@ -65,6 +65,7 @@ import { NETWORKS } from 'config/networks';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
+import { ls_GetWalletType, ls_GetChainID } from 'util/ApplicationStorage';
 import audioWeb from 'assets/images/token-gated/audioWeb.svg';
 
 const currency = {
@@ -174,7 +175,7 @@ const CollectionContent = ({ collectionId, userId }) => {
     useState('');
   const [showGlobalErrorModalMessage, setShowGlobalErrorModalMessage] =
     useState('');
-
+  let walletType = ls_GetWalletType();
   useEffect(() => {
     if (hasNextPageData) {
       getSplitters(Collection?.blockchain);
@@ -593,40 +594,76 @@ const CollectionContent = ({ collectionId, userId }) => {
   };
 
   const handlePublishModal = async () => {
-    let networkId = await getCurrentNetworkId();
-    setShowSuccessModal(false);
-    if (Number(collectionNetwork) === networkId) {
-      if (Collection?.type === 'product') {
-        if (salesSetupInfo?.price) {
-          setShowPublishModal(true);
-          setIsSalesPrice(false);
+    if (walletType === 'metamask') {
+      let networkId = await getCurrentNetworkId();
+      setShowSuccessModal(false);
+      if (Number(collectionNetwork) === networkId) {
+        if (Collection?.type === 'product') {
+          if (salesSetupInfo?.price) {
+            setShowPublishModal(true);
+            setIsSalesPrice(false);
+          } else {
+            setIsSalesPrice(true);
+          }
         } else {
-          setIsSalesPrice(true);
+          setShowPublishModal(true);
         }
       } else {
-        setShowPublishModal(true);
+        setShowNetworkHandler(true);
       }
-    } else {
-      setShowNetworkHandler(true);
+    } else if (walletType === 'magicwallet') {
+      let chainId = await ls_GetChainID();
+      if (Number(collectionNetwork) === chainId) {
+        setShowSuccessModal(false);
+        if (Collection?.type === 'product') {
+          if (salesSetupInfo?.price) {
+            setShowPublishModal(true);
+            setIsSalesPrice(false);
+          } else {
+            setIsSalesPrice(true);
+          }
+        } else {
+          setShowPublishModal(true);
+        }
+      } else {
+        setShowNetworkHandler(true);
+      }
     }
   };
 
   const handlePublishSpliter = async () => {
     setIsPublishing(true);
     if (blockchain && splitterName && royalityMembers.length) {
-      let networkId = await getCurrentNetworkId();
-      if (Number(collectionNetwork) === networkId) {
-        let totalPercent = royalityMembers.reduce(
-          (arr, val) => arr + val.royalty_percent,
-          0
-        );
-        if (totalPercent === 100) {
-          setShowPublishRoyaltySpliterConfirmModal(true);
+      if (walletType === 'metamask') {
+        let networkId = await getCurrentNetworkId();
+        if (Number(collectionNetwork) === networkId) {
+          let totalPercent = royalityMembers.reduce(
+            (arr, val) => arr + val.royalty_percent,
+            0
+          );
+          if (totalPercent === 100) {
+            setShowPublishRoyaltySpliterConfirmModal(true);
+          } else {
+            toast.error('Total royalty percent should be 100 %');
+          }
         } else {
-          toast.error('Total royalty percent should be 100 %');
+          setShowNetworkHandler(true);
         }
-      } else {
-        setShowNetworkHandler(true);
+      } else if (walletType === 'magicwallet') {
+        let chainId = await ls_GetChainID();
+        if (Number(collectionNetwork) === chainId) {
+          let totalPercent = royalityMembers.reduce(
+            (arr, val) => arr + val.royalty_percent,
+            0
+          );
+          if (totalPercent === 100) {
+            setShowPublishRoyaltySpliterConfirmModal(true);
+          } else {
+            toast.error('Total royalty percent should be 100 %');
+          }
+        } else {
+          setShowNetworkHandler(true);
+        }
       }
     }
   };
@@ -661,11 +698,20 @@ const CollectionContent = ({ collectionId, userId }) => {
 
   const handleWithdrawModel = async (e) => {
     e.preventDefault();
-    let networkId = await getCurrentNetworkId();
-    if (Number(collectionNetwork) === networkId) {
-      setShowWithdrawModal(true);
-    } else {
-      setShowNetworkHandler(true);
+    if (walletType === 'metamask') {
+      let networkId = await getCurrentNetworkId();
+      if (Number(collectionNetwork) === networkId) {
+        setShowWithdrawModal(true);
+      } else {
+        setShowNetworkHandler(true);
+      }
+    } else if (walletType === 'magicwallet') {
+      let chainId = await ls_GetChainID();
+      if (Number(collectionNetwork) === chainId) {
+        setShowWithdrawModal(true);
+      } else {
+        setShowNetworkHandler(true);
+      }
     }
   };
 

@@ -7,22 +7,31 @@ import {
 import { ethers } from 'ethers';
 import Modal from 'components/Commons/Modal';
 import metamaskIcon from 'assets/images/modal/metamask.png';
+import MagicWallet from 'assets/images/magic-wallet.png';
 import { loginUser } from 'redux/auth';
 import { getUserInfo } from 'services/User/userService';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUserInfo, setUserLoading, handleNewUser } from 'redux/user';
+import {
+  setUserInfo,
+  setUserLoading,
+  handleNewUser,
+  setUserEmail,
+} from 'redux/user';
 import {
   ls_GetUserID,
   ls_SetChainID,
   ls_SetWalletAddress,
 } from 'util/ApplicationStorage';
-import { NETWORKS } from 'config/networks';
 import WrongNetwork from './components/WrongNetwork';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Lottie from 'react-lottie';
 import lottieJson from 'assets/lottieFiles/circle-loader.json';
 import SignRejectionModal from 'components/Commons/TopHeader/Account/SignRejectModal';
+import { magic, etherMagicProvider } from 'config/magicWallet/magic';
+import { recoverPersonalSignature } from '@metamask/eth-sig-util';
+import Spinner from 'components/Commons/Spinner';
+let MESSAGE = "You're signing to the decir.io";
 
 const WalletConnectModal = ({
   showModal,
@@ -41,6 +50,7 @@ const WalletConnectModal = ({
   const [metamaskConnectAttempt, setMetamaskConnectAttempt] = useState(0);
   const [metamaskAccount, setMetamaskAccount] = useState('');
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
+  const [magicLoading, setMagicLoading] = useState(false);
   const [showSignReject, setShowSignReject] = useState(false);
   const defaultOptions = {
     loop: true,
@@ -113,11 +123,16 @@ const WalletConnectModal = ({
     try {
       setIsLoading(true);
       let response = await dispatch(loginUser(request));
-      const userProvider = new ethers.providers.Web3Provider(window.ethereum);
-      const userNetwork = await userProvider.getNetwork();
       ls_SetWalletAddress(address);
-      ls_SetChainID(userNetwork.chainId);
-      getUserDetails(response['user_id']);
+      if (wallet === 'metamask') {
+        const userProvider = new ethers.providers.Web3Provider(window.ethereum);
+        const userNetwork = await userProvider.getNetwork();
+        ls_SetChainID(userNetwork.chainId);
+      } else if (wallet === 'magicwallet') {
+        let magicChainId = await etherMagicProvider.getNetwork();
+        ls_SetChainID(magicChainId?.chainId);
+      }
+      getUserDetails(response['user_id'], wallet);
     } catch (error) {
       setIsLoading(false);
       console.log(error);
@@ -125,14 +140,25 @@ const WalletConnectModal = ({
   }
 
   /** Get user info and save it to redux store */
-  async function getUserDetails(userID) {
+  async function getUserDetails(userID, wallet) {
     dispatch(setUserLoading('loading'));
     const response = await getUserInfo(userID);
     let userinfoResponse;
     try {
       userinfoResponse = response['user'];
       if (!userinfoResponse?.last_login_time) {
-        dispatch(handleNewUser(true));
+        if (wallet === 'magicwallet') {
+          const userInfo = await magic.wallet.requestUserInfoWithUI({
+            scope: {
+              email: 'optional',
+            },
+          });
+          console.log(userInfo);
+          dispatch(setUserEmail(userInfo?.email));
+          dispatch(handleNewUser(true));
+        } else {
+          dispatch(handleNewUser(true));
+        }
       } else {
         dispatch(handleNewUser(false));
       }
@@ -163,6 +189,39 @@ const WalletConnectModal = ({
     setModalKey((pre) => pre + 1);
     setshowMessage(false);
   }
+
+  const handleMagicConnect = async () => {
+    try {
+      if (isTermsAndConditionsChecked) {
+        setMagicLoading(true);
+        const accounts = await magic.wallet.connectWithUI();
+        const signer = etherMagicProvider.getSigner();
+        const signedMessage = await signer.signMessage(MESSAGE);
+        const recoveredAddress = recoverPersonalSignature({
+          data: MESSAGE,
+          signature: signedMessage,
+        });
+        setMagicLoading(false);
+        if (
+          recoveredAddress.toLocaleLowerCase() ===
+          accounts[0].toLocaleLowerCase()
+        ) {
+          setMetamaskAccount(accounts[0]);
+
+          userLogin(
+            accounts[0].toLocaleLowerCase(),
+            signedMessage,
+            'magicwallet'
+          );
+        }
+      } else {
+        setshowMessage(true);
+      }
+    } catch (err) {
+      console.log(err);
+      setMagicLoading(false);
+    }
+  };
 
   if (showSignReject) {
     return (
@@ -247,7 +306,7 @@ const WalletConnectModal = ({
               </div>
               <div className='mt-[26px]'>
                 <div
-                  className='w-full cursor-pointer  h-[72px] rounded-[12px] block mx-auto px-[14px] bg-[#fff] flex items-center connect-wallet'
+                  className=' hidden md:flex w-full cursor-pointer  h-[72px] rounded-[12px] mx-auto px-[14px] bg-[#fff] items-center connect-wallet'
                   onClick={handleConnectWallet}
                 >
                   <div className='flex items-center ml-2'>
@@ -265,6 +324,29 @@ const WalletConnectModal = ({
                   Popular
                 </div> */}
                   </div>
+                </div>
+                <div
+                  onClick={handleMagicConnect}
+                  className='w-full cursor-pointer  h-[72px] rounded-[12px] block mx-auto px-[14px] bg-[#fff] flex items-center connect-wallet mt-3'
+                >
+                  {magicLoading ? (
+                    <div className='flex items-center justify-center ml-1 text-center w-full'>
+                      <Spinner />
+                    </div>
+                  ) : (
+                    <div className='flex items-center ml-1'>
+                      <div className='flex items-center'>
+                        <Image
+                          className='h-11 w-11'
+                          src={MagicWallet}
+                          alt='Magic wallet login button'
+                        />
+                        <div className='ml-[10px] font-satoshi-bold font-black text-[24px]'>
+                          <p className='text-[18px]'>Magic Connect</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </>

@@ -12,6 +12,7 @@ import {
 import { NETWORKS } from 'config/networks';
 import axios from 'axios';
 import Config from 'config/config';
+import { ls_GetWalletType } from 'util/ApplicationStorage';
 
 const MoonpayModal = ({ handleClose, show }) => {
   const [account, setAccount] = useState('');
@@ -23,10 +24,13 @@ const MoonpayModal = ({ handleClose, show }) => {
   }, []);
 
   const fetchAccount = async () => {
-    const address = await getWalletAccount();
-    const network = await getCurrentNetworkId();
-    setAccount(address);
-    setNetwork(network);
+    const walletType = await ls_GetWalletType();
+    if (walletType === 'metamask') {
+      const address = await getWalletAccount();
+      const network = await getCurrentNetworkId();
+      setAccount(address);
+      setNetwork(network);
+    }
   };
 
   useEffect(() => {

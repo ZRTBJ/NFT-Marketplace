@@ -43,6 +43,7 @@ const SalesSettingsTab = ({ projectNetwork }) => {
   const [nftShareURL, setNFTShareURL] = useState('');
   const [showSalesModal, setShowSalesModal] = useState(false);
   const [collection, setCollection] = useState({});
+
   function handleSortType(order_by) {
     const newPayload = { ...payload };
     newPayload.order_by = order_by;

@@ -3,14 +3,19 @@ import Modal from 'components/Commons/Modal';
 import { NETWORKS } from 'config/networks';
 import Image from 'next/image';
 import { handleSwitchNetwork } from 'util/MetaMask';
+import { ls_GetWalletType } from 'util/ApplicationStorage';
 
 export default function NetworkSwitchModal({ show, handleClose }) {
   let networkList = Object.values(NETWORKS);
 
+  let walletType = ls_GetWalletType();
   const handleNetworkSelection = async (data) => {
-    await handleSwitchNetwork(data.network);
+    if (walletType === 'metamask') {
+      await handleSwitchNetwork(network);
+    }
     handleClose();
   };
+
   return (
     <Modal
       width={520}

@@ -204,13 +204,14 @@ export default function OnBoardingGuide({ setSwitchNetwork }) {
           </p>
         </div>
       </div>
-      <WalletConnectModal
-        showModal={showWalletConnectModal}
-        closeModal={() => setShowWalletConnectModal(false)}
-        noRedirection={false}
-        navigateToPage={'dashboard?createNFT=true'}
-      />
-
+      {showWalletConnectModal && (
+        <WalletConnectModal
+          showModal={showWalletConnectModal}
+          closeModal={() => setShowWalletConnectModal(false)}
+          noRedirection={false}
+          navigateToPage={'dashboard?createNFT=true'}
+        />
+      )}
       {showCreateNFTModal && (
         <CreateNFTModal
           show={showCreateNFTModal}

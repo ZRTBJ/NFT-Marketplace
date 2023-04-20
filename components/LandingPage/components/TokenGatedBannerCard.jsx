@@ -86,11 +86,13 @@ export default function TokenGatedBannerCard() {
           </div>
         </div>
       </div>
-      <WalletConnectModal
-        showModal={showWalletConnectModal}
-        closeModal={() => setShowWalletConnectModal(false)}
-        noRedirection={true}
-      />
+      {showWalletConnectModal && (
+        <WalletConnectModal
+          showModal={showWalletConnectModal}
+          closeModal={() => setShowWalletConnectModal(false)}
+          noRedirection={true}
+        />
+      )}
     </div>
   );
 }

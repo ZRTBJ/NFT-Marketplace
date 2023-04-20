@@ -10,7 +10,8 @@ import MemeberListMobile from '../MemberListMobile/MemberListMobile';
 import ConfirmationModal from 'components/Modals/ConfirmationModal';
 import { walletAddressTruncate } from 'util/WalletUtils';
 import Image from 'next/image';
-import { ls_GetWalletAddress } from 'util/ApplicationStorage';
+import { ls_GetWalletAddress, ls_GetWalletType } from 'util/ApplicationStorage';
+import { etherMagicProvider } from 'config/magicWallet/magic';
 
 const MemberListTable = ({
   collection,
@@ -36,6 +37,7 @@ const MemberListTable = ({
   const [addError, setAddError] = useState('');
   const [name, setName] = useState('');
   const [role, setRole] = useState('');
+  let walletType = ls_GetWalletType();
   const [duplicateAddress, setDuplicateAddress] = useState(false);
 
   useEffect(() => {
@@ -88,16 +90,22 @@ const MemberListTable = ({
       ) {
         let userAddress = address;
         setDuplicateAddress(false);
+
         if (!ethers.utils.isAddress(address)) {
           try {
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            userAddress = await provider.resolveName(address);
+            if (walletType === 'metamask') {
+              const provider = new ethers.providers.Web3Provider(
+                window.ethereum
+              );
+              userAddress = await provider.resolveName(address);
+            } else {
+              userAddress = await etherMagicProvider.resolveName(address);
+            }
           } catch (error) {
             setAddError('Invalid Wallet address or ENS');
             return;
           }
         }
-
         if (userAddress === null) {
           setAddError('Invalid Wallet address or ENS');
           return;

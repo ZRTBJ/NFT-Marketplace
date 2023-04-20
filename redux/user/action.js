@@ -10,6 +10,7 @@ const {
   getNotificationsSuccess,
   getNotificationsError,
   setChainId,
+  setEmail,
 } = userSlice.actions;
 
 export const setUserInfo = (user) => (dispatch) => {
@@ -24,6 +25,10 @@ export const setUserLoading = (value) => (dispatch) => {
 
 export const handleNewUser = (value) => (dispatch) => {
   dispatch(setIsNewUser(value));
+};
+
+export const setUserEmail = (value) => (dispatch) => {
+  dispatch(setEmail(value));
 };
 
 export const getUserNotification = (isActive) => async (dispatch) => {
