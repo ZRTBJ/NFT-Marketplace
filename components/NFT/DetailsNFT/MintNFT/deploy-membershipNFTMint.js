@@ -22,6 +22,7 @@ export async function createMembershipMintNFT(
   }
   const contract = mintContract.connect(signer);
   try {
+    const from = await signer.getAddress();
     const result = await contract.mintToCaller(from, url, tier, {
       value: ethers.utils.parseEther(value.toString()),
     });

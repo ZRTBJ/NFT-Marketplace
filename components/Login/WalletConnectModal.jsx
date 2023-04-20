@@ -306,7 +306,7 @@ const WalletConnectModal = ({
               </div>
               <div className='mt-[26px]'>
                 <div
-                  className='hidden md:block w-full cursor-pointer  h-[72px] rounded-[12px] block mx-auto px-[14px] bg-[#fff] flex items-center connect-wallet'
+                  className=' hidden md:flex w-full cursor-pointer  h-[72px] rounded-[12px] mx-auto px-[14px] bg-[#fff] items-center connect-wallet'
                   onClick={handleConnectWallet}
                 >
                   <div className='flex items-center ml-2'>
@@ -337,7 +337,7 @@ const WalletConnectModal = ({
                     <div className='flex items-center ml-1'>
                       <div className='flex items-center'>
                         <Image
-                          className='h-12 w-12'
+                          className='h-11 w-11'
                           src={MagicWallet}
                           alt='Magic wallet login button'
                         />
