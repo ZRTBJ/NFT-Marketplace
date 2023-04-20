@@ -31,6 +31,7 @@ import SignRejectionModal from 'components/Commons/TopHeader/Account/SignRejectM
 import { magic, etherMagicProvider } from 'config/magicWallet/magic';
 import { recoverPersonalSignature } from '@metamask/eth-sig-util';
 import Spinner from 'components/Commons/Spinner';
+import LoadingText from 'components/Commons/LoadingText/LoadingText';
 let MESSAGE = "You're signing to the decir.io";
 
 const WalletConnectModal = ({
@@ -253,7 +254,7 @@ const WalletConnectModal = ({
           />
         )}
         <div className={`px-[11px] md:px-[0px] mb-8 text-black`}>
-          <h1 className='text-[30px] md:text-[46px]'>Connect your wallet</h1>
+          <h1 className='text-[30px] md:text-[46px]'>Connect Your Wallet</h1>
           <p className='mt-3 text-[#838383] font-normal break-normal'>
             Connect with your existing Metamask account or create a new one
           </p>
@@ -331,11 +332,11 @@ const WalletConnectModal = ({
                 >
                   {magicLoading ? (
                     <div className='flex items-center justify-center ml-1 text-center w-full'>
-                      <Spinner />
+                      <LoadingText text={'Connecting'} />
                     </div>
                   ) : (
-                    <div className='flex items-center ml-1'>
-                      <div className='flex items-center'>
+                    <div className='flex items-center ml-1 w-full'>
+                      <div className='flex items-center w-full'>
                         <Image
                           className='h-11 w-11'
                           src={MagicWallet}
@@ -344,6 +345,9 @@ const WalletConnectModal = ({
                         <div className='ml-[10px] font-satoshi-bold font-black text-[24px]'>
                           <p className='text-[18px]'>Magic Connect</p>
                         </div>
+                        <span className='ml-auto py-1 px-2 gradient-text-deep-pueple font-bold border rounded-lg border-secondary-900'>
+                          E-mail Login
+                        </span>
                       </div>
                     </div>
                   )}

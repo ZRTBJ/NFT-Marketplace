@@ -2,6 +2,7 @@ import MetaMaskOnboarding from '@metamask/onboarding';
 import { ethers } from 'ethers';
 import Web3 from 'web3';
 import { NETWORKS } from 'config/networks';
+import { ls_SetChainID } from './ApplicationStorage';
 
 const currentUrl =
   typeof window !== 'undefined' && new URL(window.location.href);
@@ -117,6 +118,7 @@ export const handleSwitchNetwork = async (projectNetwork) => {
           method: 'wallet_switchEthereumChain',
           params: [{ chainId: Web3?.utils?.toHex(projectNetwork) }],
         });
+        ls_SetChainID(projectNetwork);
       } catch (error) {
         if (error.code === 4902) {
           let config = NETWORKS?.[projectNetwork]?.config;

@@ -1,0 +1,60 @@
+.loadingText p {
+  font-size: 20px;
+}
+
+.loadingText p span {
+  opacity: 0;
+}
+.dotOne {
+  animation: dotOne 2s infinite linear;
+}
+.dotTwo {
+  animation: dotTwo 2s infinite linear;
+}
+.dotThree {
+  animation: dotThree 2s infinite linear;
+}
+@keyframes dotOne {
+  0% {
+    opacity: 0;
+  }
+  15% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes dotTwo {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes dotThree {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
