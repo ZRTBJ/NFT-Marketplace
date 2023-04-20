@@ -306,7 +306,7 @@ const WalletConnectModal = ({
               </div>
               <div className='mt-[26px]'>
                 <div
-                  className='w-full cursor-pointer  h-[72px] rounded-[12px] block mx-auto px-[14px] bg-[#fff] flex items-center connect-wallet'
+                  className='hidden md:block w-full cursor-pointer  h-[72px] rounded-[12px] block mx-auto px-[14px] bg-[#fff] flex items-center connect-wallet'
                   onClick={handleConnectWallet}
                 >
                   <div className='flex items-center ml-2'>

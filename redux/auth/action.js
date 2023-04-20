@@ -50,9 +50,9 @@ export const loginUser = (loginPayload) => async (dispatch) => {
 export const logout = () => async (dispatch) => {
   dispatch(logginOut());
   ls_ClearLocalStorage();
-  magic.wallet.disconnect();
   persistor.pause();
   persistor.flush().then(() => {
     return persistor.purge();
   });
+  await magic.wallet.disconnect();
 };
