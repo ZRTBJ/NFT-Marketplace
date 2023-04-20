@@ -542,7 +542,9 @@ const SalesPageModal = ({
           handleClose={() => isLoading(false)}
         >
           <div className='text-center md:my-6 md:mx-16'>
-            <h5>Please wait, we are creating the sales page for NFT</h5>
+            <p className='font-black'>
+              Please wait, we are creating the sales page for NFT
+            </p>
             <div className='overflow-hidden rounded-full h-4 w-full mt-4 md:mt-6 mb-8 relative animated fadeIn'>
               <div className='animated-process-bar'></div>
             </div>

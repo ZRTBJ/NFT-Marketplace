@@ -8,6 +8,10 @@ import DeleteContentModal from 'components/TokenGated/Modal/DeleteContent';
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import AddNewContent from '../Modal/Content/AddNewContent';
+import ContentPreview from './ContentPreview';
+import ErrorModal from 'components/Modals/ErrorModal';
+import { getCollectionByContractAddress } from 'services/collection/collectionService';
+import { useRouter } from 'next/router';
 
 export default function ContentListTable({
   projectInfo,
@@ -20,6 +24,7 @@ export default function ContentListTable({
   setIsEditContent,
   onContentDrop,
 }) {
+  const router = useRouter();
   const [project, setProject] = useState(projectInfo);
   const [selectedContents, setSelectedContents] = useState([]);
   const [isAllContentsChecked, setIsAllContentsChecked] = useState(false);
@@ -29,13 +34,30 @@ export default function ContentListTable({
   const [showDeleteContentModal, setShowDeleteContentModal] = useState(false);
   const [usedForPublish, setUsedForPublish] = useState(true);
   const [showConfigureAllModal, setShowConfigureAllModal] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [showOverlayLoading, setShowOverlayLoading] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorModalMessage, setErrorModalMessage] = useState('');
 
   const onDrop = async (e) => {
     onContentDrop(e);
+    setIsDragOver(false);
+  };
+  const onDragOver = async (e) => {
+    if (!isDragOver) {
+      setIsDragOver(true);
+    }
+  };
+  const onDragLeave = async () => {
+    if (isDragOver) {
+      setIsDragOver(false);
+    }
   };
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
     onDrop,
     noClick: true,
+    onDragOver,
+    onDragLeave,
   });
 
   const onAllContentCheckedChange = (e) => {
@@ -79,6 +101,42 @@ export default function ContentListTable({
       setIsEditContent(false);
     }
   };
+  const showCollection = async (index, index_config_names) => {
+    setShowOverlayLoading(true);
+    const config_col_contracts = project?.contents[index]?.config_col_contracts;
+    if (config_col_contracts && config_col_contracts?.length > 0) {
+      const address = config_col_contracts[index_config_names];
+      if (address && address?.length > 0) {
+        await getCollectionByContractAddress(address)
+          .then((res) => {
+            setShowOverlayLoading(false);
+            if (res?.code === 0) {
+              if (res?.data?.[0]?.id) {
+                router.push(`/collection/${res.data?.[0]?.id}`);
+              } else {
+                setShowErrorModal(true);
+                setErrorModalMessage('Collection not found');
+              }
+            } else {
+              setShowErrorModal(true);
+              setErrorModalMessage(res?.message);
+            }
+          })
+          .catch((err) => {
+            setShowOverlayLoading(false);
+            console.log(err);
+          });
+      } else {
+        setShowOverlayLoading(false);
+        setShowErrorModal(true);
+        setErrorModalMessage('Contract Address not found of this Collection');
+      }
+    } else {
+      setShowOverlayLoading(false);
+      setShowErrorModal(true);
+      setErrorModalMessage('Contract Address not found of this Collection');
+    }
+  };
   useEffect(() => {
     if (project && project?.contents?.length > 0) {
       let oldProject = { ...project };
@@ -93,6 +151,8 @@ export default function ContentListTable({
 
   return (
     <>
+      {showOverlayLoading && <div className='loading'></div>}
+
       {/* multiple action start */}
       {selectedContents.length > 0 && (
         <div className='text-white-shade-900 mt-10 flex flex-wrap items-center'>
@@ -172,224 +232,169 @@ export default function ContentListTable({
       {/* multiple action End */}
 
       {/* table start */}
-      <div {...getRootProps({ className: 'dropzone' })}>
+      <div
+        {...getRootProps({
+          className: `dropzone md:min-h-[60vh]`,
+        })}
+      >
         <input {...getInputProps()} />
-        <div className='md:overflow-x-auto'>
-          <table className='text-left w-full  md:!whitespace-nowrap'>
-            <thead className='text-black border border-divider'>
-              <tr>
-                <th scope='col' className='py-3 px-2 md:px-6 !font-black'>
-                  <div className='flex items-center '>
-                    {project?.contents?.length > 0 && (
-                      <input
-                        type='checkbox'
-                        name='token-gated-all-content-check'
-                        id='token-gated-all-content-check'
-                        className='mr-2'
-                        checked={isAllContentsChecked}
-                        onChange={(e) =>
-                          onAllContentCheckedChange(isAllContentsChecked)
-                        }
-                      />
-                    )}
-                    <div>Contents</div>
-                  </div>
-                </th>
-                <th
-                  scope='col'
-                  className='py-3 px-6 !font-black hidden md:table-cell'
-                >
-                  Status
-                </th>
-                <th
-                  scope='col'
-                  className='py-3 px-6 !font-black hidden md:table-cell'
-                >
-                  Accessibility
-                </th>
-                <th
-                  scope='col'
-                  className='py-3 px-6 !font-black hidden md:table-cell'
-                >
-                  Date Created
-                </th>
-                <th
-                  scope='col'
-                  className='py-3 px-6 !font-black hidden md:table-cell'
-                >
-                  File Type
-                </th>
-                <th
-                  scope='col'
-                  className='py-3 px-6 !font-black text-right md:text-center'
-                >
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {project?.contents?.length === 0 && (
+        {project?.contents?.length > 0 ? (
+          <div className='md:overflow-x-auto'>
+            <table className='text-left w-full  md:!whitespace-nowrap'>
+              <thead className='text-black border border-divider'>
                 <tr>
-                  <td align='center' colSpan={6}>
-                    <div className='my-5 md:my-20'>
-                      <Image
-                        src={emptyStateSvg}
-                        alt='token gated project empty state'
-                        className='h-[245px] w-full md:max-w-[325px]'
-                        height={245}
-                        width={325}
-                      />
-                      <p className='mt-2 text-textSubtle'>
-                        Drag content or click{' '}
-                        <span className='font-bold'>Add new content</span>
-                      </p>
+                  <th scope='col' className='py-3 px-2 md:px-6 !font-black'>
+                    <div className='flex items-center '>
+                      {project?.contents?.length > 0 && (
+                        <input
+                          type='checkbox'
+                          name='token-gated-all-content-check'
+                          id='token-gated-all-content-check'
+                          className='mr-2'
+                          checked={isAllContentsChecked}
+                          onChange={(e) =>
+                            onAllContentCheckedChange(isAllContentsChecked)
+                          }
+                        />
+                      )}
+                      <div>Contents</div>
                     </div>
-                  </td>
+                  </th>
+                  <th
+                    scope='col'
+                    className='py-3 px-6 !font-black hidden md:table-cell'
+                  >
+                    Status
+                  </th>
+                  <th
+                    scope='col'
+                    className='py-3 px-6 !font-black hidden md:table-cell'
+                  >
+                    Accessibility
+                  </th>
+                  <th
+                    scope='col'
+                    className='py-3 px-6 !font-black hidden md:table-cell'
+                  >
+                    Date Created
+                  </th>
+                  <th
+                    scope='col'
+                    className='py-3 px-6 !font-black hidden md:table-cell'
+                  >
+                    File Type
+                  </th>
+                  <th
+                    scope='col'
+                    className='py-3 px-6 !font-black text-right md:text-center'
+                  >
+                    Action
+                  </th>
                 </tr>
-              )}
-              {project?.contents?.map((content, index) => (
-                <tr key={index}>
-                  <td className='py-4  pr-6 md:px-6'>
-                    <div className='flex items-center gap-3'>
-                      <input
-                        type='checkbox'
-                        name={`token-gated-content-${index}`}
-                        id={`token-gated-content-${index}`}
-                        checked={content?.isChecked}
-                        onChange={() =>
-                          onSingleContentCheckedChange(
-                            content?.isChecked,
-                            index
-                          )
-                        }
-                      />
-                      <div className='hidden md:block w-[40px]'>
-                        {content?.file_type === 'movie' && (
-                          <>
-                            {content?.thumbnail ? (
-                              <Image
-                                src={content?.thumbnail}
-                                className='h-[36px] w-[36px] object-fit rounded-md'
-                                alt='content thumbnail'
-                                height={36}
-                                width={36}
-                              ></Image>
-                            ) : (
-                              <div className='social-icon-button cursor-pointer w-9 h-9  flex justify-center items-center rounded-md ease-in-out duration-300'>
-                                <i className='fa-solid fa-circle-video gradient-text text-[20px]'></i>
-                              </div>
-                            )}
-                          </>
-                        )}
-                        {content?.file_type === 'audio' && (
-                          <>
-                            {content?.thumbnail ? (
-                              <Image
-                                src={content?.thumbnail}
-                                className='h-[36px] w-[36px] object-fit rounded-md'
-                                alt='content thumbnail'
-                                height={36}
-                                width={36}
-                              ></Image>
-                            ) : (
-                              <div className='social-icon-button cursor-pointer w-9 h-9  flex justify-center items-center rounded-md ease-in-out duration-300'>
-                                <i className='fa-solid fa-file-audio gradient-text text-[20px]'></i>
-                              </div>
-                            )}
-                          </>
-                        )}
-                        {content?.file_type === 'image' && (
-                          <>
-                            {content?.thumbnail ? (
-                              <Image
-                                src={content?.thumbnail}
-                                className='h-[36px] w-[36px] object-fit rounded-md'
-                                alt='content thumbnail'
-                                height={36}
-                                width={36}
-                              ></Image>
-                            ) : (
-                              <div className='social-icon-button cursor-pointer w-9 h-9  flex justify-center items-center rounded-md ease-in-out duration-300'>
-                                <i className='fa-solid fa-image gradient-text text-[20px]'></i>
-                              </div>
-                            )}
-                          </>
-                        )}
-                        {content?.file_type === 'other' && (
-                          <>
-                            {content?.thumbnail ? (
-                              <Image
-                                src={content?.thumbnail}
-                                className='h-[36px] w-[36px] object-fit rounded-md'
-                                alt='content thumbnail'
-                                height={36}
-                                width={36}
-                              ></Image>
-                            ) : (
-                              <div className='social-icon-button cursor-pointer w-9 h-9  flex justify-center items-center rounded-md ease-in-out duration-300'>
-                                <i className='fa-solid fa-file gradient-text text-[20px]'></i>
-                              </div>
-                            )}
-                          </>
-                        )}
+              </thead>
+              <tbody>
+                {project?.contents?.map((content, index) => (
+                  <tr key={index}>
+                    <td className='py-4  pr-6 md:px-6'>
+                      <div className='flex items-center gap-3'>
+                        <input
+                          type='checkbox'
+                          name={`token-gated-content-${index}`}
+                          id={`token-gated-content-${index}`}
+                          checked={content?.isChecked}
+                          onChange={() =>
+                            onSingleContentCheckedChange(
+                              content?.isChecked,
+                              index
+                            )
+                          }
+                        />
+                        <div className='hidden md:block w-[40px]'>
+                          <ContentPreview content={content}></ContentPreview>
+                        </div>
+                        <div>
+                          <Link
+                            href={`/token-gated/content/${content?.id}?projectId=${tokenProjectId}`}
+                            className='font-bold !no-underline text-txtblack'
+                          >
+                            {content?.title}
+                          </Link>
+                        </div>
                       </div>
-                      <div>
-                        <Link
-                          href={`/token-gated/content/${content?.id}?projectId=${tokenProjectId}`}
-                          className='font-bold !no-underline text-txtblack'
+                    </td>
+                    <td className='py-4 px-6 hidden md:table-cell'>
+                      {content?.status === 'published' ? (
+                        <div className='px-4 py-2 rounded w-[100px] bg-secondary-900/[0.10] text-secondary-900'>
+                          Published
+                        </div>
+                      ) : (
+                        <div className='text-center  py-2 rounded w-[100px] bg-white-filled-form text-textSubtle'>
+                          Draft
+                        </div>
+                      )}
+                    </td>
+                    <td className='py-4 px-6 hidden md:table-cell'>
+                      <div className='flex  items-center gap-2  text-white text-[12px] '>
+                        {content?.config_names &&
+                          content?.config_names?.length > 0 && (
+                            <>
+                              {content?.config_names
+                                .slice(0, 2)
+                                ?.map((c, index_config_names) => (
+                                  <div
+                                    key={index_config_names}
+                                    className='bg-textSubtle py-1 px-3 rounded max-w-[150px] truncate cursor-pointer'
+                                    onClick={() =>
+                                      showCollection(index, index_config_names)
+                                    }
+                                  >
+                                    {c}
+                                  </div>
+                                ))}
+                            </>
+                          )}
+                        {content?.config_names &&
+                          content?.config_names?.length > 2 && (
+                            <div className='bg-textSubtle py-1 px-3 rounded'>
+                              +{content?.config_names?.length - 2}
+                            </div>
+                          )}
+                      </div>
+                    </td>
+                    <td className='py-4 px-6 hidden md:table-cell'>
+                      {dayjs(content?.created_at).format('DD/MM/YYYY')}
+                    </td>
+                    <td className='py-4 px-6 capitalize hidden md:table-cell'>
+                      {content?.file_type}
+                    </td>
+                    <td className='py-4 px-2 md:px-6 '>
+                      <div className='hidden md:flex justify-center  items-center gap-3 '>
+                        <button
+                          onClick={() => onContentActions(content, 'publish')}
+                          className='py-2  border bg-primary-900/[0.10] text-primary-900 font-bold rounded w-[140px]'
                         >
-                          {content?.title}
-                        </Link>
+                          <i
+                            className={`${
+                              content?.status === 'draft'
+                                ? 'fa-solid fa-play'
+                                : 'fa-solid fa-eye-slash'
+                            }  mr-2`}
+                          ></i>
+                          {content?.status === 'draft'
+                            ? 'Publish'
+                            : 'Un-Publish'}
+                        </button>
+                        <button
+                          onClick={() => onContentActions(content, 'configure')}
+                          className='py-2  border border-primary-900 text-primary-900 font-bold rounded w-[140px]'
+                        >
+                          <i className='fa-solid fa-screwdriver-wrench mr-2'></i>
+                          Accessibility
+                        </button>
                       </div>
-                    </div>
-                  </td>
-                  <td className='py-4 px-6 hidden md:table-cell'>
-                    {content?.status === 'published' ? (
-                      <div className='px-4 py-2 rounded w-[100px] bg-secondary-900/[0.10] text-secondary-900'>
-                        Published
-                      </div>
-                    ) : (
-                      <div className='text-center  py-2 rounded w-[100px] bg-white-filled-form text-textSubtle'>
-                        Draft
-                      </div>
-                    )}
-                  </td>
-                  <td className='py-4 px-6 hidden md:table-cell'>
-                    <div className='flex  items-center gap-2  text-white text-[12px] '>
-                      {content?.config_names &&
-                        content?.config_names?.length > 0 && (
-                          <>
-                            {content?.config_names
-                              .slice(0, 2)
-                              ?.map((c, index) => (
-                                <div
-                                  key={index}
-                                  className='bg-textSubtle py-1 px-3 rounded max-w-[150px] truncate'
-                                >
-                                  {c}
-                                </div>
-                              ))}
-                          </>
-                        )}
-                      {content?.config_names &&
-                        content?.config_names?.length > 2 && (
-                          <div className='bg-textSubtle py-1 px-3 rounded'>
-                            +{content?.config_names?.length - 2}
-                          </div>
-                        )}
-                    </div>
-                  </td>
-                  <td className='py-4 px-6 hidden md:table-cell'>
-                    {dayjs(content?.created_at).format('DD/MM/YYYY')}
-                  </td>
-                  <td className='py-4 px-6 capitalize hidden md:table-cell'>
-                    {content?.file_type}
-                  </td>
-                  <td className='py-4 px-2 md:px-6 '>
-                    <div className='hidden md:flex justify-center  items-center gap-3 '>
-                      <button
+                      <div
                         onClick={() => onContentActions(content, 'publish')}
-                        className='py-2  border bg-primary-900/[0.10] text-primary-900 font-bold rounded w-[140px]'
+                        className='text-center mb-4 md:hidden py-2 border bg-primary-900/[0.10] text-primary-900 font-bold ml-auto rounded w-[130px]'
                       >
                         <i
                           className={`${
@@ -399,41 +404,56 @@ export default function ContentListTable({
                           }  mr-2`}
                         ></i>
                         {content?.status === 'draft' ? 'Publish' : 'Un-Publish'}
-                      </button>
-                      <button
+                      </div>
+                      <div
                         onClick={() => onContentActions(content, 'configure')}
-                        className='py-2  border border-primary-900 text-primary-900 font-bold rounded w-[140px]'
+                        className='md:hidden py-2  text-center border border-primary-900 text-primary-900 font-bold ml-auto rounded w-[130px]'
                       >
                         <i className='fa-solid fa-screwdriver-wrench mr-2'></i>
                         Accessibility
-                      </button>
-                    </div>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                <tr>
+                  <td align='center' colSpan={6}>
                     <div
-                      onClick={() => onContentActions(content, 'publish')}
-                      className='text-center mb-4 md:hidden py-2 border bg-primary-900/[0.10] text-primary-900 font-bold ml-auto rounded w-[130px]'
+                      className={`my-5 md:my-20 ${
+                        isDragOver ? 'border border-dashed border-4' : ''
+                      }`}
                     >
-                      <i
-                        className={`${
-                          content?.status === 'draft'
-                            ? 'fa-solid fa-play'
-                            : 'fa-solid fa-eye-slash'
-                        }  mr-2`}
-                      ></i>
-                      {content?.status === 'draft' ? 'Publish' : 'Un-Publish'}
-                    </div>
-                    <div
-                      onClick={() => onContentActions(content, 'configure')}
-                      className='md:hidden py-2  text-center border border-primary-900 text-primary-900 font-bold ml-auto rounded w-[130px]'
-                    >
-                      <i className='fa-solid fa-screwdriver-wrench mr-2'></i>
-                      Accessibility
+                      <Image
+                        src={emptyStateSvg}
+                        alt='token gated project empty state'
+                        className='h-[245px] w-full md:max-w-[325px]'
+                        height={245}
+                        width={325}
+                      />
+                      <p className='mt-2 text-textSubtle mb-4'>
+                        Drag content or click{' '}
+                        <span className='font-bold'>Add new content</span>
+                      </p>
                     </div>
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className='my-5 md:py-20'>
+            <Image
+              src={emptyStateSvg}
+              alt='token gated project empty state'
+              className='h-[245px] w-full md:max-w-[325px] mx-auto'
+              height={245}
+              width={325}
+            />
+            <p className='mt-2 text-textSubtle text-center'>
+              Drag content or click{' '}
+              <span className='font-bold'>Add new content</span>
+            </p>
+          </div>
+        )}
       </div>
       {/* table end */}
 
@@ -482,6 +502,16 @@ export default function ContentListTable({
           handleClose={() => setShowDeleteContentModal(false)}
           contents={lastSelectedContents}
           onContentDelete={onContentDelete}
+        />
+      )}
+      {showErrorModal && (
+        <ErrorModal
+          message={errorModalMessage}
+          handleClose={() => {
+            setErrorModalMessage('');
+            setShowErrorModal(false);
+          }}
+          show={showErrorModal}
         />
       )}
     </>

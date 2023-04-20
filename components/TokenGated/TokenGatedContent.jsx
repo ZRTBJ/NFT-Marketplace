@@ -148,7 +148,9 @@ export default function TokenGatedContent({ query, createMode }) {
   };
 
   const onContentDrop = (file) => {
-    if (file && file[0]) {
+    if (contentList?.contents?.length > 2) {
+      setShowLimitModal(true);
+    } else if (file && file[0]) {
       setMediaFromDropFile({
         file: file[0],
         path: URL.createObjectURL(file[0]),

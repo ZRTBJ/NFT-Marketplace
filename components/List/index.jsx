@@ -14,7 +14,7 @@ import CollectionCard from 'components/Cards/CollectionCard';
 import NFTListCard from 'components/Cards/NFTListCard';
 import Sort from 'assets/images/icons/sort.svg';
 import { toast } from 'react-toastify';
-import { getCollections } from 'services/collection/collectionService';
+import { getUserCollectionSalesInformation } from 'services/User/userService';
 import ReactPaginate from 'react-paginate';
 import { getMintedNftListByUserId } from 'services/nft/nftService';
 import emptyStateCommon from 'assets/images/profile/emptyStateCommon.svg';
@@ -57,14 +57,13 @@ function List({ query }) {
       if (query?.user === 'true') {
         listType = 'user';
       }
-      projectResponse = await getCollections(
-        listType,
-        '',
-        payload.page,
-        10,
-        payload.keyword,
-        payload.order_by
-      );
+      const queryData = {
+        page: payload.page,
+        limit: 10,
+        order_by: payload.order_by,
+        keyword: payload.keyword,
+      };
+      projectResponse = await getUserCollectionSalesInformation(queryData);
     } else if (query?.type === 'dao') {
       let payloadData = {
         id: ls_GetUserID(),
