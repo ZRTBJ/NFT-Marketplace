@@ -49,7 +49,7 @@ export async function getUserRevenue(id) {
 export async function getUserCollectionSalesInformation(payload) {
   return await client(
     'GET',
-    `/collection/sales?page=${payload.page}&limit=${payload.limit}&order_by=${payload.order_by}`
+    `/collection/sales?page=${payload.page}&limit=${payload.limit}&order_by=${payload.order_by}&keyword=${payload.keyword}`
   );
 }
 

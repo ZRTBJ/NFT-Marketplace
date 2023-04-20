@@ -2,6 +2,9 @@ import React from 'react';
 import thumbIcon from 'assets/images/profile/card.svg';
 import Link from 'next/link';
 import Image from 'next/image';
+import tickSvg from 'assets/images/icons/tick.svg';
+import { NETWORKS } from 'config/networks';
+import { formatNumber } from 'accounting';
 
 export default function CollectionCard({ collection }) {
   const truncateArray = (members) => {
@@ -11,13 +14,7 @@ export default function CollectionCard({ collection }) {
 
   return (
     <div className='md:min-h-[390px] '>
-      <Link
-        href={
-          collection.type === 'right_attach'
-            ? `/royality-management/${collection?.id}`
-            : `/collection/${collection?.id}`
-        }
-      >
+      <Link href={`/collection/${collection?.id}`}>
         <Image
           className='w-full h-[156px] rounded-xl md:h-[276px] object-cover'
           src={
@@ -25,20 +22,75 @@ export default function CollectionCard({ collection }) {
               ? collection?.assets[0]?.path
               : thumbIcon
           }
-          alt=''
+          alt='collection Cover'
           width={400}
           height={276}
+          unoptimized
         />
       </Link>
 
-      <div className='p-5'>
-        <h3 className='pb-2 text-txtblack truncate text-[18px] md:text-[24px]'>
-          {collection?.name}
-        </h3>
-        <p className='mb-3 text-textSubtle text-[13px]'>
-          {collection?.description && collection?.description?.length > 70
-            ? collection?.description.substring(0, 67) + '...'
-            : collection?.description}
+      <div className='py-3 px-1'>
+        <div className='md:flex items-center flex-wrap mb-3'>
+          <div className='flex-1 flex items-center gap-1 mb-2 md:mb-0'>
+            {collection?.status === 'published' && (
+              <Image src={tickSvg} alt='published svg' height={17} width={17} />
+            )}
+            <p className='text-txtblack truncate text-[18px] font-black'>
+              {collection?.name && collection?.name?.length > 16
+                ? collection?.name.substring(0, 14) + '...'
+                : collection?.name}
+            </p>
+          </div>
+          <div className='ml-auto'>
+            {collection?.type === 'product' && (
+              <p className='w-fit text-[10px] border-primary-900 border rounded  px-2 font-bold text-txtSubtle'>
+                Product
+              </p>
+            )}
+            {collection?.type === 'membership' && (
+              <p className='w-fit text-[10px] border-secondary-900 border rounded  px-2 font-bold text-txtSubtle'>
+                {' '}
+                Membership
+              </p>
+            )}
+          </div>
+        </div>
+        <div className='flex items-center mb-3'>
+          {collection?.status === 'published' ? (
+            <p className='text-[12px] font-semibold'>
+              {parseInt(collection?.total_supply) -
+                parseInt(collection?.summary?.sold_count)}
+              /{collection?.total_supply} Remaining
+            </p>
+          ) : (
+            <p className='text-[12px] font-semibold'>Not publish yet</p>
+          )}
+
+          <div className='ml-auto'>
+            <div className='flex items-center gap-2'>
+              <div className='ml-auto flex gap-1 items-center'>
+                {collection?.blockchain && (
+                  <Image
+                    width={20}
+                    height={20}
+                    src={NETWORKS[collection?.blockchain]?.icon?.src}
+                    alt='currency logo'
+                  />
+                )}
+                <p className='text-[14px] font-black'>
+                  {collection?.summary?.holding_value_usd
+                    ? `$${formatNumber(
+                        collection?.summary?.holding_value_usd.toFixed(2)
+                      )}  USD`
+                    : '$0 USD'}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className='mb-3 truncate text-textSubtle text-[13px]'>
+          {collection?.description}
         </p>
 
         <div className='flex items-center'>

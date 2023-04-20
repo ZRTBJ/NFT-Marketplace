@@ -73,6 +73,8 @@ export default function Outline({
   webLinks,
   onSocialLinkChange,
   showWebLinks,
+  addMoreSocialLink,
+  deleteSocialLinks,
 
   // category
   showProjectCategory,
@@ -180,7 +182,9 @@ export default function Outline({
           <div className='mb-6'>
             <div className='flex flex-wrap items-center mb-4'>
               <Tooltip message='Please select the NFT type you would create.'></Tooltip>
-              <div className='txtblack text-[14px]'>NFT Type</div>
+              <div className='txtblack text-[14px]'>
+                NFT Type<span className='ml-1 text-danger-1 font-bold'>*</span>
+              </div>
             </div>
             <div className='select-wrapper'>
               <select
@@ -188,7 +192,7 @@ export default function Outline({
                 onChange={onCollectionTypeSelect}
                 className='h-[44px] border border-divider text-textSubtle bg-white-shade-900 pl-3'
               >
-                <option value={'default'} defaultValue>
+                <option value={''} disabled defaultValue>
                   Select Type
                 </option>
                 <option value={'membership'}>Membership</option>
@@ -206,7 +210,10 @@ export default function Outline({
       <div className='mb-6'>
         <div className='flex flex-wrap items-center mb-4'>
           <Tooltip message='This field will not be changeable after publishing on the blockchain.'></Tooltip>
-          <div className='txtblack text-[14px]'>{nameLabel} Name</div>
+          <div className='txtblack text-[14px]'>
+            {nameLabel} Name{' '}
+            <span className='ml-1 text-danger-1 font-bold'>*</span>
+          </div>
         </div>
 
         {!projectNameDisabled && (
@@ -239,7 +246,10 @@ export default function Outline({
         <div className='mb-6' id='daoSymbol'>
           <div className='flex flex-wrap items-center mb-4'>
             <Tooltip></Tooltip>
-            <div className='txtblack text-[14px]'>{symbolTitle}</div>
+            <div className='txtblack text-[14px]'>
+              {symbolTitle}{' '}
+              <span className='ml-1 text-danger-1 font-bold'>*</span>
+            </div>
           </div>
           {!daoSymbolDisable && (
             <>
@@ -457,7 +467,7 @@ export default function Outline({
 
       {/* web Links*/}
       {showWebLinks && (
-        <div className='mb-3'>
+        <div className='mb-6'>
           <div className='txtblack text-[14px] mb-4'>
             Add social media links
           </div>
@@ -479,16 +489,30 @@ export default function Outline({
                     onSocialLinkChange(event.target.value, index)
                   }
                 />
+                {index > 4 && (
+                  <i
+                    onClick={() => deleteSocialLinks(index)}
+                    className='cursor-pointer fa-solid fa-trash text-danger-1 text-[16px] text-primary-900  ml-2 '
+                  ></i>
+                )}
               </div>
             ))}
           </div>
+          <button
+            onClick={() => addMoreSocialLink()}
+            className='text-primary-900 font-black text-[12px] ml-[35px]'
+          >
+            + Add More Link
+          </button>
         </div>
       )}
 
       {/* category */}
       {showProjectCategory && (
         <div className='mb-6'>
-          <div className='txtblack text-[14px] mb-4 '>Category</div>
+          <div className='txtblack text-[14px] mb-4 '>
+            Category <span className='ml-1 text-danger-1 font-bold'>*</span>
+          </div>
           <div className='select-wrapper'>
             <select
               value={projectCategory}
@@ -517,7 +541,9 @@ export default function Outline({
         <div className='mb-6'>
           <div className='flex flex-wrap items-center mb-4'>
             <Tooltip message='This field will not be changeable after publishing on the blockchain.'></Tooltip>
-            <div className='txtblack text-[14px]'>Blockchain</div>
+            <div className='txtblack text-[14px]'>
+              Blockchain <span className='ml-1 text-danger-1 font-bold'>*</span>
+            </div>
           </div>
           <div className='select-wrapper'>
             <select
@@ -635,7 +661,9 @@ export default function Outline({
         <div className='mb-6'>
           <div className='flex flex-wrap items-center mb-4'>
             <Tooltip message='This field will not be changeable after publishing on the blockchain.'></Tooltip>
-            <div className='txtblack text-[14px]'>Blockchain</div>
+            <div className='txtblack text-[14px]'>
+              Blockchain<span className='ml-1 text-danger-1 font-bold'>*</span>
+            </div>
           </div>
           <div className='select-wrapper'>
             <select
@@ -675,7 +703,7 @@ export default function Outline({
             <div className='flex flex-wrap items-center mb-4'>
               <Tooltip></Tooltip>
               <div className='txtblack text-[14px]'>
-                Royalty Percentage (in Percentage)
+                Royalty Percentage % (for secondary market)
               </div>
             </div>
             {!royaltyPercentageDisable && (
@@ -705,7 +733,9 @@ export default function Outline({
           <div className='mb-6'>
             <div className='flex flex-wrap items-center mb-4'>
               <Tooltip></Tooltip>
-              <div className='txtblack text-[14px]'>Supply</div>
+              <div className='txtblack text-[14px]'>
+                Supply <span className='ml-1 text-danger-1 font-bold'>*</span>
+              </div>
             </div>
             {!supplyDisable && (
               <>

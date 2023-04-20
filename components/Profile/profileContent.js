@@ -313,6 +313,7 @@ const Profile = ({ id }) => {
       page: 1,
       limit: 5,
       order_by: 'newer',
+      keyword: '',
     };
     await getUserCollectionSalesInformation(payload)
       .then((e) => {

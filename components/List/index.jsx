@@ -14,7 +14,7 @@ import CollectionCard from 'components/Cards/CollectionCard';
 import NFTListCard from 'components/Cards/NFTListCard';
 import Sort from 'assets/images/icons/sort.svg';
 import { toast } from 'react-toastify';
-import { getCollections } from 'services/collection/collectionService';
+import { getUserCollectionSalesInformation } from 'services/User/userService';
 import ReactPaginate from 'react-paginate';
 import { getMintedNftListByUserId } from 'services/nft/nftService';
 import emptyStateCommon from 'assets/images/profile/emptyStateCommon.svg';
@@ -57,14 +57,13 @@ function List({ query }) {
       if (query?.user === 'true') {
         listType = 'user';
       }
-      projectResponse = await getCollections(
-        listType,
-        '',
-        payload.page,
-        10,
-        payload.keyword,
-        payload.order_by
-      );
+      const queryData = {
+        page: payload.page,
+        limit: 10,
+        order_by: payload.order_by,
+        keyword: payload.keyword,
+      };
+      projectResponse = await getUserCollectionSalesInformation(queryData);
     } else if (query?.type === 'dao') {
       let payloadData = {
         id: ls_GetUserID(),
@@ -145,7 +144,6 @@ function List({ query }) {
         sortType,
         searchKeyword.length > 0 ? true : false
       );
-      // await getCollectionList();
     })();
   }, [sortType, query, userinfo?.id]);
 
@@ -172,17 +170,6 @@ function List({ query }) {
     await getProjectList(payload, 'newer');
   }
 
-  useEffect(() => {
-    const navItem = document.getElementById('nav-home');
-    if (navItem) navItem.classList.add('active-menu');
-  }, []);
-  useEffect(
-    () => () => {
-      const navItem = document.getElementById('nav-home');
-      if (navItem) navItem.classList.remove('active-menu');
-    },
-    []
-  );
   const isSearching = searchKeyword.length > 2;
 
   const handlePageClick = (event) => {
@@ -225,29 +212,18 @@ function List({ query }) {
     <>
       {isLoading && <div className='loading'></div>}
       <div className='text-txtblack'>
-        {/* <h1 className='my-6 pl-4'>
-          {query?.type === 'collection'
-            ? 'Collection List'
-            : query?.type === 'dao'
-            ? 'DAO List'
-            : query?.type === 'tokenGated'
-            ? 'Token Gated Project List'
-            : 'Minted NFT List'}
-        </h1> */}
-
-        <div className='mr-4 flex-1 block md:hidden'>
+        <div className='mx-4 mt-4 flex-1 block md:hidden'>
           <div className='relative'>
             <div className='flex absolute inset-y-0 left-0 items-center pl-4 pointer-events-none'>
-              <i className='fa-regular fa-magnifying-glass text-primary-900 text-lg'></i>
+              <Image src={Search} alt='Search' height={20} width={20} />
             </div>
             <input
               type='text'
               id='default-search'
               style={{
                 paddingLeft: 40, // todo: use tailwind
-                border: 'none',
               }}
-              className='text-lg shadow-main w-full rounded-lg placeholder-color-ass-4 h-[72px] text-[#000] pl-[40px]'
+              className='text-lg  rounded  placeholder-color-ass-4 h-[40px] text-[#000] pl-[40px]'
               placeholder='Search by name or title...'
               onChange={searchProject}
               value={searchKeyword}
@@ -259,7 +235,7 @@ function List({ query }) {
             />
           </div>
         </div>
-        <section className='flex px-4 mb-6 mt-6'>
+        <section className='flex px-4 mb-6 mt-6 gap-4 mb-10'>
           <div className='mr-4 flex-1 hidden md:block'>
             <div className='relative'>
               <div className='flex absolute inset-y-0 left-0 items-center pl-4 pointer-events-none'>
@@ -270,9 +246,8 @@ function List({ query }) {
                 id='default-search'
                 style={{
                   paddingLeft: 40, // todo: use tailwind
-                  border: 'none',
                 }}
-                className='shadow-main w-full rounded-lg h-[72px] text-[14px] pl-[40px]'
+                className=' w-full rounded h-[40px] text-[14px]'
                 placeholder='Search by name or title...'
                 onChange={searchProject}
                 value={searchKeyword}
@@ -285,9 +260,9 @@ function List({ query }) {
             </div>
           </div>
 
-          <div className='dropdown relative w-1/2 md:w-auto'>
+          <div className='dropdown relative w-auto'>
             <button
-              className='bg-white dropdown-toggle p-4 text-textSubtle font-black font-satoshi-bold rounded-lg shadow-main flex items-center justify-between w-full md:w-15 md:w-44 h-[72px]'
+              className='bg-white dropdown-toggle p-4 text-textSubtle font-black font-satoshi-bold rounded border flex items-center justify-between  w-44  h-[40px]'
               type='button'
               id='dropdownMenuButton1'
               data-bs-toggle='dropdown'
@@ -331,26 +306,24 @@ function List({ query }) {
               </li>
             </ul>
           </div>
+          {query?.type !== 'nft' && (
+            <button
+              onClick={() => onCreateItems(query?.type)}
+              className='contained-button py-2 rounded '
+            >
+              <i className='fa-solid fa-plus mr-2 font-bold'></i>
+              Create{' '}
+              {query?.type === 'collection'
+                ? 'Collection'
+                : query?.type === 'dao'
+                ? 'DAO'
+                : query?.type === 'tokenGated'
+                ? 'Token Gated Project'
+                : ''}
+            </button>
+          )}
         </section>
         <section>
-          <div className='text-right mr-4 my-10'>
-            {query?.type !== 'nft' && (
-              <button
-                onClick={() => onCreateItems(query?.type)}
-                className='contained-button py-2'
-              >
-                <i className='fa-solid fa-plus mr-2 font-bold'></i>
-                Create{' '}
-                {query?.type === 'collection'
-                  ? 'Collection'
-                  : query?.type === 'dao'
-                  ? 'DAO'
-                  : query?.type === 'tokenGated'
-                  ? 'Token Gated Project'
-                  : ''}
-              </button>
-            )}
-          </div>
           {isSearching ? (
             <h4 className='ml-4 mb-5'>
               {`Showing result for "${searchKeyword}"`}{' '}
@@ -376,7 +349,7 @@ function List({ query }) {
                 {query?.type !== 'nft' && (
                   <button
                     onClick={() => onCreateItems(query?.type)}
-                    className='contained-button rounded ml-auto !text-white !py-3 !no-underline'
+                    className='contained-button rounded ml-auto !text-white py-2 !no-underline'
                   >
                     <i className='fa-solid fa-plus mr-2'></i>
                     Create{' '}
@@ -397,7 +370,7 @@ function List({ query }) {
               {projectList.length > 0 ? (
                 <div className='mx-4'>
                   {query?.type === 'collection' && (
-                    <section className='grid gap-6  grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'>
+                    <section className='grid gap-6  grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'>
                       {isSearching
                         ? searchList.map((item, index) => (
                             <div key={item.id}>

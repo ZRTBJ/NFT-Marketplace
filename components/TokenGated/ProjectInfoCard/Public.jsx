@@ -16,9 +16,9 @@ export default function PublicProjectInfoCard({ project, userId }) {
       <div className='my-4 md:my-10'>
         <div className={`grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6`}>
           <div className='md:order-last col-span-2'>
-            {project?.coverUrl && (
+            {project?.photoUrl && (
               <Image
-                src={project?.coverUrl}
+                src={project?.photoUrl}
                 height={415}
                 width={907}
                 alt='cover'
@@ -29,7 +29,7 @@ export default function PublicProjectInfoCard({ project, userId }) {
           </div>
           <div className=''>
             <Image
-              src={project?.photoUrl ? project?.photoUrl : thumbIcon}
+              src={project?.coverUrl ? project?.coverUrl : thumbIcon}
               height={100}
               width={100}
               alt='cover'

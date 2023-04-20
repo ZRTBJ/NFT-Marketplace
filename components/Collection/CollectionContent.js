@@ -67,6 +67,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import { ls_GetWalletType, ls_GetChainID } from 'util/ApplicationStorage';
 import audioWeb from 'assets/images/token-gated/audioWeb.svg';
+import SocialLink from 'components/Commons/SocialLink';
 
 const currency = {
   eth: Eth,
@@ -1050,7 +1051,7 @@ const CollectionContent = ({ collectionId, userId }) => {
           className={`gray-linear-gradient-background rounded-b-xl mt-4 p-6 shadow-main`}
         >
           <div className='flex flex-col md:flex-row'>
-            <div className='md:w-2/3'>
+            <div className='flex-1 md:w-2/3'>
               <div className='flex'>
                 <Image
                   src={Logo?.path ? Logo?.path : manImg}
@@ -1136,127 +1137,8 @@ const CollectionContent = ({ collectionId, userId }) => {
                 </div>
               </div>
             </div>
-
-            <div
-              className='flex flex-wrap mt-3 items-start md:justify-end md:w-1/3 md:mt-0'
-              role='group'
-            >
-              {Links.find((link) => link.title === 'linkFacebook') &&
-                Links.find((link) => link.title === 'linkFacebook').value
-                  ?.length > 0 && (
-                  <div className='social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300'>
-                    <a
-                      href={`${
-                        Links.find((link) => link.title === 'linkFacebook')
-                          .value
-                      }`}
-                      target='_blank'
-                      rel='noreferrer'
-                    >
-                      <Image
-                        src={Facebook}
-                        alt='Facebook'
-                        width={16}
-                        height={16}
-                      />
-                    </a>
-                  </div>
-                )}
-
-              {Links.find((link) => link.title === 'linkInsta') &&
-                Links.find((link) => link.title === 'linkInsta').value?.length >
-                  0 && (
-                  <div className='social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4'>
-                    <a
-                      href={`${
-                        Links.find((link) => link.title === 'linkInsta').value
-                      }`}
-                      target='_blank'
-                      rel='noreferrer'
-                    >
-                      <Image
-                        src={Instagram}
-                        alt='Instagram'
-                        width={16}
-                        height={16}
-                      />
-                    </a>
-                  </div>
-                )}
-
-              {Links.find((link) => link.title === 'linkTwitter') &&
-                Links.find((link) => link.title === 'linkTwitter').value
-                  ?.length > 0 && (
-                  <div className='social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4'>
-                    <a
-                      href={`${
-                        Links.find((link) => link.title === 'linkTwitter').value
-                      }`}
-                      target='_blank'
-                      rel='noreferrer'
-                    >
-                      <Image
-                        src={Twitter}
-                        alt='Twitter'
-                        width={16}
-                        height={16}
-                      />
-                    </a>
-                  </div>
-                )}
-
-              {Links.find((link) => link.title === 'linkGitub') &&
-                Links.find((link) => link.title === 'linkGitub').value?.length >
-                  0 && (
-                  <div className='social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 '>
-                    <a
-                      href={`${
-                        Links.find((link) => link.title === 'linkGitub').value
-                      }`}
-                      target='_blank'
-                      rel='noreferrer'
-                    >
-                      <Image src={Github} alt='Github' width={16} height={16} />
-                    </a>
-                  </div>
-                )}
-              {Links.find((link) => link.title === 'linkReddit') &&
-                Links.find((link) => link.title === 'linkReddit').value
-                  ?.length > 0 && (
-                  <div className='social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 '>
-                    <a
-                      href={`${
-                        Links.find((link) => link.title === 'linkReddit').value
-                      }`}
-                      target='_blank'
-                      rel='noreferrer'
-                    >
-                      <Image src={Reddit} alt='Reddit' width={16} height={16} />
-                    </a>
-                  </div>
-                )}
-
-              {Links.find((link) => link.title === 'customLinks1') &&
-                Links.find((link) => link.title === 'customLinks1').value
-                  ?.length > 0 && (
-                  <div className='social-icon-button cursor-pointer w-8 h-8 mb-4 flex justify-center items-center rounded-md ease-in-out duration-300 ml-4 '>
-                    <a
-                      href={`${
-                        Links.find((link) => link.title === 'customLinks1')
-                          .value
-                      }`}
-                      target='_blank'
-                      rel='noreferrer'
-                    >
-                      <Image
-                        src={ExternalLink}
-                        alt='Github'
-                        width={16}
-                        height={16}
-                      />
-                    </a>
-                  </div>
-                )}
+            <div className='flex flex-wrap mt-5 items-start md:justify-end md:w-1/3 md:mt-0'>
+              <SocialLink links={Links} />
             </div>
           </div>
 
@@ -1308,7 +1190,7 @@ const CollectionContent = ({ collectionId, userId }) => {
                     href={`/collection/create/?id=${collectionId}`}
                     className='outlined-button font-satoshi-bold'
                   >
-                    <span>Edit Collection</span>
+                    <span>Edit</span>
                   </Link>
                 )}
               </div>
