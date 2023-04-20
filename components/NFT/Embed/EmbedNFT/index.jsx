@@ -63,7 +63,16 @@ function EmbedNFT({ type, id }) {
         provider
       );
       let nftPrice = config.price;
-      const accountBalance = await getAccountBalance();
+
+      let accountBalance;
+
+      if (walletType === 'metamask') {
+        accountBalance = await getAccountBalance();
+      } else if (walletType === 'magicwallet') {
+        let walletAddress = await ls_GetWalletAddress();
+        const walBalance = await etherMagicProvider.getBalance(walletAddress);
+        accountBalance = ethers.utils.formatEther(walBalance);
+      }
 
       if (Number(accountBalance) > Number(nftPrice)) {
         const response =
@@ -89,10 +98,12 @@ function EmbedNFT({ type, id }) {
           handleProceedPayment(data);
         }
       } else {
-        setErrorMessage(
-          "You don't have enough balance in your wallet to Mint NFT"
-        );
         setIsMinting(false);
+        if (walletType === 'magicwallet') {
+          setErrorMsg(
+            "You don't have enough balance in your wallet to Mint NFT"
+          );
+        }
       }
     } catch (err) {
       if (err.message) {

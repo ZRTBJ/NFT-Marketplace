@@ -33,7 +33,7 @@ import { createMembsrshipMintInstance } from 'config/ABI/mint-membershipNFT';
 import { createMembershipMintNFT } from 'components/NFT/DetailsNFT/MintNFT/deploy-membershipNFTMint';
 import EmbedNFTModal from 'components/NFT/Embed/EmbedNFTModal';
 import { NETWORKS } from 'config/networks';
-import { ls_GetChainID } from 'util/ApplicationStorage';
+import { ls_GetChainID, ls_GetWalletAddress } from 'util/ApplicationStorage';
 import { getCurrentNetworkId, getAccountBalance } from 'util/MetaMask';
 import NetworkHandlerModal from 'components/Modals/NetworkHandlerModal';
 import Eth from 'assets/images/network/eth.svg';
@@ -48,6 +48,8 @@ import { event } from 'nextjs-google-analytics';
 import TagManager from 'react-gtm-module';
 import { ls_GetWalletType } from 'util/ApplicationStorage';
 import Tooltip from 'components/Commons/Tooltip';
+import { etherMagicProvider } from 'config/magicWallet/magic';
+import { ethers } from 'ethers';
 
 const currency = {
   eth: Eth,
@@ -84,7 +86,16 @@ export default function DetailsNFT({ type, id }) {
         provider
       );
       let nftPrice = config.price;
-      const accountBalance = await getAccountBalance();
+      let accountBalance;
+
+      if (walletType === 'metamask') {
+        accountBalance = await getAccountBalance();
+      } else if (walletType === 'magicwallet') {
+        let walletAddress = await ls_GetWalletAddress();
+        const walBalance = await etherMagicProvider.getBalance(walletAddress);
+        accountBalance = ethers.utils.formatEther(walBalance);
+      }
+
       if (Number(accountBalance) > Number(nftPrice)) {
         const response =
           type === 'membership'
@@ -111,12 +122,18 @@ export default function DetailsNFT({ type, id }) {
         }
       } else {
         setTransactionWaitingModal(false);
-        if (process.env.NEXT_PUBLIC_ENV !== 'production') {
-          setShowMoonpayModal(true);
-        } else {
+        if (walletType === 'magicwallet') {
           setErrorMsg(
             "You don't have enough balance in your wallet to Mint NFT"
           );
+        } else {
+          if (process.env.NEXT_PUBLIC_ENV !== 'production') {
+            setShowMoonpayModal(true);
+          } else {
+            setErrorMsg(
+              "You don't have enough balance in your wallet to Mint NFT"
+            );
+          }
         }
       }
     } catch (err) {

@@ -9,7 +9,6 @@ export async function createMembershipMintNFT(
   provider,
   value
 ) {
-  if (!window.ethereum) throw new Error(`User wallet not found`);
   let walletType = await ls_GetWalletType();
   let signer;
   if (walletType === 'metamask') {
@@ -26,6 +25,7 @@ export async function createMembershipMintNFT(
     const result = await contract.mintToCaller(from, url, tier, {
       value: ethers.utils.parseEther(value.toString()),
     });
+    console.log(result);
     const txReceipt = await provider.waitForTransaction(result.hash);
     return txReceipt;
   } catch (err) {
