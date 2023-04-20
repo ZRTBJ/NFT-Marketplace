@@ -13,6 +13,7 @@ const initialState = {
   notificationLoading: false,
   notificationError: false,
   chainId: chainId || defaultNetworkId,
+  email: '',
 };
 
 export const userSlice = createSlice({
@@ -44,6 +45,9 @@ export const userSlice = createSlice({
     },
     setChainId(state, action) {
       state.chainId = action.payload;
+    },
+    setEmail(state, action) {
+      state.email = action.payload;
     },
   },
 });

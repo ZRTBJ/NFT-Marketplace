@@ -46,7 +46,7 @@ steps:
     args:
       - apply
       - '-f'
-      - deployment/dev/deployment.yml
+      - deployment/stg/deployment.yml
   - name: gcr.io/cloud-builders/kubectl
     env:
       - CLOUDSDK_COMPUTE_ZONE=us-central1-c

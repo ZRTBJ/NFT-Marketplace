@@ -30,6 +30,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
+import { ls_GetWalletType } from 'util/ApplicationStorage';
 import { ls_GetChainID } from 'util/ApplicationStorage';
 
 const TABLE_HEADERS = [
@@ -78,8 +79,8 @@ const Splitter = ({
   const [toPublishSplitter, setToPublishSplitter] = useState(false);
   const [splitterAddress, setSplitterAddress] = useState('');
   const [isMembersCreated, setIsMembersCreated] = useState(false);
+  let walletType = ls_GetWalletType();
   const [connectedCollections, setConnectedCollections] = useState([]);
-
   useEffect(() => {
     if (projectNetwork) {
       setBlockchain(projectNetwork);
@@ -370,23 +371,41 @@ const Splitter = ({
 
   const handlePublishSpliter = async () => {
     setIsPublishing(true);
+
     if (splitterName && blockchain && royalityMembers.length) {
       let selectedNetwork = projectNetwork
         ? Number(projectNetwork)
         : Number(blockchain);
-      let networkId = await getCurrentNetworkId();
-      if (selectedNetwork === networkId) {
-        let totalPercent = royalityMembers.reduce(
-          (arr, val) => arr + val.royalty_percent,
-          0
-        );
-        if (totalPercent === 100) {
-          setShowPublishRoyaltySpliterConfirmModal(true);
+      if (walletType === 'metamask') {
+        let networkId = await getCurrentNetworkId();
+        if (selectedNetwork === networkId) {
+          let totalPercent = royalityMembers.reduce(
+            (arr, val) => arr + val.royalty_percent,
+            0
+          );
+          if (totalPercent === 100) {
+            setShowPublishRoyaltySpliterConfirmModal(true);
+          } else {
+            toast.error('Total royalty percent should be 100 %');
+          }
         } else {
-          toast.error('Total royalty percent should be 100 %');
+          setShowNetworkHandler(true);
         }
-      } else {
-        setShowNetworkHandler(true);
+      } else if (walletType === 'magicwallet') {
+        let chainId = await ls_GetChainID();
+        if (selectedNetwork === chainId) {
+          let totalPercent = royalityMembers.reduce(
+            (arr, val) => arr + val.royalty_percent,
+            0
+          );
+          if (totalPercent === 100) {
+            setShowPublishRoyaltySpliterConfirmModal(true);
+          } else {
+            toast.error('Total royalty percent should be 100 %');
+          }
+        } else {
+          setShowNetworkHandler(true);
+        }
       }
     }
   };

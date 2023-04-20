@@ -22,6 +22,7 @@ import {
   ls_GetWalletAddress,
   ls_SetChainID,
   ls_GetChainID,
+  ls_GetWalletType,
 } from 'util/ApplicationStorage';
 import { setChain } from 'redux/user';
 import { toast } from 'react-toastify';
@@ -40,6 +41,7 @@ import useComponentVisible from 'hooks/useComponentVisible';
 import ReactTooltip from 'react-tooltip';
 import { getUserData } from 'services/User/userService';
 import SignRejectionModal from './Account/SignRejectModal';
+import WarningBar from '../WarningBar/WarningBar';
 
 const LANGS = {
   'en|en': 'English',
@@ -55,8 +57,10 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const dispatch = useDispatch();
   const inputRef = useRef(null);
   const outsideRef = useRef(null);
+  const { user, walletAddress, token, wallet } = useSelector(
+    (state) => state.auth
+  );
   const timer = useRef(null);
-  const { user, walletAddress, token } = useSelector((state) => state.auth);
   const [userId, setUserId] = useState(user ? user : '');
   const userinfo = useSelector((state) => state.user.userinfo);
   const [messageHistory, setMessageHistory] = useState([]);
@@ -86,12 +90,19 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const [page, setPage] = useState(1);
   const [currentSelectedNetwork, setCurrentSelectedNetwork] = useState();
   const [showSignReject, setShowSignReject] = useState('');
-
   const { ref, setIsComponentVisible, isComponentVisible } =
     useComponentVisible();
-
+  const [isWrongNetwork, setIsWrongNetwork] = useState(false);
+  let walletType = ls_GetWalletType();
   /** Detect account whenever user come back to site */
   let localAccountAddress = ls_GetWalletAddress();
+
+  let networkList = Object.values(NETWORKS);
+
+  let finalList =
+    walletType === 'magicwallet'
+      ? networkList.filter((list) => list.network !== 56 && list.network !== 97)
+      : networkList;
 
   const handleAccountDifference = async () => {
     if (window?.ethereum) {
@@ -108,7 +119,9 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
 
   useEffect(() => {
     if (userinfo?.id) {
-      handleAccountDifference();
+      if (walletType === 'metamask') {
+        handleAccountDifference();
+      }
     }
   }, [userinfo?.id]);
 
@@ -117,12 +130,19 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
 
   const handleChainDifference = async () => {
     if (window?.ethereum) {
-      const network = await getCurrentNetworkId();
-      if (localChainId && network) {
-        if (!networkChangeDetected && localChainId !== network) {
-          setNetworkId(network);
-          ls_SetChainID(network);
-          handleSwitchNetwork(network);
+      let currentNetworkChain;
+      if (walletType === 'metamask') {
+        const network = await getCurrentNetworkId();
+        currentNetworkChain = network;
+      }
+
+      if (localChainId && currentNetworkChain) {
+        if (!networkChangeDetected && localChainId !== currentNetworkChain) {
+          setNetworkId(currentNetworkChain);
+          ls_SetChainID(currentNetworkChain);
+          if (walletType === 'metamask') {
+            handleSwitchNetwork(currentNetworkChain);
+          }
         }
       }
     }
@@ -130,7 +150,9 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
 
   useEffect(() => {
     if (userinfo?.id) {
-      handleChainDifference();
+      if (walletType !== 'magicwallet') {
+        handleChainDifference();
+      }
     }
   }, [userinfo?.id]);
 
@@ -141,20 +163,18 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
         await setDefaultNetwork();
       } else {
         setCurrentSelectedNetwork({
-          name: networkList?.[0]?.networkName,
-          value: networkList?.[0]?.network,
-          icon: networkList?.[0]?.icon,
+          name: finalList?.[0]?.networkName,
+          value: finalList?.[0]?.network,
+          icon: finalList?.[0]?.icon,
         });
       }
     })();
   }, [userinfo?.id]);
 
-  let networkList = Object.values(NETWORKS);
-
   const setDefaultNetwork = async (networkId) => {
     let networkValue = await ls_GetChainID();
     let id = networkId ? networkId : networkValue;
-    let currentNetwork = await networkList.find(
+    let currentNetwork = await finalList.find(
       (network) => network.network === Number(id)
     );
     setCurrentSelectedNetwork({
@@ -264,29 +284,52 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
     return cookies[name];
   }
 
+  useEffect(() => {
+    if (userinfo?.id) {
+      getCurrentNetwork();
+    }
+  }, [userinfo?.id]);
+
+  const getCurrentNetwork = async (networkId) => {
+    let networkValue = await ls_GetChainID();
+    let id = networkId ? Number(networkId) : Number(networkValue);
+    if (NETWORKS?.[id] && id !== 1) {
+      setIsWrongNetwork(false);
+    } else {
+      setIsWrongNetwork(true);
+    }
+  };
+
   /** Metamask network change detection */
   useEffect(() => {
-    setNetworkChangeDetected(false);
-    if (window?.ethereum) {
-      if (!networkId) setNetworkId(window.ethereum.networkVersion);
-      window?.ethereum?.on('networkChanged', function (networkId) {
-        setNetworkChangeDetected(true);
-        setNetworkId(networkId);
-        ls_SetChainID(networkId);
-        setDefaultNetwork(networkId);
-        if (userinfo?.id) {
-          if (NETWORKS[networkId]) {
-            toast.success(
-              `Your network got changed to ${NETWORKS?.[networkId]?.networkName}`,
-              { toastId: 'network-change-deduction' }
-            );
-          } else {
-            toast.error(`Your network got changed to an unsupported network`, {
-              toastId: 'network-change-deduction-error',
-            });
+    if (walletType === 'metamask') {
+      setNetworkChangeDetected(false);
+      if (window?.ethereum) {
+        if (!networkId) setNetworkId(window.ethereum.networkVersion);
+        window?.ethereum?.on('networkChanged', function (networkId) {
+          setNetworkChangeDetected(true);
+          setNetworkId(networkId);
+          ls_SetChainID(networkId);
+          setDefaultNetwork(networkId);
+          if (userinfo?.id) {
+            getCurrentNetwork(networkId);
+            console.log(NETWORKS[networkId]);
+            if (NETWORKS[networkId]) {
+              toast.success(
+                `Your network got changed to ${NETWORKS?.[networkId]?.networkName}`,
+                { toastId: 'network-change-deduction' }
+              );
+            } else {
+              toast.error(
+                `Your network got changed to an unsupported network`,
+                {
+                  toastId: 'network-change-deduction-error',
+                }
+              );
+            }
           }
-        }
-      });
+        });
+      }
     }
 
     return () => {
@@ -299,15 +342,17 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
    * In case accounts == null, mean metamask logged out, no smartcontract interaction can be called
    */
   useEffect(() => {
-    window?.ethereum?.on('accountsChanged', function (accounts) {
-      if (
-        accounts != null &&
-        accounts.length > 0 &&
-        accounts[0] != ls_GetWalletAddress()
-      ) {
-        existingAccountChange(null, accounts[0]);
-      }
-    });
+    if (walletType === 'metamask') {
+      window?.ethereum?.on('accountsChanged', function (accounts) {
+        if (
+          accounts != null &&
+          accounts.length > 0 &&
+          accounts[0] != ls_GetWalletAddress()
+        ) {
+          existingAccountChange(null, accounts[0]);
+        }
+      });
+    }
   }, []);
 
   const existingAccountChange = async (data, address) => {
@@ -566,7 +611,18 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const handleNetworkSelection = async (data) => {
     try {
       if (data?.network !== currentSelectedNetwork?.value) {
-        await handleSwitchNetwork(data.network);
+        if (walletType === 'metamask') {
+          await handleSwitchNetwork(data.network);
+        } else if (walletType === 'magicwallet') {
+          ls_SetChainID(data?.network);
+          window.location.reload();
+          toast.success(
+            `Your network got changed to ${
+              NETWORKS?.[data?.network]?.networkName
+            }`,
+            { toastId: 'network-change-deduction' }
+          );
+        }
         setCurrentSelectedNetwork({
           name: data?.networkName,
           value: data?.network,
@@ -589,6 +645,12 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
       className={`${isNewBg ? 'bg-[#e2ecf0]' : 'bg-[#fff]'}`}
       style={{ position: 'relative', zIndex: '30' }}
     >
+      {userinfo?.id && isWrongNetwork ? (
+        <WarningBar
+          setIsWrongNetwork={setIsWrongNetwork}
+          currentNetwork={networkId}
+        />
+      ) : null}
       {/* <AccountChangedModal
         show={showAccountChanged}
         handleClose={() => setShowAccountChanged(false)}
@@ -723,7 +785,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                     currentSelectedNetwork?.name
                       ? 'bg-primary-100'
                       : 'bg-red-100'
-                  }`}
+                  } `}
                 >
                   {currentSelectedNetwork?.icon?.src ? (
                     <Image
@@ -753,7 +815,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                 </div>
                 {isComponentVisible ? (
                   <div className='absolute z-[1000] w-full overflow-hidden rounded-lg shadow-lg'>
-                    {networkList.map((list) => (
+                    {finalList.map((list) => (
                       <div
                         key={list?.network}
                         onClick={() => handleNetworkSelection(list)}
@@ -823,7 +885,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                         e.stopPropagation();
                         showHideUserPopupWallet();
                       }}
-                      className={`flex place-items-center bg-white p-3 rounded-[0.5rem] border border-secondary-900 w-auto  rounded-tl-none rounded-bl-none`}
+                      className={`flex place-items-center bg-white px-2 py-3 rounded-[0.5rem] border border-secondary-900 w-auto  rounded-tl-none rounded-bl-none`}
                     >
                       <i className='fa-solid fa-angle-down'></i>
                     </button>

@@ -32,6 +32,7 @@ import Image from 'next/image';
 import { event } from 'nextjs-google-analytics';
 import Config from 'config/config';
 import TagManager from 'react-gtm-module';
+import { ls_GetWalletType, ls_GetChainID } from 'util/ApplicationStorage';
 
 //TODO: in the future, 1 network can support multiple currency, please fix this
 const CURRENCY = [
@@ -97,6 +98,7 @@ const SalesPageModal = ({
   projectNetwork,
   setNFTShareURL,
   setMembershipNFTId,
+  setMemNFTPrice,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -127,7 +129,7 @@ const SalesPageModal = ({
     formState: { errors },
   } = useForm();
   const [showNetworkHandler, setShowNetworkHandler] = useState(false);
-
+  let walletType = ls_GetWalletType();
   useEffect(() => {
     let detail = CURRENCY.find((value) => value.id === Number(projectNetwork));
     setSelectedCurrency(detail);
@@ -187,138 +189,292 @@ const SalesPageModal = ({
     publishedCollections.find((item) => item.id === selectedCollection);
 
   const onSubmit = async (data) => {
-    let networkId = await getCurrentNetworkId();
-    if (Number(projectNetwork) === networkId) {
-      setIsSubmitted(true);
-      let type = collectionType ? collectionType : currentCollection.type;
-      if (agree && date?.length === 2) {
-        event('set_sale_page', { category: 'nft', label: 'type', value: type });
-
-        TagManager.dataLayer({
-          dataLayer: {
-            event: 'click_event',
+    if (walletType === 'metamask') {
+      let networkId = await getCurrentNetworkId();
+      if (Number(projectNetwork) === networkId) {
+        setIsSubmitted(true);
+        let type = collectionType ? collectionType : currentCollection.type;
+        if (agree && date?.length === 2) {
+          event('set_sale_page', {
             category: 'nft',
-            pageTitle: 'set_sale_page',
             label: 'type',
             value: type,
-          },
-        });
-        const payload = {
-          price: data?.['price'],
-          startTime: getUnixTime(date?.[0]),
-          endTime: getUnixTime(date?.[1]),
-          reserve_EOA: data['eoa'],
-          collectionType: type,
-          collectionId: selectedCollection,
-          nftId: nftId,
-        };
+          });
 
-        setIsLoading(true);
-        try {
-          if (type === 'membership') {
-            const priceContract = createMintInstance(
-              address ? address : currentCollection.contract_address,
-              provider
-            );
-            const membershipPriceContract = createMembsrshipMintInstance(
-              address ? address : currentCollection.contract_address,
-              provider
-            );
+          TagManager.dataLayer({
+            dataLayer: {
+              event: 'click_event',
+              category: 'nft',
+              pageTitle: 'set_sale_page',
+              label: 'type',
+              value: type,
+            },
+          });
+          const payload = {
+            price: data?.['price'],
+            startTime: getUnixTime(date?.[0]),
+            endTime: getUnixTime(date?.[1]),
+            reserve_EOA: data['eoa'],
+            collectionType: type,
+            collectionId: selectedCollection,
+            nftId: nftId,
+          };
 
-            let tiers = [
-              {
-                tierId: nftId,
-                floorPrice: ethers.utils.parseEther(data['price'].toString()),
-                totalSupply: supply,
-              },
-            ];
+          setIsLoading(true);
+          try {
+            if (type === 'membership') {
+              const priceContract = createMintInstance(
+                address ? address : currentCollection.contract_address,
+                provider
+              );
+              const membershipPriceContract = createMembsrshipMintInstance(
+                address ? address : currentCollection.contract_address,
+                provider
+              );
 
-            let allTiers = selectedTiers.map((value) => {
-              return {
-                tierId: value.id,
-                floorPrice: ethers.utils.parseEther(data['price'].toString()),
-                totalSupply: value.supply,
-              };
-            });
-            let response;
-            if (gaslessMode === 'true') {
-              response =
-                type === 'membership'
-                  ? await setMemNFTPrice(
-                      membershipPriceContract,
-                      provider,
-                      nftId ? tiers : allTiers
-                    )
-                  : await setNFTPrice(priceContract, provider, data['price']);
-            } else {
-              response =
-                type === 'membership'
-                  ? await setMemNFTPriceByCaller(
-                      membershipPriceContract,
-                      provider,
-                      nftId ? tiers : allTiers
-                    )
-                  : await setNFTPriceByCaller(
-                      priceContract,
-                      provider,
-                      data['price']
+              let tiers = [
+                {
+                  tierId: nftId,
+                  floorPrice: ethers.utils.parseEther(data['price'].toString()),
+                  totalSupply: supply,
+                },
+              ];
+
+              let allTiers = selectedTiers.map((value) => {
+                return {
+                  tierId: value.id,
+                  floorPrice: ethers.utils.parseEther(data['price'].toString()),
+                  totalSupply: value.supply,
+                };
+              });
+              let response;
+              if (gaslessMode === 'true') {
+                response =
+                  type === 'membership'
+                    ? await setMemNFTPrice(
+                        membershipPriceContract,
+                        provider,
+                        nftId ? tiers : allTiers
+                      )
+                    : await setNFTPrice(priceContract, provider, data['price']);
+              } else {
+                response =
+                  type === 'membership'
+                    ? await setMemNFTPriceByCaller(
+                        membershipPriceContract,
+                        provider,
+                        nftId ? tiers : allTiers
+                      )
+                    : await setNFTPriceByCaller(
+                        priceContract,
+                        provider,
+                        data['price']
+                      );
+              }
+              if (response?.txReceipt) {
+                if (response.txReceipt?.status === 1) {
+                  const request = new FormData();
+                  request.append('price', data['price']);
+                  request.append('start_time', payload.startTime);
+                  request.append('end_time', payload.endTime);
+                  request.append('currency', selectedCurrency.value);
+                  request.append(
+                    'transaction_hash',
+                    response?.txReceipt?.transactionHash
+                  );
+                  if (allTiers.length && !nftId) {
+                    allTiers.map((value) =>
+                      handleSalesAPICall(
+                        type,
+                        selectedCollection,
+                        request,
+                        value.tierId
+                      )
                     );
-            }
-            if (response?.txReceipt) {
-              if (response.txReceipt?.status === 1) {
-                const request = new FormData();
-                request.append('price', data['price']);
-                request.append('start_time', payload.startTime);
-                request.append('end_time', payload.endTime);
-                request.append('currency', selectedCurrency.value);
-                request.append(
-                  'transaction_hash',
-                  response?.txReceipt?.transactionHash
-                );
-                if (allTiers.length && !nftId) {
-                  allTiers.map((value) =>
+                  } else {
                     handleSalesAPICall(
                       type,
                       selectedCollection,
                       request,
-                      value.tierId
-                    )
-                  );
-                } else {
-                  handleSalesAPICall(type, selectedCollection, request, nftId);
+                      nftId
+                    );
+                  }
                 }
+              } else {
+                setErrorMessage(response);
+                setIsLoading(false);
+                setIsSubmitted(false);
+                setShowErrorModal(true);
               }
             } else {
-              setErrorMessage(response);
+              const request = new FormData();
+              request.append('price', data['price']);
+              request.append('start_time', payload.startTime);
+              request.append('end_time', payload.endTime);
+              request.append('currency', selectedCurrency.value);
+              request.append('transaction_hash', '');
+              handleSalesAPICall(type, selectedCollection, request, nftId);
+            }
+          } catch (err) {
+            if (err.message) {
+              setErrorMessage(err.message);
+              setShowErrorModal(true);
               setIsLoading(false);
               setIsSubmitted(false);
+            } else {
+              setIsLoading(false);
               setShowErrorModal(true);
+              setIsSubmitted(false);
+              setErrorMessage('Setting price failed. Please try again later');
             }
-          } else {
-            const request = new FormData();
-            request.append('price', data['price']);
-            request.append('start_time', payload.startTime);
-            request.append('end_time', payload.endTime);
-            request.append('currency', selectedCurrency.value);
-            request.append('transaction_hash', '');
-            handleSalesAPICall(type, selectedCollection, request, nftId);
-          }
-        } catch (err) {
-          if (err.message) {
-            setErrorMessage(err.message);
-            setShowErrorModal(true);
-            setIsLoading(false);
-            setIsSubmitted(false);
-          } else {
-            setIsLoading(false);
-            setShowErrorModal(true);
-            setIsSubmitted(false);
-            setErrorMessage('Setting price failed. Please try again later');
           }
         }
+      } else {
+        setShowNetworkHandler(true);
       }
-    } else {
-      setShowNetworkHandler(true);
+    } else if (walletType === 'magicwallet') {
+      let chainId = await ls_GetChainID();
+      if (Number(projectNetwork) === chainId) {
+        setIsSubmitted(true);
+        let type = collectionType ? collectionType : currentCollection.type;
+        if (agree && date?.length === 2) {
+          event('set_sale_page', {
+            category: 'nft',
+            label: 'type',
+            value: type,
+          });
+
+          TagManager.dataLayer({
+            dataLayer: {
+              event: 'click_event',
+              category: 'nft',
+              pageTitle: 'set_sale_page',
+              label: 'type',
+              value: type,
+            },
+          });
+          const payload = {
+            price: data?.['price'],
+            startTime: getUnixTime(date?.[0]),
+            endTime: getUnixTime(date?.[1]),
+            reserve_EOA: data['eoa'],
+            collectionType: type,
+            collectionId: selectedCollection,
+            nftId: nftId,
+          };
+
+          setIsLoading(true);
+          try {
+            if (type === 'membership') {
+              const priceContract = createMintInstance(
+                address ? address : currentCollection.contract_address,
+                provider
+              );
+              const membershipPriceContract = createMembsrshipMintInstance(
+                address ? address : currentCollection.contract_address,
+                provider
+              );
+
+              let tiers = [
+                {
+                  tierId: nftId,
+                  floorPrice: ethers.utils.parseEther(data['price'].toString()),
+                  totalSupply: supply,
+                },
+              ];
+
+              let allTiers = selectedTiers.map((value) => {
+                return {
+                  tierId: value.id,
+                  floorPrice: ethers.utils.parseEther(data['price'].toString()),
+                  totalSupply: value.supply,
+                };
+              });
+              let response;
+              if (gaslessMode === 'true') {
+                response =
+                  type === 'membership'
+                    ? await setMemNFTPrice(
+                        membershipPriceContract,
+                        provider,
+                        nftId ? tiers : allTiers
+                      )
+                    : await setNFTPrice(priceContract, provider, data['price']);
+              } else {
+                response =
+                  type === 'membership'
+                    ? await setMemNFTPriceByCaller(
+                        membershipPriceContract,
+                        provider,
+                        nftId ? tiers : allTiers
+                      )
+                    : await setNFTPriceByCaller(
+                        priceContract,
+                        provider,
+                        data['price']
+                      );
+              }
+              if (response?.txReceipt) {
+                if (response.txReceipt?.status === 1) {
+                  const request = new FormData();
+                  request.append('price', data['price']);
+                  request.append('start_time', payload.startTime);
+                  request.append('end_time', payload.endTime);
+                  request.append('currency', selectedCurrency.value);
+                  request.append(
+                    'transaction_hash',
+                    response?.txReceipt?.transactionHash
+                  );
+                  if (allTiers.length && !nftId) {
+                    allTiers.map((value) =>
+                      handleSalesAPICall(
+                        type,
+                        selectedCollection,
+                        request,
+                        value.tierId
+                      )
+                    );
+                  } else {
+                    handleSalesAPICall(
+                      type,
+                      selectedCollection,
+                      request,
+                      nftId
+                    );
+                  }
+                }
+              } else {
+                setErrorMessage(response);
+                setIsLoading(false);
+                setIsSubmitted(false);
+                setShowErrorModal(true);
+              }
+            } else {
+              const request = new FormData();
+              request.append('price', data['price']);
+              request.append('start_time', payload.startTime);
+              request.append('end_time', payload.endTime);
+              request.append('currency', selectedCurrency.value);
+              request.append('transaction_hash', '');
+              handleSalesAPICall(type, selectedCollection, request, nftId);
+            }
+          } catch (err) {
+            if (err.message) {
+              setErrorMessage(err.message);
+              setShowErrorModal(true);
+              setIsLoading(false);
+              setIsSubmitted(false);
+            } else {
+              setIsLoading(false);
+              setShowErrorModal(true);
+              setIsSubmitted(false);
+              setErrorMessage('Setting price failed. Please try again later');
+            }
+          }
+        }
+      } else {
+        setShowNetworkHandler(true);
+      }
     }
   };
 

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { getAccountBalance } from 'util/MetaMask';
 import { NETWORKS } from 'config/networks';
 import { cryptoConvert } from 'services/chainlinkService';
-import { ls_GetChainID } from 'util/ApplicationStorage';
+import { ls_GetChainID, ls_GetWalletType } from 'util/ApplicationStorage';
 import { formatMoney } from 'accounting';
 export default function BalanceInfo({ balanceInfo, userInfo }) {
   const [open, setOPen] = useState(true);
@@ -20,7 +20,12 @@ export default function BalanceInfo({ balanceInfo, userInfo }) {
 
   const onGetAccountBalance = async () => {
     try {
-      const balance = await getAccountBalance();
+      let walletType = await ls_GetWalletType();
+      let balance;
+      if (walletType === 'metamask') {
+        balance = await getAccountBalance();
+      }
+
       const crypto = NETWORKS[ls_GetChainID()]?.cryto;
       await cryptoConvert(crypto).then((res) => {
         if (res) {

@@ -11,8 +11,11 @@ import { walletAddressTruncate } from 'util/WalletUtils';
 import AvatarDefault from 'assets/images/avatar-default.svg';
 import { toast } from 'react-toastify';
 import LanguageChanger from 'components/Commons/LanguageChanger';
+import { ls_GetWalletType, ls_GetChainID } from 'util/ApplicationStorage';
+import { etherMagicProvider } from 'config/magicWallet/magic';
+import { ethers } from 'ethers';
 
-const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
+const WalletDropDownMenu = ({ handleWalletDropDownClose }) => {
   let router = useRouter();
   const dispatch = useDispatch();
   const { walletAddress, wallet: userWallet } = useSelector(
@@ -27,7 +30,8 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
   const userLoadingStatus = useSelector((state) => state.user.status);
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
   const ref = useDetectClickOutside({ onTriggered: handleWalletDropDownClose });
-
+  let walletType = ls_GetWalletType();
+  let networkId = ls_GetChainID();
   function showHideUserPopup() {
     const userDropDown = document.getElementById('userDropDown');
     userDropDown.classList.toggle('hidden');
@@ -59,8 +63,14 @@ const WalletDropDownMenu = ({ handleWalletDropDownClose, networkId }) => {
     try {
       setIsLoadingBalance(true);
       if (walletAddress && walletAddress.length > 5) {
-        const accountBalance = await getAccountBalance();
-        setBalance(accountBalance);
+        if (walletType === 'metamask') {
+          const accountBalance = await getAccountBalance();
+          setBalance(accountBalance);
+        } else if (walletType === 'magicwallet') {
+          const balance = await etherMagicProvider.getBalance(walletAddress);
+          console.log(balance, ethers.utils.formatEther(balance));
+          setBalance(ethers.utils.formatEther(balance));
+        }
         setIsLoadingBalance(false);
       }
     } catch {

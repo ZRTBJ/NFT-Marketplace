@@ -29,6 +29,7 @@ function EmbedNFT({ type, id }) {
   const [nft, setNft] = useState({});
   const userinfo = useSelector((state) => state.user.userinfo);
   const provider = createProvider();
+
   useEffect(() => {
     if (id) {
       nftDetails(type, id);
@@ -62,7 +63,16 @@ function EmbedNFT({ type, id }) {
         provider
       );
       let nftPrice = config.price;
-      const accountBalance = await getAccountBalance();
+
+      let accountBalance;
+
+      if (walletType === 'metamask') {
+        accountBalance = await getAccountBalance();
+      } else if (walletType === 'magicwallet') {
+        let walletAddress = await ls_GetWalletAddress();
+        const walBalance = await etherMagicProvider.getBalance(walletAddress);
+        accountBalance = ethers.utils.formatEther(walBalance);
+      }
 
       if (Number(accountBalance) > Number(nftPrice)) {
         const response =
@@ -88,10 +98,12 @@ function EmbedNFT({ type, id }) {
           handleProceedPayment(data);
         }
       } else {
-        setErrorMessage(
-          "You don't have enough balance in your wallet to Mint NFT"
-        );
         setIsMinting(false);
+        if (walletType === 'magicwallet') {
+          setErrorMsg(
+            "You don't have enough balance in your wallet to Mint NFT"
+          );
+        }
       }
     } catch (err) {
       if (err.message) {
@@ -243,11 +255,13 @@ function EmbedNFT({ type, id }) {
                 : 'Connect Wallet'}
             </button>
           </div>
-          <WalletConnectModal
-            showModal={showModal}
-            closeModal={hideModal}
-            noRedirection={true}
-          />
+          {showModal && (
+            <WalletConnectModal
+              showModal={showModal}
+              closeModal={hideModal}
+              noRedirection={true}
+            />
+          )}
         </>
       )}
     </>

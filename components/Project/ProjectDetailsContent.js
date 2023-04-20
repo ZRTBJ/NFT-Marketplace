@@ -19,6 +19,7 @@ import InfoCard from './InfoCard.jsx';
 import MembershipNFTTab from './MembershipNFTTab/MembershipNFTTab';
 import ProductNFTTab from './ProductNFTTab/ProductNFTTab';
 import { useSelector } from 'react-redux';
+import { ls_GetChainID, ls_GetWalletType } from 'util/ApplicationStorage';
 
 const TABS = [
   { id: 1, label: 'Membership NFT' },
@@ -55,7 +56,7 @@ function ProjectDetailsContent({ id }) {
   });
   const [showNetworkHandler, setShowNetworkHandler] = useState(false);
   const userInfo = useSelector((state) => state.user.userinfo);
-
+  let walletType = ls_GetWalletType();
   useEffect(() => {
     if (projectId) {
       projectDetails(projectId);
@@ -145,11 +146,20 @@ function ProjectDetailsContent({ id }) {
   }
 
   const handlePublishModal = async () => {
-    let networkId = await getCurrentNetworkId();
-    if (Number(project?.blockchain) === networkId) {
-      setShowPublishModal(true);
+    if (walletType === 'magicwallet') {
+      let chainId = await ls_GetChainID();
+      if (Number(project?.blockchain) === chainId) {
+        setShowPublishModal(true);
+      } else {
+        setShowNetworkHandler(true);
+      }
     } else {
-      setShowNetworkHandler(true);
+      let networkId = await getCurrentNetworkId();
+      if (Number(project?.blockchain) === networkId) {
+        setShowPublishModal(true);
+      } else {
+        setShowNetworkHandler(true);
+      }
     }
   };
 
@@ -207,10 +217,11 @@ function ProjectDetailsContent({ id }) {
                     (!project?.is_owner && tab.label === 'Sales Settings')
                   )
                     return;
-                   if (
+                  if (
                     !productCollectionList.length &&
                     !membershipCollectionList.length &&
-                    (tab.label === 'Royalty Splitter' || tab.label == 'Sales Settings')
+                    (tab.label === 'Royalty Splitter' ||
+                      tab.label == 'Sales Settings')
                   )
                     return;
 

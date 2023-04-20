@@ -4,6 +4,11 @@ import { getCurrentNetworkId } from 'util/MetaMask';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { handleSwitchNetwork } from 'util/MetaMask';
+import {
+  ls_GetChainID,
+  ls_GetWalletType,
+  ls_SetChainID,
+} from 'util/ApplicationStorage';
 
 const NetworkHandlerModal = ({
   show,
@@ -18,13 +23,31 @@ const NetworkHandlerModal = ({
   }, []);
 
   const handleCurrentNetwork = async () => {
-    let networkId = await getCurrentNetworkId();
+    let walletType = await ls_GetWalletType();
+    let networkId;
+    if (walletType === 'magicwallet') {
+      networkId = await ls_GetChainID();
+    } else if (walletType === 'metamask') {
+      networkId = await getCurrentNetworkId();
+    }
+
     setCurrentNetwork(networkId);
   };
 
   const handleChangeNetwork = async () => {
     try {
-      await handleSwitchNetwork(projectNetwork);
+      let walletType = await ls_GetWalletType();
+      if (walletType === 'magicwallet') {
+        ls_SetChainID(projectNetwork);
+        window.location.reload();
+        toast.success(
+          `Your network got changed to ${NETWORKS?.[projectNetwork]?.networkName}`,
+          { toastId: 'network-change-deduction' }
+        );
+      } else if (walletType === 'metamask') {
+        console.log(4);
+        await handleSwitchNetwork(projectNetwork);
+      }
       handleClose();
     } catch (error) {
       toast.error(
