@@ -279,27 +279,18 @@ const WalletConnectModal = ({
                     <div className='text-left ml-[8px] font-medium text-sm'>
                       I read and accept{' '}
                       <a
-                        href='https://decir.io/privacy-policy-2/'
+                        href='https://decir.io/term-of-use/'
                         target='_blank'
                         className='text-primary-900'
                         rel='noreferrer'
                       >
-                        Terms Of services
-                      </a>{' '}
-                      and
-                      <a
-                        href='https://www.decir.io/policyandprivacy'
-                        target='_blank'
-                        className='text-primary-900'
-                        rel='noreferrer'
-                      >
-                        {' '}
-                        Privacy Policy
+                        Terms of use
                       </a>
+                      .{' '}
                     </div>
                     {showMessage && (
                       <div className='validationTag'>
-                        Please accept terms and conditions
+                        Please accept Terms of use to continue.
                       </div>
                     )}
                   </div>
