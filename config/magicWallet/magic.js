@@ -11,11 +11,11 @@ export const formattedMainnetNetwork = () => {
         rpcUrl: 'https://polygon-rpc.com/',
         chainId: 137,
       };
-    case 1:
-      return {
-        rpcUrl: 'https://mainnet.infura.io/v3/',
-        chainId: 1,
-      };
+    // case 1:
+    //   return {
+    //     rpcUrl: 'https://mainnet.infura.io/v3/',
+    //     chainId: 1,
+    //   };
     default:
       return {
         rpcUrl: 'https://polygon-rpc.com/',

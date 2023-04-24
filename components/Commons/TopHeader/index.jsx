@@ -42,6 +42,7 @@ import ReactTooltip from 'react-tooltip';
 import { getUserData } from 'services/User/userService';
 import SignRejectionModal from './Account/SignRejectModal';
 import WarningBar from '../WarningBar/WarningBar';
+import Eth from 'assets/images/eth.svg';
 
 const LANGS = {
   'en|en': 'English',
@@ -293,7 +294,7 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
   const getCurrentNetwork = async (networkId) => {
     let networkValue = await ls_GetChainID();
     let id = networkId ? Number(networkId) : Number(networkValue);
-    if (NETWORKS?.[id] && id !== 1) {
+    if (NETWORKS?.[id]) {
       setIsWrongNetwork(false);
     } else {
       setIsWrongNetwork(true);
@@ -770,7 +771,12 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                 userId ? '' : 'sm:py-2'
               } ${styles.walletContainer}`}
             >
-              <li className='relative w-[185px]' ref={ref}>
+              <li
+                className={`relative ${
+                  config?.IS_PRODUCTION ? 'w-[205px]' : 'w-[185px]'
+                }`}
+                ref={ref}
+              >
                 {!currentSelectedNetwork?.name ? (
                   <ReactTooltip type='info' effect='solid' />
                 ) : null}
@@ -833,6 +839,25 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
                         </span>
                       </div>
                     ))}
+                    {config?.IS_PRODUCTION ? (
+                      <div className='cursor-pointer flex place-items-center px-3 py-2 bg-primary-100 border-primary-900 hover:bg-primary-400'>
+                        <Image
+                          className='rounded-full border-gray-100 shadow-sm mr-2'
+                          src={Eth}
+                          height={18}
+                          width={18}
+                          alt='user icon'
+                          style={{ opacity: 0.5 }}
+                        />{' '}
+                        <span
+                          className='mr-2 font-semibold'
+                          style={{ opacity: 0.5 }}
+                        >
+                          Ethereum{' '}
+                          <span className='text-[11px]'>(Coming soon)</span>
+                        </span>
+                      </div>
+                    ) : null}
                   </div>
                 ) : null}
               </li>
