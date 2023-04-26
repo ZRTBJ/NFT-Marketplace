@@ -12,8 +12,10 @@ import {
 } from 'util/ApplicationStorage';
 import { defaultNetworkId } from 'config/networks';
 import { getCurrentNetworkId } from 'util/MetaMask';
+import { useRouter } from 'next/router';
 
 export default function OnBoardingGuide({ setSwitchNetwork }) {
+  const router = useRouter();
   const chainId = useSelector((state) => state.user.chainId);
   const [open, setOPen] = useState(true);
   const [showWalletConnectModal, setShowWalletConnectModal] = useState(false);
@@ -40,12 +42,7 @@ export default function OnBoardingGuide({ setSwitchNetwork }) {
   };
 
   const redirectToNftCreatePage = async () => {
-    // let currentNetwork = await getCurrentNetworkId();
-    // if (NETWORKS?.[currentNetwork]) {
-    setShowCreateNFTModal(true);
-    // } else {
-    //   setSwitchNetwork(true);
-    // }
+    router.push('/collection/draft');
   };
 
   const getGasPrice = async () => {
@@ -99,13 +96,10 @@ export default function OnBoardingGuide({ setSwitchNetwork }) {
           </div>
           {open && (
             <div className='flex my-5 pb-3 gap-x-4 overflow-x-auto whitespace-nowrap custom-scrollbar'>
-              <div
-                onClick={() => redirectToNftCreatePage()}
-                className='cursor-pointer min-w-[86vw]  md:min-w-[434px]  rounded-[8px] bg-gradient-to-r from-white to-secondary-200/[0.8]'
-              >
+              <div className='cursor-pointer min-w-[86vw]  md:min-w-[434px]  rounded-[8px] bg-gradient-to-r from-white to-secondary-200/[0.8]'>
                 <div className='triangle'></div>
                 <div className='flex items-center px-6 pb-3 -mt-4 gap-4 '>
-                  <div>
+                  <div onClick={() => redirectToNftCreatePage()}>
                     <div className='gradient-text-deep-pueple font-black text-[18px]'>
                       Create NFT
                     </div>
@@ -113,10 +107,15 @@ export default function OnBoardingGuide({ setSwitchNetwork }) {
                       Find out how to create NFTs on DeCir
                     </p>
                   </div>
-                  <div className='ml-auto text-black font-black text-[14px] '>
+                  <Link
+                    href='https://decir.gitbook.io/whitepaper/nft-creation'
+                    passHref
+                    target='_blank'
+                    className='ml-auto !no-underline hover:text-black text-black font-black text-[14px] '
+                  >
                     Learn more{' '}
                     <i className=' ml-2 fa-sharp fa-solid fa-arrow-right'></i>
-                  </div>
+                  </Link>
                 </div>
               </div>
               <Link
