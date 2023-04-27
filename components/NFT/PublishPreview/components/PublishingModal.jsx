@@ -2,12 +2,28 @@ import Modal from 'components/Commons/Modal';
 import { useEffect, useState } from 'react';
 import Lottie from 'react-lottie';
 import lottieJson from 'assets/lottieFiles/nft-minting-process';
+import MockImage from 'assets/images/magic-wallet.png';
+import NFTStatusTable from './NFTStatusTable';
 
 const steps = [
-  { title: 'Publishing Royalty Splitter' },
-  { title: 'Deploying NFT to IPFS' },
-  { title: 'Deploying Collection' },
-  { title: 'Done' },
+  {
+    title: 'Publishing Royalty Splitter',
+    titleCompleted: 'Published Royalty Splitter',
+  },
+  {
+    title: 'Publishing NFT to IPFS',
+    titleCompleted: 'Published NFT to IPFS',
+  },
+  {
+    title: 'Publishing Collection',
+    titleCompleted: 'Published Collection',
+  },
+  { title: 'Done', titleCompleted: 'Put on sale' },
+];
+
+const NFTs = [
+  { id: 0, asset: MockImage, name: 'NFT One', status: 'pending' },
+  { id: 1, asset: MockImage, name: 'NFT Two', status: 'pending' },
 ];
 
 const PublishingModal = ({ handleClose, show }) => {
@@ -78,13 +94,17 @@ const PublishingModal = ({ handleClose, show }) => {
                       : 'text-textSubtle'
                   }`}
                 >
-                  {step?.title}
+                  {currentStep >= index + 1 ? step.titleCompleted : step?.title}
                 </p>
               </div>
             ))}
           </div>
         </div>
-        <Lottie options={defaultOptions} height={300} width={300} />
+        {currentStep > 0 ? (
+          <NFTStatusTable nfts={NFTs} />
+        ) : (
+          <Lottie options={defaultOptions} height={300} width={300} />
+        )}
       </div>
     </Modal>
   );

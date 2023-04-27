@@ -219,3 +219,7 @@ export async function detachSplitterFormCollection(id) {
   console.log('here');
   return await client('PUT', `/collection/${id}/detach-splitter`);
 }
+
+export async function validateCollectionPublish(id) {
+  return await client('POST', `/collection/${id}/validate-for-publish`);
+}
