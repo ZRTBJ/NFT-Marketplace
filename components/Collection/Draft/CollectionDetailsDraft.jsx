@@ -33,7 +33,9 @@ export default function CollectionDetailsDraft({ userId }) {
           <p className='text-textLight text-sm'>No description provided yet</p>
           <div className='flex flex-wrap items-center gap-4 mt-6'>
             <button className='contained-button font-satoshi-bold'>
-              Publish
+              <Link href={`/nft/publish/preview`} className='font-satoshi-bold'>
+                Publish
+              </Link>
             </button>
 
             <Link
