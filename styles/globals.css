@@ -183,9 +183,14 @@ p {
 }
 
 .dao-connect__option {
+  cursor: pointer !important;
   background-color: white !important;
   color: #7d849d !important;
 }
+.dao-connect__control {
+  height: 48px;
+}
+
 .custom-scrollbar::-webkit-scrollbar-track {
   margin-top: 20px;
   margin-bottom: 20px;
@@ -199,4 +204,7 @@ p {
 
 .custom-scrollbar::-webkit-scrollbar {
   width: 15px;
+}
+.splitter-select-on-collection__control {
+  height: 48px;
 }

@@ -3,9 +3,13 @@ import Image from 'next/image';
 import Cover from 'assets/images/cover-default.svg';
 import manImg from 'assets/images/image-default.svg';
 import Link from 'next/link';
+import emptyStateCommon from 'assets/images/profile/emptyStateCommon.svg';
+import { useRouter } from 'next/router';
 
 export default function CollectionDetailsDraft({ userId }) {
+  const router = useRouter();
   const [selectedTab, setSelectedTab] = useState(1);
+
   return (
     <div className='mx-4 mt-6'>
       <Image
@@ -32,12 +36,12 @@ export default function CollectionDetailsDraft({ userId }) {
           <h3>About the Collection</h3>
           <p className='text-textLight text-sm'>No description provided yet</p>
           <div className='flex flex-wrap items-center gap-4 mt-6'>
-            <button className='contained-button font-satoshi-bold'>
+            {/* <button className='contained-button font-satoshi-bold'>
               Publish
-            </button>
+            </button> */}
 
             <Link
-              href={`/collection/create`}
+              href={`/collection/create?draft=true`}
               className='outlined-button font-satoshi-bold'
             >
               <span>Edit</span>
@@ -45,7 +49,7 @@ export default function CollectionDetailsDraft({ userId }) {
           </div>
         </div>
       </div>
-      <div className='mt-10'>
+      <div className='my-10'>
         <ul className='flex flex-wrap items-center  text-sm font-medium text-center'>
           <li onClick={() => setSelectedTab(1)}>
             <button
@@ -58,30 +62,19 @@ export default function CollectionDetailsDraft({ userId }) {
               NFT
             </button>
           </li>
-          <li onClick={() => setSelectedTab(2)}>
-            <button
-              className={`inline-block p-4 text-lg rounded-t-lg ${
-                selectedTab === 2
-                  ? 'border-b-2 border-primary-900 text-primary-900'
-                  : 'border-transparent text-textSubtle'
-              } hover:text-primary-900`}
-            >
-              Royalty Splitter
-            </button>
-          </li>
-          <li onClick={() => setSelectedTab(3)}>
-            <button
-              className={`inline-block p-4 text-lg rounded-t-lg ${
-                selectedTab === 3
-                  ? 'border-b-2 border-primary-900 text-primary-900'
-                  : 'border-transparent text-textSubtle'
-              } hover:text-primary-900`}
-            >
-              NFT Sales
-            </button>
-          </li>
         </ul>
         <div className='mt-10 text-center'>
+          <Image
+            src={emptyStateCommon}
+            className='h-[210px] w-[315px] m-auto'
+            alt=''
+            height={210}
+            width={315}
+          />
+          <p className='text-subtitle font-bold mb-10'>
+            You don't have any NFT yet
+          </p>
+
           <p className='mb-4'>
             {selectedTab === 1
               ? 'Click button below to start creating NFT'
@@ -89,12 +82,13 @@ export default function CollectionDetailsDraft({ userId }) {
               ? 'Please create NFT first and then set Royalty Splitter'
               : 'Please create NFT first in order to see the sales'}{' '}
           </p>
-          <Link
-            href={`/nft/create`}
-            className='contained-button !no-underline hover:text-white font-satoshi-bold  w-[150px]'
+
+          <button
+            onClick={() => router.push('/nft/create')}
+            className='contained-button !py-3 !text-[16px] !no-underline hover:text-white font-satoshi-bold  !w-[200px]'
           >
-            Create NFT
-          </Link>
+            + Create NFT
+          </button>
         </div>
       </div>
     </div>

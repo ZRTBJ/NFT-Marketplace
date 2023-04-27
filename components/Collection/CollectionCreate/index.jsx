@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import {
   checkUniqueCollectionName,
   checkUniqueCollectionSymbol,
+  getSplitterList,
 } from 'services/collection/collectionService';
 import {
   createCollection,
@@ -26,6 +27,11 @@ import ConfirmationModal from 'components/Modals/ConfirmationModal';
 import { event } from 'nextjs-google-analytics';
 import TagManager from 'react-gtm-module';
 import WalletConnectModal from 'components/Login/WalletConnectModal';
+import { uniqBy } from 'lodash';
+import { toast } from 'react-toastify';
+import { addDays } from 'date-fns';
+import getUnixTime from 'date-fns/getUnixTime';
+import { format } from 'date-fns';
 
 export default function CollectionCreate({ query }) {
   // logo start
@@ -34,18 +40,8 @@ export default function CollectionCreate({ query }) {
   const [showConnectModal, setShowConnectModal] = useState(false);
   const [toCreateCollection, setToCreateCollection] = useState(false);
   const userInfo = useSelector((state) => state.user.userinfo);
-
-  useEffect(() => {
-    if (toCreateCollection) {
-      saveDraft();
-    }
-
-    return () => {
-      setToCreateCollection(false);
-    };
-  }, [userInfo?.id]);
   const onLogoPhotoSelect = useCallback((acceptedFiles) => {
-    if (acceptedFiles.length === 1) {
+    if (acceptedFiles?.length === 1) {
       setLogoPhoto(acceptedFiles);
       let objectUrl = URL.createObjectURL(acceptedFiles[0]);
       let logoPhotoInfo = {
@@ -55,7 +51,7 @@ export default function CollectionCreate({ query }) {
       setoutlineKey(1);
     }
   }, []);
-  async function onLogoPhotoRemove() {
+  const onLogoPhotoRemove = async () => {
     if (coverPhotoUrl.id) {
       let payload = {
         projectId: projectInfo.id,
@@ -71,18 +67,232 @@ export default function CollectionCreate({ query }) {
       setLogoPhoto([]);
       setLogoPhotoUrl('');
     }
-  }
+  };
   // Logo End
 
-  // collection Type start
-  const [collectionType, setCollectionType] = useState('');
-  const [showCollectionType, setShowCollectionType] = useState(true);
-  const [emptyCollectionType, setEmptyCollectionType] = useState(false);
-  function onCollectionTypeSelect(e) {
-    setCollectionType(e.target.value);
-    setEmptyCollectionType(false);
+  // Collection Name start
+  const [projectName, setProjectName] = useState('');
+  const [emptyProjectName, setemptyProjectName] = useState(false);
+  const [alreadyTakenProjectName, setAlreadyTakenProjectName] = useState(false);
+  const [projectNameDisabled, setProjectNameDisabled] = useState(false);
+  const onProjectNameChange = async (e) => {
+    let payload = {
+      projectName: e,
+      project_uuid: projectId,
+    };
+    setProjectName(payload.projectName);
+    setemptyProjectName(false);
+    await checkUniqueCollectionName(payload)
+      .then((e) => {
+        if (e?.code === 0) {
+          setemptyProjectName(false);
+          setAlreadyTakenProjectName(false);
+        } else {
+          setAlreadyTakenProjectName(true);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  // Collection Name End
+
+  // Collection symbol start
+  const [daoSymbol, setDaoSymbol] = useState('');
+  const [emptyDaoSymbol, setEmptyDaoSymbol] = useState(false);
+  const [daoSymbolDisable, setDaoSymbolDisable] = useState(false);
+  const [alreadyTakenDaoSymbol, setAlreadyTakenDaoSymbol] = useState(false);
+  const onDaoSymbolChange = async (e) => {
+    let payload = {
+      collectionSymbol: e,
+      project_uuid: projectId,
+    };
+    setDaoSymbol(payload.collectionSymbol);
+    setEmptyDaoSymbol(false);
+    await checkUniqueCollectionSymbol(payload)
+      .then((e) => {
+        if (e?.code === 0) {
+          setEmptyDaoSymbol(false);
+          setAlreadyTakenDaoSymbol(false);
+        } else {
+          setAlreadyTakenDaoSymbol(true);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  // Collection symbol End
+
+  // Category start
+  const [projectCategory, setProjectCategory] = useState('');
+  const [emptyProjeCtCategory, setEmptyProjectCategory] = useState(false);
+  const [projectCategoryName, setProjectCategoryName] = useState('');
+  const onProjectCategoryChange = async (event) => {
+    setProjectCategory(event.target.value);
+    setEmptyProjectCategory(false);
+    const categoryName = projectCategoryList?.find(
+      (x) => x?.id === parseInt(event.target.value)
+    );
+    setProjectCategoryName(categoryName ? categoryName?.name : '');
+  };
+  // Category end
+
+  // Blockchain start
+  let chainId = ls_GetChainID();
+  const [network, setNetwork] = useState(chainId?.toString());
+  const [isNetworkEmpty, setIsNetworkEmpty] = useState(false);
+  const [disableNetwork, setDisableNetwork] = useState(false);
+  //  BlockChain end
+
+  // Token Transferable start
+  const [isTokenTransferable, setIsTokenTransferable] = useState(false);
+  const onTokenTransferableChange = (data) => {
+    setIsTokenTransferable((o) => !o);
+  };
+  // Token Transferable End
+
+  // Token Time Bound start
+  const [isTokenTimebound, setIsTokenTimebound] = useState(false);
+  const [isTimeboundDurationValid, setisTimeboundDurationValid] =
+    useState(true);
+
+  const [timeboundDuration, setTimeBoundDuration] = useState({
+    days: null,
+    months: null,
+    years: null,
+  });
+  const onTokenTimeboundChange = (data) => {
+    setTimeBoundDuration({
+      days: null,
+      months: null,
+      years: null,
+    });
+    setIsTokenTimebound((o) => !o);
+  };
+  const onTimeboundDurationChange = (key, value) => {
+    let data = { ...timeboundDuration };
+    data[key] = value;
+    setTimeBoundDuration(data);
+  };
+  // Token Time bound End
+
+  // Base price start
+  const [basePrice, setBasePrice] = useState('');
+  const [isBasePriceValid, setIsBasePriceValid] = useState(true);
+  const handleBasePriceValue = (e) => {
+    if (e.target.value <= 0) {
+      setIsBasePriceValid(false);
+    } else {
+      setIsBasePriceValid(true);
+    }
+    setBasePrice(e.target.value);
+  };
+  // Base price end
+
+  // Supply start
+  const [supply, setSupply] = useState(0);
+  const [supplyDisable, setSupplyDisable] = useState(false);
+  const [isSupplyValid, setIsSupplyValid] = useState(true);
+  const handleSupplyValue = (e) => {
+    if (e.target.value <= 0) {
+      setIsSupplyValid(false);
+    } else {
+      setIsSupplyValid(true);
+    }
+    setSupply(Number(e.target.value));
+  };
+  // Supply end
+
+  // Royalty Earnable By Owner start
+  const [isRoyaltyEarnableByOwner, setIsRoyaltyEarnableByOwner] =
+    useState(false);
+  const [royaltyPercentage, setRoyaltyPercentage] = useState(0);
+  const [splitter, setSplitter] = useState();
+  const onRoyaltyEarnableByOwnerChange = (data) => {
+    setRoyaltyPercentage(0);
+    setSplitter();
+    setIsRoyaltyEarnableByOwner((o) => !o);
+  };
+  // Royalty Earnable By Owner end
+
+  // Royalty Percentage start
+  const [showRoyalties, setShowRoyalties] = useState(true);
+  const [royaltyPercentageDisable, setRoyaltyPercentageDisable] =
+    useState(false);
+  const [isRoyaltyPercentageValid, setIsRoyaltyPercentageValid] =
+    useState(true);
+
+  function onRoyaltyPercentageChange(royalties) {
+    setRoyaltyPercentage(royalties);
+    if (royalties === '') {
+      setIsRoyaltyPercentageValid(false);
+    } else {
+      if (!isNaN(royalties)) {
+        let value = parseInt(royalties);
+        if (value < 0) {
+          setIsRoyaltyPercentageValid(false);
+        } else if (value > 1 && value > 10) {
+          setIsRoyaltyPercentageValid(false);
+        } else {
+          setIsRoyaltyPercentageValid(true);
+        }
+      }
+    }
   }
-  // collection type End
+  // Royalty Percentage end
+
+  // Splitter start
+
+  const [splittersOptions, setSplittersOptions] = useState([]);
+  const [splitterListPayload, setSplitterListPayload] = useState({
+    page: 1,
+    perPage: 10,
+    keyword: '',
+    order_by: 'newer',
+  });
+  const [hasNextPageData, setHasNextPageData] = useState(true);
+  const getSplitters = async (network) => {
+    await getSplitterList(splitterListPayload.page, splitterListPayload.perPage)
+      .then((res) => {
+        let chain = network ? network : network;
+        let filteredSplitters =
+          chain &&
+          res?.splitters?.filter((split) => split?.blockchain === chain);
+        const splitterList = [...splittersOptions];
+        const mergedSplitterList = [...splitterList, ...filteredSplitters];
+        const uniqSplitterList = uniqBy(mergedSplitterList, function (e) {
+          return e?.id;
+        });
+
+        setSplittersOptions(uniqSplitterList);
+        if (res?.splitters?.length === 0) {
+          setHasNextPageData(false);
+        }
+      })
+      .catch((res) => {
+        console.log(res);
+      });
+  };
+  const scrolledBottomSplitters = async () => {
+    let oldPayload = { ...splitterListPayload };
+    oldPayload.page = oldPayload.page + 1;
+    setSplitterListPayload(oldPayload);
+  };
+
+  const onGetSplitterList = async () => {
+    setSplittersOptions([]);
+    setSplitterListPayload({
+      page: 1,
+      perPage: 10,
+      keyword: '',
+      order_by: 'newer',
+    });
+  };
+  const onSplitterDraftSave = async () => {
+    toast.success('Successfully Created New Splitter');
+  };
+  // Splitter end
 
   // cover start
   const [showCover, setShowCover] = useState(true);
@@ -118,79 +328,12 @@ export default function CollectionCreate({ query }) {
   }
   // cover End
 
-  // Project Name start
-  const [projectName, setProjectName] = useState('');
-  const [emptyProjectName, setemptyProjectName] = useState(false);
-  const [alreadyTakenProjectName, setAlreadyTakenProjectName] = useState(false);
-  const [projectNameDisabled, setProjectNameDisabled] = useState(false);
-  async function onProjectNameChange(e) {
-    let payload = {
-      projectName: e,
-      project_uuid: projectId,
-    };
-    setProjectName(payload.projectName);
-    setemptyProjectName(false);
-    await checkUniqueCollectionName(payload)
-      .then((e) => {
-        if (e.code === 0) {
-          setemptyProjectName(false);
-          setAlreadyTakenProjectName(false);
-        } else {
-          setAlreadyTakenProjectName(true);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-  // Project Name End
-
-  // Dao symbol start
-  // dao symbol is collection symbol
-  const [daoSymbol, setDaoSymbol] = useState('');
-  const [emptyDaoSymbol, setEmptyDaoSymbol] = useState(false);
-  const [daoSymbolDisable, setDaoSymbolDisable] = useState(false);
-  const [alreadyTakenDaoSymbol, setAlreadyTakenDaoSymbol] = useState(false);
-  async function onDaoSymbolChange(e) {
-    let payload = {
-      collectionSymbol: e,
-      project_uuid: projectId,
-    };
-    setDaoSymbol(payload.collectionSymbol);
-    setEmptyDaoSymbol(false);
-    await checkUniqueCollectionSymbol(payload)
-      .then((e) => {
-        if (e.code === 0) {
-          setEmptyDaoSymbol(false);
-          setAlreadyTakenDaoSymbol(false);
-        } else {
-          setAlreadyTakenDaoSymbol(true);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-  // Dao symbol End
-
   // overview start
   const [overview, setOverview] = useState('');
   function onOverviewChange(e) {
     setOverview(e.target.value);
   }
   // overview End
-
-  // Royalties start
-  const [royaltiesDisable, setRoyaltiesDisable] = useState(false);
-  const [primaryRoyalties, setPrimaryRoyalties] = useState(0);
-  const [secondaryRoyalties, setSecondaryRoyalties] = useState(0);
-  function onPrimaryRoyaltiesChange(royalties) {
-    setPrimaryRoyalties(royalties);
-  }
-  function onSecondaryRoyaltiesChange(royalties) {
-    setSecondaryRoyalties(royalties);
-  }
-  // Royalties End
 
   // webLinks start
   const links = [
@@ -224,21 +367,6 @@ export default function CollectionCreate({ query }) {
 
   // webLinks end
 
-  // category start
-  const [projectCategory, setProjectCategory] = useState('');
-  const [emptyProjeCtCategory, setEmptyProjectCategory] = useState(false);
-  const [projectCategoryName, setProjectCategoryName] = useState('');
-  function onProjectCategoryChange(event) {
-    setProjectCategory(event.target.value);
-    setEmptyProjectCategory(false);
-    const categoryName = projectCategoryList.find(
-      (x) => x.id === parseInt(event.target.value)
-    );
-
-    setProjectCategoryName(categoryName ? categoryName.name : '');
-  }
-  // category end
-
   // Freeze MetaData start
   const [isMetaDaFreezed, setIsMetaDataFreezed] = useState(true);
   const [freezeMetadataDisabled, setFreezeMetadataDisabled] = useState(false);
@@ -246,57 +374,7 @@ export default function CollectionCreate({ query }) {
     setIsMetaDataFreezed((o) => !o);
   }
   // Freeze MetaData end
-  // Token Transferable start
-  const [isTokenTransferable, setIsTokenTransferable] = useState(true);
-  const [showTokenTransferable, setShowTokenTransferable] = useState(true);
-  const [tokenTransferableDisabled, setTokenTransferableDisabled] =
-    useState(false);
-  function onTokenTransferableChange(data) {
-    setIsTokenTransferable((o) => !o);
-  }
-  // Token Transferable End
 
-  // Royalty Percentage start
-  const [showRoyalties, setShowRoyalties] = useState(true);
-  const [royaltyPercentageDisable, setRoyaltyPercentageDisable] =
-    useState(false);
-  const [royaltyPercentage, setRoyaltyPercentage] = useState(0);
-  const [isRoyaltyPercentageValid, setIsRoyaltyPercentageValid] =
-    useState(true);
-
-  function onRoyaltyPercentageChange(royalties) {
-    setRoyaltyPercentage(royalties);
-    if (royalties === '') {
-      setIsRoyaltyPercentageValid(false);
-    } else {
-      if (!isNaN(royalties)) {
-        let value = parseInt(royalties);
-        if (value < 0) {
-          setIsRoyaltyPercentageValid(false);
-        } else if (value > 0 && value > 10) {
-          setIsRoyaltyPercentageValid(false);
-        } else {
-          setIsRoyaltyPercentageValid(true);
-        }
-      }
-    }
-  }
-
-  // Royalty Percentage end
-  let chainId = ls_GetChainID();
-  //Supply
-  const [supply, setSupply] = useState(0);
-  const [supplyDisable, setSupplyDisable] = useState(false);
-  const [isSupplyValid, setIsSupplyValid] = useState(true);
-
-  const handleSupplyValue = (e) => {
-    if (e.target.value <= 0) {
-      setIsSupplyValid(false);
-    } else {
-      setIsSupplyValid(true);
-    }
-    setSupply(e.target.value);
-  };
   const [outlineKey, setoutlineKey] = useState(0);
   const [currentStep, setcurrentStep] = useState([1]);
   const [projectCreated, setProjectCreated] = useState(false);
@@ -310,15 +388,14 @@ export default function CollectionCreate({ query }) {
   const [dao_id, setDao_id] = useState(null);
   const [notOwner, setNotOwner] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [network, setNetwork] = useState(chainId?.toString());
-  const [isNetworkEmpty, setIsNetworkEmpty] = useState(false);
-  const [disableNetwork, setDisableNetwork] = useState(false);
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [collectionPublished, setCollectionPublished] = useState(false);
   const [collectionDeleted, setCollectionDeleted] = useState(false);
   const [daoDetails, setDaoDetails] = useState({});
 
   function handelClickBack() {
+    setoutlineKey((pre) => pre + 1);
     let currentIndex = currentStep.pop();
     setcurrentStep(currentStep.filter((x) => x !== currentIndex));
   }
@@ -346,6 +423,25 @@ export default function CollectionCreate({ query }) {
     }
   }
 
+  const daysToSec = (days) => {
+    return days * 24 * 60 * 60;
+  };
+  const monthsToSec = (months) => {
+    return months * 30 * 24 * 60 * 60;
+  };
+  const yearsToSec = (years) => {
+    return years * 60 * 60 * 24 * 365;
+  };
+  const convertSecondsToDHMS = (seconds) => {
+    const oneDay = 24 * 60 * 60; // Number of seconds in one day
+    const oneMonth = 30 * oneDay; // Number of seconds in one month
+    const oneYear = 365 * oneDay; // Number of seconds in one year
+    const years = Math.floor(seconds / oneYear);
+    const months = Math.floor((seconds % oneYear) / oneMonth);
+    const days = Math.floor(((seconds % oneYear) % oneMonth) / oneDay);
+    return { years, months, days };
+  };
+
   async function saveDraft() {
     if (userInfo?.id) {
       // outline
@@ -355,8 +451,7 @@ export default function CollectionCreate({ query }) {
           projectCategory !== '' &&
           alreadyTakenProjectName === false &&
           daoSymbol !== '' &&
-          alreadyTakenDaoSymbol === false &&
-          isRoyaltyPercentageValid
+          alreadyTakenDaoSymbol === false
         ) {
           let id = '';
           if (!projectCreated) {
@@ -388,7 +483,7 @@ export default function CollectionCreate({ query }) {
     });
     let createPayload = {
       name: projectName,
-      collection_type: collectionType,
+      collection_type: 'auto',
       blockchain: network,
       ...(dao_id && { dao_id: dao_id }),
     };
@@ -422,6 +517,18 @@ export default function CollectionCreate({ query }) {
       },
     });
     const allWebLinks = [...webLinks];
+
+    let timeDuration = 0;
+    if (timeboundDuration.days && timeboundDuration.days > 0) {
+      timeDuration = timeDuration + daysToSec(timeboundDuration.days);
+    }
+    if (timeboundDuration.months && timeboundDuration.months > 0) {
+      timeDuration = timeDuration + monthsToSec(timeboundDuration.months);
+    }
+    if (timeboundDuration.years && timeboundDuration.years > 0) {
+      timeDuration = timeDuration + yearsToSec(timeboundDuration.years);
+    }
+
     let updatePayload = {
       logo: logoPhoto.length > 0 ? logoPhoto[0] : null,
       name: projectName,
@@ -436,8 +543,11 @@ export default function CollectionCreate({ query }) {
       isTokenTransferable: isTokenTransferable,
       royaltyPercentage: royaltyPercentage,
       collectionSymbol: daoSymbol,
-      total_supply: supply,
+      total_supply: supply ? supply : 1,
+      price: basePrice,
       id: id,
+      splitterId: splitter?.id ? splitter.id : '',
+      timebound: timeDuration ? timeDuration : '',
     };
     await updateCollection(updatePayload)
       .then((res) => {
@@ -479,15 +589,33 @@ export default function CollectionCreate({ query }) {
         setIsTokenTransferable(response?.token_transferable);
         setIsMetaDataFreezed(response?.updatable);
         setRoyaltyPercentage(response?.royalty_percent);
+        if (response?.royalty_percent) {
+          setIsRoyaltyEarnableByOwner(true);
+        }
         setSupply(response?.total_supply);
-        setCollectionType(response?.type);
         setDataIsLoading(false);
         setProjectInfo(response);
         setProjectStatus(response?.status);
         setProjectCreated(true);
         setProjectId(response?.id);
+        if (response?.price) {
+          setBasePrice(response?.price);
+        }
+        if (response?.royalty_splitter?.id) {
+          setSplitter(response?.royalty_splitter);
+        }
+        if (response?.token_limit_duration) {
+          const { years, months, days } = convertSecondsToDHMS(
+            response?.token_limit_duration
+          );
+          setIsTokenTimebound(true);
+          setTimeBoundDuration({
+            days: days,
+            months: months,
+            years: years,
+          });
+        }
         if (response?.type === 'right_attach') {
-          setTokenTransferableDisabled(true);
           setIsMetaDataFreezed(true);
           setFreezeMetadataDisabled(true);
           setShowRoyalties(false);
@@ -500,7 +628,6 @@ export default function CollectionCreate({ query }) {
           setProjectNameDisabled(true);
           setDaoSymbolDisable(true);
           setFreezeMetadataDisabled(true);
-          setTokenTransferableDisabled(true);
           setRoyaltyPercentageDisable(true);
           setSupplyDisable(true);
           setDisableNetwork(true);
@@ -509,6 +636,7 @@ export default function CollectionCreate({ query }) {
         if (!response?.is_owner) {
           setNotOwner(true);
         }
+        setoutlineKey((pre) => pre + 1);
       } else {
         setDataIsLoading(false);
         showErrorModal(true);
@@ -516,6 +644,7 @@ export default function CollectionCreate({ query }) {
       }
     });
   }
+
   function handelClickNext() {
     // outline
     if (currentStep.length === 1) {
@@ -527,39 +656,41 @@ export default function CollectionCreate({ query }) {
         setEmptyDaoSymbol(true);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-      if (collectionType === '') {
-        setEmptyCollectionType(true);
-      }
       if (network === '0') {
         setIsNetworkEmpty(true);
       }
-      if (!supply) {
-        setIsSupplyValid(false);
-      }
       if (projectCategory === '') {
         setEmptyProjectCategory(true);
+      }
+      if (
+        (isRoyaltyEarnableByOwner && royaltyPercentage == 0) ||
+        (isRoyaltyEarnableByOwner && !isRoyaltyPercentageValid)
+      ) {
+        setIsRoyaltyPercentageValid(false);
+        return;
       } else if (
         projectName !== '' &&
         projectCategory !== '' &&
         alreadyTakenProjectName === false &&
         daoSymbol !== '' &&
         alreadyTakenDaoSymbol === false &&
-        isRoyaltyPercentageValid &&
         network !== '0'
       ) {
-        if (collectionType === 'product') {
-          if (supply && isSupplyValid) {
-            const categoryName = projectCategoryList.find(
-              (x) => x.id === parseInt(projectCategory)
-            );
-            setProjectCategoryName(categoryName ? categoryName.name : '');
+        const categoryName = projectCategoryList.find(
+          (x) => x.id === parseInt(projectCategory)
+        );
+        setProjectCategoryName(categoryName ? categoryName.name : '');
+        if (isTokenTimebound) {
+          if (
+            timeboundDuration.days ||
+            timeboundDuration.months ||
+            timeboundDuration.years
+          ) {
             setcurrentStep([1, 2]);
+          } else {
+            setisTimeboundDurationValid(false);
           }
         } else {
-          const categoryName = projectCategoryList.find(
-            (x) => x.id === parseInt(projectCategory)
-          );
-          setProjectCategoryName(categoryName ? categoryName.name : '');
           setcurrentStep([1, 2]);
         }
       }
@@ -593,37 +724,17 @@ export default function CollectionCreate({ query }) {
         setDataIsLoading(false);
       });
   }
-  // async function daoCreate() {
-  //   let daoId = '';
-  //   let payload = {
-  //     // name: `DAO_${uuidv4()}`,
-  //     blockchain: ls_GetChainID(),
-  //   };
-  //   await createProject(payload).then((res) => {
-  //     if (res.code === 0) {
-  //       daoId = res.project.id;
-  //       setDao_id(daoId);
-  //     } else {
-  //       setShowErrorModal(true);
-  //       setErrorMessage(res.message);
-  //     }
-  //   });
-  //   return daoId;
-  // }
+  useEffect(() => {
+    if (hasNextPageData) {
+      getSplitters(network);
+    }
+  }, [splitterListPayload, userInfo?.id]);
   useEffect(() => {
     setDao_id(dao_id);
   }, [dao_id]);
   useEffect(() => {
-    setCollectionType(collectionType);
-    if (collectionType === 'membership') {
-      setIsMetaDataFreezed(false);
-    }
-  }, [collectionType]);
-
-  useEffect(() => {
     if (query?.id) {
       projectDetails(query?.id);
-      setShowCollectionType(false);
     }
     if (query?.dao_id) {
       setDao_id(query?.dao_id);
@@ -637,14 +748,18 @@ export default function CollectionCreate({ query }) {
         }
       });
     }
-    if (query?.type) {
-      setCollectionType(query?.type);
-      setShowCollectionType(false);
-    }
     getProjectCategory().then((e) => {
       setProjectCategoryList(e.categories);
     });
   }, []);
+  useEffect(() => {
+    if (toCreateCollection) {
+      saveDraft();
+    }
+    return () => {
+      setToCreateCollection(false);
+    };
+  }, [userInfo?.id]);
   return (
     <>
       {isDataLoading && <div className='loading'></div>}
@@ -662,11 +777,15 @@ export default function CollectionCreate({ query }) {
                   <div className='flex flex-wrap items-center mb-[24px]'>
                     <div>
                       <h1 className='txtblack text-[28px] font-black mb-[6px]'>
-                        {projectCreated ? 'Edit' : 'Create New'} Collection
+                        {query?.draft
+                          ? 'Edit'
+                          : projectCreated
+                          ? 'Edit'
+                          : 'Create New'}{' '}
+                        Collection
                       </h1>
                       <p className='txtblack text-[14px] text-textSubtle'>
-                        Fill the require form to{' '}
-                        {!projectCreated ? 'create ' : 'Edit'} collection
+                        Fill the require form to save collection
                       </p>
                     </div>
                     {query?.id && !notOwner && !collectionPublished && (
@@ -680,6 +799,7 @@ export default function CollectionCreate({ query }) {
                     )}
                   </div>
                   <Outline
+                    isPublished={collectionPublished}
                     key={outlineKey}
                     // logo
                     logoLabel='Collection Logo'
@@ -687,10 +807,7 @@ export default function CollectionCreate({ query }) {
                     onCoverPhotoSelect={onCoverPhotoSelect}
                     onCoverPhotoRemove={onCoverPhotoRemove}
                     // collection Type
-                    showCollectionType={showCollectionType}
-                    collectionType={collectionType}
-                    emptyCollectionType={emptyCollectionType}
-                    onCollectionTypeSelect={onCollectionTypeSelect}
+                    showCollectionType={false}
                     // name
                     nameLabel='Collection'
                     projectName={projectName}
@@ -706,6 +823,52 @@ export default function CollectionCreate({ query }) {
                     onDaoSymbolChange={onDaoSymbolChange}
                     daoSymbolDisable={daoSymbolDisable}
                     alreadyTakenDaoSymbol={alreadyTakenDaoSymbol}
+                    // options
+                    showOptions={true}
+                    // Token Transferable
+                    showTokenTransferable={true}
+                    isTokenTransferable={isTokenTransferable}
+                    onTokenTransferableChange={onTokenTransferableChange}
+                    // Timebound token
+                    showTimeBoundToken={true}
+                    isTokenTimebound={isTokenTimebound}
+                    onTokenTimeboundChange={onTokenTimeboundChange}
+                    timeboundDuration={timeboundDuration}
+                    onTimeboundDurationChange={(key, value) =>
+                      onTimeboundDurationChange(key, value)
+                    }
+                    isTimeboundDurationValid={isTimeboundDurationValid}
+                    // price and royalty settings
+                    showPriceAndRoyaltySettings={true}
+                    // base price
+                    isBasePriceValid={isBasePriceValid}
+                    basePrice={basePrice}
+                    handleBasePriceValue={handleBasePriceValue}
+                    // supply
+                    showSupply={true}
+                    supply={supply}
+                    supplyDisable={supplyDisable}
+                    isSupplyValid={isSupplyValid}
+                    handleSupplyValue={handleSupplyValue}
+                    // Royalty Earnable By Owner
+                    showOwnerCanEarnRoyalty={true}
+                    isRoyaltyEarnableByOwner={isRoyaltyEarnableByOwner}
+                    onRoyaltyEarnableByOwnerChange={
+                      onRoyaltyEarnableByOwnerChange
+                    }
+                    // Royalty Percentage
+                    showRoyaltyPercentage={showRoyalties}
+                    royaltyPercentageDisable={royaltyPercentageDisable}
+                    royaltyPercentage={royaltyPercentage}
+                    onRoyaltyPercentageChange={onRoyaltyPercentageChange}
+                    isRoyaltyPercentageValid={isRoyaltyPercentageValid}
+                    // splitter
+                    splitter={splitter}
+                    onsetSplitter={setSplitter}
+                    splittersOptions={splittersOptions}
+                    scrolledBottomSplitters={scrolledBottomSplitters}
+                    onGetSplitterList={onGetSplitterList}
+                    onSplitterDraftSave={onSplitterDraftSave}
                     // Dao Wallet
                     showDaoWallet={false}
                     // overview
@@ -720,11 +883,6 @@ export default function CollectionCreate({ query }) {
                     onLogoPhotoRemove={onLogoPhotoRemove}
                     // Royalties
                     showRoyalties={false}
-                    royaltiesDiisTokenTransferablesable={royaltiesDisable}
-                    primaryRoyalties={primaryRoyalties}
-                    secondaryRoyalties={secondaryRoyalties}
-                    onPrimaryRoyaltiesChange={onPrimaryRoyaltiesChange}
-                    onSecondaryRoyaltiesChange={onSecondaryRoyaltiesChange}
                     // webLinks
                     showWebLinks={showWebLinks}
                     webLinks={webLinks}
@@ -732,40 +890,15 @@ export default function CollectionCreate({ query }) {
                     addMoreSocialLink={addMoreSocialLink}
                     deleteSocialLinks={deleteSocialLinks}
                     // category
-                    showProjectCategory={
-                      collectionType === 'right_attach' ? false : true
-                    }
+                    showProjectCategory={true}
                     projectCategory={projectCategory}
                     emptyProjeCtCategory={emptyProjeCtCategory}
                     onProjectCategoryChange={onProjectCategoryChange}
-                    // blockchainCategory={blockchainCategory}
                     // Freeze metadata
-                    showFreezeMetadata={
-                      collectionType === 'membership' ? false : true
-                    }
-                    isMetadataFreezed={isMetaDaFreezed}
-                    onMetadataFreezeChange={onMetadataFreezeChange}
-                    freezeMetadataDisabled={freezeMetadataDisabled}
-                    // Token Transferable
-                    showTokenTransferable={showTokenTransferable}
-                    isTokenTransferable={isTokenTransferable}
-                    onTokenTransferableChange={onTokenTransferableChange}
-                    tokenTransferableDisabled={tokenTransferableDisabled}
-                    // Royalty Percentage
-                    showRoyaltyPercentage={showRoyalties}
-                    royaltyPercentageDisable={royaltyPercentageDisable}
-                    royaltyPercentage={royaltyPercentage}
-                    onRoyaltyPercentageChange={onRoyaltyPercentageChange}
-                    isRoyaltyPercentageValid={isRoyaltyPercentageValid}
-                    //Supply
-                    showSupply={collectionType === 'product' ? true : false}
-                    supply={supply}
-                    handleSupplyValue={handleSupplyValue}
-                    supplyDisable={supplyDisable}
+                    showFreezeMetadata={false}
                     onBlockchainCategoryChange={setNetwork}
                     collectionNetwork={network}
                     disableNetwork={disableNetwork}
-                    isSupplyValid={isSupplyValid}
                     userId={userInfo?.id}
                     setIsNetworkEmpty={setIsNetworkEmpty}
                     isNetworkEmpty={isNetworkEmpty}
@@ -800,22 +933,16 @@ export default function CollectionCreate({ query }) {
                   coverPhotoUrl={coverPhotoUrl}
                   // Royalties
                   showRoyalties={false}
-                  primaryRoyalties={primaryRoyalties}
-                  secondaryRoyalties={secondaryRoyalties}
                   // category
-                  showProjectCategory={
-                    collectionType === 'right_attach' ? false : true
-                  }
+                  showProjectCategory={true}
                   projectCategoryName={projectCategoryName}
-                  showFreezeMetadata={
-                    collectionType === 'membership' ? false : true
-                  }
+                  showFreezeMetadata={false}
                   isMetaDaFreezed={isMetaDaFreezed}
-                  showTokenTransferable={showTokenTransferable}
+                  showTokenTransferable={true}
                   isTokenTransferable={isTokenTransferable}
                   showRoyaltyPercentage={showRoyalties}
                   royaltyPercentage={royaltyPercentage}
-                  showSupplyData={collectionType === 'product' ? true : false}
+                  showSupplyData={true}
                   supply={supply}
                   network={network}
                 />
