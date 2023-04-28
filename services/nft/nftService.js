@@ -17,6 +17,9 @@ export async function saveNFT(payload) {
 export async function createMembershipNft(payload) {
   return await client('POST', `/membership-nft`, payload, 'formdata');
 }
+export async function createNft(payload) {
+  return await client('POST', `/lnft`, payload, 'formdata');
+}
 
 export async function generateUploadkey(payload) {
   return await client('POST', `/upload/genKey`, payload, 'formdata');
@@ -39,6 +42,11 @@ export async function getNftDetails(type, id) {
       : '/nft/';
   return await client('GET', `${typeValue}${id}`);
 }
+
+export async function getNftDetailsAutoType(id) {
+  return await client('GET', `/lnft/${id}`);
+}
+
 export async function getMintedNftDetails(nftId, tokenId) {
   return await client('GET', `/lnft/${nftId}/${tokenId}`);
 }
@@ -59,6 +67,9 @@ export async function updateProductNFT(id, payload) {
 }
 export async function updateMembershipNFT(id, payload) {
   return await client('PUT', `/membership-nft/${id}`, payload, 'formdata');
+}
+export async function updateNft(id, payload) {
+  return await client('PUT', `/lnft/${id}`, payload, 'formdata');
 }
 
 export async function setSalesPage(

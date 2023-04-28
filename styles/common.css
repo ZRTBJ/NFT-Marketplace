@@ -432,6 +432,10 @@ table > thead > tr > th {
 .date-range-picker input {
   height: 44px;
 }
+.nft-sales-range .rs-picker-toggle {
+  padding-bottom: 13px !important;
+  padding-top: 13px !important;
+}
 
 .word-break {
   white-space: pre-wrap;
