@@ -41,7 +41,7 @@ const PricingRoyalty = ({ price, network, contributors }) => {
               ))}
             </table>
           ) : (
-            <p>No Contributors</p>
+            <p>The Collection does not have any Contributors</p>
           )}
         </div>
       </div>

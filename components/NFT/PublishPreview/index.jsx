@@ -7,6 +7,7 @@ import {
   validateCollectionPublish,
   getCollectionDetailsById,
   getSplitterDetails,
+  getCollectionNFTs,
 } from 'services/collection/collectionService';
 import { useEffect } from 'react';
 import { NETWORKS } from 'config/networks';
@@ -16,13 +17,15 @@ const PublishPreview = ({ query }) => {
   const [tokenStandard, setTokenStandard] = useState('');
   const [collection, setCollection] = useState(null);
   const [contributors, setContributors] = useState([]);
+  const [nfts, setNFTs] = useState([]);
   const network = NETWORKS?.[collection?.blockchain];
-  console.log(collection);
+
   useEffect(() => {
     if (query?.id) {
       validatePublish();
       getCollectionDetails();
       getSplitters();
+      getNFTs();
     }
   }, [query?.id]);
 
@@ -48,6 +51,14 @@ const PublishPreview = ({ query }) => {
     });
   };
 
+  const getNFTs = () => {
+    getCollectionNFTs(query?.id).then((resp) => {
+      if (resp.code === 0) {
+        setNFTs(resp?.lnfts);
+      }
+    });
+  };
+
   return (
     <div className='pt-6 md:pt-0 md:mt-[40px] mx-10 mb-10'>
       <h2 className='text-center'>Publish Preview</h2>
@@ -62,7 +73,7 @@ const PublishPreview = ({ query }) => {
           network={network}
           contributors={contributors}
         />
-        <NFTList />
+        <NFTList nfts={nfts} />
         <div className='w-full mt-8'>
           <button
             className='contained-button mx-auto block shadow-md'

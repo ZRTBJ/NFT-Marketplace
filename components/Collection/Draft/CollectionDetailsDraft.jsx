@@ -39,7 +39,6 @@ export default function CollectionDetailsDraft({ userId }) {
             {/* <button className='contained-button font-satoshi-bold'>
               Publish
             </button> */}
-
             <Link
               href={`/collection/create?draft=true`}
               className='outlined-button font-satoshi-bold'
