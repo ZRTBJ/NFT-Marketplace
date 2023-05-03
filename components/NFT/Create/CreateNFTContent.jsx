@@ -11,13 +11,19 @@ import {
   deleteDraftNFT,
   createNft,
   updateNft,
+  NFTRegisterAfterPublish,
 } from 'services/nft/nftService';
 import {
   updateRoyaltySplitter,
   getCollectionDetailsById,
   getUserCollections,
 } from 'services/collection/collectionService';
-import { ls_GetChainID, ls_GetUserToken } from 'util/ApplicationStorage';
+import {
+  ls_GetChainID,
+  ls_GetUserToken,
+  ls_GetWalletAddress,
+  ls_GetWalletType,
+} from 'util/ApplicationStorage';
 import { uniqBy } from 'lodash';
 import { getNotificationData } from 'redux/notification';
 import { NETWORKS } from 'config/networks';
@@ -42,6 +48,10 @@ import NetworkSwitchModal from 'components/Commons/NetworkSwitchModal/NetworkSwi
 import Matic from 'assets/images/polygon.svg';
 import Eth from 'assets/images/eth.svg';
 import Bnb from 'assets/images/bnb.svg';
+
+import { createProvider } from 'util/smartcontract/provider';
+import { erc721Instance } from 'config/ABI/erc721';
+import { ethers } from 'ethers';
 
 const predefinedBottomRanges = [
   {
@@ -89,6 +99,8 @@ const Control = ({ children, ...props }) => {
   );
 };
 export default function CreateNFTContent({ query }) {
+  const provider = createProvider();
+
   const fileUploadNotification = useSelector((state) =>
     state?.notifications?.notificationData
       ? state?.notifications?.notificationData
@@ -108,7 +120,6 @@ export default function CreateNFTContent({ query }) {
         isFileError: false,
         limitExceeded: false,
       },
-      // nftName: "",
       externalLink: '',
       description: '',
       benefits: [{ title: '' }, { title: '' }],
@@ -249,10 +260,9 @@ export default function CreateNFTContent({ query }) {
         isFileError: false,
         limitExceeded: false,
       },
-      // nftName: "",
       externalLink: '',
       description: '',
-      benefits: [{ title: '' }],
+      benefits: [{ title: '' }, { title: '' }],
       properties: [
         {
           key: '',
@@ -262,10 +272,11 @@ export default function CreateNFTContent({ query }) {
         },
       ],
       sensitiveContent: false,
-      supply: '',
+      supply: '1',
       isOpen: true,
       blockchainCategory: 'polygon',
       indexId: oldNfts.length + 1,
+      price: '',
     });
     setNfts(oldNfts);
   }
@@ -457,6 +468,52 @@ export default function CreateNFTContent({ query }) {
     setIsNftLoading(false);
     setShowDataUploadingModal(false);
   };
+  const registerNFT = async (price, ipfsLink, supply, nftId) => {
+    if (
+      collection?.id &&
+      collection?.type === 'auto' &&
+      collection?.status === 'published' &&
+      collection?.contract_address
+    ) {
+      if (ipfsLink) {
+        const priceContract = erc721Instance(
+          // collection?.contract_address,
+          '0x204D05423Ccf56b99D8C7FB5420Fd61fE4Fc1e71',
+          provider
+        );
+
+        const nftInfo = {
+          price: ethers.utils.parseEther(price.toString()),
+          uri: ipfsLink,
+        };
+
+        let walletType = await ls_GetWalletType();
+        let signer;
+
+        if (walletType === 'metamask') {
+          if (!window.ethereum) throw new Error(`User wallet not found`);
+          await window.ethereum.enable();
+          const userProvider = await new ethers.providers.Web3Provider(
+            window.ethereum
+          );
+          signer = await userProvider.getSigner();
+        } else if (walletType === 'magicwallet') {
+          signer = await etherMagicProvider.getSigner();
+        }
+        console.log(signer);
+        const response = await priceContract.addNewToken(
+          nftInfo.price,
+          nftInfo.uri,
+          {
+            from: signer,
+          }
+        );
+        console.log(response);
+        // await NFTRegisterAfterPublish(nftId, tnx);
+      }
+    }
+  };
+
   async function saveNFTDetails(assetId, jobId) {
     let nft = {};
     if (typeof window !== 'undefined') {
@@ -508,8 +565,14 @@ export default function CreateNFTContent({ query }) {
         },
       });
       await createNft(request)
-        .then((res) => {
-          if (res.code === 0) {
+        .then(async (res) => {
+          if (res?.code === 0) {
+            await registerNFT(
+              nft?.price,
+              res?.lnft?.asset?.path,
+              res?.lnft?.supply,
+              res?.lnft?.id
+            );
             if (typeof window !== 'undefined') {
               localStorage.removeItem(`${jobId}`);
               const index = jobIds.indexOf(jobId);
@@ -681,7 +744,8 @@ export default function CreateNFTContent({ query }) {
         element?.assets?.isFileError === false &&
         element?.assets?.limitExceeded === false &&
         element?.nftName !== '' &&
-        element?.supply !== ''
+        element?.supply !== '' &&
+        element?.price !== ''
     );
 
     if (isPreview) {
@@ -1247,7 +1311,7 @@ export default function CreateNFTContent({ query }) {
                       <Tooltip></Tooltip>
                       <p className='text-txtblack text-[14px]'>NFT Price</p>
                     </div>
-                    <div className='flex items-center gap-2'>
+                    <div className='flex  gap-2'>
                       <Select
                         components={{
                           Control,
@@ -1260,23 +1324,27 @@ export default function CreateNFTContent({ query }) {
                         isDisabled={true}
                         className='min-w-[50%]'
                       />
-                      <input
-                        value={nft.price}
-                        onChange={(e) =>
-                          onTextfieldChange(index, 'price', e.target.value)
-                        }
-                        disabled={isPreview}
-                        type='number'
-                        min='0'
-                        className={`debounceInput ${
-                          isPreview ? ' !border-none bg-transparent' : ''
-                        } `}
-                        placeholder={`${isPreview ? '' : 'Add Price'}`}
-                      />
+                      <div>
+                        <input
+                          value={nft.price}
+                          onChange={(e) =>
+                            onTextfieldChange(index, 'price', e.target.value)
+                          }
+                          disabled={isPreview}
+                          type='number'
+                          min='0'
+                          className={`debounceInput ${
+                            isPreview ? ' !border-none bg-transparent' : ''
+                          } `}
+                          placeholder={`${isPreview ? '' : 'Add Price'}`}
+                        />
+                        {checkedValidation && nft.price === '' && (
+                          <p className='validationTag text-sm'>
+                            Price is required
+                          </p>
+                        )}
+                      </div>
                     </div>
-                    {/* {checkedValidation && nft.price === '' && (
-                      <p className='validationTag text-sm'>Price is required</p>
-                    )} */}
                   </div>
                   {/* sale time */}
                   <div className='md:col-span-3'>
@@ -1700,8 +1768,9 @@ export default function CreateNFTContent({ query }) {
       )}
       {showSuccessModal && (
         <SuccessModal
-          message={`You have successfully ${updateMode ? 'update' : 'create'}
-                     Membership NFT!`}
+          message={`You have successfully ${
+            updateMode ? 'update' : 'create'
+          } NFT!`}
           subMessage="Let's explore the NFT"
           buttonText='View NFT'
           redirection={`/collection/${collection_id}`}
