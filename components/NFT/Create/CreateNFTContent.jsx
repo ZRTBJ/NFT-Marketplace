@@ -567,12 +567,12 @@ export default function CreateNFTContent({ query }) {
       await createNft(request)
         .then(async (res) => {
           if (res?.code === 0) {
-            await registerNFT(
-              nft?.price,
-              res?.lnft?.asset?.path,
-              res?.lnft?.supply,
-              res?.lnft?.id
-            );
+            // await registerNFT(
+            //   nft?.price,
+            //   res?.lnft?.asset?.path,
+            //   res?.lnft?.supply,
+            //   res?.lnft?.id
+            // );
             if (typeof window !== 'undefined') {
               localStorage.removeItem(`${jobId}`);
               const index = jobIds.indexOf(jobId);
