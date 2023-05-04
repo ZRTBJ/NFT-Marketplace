@@ -1268,29 +1268,6 @@ const CollectionContent = ({ collectionId, userId }) => {
           </div>
         </section>
         <section>
-          {Collection?.is_owner ? (
-            <div
-              onClick={
-                Collection.type === 'product' && isSupplyOver
-                  ? null
-                  : () =>
-                      router.push(
-                        `${
-                          Collection?.type === 'product'
-                            ? `/nft/product/create?collectionId=${collectionId}`
-                            : Collection?.type === 'membership'
-                            ? `/nft/membership/create?collection_id=${collectionId}`
-                            : `/nft/create?collection_id=${collectionId}`
-                        }`
-                      )
-              }
-              className={`mint-button mt-3 text-center font-satoshi-bold w-full md:w-fit ${
-                Collection.type === 'product' && isSupplyOver ? 'grayscale' : ''
-              }`}
-            >
-              <span> Create NFT</span>
-            </div>
-          ) : null}
           <section>
             <div className='mb-4'>
               <ul

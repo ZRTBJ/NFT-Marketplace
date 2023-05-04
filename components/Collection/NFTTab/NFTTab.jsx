@@ -21,13 +21,15 @@ export default function NFTTab({ Collection, NFTs, onShowSalesPageModal }) {
   let isSupplyOver = Collection?.total_supply <= NFTs?.length;
   const checkSalesStatus = (nft) => {
     let status = '';
-    if (
-      typeof nft?.more_info?.price === 'number' &&
-      nft?.more_info?.currency &&
-      nft?.more_info?.start_datetime &&
-      nft?.more_info?.end_datetime
-    ) {
-      status = 'ready';
+    if (Collection?.status === 'published') {
+      if (
+        typeof nft?.more_info?.price === 'number' &&
+        nft?.more_info?.currency &&
+        nft?.more_info?.start_datetime &&
+        nft?.more_info?.end_datetime
+      ) {
+        status = 'ready';
+      }
     } else {
       status = 'not_ready';
     }
@@ -58,6 +60,38 @@ export default function NFTTab({ Collection, NFTs, onShowSalesPageModal }) {
     };
     onShowSalesPageModal(salesInfo);
   };
+  const showSalesButton = (nft) => {
+    let show = 'false';
+    const nft_type = nft?.nft_type;
+    if (Collection?.status === 'published') {
+      if (nft_type === 'product' && checkSalesStatus(nft) === 'ready') {
+        show = 'true';
+      }
+      if (nft_type === 'membership' && checkSalesStatus(nft) === 'ready') {
+        show = 'true';
+      } else if (nft_type === 'auto' && nft?.token_id) {
+        show = 'true';
+      }
+    }
+  };
+  const showSalesSettingButton = (nft) => {
+    let show = 'true';
+    if (
+      Collection?.type === 'membership' &&
+      Collection?.status === 'published' &&
+      checkSalesStatus(nft) === 'ready'
+    ) {
+      show = 'false';
+    }
+    if (
+      Collection?.type === 'auto' &&
+      Collection?.status === 'published' &&
+      checkSalesStatus(nft) === 'ready'
+    ) {
+      show = 'false';
+    }
+    return show;
+  };
 
   return (
     <>
@@ -70,9 +104,32 @@ export default function NFTTab({ Collection, NFTs, onShowSalesPageModal }) {
             width={315}
             height={210}
           />
-          <p className='font-bold text-center'>
+          <p className='font-bold text-center mb-4'>
             You don't have any NFT yet. Start creating NFT now
           </p>
+          {Collection?.is_owner ? (
+            <div
+              onClick={
+                Collection.type === 'product' && isSupplyOver
+                  ? null
+                  : () =>
+                      router.push(
+                        `${
+                          Collection?.type === 'product'
+                            ? `/nft/product/create?collectionId=${Collection?.id}`
+                            : Collection?.type === 'membership'
+                            ? `/nft/membership/create?collection_id=${Collection?.id}`
+                            : `/nft/create?collection_id=${Collection?.id}`
+                        }`
+                      )
+              }
+              className={`mint-button mt-3 text-center font-satoshi-bold w-full md:w-fit px-4 ${
+                Collection.type === 'product' && isSupplyOver ? 'grayscale' : ''
+              }`}
+            >
+              <span> Create NFT</span>
+            </div>
+          ) : null}
         </div>
       )}
       {NFTs?.length > 0 && (
@@ -105,26 +162,44 @@ export default function NFTTab({ Collection, NFTs, onShowSalesPageModal }) {
             ) : null}
           </div>
 
-          <div class='relative overflow-x-auto custom-scrollbar my-10 shadow rounded-2xl border'>
-            <table class='w-full text-left '>
-              <thead class=' bg-gray-200 whitespace-nowrap'>
+          <div className='relative overflow-y-hidden overflow-x-auto custom-scrollbar my-10 shadow rounded-2xl border'>
+            <table className='w-full text-left '>
+              <thead className=' bg-gray-200 whitespace-nowrap'>
                 <tr>
-                  <th scope='col' class='px-6 py-5 text-txtblack !font-bold'>
+                  <th
+                    scope='col'
+                    className='px-6 py-5 text-txtblack !font-bold'
+                  >
                     Asset
                   </th>
-                  <th scope='col' class='px-6 py-5 text-txtblack !font-bold'>
+                  <th
+                    scope='col'
+                    className='px-6 py-5 text-txtblack !font-bold'
+                  >
                     Name
                   </th>
-                  <th scope='col' class='px-6 py-5 text-txtblack !font-bold'>
+                  <th
+                    scope='col'
+                    className='px-6 py-5 text-txtblack !font-bold'
+                  >
                     Pricing
                   </th>
-                  <th scope='col' class='px-6 py-5 text-txtblack !font-bold'>
+                  <th
+                    scope='col'
+                    className='px-6 py-5 text-txtblack !font-bold'
+                  >
                     Supply
                   </th>
-                  <th scope='col' class='px-6 py-5 text-txtblack !font-bold'>
+                  <th
+                    scope='col'
+                    className='px-6 py-5 text-txtblack !font-bold'
+                  >
                     Sales Status
                   </th>
-                  <th scope='col' class='px-6 py-5 text-txtblack !font-bold'>
+                  <th
+                    scope='col'
+                    className='px-6 py-5 text-txtblack !font-bold'
+                  >
                     Action
                   </th>
                 </tr>
@@ -132,7 +207,7 @@ export default function NFTTab({ Collection, NFTs, onShowSalesPageModal }) {
               <tbody>
                 {NFTs?.map((nft, index) => (
                   <tr key={index} className='border-b border-[#B1C1C8]'>
-                    <td class='whitespace-nowrap px-6 py-5'>
+                    <td className='whitespace-nowrap px-6 py-5'>
                       <Link href={`/nft/${nft?.nft_type}/${nft.id}`}>
                         {imageRegex.test(nft?.asset?.asset_type) && (
                           <Image
@@ -176,7 +251,7 @@ export default function NFTTab({ Collection, NFTs, onShowSalesPageModal }) {
                         ) : null}
                       </Link>
                     </td>
-                    <td class='whitespace-nowrap px-6 py-5'>
+                    <td className='whitespace-nowrap px-6 py-5'>
                       <Link
                         className='hover:text-txtblack !no-underline font-black text-[14px]'
                         href={`/nft/${nft?.nft_type}/${nft.id}`}
@@ -184,7 +259,7 @@ export default function NFTTab({ Collection, NFTs, onShowSalesPageModal }) {
                         {nft?.name}
                       </Link>
                     </td>
-                    <td class='whitespace-nowrap px-6  py-5'>
+                    <td className='whitespace-nowrap px-6  py-5'>
                       <span className='text-[14px] font-bold'>
                         {nft?.more_info?.price}
                       </span>
@@ -201,10 +276,10 @@ export default function NFTTab({ Collection, NFTs, onShowSalesPageModal }) {
                         />
                       ) : null}
                     </td>
-                    <td class='whitespace-nowrap px-6 py-5'>
+                    <td className='whitespace-nowrap px-6 py-5'>
                       <p className='text-[14px]'>{nft?.supply}</p>
                     </td>
-                    <td class='whitespace-nowrap px-6 py-5'>
+                    <td className='whitespace-nowrap px-6 py-5'>
                       {checkSalesStatus(nft) === 'ready' ? (
                         <p className='whitespace-nowrap w-fit py-2 px-4 rounded bg-primary-900 bg-opacity-10 text-primary-900 text-[13px] font-black'>
                           Ready for sale
@@ -215,7 +290,7 @@ export default function NFTTab({ Collection, NFTs, onShowSalesPageModal }) {
                         </p>
                       )}
                     </td>
-                    <td class='whitespace-nowrap gap-4 px-6 py-5'>
+                    <td className='whitespace-nowrap gap-4 px-6 py-5'>
                       {Collection?.is_owner && (
                         <>
                           <button
@@ -229,14 +304,16 @@ export default function NFTTab({ Collection, NFTs, onShowSalesPageModal }) {
                           >
                             <span>Edit</span>
                           </button>
-                          <Link
-                            href={`/nft/${nft?.nft_type}/${nft.id}`}
-                            className='py-[10px] px-4 border-2 rounded border-primary-900
+                          {showSalesButton(nft) === 'true' && (
+                            <Link
+                              href={`/nft/${nft?.nft_type}/${nft.id}`}
+                              className='py-[10px] px-4 border-2 rounded border-primary-900
                         text-primary-900 font-black text-[14px] mr-4'
-                          >
-                            Sale Page
-                          </Link>
-                          {nft?.nft_type === 'membership' && (
+                            >
+                              Sale Page
+                            </Link>
+                          )}
+                          {showSalesSettingButton(nft) === 'true' && (
                             <button
                               onClick={(e) => showSalesModal(e, nft)}
                               className='py-2 px-4 border-2 rounded border-secondary-900 text-secondary-900 font-black text-[14px]'
