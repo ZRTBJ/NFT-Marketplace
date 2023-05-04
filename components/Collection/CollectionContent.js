@@ -68,6 +68,7 @@ import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import { ls_GetWalletType, ls_GetChainID } from 'util/ApplicationStorage';
 import audioWeb from 'assets/images/token-gated/audioWeb.svg';
 import SocialLink from 'components/Commons/SocialLink';
+import NFTTab from './NFTTab/NFTTab';
 
 const currency = {
   eth: Eth,
@@ -379,16 +380,6 @@ const CollectionContent = ({ collectionId, userId }) => {
     }, 2000);
   }
 
-  const handleShowOptions = (e, value) => {
-    e.stopPropagation();
-    e.preventDefault();
-    if (ShowOptions) {
-      setShowOptions(null);
-    } else {
-      setShowOptions(value);
-    }
-  };
-
   const handleAutoAssign = (e) => {
     let memberCount = royalityMembers.length;
 
@@ -406,49 +397,6 @@ const CollectionContent = ({ collectionId, userId }) => {
       };
     });
     setRoyalityMembers(values);
-  };
-
-  const handleEditNFT = (e, nft) => {
-    e.stopPropagation();
-    e.preventDefault();
-    setShowOptions(null);
-
-    if (Collection?.status === 'draft' || Collection?.status === 'publishing') {
-      router.push(
-        `${
-          Collection?.type === 'product'
-            ? `/nft/product/create?collectionId=${collectionId}&nftId=${nft.id}`
-            : Collection?.type === 'membership'
-            ? `/nft/membership/create?collection_id=${collectionId}&nftId=${nft.id}`
-            : `/nft/create?collection_id=${collectionId}&nftId=${nft.id}`
-        }`
-      );
-    } else if (Collection?.status === 'published') {
-      if (Collection?.type === 'membership') {
-        router.push(
-          `/nft/membership/create?collection_id=${collectionId}&nftId=${nft.id}`
-        );
-      } else if (Collection?.type === 'product') {
-        if (Collection?.updatable && !nft?.freeze_metadata) {
-          router.push(
-            `/nft/product/create?collectionId=${collectionId}&nftId=${nft.id}`
-          );
-        } else {
-          setCollectionNotUpdatableModal(true);
-        }
-      }
-      if (Collection?.type === 'auto') {
-        router.push(
-          `/nft/create?collection_id=${collectionId}&nftId=${nft.id}`
-        );
-      }
-    }
-  };
-
-  const handleUpdateMeta = (e, id) => {
-    e.stopPropagation();
-    e.preventDefault();
-    setShowOptions(null);
   };
 
   const useDebounceCallback = (delay = 100, cleaning = true) => {
@@ -829,6 +777,14 @@ const CollectionContent = ({ collectionId, userId }) => {
     setDetachOrDeleteAction('delete');
     setConformModalMessage('Are you sure to delete this splitter?');
     setShowConfirmModal(true);
+  };
+  const onShowSalesPageModal = (salesInfo) => {
+    salesPageModal(
+      salesInfo.event,
+      salesInfo.collection_type,
+      salesInfo.nft_id,
+      salesInfo.supply
+    );
   };
 
   return (
@@ -1421,174 +1377,13 @@ const CollectionContent = ({ collectionId, userId }) => {
             <div id='myTabContent'>
               {selectedTab === 1 && (
                 <div className='mt-6 mb-6 md:mb-[100px]'>
-                  {NFTs?.length ? (
-                    <div className='grid gap-6  grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'>
-                      {NFTs.map((nft) => {
-                        return (
-                          <div
-                            key={nft?.id}
-                            className='min-h-auto md:min-h-[400px] rounded-xl  bg-white'
-                          >
-                            <Link href={`/nft/${nft?.nft_type}/${nft.id}`}>
-                              {imageRegex.test(nft?.asset?.asset_type) && (
-                                <Image
-                                  className='rounded-xl h-[176px] md:h-[276px] w-full object-cover'
-                                  src={nft?.asset?.path}
-                                  alt=''
-                                  width={276}
-                                  height={276}
-                                />
-                              )}
-                              {nft?.asset?.asset_type === 'movie' ||
-                              nft?.asset?.asset_type === 'video/mp4' ? (
-                                <video
-                                  className='h-[176px] md:h-[276px] w-full object-cover rounded-xl'
-                                  controls
-                                >
-                                  <source
-                                    src={nft?.asset?.path}
-                                    type='video/mp4'
-                                  />
-                                  Your browser does not support the video tag.
-                                </video>
-                              ) : null}
-                              {nft?.asset?.asset_type === 'audio' ||
-                              nft?.asset?.asset_type === 'audio/mpeg' ? (
-                                <div className='rounded-xl h-[176px] md:h-[276px] w-full bg-primary-900/[0.05] relative'>
-                                  <Image
-                                    src={audioWeb}
-                                    className='w-full  absolute  top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2'
-                                    height={100}
-                                    width={50}
-                                    unoptimized
-                                    alt='play png'
-                                  ></Image>
-
-                                  <audio
-                                    src={nft?.asset?.path}
-                                    controls
-                                    autoPlay={false}
-                                    className='w-full bottom-0 left-0 absolute'
-                                  />
-                                </div>
-                              ) : null}
-                            </Link>
-                            <div className='py-2 md:py-5'>
-                              <div className='flex '>
-                                <h3 className='mb-2 text-txtblack truncate flex-1 mr-3 m-w-0 text-[24px]'>
-                                  <Link
-                                    className='hover:text-txtblack !no-underline'
-                                    href={`/nft/${nft?.nft_type}/${nft.id}`}
-                                  >
-                                    {nft?.name}
-                                  </Link>
-                                </h3>
-                                <div className='relative'>
-                                  {/* Dropdown menu  */}
-                                  {Collection?.is_owner && (
-                                    <>
-                                      <button
-                                        type='button'
-                                        className='w-[20px]'
-                                        onClick={(e) =>
-                                          handleShowOptions(e, nft.id)
-                                        }
-                                      >
-                                        <i className='fa-regular fa-ellipsis-vertical text-textSubtle'></i>
-                                      </button>
-                                    </>
-                                  )}
-                                  {ShowOptions === nft.id && (
-                                    <div className='z-10 w-[115px]  bg-white   rounded-md  absolute right-0  top-6 mb-9 block'>
-                                      <ul className='text-sm'>
-                                        <li className='border'>
-                                          <div
-                                            onClick={(e) =>
-                                              handleEditNFT(e, nft)
-                                            }
-                                            className={`py-2 pl-3 block hover:bg-gray-100 ${
-                                              Collection?.type === 'product' &&
-                                              nft?.freeze_metadata
-                                                ? 'cursor-not-allowed'
-                                                : 'cursor-pointer'
-                                            }`}
-                                          >
-                                            Edit NFT
-                                          </div>
-                                        </li>
-                                        {Collection?.type === 'membership' && (
-                                          <>
-                                            {/* <li className='border'>
-                                          <div
-                                            onClick={() => {
-                                              setShowTransferNFT(true);
-                                              setShowOptions(false);
-                                            }}
-                                            className='block p-4 hover:bg-gray-100 cursor-pointer'
-                                          >
-                                            Transfer NFT
-                                          </div>
-                                        </li> */}
-                                            <li className='border'>
-                                              <div
-                                                onClick={(e) =>
-                                                  salesPageModal(
-                                                    e,
-                                                    'membership',
-                                                    nft.id,
-                                                    nft.supply
-                                                  )
-                                                }
-                                                className='block py-2 pl-3 hover:bg-gray-100 cursor-pointer'
-                                              >
-                                                Sales Settings
-                                              </div>
-                                            </li>
-                                          </>
-                                        )}
-                                      </ul>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-
-                              <div className='flex  '>
-                                <p className='text-[13px]'>
-                                  {nft?.price ? nft?.price : 'Price not set'}{' '}
-                                  {nft?.currency?.toUpperCase()}
-                                </p>
-                                {nft?.currency ? (
-                                  <Image
-                                    className='ml-auto'
-                                    src={currency[nft.currency]}
-                                    alt={collectionNetwork}
-                                    width={24}
-                                    height={24}
-                                  />
-                                ) : null}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <div className='w-full mb-6'>
-                      <Image
-                        src={emptyStateCommon}
-                        className='h-[210px] w-[315px] m-auto'
-                        alt=''
-                        width={315}
-                        height={210}
-                      />
-                      <p className='font-bold text-center'>
-                        You don't have any NFT.
-                        {Collection?.status === 'draft'
-                          ? ` Start create NFT now`
-                          : ``}
-                      </p>
-                    </div>
-                  )}
+                  <NFTTab
+                    Collection={Collection}
+                    NFTs={NFTs}
+                    onShowSalesPageModal={(salesInfo) =>
+                      onShowSalesPageModal(salesInfo)
+                    }
+                  />
                 </div>
               )}
               {selectedTab === 2 && (
@@ -1881,6 +1676,7 @@ const CollectionContent = ({ collectionId, userId }) => {
               setShowSalesPageModal(false);
               setShowSuccessModal(true);
               getCollectionDetail();
+              getNFTs();
             }}
             supply={nftMemSupply}
             projectNetwork={collectionNetwork}
