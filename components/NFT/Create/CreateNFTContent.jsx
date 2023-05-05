@@ -51,6 +51,7 @@ import Bnb from 'assets/images/bnb.svg';
 
 import { createProvider } from 'util/smartcontract/provider';
 import { erc721Instance } from 'config/ABI/erc721';
+import { erc1155Instance } from 'config/ABI/erc1155';
 import { ethers } from 'ethers';
 
 const predefinedBottomRanges = [
@@ -468,25 +469,15 @@ export default function CreateNFTContent({ query }) {
     setIsNftLoading(false);
     setShowDataUploadingModal(false);
   };
-  const registerNFT = async (price, ipfsLink, supply, nftId) => {
+  const registerNFT = async (price, ipfsLink, supply, nftId, token_id) => {
     if (
       collection?.id &&
       collection?.type === 'auto' &&
       collection?.status === 'published' &&
-      collection?.contract_address
+      collection?.contract_address &&
+      !token_id
     ) {
       if (ipfsLink) {
-        const priceContract = erc721Instance(
-          // collection?.contract_address,
-          '0x204D05423Ccf56b99D8C7FB5420Fd61fE4Fc1e71',
-          provider
-        );
-
-        const nftInfo = {
-          price: ethers.utils.parseEther(price.toString()),
-          uri: ipfsLink,
-        };
-
         let walletType = await ls_GetWalletType();
         let signer;
 
@@ -500,16 +491,90 @@ export default function CreateNFTContent({ query }) {
         } else if (walletType === 'magicwallet') {
           signer = await etherMagicProvider.getSigner();
         }
-        console.log(signer);
-        const response = await priceContract.addNewToken(
-          nftInfo.price,
-          nftInfo.uri,
-          {
-            from: signer,
+
+        if (collection.token_standard == 'ERC721') {
+          const priceContract = erc721Instance(
+            collection?.contract_address,
+            // '0x695397fae5e6f4aa6dff8ebc2d723b354fb1c6fa',
+            provider
+          );
+          const nftInfo = {
+            price: ethers.utils.parseEther(price.toString()),
+            uri: ipfsLink,
+          };
+          try {
+            const response = await priceContract
+              .connect(signer)
+              .addNewToken(nftInfo.price, nftInfo.uri);
+            console.log(response);
+
+            if (response?.txReceipt?.transactionHash) {
+              await NFTRegisterAfterPublish(
+                nftId,
+                response?.txReceipt?.transactionHash
+              )
+                .then((res) => {
+                  if (res?.code !== 0) {
+                    setShowDataUploadingModal(false);
+                    setShowErrorModal(true);
+                    setErrorMessage(res?.message);
+                  }
+                })
+                .catch((error) => {
+                  setShowDataUploadingModal(false);
+                  setShowErrorModal(true);
+                  setErrorMessage(JSON.stringify(error));
+                });
+            }
+          } catch (error) {
+            setShowDataUploadingModal(false);
+            setShowErrorModal(true);
+            setErrorMessage(JSON.stringify(error));
+            console.log(error);
           }
-        );
-        console.log(response);
-        // await NFTRegisterAfterPublish(nftId, tnx);
+        }
+
+        if (collection.token_standard == 'ERC1155') {
+          const priceContract = erc1155Instance(
+            collection?.contract_address,
+            // '0xED129b2A708CA6bd20d53c63Db5263870D12b2B9',
+            provider
+          );
+          const nftInfo = {
+            price: ethers.utils.parseEther(price.toString()),
+            uri: ipfsLink,
+            total_supply: supply,
+          };
+          try {
+            const response = await priceContract
+              .connect(signer)
+              .addNewToken(nftInfo.price, nftInfo.uri, nftInfo.total_supply);
+            console.log(response);
+            if (response?.txReceipt?.transactionHash) {
+              await NFTRegisterAfterPublish(
+                nftId,
+                response?.txReceipt?.transactionHash
+              )
+                .then((res) => {
+                  if (res?.code !== 0) {
+                    setShowDataUploadingModal(false);
+                    setShowErrorModal(true);
+                    setErrorMessage(res?.message);
+                  }
+                })
+                .catch((error) => {
+                  setShowDataUploadingModal(false);
+                  setShowErrorModal(true);
+                  setErrorMessage(JSON.stringify(error));
+                });
+            }
+          } catch (error) {
+            setShowDataUploadingModal(false);
+            setShowErrorModal(true);
+            setErrorMessage(JSON.stringify(error));
+            console.log(error);
+          }
+        }
       }
     }
   };
@@ -567,12 +632,13 @@ export default function CreateNFTContent({ query }) {
       await createNft(request)
         .then(async (res) => {
           if (res?.code === 0) {
-            // await registerNFT(
-            //   nft?.price,
-            //   res?.lnft?.asset?.path,
-            //   res?.lnft?.supply,
-            //   res?.lnft?.id
-            // );
+            await registerNFT(
+              nft?.price,
+              res?.lnft?.asset?.path,
+              res?.lnft?.supply,
+              res?.lnft?.id,
+              res?.lnft?.token_id
+            );
             if (typeof window !== 'undefined') {
               localStorage.removeItem(`${jobId}`);
               const index = jobIds.indexOf(jobId);
@@ -592,6 +658,9 @@ export default function CreateNFTContent({ query }) {
           }
         })
         .catch((err) => {
+          setShowDataUploadingModal(false);
+          setShowErrorModal(true);
+          setErrorMessage(JSON.stringify(err));
           console.log(err);
         });
     } else if (updateMode) {
