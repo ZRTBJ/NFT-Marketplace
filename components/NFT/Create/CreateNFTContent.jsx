@@ -469,12 +469,13 @@ export default function CreateNFTContent({ query }) {
     setIsNftLoading(false);
     setShowDataUploadingModal(false);
   };
-  const registerNFT = async (price, ipfsLink, supply, nftId) => {
+  const registerNFT = async (price, ipfsLink, supply, nftId, token_id) => {
     if (
       collection?.id &&
       collection?.type === 'auto' &&
       collection?.status === 'published' &&
-      collection?.contract_address
+      collection?.contract_address &&
+      !token_id
     ) {
       if (ipfsLink) {
         let walletType = await ls_GetWalletType();
@@ -515,21 +516,20 @@ export default function CreateNFTContent({ query }) {
                 .then((res) => {
                   if (res?.code !== 0) {
                     setShowDataUploadingModal(false);
-                    showDataUploadingModal(false);
-                    showErrorModal(true);
+                    setShowErrorModal(true);
                     setErrorMessage(res?.message);
                   }
                 })
                 .catch((error) => {
-                  showDataUploadingModal(false);
-                  showErrorModal(true);
-                  setErrorMessage(error);
+                  setShowDataUploadingModal(false);
+                  setShowErrorModal(true);
+                  setErrorMessage(JSON.stringify(error));
                 });
             }
           } catch (error) {
-            showDataUploadingModal(false);
-            showErrorModal(true);
-            setErrorMessage(error);
+            setShowDataUploadingModal(false);
+            setShowErrorModal(true);
+            setErrorMessage(JSON.stringify(error));
             console.log(error);
           }
         }
@@ -558,21 +558,20 @@ export default function CreateNFTContent({ query }) {
                 .then((res) => {
                   if (res?.code !== 0) {
                     setShowDataUploadingModal(false);
-                    showDataUploadingModal(false);
-                    showErrorModal(true);
+                    setShowErrorModal(true);
                     setErrorMessage(res?.message);
                   }
                 })
                 .catch((error) => {
-                  showDataUploadingModal(false);
-                  showErrorModal(true);
-                  setErrorMessage(error);
+                  setShowDataUploadingModal(false);
+                  setShowErrorModal(true);
+                  setErrorMessage(JSON.stringify(error));
                 });
             }
           } catch (error) {
-            showDataUploadingModal(false);
-            showErrorModal(true);
-            setErrorMessage(error);
+            setShowDataUploadingModal(false);
+            setShowErrorModal(true);
+            setErrorMessage(JSON.stringify(error));
             console.log(error);
           }
         }
@@ -633,12 +632,13 @@ export default function CreateNFTContent({ query }) {
       await createNft(request)
         .then(async (res) => {
           if (res?.code === 0) {
-            // await registerNFT(
-            //   nft?.price,
-            //   res?.lnft?.asset?.path,
-            //   res?.lnft?.supply,
-            //   res?.lnft?.id
-            // );
+            await registerNFT(
+              nft?.price,
+              res?.lnft?.asset?.path,
+              res?.lnft?.supply,
+              res?.lnft?.id,
+              res?.lnft?.token_id
+            );
             if (typeof window !== 'undefined') {
               localStorage.removeItem(`${jobId}`);
               const index = jobIds.indexOf(jobId);
@@ -658,9 +658,9 @@ export default function CreateNFTContent({ query }) {
           }
         })
         .catch((err) => {
-          showDataUploadingModal(false);
-          showErrorModal(true);
-          setErrorMessage(error);
+          setShowDataUploadingModal(false);
+          setShowErrorModal(true);
+          setErrorMessage(JSON.stringify(err));
           console.log(err);
         });
     } else if (updateMode) {
