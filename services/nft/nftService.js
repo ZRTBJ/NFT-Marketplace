@@ -140,3 +140,14 @@ export async function refreshNFT(payload) {
 export async function deleteDraftNFT(id) {
   return await client('DELETE', `/lnft/${id}`);
 }
+export const NFTRegisterAfterPublish = async (nftId, tnx) => {
+  let formData = new FormData();
+  formData.append('txn_hash', tnx);
+
+  return await client(
+    'PUT',
+    `/lnft/${nftId}/register-after-publish`,
+    formData,
+    'formData'
+  );
+};
