@@ -78,6 +78,7 @@ export default function DetailsNFT({ type, id }) {
   const [usdValue, setUsdValue] = useState();
   const [collection, setCollection] = useState({});
   let walletType = ls_GetWalletType();
+
   const handleContract = async (config) => {
     try {
       const mintContract = createMintInstance(config.contract, provider);
@@ -145,7 +146,6 @@ export default function DetailsNFT({ type, id }) {
       }
     }
   };
-
   async function dollarConvert(formUnit, price) {
     await cryptoConvert(formUnit).then((res) => {
       if (res) {
@@ -154,7 +154,6 @@ export default function DetailsNFT({ type, id }) {
       }
     });
   }
-
   useEffect(() => {
     if (id) {
       nftDetails();
@@ -198,7 +197,6 @@ export default function DetailsNFT({ type, id }) {
       setIsLoading(false);
     }
   }
-
   async function handleProceedPayment(response) {
     event('mint_nft', {
       category: 'nft',
@@ -258,14 +256,12 @@ export default function DetailsNFT({ type, id }) {
       });
   }
   const [showModal, setShowModal] = useState(false);
-
   function hideModal(e) {
     setShowModal(false);
     if (typeof window !== 'undefined') {
       window.location.reload();
     }
   }
-
   const getCurrentNftNetwork = () => {
     let currency = nft?.more_info?.currency;
     let networks = Object.values(NETWORKS);
@@ -273,7 +269,6 @@ export default function DetailsNFT({ type, id }) {
 
     return currentNetwork.network;
   };
-
   const handlePublishModal = async () => {
     if (userinfo.eoa) {
       if (!nft.more_info.currency) {
@@ -282,6 +277,10 @@ export default function DetailsNFT({ type, id }) {
       }
       if (nft?.lnft?.minted_amount >= nft?.lnft?.supply) {
         setErrorMsg('This NFT can not buy, Maximum minted amount exceed!');
+        return;
+      }
+      if (nft?.lnft?.nft_type === 'auto' && !nft?.lnft?.token_id) {
+        setErrorMsg('This NFT is not for sale yet, please try again later');
         return;
       }
       let nftNetwork = await getCurrentNftNetwork();
@@ -310,7 +309,6 @@ export default function DetailsNFT({ type, id }) {
       window.open(`${nft?.lnft?.asset?.path}`, '_blank');
     }
   }
-
   const copyToClipboard = () => {
     if (typeof window !== 'undefined') {
       navigator.clipboard.writeText(window.location.href);
@@ -328,10 +326,25 @@ export default function DetailsNFT({ type, id }) {
   };
 
   let info = nft?.more_info;
-
   let benefits = info?.benefits && JSON.parse(nft.more_info.benefits);
   const minted_amount = nft?.lnft?.minted_amount ? nft?.lnft?.minted_amount : 0;
   let availableSupply = nft?.lnft?.supply - minted_amount;
+  const isBuyButtonDisable = () => {
+    let isDisable = false;
+    if (nft?.lnft?.nft_type === 'auto') {
+      if (!nft?.lnft?.token_id) {
+        isDisable = true;
+      }
+    } else {
+      if (
+        nft?.lnft?.minted_amount >= nft?.lnft?.supply ||
+        !nft?.more_info?.currency
+      ) {
+        isDisable = true;
+      }
+    }
+    return isDisable;
+  };
 
   return (
     <>
@@ -566,14 +579,9 @@ export default function DetailsNFT({ type, id }) {
               </div>
               <div className='mt-6 flex items-center gap-2'>
                 <button
-                  disabled={
-                    nft?.lnft?.minted_amount >= nft?.lnft?.supply ||
-                    !nft?.more_info?.currency
-                  }
-                  className={`w-[264px] !text-[16px] h-[44px]   ${
-                    nft?.lnft?.minted_amount >= nft?.lnft?.supply
-                      ? 'bg-color-asss-3 text-white'
-                      : !nft?.more_info?.currency
+                  disabled={isBuyButtonDisable()}
+                  className={`w-[264px] !text-[16px] h-[44px] ${
+                    isBuyButtonDisable()
                       ? 'bg-color-asss-3 text-white'
                       : 'contained-button'
                   }`}
@@ -581,10 +589,11 @@ export default function DetailsNFT({ type, id }) {
                 >
                   {availableSupply > 0 ? 'BUY NOW' : 'SOLD OUT'}
                 </button>
-                {nft?.lnft?.minted_amount >= nft?.lnft?.supply ||
-                  (!nft?.more_info?.currency && (
+                {isBuyButtonDisable() && (
+                  <>
                     <Tooltip message='You need publish in order to sell your NFT'></Tooltip>
-                  ))}
+                  </>
+                )}
               </div>
             </div>
 
@@ -665,18 +674,20 @@ export default function DetailsNFT({ type, id }) {
                 <p>No property set for this NFT</p>
               )}
             </div>
-            {nft?.lnft?.nft_type === 'membership' && (
+            {nft?.lnft?.nft_type === 'membership' ||
+            nft?.lnft?.nft_type === 'auto' ? (
               <div>
                 <div className='flex mb-4 items-center flex-wrap md:max-w-[564px]'>
                   <h3 className='txtblack'>Benefit</h3>
-                  {nft?.lnft?.is_owner && (
-                    <Link
-                      href={`/nft/membership/create?dao_id=${nft?.lnft?.project_uuid}&collection_id=${nft?.lnft?.collection_uuid}&nftId=${nft?.lnft?.id}`}
-                      className='!no-underline txtblack text-primary-900 ml-auto mr-2 md:mr-0 font-black'
-                    >
-                      Edit Benefit
-                    </Link>
-                  )}
+                  {nft?.lnft?.is_owner &&
+                    nft?.lnft?.nft_type === 'membership' && (
+                      <Link
+                        href={`/nft/membership/create?collection_id=${nft?.lnft?.collection_uuid}&nftId=${nft?.lnft?.id}`}
+                        className='!no-underline txtblack text-primary-900 ml-auto mr-2 md:mr-0 font-black'
+                      >
+                        Edit Benefit
+                      </Link>
+                    )}
                 </div>
                 {benefits && benefits.length ? (
                   benefits.map((benefit, index) => (
@@ -694,7 +705,7 @@ export default function DetailsNFT({ type, id }) {
                   <p>No benefits to show</p>
                 )}
               </div>
-            )}
+            ) : null}
           </div>
         </section>
       )}

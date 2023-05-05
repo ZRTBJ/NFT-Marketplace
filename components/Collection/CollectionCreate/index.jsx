@@ -289,8 +289,21 @@ export default function CollectionCreate({ query }) {
       order_by: 'newer',
     });
   };
+
   const onSplitterDraftSave = async () => {
     toast.success('Successfully Created New Splitter');
+    await getSplitterList(splitterListPayload.page, splitterListPayload.perPage)
+      .then((res) => {
+        let chain = network ? network : network;
+        let filteredSplitters =
+          chain &&
+          res?.splitters?.filter((split) => split?.blockchain === chain);
+        setSplitter(filteredSplitters[0]);
+        setoutlineKey((pre) => pre + 1);
+      })
+      .catch((res) => {
+        console.log(res);
+      });
   };
   // Splitter end
 

@@ -39,7 +39,7 @@ export async function getNftDetails(type, id) {
       ? '/membership-nft/'
       : type === 'product'
       ? '/product-nft/'
-      : '/nft/';
+      : '/lnft/';
   return await client('GET', `${typeValue}${id}`);
 }
 
@@ -105,7 +105,11 @@ export async function mintRANFT(id) {
 }
 export async function mintProductOrMembershipNft(payload) {
   const url =
-    payload.type === 'membership' ? '/membership-nft' : '/product-nft';
+    payload.type === 'membership'
+      ? '/membership-nft'
+      : payload.type === 'product'
+      ? '/product-nft'
+      : '/lnft';
   return await client(
     'POST',
     `${url}/${payload.id}/mint`,

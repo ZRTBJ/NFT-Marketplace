@@ -178,6 +178,7 @@ const CollectionContent = ({ collectionId, userId }) => {
   const [showGlobalErrorModalMessage, setShowGlobalErrorModalMessage] =
     useState('');
   let walletType = ls_GetWalletType();
+  const [nftListSortBy, setNFTListSoryBy] = useState('newer');
   useEffect(() => {
     if (hasNextPageData) {
       getSplitters(Collection?.blockchain);
@@ -786,6 +787,18 @@ const CollectionContent = ({ collectionId, userId }) => {
       salesInfo.supply
     );
   };
+  const onNFTSort = async (order_by) => {
+    setDataLoading(true);
+    await getCollectionNFTs(collectionId, order_by)
+      .then((resp) => {
+        setDataLoading(false);
+        if (resp?.code === 0) {
+          setNFTs(resp.lnfts);
+          setNFTListSoryBy(order_by);
+        }
+      })
+      .catch((err) => setDataLoading(false));
+  };
 
   return (
     <>
@@ -1360,6 +1373,8 @@ const CollectionContent = ({ collectionId, userId }) => {
                     onShowSalesPageModal={(salesInfo) =>
                       onShowSalesPageModal(salesInfo)
                     }
+                    onNFTSort={(data) => onNFTSort(data)}
+                    nftListSortBy={nftListSortBy}
                   />
                 </div>
               )}
