@@ -136,7 +136,7 @@ export default function CreateNFTContent({ query }) {
       isOpen: true,
       blockchainCategory: 'polygon',
       indexId: 1,
-      price: '',
+      price: '0',
       salesTimeRange: null,
     },
   ];
@@ -276,7 +276,7 @@ export default function CreateNFTContent({ query }) {
       isOpen: true,
       blockchainCategory: 'polygon',
       indexId: oldNfts.length + 1,
-      price: '',
+      price: '0',
     });
     setNfts(oldNfts);
   }
@@ -451,7 +451,7 @@ export default function CreateNFTContent({ query }) {
       let formData = new FormData();
       formData.append('royalty_data', JSON.stringify(members));
       formData.append('collection_uid', res.collection.id);
-      updateRoyaltySplitter(formData);
+      // updateRoyaltySplitter(formData);
       setCollection_id(collection_id);
     });
     return collection_id;
@@ -1066,7 +1066,8 @@ export default function CreateNFTContent({ query }) {
               {/* name */}
               <div className='mb-6 md:w-[50%]'>
                 <p className='text-txtblack text-[14px] font-bold font-satoshi-bold'>
-                  Type your NFT name
+                  Type your NFT name{' '}
+                  <span className='ml-1 text-danger-1 font-bold'>*</span>
                 </p>
                 <>
                   <DebounceInput
@@ -1095,7 +1096,8 @@ export default function CreateNFTContent({ query }) {
                   className='block text-[14px] font-bold font-satoshi-bold text-txtblack'
                   htmlFor='dropzone-file'
                 >
-                  Upload assets
+                  Upload assets{' '}
+                  <span className='ml-1 text-danger-1 font-bold'>*</span>
                 </label>
                 <p className='block text-[14px] text-textSubtle mb-4 word-break'>
                   You can upload assets in any of these formats. PNG, GIF, WEBP,

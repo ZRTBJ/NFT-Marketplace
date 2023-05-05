@@ -123,8 +123,11 @@ export async function getUserCollections(payload) {
   );
 }
 
-export async function getCollectionNFTs(id) {
-  return await client('GET', `/collection/${id}/nft`);
+export async function getCollectionNFTs(id, order_by) {
+  return await client(
+    'GET',
+    `/collection/${id}/nft?order_by=${order_by ? order_by : 'newer'}`
+  );
 }
 
 export async function connectCollection(ranknftid, collectionId) {
