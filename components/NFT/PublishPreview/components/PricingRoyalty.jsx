@@ -20,7 +20,7 @@ const PricingRoyalty = ({ price, network, contributors }) => {
         </p>
         <div className='mt-2'>
           <p className='font-black mb-2'>Contributors</p>
-          {contributors.length ? (
+          {contributors?.length ? (
             <table className='w-full'>
               <tr>
                 {TABLE_HEADERS.map((header) => (

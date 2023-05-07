@@ -155,3 +155,7 @@ export const NFTRegisterAfterPublish = async (nftId, tnx) => {
     'formData'
   );
 };
+
+export async function moveToIPFS(data) {
+  return await client('POST', `/lnft/move-to-ipfs`, data, 'formdata');
+}

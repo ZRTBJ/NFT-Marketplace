@@ -5,30 +5,13 @@ import lottieJson from 'assets/lottieFiles/nft-minting-process';
 import MockImage from 'assets/images/magic-wallet.png';
 import NFTStatusTable from './NFTStatusTable';
 
-const steps = [
-  {
-    title: 'Publishing Royalty Splitter',
-    titleCompleted: 'Published Royalty Splitter',
-  },
-  {
-    title: 'Publishing NFT to IPFS',
-    titleCompleted: 'Published NFT to IPFS',
-  },
-  {
-    title: 'Publishing Collection',
-    titleCompleted: 'Published Collection',
-  },
-  { title: 'Done', titleCompleted: 'Put on sale' },
-];
-
-const NFTs = [
-  { id: 0, asset: MockImage, name: 'NFT One', status: 'pending' },
-  { id: 1, asset: MockImage, name: 'NFT Two', status: 'pending' },
-];
-
-const PublishingModal = ({ handleClose, show }) => {
-  const [currentStep, setCurrentStep] = useState(0);
-
+const PublishingModal = ({
+  handleClose,
+  show,
+  currentStep,
+  nfts,
+  contributors,
+}) => {
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -38,17 +21,25 @@ const PublishingModal = ({ handleClose, show }) => {
     },
   };
 
-  useEffect(() => {
-    handleStatus();
-  }, []);
-
-  const handleStatus = () => {
-    if (currentStep < 5) {
-      let interval = setInterval(() => {
-        setCurrentStep((prevState) => prevState + 1);
-      }, 3000);
-    }
-  };
+  const steps = [
+    {
+      title: 'Publishing Royalty Splitter',
+      titleCompleted: contributors?.length
+        ? 'Published Royalty Splitter'
+        : 'No Splitter to publish',
+    },
+    {
+      title: 'Publishing NFT to IPFS',
+      titleCompleted: nfts?.length
+        ? 'Published NFT to IPFS'
+        : 'No NFTs to Publish',
+    },
+    {
+      title: 'Publishing Collection',
+      titleCompleted: 'Published Collection',
+    },
+    { title: 'Done', titleCompleted: 'Put on sale' },
+  ];
 
   console.log(currentStep);
   return (
@@ -100,8 +91,8 @@ const PublishingModal = ({ handleClose, show }) => {
             ))}
           </div>
         </div>
-        {currentStep > 0 ? (
-          <NFTStatusTable nfts={NFTs} />
+        {currentStep === 1 ? (
+          <NFTStatusTable nfts={nfts} />
         ) : (
           <Lottie options={defaultOptions} height={300} width={300} />
         )}

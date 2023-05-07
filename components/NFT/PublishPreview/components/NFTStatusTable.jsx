@@ -23,7 +23,7 @@ const NFTStatusTable = ({ nfts }) => {
           <tr className='text-center' key={nft?.id}>
             <td className='w-1/4'>
               <Image
-                src={nft.asset}
+                src={nft.asset.path}
                 height={30}
                 width={30}
                 alt='NFT'

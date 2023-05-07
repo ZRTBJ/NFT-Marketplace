@@ -4,7 +4,7 @@ const CollectionPreview = ({ tokenStandard, collection, network }) => {
   const collectionLogo = collection?.assets.find(
     (asset) => asset.asset_purpose === 'logo'
   );
-  console.log(network);
+
   return (
     <div className='section-collection'>
       <h3>Collection</h3>

@@ -7,6 +7,7 @@ const NFTList = ({ nfts }) => {
     { id: 2, label: 'Pricing' },
     { id: 3, label: 'Supply' },
   ];
+  console.log(nfts);
   return (
     <div className='section-collection mt-6'>
       <h3>NFT List</h3>
@@ -24,15 +25,15 @@ const NFTList = ({ nfts }) => {
               <tr className='text-center' key={index}>
                 <td className='w-1/4'>
                   <Image
-                    src={nft?.image}
+                    src={nft?.asset?.path}
                     height={50}
                     width={50}
                     alt='Collection'
                     className='mx-auto my-1'
                   />
                 </td>
-                <td className='w-1/4'>{nft?.label}</td>
-                <td className='w-1/4'>{nft?.price}</td>
+                <td className='w-1/4'>{nft?.name}</td>
+                <td className='w-1/4'>{nft?.more_info?.price}</td>
                 <td className='w-1/4'>{nft?.supply}</td>
               </tr>
             ))}
