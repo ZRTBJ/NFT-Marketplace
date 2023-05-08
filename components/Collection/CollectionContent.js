@@ -1154,12 +1154,13 @@ const CollectionContent = ({ collectionId, userId }) => {
                     </div>
                   )}
                 {Collection?.status !== 'published' && Collection?.is_owner && (
-                  <a
-                    onClick={handlePublishModal}
+                  <Link
+                    // onClick={handlePublishModal}
+                    href={`/nft/publish/preview/${collectionId}`}
                     className='contained-button font-satoshi-bold'
                   >
                     Publish
-                  </a>
+                  </Link>
                 )}
                 {Collection?.is_owner && (
                   <Link
