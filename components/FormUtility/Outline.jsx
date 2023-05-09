@@ -478,8 +478,8 @@ export default function Outline({
             <div className='mb-6'>
               <div className='flex flex-wrap items-center'>
                 <div className='text-txtSubtle text-[14px] md:max-w-[400px] flex flex-wrap items-center'>
-                  <Tooltip message='This field will not be changeable after publishing on the blockchain.'></Tooltip>{' '}
-                  NFT can be transferable (Soulbound Token)
+                  <Tooltip message="If this is off, NFT won't be transferable between users"></Tooltip>
+                  NFT can be non-transferable (Soulbound Token)
                 </div>
                 {!isPublished && (
                   <>
@@ -514,7 +514,7 @@ export default function Outline({
             <div className='mb-6'>
               <div className='flex flex-wrap items-center '>
                 <div className='text-txtSubtle text-[14px] md:max-w-[400px] flex flex-wrap items-center'>
-                  <Tooltip message='This field will not be changeable after publishing on the blockchain.'></Tooltip>{' '}
+                  <Tooltip message='If this is ON, NFT will be minted within limited time period since collection published time'></Tooltip>
                   NFT having limited time (Timebound Token)
                 </div>
                 <label
@@ -617,7 +617,7 @@ export default function Outline({
             <div>
               <div className='mb-6'>
                 <div className='flex flex-wrap items-center mb-4'>
-                  <Tooltip message=' Price will change based on NFT price settings'></Tooltip>
+                  <Tooltip message='Base price will be override by NFT price setting (if set)'></Tooltip>
                   <div className='txtblack text-[14px]'>Base Price</div>
                 </div>
                 <div className='flex gap-2 items-center'>
@@ -656,7 +656,7 @@ export default function Outline({
             {showSupply && (
               <div className='mb-6'>
                 <div className='flex flex-wrap items-center mb-4'>
-                  <Tooltip message='Supply will change based on NFT settings'></Tooltip>
+                  <Tooltip message='Supply will be override by NFT supply setting (if set)'></Tooltip>
                   <div className='txtblack text-[14px]'>Max Supply</div>
                 </div>
                 {!supplyDisable && (
@@ -686,7 +686,7 @@ export default function Outline({
           <div className='mb-6'>
             <div className='flex flex-wrap items-center'>
               <div className='text-txtSubtle text-[14px] md:max-w-[400px] flex flex-wrap items-center'>
-                <Tooltip message='This field will not be changeable after publishing on the blockchain.'></Tooltip>{' '}
+                <Tooltip message='NFT creator will earn royalty per secondary sale, also splittable to contributors by royalty splitter'></Tooltip>{' '}
                 Owner can earn royalty
               </div>
               {!isPublished && (

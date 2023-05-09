@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DebounceInput } from 'react-debounce-input';
@@ -598,9 +599,7 @@ export default function CreateNFTContent({ query }) {
     request.append('job_id', nft.job_id);
     const benefit_array = nft.benefit_array.filter((x) => x.title !== '');
     request.append('benefit_array', JSON.stringify(benefit_array));
-    if (nft?.price) {
-      request.append('price', nft?.price);
-    }
+    request.append('price', nft?.price ? nft?.price : 0);
     if (nft?.salesTimeRange && nft?.salesTimeRange?.length > 0) {
       if (nft?.salesTimeRange[0]) {
         try {
@@ -739,9 +738,8 @@ export default function CreateNFTContent({ query }) {
     request.append('attributes', JSON.stringify(nft?.properties));
     request.append('sensitive_content', nft?.sensitiveContent);
     request.append('supply', nft?.supply);
-    if (nft?.price) {
-      request.append('price', nft?.price);
-    }
+    request.append('price', nft?.price ? nft?.price : 0);
+
     if (nft?.salesTimeRange && nft?.salesTimeRange?.length > 0) {
       if (nft?.salesTimeRange[0]) {
         try {
@@ -813,8 +811,7 @@ export default function CreateNFTContent({ query }) {
         element?.assets?.isFileError === false &&
         element?.assets?.limitExceeded === false &&
         element?.nftName !== '' &&
-        element?.supply !== '' &&
-        element?.price !== ''
+        element?.supply !== ''
     );
 
     if (isPreview) {
@@ -1322,9 +1319,12 @@ export default function CreateNFTContent({ query }) {
               </div>
               {/* benefit */}
               <div className='mb-3'>
-                <p className='text-[14px] font-bold font-satoshi-bold text-txtblack'>
-                  Benefits
-                </p>
+                <div className='flex items-center'>
+                  <Tooltip message='You can specific benefits for users like exclusive permission'></Tooltip>
+                  <p className='text-[14px] font-bold font-satoshi-bold text-txtblack'>
+                    Benefits
+                  </p>
+                </div>
                 <span className='block text-[14px] text-textSubtle mb-4 word-break'>
                   NFT as Membership: NFT buyers can have exclusive benefits
                 </span>
@@ -1409,18 +1409,13 @@ export default function CreateNFTContent({ query }) {
                           } `}
                           placeholder={`${isPreview ? '' : 'Add Price'}`}
                         />
-                        {checkedValidation && nft.price === '' && (
-                          <p className='validationTag text-sm'>
-                            Price is required
-                          </p>
-                        )}
                       </div>
                     </div>
                   </div>
                   {/* sale time */}
                   <div className='md:col-span-3'>
                     <div className='flex items-center mb-2'>
-                      <Tooltip></Tooltip>
+                      <Tooltip message='If set, this NFT can only be minted within that time period'></Tooltip>
                       <p className='text-txtblack text-[14px]'>Sale Time</p>
                     </div>
                     <DateRangePicker
@@ -1446,7 +1441,7 @@ export default function CreateNFTContent({ query }) {
                   {/* supply */}
                   <div className='md:col-span-3'>
                     <div className='flex items-center mb-2'>
-                      <Tooltip></Tooltip>
+                      <Tooltip message='Maximum copies of this NFT can be minted'></Tooltip>
                       <p className='text-txtblack text-[14px]'>Supply</p>
                     </div>
                     <>
@@ -1726,18 +1721,18 @@ export default function CreateNFTContent({ query }) {
             </div>
           ))}
         </div>
-        <div className='py-6 flex justify-center'>
+        <div className='py-6 flex flex-wrap justify-between mb-4'>
           {isPreview ? (
             <>
               <button
                 onClick={() => setIsPreview(false)}
-                className='h-[43px] mb-4 mr-4 px-6 py-2 bg-primary-900/[.20] font-black  rounded text-primary-900   '
+                className='h-[43px]  px-6 py-2 bg-primary-900/[.20] font-black  rounded text-primary-900'
               >
                 Back
               </button>
               <button
                 onClick={nextHandle}
-                className='w-[140px] !text-[16px] h-[44px] contained-button   md:ml-auto'
+                className='w-[140px] !text-[16px] h-[44px] contained-button'
               >
                 Submit
               </button>
@@ -1745,16 +1740,24 @@ export default function CreateNFTContent({ query }) {
           ) : (
             <>
               {!updateMode && (
-                <button
-                  onClick={addMoreTier}
-                  className='h-[43px] mb-4 mr-4 px-3  md:px-6 py-2 bg-primary-900/[.20] font-black  rounded text-primary-900   '
-                >
-                  Add more tier
-                </button>
+                <div className='block md:flex  items-center gap-2'>
+                  <button
+                    onClick={addMoreTier}
+                    className='h-[43px] px-3 mb-2 md:mb-0  md:px-6 py-2 bg-primary-900/[.20] font-black  rounded text-primary-900'
+                  >
+                    + Add More Tier
+                  </button>
+                  <div className='flex items-center'>
+                    <Tooltip message='You can create multiple NFT, each is one tier'></Tooltip>
+                    <span className='text-[13px] text-textSubtle font-bold'>
+                      What is Tier ?
+                    </span>
+                  </div>
+                </div>
               )}
               <button
                 onClick={nextHandle}
-                className='w-[140px] !text-[16px] h-[44px] contained-button   md:ml-auto'
+                className='w-[140px] !text-[16px] h-[44px] contained-button'
               >
                 Next
               </button>

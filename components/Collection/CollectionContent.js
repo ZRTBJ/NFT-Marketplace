@@ -1277,6 +1277,18 @@ const CollectionContent = ({ collectionId, userId }) => {
                     </span>
                   </p>
                 </div>
+                {Collection?.status === 'published' &&
+                  Collection?.token_standard &&
+                  Collection?.type === 'auto' && (
+                    <div className='flex items-center justify-between mt-1'>
+                      <p className=' text-textSubtle  text-[14px]'>
+                        Token Standard
+                      </p>
+                      <small className='text-secondary-900 font-black rounded-2xl border border-secondary-900 px-3 py-1'>
+                        {Collection?.token_standard}
+                      </small>
+                    </div>
+                  )}
               </div>
             </div>
           </div>

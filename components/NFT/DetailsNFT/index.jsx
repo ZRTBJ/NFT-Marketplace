@@ -50,6 +50,7 @@ import { ls_GetWalletType } from 'util/ApplicationStorage';
 import Tooltip from 'components/Commons/Tooltip';
 import { etherMagicProvider } from 'config/magicWallet/magic';
 import { ethers } from 'ethers';
+import { createAutoTypeMintNFT } from './MintNFT/deploy-autoTypeNFTMint';
 
 const currency = {
   eth: Eth,
@@ -107,7 +108,14 @@ export default function DetailsNFT({ type, id }) {
                 provider,
                 config.price
               )
-            : await createMintNFT(
+            : type === 'product'
+            ? await createMintNFT(
+                mintContract,
+                config.metadataUrl,
+                config.price,
+                provider
+              )
+            : await createAutoTypeMintNFT(
                 mintContract,
                 config.metadataUrl,
                 config.price,
