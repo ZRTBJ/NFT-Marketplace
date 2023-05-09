@@ -109,6 +109,13 @@ const TESTNET = {
     masterCopyCollection: address.CreateCollectionMasterCopyMumbai,
     masterMembershipCollection:
       address.CreateMembershipCollectionMasterCopyMumbai,
+    ProxyManagerERC721Mumbai: address.ProxyManagerERC721Mumbai,
+    ProxyManagerERC1155Mumbai: address.ProxyManagerERC1155Mumbai,
+    CreateCollectionERC721MasterCopyMumbai:
+      address.CreateCollectionERC721MasterCopyMumbai,
+    CreateCollectionERC1155MasterCopyMumbai:
+      address.CreateCollectionERC1155MasterCopyMumbai,
+    PlatformFeeManager: address.PlatformFeeManager,
     masterRoyaltySplitter: address.RoyaltySplitterMasterCopyMumbai,
     network: 80001,
     gnosis: `${gnosisFundTransferUrl}/matic`,

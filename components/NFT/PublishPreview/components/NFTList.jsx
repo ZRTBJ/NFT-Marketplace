@@ -21,7 +21,6 @@ const NFTList = ({ nfts }) => {
     { id: 3, label: 'Supply' },
   ];
 
-  console.log(nfts);
   return (
     <div className='section-collection mt-6'>
       <div className='flex items-center'>

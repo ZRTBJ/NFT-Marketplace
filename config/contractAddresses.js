@@ -16,12 +16,19 @@ export const address = {
 
   //Mumbai Testnet
   GenericProxyFactoryMumbai: '0x19932d3486326C5ea7bD2Fe3659Fe79B12c0DbeB',
+  ProxyManagerERC721Mumbai: '0x583299EE7bF14C3556B0Ed4767321309e4A40a18',
+  ProxyManagerERC1155Mumbai: '0xb1b59a5002851b8e96fAFFb9ff478e961746b1f5',
   MinimalForwarderMumbai: '0x4565BbCA3b265C42Fc547B15a81CADB2159Ae96D',
   CreatorDAOMasterCopyMumbai: '0xa8592984637A5c2B1715d817e902cDc05A3B681A',
   CreateCollectionMasterCopyMumbai:
     '0x617794f0525BF7Ed01E502b9D6c5f49674644850',
   CreateMembershipCollectionMasterCopyMumbai:
     '0x274Dbdf00657e5Feb9aC19dF528D5add8fbf8942',
+  CreateCollectionERC721MasterCopyMumbai:
+    '0x43976EB754fB67BB4eB5Ac64CEfA099FA96D95b5',
+  CreateCollectionERC1155MasterCopyMumbai:
+    '0x2E34A90c8295B3948C48aF1Bf514A4dEEB980a7b',
+  PlatformFeeManager: '0x3754979332808Fa4266e8334cef871F9ee5AC8e5',
   RoyaltySplitterMasterCopyMumbai: '0x9927ddEB99D53576F72125Cd3959e141f65D9b15',
   decirTreasuryMumbai: '0xd28940fBF6363397f1837cb6aE7A8cCC118bFCE5',
   discountMumbai: '0xBdF47C08314F0431ed5778c3Dc52b7171850c2a9',

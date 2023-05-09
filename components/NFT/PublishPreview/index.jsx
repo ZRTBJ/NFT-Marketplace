@@ -24,6 +24,8 @@ import {
   createUserProvider,
 } from 'util/smartcontract/provider';
 import { createInstance } from 'config/ABI/genericProxyFactory';
+import { erc721ProxyInstance } from 'config/ABI/erc721ProxyFactory';
+import { erc1155ProxyInstance } from 'config/ABI/erc1155ProxyFactory';
 import {
   createCollection,
   createCollectionByCaller,
@@ -36,6 +38,7 @@ const PublishPreview = ({ query }) => {
   const [contributors, setContributors] = useState([]);
   const [nfts, setNFTs] = useState([]);
   const [currentStep, setCurrentStep] = useState(0);
+  const [txnData, setTxnData] = useState();
   const [showNetworkHandler, setShowNetworkHandler] = useState(false);
   const [isSplitterPublished, setIsSplitterPublished] = useState(false);
   const [moveNFTs, setMoveNFTs] = useState([]);
@@ -47,7 +50,7 @@ const PublishPreview = ({ query }) => {
   const dispatch = useDispatch();
   const network = NETWORKS?.[collection?.blockchain];
   let walletType = ls_GetWalletType();
-  console.log(currentStep);
+
   const {
     isLoading: isPublishingRoyaltySplitter,
     status: publishRoyaltySplitterStatus,
@@ -91,15 +94,13 @@ const PublishPreview = ({ query }) => {
 
   const moveNFTsToIPFS = async () => {
     setCurrentStep(1);
-    console.log('2', 1);
     let formData = new FormData();
-    let nftIds = nfts.map((nft) => nft.id);
-    formData.append('nft_ids', JSON.stringify(nftIds));
+    let nftIds = nfts.join(',');
+    formData.append('nft_ids', nftIds);
     let resp = await moveToIPFS(formData);
     if (resp.code === 0) {
-      nftIds.map((nft) => {
-        if (nft?.asset?.id) {
-          console.log('[d');
+      nfts.map((nft) => {
+        if (nft?.asset?.id && nfts?.asset?.hash) {
           const notificationData = {
             function_uuid: nft?.asset?.id,
             data: '',
@@ -109,31 +110,44 @@ const PublishPreview = ({ query }) => {
       });
 
       setCurrentStep(2);
-      publishCollection();
+      publishTheCollection();
     }
   };
 
   const handleSmartContract = async (config) => {
     try {
       let response;
-      const provider = createUserProvider();
-      const collectionContract = createInstance(provider);
-      if (gaslessMode === 'true') {
-        response = await createCollection(
-          collectionContract,
-          provider,
-          config
-          // collectionType,
-          // productPrice
-        );
-      } else {
-        response = await createCollectionByCaller(
-          collectionContract,
-          config
-          // collectionType,
-          // productPrice
-        );
-      }
+      const provider = await createUserProvider();
+
+      const collectionContract =
+        tokenStandard === 'ERC1155'
+          ? await erc1155ProxyInstance(
+              network?.ProxyManagerERC1155Mumbai,
+              provider
+            )
+          : await erc721ProxyInstance(
+              network?.ProxyManagerERC721Mumbai,
+              provider
+            );
+
+      // if (gaslessMode === 'true') {
+
+      // response = await createCollection(
+      //   collectionContract,
+      //   provider,
+      //   config
+      // collectionType,
+      // productPrice
+      // );
+      // } else {
+      response = await createCollectionByCaller(
+        collectionContract,
+        config
+        // collectionType,
+        // productPrice
+      );
+      // }
+      console.log(response);
       let hash;
       if (response?.txReceipt) {
         hash = response.txReceipt;
@@ -141,42 +155,36 @@ const PublishPreview = ({ query }) => {
           transactionHash: hash.transactionHash,
           block_number: hash.blockNumber,
         };
+        publishTheCollection(data);
         setTxnData(data);
       } else {
-        errorClose(response);
+        // errorClose(response);
       }
     } catch (err) {
-      errorClose(err.message);
+      console.log(err);
     }
   };
 
-  const publishCollection = async (data) => {
-    let txnData;
+  const publishTheCollection = async (data) => {
     let payload = new FormData();
     if (data) {
       payload.append('transaction_hash', data.transactionHash);
     }
-    // await publishCollection(collection?.id, txnData ? payload : null)
-    //   .then((res) => {
-    //     setIsLoading(false);
-    //     if (res.code === 0) {
-    //       if (txnData) {
-    // if (res?.function?.status === 'success') {
-    // } else if (res?.function?.status === 'failed') {
-    //   setTxnData();
-    //   errorClose(res?.function?.message);
-    // }
-    // } else {
-    //   handleSmartContract(res.config);
-    // }
-    //   } else {
-    //     errorClose(res.message);
-    //   }
-    // })
-    // .catch((err) => {
-    //   setIsLoading(false);
-    //   errorClose('Failed to publish collection. Please try again later');
-    // });
+    await publishCollection(
+      collection?.id,
+      data?.transactionHash ? payload : null
+    )
+      .then((res) => {
+        if (res.code === 0) {
+          console.log(res);
+          if (res?.function?.status === 'success') {
+            console.log('success');
+          } else {
+            handleSmartContract(res.config);
+          }
+        }
+      })
+      .catch((err) => {});
   };
 
   const validatePublish = () => {
@@ -197,7 +205,6 @@ const PublishPreview = ({ query }) => {
 
   const getSplitters = () => {
     getSplitterDetails(query?.id, 'collection_id').then((resp) => {
-      console.log(resp);
       if (resp?.splitter?.status === 'published') {
         setIsSplitterPublished(true);
       }
@@ -243,9 +250,9 @@ const PublishPreview = ({ query }) => {
       setShowPublishing(true);
       if (!contributors?.length && !nfts?.length) {
         setCurrentStep(2);
+        publishTheCollection();
       } else {
         if (!isSplitterPublished && contributors.length) {
-          console.log('2', 0);
           setCurrentStep(0);
           await publishRoyaltySplitter();
         } else {
