@@ -123,7 +123,7 @@ export default function NFTTab({
                 Collection.type === 'product' && isSupplyOver ? 'grayscale' : ''
               }`}
             >
-              <span>+ Create NFT</span>
+              <span>Create NFT</span>
             </div>
           ) : null}
         </div>
@@ -196,7 +196,7 @@ export default function NFTTab({
                     : ''
                 }`}
               >
-                <span>+ Create NFT</span>
+                <span>Create NFT</span>
               </div>
             ) : null}
           </div>
@@ -443,7 +443,7 @@ export default function NFTTab({
                     : ''
                 }`}
               >
-                <span>+ Create NFT</span>
+                <span>Create NFT</span>
               </div>
             ) : null}
           </div>

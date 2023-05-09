@@ -811,7 +811,7 @@ export default function Outline({
               onClick={() => setShowSplitterModal(true)}
               className='text-primary-900 font-black text-[13px]'
             >
-              + Create New Splitter
+              Create New Splitter
             </button>
           </div>
         </>
