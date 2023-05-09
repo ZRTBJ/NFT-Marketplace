@@ -86,7 +86,7 @@ export default function CollectionDetailsDraft({ userId }) {
             onClick={() => router.push('/nft/create')}
             className='contained-button !py-3 !text-[16px] !no-underline hover:text-white font-satoshi-bold  !w-[200px]'
           >
-            + Create NFT
+            Create NFT
           </button>
         </div>
       </div>

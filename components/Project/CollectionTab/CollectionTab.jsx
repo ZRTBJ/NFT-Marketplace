@@ -147,7 +147,7 @@ const CollectionTab = (props) => {
               {props.projectOwner && (
                 <Link href={`/collection/create/?dao_id=${id}`}>
                   <button className='contained-button h-[45px]'>
-                    + Create New Collection
+                    Create New Collection
                   </button>
                 </Link>
               )}

@@ -24,10 +24,16 @@ import {
   createUserProvider,
 } from 'util/smartcontract/provider';
 import { createInstance } from 'config/ABI/genericProxyFactory';
+import { erc721ProxyInstance } from 'config/ABI/erc721ProxyFactory';
+import { erc1155ProxyInstance } from 'config/ABI/erc1155ProxyFactory';
 import {
   createCollection,
   createCollectionByCaller,
 } from 'components/Collection/Publish/deploy-collection';
+import ErrorModal from 'components/Modals/ErrorModal';
+import { useRouter } from 'next/router';
+import { getAssetDetail } from 'services/tokenGated/tokenGatedService';
+import { uniqBy } from 'lodash';
 
 const PublishPreview = ({ query }) => {
   const [showPublishing, setShowPublishing] = useState(false);
@@ -36,18 +42,23 @@ const PublishPreview = ({ query }) => {
   const [contributors, setContributors] = useState([]);
   const [nfts, setNFTs] = useState([]);
   const [currentStep, setCurrentStep] = useState(0);
+  const [txnData, setTxnData] = useState();
+  const [showError, setShowError] = useState('');
   const [showNetworkHandler, setShowNetworkHandler] = useState(false);
   const [isSplitterPublished, setIsSplitterPublished] = useState(false);
-  const [moveNFTs, setMoveNFTs] = useState([]);
+  const [uploadingNFTs, setUploadingNFTs] = useState([]);
   const fileUploadNotification = useSelector((state) =>
     state?.notifications?.notificationData
       ? state?.notifications?.notificationData
       : []
   );
+  const [uploadedNFTs, setUploadedNFTs] = useState([]);
+  const [splitterPercent, setShowSplitterPercent] = useState(0);
+  const router = useRouter();
   const dispatch = useDispatch();
   const network = NETWORKS?.[collection?.blockchain];
   let walletType = ls_GetWalletType();
-  console.log(currentStep);
+
   const {
     isLoading: isPublishingRoyaltySplitter,
     status: publishRoyaltySplitterStatus,
@@ -62,18 +73,69 @@ const PublishPreview = ({ query }) => {
 
   useEffect(() => {
     // file upload web socket
-    console.log(fileUploadNotification);
-    console.log(moveNFTs);
-    const projectDeployStatus = fileUploadNotification.find(
-      (x) => x.function_uuid === moveNFTs[0]?.asset?.id
-    );
-    console.log(projectDeployStatus);
-    if (projectDeployStatus && projectDeployStatus.data) {
-      const data = JSON.parse(projectDeployStatus.data);
-      console.log(data);
-    }
+    uploadingNFTs.map((resp) => {
+      const projectDeployStatus = fileUploadNotification.find(
+        (x) => x.function_uuid === resp?.id
+      );
+      if (projectDeployStatus && projectDeployStatus.data) {
+        const data = JSON.parse(projectDeployStatus.data);
+        console.log(data);
+        if (data?.Data?.upload_result) {
+          setUploadedNFTs([...uploadedNFTs, data?.Data?.nft_id]);
+          let nftUploading = uploadingNFTs.find(
+            (nft) => nft?.id === data?.Data?.nft_id
+          );
+          setUploadingNFTs(
+            uniqBy(
+              [{ ...nftUploading, status: 'success' }, ...uploadingNFTs],
+              'id'
+            )
+          );
+        } else {
+          setTimeout(() => {
+            verifyFileHash(resp?.asset?.id);
+          }, 8000);
+        }
+      }
+    });
   }, [fileUploadNotification]);
 
+  useEffect(() => {
+    if (currentStep === 1) {
+      if (uploadingNFTs.every((nft) => nft?.status === 'success')) {
+        setCurrentStep(2);
+        publishTheCollection();
+      }
+    }
+  }, [uploadingNFTs]);
+
+  const verifyFileHash = async (id) => {
+    // await uploadingNFTs.map((item) => {
+    await getAssetDetail(id).then((response) => {
+      if (response.code === 0) {
+        if (response?.asset?.hash) {
+          setUploadedNFTs([...uploadedNFTs, response?.id]);
+
+          let nftUploading = uploadingNFTs.map((nft) => {
+            if (nft?.id === response?.id) {
+              return {
+                ...nft,
+                status: 'success',
+              };
+            }
+            return nft;
+          });
+          setUploadingNFTs(nftUploading);
+        }
+      }
+    });
+
+    if (uploadingNFTs.every((nft) => nft?.status === 'success')) {
+      setCurrentStep(2);
+      publishTheCollection();
+    }
+  };
+  console.log(uploadingNFTs);
   useEffect(() => {
     if (query?.id) {
       validatePublish();
@@ -90,50 +152,60 @@ const PublishPreview = ({ query }) => {
   }, [publishRoyaltySplitterStatus]);
 
   const moveNFTsToIPFS = async () => {
-    setCurrentStep(1);
-    console.log('2', 1);
-    let formData = new FormData();
-    let nftIds = nfts.map((nft) => nft.id);
-    formData.append('nft_ids', JSON.stringify(nftIds));
-    let resp = await moveToIPFS(formData);
-    if (resp.code === 0) {
-      nftIds.map((nft) => {
-        if (nft?.asset?.id) {
-          console.log('[d');
-          const notificationData = {
-            function_uuid: nft?.asset?.id,
-            data: '',
-          };
-          dispatch(getNotificationData(notificationData));
-        }
-      });
+    if (nfts?.length) {
+      if (nfts.some((nft) => nft?.asset?.hash === '')) {
+        setCurrentStep(1);
 
+        let formData = new FormData();
+        let filNfts = nfts?.filter((nft) => nft?.asset?.hash === '');
+        let nftIds = filNfts.map((nft) => nft?.id).join(',');
+        console.log(nftIds);
+        setUploadingNFTs(filNfts);
+        formData.append('nft_ids', nftIds);
+        let resp = await moveToIPFS(formData);
+        if (resp.code === 0) {
+          nfts.map((nft) => {
+            if (nft?.asset?.id && !nfts?.asset?.hash) {
+              const notificationData = {
+                function_uuid: nft?.id,
+                data: '',
+              };
+              console.log(notificationData);
+              dispatch(getNotificationData(notificationData));
+            }
+          });
+
+          // setCurrentStep(2);
+          // publishTheCollection();
+        }
+      } else {
+        setCurrentStep(2);
+        publishTheCollection();
+      }
+    } else {
       setCurrentStep(2);
-      publishCollection();
+      publishTheCollection();
     }
   };
 
   const handleSmartContract = async (config) => {
     try {
       let response;
-      const provider = createUserProvider();
-      const collectionContract = createInstance(provider);
-      if (gaslessMode === 'true') {
-        response = await createCollection(
-          collectionContract,
-          provider,
-          config
-          // collectionType,
-          // productPrice
-        );
-      } else {
-        response = await createCollectionByCaller(
-          collectionContract,
-          config
-          // collectionType,
-          // productPrice
-        );
-      }
+      const provider = await createUserProvider();
+
+      const collectionContract =
+        tokenStandard === 'ERC1155'
+          ? await erc1155ProxyInstance(
+              network?.ProxyManagerERC1155Mumbai,
+              provider
+            )
+          : await erc721ProxyInstance(
+              network?.ProxyManagerERC721Mumbai,
+              provider
+            );
+
+      response = await createCollectionByCaller(collectionContract, config);
+
       let hash;
       if (response?.txReceipt) {
         hash = response.txReceipt;
@@ -141,42 +213,40 @@ const PublishPreview = ({ query }) => {
           transactionHash: hash.transactionHash,
           block_number: hash.blockNumber,
         };
+        publishTheCollection(data);
         setTxnData(data);
-      } else {
-        errorClose(response);
       }
     } catch (err) {
-      errorClose(err.message);
+      console.log(err);
+      setShowError(err);
+      setShowPublishing(false);
     }
   };
 
-  const publishCollection = async (data) => {
-    let txnData;
+  const publishTheCollection = async (data) => {
     let payload = new FormData();
     if (data) {
       payload.append('transaction_hash', data.transactionHash);
     }
-    // await publishCollection(collection?.id, txnData ? payload : null)
-    //   .then((res) => {
-    //     setIsLoading(false);
-    //     if (res.code === 0) {
-    //       if (txnData) {
-    // if (res?.function?.status === 'success') {
-    // } else if (res?.function?.status === 'failed') {
-    //   setTxnData();
-    //   errorClose(res?.function?.message);
-    // }
-    // } else {
-    //   handleSmartContract(res.config);
-    // }
-    //   } else {
-    //     errorClose(res.message);
-    //   }
-    // })
-    // .catch((err) => {
-    //   setIsLoading(false);
-    //   errorClose('Failed to publish collection. Please try again later');
-    // });
+    await publishCollection(
+      collection?.id,
+      data?.transactionHash ? payload : null
+    )
+      .then((res) => {
+        if (res.code === 0) {
+          console.log(res);
+          if (res?.function?.status === 'success') {
+            console.log('success');
+            setCurrentStep(3);
+          } else {
+            handleSmartContract(res.config);
+          }
+        }
+      })
+      .catch((err) => {
+        setShowError(err);
+        setShowPublishing(false);
+      });
   };
 
   const validatePublish = () => {
@@ -197,11 +267,16 @@ const PublishPreview = ({ query }) => {
 
   const getSplitters = () => {
     getSplitterDetails(query?.id, 'collection_id').then((resp) => {
-      console.log(resp);
       if (resp?.splitter?.status === 'published') {
         setIsSplitterPublished(true);
       }
       setContributors(resp?.members);
+      console.log(resp.members);
+      let percent = resp?.members?.reduce(
+        (acc, val) => acc + val.royalty_percent,
+        0
+      );
+      setShowSplitterPercent(percent);
     });
   };
 
@@ -212,10 +287,10 @@ const PublishPreview = ({ query }) => {
         let nftStatus = resp?.lnfts.map((nft) => {
           return {
             ...nft,
-            status: 'pending',
+            status: nft?.asset?.hash ? 'success' : 'pending',
           };
         });
-        setMoveNFTs(nftStatus);
+        setNFTs(nftStatus);
       }
     });
   };
@@ -243,16 +318,26 @@ const PublishPreview = ({ query }) => {
       setShowPublishing(true);
       if (!contributors?.length && !nfts?.length) {
         setCurrentStep(2);
+        publishTheCollection();
       } else {
-        if (!isSplitterPublished && contributors.length) {
-          console.log('2', 0);
-          setCurrentStep(0);
-          await publishRoyaltySplitter();
+        if (!isSplitterPublished && contributors?.length) {
+          if (splitterPercent === 100) {
+            setCurrentStep(0);
+            await publishRoyaltySplitter();
+          } else {
+            setShowPublishing(false);
+            setShowError('Total Royalty Percent should be 100%');
+            router.push(`/collection/${query?.id}`);
+          }
         } else {
+          console.log('---');
           await moveNFTsToIPFS();
         }
       }
-    } catch {}
+    } catch (err) {
+      setShowError(err);
+      setShowPublishing(false);
+    }
   };
 
   return (
@@ -274,6 +359,7 @@ const PublishPreview = ({ query }) => {
           <button
             className='contained-button mx-auto block shadow-md'
             onClick={handlePublishModal}
+            disabled={!tokenStandard}
           >
             Publish to Blockchain
           </button>
@@ -282,10 +368,14 @@ const PublishPreview = ({ query }) => {
       {showPublishing && (
         <PublishingModal
           show={showPublishing}
-          handleClose={() => setShowPublishing(false)}
+          handleClose={() => {
+            setShowPublishing(false);
+            router.push(`/collection/${query?.id}`);
+          }}
           currentStep={currentStep}
-          nfts={moveNFTs}
+          nfts={uploadingNFTs}
           contributors={contributors}
+          collectionId={query?.id}
         />
       )}
       {showNetworkHandler && (
@@ -293,6 +383,16 @@ const PublishPreview = ({ query }) => {
           show={showNetworkHandler}
           handleClose={() => setShowNetworkHandler(false)}
           projectNetwork={collection?.blockchain}
+        />
+      )}
+      {showError && (
+        <ErrorModal
+          title={'Publish failed !'}
+          message={`${showError}`}
+          handleClose={() => {
+            setShowError(null);
+          }}
+          show={showError}
         />
       )}
     </div>

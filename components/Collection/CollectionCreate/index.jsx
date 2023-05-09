@@ -256,9 +256,9 @@ export default function CollectionCreate({ query }) {
     await getSplitterList(splitterListPayload.page, splitterListPayload.perPage)
       .then((res) => {
         let chain = network ? network : network;
-        let filteredSplitters =
-          chain &&
-          res?.splitters?.filter((split) => split?.blockchain === chain);
+        let filteredSplitters = chain
+          ? res?.splitters?.filter((split) => split?.blockchain === chain)
+          : [];
         const splitterList = [...splittersOptions];
         const mergedSplitterList = [...splitterList, ...filteredSplitters];
         const uniqSplitterList = uniqBy(mergedSplitterList, function (e) {
@@ -290,7 +290,7 @@ export default function CollectionCreate({ query }) {
     });
   };
 
-  const onSplitterDraftSave = async () => {
+  const onSplitterDraftSave = async (id) => {
     toast.success('Successfully Created New Splitter');
     await getSplitterList(splitterListPayload.page, splitterListPayload.perPage)
       .then((res) => {
@@ -298,8 +298,14 @@ export default function CollectionCreate({ query }) {
         let filteredSplitters =
           chain &&
           res?.splitters?.filter((split) => split?.blockchain === chain);
-        setSplitter(filteredSplitters[0]);
-        setoutlineKey((pre) => pre + 1);
+        let splitter = null;
+        if (id) {
+          splitter = filteredSplitters?.find((x) => x.id === id);
+        }
+        if (splitter) {
+          setSplitter(splitter);
+          setoutlineKey((pre) => pre + 1);
+        }
       })
       .catch((res) => {
         console.log(res);

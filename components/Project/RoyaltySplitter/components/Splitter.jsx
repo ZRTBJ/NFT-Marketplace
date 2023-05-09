@@ -339,7 +339,7 @@ const Splitter = ({
                   if (isModal) {
                     createSplitterClose();
                     onGetSplitterList();
-                    onDraftSave();
+                    onDraftSave(resp?.splitter_id);
                   }
                 }
               } else {

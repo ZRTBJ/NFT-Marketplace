@@ -8,6 +8,8 @@ import Cover from 'assets/images/cover-default.svg';
 import Eth from 'assets/images/network/eth.svg';
 import Polygon from 'assets/images/network/polygon.svg';
 import Bnb from 'assets/images/network/bnb.svg';
+import darkBg from 'assets/images/token-gated/darkBg.png';
+import playIcon from 'assets/images/token-gated/audioPlay.svg';
 
 const imageRegex = new RegExp('image');
 const currency = {
@@ -123,7 +125,7 @@ export default function NFTTab({
                 Collection.type === 'product' && isSupplyOver ? 'grayscale' : ''
               }`}
             >
-              <span>+ Create NFT</span>
+              <span>Create NFT</span>
             </div>
           ) : null}
         </div>
@@ -196,7 +198,7 @@ export default function NFTTab({
                     : ''
                 }`}
               >
-                <span>+ Create NFT</span>
+                <span>Create NFT</span>
               </div>
             ) : null}
           </div>
@@ -252,10 +254,10 @@ export default function NFTTab({
                     } `}
                   >
                     <td className='whitespace-nowrap px-6 py-5'>
-                      <Link href={`/nft/${nft?.nft_type}/${nft.id}`}>
+                      <a target='blank' href={`${nft?.asset?.path}`}>
                         {imageRegex.test(nft?.asset?.asset_type) && (
                           <Image
-                            className='rounded-xl h-[150px] w-[150px] object-cover'
+                            className='rounded-xl h-[100px] w-[100px] object-cover'
                             src={nft?.asset?.path ? nft?.asset?.path : Cover}
                             alt='nft asset'
                             width={80}
@@ -265,35 +267,54 @@ export default function NFTTab({
                         )}
                         {nft?.asset?.asset_type === 'movie' ||
                         nft?.asset?.asset_type === 'video/mp4' ? (
-                          <video
-                            className='rounded-xl h-[150px] w-[150px] object-cover'
-                            controls
+                          <div
+                            className='rounded-xl relative'
+                            style={{
+                              backgroundImage: `url(${darkBg.src})`,
+                              backgroundRepeat: 'no-repeat',
+                              backgroundSize: 'cover',
+                              backgroundPosition: 'center',
+                              height: '100px',
+                              width: '100px',
+                            }}
                           >
-                            <source src={nft?.asset?.path} type='video/mp4' />
-                            Your browser does not support the video tag.
-                          </video>
+                            <div className='absolute  top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 social-icon-button cursor-pointer w-9 h-9  flex justify-center items-center rounded-md'>
+                              <i className='fa-solid fa-circle-video gradient-text text-[20px]'></i>
+                            </div>
+                          </div>
                         ) : null}
                         {nft?.asset?.asset_type === 'audio' ||
                         nft?.asset?.asset_type === 'audio/mpeg' ? (
-                          <div className='rounded-xl h-[150px] w-[150px] object-cover bg-primary-900/[0.05] relative'>
+                          <div
+                            className='rounded-xl relative'
+                            style={{
+                              backgroundImage: `url(${darkBg.src})`,
+                              backgroundRepeat: 'no-repeat',
+                              backgroundSize: 'cover',
+                              backgroundPosition: 'center',
+                              height: '100px',
+                              width: '100px',
+                            }}
+                          >
                             <Image
                               src={audioWeb}
-                              className='w-full absolute  top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2'
+                              className='w-full  absolute  top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2'
                               height={100}
                               width={50}
                               unoptimized
                               alt='play png'
                             ></Image>
-
-                            <audio
-                              src={nft?.asset?.path}
-                              controls
-                              autoPlay={false}
-                              className='w-full bottom-0 left-0 absolute'
-                            />
+                            <Image
+                              src={playIcon}
+                              className='absolute  m-auto top-0 bottom-0 left-0 right-0 block h-[30px] w-[30px] object-cover'
+                              height={30}
+                              width={30}
+                              unoptimized
+                              alt='play png'
+                            ></Image>
                           </div>
                         ) : null}
-                      </Link>
+                      </a>
                     </td>
                     <td className='whitespace-nowrap px-6 py-5'>
                       <Link
@@ -324,7 +345,7 @@ export default function NFTTab({
                       <p className='text-[14px]'>{nft?.supply}</p>
                     </td>
                     <td className='whitespace-nowrap px-6 py-5'>
-                      {checkSalesStatus(nft) === 'ready' ? (
+                      {showSalesButton(nft) === 'true' ? (
                         <p className='whitespace-nowrap w-fit py-2 px-4 rounded bg-primary-900 bg-opacity-10 text-primary-900 text-[13px] font-black'>
                           Ready for sale
                         </p>
@@ -379,7 +400,7 @@ export default function NFTTab({
       {/* table for mobile */}
       {NFTs?.length > 0 && (
         <>
-          <div className='my-6 justify-end flex items-center gap-4'>
+          <div className='my-6 justify-end md:hidden flex items-center gap-4'>
             <div className='dropdown relative w-auto'>
               <button
                 className='bg-white dropdown-toggle p-4 text-textSubtle font-black font-satoshi-bold rounded border flex items-center justify-between  w-44  h-[40px]'
@@ -443,7 +464,7 @@ export default function NFTTab({
                     : ''
                 }`}
               >
-                <span>+ Create NFT</span>
+                <span>Create NFT</span>
               </div>
             ) : null}
           </div>
@@ -527,7 +548,7 @@ export default function NFTTab({
                         {nft?.supply}
                       </span>
                     </p>
-                    {checkSalesStatus(nft) === 'ready' ? (
+                    {showSalesButton(nft) === 'true' ? (
                       <p className='whitespace-nowrap w-fit py-2 px-4 rounded bg-primary-900 bg-opacity-10 text-primary-900 text-[13px] font-black'>
                         Ready for sale
                       </p>

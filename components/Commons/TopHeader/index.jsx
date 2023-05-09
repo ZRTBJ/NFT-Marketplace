@@ -446,7 +446,9 @@ const Header = ({ handleSidebar, showModal, setShowModal }) => {
             dispatch(getNotificationData(notificationData));
           } else if (data.type === 'fileUploadNotification') {
             const notificationData = {
-              function_uuid: data.Data.job_id,
+              function_uuid: data.Data.nft_id
+                ? data.Data.nft_id
+                : data.Data.job_id,
               data: lastMessage.data,
             };
             dispatch(getNotificationData(notificationData));

@@ -147,7 +147,7 @@ const SalesSettingsTab = ({ projectNetwork }) => {
                 onClick={() => setShowSalesModal(true)}
                 className='contained-button h-[45px]'
               >
-                + Create Sales Page
+                Create Sales Page
               </button>
             </div>
 

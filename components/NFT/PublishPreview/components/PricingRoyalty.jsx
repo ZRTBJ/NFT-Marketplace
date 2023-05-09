@@ -1,4 +1,6 @@
+import Tooltip from 'components/Commons/Tooltip';
 import { walletAddressTruncate } from 'util/WalletUtils';
+import { toast } from 'react-toastify';
 
 const PricingRoyalty = ({ price, network, contributors }) => {
   const TABLE_HEADERS = [
@@ -7,12 +9,21 @@ const PricingRoyalty = ({ price, network, contributors }) => {
     { id: 2, label: 'Percentage' },
     { id: 3, label: 'Role' },
   ];
+  const copyToClipboard = (text) => {
+    if (typeof window !== 'undefined') {
+      navigator.clipboard.writeText(text);
+      toast.success(`Link successfully copied`);
+    }
+  };
 
   return (
     <div className='section-collection mt-6 '>
-      <h3>Pricing & Royalty</h3>
-      <div className='shadow-md text-center mt-2 collection-content border-gray-500 border border-dashed  py-3 rounded-xl'>
-        <p className='border-b border-dashed border-gray-500'>
+      <div className='flex items-center'>
+        <Tooltip message='Collection price and royalty setting will be saved to blockchain' />
+        <h3>Pricing & Royalty</h3>
+      </div>
+      <div className='text-center mt-4 collection-content border-gray-300 border-2 border-dashed  py-3 rounded-xl'>
+        <p className='border-b-2  border-dashed border-gray-300'>
           Base Price:{' '}
           <span className='font-bold'>
             {price} {network?.cryto}
@@ -33,6 +44,10 @@ const PricingRoyalty = ({ price, network, contributors }) => {
                 <tr className='text-center' key={item?.user_eoa}>
                   <td className='w-1/4'>
                     {walletAddressTruncate(item?.user_eoa)}
+                    <i
+                      className='fa-solid fa-copy cursor-pointer ml-1'
+                      onClick={() => copyToClipboard(item?.user_eoa)}
+                    ></i>
                   </td>
                   <td className='w-1/4'>{item?.custom_name}</td>
                   <td className='w-1/4'>{item?.royalty_percent}%</td>
