@@ -30,6 +30,10 @@ import {
   createCollection,
   createCollectionByCaller,
 } from 'components/Collection/Publish/deploy-collection';
+import ErrorModal from 'components/Modals/ErrorModal';
+import { useRouter } from 'next/router';
+import { getAssetDetail } from 'services/tokenGated/tokenGatedService';
+import { uniqBy } from 'lodash';
 
 const PublishPreview = ({ query }) => {
   const [showPublishing, setShowPublishing] = useState(false);
@@ -39,14 +43,18 @@ const PublishPreview = ({ query }) => {
   const [nfts, setNFTs] = useState([]);
   const [currentStep, setCurrentStep] = useState(0);
   const [txnData, setTxnData] = useState();
+  const [showError, setShowError] = useState('');
   const [showNetworkHandler, setShowNetworkHandler] = useState(false);
   const [isSplitterPublished, setIsSplitterPublished] = useState(false);
-  const [moveNFTs, setMoveNFTs] = useState([]);
+  const [uploadingNFTs, setUploadingNFTs] = useState([]);
   const fileUploadNotification = useSelector((state) =>
     state?.notifications?.notificationData
       ? state?.notifications?.notificationData
       : []
   );
+  const [uploadedNFTs, setUploadedNFTs] = useState([]);
+  const [splitterPercent, setShowSplitterPercent] = useState(0);
+  const router = useRouter();
   const dispatch = useDispatch();
   const network = NETWORKS?.[collection?.blockchain];
   let walletType = ls_GetWalletType();
@@ -65,18 +73,69 @@ const PublishPreview = ({ query }) => {
 
   useEffect(() => {
     // file upload web socket
-    console.log(fileUploadNotification);
-    console.log(moveNFTs);
-    const projectDeployStatus = fileUploadNotification.find(
-      (x) => x.function_uuid === moveNFTs[0]?.asset?.id
-    );
-    console.log(projectDeployStatus);
-    if (projectDeployStatus && projectDeployStatus.data) {
-      const data = JSON.parse(projectDeployStatus.data);
-      console.log(data);
-    }
+    uploadingNFTs.map((resp) => {
+      const projectDeployStatus = fileUploadNotification.find(
+        (x) => x.function_uuid === resp?.id
+      );
+      if (projectDeployStatus && projectDeployStatus.data) {
+        const data = JSON.parse(projectDeployStatus.data);
+        console.log(data);
+        if (data?.Data?.upload_result) {
+          setUploadedNFTs([...uploadedNFTs, data?.Data?.nft_id]);
+          let nftUploading = uploadingNFTs.find(
+            (nft) => nft?.id === data?.Data?.nft_id
+          );
+          setUploadingNFTs(
+            uniqBy(
+              [{ ...nftUploading, status: 'success' }, ...uploadingNFTs],
+              'id'
+            )
+          );
+        } else {
+          setTimeout(() => {
+            verifyFileHash(resp?.asset?.id);
+          }, 8000);
+        }
+      }
+    });
   }, [fileUploadNotification]);
 
+  useEffect(() => {
+    if (currentStep === 1) {
+      if (uploadingNFTs.every((nft) => nft?.status === 'success')) {
+        setCurrentStep(2);
+        publishTheCollection();
+      }
+    }
+  }, [uploadingNFTs]);
+
+  const verifyFileHash = async (id) => {
+    // await uploadingNFTs.map((item) => {
+    await getAssetDetail(id).then((response) => {
+      if (response.code === 0) {
+        if (response?.asset?.hash) {
+          setUploadedNFTs([...uploadedNFTs, response?.id]);
+
+          let nftUploading = uploadingNFTs.map((nft) => {
+            if (nft?.id === response?.id) {
+              return {
+                ...nft,
+                status: 'success',
+              };
+            }
+            return nft;
+          });
+          setUploadingNFTs(nftUploading);
+        }
+      }
+    });
+
+    if (uploadingNFTs.every((nft) => nft?.status === 'success')) {
+      setCurrentStep(2);
+      publishTheCollection();
+    }
+  };
+  console.log(uploadingNFTs);
   useEffect(() => {
     if (query?.id) {
       validatePublish();
@@ -93,22 +152,37 @@ const PublishPreview = ({ query }) => {
   }, [publishRoyaltySplitterStatus]);
 
   const moveNFTsToIPFS = async () => {
-    setCurrentStep(1);
-    let formData = new FormData();
-    let nftIds = nfts.join(',');
-    formData.append('nft_ids', nftIds);
-    let resp = await moveToIPFS(formData);
-    if (resp.code === 0) {
-      nfts.map((nft) => {
-        if (nft?.asset?.id && nfts?.asset?.hash) {
-          const notificationData = {
-            function_uuid: nft?.asset?.id,
-            data: '',
-          };
-          dispatch(getNotificationData(notificationData));
-        }
-      });
+    if (nfts?.length) {
+      if (nfts.some((nft) => nft?.asset?.hash === '')) {
+        setCurrentStep(1);
 
+        let formData = new FormData();
+        let filNfts = nfts?.filter((nft) => nft?.asset?.hash === '');
+        let nftIds = filNfts.map((nft) => nft?.id).join(',');
+        console.log(nftIds);
+        setUploadingNFTs(filNfts);
+        formData.append('nft_ids', nftIds);
+        let resp = await moveToIPFS(formData);
+        if (resp.code === 0) {
+          nfts.map((nft) => {
+            if (nft?.asset?.id && !nfts?.asset?.hash) {
+              const notificationData = {
+                function_uuid: nft?.id,
+                data: '',
+              };
+              console.log(notificationData);
+              dispatch(getNotificationData(notificationData));
+            }
+          });
+
+          // setCurrentStep(2);
+          // publishTheCollection();
+        }
+      } else {
+        setCurrentStep(2);
+        publishTheCollection();
+      }
+    } else {
       setCurrentStep(2);
       publishTheCollection();
     }
@@ -130,24 +204,8 @@ const PublishPreview = ({ query }) => {
               provider
             );
 
-      // if (gaslessMode === 'true') {
+      response = await createCollectionByCaller(collectionContract, config);
 
-      // response = await createCollection(
-      //   collectionContract,
-      //   provider,
-      //   config
-      // collectionType,
-      // productPrice
-      // );
-      // } else {
-      response = await createCollectionByCaller(
-        collectionContract,
-        config
-        // collectionType,
-        // productPrice
-      );
-      // }
-      console.log(response);
       let hash;
       if (response?.txReceipt) {
         hash = response.txReceipt;
@@ -157,11 +215,11 @@ const PublishPreview = ({ query }) => {
         };
         publishTheCollection(data);
         setTxnData(data);
-      } else {
-        // errorClose(response);
       }
     } catch (err) {
       console.log(err);
+      setShowError(err);
+      setShowPublishing(false);
     }
   };
 
@@ -179,12 +237,16 @@ const PublishPreview = ({ query }) => {
           console.log(res);
           if (res?.function?.status === 'success') {
             console.log('success');
+            setCurrentStep(3);
           } else {
             handleSmartContract(res.config);
           }
         }
       })
-      .catch((err) => {});
+      .catch((err) => {
+        setShowError(err);
+        setShowPublishing(false);
+      });
   };
 
   const validatePublish = () => {
@@ -209,6 +271,12 @@ const PublishPreview = ({ query }) => {
         setIsSplitterPublished(true);
       }
       setContributors(resp?.members);
+      console.log(resp.members);
+      let percent = resp?.members?.reduce(
+        (acc, val) => acc + val.royalty_percent,
+        0
+      );
+      setShowSplitterPercent(percent);
     });
   };
 
@@ -219,10 +287,10 @@ const PublishPreview = ({ query }) => {
         let nftStatus = resp?.lnfts.map((nft) => {
           return {
             ...nft,
-            status: 'pending',
+            status: nft?.asset?.hash ? 'success' : 'pending',
           };
         });
-        setMoveNFTs(nftStatus);
+        setNFTs(nftStatus);
       }
     });
   };
@@ -252,14 +320,24 @@ const PublishPreview = ({ query }) => {
         setCurrentStep(2);
         publishTheCollection();
       } else {
-        if (!isSplitterPublished && contributors.length) {
-          setCurrentStep(0);
-          await publishRoyaltySplitter();
+        if (!isSplitterPublished && contributors?.length) {
+          if (splitterPercent === 100) {
+            setCurrentStep(0);
+            await publishRoyaltySplitter();
+          } else {
+            setShowPublishing(false);
+            setShowError('Total Royalty Percent should be 100%');
+            router.push(`/collection/${query?.id}`);
+          }
         } else {
+          console.log('---');
           await moveNFTsToIPFS();
         }
       }
-    } catch {}
+    } catch (err) {
+      setShowError(err);
+      setShowPublishing(false);
+    }
   };
 
   return (
@@ -281,6 +359,7 @@ const PublishPreview = ({ query }) => {
           <button
             className='contained-button mx-auto block shadow-md'
             onClick={handlePublishModal}
+            disabled={!tokenStandard}
           >
             Publish to Blockchain
           </button>
@@ -289,10 +368,14 @@ const PublishPreview = ({ query }) => {
       {showPublishing && (
         <PublishingModal
           show={showPublishing}
-          handleClose={() => setShowPublishing(false)}
+          handleClose={() => {
+            setShowPublishing(false);
+            router.push(`/collection/${query?.id}`);
+          }}
           currentStep={currentStep}
-          nfts={moveNFTs}
+          nfts={uploadingNFTs}
           contributors={contributors}
+          collectionId={query?.id}
         />
       )}
       {showNetworkHandler && (
@@ -300,6 +383,16 @@ const PublishPreview = ({ query }) => {
           show={showNetworkHandler}
           handleClose={() => setShowNetworkHandler(false)}
           projectNetwork={collection?.blockchain}
+        />
+      )}
+      {showError && (
+        <ErrorModal
+          title={'Publish failed !'}
+          message={`${showError}`}
+          handleClose={() => {
+            setShowError(null);
+          }}
+          show={showError}
         />
       )}
     </div>

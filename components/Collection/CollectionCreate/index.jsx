@@ -256,9 +256,9 @@ export default function CollectionCreate({ query }) {
     await getSplitterList(splitterListPayload.page, splitterListPayload.perPage)
       .then((res) => {
         let chain = network ? network : network;
-        let filteredSplitters =
-          chain &&
-          res?.splitters?.filter((split) => split?.blockchain === chain);
+        let filteredSplitters = chain
+          ? res?.splitters?.filter((split) => split?.blockchain === chain)
+          : [];
         const splitterList = [...splittersOptions];
         const mergedSplitterList = [...splitterList, ...filteredSplitters];
         const uniqSplitterList = uniqBy(mergedSplitterList, function (e) {

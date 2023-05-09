@@ -152,6 +152,7 @@ export async function createCollectionByCaller(
       symbol: config?.deploymentConfig?.symbol,
       contractURI: 'URIofcontract',
       baseURI: config?.runtimeConfig?.baseURI,
+      royaltyRecipient: config?.runtimeConfig?.royaltiesAddress,
       royaltyRecipient: from,
       royaltyBps: config?.runtimeConfig?.royaltiesBps,
       primarySaleRecipient: from,
@@ -167,13 +168,17 @@ export async function createCollectionByCaller(
         ? ERC721MasterCopy
         : ERC1155MasterCopy,
   };
-  console.log(metaArgs);
   let response;
   // if (type === 'membership') {
   //   const tx = await collection.connect(signer).createMembershipProxy(args);
   //   response = await tx.wait();
   // } else {
-  const tx = await collection.connect(signer).DeployERC721(metaArgs);
+
+  let tx;
+  tx =
+    config?.deploymentConfig?.collection_standard === 'ERC721'
+      ? await collection.connect(signer)?.DeployERC721(metaArgs)
+      : await collection.connect(signer)?.DeployERC1155(metaArgs);
   response = await tx.wait(1);
   // }
   console.log('Res: ', response);

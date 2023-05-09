@@ -24,44 +24,56 @@ const abi = [
       {
         components: [
           {
-            internalType: 'address',
-            name: 'defaultAdmin',
-            type: 'address',
-          },
-          {
-            internalType: 'string',
-            name: 'name',
-            type: 'string',
-          },
-          {
-            internalType: 'string',
-            name: 'symbol',
-            type: 'string',
-          },
-          {
-            internalType: 'string',
-            name: 'contractURI',
-            type: 'string',
-          },
-          {
-            internalType: 'string',
-            name: 'baseURI',
-            type: 'string',
-          },
-          {
-            internalType: 'address',
-            name: 'royaltyRecipient',
-            type: 'address',
-          },
-          {
-            internalType: 'uint128',
-            name: 'royaltyBps',
-            type: 'uint128',
-          },
-          {
-            internalType: 'address',
-            name: 'primarySaleRecipient',
-            type: 'address',
+            components: [
+              {
+                internalType: 'address',
+                name: 'defaultAdmin',
+                type: 'address',
+              },
+              {
+                internalType: 'string',
+                name: 'name',
+                type: 'string',
+              },
+              {
+                internalType: 'string',
+                name: 'symbol',
+                type: 'string',
+              },
+              {
+                internalType: 'string',
+                name: 'contractURI',
+                type: 'string',
+              },
+              {
+                internalType: 'string',
+                name: 'baseURI',
+                type: 'string',
+              },
+              {
+                internalType: 'address',
+                name: 'royaltyRecipient',
+                type: 'address',
+              },
+              {
+                internalType: 'uint128',
+                name: 'royaltyBps',
+                type: 'uint128',
+              },
+              {
+                internalType: 'address',
+                name: 'primarySaleRecipient',
+                type: 'address',
+              },
+              {
+                internalType: 'address',
+                name: 'platformFeeManager',
+                type: 'address',
+              },
+            ],
+            internalType: 'struct Config.ERC1155Params',
+            name: 'metadata',
+            type: 'tuple',
           },
           {
             internalType: 'address',

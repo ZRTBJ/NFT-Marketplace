@@ -24,54 +24,66 @@ const abi = [
       {
         components: [
           {
-            internalType: 'address',
-            name: 'defaultAdmin',
-            type: 'address',
-          },
-          {
-            internalType: 'string',
-            name: 'name',
-            type: 'string',
-          },
-          {
-            internalType: 'string',
-            name: 'symbol',
-            type: 'string',
-          },
-          {
-            internalType: 'string',
-            name: 'contractURI',
-            type: 'string',
-          },
-          {
-            internalType: 'string',
-            name: 'baseURI',
-            type: 'string',
-          },
-          {
-            internalType: 'address',
-            name: 'royaltyRecipient',
-            type: 'address',
-          },
-          {
-            internalType: 'uint128',
-            name: 'royaltyBps',
-            type: 'uint128',
-          },
-          {
-            internalType: 'address',
-            name: 'primarySaleRecipient',
-            type: 'address',
-          },
-          {
-            internalType: 'uint256',
-            name: 'floorPrice',
-            type: 'uint256',
-          },
-          {
-            internalType: 'uint256',
-            name: 'maxSupply',
-            type: 'uint256',
+            components: [
+              {
+                internalType: 'address',
+                name: 'defaultAdmin',
+                type: 'address',
+              },
+              {
+                internalType: 'string',
+                name: 'name',
+                type: 'string',
+              },
+              {
+                internalType: 'string',
+                name: 'symbol',
+                type: 'string',
+              },
+              {
+                internalType: 'string',
+                name: 'contractURI',
+                type: 'string',
+              },
+              {
+                internalType: 'string',
+                name: 'baseURI',
+                type: 'string',
+              },
+              {
+                internalType: 'address',
+                name: 'royaltyRecipient',
+                type: 'address',
+              },
+              {
+                internalType: 'uint128',
+                name: 'royaltyBps',
+                type: 'uint128',
+              },
+              {
+                internalType: 'address',
+                name: 'primarySaleRecipient',
+                type: 'address',
+              },
+              {
+                internalType: 'uint256',
+                name: 'floorPrice',
+                type: 'uint256',
+              },
+              {
+                internalType: 'uint256',
+                name: 'maxSupply',
+                type: 'uint256',
+              },
+              {
+                internalType: 'address',
+                name: 'platformFeeManager',
+                type: 'address',
+              },
+            ],
+            internalType: 'struct Config.ERC721Params',
+            name: 'metadata',
+            type: 'tuple',
           },
           {
             internalType: 'address',
@@ -79,7 +91,7 @@ const abi = [
             type: 'address',
           },
         ],
-        internalType: 'struct Config.DeployRequest',
+        internalType: 'struct Config.ERC721DeployRequest',
         name: 'params',
         type: 'tuple',
       },
