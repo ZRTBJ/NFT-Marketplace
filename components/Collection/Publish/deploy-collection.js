@@ -116,8 +116,8 @@ export async function createCollection(
 export async function createCollectionByCaller(
   collection,
   config,
-  type,
-  productPrice
+  total,
+  hashData
 ) {
   let walletType = await ls_GetWalletType();
   let signer;
@@ -132,17 +132,11 @@ export async function createCollectionByCaller(
   const from = await signer.getAddress();
 
   let chainId = ls_GetChainID();
-  let minimalForwarder = NETWORKS[chainId]?.forwarder;
-  let masterCopyCollection = NETWORKS[chainId]?.masterCopyCollection;
-  let masterMembershipCollection =
-    NETWORKS[Number(chainId)]?.masterMembershipCollection;
   NETWORKS[Number(chainId)]?.masterMembershipCollection;
   let ERC721MasterCopy =
     NETWORKS[chainId]?.CreateCollectionERC721MasterCopyMumbai;
   let ERC1155MasterCopy =
     NETWORKS[chainId]?.CreateCollectionERC1155MasterCopyMumbai;
-  let discount = NETWORKS[Number(chainId)]?.discount;
-  let treasury = NETWORKS[Number(chainId)]?.decirTreasury;
   let platformFeeManager = NETWORKS[Number(chainId)]?.PlatformFeeManager;
 
   const metaArgs = {
@@ -150,17 +144,20 @@ export async function createCollectionByCaller(
       defaultAdmin: from,
       name: config?.deploymentConfig?.name,
       symbol: config?.deploymentConfig?.symbol,
-      contractURI: 'URIofcontract',
-      baseURI: config?.runtimeConfig?.baseURI,
+      contractURI: '',
+      baseURI: total ? `${config?.runtimeConfig?.baseURI}${hashData}` : '',
       royaltyRecipient: config?.runtimeConfig?.royaltiesAddress,
       royaltyRecipient: from,
       royaltyBps: config?.runtimeConfig?.royaltiesBps,
       primarySaleRecipient: from,
-      floorPrice: ethers.utils.parseUnits(
-        config?.runtimeConfig?.basePrice?.toString(),
-        'ether'
-      ),
-      maxSupply: config?.runtimeConfig?.totalSupply,
+      ...(config?.deploymentConfig?.collection_standard === 'ERC721' && {
+        floorPrice: ethers.utils.parseUnits(
+          config?.runtimeConfig?.basePrice?.toString(),
+          'ether'
+        ),
+        maxSupply: config?.runtimeConfig?.totalSupply,
+        initialSupply: total,
+      }),
       platformFeeManager: platformFeeManager,
     },
     masterCopy:
@@ -168,6 +165,7 @@ export async function createCollectionByCaller(
         ? ERC721MasterCopy
         : ERC1155MasterCopy,
   };
+  console.log(metaArgs);
   let response;
   // if (type === 'membership') {
   //   const tx = await collection.connect(signer).createMembershipProxy(args);
