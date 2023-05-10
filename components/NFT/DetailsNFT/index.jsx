@@ -334,7 +334,13 @@ export default function DetailsNFT({ type, id }) {
   };
 
   let info = nft?.more_info;
-  let benefits = info?.benefits && JSON.parse(nft.more_info.benefits);
+  let benefits = [];
+  try {
+    benefits = info?.benefits && JSON.parse(nft?.more_info?.benefits);
+  } catch (error) {
+    console.log(error);
+    benefits = [];
+  }
   const minted_amount = nft?.lnft?.minted_amount ? nft?.lnft?.minted_amount : 0;
   let availableSupply = nft?.lnft?.supply - minted_amount;
   const isBuyButtonDisable = () => {
