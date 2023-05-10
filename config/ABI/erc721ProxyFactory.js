@@ -76,6 +76,11 @@ const abi = [
                 type: 'uint256',
               },
               {
+                internalType: 'uint256',
+                name: 'initialSupply',
+                type: 'uint256',
+              },
+              {
                 internalType: 'address',
                 name: 'platformFeeManager',
                 type: 'address',

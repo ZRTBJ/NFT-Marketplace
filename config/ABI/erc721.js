@@ -262,6 +262,19 @@ const abi = [
     anonymous: false,
     inputs: [
       {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'tokenId',
+        type: 'uint256',
+      },
+    ],
+    name: 'TokenCreated',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: true,
         internalType: 'address',
         name: 'mintedTo',
@@ -335,6 +348,24 @@ const abi = [
         internalType: 'bytes32',
         name: '',
         type: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: '_getPlatformFeeInfo',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
       },
     ],
     stateMutability: 'view',
@@ -425,6 +456,30 @@ const abi = [
     name: 'burn',
     outputs: [],
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'value',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'fee',
+        type: 'uint256',
+      },
+    ],
+    name: 'calculateFee',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'pure',
     type: 'function',
   },
   {
@@ -647,54 +702,71 @@ const abi = [
   {
     inputs: [
       {
-        internalType: 'address',
-        name: '_defaultAdmin',
-        type: 'address',
-      },
-      {
-        internalType: 'string',
-        name: '_name',
-        type: 'string',
-      },
-      {
-        internalType: 'string',
-        name: '_symbol',
-        type: 'string',
-      },
-      {
-        internalType: 'string',
-        name: 'contractURI_',
-        type: 'string',
-      },
-      {
-        internalType: 'string',
-        name: '_baseURI',
-        type: 'string',
-      },
-      {
-        internalType: 'address',
-        name: '_royaltyRecipient',
-        type: 'address',
-      },
-      {
-        internalType: 'uint128',
-        name: '_royaltyBps',
-        type: 'uint128',
-      },
-      {
-        internalType: 'address',
-        name: '_primarySaleRecipient',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: '_floorPrice',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: '_maxSupply',
-        type: 'uint256',
+        components: [
+          {
+            internalType: 'address',
+            name: 'defaultAdmin',
+            type: 'address',
+          },
+          {
+            internalType: 'string',
+            name: 'name',
+            type: 'string',
+          },
+          {
+            internalType: 'string',
+            name: 'symbol',
+            type: 'string',
+          },
+          {
+            internalType: 'string',
+            name: 'contractURI',
+            type: 'string',
+          },
+          {
+            internalType: 'string',
+            name: 'baseURI',
+            type: 'string',
+          },
+          {
+            internalType: 'address',
+            name: 'royaltyRecipient',
+            type: 'address',
+          },
+          {
+            internalType: 'uint128',
+            name: 'royaltyBps',
+            type: 'uint128',
+          },
+          {
+            internalType: 'address',
+            name: 'primarySaleRecipient',
+            type: 'address',
+          },
+          {
+            internalType: 'uint256',
+            name: 'floorPrice',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'maxSupply',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'initialSupply',
+            type: 'uint256',
+          },
+          {
+            internalType: 'address',
+            name: 'platformFeeManager',
+            type: 'address',
+          },
+        ],
+        internalType: 'struct Config.ERC721Params',
+        name: 'params',
+        type: 'tuple',
       },
     ],
     name: 'initialize',
@@ -832,19 +904,6 @@ const abi = [
       },
     ],
     name: 'ownerOf',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'platformFeeRecipient',
     outputs: [
       {
         internalType: 'address',
@@ -1241,6 +1300,37 @@ const abi = [
       },
     ],
     name: 'transferOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_receiver',
+        type: 'address',
+      },
+    ],
+    name: 'withdraw',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_receiver',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: '_token',
+        type: 'address',
+      },
+    ],
+    name: 'withdrawToken',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
