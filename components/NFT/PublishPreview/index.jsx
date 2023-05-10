@@ -47,6 +47,7 @@ const PublishPreview = ({ query }) => {
   const [showNetworkHandler, setShowNetworkHandler] = useState(false);
   const [isSplitterPublished, setIsSplitterPublished] = useState(false);
   const [uploadingNFTs, setUploadingNFTs] = useState([]);
+  const [hashData, setHashData] = useState(null);
   const fileUploadNotification = useSelector((state) =>
     state?.notifications?.notificationData
       ? state?.notifications?.notificationData
@@ -82,6 +83,8 @@ const PublishPreview = ({ query }) => {
         console.log(data);
         if (data?.Data?.upload_result) {
           setUploadedNFTs([...uploadedNFTs, data?.Data?.nft_id]);
+          let hashData = JSON.parse(data?.Data?.upload_result_data);
+          setHashData(hashData?.IpfsHash);
           let nftUploading = uploadingNFTs.find(
             (nft) => nft?.id === data?.Data?.nft_id
           );
@@ -91,11 +94,11 @@ const PublishPreview = ({ query }) => {
               'id'
             )
           );
-        } else {
-          setTimeout(() => {
-            verifyFileHash(resp?.asset?.id);
-          }, 8000);
         }
+      } else {
+        setTimeout(() => {
+          verifyFileHash(resp?.asset?.id);
+        }, 8000);
       }
     });
   }, [fileUploadNotification]);
@@ -115,6 +118,7 @@ const PublishPreview = ({ query }) => {
       if (response.code === 0) {
         if (response?.asset?.hash) {
           setUploadedNFTs([...uploadedNFTs, response?.id]);
+          setHashData(response?.asset?.hash);
 
           let nftUploading = uploadingNFTs.map((nft) => {
             if (nft?.id === response?.id) {
@@ -135,15 +139,19 @@ const PublishPreview = ({ query }) => {
       publishTheCollection();
     }
   };
-  console.log(uploadingNFTs);
+
   useEffect(() => {
     if (query?.id) {
-      validatePublish();
-      getCollectionDetails();
-      getSplitters();
-      getNFTs();
+      handleInitialLoad();
     }
   }, [query?.id]);
+
+  const handleInitialLoad = () => {
+    validatePublish();
+    getCollectionDetails();
+    getSplitters();
+    getNFTs();
+  };
 
   useEffect(() => {
     if (publishRoyaltySplitterStatus === 2) {
@@ -204,7 +212,12 @@ const PublishPreview = ({ query }) => {
               provider
             );
 
-      response = await createCollectionByCaller(collectionContract, config);
+      response = await createCollectionByCaller(
+        collectionContract,
+        config,
+        nfts?.length,
+        hashData
+      );
 
       let hash;
       if (response?.txReceipt) {
@@ -391,6 +404,7 @@ const PublishPreview = ({ query }) => {
           message={`${showError}`}
           handleClose={() => {
             setShowError(null);
+            handleInitialLoad();
           }}
           show={showError}
         />

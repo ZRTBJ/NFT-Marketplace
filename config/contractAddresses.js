@@ -16,7 +16,7 @@ export const address = {
 
   //Mumbai Testnet
   GenericProxyFactoryMumbai: '0x19932d3486326C5ea7bD2Fe3659Fe79B12c0DbeB',
-  ProxyManagerERC721Mumbai: '0x5a33ed622A88D7d6c54D791EdE623f51EA877299',
+  ProxyManagerERC721Mumbai: '0x583299EE7bF14C3556B0Ed4767321309e4A40a18',
   ProxyManagerERC1155Mumbai: '0xC7C307ca98C4BCBf92DAded4b923626ADBe174ba',
   MinimalForwarderMumbai: '0x4565BbCA3b265C42Fc547B15a81CADB2159Ae96D',
   CreatorDAOMasterCopyMumbai: '0xa8592984637A5c2B1715d817e902cDc05A3B681A',
@@ -27,7 +27,7 @@ export const address = {
   CreateCollectionERC721MasterCopyMumbai:
     '0x43976EB754fB67BB4eB5Ac64CEfA099FA96D95b5',
   CreateCollectionERC1155MasterCopyMumbai:
-    '0x57CEE6e156AC428689cEa71E900DFDA2C4A43d53',
+    '0x9058789418961cf272967644Ea978778e2F5eBe8',
   PlatformFeeManager: '0x3754979332808Fa4266e8334cef871F9ee5AC8e5',
   RoyaltySplitterMasterCopyMumbai: '0x9927ddEB99D53576F72125Cd3959e141f65D9b15',
   decirTreasuryMumbai: '0xd28940fBF6363397f1837cb6aE7A8cCC118bFCE5',
