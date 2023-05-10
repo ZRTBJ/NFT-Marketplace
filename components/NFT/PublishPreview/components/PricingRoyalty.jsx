@@ -22,8 +22,8 @@ const PricingRoyalty = ({ price, network, contributors }) => {
         <Tooltip message='Collection price and royalty setting will be saved to blockchain' />
         <h3>Pricing & Royalty</h3>
       </div>
-      <div className='text-center mt-4 collection-content border-gray-300 border-2 border-dashed  py-3 rounded-xl'>
-        <p className='border-b-2  border-dashed border-gray-300'>
+      <div className='text-center mt-4 collection-content border shadow  py-3 rounded-xl'>
+        <p className='border-b'>
           Base Price:{' '}
           <span className='font-bold'>
             {price} {network?.cryto}

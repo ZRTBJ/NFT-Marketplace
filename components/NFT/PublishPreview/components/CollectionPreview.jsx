@@ -13,7 +13,7 @@ const CollectionPreview = ({ tokenStandard, collection, network }) => {
         <Tooltip message='The below collection config will be saved to blockchain' />
         <h3>Collection</h3>
       </div>
-      <div className='mt-4 collection-content border-2  border-gray-300  border-dashed px-4 py-3 rounded-xl'>
+      <div className='mt-4 collection-content border shadow px-4 py-3 rounded-xl'>
         <div className='flex items-center mb-8'>
           <Image
             src={collectionLogo?.path ? collectionLogo?.path : Cover}
@@ -38,13 +38,15 @@ const CollectionPreview = ({ tokenStandard, collection, network }) => {
                 <span className='block text-xs text-gray-400'>Chain</span>
                 <span className='flex'>
                   {network?.networkName}{' '}
-                  <Image
-                    src={network?.icon?.src}
-                    height={network?.icon?.height}
-                    width={network?.icon?.width}
-                    alt='Chain Icon'
-                    className='ml-1'
-                  />
+                  {network?.networkName && (
+                    <Image
+                      src={network?.icon?.src}
+                      height={network?.icon?.height}
+                      width={network?.icon?.width}
+                      alt='Chain Icon'
+                      className='ml-1'
+                    />
+                  )}
                 </span>
               </p>
             </div>
@@ -56,6 +58,12 @@ const CollectionPreview = ({ tokenStandard, collection, network }) => {
               <p>
                 <span className='block text-xs text-gray-400'>Supply</span>
                 {collection?.total_supply}
+              </p>
+              <p>
+                <span className='block text-xs text-gray-400'>
+                  Royalty Percentage
+                </span>
+                {collection?.royalty_percent}
               </p>
             </div>
           </div>
@@ -69,10 +77,6 @@ const CollectionPreview = ({ tokenStandard, collection, network }) => {
         {collection?.token_limit_duration ? (
           <p className='text-center text-sm'>NFT having limited time</p>
         ) : null}
-
-        <div>
-          <div></div>
-        </div>
       </div>
     </div>
   );

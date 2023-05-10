@@ -146,7 +146,7 @@ export default function CollectionCreate({ query }) {
   //  BlockChain end
 
   // Token Transferable start
-  const [isTokenTransferable, setIsTokenTransferable] = useState(false);
+  const [isTokenTransferable, setIsTokenTransferable] = useState(true);
   const onTokenTransferableChange = (data) => {
     setIsTokenTransferable((o) => !o);
   };
@@ -559,7 +559,7 @@ export default function CollectionCreate({ query }) {
       category_id: projectCategory,
       blockchain: network,
       isMetaDaFreezed: isMetaDaFreezed,
-      isTokenTransferable: isTokenTransferable,
+      isTokenTransferable: isTokenTransferable ? false : true,
       royaltyPercentage: royaltyPercentage,
       collectionSymbol: daoSymbol,
       total_supply: supply ? supply : 1,
@@ -605,7 +605,7 @@ export default function CollectionCreate({ query }) {
           setWebLinks(JSON.parse(response.links));
         } catch (e) {}
         setProjectCategory(response?.category_id);
-        setIsTokenTransferable(response?.token_transferable);
+        setIsTokenTransferable(response?.token_transferable ? false : true);
         setIsMetaDataFreezed(response?.updatable);
         setRoyaltyPercentage(response?.royalty_percent);
         if (response?.royalty_percent) {

@@ -27,11 +27,11 @@ const NFTList = ({ nfts }) => {
         <Tooltip message='All NFT below will be saved to blockchain and ready to be minted' />
         <h3>NFT List</h3>
       </div>
-      <div className='w-full mt-4 border-gray-300 border-2 border-dashed rounded-xl py-2 '>
+      <div className='w-full mt-4 border shadow rounded-xl py-2 '>
         {nfts?.length ? (
           <table className='w-full text-left'>
             <thead>
-              <tr className='border-b-2  border-dashed border-gray-300'>
+              <tr className='border-b'>
                 {TABLE_HEADERS.map((header) => (
                   <th scope='col' key={header.id} className='p-3 w-1/4'>
                     {header.label}
