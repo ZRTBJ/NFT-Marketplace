@@ -470,13 +470,32 @@ export default function CreateNFTContent({ query }) {
     setIsNftLoading(false);
     setShowDataUploadingModal(false);
   };
+
+  const verifyTokenId = async (nftId, hash) => {
+    const tnxHash = await provider.waitForTransaction(hash);
+    await NFTRegisterAfterPublish(nftId, hash)
+      .then((res) => {
+        if (res?.code !== 0) {
+          setShowDataUploadingModal(false);
+          setShowErrorModal(true);
+          setErrorMessage(res?.message);
+        }
+      })
+      .catch((error) => {
+        setShowDataUploadingModal(false);
+        setShowErrorModal(true);
+        setErrorMessage(JSON.stringify(error));
+      });
+  };
+
   const registerNFT = async (price, ipfsLink, supply, nftId, token_id) => {
     if (
       collection?.id &&
       collection?.type === 'auto' &&
       collection?.status === 'published' &&
       collection?.contract_address &&
-      !token_id
+      !token_id &&
+      ipfsLink
     ) {
       if (ipfsLink) {
         let walletType = await ls_GetWalletType();
@@ -493,7 +512,7 @@ export default function CreateNFTContent({ query }) {
           signer = await etherMagicProvider.getSigner();
         }
 
-        if (collection.token_standard == 'ERC721') {
+        if (collection?.token_standard == 'ERC721') {
           const priceContract = erc721Instance(
             collection?.contract_address,
             // '0x695397fae5e6f4aa6dff8ebc2d723b354fb1c6fa',
@@ -501,31 +520,14 @@ export default function CreateNFTContent({ query }) {
           );
           const nftInfo = {
             price: ethers.utils.parseEther(price.toString()),
-            uri: ipfsLink,
+            uri: `${Config.PINATA_URL}/${ipfsLink}`,
           };
           try {
             const response = await priceContract
               .connect(signer)
               .addNewToken(nftInfo.price, nftInfo.uri);
-            console.log(response);
-
-            if (response?.txReceipt?.transactionHash) {
-              await NFTRegisterAfterPublish(
-                nftId,
-                response?.txReceipt?.transactionHash
-              )
-                .then((res) => {
-                  if (res?.code !== 0) {
-                    setShowDataUploadingModal(false);
-                    setShowErrorModal(true);
-                    setErrorMessage(res?.message);
-                  }
-                })
-                .catch((error) => {
-                  setShowDataUploadingModal(false);
-                  setShowErrorModal(true);
-                  setErrorMessage(JSON.stringify(error));
-                });
+            if (response?.hash) {
+              await verifyTokenId(nftId, response?.hash);
             }
           } catch (error) {
             setShowDataUploadingModal(false);
@@ -535,7 +537,7 @@ export default function CreateNFTContent({ query }) {
           }
         }
 
-        if (collection.token_standard == 'ERC1155') {
+        if (collection?.token_standard == 'ERC1155') {
           const priceContract = erc1155Instance(
             collection?.contract_address,
             // '0xED129b2A708CA6bd20d53c63Db5263870D12b2B9',
@@ -543,31 +545,15 @@ export default function CreateNFTContent({ query }) {
           );
           const nftInfo = {
             price: ethers.utils.parseEther(price.toString()),
-            uri: ipfsLink,
+            uri: `${Config.PINATA_URL}/${ipfsLink}`,
             total_supply: supply,
           };
           try {
             const response = await priceContract
               .connect(signer)
               .addNewToken(nftInfo.price, nftInfo.uri, nftInfo.total_supply);
-            console.log(response);
-            if (response?.txReceipt?.transactionHash) {
-              await NFTRegisterAfterPublish(
-                nftId,
-                response?.txReceipt?.transactionHash
-              )
-                .then((res) => {
-                  if (res?.code !== 0) {
-                    setShowDataUploadingModal(false);
-                    setShowErrorModal(true);
-                    setErrorMessage(res?.message);
-                  }
-                })
-                .catch((error) => {
-                  setShowDataUploadingModal(false);
-                  setShowErrorModal(true);
-                  setErrorMessage(JSON.stringify(error));
-                });
+            if (response?.hash) {
+              await verifyTokenId(nftId, response?.hash);
             }
           } catch (error) {
             setShowDataUploadingModal(false);
@@ -632,8 +618,8 @@ export default function CreateNFTContent({ query }) {
         .then(async (res) => {
           if (res?.code === 0) {
             await registerNFT(
-              nft?.price,
-              res?.lnft?.asset?.path,
+              nft?.price ? nft?.price : 0,
+              res?.lnft?.metadata_url,
               res?.lnft?.supply,
               res?.lnft?.id,
               res?.lnft?.token_id
