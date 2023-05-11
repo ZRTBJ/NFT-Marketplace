@@ -55,6 +55,7 @@ const PublishPreview = ({ query }) => {
   );
   const [uploadedNFTs, setUploadedNFTs] = useState([]);
   const [splitterPercent, setShowSplitterPercent] = useState(0);
+  const [nftsHashed, setNFTsHashed] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch();
   const network = NETWORKS?.[collection?.blockchain];
@@ -295,6 +296,9 @@ const PublishPreview = ({ query }) => {
           };
         });
         setNFTs(nftStatus);
+        if (resp?.lnfts?.every((nft) => nft?.asset?.hash)) {
+          setNFTsHashed(true);
+        }
       }
     });
   };
@@ -385,12 +389,13 @@ const PublishPreview = ({ query }) => {
           show={showPublishing}
           handleClose={() => {
             setShowPublishing(false);
-            router.push(`/collection/${query?.id}`);
+            handleInitialLoad();
           }}
           currentStep={currentStep}
           nfts={uploadingNFTs}
           contributors={contributors}
           collectionId={query?.id}
+          nftsHashed={nftsHashed}
         />
       )}
       {showNetworkHandler && (
