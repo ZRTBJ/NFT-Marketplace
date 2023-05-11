@@ -113,12 +113,7 @@ export async function createCollection(
   return output;
 }
 
-export async function createCollectionByCaller(
-  collection,
-  config,
-  total,
-  hashData
-) {
+export async function createCollectionByCaller(collection, config) {
   let walletType = await ls_GetWalletType();
   let signer;
   if (walletType === 'metamask') {
@@ -136,16 +131,17 @@ export async function createCollectionByCaller(
   let ERC721MasterCopy = NETWORKS[chainId]?.CreateCollectionERC721MasterCopy;
   let ERC1155MasterCopy = NETWORKS[chainId]?.CreateCollectionERC1155MasterCopy;
   let platformFeeManager = NETWORKS[Number(chainId)]?.PlatformFeeManager;
-
+  console.log(config);
   const metaArgs = {
     metadata: {
       defaultAdmin: from,
       name: config?.deploymentConfig?.name,
       symbol: config?.deploymentConfig?.symbol,
       contractURI: '',
-      baseURI: total ? `${config?.runtimeConfig?.baseURI}${hashData}` : '',
+      baseURI: config?.runtimeConfig?.nftFolderHash
+        ? `${config?.runtimeConfig?.baseURI}${config?.runtimeConfig?.nftFolderHash}`
+        : '',
       royaltyRecipient: config?.runtimeConfig?.royaltiesAddress,
-      royaltyRecipient: from,
       royaltyBps: config?.runtimeConfig?.royaltiesBps,
       primarySaleRecipient: from,
       ...(config?.deploymentConfig?.collection_standard === 'ERC721' && {
@@ -154,7 +150,9 @@ export async function createCollectionByCaller(
           'ether'
         ),
         maxSupply: config?.runtimeConfig?.totalSupply,
-        initialSupply: total,
+        initialSupply: config?.runtimeConfig?.numberOfNFTNow
+          ? config?.runtimeConfig?.numberOfNFTNow
+          : 0,
       }),
       platformFeeManager: platformFeeManager,
     },
@@ -165,10 +163,6 @@ export async function createCollectionByCaller(
   };
   console.log(metaArgs);
   let response;
-  // if (type === 'membership') {
-  //   const tx = await collection.connect(signer).createMembershipProxy(args);
-  //   response = await tx.wait();
-  // } else {
 
   let tx;
   tx =
