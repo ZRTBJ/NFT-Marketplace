@@ -47,6 +47,7 @@ const PublishPreview = ({ query }) => {
   const [showNetworkHandler, setShowNetworkHandler] = useState(false);
   const [isSplitterPublished, setIsSplitterPublished] = useState(false);
   const [uploadingNFTs, setUploadingNFTs] = useState([]);
+  const [isSplitterCreated, setIsSplitterCreated] = useState(false);
   const [hashData, setHashData] = useState(null);
   const fileUploadNotification = useSelector((state) =>
     state?.notifications?.notificationData
@@ -117,19 +118,18 @@ const PublishPreview = ({ query }) => {
     await getAssetDetail(id).then((response) => {
       if (response.code === 0) {
         if (response?.asset?.hash) {
-          setUploadedNFTs([...uploadedNFTs, response?.id]);
+          setUploadedNFTs([...uploadedNFTs, response?.asset?.id]);
           setHashData(response?.asset?.hash);
 
-          let nftUploading = uploadingNFTs.map((nft) => {
-            if (nft?.id === response?.id) {
-              return {
-                ...nft,
-                status: 'success',
-              };
-            }
-            return nft;
-          });
-          setUploadingNFTs(nftUploading);
+          let nftUploading = uploadingNFTs.find(
+            (nft) => nft?.asset?.id === response?.asset?.id
+          );
+          setUploadingNFTs(
+            uniqBy(
+              [{ ...nftUploading, status: 'success' }, ...uploadingNFTs],
+              'id'
+            )
+          );
         }
       }
     });
@@ -254,6 +254,9 @@ const PublishPreview = ({ query }) => {
           } else {
             handleSmartContract(res.config);
           }
+        } else {
+          setShowError(res.message);
+          setShowPublishing(false);
         }
       })
       .catch((err) => {
@@ -280,8 +283,11 @@ const PublishPreview = ({ query }) => {
 
   const getSplitters = () => {
     getSplitterDetails(query?.id, 'collection_id').then((resp) => {
-      if (resp?.splitter?.status === 'published') {
+      if (resp?.splitter?.contract_address) {
         setIsSplitterPublished(true);
+      }
+      if (resp?.splitter?.id) {
+        setIsSplitterCreated(true);
       }
       setContributors(resp?.members);
       console.log(resp.members);
@@ -329,11 +335,22 @@ const PublishPreview = ({ query }) => {
   const publishAll = async () => {
     try {
       setShowPublishing(true);
-      if (!contributors?.length && !nfts?.length) {
+      if (!isSplitterCreated && !contributors?.length && !nfts?.length) {
         setCurrentStep(2);
         publishTheCollection();
       } else {
-        if (!isSplitterPublished && contributors?.length) {
+        if (
+          !isSplitterPublished &&
+          isSplitterCreated &&
+          !contributors?.length
+        ) {
+          setShowPublishing(false);
+          setShowError('Please add members to splitter to publish');
+        } else if (
+          !isSplitterPublished &&
+          contributors?.length &&
+          isSplitterCreated
+        ) {
           if (splitterPercent === 100) {
             setCurrentStep(0);
             await publishRoyaltySplitter();

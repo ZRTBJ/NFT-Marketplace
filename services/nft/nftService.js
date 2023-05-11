@@ -152,7 +152,7 @@ export const NFTRegisterAfterPublish = async (nftId, tnx) => {
     'PUT',
     `/lnft/${nftId}/register-after-publish`,
     formData,
-    'formData'
+    'formdata'
   );
 };
 

@@ -720,7 +720,7 @@ export default function MembershipNFT({ query }) {
           onTextfieldChange(0, 'properties', nft.attributes);
           onTextfieldChange(0, 'sensitiveContent', nft.sensitive_content);
           onTextfieldChange(0, 'supply', nft.supply);
-
+          setIndexOfNfts(0);
           setIsNftLoading(false);
         } else {
           setIsNftLoading(false);
@@ -742,16 +742,17 @@ export default function MembershipNFT({ query }) {
   };
   function removePropertyOfTier(nft, index) {
     try {
-     
-    setIsListUpdate(true);
-    let tempProperty = [...nft.properties];
-    tempProperty = tempProperty.filter((prop) => prop !== tempProperty[index]);
-    let oldNfts = [...nfts];
-    oldNfts[indexOfNfts].properties = tempProperty;
-    setNfts(oldNfts);
-    setTimeout(() => {
-      setIsListUpdate(false);
-    }, 50); 
+      setIsListUpdate(true);
+      let tempProperty = [...nft.properties];
+      tempProperty = tempProperty.filter(
+        (prop) => prop !== tempProperty[index]
+      );
+      let oldNfts = [...nfts];
+      oldNfts[indexOfNfts].properties = tempProperty;
+      setNfts(oldNfts);
+      setTimeout(() => {
+        setIsListUpdate(false);
+      }, 50);
     } catch (error) {
       console.log(error);
     }
