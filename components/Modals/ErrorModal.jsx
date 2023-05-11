@@ -17,6 +17,7 @@ const ErrorModal = ({
   redirection,
   showCloseIcon = true,
   errorType = '',
+  showErrorTitleInRedColor,
 }) => {
   const [fundsLoading, setFundsLoading] = useState(false);
   const btnText = buttomText ? buttomText : 'CLOSE';
@@ -44,7 +45,15 @@ const ErrorModal = ({
           src={errorType === 'user_not_logged_in' ? IconLock : IconError}
           alt=''
         />
-        <div className='mb-4 text-[16px] font-bold txtblack'>{titleMsg}</div>
+        <div
+          className={`mb-4 text-[16px] ${
+            showErrorTitleInRedColor
+              ? ' text-danger-1'
+              : ' font-bold text-txtblack'
+          }`}
+        >
+          {titleMsg}
+        </div>
         <div className='my-4 font-bold text-[14px] txtblack max-h-40 overflow-y-auto'>
           {bodyMsg}
         </div>

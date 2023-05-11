@@ -140,6 +140,7 @@ export default function CreateNFTContent({ query }) {
       indexId: 1,
       price: '0',
       salesTimeRange: null,
+      token_id: null,
     },
   ];
   const [nfts, setNfts] = useState(nftList);
@@ -279,6 +280,8 @@ export default function CreateNFTContent({ query }) {
       blockchainCategory: 'polygon',
       indexId: oldNfts.length + 1,
       price: '0',
+      salesTimeRange: null,
+      token_id: null,
     });
     setNfts(oldNfts);
   }
@@ -478,12 +481,16 @@ export default function CreateNFTContent({ query }) {
         if (res?.code !== 0) {
           setShowDataUploadingModal(false);
           setShowErrorModal(true);
+          setErrorTitle(
+            'NFT is not on blockchain yet, please try saving again'
+          );
           setErrorMessage(res?.message);
         }
       })
       .catch((error) => {
         setShowDataUploadingModal(false);
         setShowErrorModal(true);
+        setErrorTitle('NFT is not on blockchain yet, please try saving again');
         setErrorMessage(JSON.stringify(error));
       });
   };
@@ -532,6 +539,9 @@ export default function CreateNFTContent({ query }) {
           } catch (error) {
             setShowDataUploadingModal(false);
             setShowErrorModal(true);
+            setErrorTitle(
+              'NFT is not on blockchain yet, please try saving again'
+            );
             setErrorMessage(JSON.stringify(error));
             console.log(error);
           }
@@ -558,6 +568,9 @@ export default function CreateNFTContent({ query }) {
           } catch (error) {
             setShowDataUploadingModal(false);
             setShowErrorModal(true);
+            setErrorTitle(
+              'NFT is not on blockchain yet, please try saving again'
+            );
             setErrorMessage(JSON.stringify(error));
             console.log(error);
           }
@@ -745,9 +758,16 @@ export default function CreateNFTContent({ query }) {
       }
     }
     await updateNft(nftItem?.id, request)
-      .then((res) => {
-        setShowDataUploadingModal(false);
+      .then(async (res) => {
         if (res?.code === 0) {
+          await registerNFT(
+            nftItem?.price ? nftItem?.price : 0,
+            nftItem?.metadata_url,
+            nftItem?.supply,
+            nftItem?.id,
+            nftItem?.token_id
+          );
+          setShowDataUploadingModal(false);
           setShowSuccessModal(true);
         } else {
           handleErrorState(res?.message);
@@ -931,6 +951,10 @@ export default function CreateNFTContent({ query }) {
           if (resp?.more_info?.price) {
             onTextfieldChange(0, 'price', resp?.more_info?.price);
           }
+          if (nft?.token_id) {
+            onTextfieldChange(0, 'token_id', nft.token_id);
+          }
+          setIndexOfNfts(0);
           setIsNftLoading(false);
         } else {
           setIsNftLoading(false);
@@ -1003,7 +1027,7 @@ export default function CreateNFTContent({ query }) {
   useEffect(() => {
     try {
       const nftId = query?.nftId;
-      if (nftId !== null) {
+      if (nftId) {
         nftDetails(nftId);
       }
     } catch {}
@@ -1013,12 +1037,6 @@ export default function CreateNFTContent({ query }) {
       collectionFetch();
     }
   }, [payload]);
-  useEffect(() => {
-    if (collection?.status === 'published' && updateMode) {
-      setRedirectOnError(true);
-      handleErrorState("Collection is published, You can't update NFT");
-    }
-  }, [collection, updateMode]);
 
   let curCollection = collection_id
     ? options.find((item) => item.id === collection_id)
@@ -1065,6 +1083,13 @@ export default function CreateNFTContent({ query }) {
     label: 'ETH',
     icon: Eth,
   });
+  const canEdit = () => {
+    if (collection?.status === 'published' && updateMode) {
+      return false;
+    } else {
+      return true;
+    }
+  };
 
   return (
     <>
@@ -1128,7 +1153,7 @@ export default function CreateNFTContent({ query }) {
                     className={`debounceInput mt-1 ${
                       isPreview ? ' !border-none bg-transparent' : ''
                     } `}
-                    disabled={isPreview}
+                    disabled={isPreview || !canEdit()}
                     value={nft.tierName}
                     onChange={(e) =>
                       onTextfieldChange(index, 'tierName', e.target.value)
@@ -1260,7 +1285,7 @@ export default function CreateNFTContent({ query }) {
                       </div>
 
                       <input
-                        disabled={isPreview}
+                        disabled={isPreview || !canEdit()}
                         key={index}
                         id={`dropzone-file${index}`}
                         type='file'
@@ -1387,7 +1412,7 @@ export default function CreateNFTContent({ query }) {
                           onChange={(e) =>
                             onTextfieldChange(index, 'price', e.target.value)
                           }
-                          disabled={isPreview}
+                          disabled={isPreview || !canEdit()}
                           type='number'
                           min='0'
                           className={`debounceInput ${
@@ -1417,7 +1442,7 @@ export default function CreateNFTContent({ query }) {
                       showMeridian={true}
                       className='date-range-picker nft-sales-range'
                       ranges={predefinedBottomRanges}
-                      disabled={isPreview}
+                      disabled={isPreview || !canEdit()}
                     />
                     {/* {checkedValidation && nft.salesTimeRange === '' && (
                       <p className='validationTag text-sm'>Price is required</p>
@@ -1437,7 +1462,7 @@ export default function CreateNFTContent({ query }) {
                         className={`debounceInput ${
                           isPreview ? ' !border-none bg-transparent' : ''
                         } `}
-                        disabled={isPreview}
+                        disabled={isPreview || !canEdit()}
                         value={nft.supply}
                         type='number'
                         onChange={(e) =>
@@ -1490,7 +1515,7 @@ export default function CreateNFTContent({ query }) {
                           className={`debounceInput mt-1 ${
                             isPreview ? ' !border-none bg-transparent' : ''
                           } `}
-                          disabled={isPreview}
+                          disabled={isPreview || !canEdit()}
                           value={nft.externalLink}
                           onChange={(e) =>
                             onTextfieldChange(
@@ -1503,63 +1528,6 @@ export default function CreateNFTContent({ query }) {
                         />
                       </>
                     </div>
-
-                    {/* {userinfo?.id && typeof window !== 'undefined' && (
-                      <div className='mb-6'>
-                        <div className='flex items-center mb-2'>
-                          <Tooltip message='If you selecting a Collection, it will generate automatically'></Tooltip>
-                          <p className='text-txtblack text-[14px]'>
-                            Connect Collection
-                          </p>
-                        </div>
-                        <Select
-                          // defaultValue={curCollection}
-                          value={curCollection}
-                          onChange={(data) => setCollection_id(data?.id)}
-                          onKeyDown={(event) => onDaoSearch(event.target.value)}
-                          options={options}
-                          styles={{
-                            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-                            control: (base) => ({
-                              ...base,
-                              border: isPreview
-                                ? 'none'
-                                : '1px solid hsl(0, 0%, 80%)',
-                            }),
-                          }}
-                          isDisabled={query?.collection_id || isPreview}
-                          menuPortalTarget={document.body}
-                          placeholder='Choose Collection'
-                          isLoading={isLoading}
-                          noOptionsMessage={() => 'No Collection Found'}
-                          loadingMessage={() => 'Loading,please wait...'}
-                          getOptionLabel={(option) => `${option.name}`}
-                          getOptionValue={(option) => option.id}
-                          classNamePrefix='collection-connect'
-                          isClearable
-                          isSearchable
-                          menuShouldScrollIntoView
-                          onMenuScrollToBottom={() => scrolledBottom()}
-                        />
-                      </div>
-                    )}
-                    {networkName && (
-                      <div className='mb-6 '>
-                        <p className='text-txtblack text-[14px]'>Blockchain</p>
-                        <>
-                          <DebounceInput
-                            debounceTimeout={0}
-                            className={`debounceInput mt-1 ${
-                              isPreview ? ' !border-none bg-transparent' : ''
-                            } `}
-                            disabled
-                            value={networkName}
-                            type='text'
-                          />
-                        </>
-                      </div>
-                    )} */}
-
                     <div className='mb-6'>
                       <p className='text-txtblack font-bold '>Properties</p>
                       <p className='text-textSubtle text-[14px] mb-[16px]'>
@@ -1575,7 +1543,7 @@ export default function CreateNFTContent({ query }) {
                           </small>
                         </div>
                         <>
-                          {!isPreview && (
+                          {!isPreview && canEdit() && (
                             <i
                               className='fa-regular fa-square-plus text-2xl text-primary-900 cursor-pointer'
                               onClick={() => openPropertyModal(index)}
@@ -1622,14 +1590,14 @@ export default function CreateNFTContent({ query }) {
                                       />
                                     </div>
                                     <>
-                                      {!isPreview && (
-                                        <i
-                                          className='cursor-pointer fa-solid fa-trash text-danger-1/[0.7]'
-                                          onClick={() => {
-                                            removePropertyOfTier(nft, i);
-                                          }}
-                                        ></i>
-                                      )}
+                                      <button
+                                        disabled={isPreview || !canEdit()}
+                                        onClick={() => {
+                                          removePropertyOfTier(nft, i);
+                                        }}
+                                      >
+                                        <i className='fa-solid fa-trash text-danger-1/[0.7]'></i>
+                                      </button>
                                     </>
                                   </div>
                                 </div>
@@ -1648,7 +1616,7 @@ export default function CreateNFTContent({ query }) {
                             Specify if your NFT content is rated 18
                           </small>
                         </div>
-                        {isPreview ? (
+                        {isPreview || !canEdit() ? (
                           <p className='text-[14px] text-textSubtle'>
                             {nft.sensitiveContent
                               .toString()
@@ -1698,12 +1666,22 @@ export default function CreateNFTContent({ query }) {
                         className={`mt-1 p-4 ${
                           isPreview ? ' !border-none bg-transparent' : ''
                         } `}
-                        disabled={isPreview}
+                        disabled={isPreview || !canEdit()}
                       ></textarea>
                     </div>
                   </div>
                 </div>
               </div>
+              {isPreview &&
+                collection?.status === 'published' &&
+                !nft?.token_id && (
+                  <div className='my-6'>
+                    <div className='w-full text-center rounded-lg mx-auto max-w-[400px] p-5 border shadow text-danger-1 text-[14px]'>
+                      Since collection published, your NFT will added to
+                      blockchain and also be ready to mint after saving
+                    </div>
+                  </div>
+                )}
             </div>
           ))}
         </div>
@@ -1725,7 +1703,7 @@ export default function CreateNFTContent({ query }) {
             </>
           ) : (
             <>
-              {!updateMode && (
+              {!updateMode && collection?.status !== 'published' ? (
                 <div className='block md:flex  items-center gap-2'>
                   <button
                     onClick={addMoreTier}
@@ -1740,10 +1718,10 @@ export default function CreateNFTContent({ query }) {
                     </span>
                   </div>
                 </div>
-              )}
+              ) : null}
               <button
                 onClick={nextHandle}
-                className='w-[140px] !text-[16px] h-[44px] contained-button'
+                className='w-[140px] !text-[16px] h-[44px] contained-button ml-auto'
               >
                 Next
               </button>
@@ -1850,6 +1828,7 @@ export default function CreateNFTContent({ query }) {
           show={showErrorModal}
           title={errorTitle}
           message={errorMessage}
+          showErrorTitleInRedColor={true}
           redirection={
             redirectOnError ? `/collection/${collection?.id}` : false
           }
