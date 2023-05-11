@@ -88,7 +88,7 @@ const NetworkHandlerModal = ({
             className='rounded-[4px] bg-primary-900 text-white text-[12px] font-bold px-4 py-2 ml-2'
             onClick={handleChangeNetwork}
           >
-            Swtich Network
+            Switch Network
           </button>
         </div>
       </div>

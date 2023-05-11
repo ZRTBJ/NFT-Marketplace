@@ -106,7 +106,7 @@ const InfoCard = ({
             >
               {project?.overview
                 ? project.overview
-                : 'Please add description to show here'}
+                : ''}
             </ReactReadMoreReadLess>
             <div className={`flex mt-4 mb-4 md:mb-0`}>
               {project?.is_owner && (

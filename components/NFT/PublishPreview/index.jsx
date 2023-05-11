@@ -48,7 +48,6 @@ const PublishPreview = ({ query }) => {
   const [isSplitterPublished, setIsSplitterPublished] = useState(false);
   const [uploadingNFTs, setUploadingNFTs] = useState([]);
   const [isSplitterCreated, setIsSplitterCreated] = useState(false);
-  const [hashData, setHashData] = useState(null);
   const fileUploadNotification = useSelector((state) =>
     state?.notifications?.notificationData
       ? state?.notifications?.notificationData
@@ -84,8 +83,6 @@ const PublishPreview = ({ query }) => {
         console.log(data);
         if (data?.Data?.upload_result) {
           setUploadedNFTs([...uploadedNFTs, data?.Data?.nft_id]);
-          let hashData = JSON.parse(data?.Data?.upload_result_data);
-          setHashData(hashData?.IpfsHash);
           let nftUploading = uploadingNFTs.find(
             (nft) => nft?.id === data?.Data?.nft_id
           );
@@ -119,7 +116,6 @@ const PublishPreview = ({ query }) => {
       if (response.code === 0) {
         if (response?.asset?.hash) {
           setUploadedNFTs([...uploadedNFTs, response?.asset?.id]);
-          setHashData(response?.asset?.hash);
 
           let nftUploading = uploadingNFTs.find(
             (nft) => nft?.asset?.id === response?.asset?.id
@@ -206,12 +202,7 @@ const PublishPreview = ({ query }) => {
           ? await erc1155ProxyInstance(network?.ProxyManagerERC1155, provider)
           : await erc721ProxyInstance(network?.ProxyManagerERC721, provider);
 
-      response = await createCollectionByCaller(
-        collectionContract,
-        config,
-        nfts?.length,
-        hashData
-      );
+      response = await createCollectionByCaller(collectionContract, config);
 
       let hash;
       if (response?.txReceipt) {

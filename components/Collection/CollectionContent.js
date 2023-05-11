@@ -1135,7 +1135,7 @@ const CollectionContent = ({ collectionId, userId }) => {
                     </ReactReadMoreReadLess>
                   </div>
                 ) : (
-                  'Please add description to show here'
+                  ''
                 )}
               </div>
               <div className='mt-6 flex items-center gap-4'>
