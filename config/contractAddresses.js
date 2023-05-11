@@ -13,6 +13,13 @@ export const address = {
   RoyaltySplitterMasterCopy: '0x8ee2Ab34De74cdD31D52Ece65DCfd1Ba51172D79',
   decirTreasuryGoerli: '0x1cAcAE8BE3f689Cec5C0d01c95D15C7071BA0232',
   discountGoerli: '0x28Fb2A2507cB0c93e434b7EBCB28107Fab41CE51',
+  ProxyManagerERC721Goerli: '0x27ab57f35e9cBb484280558aA3B3362C46c7Ff53',
+  ProxyManagerERC1155Goerli: '0x79BB2FD4006eC37ebF5143cA97515b0f81C3d0E4',
+  CreateCollectionERC721MasterCopyGoerli:
+    '0x988Ea916A856200FF5a63F34E6046375c3613809',
+  CreateCollectionERC1155MasterCopyGoerli:
+    '0x982F186dFC698ad6ddda8c44B9703402219B4f33',
+  PlatformFeeManagerGoerli: '0xce133aD847CAB8430AdA880291C092B22e2fBEdD',
 
   //Mumbai Testnet
   GenericProxyFactoryMumbai: '0x19932d3486326C5ea7bD2Fe3659Fe79B12c0DbeB',
@@ -27,8 +34,8 @@ export const address = {
   CreateCollectionERC721MasterCopyMumbai:
     '0xE8d02Ca041d06F764e526dcEd11D32827fF6AFE8',
   CreateCollectionERC1155MasterCopyMumbai:
-    '0x9058789418961cf272967644Ea978778e2F5eBe8',
-  PlatformFeeManager: '0x3754979332808Fa4266e8334cef871F9ee5AC8e5',
+    '0x57CEE6e156AC428689cEa71E900DFDA2C4A43d53',
+  PlatformFeeManagerMumbai: '0x3754979332808Fa4266e8334cef871F9ee5AC8e5',
   RoyaltySplitterMasterCopyMumbai: '0x9927ddEB99D53576F72125Cd3959e141f65D9b15',
   decirTreasuryMumbai: '0xd28940fBF6363397f1837cb6aE7A8cCC118bFCE5',
   discountMumbai: '0xBdF47C08314F0431ed5778c3Dc52b7171850c2a9',
@@ -45,19 +52,13 @@ export const address = {
     '0x37f7D467784257920d24E40F6A5f669269740fBc',
   decirTreasuryBnbTest: '0x0cfD7230b1805f554D8dA778FED11E1eC813b38f',
   discountBnbTest: '0xF448eB4C8B44955989dE5399EADcC3c0DD40737F',
-
-  //BnbTest Testnet
-  GenericProxyFactoryBnbTest: '0x7780fC98e459E4c538Cc24b09960c2Cb1a320bF7',
-  MinimalForwarderBnbTest: '0x16cc8Db27C065CB1D5Caff84E9F1D400f7C82624',
-  CreatorDAOMasterCopyBnbTest: '0x913A42e0f06D52c4541f4ed111626452D455D970',
-  CreateCollectionMasterCopyBnbTest:
-    '0x14E668361EFdBA2487b4A6491e6342817DF05243',
-  CreateMembershipCollectionMasterCopyBnbTest:
-    '0x422d6E719d793Af69C6BD59B6251D948eDBeBBB0',
-  RoyaltySplitterMasterCopyBnbTest:
-    '0x37f7D467784257920d24E40F6A5f669269740fBc',
-  decirTreasuryBnbTest: '0x0cfD7230b1805f554D8dA778FED11E1eC813b38f',
-  discountBnbTest: '0xF448eB4C8B44955989dE5399EADcC3c0DD40737F',
+  ProxyManagerERC721BnbTest: '0x27ab57f35e9cBb484280558aA3B3362C46c7Ff53',
+  ProxyManagerERC1155BnbTest: '0x79BB2FD4006eC37ebF5143cA97515b0f81C3d0E4',
+  CreateCollectionERC721MasterCopyBnbTest:
+    '0x26F8270a5844a43095293f9D8fA2370D1642aB9A',
+  CreateCollectionERC1155MasterCopyBnbTest:
+    '0x988Ea916A856200FF5a63F34E6046375c3613809',
+  PlatformFeeManagerBnbTest: '0xce133aD847CAB8430AdA880291C092B22e2fBEdD',
 
   //Bnb Mainnet
   GenericProxyFactoryBnb: '0x203C425d4802f85E01de51ae9aC887c0325dba0C',

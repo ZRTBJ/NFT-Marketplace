@@ -133,10 +133,8 @@ export async function createCollectionByCaller(
 
   let chainId = ls_GetChainID();
   NETWORKS[Number(chainId)]?.masterMembershipCollection;
-  let ERC721MasterCopy =
-    NETWORKS[chainId]?.CreateCollectionERC721MasterCopyMumbai;
-  let ERC1155MasterCopy =
-    NETWORKS[chainId]?.CreateCollectionERC1155MasterCopyMumbai;
+  let ERC721MasterCopy = NETWORKS[chainId]?.CreateCollectionERC721MasterCopy;
+  let ERC1155MasterCopy = NETWORKS[chainId]?.CreateCollectionERC1155MasterCopy;
   let platformFeeManager = NETWORKS[Number(chainId)]?.PlatformFeeManager;
 
   const metaArgs = {

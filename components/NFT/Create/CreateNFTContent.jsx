@@ -527,7 +527,7 @@ export default function CreateNFTContent({ query }) {
           );
           const nftInfo = {
             price: ethers.utils.parseEther(price.toString()),
-            uri: `${Config.PINATA_URL}/${ipfsLink}`,
+            uri: `${Config.PINATA_URL}${ipfsLink}`,
           };
           try {
             const response = await priceContract
@@ -555,7 +555,7 @@ export default function CreateNFTContent({ query }) {
           );
           const nftInfo = {
             price: ethers.utils.parseEther(price.toString()),
-            uri: `${Config.PINATA_URL}/${ipfsLink}`,
+            uri: `${Config.PINATA_URL}${ipfsLink}`,
             total_supply: supply,
           };
           try {

@@ -203,14 +203,8 @@ const PublishPreview = ({ query }) => {
 
       const collectionContract =
         tokenStandard === 'ERC1155'
-          ? await erc1155ProxyInstance(
-              network?.ProxyManagerERC1155Mumbai,
-              provider
-            )
-          : await erc721ProxyInstance(
-              network?.ProxyManagerERC721Mumbai,
-              provider
-            );
+          ? await erc1155ProxyInstance(network?.ProxyManagerERC1155, provider)
+          : await erc721ProxyInstance(network?.ProxyManagerERC721, provider);
 
       response = await createCollectionByCaller(
         collectionContract,

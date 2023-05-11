@@ -36,13 +36,13 @@ const CollectionPreview = ({ tokenStandard, collection, network }) => {
               </p>
               <p>
                 <span className='block text-xs text-gray-400'>Chain</span>
-                <span className='flex'>
+                <span className='flex items-center'>
                   {network?.networkName}{' '}
                   {network?.networkName && (
                     <Image
                       src={network?.icon?.src}
-                      height={network?.icon?.height}
-                      width={network?.icon?.width}
+                      height={20}
+                      width={20}
                       alt='Chain Icon'
                       className='ml-1'
                     />
