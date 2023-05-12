@@ -296,8 +296,13 @@ const PublishPreview = ({ query }) => {
           };
         });
         setNFTs(nftStatus);
-        if (resp?.lnfts?.every((nft) => nft?.asset?.hash)) {
+        if (
+          resp?.lnfts?.length &&
+          resp.lnfts.every((nft) => nft?.asset?.hash)
+        ) {
           setNFTsHashed(true);
+        } else {
+          setNFTsHashed(false);
         }
       }
     });
