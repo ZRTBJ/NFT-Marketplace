@@ -216,7 +216,7 @@ const CollectionContent = ({ collectionId, userId }) => {
 
   const hanldeUpdatePublishStatus = (status) => {
     if (status === 'success') {
-      if (Collection.royalty_splitter.status !== 'published') {
+      if (Collection?.royalty_splitter?.status !== 'published') {
         setCollection({
           ...Collection,
           royalty_splitter: {
@@ -1615,8 +1615,7 @@ const CollectionContent = ({ collectionId, userId }) => {
                                 : 'Publish to Blockchain'}
                             </button>
                           )}
-                          {Collection?.status === 'draft' ||
-                          !hasPublishedRoyaltySplitter ? (
+                          {Collection?.status === 'draft' ? (
                             <>
                               {royalitySplitterId && (
                                 <div className='token-gated-dropdown relative'>
