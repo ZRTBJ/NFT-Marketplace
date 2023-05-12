@@ -3,8 +3,9 @@ import { ls_GetWalletType } from 'util/ApplicationStorage';
 import { etherMagicProvider } from 'config/magicWallet/magic';
 
 export async function createAutoTypeMintNFT(
+  type,
   mintContract,
-  url,
+  token_id,
   price,
   provider
 ) {
@@ -21,9 +22,19 @@ export async function createAutoTypeMintNFT(
 
   const from = await signer.getAddress();
   const contract = mintContract.connect(signer);
-  const result = await contract.mintToCaller(from, url, {
-    value: ethers.utils.parseEther(price.toString()),
-  });
+  let result = '';
+  if (type === 'ERC1155') {
+    result = await contract.mint(token_id, 1, {
+      // in erc 1155, mint function requires token id and quantity. so 1 means quantity.
+      value: ethers.utils.parseEther(price.toString()),
+    });
+    // ERC721
+  } else if (type === 'ERC721') {
+    result = await contract.mint(token_id, {
+      value: ethers.utils.parseEther(price.toString()),
+    });
+  }
+  console.log(result);
   const txReceipt = await provider.waitForTransaction(result.hash);
   return txReceipt;
 }

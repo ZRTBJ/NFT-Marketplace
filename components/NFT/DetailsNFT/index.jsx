@@ -51,6 +51,8 @@ import Tooltip from 'components/Commons/Tooltip';
 import { etherMagicProvider } from 'config/magicWallet/magic';
 import { ethers } from 'ethers';
 import { createAutoTypeMintNFT } from './MintNFT/deploy-autoTypeNFTMint';
+import { erc721Instance } from 'config/ABI/erc721';
+import { erc1155Instance } from 'config/ABI/erc1155';
 
 const currency = {
   eth: Eth,
@@ -82,6 +84,8 @@ export default function DetailsNFT({ type, id }) {
 
   const handleContract = async (config) => {
     try {
+      const erc1155Contract = erc1155Instance(config.contract, provider);
+      const erc721Contract = erc721Instance(config.contract, provider);
       const mintContract = createMintInstance(config.contract, provider);
       const membershipMintContract = createMembsrshipMintInstance(
         config.contract,
@@ -99,28 +103,49 @@ export default function DetailsNFT({ type, id }) {
       }
 
       if (Number(accountBalance) > Number(nftPrice)) {
-        const response =
-          type === 'membership'
-            ? await createMembershipMintNFT(
-                membershipMintContract,
-                config.metadataUrl,
-                id,
-                provider,
-                config.price
-              )
-            : type === 'product'
-            ? await createMintNFT(
-                mintContract,
-                config.metadataUrl,
-                config.price,
-                provider
-              )
-            : await createAutoTypeMintNFT(
-                mintContract,
-                config.metadataUrl,
-                config.price,
-                provider
-              );
+        let response = '';
+        // membership
+        if (type === 'membership') {
+          response = await createMembershipMintNFT(
+            membershipMintContract,
+            config.metadataUrl,
+            id,
+            provider,
+            config.price
+          );
+        }
+        // product
+        else if (type === 'product') {
+          response = await createMintNFT(
+            mintContract,
+            config.metadataUrl,
+            config.price,
+            provider
+          );
+        }
+        // auto
+        else if (type === 'auto') {
+          // ERC1155
+          if (collection?.token_standard === 'ERC1155') {
+            response = await createAutoTypeMintNFT(
+              'ERC1155',
+              erc1155Contract,
+              config.token_id,
+              config.price,
+              provider
+            );
+          }
+          // ERC721
+          else if (collection?.token_standard === 'ERC721') {
+            response = await createAutoTypeMintNFT(
+              'ERC721',
+              erc721Contract,
+              config.token_id,
+              config.price,
+              provider
+            );
+          }
+        }
         if (response) {
           setHash(response?.transactionHash);
           let data = {
@@ -347,6 +372,8 @@ export default function DetailsNFT({ type, id }) {
     let isDisable = false;
     if (nft?.lnft?.nft_type === 'auto') {
       if (!nft?.lnft?.token_id) {
+        isDisable = true;
+      } else if (!availableSupply) {
         isDisable = true;
       }
     } else {
@@ -624,7 +651,7 @@ export default function DetailsNFT({ type, id }) {
                   {format(new Date(info.end_datetime), 'dd/MM/yy (HH:mm)')}
                 </span>
               ) : (
-                'Not for sale'
+                <>{type === 'auto' ? 'Unlimited' : 'Not for sale'}</>
               )}
             </div>
             <div className='flex mb-4'>
@@ -694,14 +721,15 @@ export default function DetailsNFT({ type, id }) {
                 <div className='flex mb-4 items-center flex-wrap md:max-w-[564px]'>
                   <h3 className='txtblack'>Benefit</h3>
                   {nft?.lnft?.is_owner &&
-                    nft?.lnft?.nft_type === 'membership' && (
-                      <Link
-                        href={`/nft/membership/create?collection_id=${nft?.lnft?.collection_uuid}&nftId=${nft?.lnft?.id}`}
-                        className='!no-underline txtblack text-primary-900 ml-auto mr-2 md:mr-0 font-black'
-                      >
-                        Edit Benefit
-                      </Link>
-                    )}
+                  (nft?.lnft?.nft_type === 'membership' ||
+                    nft?.lnft?.nft_type === 'auto') ? (
+                    <Link
+                      href={`/nft/membership/create?collection_id=${nft?.lnft?.collection_uuid}&nftId=${nft?.lnft?.id}`}
+                      className='!no-underline txtblack text-primary-900 ml-auto mr-2 md:mr-0 font-black'
+                    >
+                      Edit Benefit
+                    </Link>
+                  ) : null}
                 </div>
                 {benefits && benefits.length ? (
                   benefits.map((benefit, index) => (

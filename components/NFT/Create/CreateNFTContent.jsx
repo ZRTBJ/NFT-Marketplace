@@ -134,11 +134,11 @@ export default function CreateNFTContent({ query }) {
         },
       ],
       sensitiveContent: false,
-      supply: '1',
+      supply: 1,
       isOpen: true,
       blockchainCategory: 'polygon',
       indexId: 1,
-      price: '0',
+      price: 0,
       salesTimeRange: null,
       token_id: null,
     },
@@ -180,6 +180,7 @@ export default function CreateNFTContent({ query }) {
   const [showDeleteSuccessModal, setShowDeleteSuccessModal] = useState(false);
   const [showConnectModal, setShowConnectModal] = useState(false);
   const [redirectOnError, setRedirectOnError] = useState(false);
+  const minPrice = 0.0001;
 
   useEffect(() => {
     if (holdCreateNFT) {
@@ -211,18 +212,7 @@ export default function CreateNFTContent({ query }) {
     };
   };
   const delayCallback = useDebounceCallback(500);
-  async function onDaoSearch(keyword) {
-    delayCallback(() => {
-      let oldPayload = { ...payload };
-      oldPayload.keyword = keyword;
-      setPayload(oldPayload);
-    });
-  }
-  function scrolledBottom() {
-    let oldPayload = { ...payload };
-    oldPayload.page = oldPayload.page + 1;
-    setPayload(oldPayload);
-  }
+
   async function collectionFetch() {
     setIsLoading(true);
     await getUserCollections(payload)
@@ -275,11 +265,11 @@ export default function CreateNFTContent({ query }) {
         },
       ],
       sensitiveContent: false,
-      supply: '1',
+      supply: 1,
       isOpen: true,
       blockchainCategory: 'polygon',
       indexId: oldNfts.length + 1,
-      price: '0',
+      price: 0,
       salesTimeRange: null,
       token_id: null,
     });
@@ -598,7 +588,7 @@ export default function CreateNFTContent({ query }) {
     request.append('job_id', nft.job_id);
     const benefit_array = nft.benefit_array.filter((x) => x.title !== '');
     request.append('benefit_array', JSON.stringify(benefit_array));
-    request.append('price', nft?.price ? nft?.price : 0);
+    request.append('price', nft?.price ? nft?.price : minPrice);
     if (nft?.salesTimeRange && nft?.salesTimeRange?.length > 0) {
       if (nft?.salesTimeRange[0]) {
         try {
@@ -619,19 +609,19 @@ export default function CreateNFTContent({ query }) {
     }
 
     if (!updateMode) {
-      event('create_membership_nft', { category: 'nft' });
+      event('create_auto_type_nft', { category: 'nft' });
       TagManager.dataLayer({
         dataLayer: {
           event: 'click_event',
           category: 'nft',
-          pageTitle: 'create_membership_nft',
+          pageTitle: 'create_auto_type_nft',
         },
       });
       await createNft(request)
         .then(async (res) => {
           if (res?.code === 0) {
             await registerNFT(
-              nft?.price ? nft?.price : 0,
+              nft?.price ? nft?.price : minPrice,
               res?.lnft?.metadata_url,
               res?.lnft?.supply,
               res?.lnft?.id,
@@ -737,7 +727,7 @@ export default function CreateNFTContent({ query }) {
     request.append('attributes', JSON.stringify(nft?.properties));
     request.append('sensitive_content', nft?.sensitiveContent);
     request.append('supply', nft?.supply);
-    request.append('price', nft?.price ? nft?.price : 0);
+    request.append('price', nft?.price ? nft?.price : minPrice);
 
     if (nft?.salesTimeRange && nft?.salesTimeRange?.length > 0) {
       if (nft?.salesTimeRange[0]) {
@@ -761,7 +751,7 @@ export default function CreateNFTContent({ query }) {
       .then(async (res) => {
         if (res?.code === 0) {
           await registerNFT(
-            nftItem?.price ? nftItem?.price : 0,
+            nftItem?.price ? nftItem?.price : minPrice,
             nftItem?.metadata_url,
             nftItem?.supply,
             nftItem?.id,
@@ -985,7 +975,7 @@ export default function CreateNFTContent({ query }) {
       setIsListUpdate(false);
     }, 50);
   }
-  const deleteMembershipNFT = async () => {
+  const onDeleteNFT = async () => {
     setIsNftLoading(true);
     await deleteDraftNFT(nftItem?.id)
       .then((res) => {
@@ -1088,6 +1078,16 @@ export default function CreateNFTContent({ query }) {
       return false;
     } else {
       return true;
+    }
+  };
+  const isERC721 = () => {
+    if (
+      collection?.status === 'published' &&
+      collection?.token_standard === 'ERC721'
+    ) {
+      return true;
+    } else {
+      return false;
     }
   };
 
@@ -1462,7 +1462,7 @@ export default function CreateNFTContent({ query }) {
                         className={`debounceInput ${
                           isPreview ? ' !border-none bg-transparent' : ''
                         } `}
-                        disabled={isPreview || !canEdit()}
+                        disabled={isPreview || !canEdit() || isERC721()}
                         value={nft.supply}
                         type='number'
                         onChange={(e) =>
@@ -1871,7 +1871,7 @@ export default function CreateNFTContent({ query }) {
         <ConfirmationModal
           show={showDeleteModal}
           handleClose={() => setShowDeleteModal(false)}
-          handleApply={deleteMembershipNFT}
+          handleApply={() => onDeleteNFT()}
           message='Are you sure to delete this NFT?'
         />
       )}

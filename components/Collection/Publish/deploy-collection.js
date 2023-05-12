@@ -131,7 +131,7 @@ export async function createCollectionByCaller(collection, config) {
   let ERC721MasterCopy = NETWORKS[chainId]?.CreateCollectionERC721MasterCopy;
   let ERC1155MasterCopy = NETWORKS[chainId]?.CreateCollectionERC1155MasterCopy;
   let platformFeeManager = NETWORKS[Number(chainId)]?.PlatformFeeManager;
-  console.log(config);
+
   const metaArgs = {
     metadata: {
       defaultAdmin: from,
@@ -161,7 +161,7 @@ export async function createCollectionByCaller(collection, config) {
         ? ERC721MasterCopy
         : ERC1155MasterCopy,
   };
-  console.log(metaArgs);
+
   let response;
 
   let tx;

@@ -13,6 +13,7 @@ const PublishingModal = ({
   nfts,
   contributors,
   collectionId,
+  nftsHashed,
 }) => {
   const defaultOptions = {
     loop: true,
@@ -32,9 +33,10 @@ const PublishingModal = ({
     },
     {
       title: 'Publishing NFT to IPFS',
-      titleCompleted: nfts?.length
-        ? 'Published NFT to IPFS'
-        : 'No NFTs to Publish',
+      titleCompleted:
+        nfts?.length || nftsHashed
+          ? 'Published NFT to IPFS'
+          : 'No NFTs to Publish',
     },
     {
       title: 'Publishing Collection',
