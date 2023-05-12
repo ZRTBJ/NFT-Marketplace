@@ -139,7 +139,7 @@ export async function createCollectionByCaller(collection, config) {
       symbol: config?.deploymentConfig?.symbol,
       contractURI: '',
       baseURI: config?.runtimeConfig?.nftFolderHash
-        ? `${config?.runtimeConfig?.baseURI}${config?.runtimeConfig?.nftFolderHash}`
+        ? `${config?.runtimeConfig?.baseURI}${config?.runtimeConfig?.nftFolderHash}/`
         : '',
       royaltyRecipient: config?.runtimeConfig?.royaltiesAddress,
       royaltyBps: config?.runtimeConfig?.royaltiesBps,
