@@ -180,7 +180,7 @@ export default function CreateNFTContent({ query }) {
   const [showDeleteSuccessModal, setShowDeleteSuccessModal] = useState(false);
   const [showConnectModal, setShowConnectModal] = useState(false);
   const [redirectOnError, setRedirectOnError] = useState(false);
-  const minPrice = 0.0001;
+  const minPrice = 0;
 
   useEffect(() => {
     if (holdCreateNFT) {
@@ -191,6 +191,16 @@ export default function CreateNFTContent({ query }) {
       setHoldCreateNFT(false);
     };
   }, [userinfo?.id]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      document.addEventListener('wheel', function (event) {
+        if (document.activeElement.type === 'number') {
+          document.activeElement.blur();
+        }
+      });
+    }
+  }, []);
 
   function onTextfieldChange(index, fieldName, value) {
     setValue(index, fieldName, value);
@@ -520,6 +530,7 @@ export default function CreateNFTContent({ query }) {
             uri: `${Config.PINATA_URL}${ipfsLink}`,
           };
           try {
+            console.log(`${collection?.token_standard} :`, price);
             const response = await priceContract
               .connect(signer)
               .addNewToken(nftInfo.price, nftInfo.uri);
@@ -549,6 +560,7 @@ export default function CreateNFTContent({ query }) {
             total_supply: supply,
           };
           try {
+            console.log(`${collection?.token_standard} :`, price);
             const response = await priceContract
               .connect(signer)
               .addNewToken(nftInfo.price, nftInfo.uri, nftInfo.total_supply);
@@ -621,7 +633,9 @@ export default function CreateNFTContent({ query }) {
         .then(async (res) => {
           if (res?.code === 0) {
             await registerNFT(
-              nft?.price ? nft?.price : minPrice,
+              res?.lnft?.more_info?.price
+                ? res?.lnft?.more_info?.price
+                : minPrice,
               res?.lnft?.metadata_url,
               res?.lnft?.supply,
               res?.lnft?.id,

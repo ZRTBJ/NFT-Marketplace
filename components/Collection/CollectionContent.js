@@ -1615,7 +1615,7 @@ const CollectionContent = ({ collectionId, userId }) => {
                                 : 'Publish to Blockchain'}
                             </button>
                           )}
-                          {Collection?.status === 'draft' ? (
+                          {Collection?.status !== 'published' ? (
                             <>
                               {royalitySplitterId && (
                                 <div className='token-gated-dropdown relative'>
