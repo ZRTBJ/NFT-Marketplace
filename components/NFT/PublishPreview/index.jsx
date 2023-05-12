@@ -10,7 +10,7 @@ import {
   getCollectionNFTs,
   publishCollection,
 } from 'services/collection/collectionService';
-import { moveToIPFS } from 'services/nft/nftService';
+import { moveToIPFS, NFTRegisterAfterPublish } from 'services/nft/nftService';
 import { useEffect } from 'react';
 import { NETWORKS } from 'config/networks';
 import { getCurrentNetworkId } from 'util/MetaMask';
@@ -26,14 +26,14 @@ import {
 import { createInstance } from 'config/ABI/genericProxyFactory';
 import { erc721ProxyInstance } from 'config/ABI/erc721ProxyFactory';
 import { erc1155ProxyInstance } from 'config/ABI/erc1155ProxyFactory';
-import {
-  createCollection,
-  createCollectionByCaller,
-} from 'components/Collection/Publish/deploy-collection';
+import { createCollectionByCaller } from 'components/Collection/Publish/deploy-collection';
 import ErrorModal from 'components/Modals/ErrorModal';
 import { useRouter } from 'next/router';
 import { getAssetDetail } from 'services/tokenGated/tokenGatedService';
 import { uniqBy } from 'lodash';
+import { erc1155Instance } from 'config/ABI/erc1155';
+import Config from 'config/config';
+import { ethers } from 'ethers';
 
 const PublishPreview = ({ query }) => {
   const [showPublishing, setShowPublishing] = useState(false);
@@ -56,6 +56,7 @@ const PublishPreview = ({ query }) => {
   const [uploadedNFTs, setUploadedNFTs] = useState([]);
   const [splitterPercent, setShowSplitterPercent] = useState(0);
   const [nftsHashed, setNFTsHashed] = useState(false);
+  const [nftsPublished, setNFTsPublished] = useState([]);
   const router = useRouter();
   const dispatch = useDispatch();
   const network = NETWORKS?.[collection?.blockchain];
@@ -81,7 +82,6 @@ const PublishPreview = ({ query }) => {
       );
       if (projectDeployStatus && projectDeployStatus.data) {
         const data = JSON.parse(projectDeployStatus.data);
-        console.log(data);
         if (data?.Data?.upload_result) {
           setUploadedNFTs([...uploadedNFTs, data?.Data?.nft_id]);
           let nftUploading = uploadingNFTs.find(
@@ -164,7 +164,6 @@ const PublishPreview = ({ query }) => {
         let formData = new FormData();
         let filNfts = nfts?.filter((nft) => nft?.asset?.hash === '');
         let nftIds = filNfts.map((nft) => nft?.id).join(',');
-        console.log(nftIds);
         setUploadingNFTs(filNfts);
         formData.append('nft_ids', nftIds);
         let resp = await moveToIPFS(formData);
@@ -175,13 +174,9 @@ const PublishPreview = ({ query }) => {
                 function_uuid: nft?.id,
                 data: '',
               };
-              console.log(notificationData);
               dispatch(getNotificationData(notificationData));
             }
           });
-
-          // setCurrentStep(2);
-          // publishTheCollection();
         }
       } else {
         setCurrentStep(2);
@@ -216,7 +211,6 @@ const PublishPreview = ({ query }) => {
         setTxnData(data);
       }
     } catch (err) {
-      console.log(err);
       setShowError(err);
       setShowPublishing(false);
     }
@@ -233,10 +227,11 @@ const PublishPreview = ({ query }) => {
     )
       .then((res) => {
         if (res.code === 0) {
-          console.log(res);
           if (res?.function?.status === 'success') {
-            console.log('success');
             setCurrentStep(3);
+            if (tokenStandard === 'ERC1155') {
+              registerToken();
+            }
           } else {
             handleSmartContract(res.config);
           }
@@ -276,7 +271,6 @@ const PublishPreview = ({ query }) => {
         setIsSplitterCreated(true);
       }
       setContributors(resp?.members);
-      console.log(resp.members);
       let percent = resp?.members?.reduce(
         (acc, val) => acc + val.royalty_percent,
         0
@@ -364,6 +358,85 @@ const PublishPreview = ({ query }) => {
     }
   };
 
+  useEffect(() => {
+    if (nftsPublished?.length === nfts?.length) {
+      console.log('success', nftsPublished, nfts);
+      setCurrentStep(4);
+    }
+  }, [nftsPublished, nfts]);
+
+  const verifyTokenId = async (nftId, hash) => {
+    await NFTRegisterAfterPublish(nftId, hash)
+      .then((res) => {
+        if (res?.code !== 0) {
+          setShowError(res?.message);
+          setShowPublishing(false);
+        } else {
+          setNFTsPublished((prevValues) => [...prevValues, nftId]);
+        }
+      })
+      .catch((error) => {
+        setShowError(error.message);
+        setShowPublishing(false);
+      });
+  };
+
+  const registerToken = async () => {
+    try {
+      let data = await getCollectionDetailsById({ id: query?.id });
+      let collectionData = await getCollectionNFTs(query?.id);
+
+      if (data?.collection?.contract_address) {
+        let nftsRegistering = collectionData?.lnfts;
+        if (nftsRegistering?.length) {
+          await nftsRegistering.map(
+            async (nft) =>
+              await handleContractCall(nft, data?.collection?.contract_address)
+          );
+        }
+      }
+    } catch (err) {
+      setShowError(error.message);
+      setShowPublishing(false);
+    }
+  };
+
+  const handleContractCall = async (nft, collectionAddress) => {
+    try {
+      let walletType = await ls_GetWalletType();
+      let signer;
+
+      const provider = await createUserProvider();
+      const priceContract = erc1155Instance(collectionAddress, provider);
+      const nftInfo = {
+        price: ethers.utils.parseEther(nft?.more_info?.price.toString()),
+        uri: `${Config.PINATA_URL}${nft?.metadata_url}`,
+        total_supply: nft?.supply,
+      };
+      if (walletType === 'metamask') {
+        if (!window.ethereum) throw new Error(`User wallet not found`);
+        await window.ethereum.enable();
+        const userProvider = await new ethers.providers.Web3Provider(
+          window.ethereum
+        );
+        signer = await userProvider.getSigner();
+      } else if (walletType === 'magicwallet') {
+        signer = await etherMagicProvider.getSigner();
+      }
+      const response = await priceContract
+        .connect(signer)
+        .addNewToken(nftInfo.price, nftInfo.uri, nftInfo.total_supply);
+
+      if (response?.hash) {
+        const tnxHash = await provider.waitForTransaction(response?.hash);
+        await verifyTokenId(nft?.id, response?.hash);
+      }
+    } catch (err) {
+      setShowError(err.message);
+      setShowPublishing(false);
+    }
+  };
+
   return (
     <div className='pt-6 md:pt-0 md:mt-[40px] mx-10 mb-10'>
       <h2 className='text-center'>Publish Preview</h2>
@@ -401,6 +474,8 @@ const PublishPreview = ({ query }) => {
           contributors={contributors}
           collectionId={query?.id}
           nftsHashed={nftsHashed}
+          tokenStandard={tokenStandard}
+          nftsPublished={nftsPublished}
         />
       )}
       {showNetworkHandler && (

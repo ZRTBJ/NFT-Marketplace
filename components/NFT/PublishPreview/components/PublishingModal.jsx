@@ -14,6 +14,8 @@ const PublishingModal = ({
   contributors,
   collectionId,
   nftsHashed,
+  tokenStandard,
+  nftsPublished,
 }) => {
   const defaultOptions = {
     loop: true,
@@ -42,8 +44,17 @@ const PublishingModal = ({
       title: 'Publishing Collection',
       titleCompleted: 'Published Collection',
     },
+  ];
+
+  const steps721 = [...steps, { title: 'Done', titleCompleted: 'Put on sale' }];
+
+  const steps1155 = [
+    ...steps,
+    { title: 'Adding Token', titleCompleted: 'Token Added' },
     { title: 'Done', titleCompleted: 'Put on sale' },
   ];
+
+  const finalSteps = tokenStandard === 'ERC1155' ? steps1155 : steps721;
 
   return (
     <Modal width={600} show={show} handleClose={() => handleClose(false)}>
@@ -54,18 +65,27 @@ const PublishingModal = ({
       <div className='flex items-center'>
         <div className='mt-8 ml-6'>
           <div className='relative text-gray-500 border-l border-l-4 border-gray-200 '>
-            {steps?.map((step, index) => (
+            {finalSteps?.map((step, index) => (
               <div className='mb-16 ml-6' key={index}>
                 <div
                   className={`absolute flex items-center justify-center w-8 h-8 rounded-full -left-[18px] ${
-                    currentStep >= index + 1 || currentStep === 3
+                    currentStep >= index + 1 ||
+                    (tokenStandard === 'ERC721' && currentStep === 3) ||
+                    (tokenStandard === 'ERC1155' && currentStep === 4)
                       ? 'bg-green-200'
                       : 'bg-gray-200'
                   }`}
                 >
-                  {currentStep === index && currentStep !== 3 ? (
+                  {(currentStep === index &&
+                    tokenStandard === 'ERC721' &&
+                    currentStep !== 3) ||
+                  (currentStep === index &&
+                    tokenStandard === 'ERC1155' &&
+                    currentStep !== 4) ? (
                     <i class='fa-sharp fa-regular fa-arrows-rotate animate-spin'></i>
-                  ) : currentStep >= index + 1 || currentStep === 3 ? (
+                  ) : currentStep >= index + 1 ||
+                    (tokenStandard === 'ERC721' && currentStep === 3) ||
+                    (tokenStandard === 'ERC1155' && currentStep === 4) ? (
                     <svg
                       aria-hidden='true'
                       className='w-5 h-5 text-green-500 dark:text-green-400'
@@ -98,13 +118,20 @@ const PublishingModal = ({
             ))}
           </div>
         </div>
-        {currentStep === 1 ? (
+        {tokenStandard === 'ERC721' && currentStep === 1 ? (
           <NFTStatusTable nfts={nfts} />
+        ) : tokenStandard === 'ERC1155' && currentStep === 3 ? (
+          <NFTStatusTable
+            nfts={nfts}
+            addToken={true}
+            nftsPublished={nftsPublished}
+          />
         ) : (
           <Lottie options={defaultOptions} height={300} width={300} />
         )}
       </div>
-      {currentStep === 3 && (
+      {(tokenStandard === 'ERC1155' && currentStep === 4) ||
+      (tokenStandard === 'ERC721' && currentStep === 3) ? (
         <div className='w-full text-center'>
           <Link
             href={`/collection/${collectionId}`}
@@ -113,7 +140,7 @@ const PublishingModal = ({
             Go to Collection
           </Link>
         </div>
-      )}
+      ) : null}
     </Modal>
   );
 };

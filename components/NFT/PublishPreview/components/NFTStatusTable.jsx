@@ -4,7 +4,7 @@ import audioWeb from 'assets/images/token-gated/audioWeb.svg';
 import darkBg from 'assets/images/token-gated/darkBg.png';
 import playIcon from 'assets/images/token-gated/audioPlay.svg';
 
-const NFTStatusTable = ({ nfts }) => {
+const NFTStatusTable = ({ nfts, nftsPublished, addToken }) => {
   const imageRegex = new RegExp('image');
   const TABLE_HEADERS = [
     { id: 0, label: 'Asset' },
@@ -23,7 +23,7 @@ const NFTStatusTable = ({ nfts }) => {
             </th>
           ))}
         </tr>
-        {nfts.map((nft) => (
+        {nfts.map((nft, index) => (
           <tr className='text-center' key={nft?.id}>
             <td className='w-1/4'>
               <div className='mb-2 ml-2 mt-1'>
@@ -90,22 +90,46 @@ const NFTStatusTable = ({ nfts }) => {
             </td>
             <td className='w-1/4'>{nft?.name}</td>
             <td className='w-1/4'>
-              {nft?.status === 'pending' ? (
-                <i class='fa-sharp fa-regular fa-arrows-rotate animate-spin'></i>
+              {!addToken ? (
+                <>
+                  {nft?.status === 'pending' ? (
+                    <i class='fa-sharp fa-regular fa-arrows-rotate animate-spin'></i>
+                  ) : (
+                    <svg
+                      aria-hidden='true'
+                      className='w-5 h-5 text-green-500 dark:text-green-400'
+                      fill='currentColor'
+                      viewBox='0 0 20 20'
+                      xmlns='http://www.w3.org/2000/svg'
+                    >
+                      <path
+                        fillRule='evenodd'
+                        d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'
+                        clipRule='evenodd'
+                      ></path>
+                    </svg>
+                  )}
+                </>
               ) : (
-                <svg
-                  aria-hidden='true'
-                  className='w-5 h-5 text-green-500 dark:text-green-400'
-                  fill='currentColor'
-                  viewBox='0 0 20 20'
-                  xmlns='http://www.w3.org/2000/svg'
-                >
-                  <path
-                    fillRule='evenodd'
-                    d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'
-                    clipRule='evenodd'
-                  ></path>
-                </svg>
+                <>
+                  {nftsPublished.length <= index ? (
+                    <i class='fa-sharp fa-regular fa-arrows-rotate animate-spin'></i>
+                  ) : (
+                    <svg
+                      aria-hidden='true'
+                      className='w-5 h-5 text-green-500 dark:text-green-400'
+                      fill='currentColor'
+                      viewBox='0 0 20 20'
+                      xmlns='http://www.w3.org/2000/svg'
+                    >
+                      <path
+                        fillRule='evenodd'
+                        d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'
+                        clipRule='evenodd'
+                      ></path>
+                    </svg>
+                  )}
+                </>
               )}
             </td>
           </tr>
