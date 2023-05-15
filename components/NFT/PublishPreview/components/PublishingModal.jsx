@@ -118,9 +118,9 @@ const PublishingModal = ({
             ))}
           </div>
         </div>
-        {tokenStandard === 'ERC721' && currentStep === 1 ? (
+        {currentStep === 1 ? (
           <NFTStatusTable nfts={nfts} />
-        ) : tokenStandard === 'ERC1155' && currentStep === 3 ? (
+        ) : currentStep === 3 && tokenStandard === 'ERC1155' ? (
           <NFTStatusTable
             nfts={nfts}
             addToken={true}
