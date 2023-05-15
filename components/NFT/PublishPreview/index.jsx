@@ -94,12 +94,18 @@ const PublishPreview = ({ query }) => {
             )
           );
         }
-      } else {
-        setTimeout(() => {
-          verifyFileHash(resp?.asset?.id);
-        }, 8000);
       }
     });
+    let uploadUpdate;
+    if (currentStep === 1) {
+      uploadUpdate = setTimeout(() => {
+        verifyFileHash();
+      }, 10000);
+    }
+
+    return () => {
+      clearTimeout(uploadUpdate);
+    };
   }, [fileUploadNotification]);
 
   useEffect(() => {
@@ -111,30 +117,19 @@ const PublishPreview = ({ query }) => {
     }
   }, [uploadingNFTs]);
 
-  const verifyFileHash = async (id) => {
-    // await uploadingNFTs.map((item) => {
-    await getAssetDetail(id).then((response) => {
-      if (response.code === 0) {
-        if (response?.asset?.hash) {
-          setUploadedNFTs([...uploadedNFTs, response?.asset?.id]);
-
-          let nftUploading = uploadingNFTs.find(
-            (nft) => nft?.asset?.id === response?.asset?.id
-          );
-          setUploadingNFTs(
-            uniqBy(
-              [{ ...nftUploading, status: 'success' }, ...uploadingNFTs],
-              'id'
-            )
-          );
-        }
+  const verifyFileHash = async () => {
+    await getCollectionNFTs(query?.id).then((resp) => {
+      if (resp.code === 0) {
+        let nftStatus = resp?.lnfts.map((nft) => {
+          setUploadedNFTs([...uploadedNFTs, nft?.asset?.id]);
+          return {
+            ...nft,
+            status: nft?.asset?.hash ? 'success' : 'pending',
+          };
+        });
+        setUploadingNFTs(nftStatus);
       }
     });
-
-    if (uploadingNFTs.every((nft) => nft?.status === 'success')) {
-      setCurrentStep(2);
-      publishTheCollection();
-    }
   };
 
   useEffect(() => {
