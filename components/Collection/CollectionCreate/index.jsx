@@ -146,7 +146,7 @@ export default function CollectionCreate({ query }) {
   //  BlockChain end
 
   // Token Transferable start
-  const [isTokenTransferable, setIsTokenTransferable] = useState(true);
+  const [isTokenTransferable, setIsTokenTransferable] = useState(false);
   const onTokenTransferableChange = (data) => {
     setIsTokenTransferable((o) => !o);
   };
@@ -608,7 +608,7 @@ export default function CollectionCreate({ query }) {
         setIsTokenTransferable(response?.token_transferable ? false : true);
         setIsMetaDataFreezed(response?.updatable);
         setRoyaltyPercentage(response?.royalty_percent);
-        if (response?.royalty_percent) {
+        if (response?.royalty_percent || response?.royalty_splitter?.id) {
           setIsRoyaltyEarnableByOwner(true);
         }
         setSupply(response?.total_supply);

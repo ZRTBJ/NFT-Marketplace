@@ -59,7 +59,10 @@ import PublishRoyaltyConfirmModal from './Publish/PublishRoyaltyConfirmModal';
 import Image from 'next/image';
 import DaoConnectModal from 'components/Collection/DaoConnectModal/DaoConnectModal';
 import WithdrawModal from './WithdrawModal';
-import { getSplitterList } from 'services/collection/collectionService';
+import {
+  getSplitterList,
+  attachSplitterToCollection,
+} from 'services/collection/collectionService';
 import Select from 'react-select';
 import { NETWORKS } from 'config/networks';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -698,25 +701,25 @@ const CollectionContent = ({ collectionId, userId }) => {
         splitter: splitter.id,
         supply: Collection.total_supply,
       };
-      addCollectionSplitter(data)
+      attachSplitterToCollection(Collection.id, splitter.id)
         .then((resp) => {
-          setAddSplitterLoading(false);
-          toast.success('Splitter added to collection Successfully');
-          getCollectionDetail();
-          setApplySplitterSubmitter(false);
+          if (resp?.code === 0) {
+            setAddSplitterLoading(false);
+            toast.success('Splitter added to collection Successfully');
+            getCollectionDetail();
+            setApplySplitterSubmitter(false);
+          } else {
+            setAddSplitterLoading(false);
+            setApplySplitterSubmitter(false);
+            toast.error(resp?.message);
+          }
         })
-        .catch((err) => {
-          setAddSplitterLoading(false);
-          setApplySplitterSubmitter(false);
-          toast.error('Failed to add splitter. Please try again later.');
-        });
+        .catch((err) => {});
     }
   };
 
   let validNetworks = NETWORKS
-    ? Object.values(NETWORKS).filter(
-        (net) => net.network !== 97 && net.network !== 56
-      )
+    ? Object.values(NETWORKS).filter((net) => net.network !== 56)
     : [];
 
   const onConfirmFromModal = async () => {

@@ -226,3 +226,14 @@ export async function detachSplitterFormCollection(id) {
 export async function validateCollectionPublish(id) {
   return await client('POST', `/collection/${id}/validate-for-publish`);
 }
+
+export async function attachSplitterToCollection(collection_id, splitter_uid) {
+  const bodyFormData = new FormData();
+  bodyFormData.append('splitter_uid', splitter_uid);
+  return await client(
+    'PUT',
+    `/collection/${collection_id}/attach-splitter`,
+    bodyFormData,
+    'formdata'
+  );
+}

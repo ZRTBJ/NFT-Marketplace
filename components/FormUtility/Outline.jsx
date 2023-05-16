@@ -206,6 +206,16 @@ export default function Outline({
     icon: Eth,
   });
   const [showSplitterModal, setShowSplitterModal] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      document.addEventListener('wheel', function (event) {
+        if (document.activeElement.type === 'number') {
+          document.activeElement.blur();
+        }
+      });
+    }
+  }, []);
   return (
     <>
       {/* Logo */}
@@ -510,28 +520,37 @@ export default function Outline({
               </div>
             </div>
           )}
-          {showTimeBoundToken && (
+          {!isTokenTransferable && (
             <div className='mb-6'>
               <div className='flex flex-wrap items-center '>
                 <div className='text-txtSubtle text-[14px] md:max-w-[400px] flex flex-wrap items-center'>
                   <Tooltip message='If this is ON, NFT will be minted within limited time period since collection published time'></Tooltip>
                   NFT having limited time (Timebound Token)
                 </div>
-                <label
-                  htmlFor='token-timebound'
-                  className='inline-flex relative items-center cursor-pointer ml-auto'
-                >
-                  <input
-                    disabled={isPublished}
-                    type='checkbox'
-                    value={isTokenTimebound}
-                    id='token-timebound'
-                    checked={isTokenTimebound}
-                    className='sr-only peer outline-none'
-                    onChange={(e) => onTokenTimeboundChange(isTokenTimebound)}
-                  />
-                  <div className="w-11 outline-none h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-900"></div>
-                </label>
+                {!isPublished && (
+                  <label
+                    htmlFor='token-timebound'
+                    className='inline-flex relative items-center cursor-pointer ml-auto'
+                  >
+                    <input
+                      disabled={isPublished}
+                      type='checkbox'
+                      value={isTokenTimebound}
+                      id='token-timebound'
+                      checked={isTokenTimebound}
+                      className='sr-only peer outline-none'
+                      onChange={(e) => onTokenTimeboundChange(isTokenTimebound)}
+                    />
+                    <div className="w-11 outline-none h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-900"></div>
+                  </label>
+                )}
+                {isPublished && (
+                  <>
+                    <h3 className='text-textSubtle capitalize ml-auto'>
+                      {isTokenTimebound?.toString()}
+                    </h3>
+                  </>
+                )}
               </div>
               {isTokenTimebound && (
                 <div className='mt-6'>
@@ -795,10 +814,12 @@ export default function Outline({
                       )}
                     </>
                   )}
-                  {isPublished && splitter?.name && (
+                  {isPublished && (
                     <>
-                      <h3 className='text-textSubtle capitalize mt-0'>
-                        {splitter?.name}
+                      <h3 className='text-textSubtle !text-[15px] capitalize mt-0'>
+                        {splitter?.name
+                          ? splitter?.name
+                          : 'No Splitter Selected'}
                       </h3>
                     </>
                   )}
@@ -806,14 +827,16 @@ export default function Outline({
               </div>
             </div>
           </div>
-          <div className='mt-3 text-right'>
-            <button
-              onClick={() => setShowSplitterModal(true)}
-              className='text-primary-900 font-black text-[13px]'
-            >
-              Create New Splitter
-            </button>
-          </div>
+          {!isPublished && (
+            <div className='mt-3 text-right'>
+              <button
+                onClick={() => setShowSplitterModal(true)}
+                className='text-primary-900 font-black text-[13px]'
+              >
+                Create New Splitter
+              </button>
+            </div>
+          )}
         </>
       )}
 

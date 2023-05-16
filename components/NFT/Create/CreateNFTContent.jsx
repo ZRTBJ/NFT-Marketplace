@@ -668,7 +668,10 @@ export default function CreateNFTContent({ query }) {
     } else if (updateMode) {
       await updateNft(nftItem.id, request)
         .then((res) => {
-          if (res.code === 0) {
+          if (res?.code === 0) {
+            if (typeof window !== 'undefined') {
+              localStorage.removeItem(`${jobId}`);
+            }
             setShowDataUploadingModal(false);
             setShowSuccessModal(true);
           } else {
