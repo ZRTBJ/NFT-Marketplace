@@ -19,17 +19,13 @@ import NetworkHandlerModal from 'components/Modals/NetworkHandlerModal';
 import usePublishRoyaltySplitter from 'components/Collection/RoyaltySplitter/Publish/hooks/usePublishRoyaltySplitter';
 import { useSelector, useDispatch } from 'react-redux';
 import { getNotificationData } from 'redux/notification';
-import {
-  createProvider,
-  createUserProvider,
-} from 'util/smartcontract/provider';
+import { createUserProvider } from 'util/smartcontract/provider';
 import { createInstance } from 'config/ABI/genericProxyFactory';
 import { erc721ProxyInstance } from 'config/ABI/erc721ProxyFactory';
 import { erc1155ProxyInstance } from 'config/ABI/erc1155ProxyFactory';
 import { createCollectionByCaller } from 'components/Collection/Publish/deploy-collection';
 import ErrorModal from 'components/Modals/ErrorModal';
 import { useRouter } from 'next/router';
-import { getAssetDetail } from 'services/tokenGated/tokenGatedService';
 import { uniqBy } from 'lodash';
 import { erc1155Instance } from 'config/ABI/erc1155';
 import Config from 'config/config';
@@ -57,7 +53,7 @@ const PublishPreview = ({ query }) => {
   const [splitterPercent, setShowSplitterPercent] = useState(0);
   const [nftsHashed, setNFTsHashed] = useState(false);
   const [nftsPublished, setNFTsPublished] = useState([]);
-  const router = useRouter();
+
   const dispatch = useDispatch();
   const network = NETWORKS?.[collection?.blockchain];
   let walletType = ls_GetWalletType();
@@ -96,16 +92,6 @@ const PublishPreview = ({ query }) => {
         }
       }
     });
-    let uploadUpdate;
-    if (currentStep === 1) {
-      uploadUpdate = setTimeout(() => {
-        verifyFileHash();
-      }, 10000);
-    }
-
-    return () => {
-      clearTimeout(uploadUpdate);
-    };
   }, [fileUploadNotification]);
 
   useEffect(() => {
@@ -170,6 +156,19 @@ const PublishPreview = ({ query }) => {
                 data: '',
               };
               dispatch(getNotificationData(notificationData));
+              let intervals;
+              if (currentStep === 1) {
+                intervals = setInterval(() => {
+                  verifyFileHash();
+                }, 8000);
+              }
+
+              if (currentStep > 1) {
+                clearInterval(intervals);
+              }
+              return () => {
+                clearInterval(intervals);
+              };
             }
           });
         }
@@ -177,9 +176,6 @@ const PublishPreview = ({ query }) => {
         setCurrentStep(2);
         publishTheCollection();
       }
-    } else {
-      setCurrentStep(2);
-      publishTheCollection();
     }
   };
 
@@ -221,6 +217,7 @@ const PublishPreview = ({ query }) => {
       data?.transactionHash ? payload : null
     )
       .then((res) => {
+        console.log(res);
         if (res.code === 0) {
           if (res?.function?.status === 'success') {
             setCurrentStep(3);
@@ -319,8 +316,15 @@ const PublishPreview = ({ query }) => {
     try {
       setShowPublishing(true);
       if (!isSplitterCreated && !contributors?.length && !nfts?.length) {
-        setCurrentStep(2);
-        publishTheCollection();
+        if (collection?.contract_address) {
+          setCurrentStep(3);
+          if (tokenStandard === 'ERC1155') {
+            registerToken();
+          }
+        } else {
+          setCurrentStep(2);
+          publishTheCollection();
+        }
       } else {
         if (
           !isSplitterPublished &&
@@ -340,10 +344,8 @@ const PublishPreview = ({ query }) => {
           } else {
             setShowPublishing(false);
             setShowError('Total Royalty Percent should be 100%');
-            router.push(`/collection/${query?.id}`);
           }
         } else {
-          console.log('---');
           await moveNFTsToIPFS();
         }
       }
@@ -354,8 +356,11 @@ const PublishPreview = ({ query }) => {
   };
 
   useEffect(() => {
-    if (nftsPublished?.length === nfts?.length) {
-      console.log('success', nftsPublished, nfts);
+    if (
+      nfts?.length &&
+      nftsPublished?.length &&
+      nftsPublished?.length === nfts?.length
+    ) {
       setCurrentStep(4);
     }
   }, [nftsPublished, nfts]);
@@ -397,27 +402,28 @@ const PublishPreview = ({ query }) => {
   };
 
   const handleContractCall = async (nft, collectionAddress) => {
-    try {
-      let walletType = await ls_GetWalletType();
-      let signer;
+    let walletType = await ls_GetWalletType();
+    let signer;
 
-      const provider = await createUserProvider();
-      const priceContract = erc1155Instance(collectionAddress, provider);
-      const nftInfo = {
-        price: ethers.utils.parseEther(nft?.more_info?.price.toString()),
-        uri: `${Config.PINATA_URL}${nft?.metadata_url}`,
-        total_supply: nft?.supply,
-      };
-      if (walletType === 'metamask') {
-        if (!window.ethereum) throw new Error(`User wallet not found`);
-        await window.ethereum.enable();
-        const userProvider = await new ethers.providers.Web3Provider(
-          window.ethereum
-        );
-        signer = await userProvider.getSigner();
-      } else if (walletType === 'magicwallet') {
-        signer = await etherMagicProvider.getSigner();
-      }
+    const provider = await createUserProvider();
+    const priceContract = erc1155Instance(collectionAddress, provider);
+    const nftInfo = {
+      price: ethers.utils.parseEther(nft?.more_info?.price.toString()),
+      uri: `${Config.PINATA_URL}${nft?.metadata_url}`,
+      total_supply: nft?.supply,
+    };
+
+    if (walletType === 'metamask') {
+      if (!window.ethereum) throw new Error(`User wallet not found`);
+      await window.ethereum.enable();
+      const userProvider = await new ethers.providers.Web3Provider(
+        window.ethereum
+      );
+      signer = await userProvider.getSigner();
+    } else if (walletType === 'magicwallet') {
+      signer = await etherMagicProvider.getSigner();
+    }
+    try {
       const response = await priceContract
         .connect(signer)
         .addNewToken(nftInfo.price, nftInfo.uri, nftInfo.total_supply);

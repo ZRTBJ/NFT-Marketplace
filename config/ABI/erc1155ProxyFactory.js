@@ -70,6 +70,16 @@ const abi = [
                 name: 'platformFeeManager',
                 type: 'address',
               },
+              {
+                internalType: 'uint256',
+                name: 'validity',
+                type: 'uint256',
+              },
+              {
+                internalType: 'bool',
+                name: 'isSoulbound',
+                type: 'bool',
+              },
             ],
             internalType: 'struct Config.ERC1155Params',
             name: 'metadata',

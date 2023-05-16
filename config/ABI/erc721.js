@@ -86,6 +86,19 @@ const abi = [
     inputs: [
       {
         indexed: false,
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    name: 'ExpiraryTimeUpdated',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
         internalType: 'uint8',
         name: 'version',
         type: 'uint8',
@@ -338,6 +351,25 @@ const abi = [
       },
     ],
     name: 'Transfer',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'tokenId',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'timeStamp',
+        type: 'uint256',
+      },
+    ],
+    name: 'ValidityUpdated',
     type: 'event',
   },
   {
@@ -678,6 +710,25 @@ const abi = [
   {
     inputs: [
       {
+        internalType: 'uint256',
+        name: '_tokenId',
+        type: 'uint256',
+      },
+    ],
+    name: 'hasExpired',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
         internalType: 'bytes32',
         name: 'role',
         type: 'bytes32',
@@ -763,6 +814,16 @@ const abi = [
             name: 'platformFeeManager',
             type: 'address',
           },
+          {
+            internalType: 'uint256',
+            name: 'validity',
+            type: 'uint256',
+          },
+          {
+            internalType: 'bool',
+            name: 'isSoulbound',
+            type: 'bool',
+          },
         ],
         internalType: 'struct Config.ERC721Params',
         name: 'params',
@@ -788,6 +849,32 @@ const abi = [
       },
     ],
     name: 'isApprovedForAll',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'isSoulbound',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'isTimebound',
     outputs: [
       {
         internalType: 'bool',
