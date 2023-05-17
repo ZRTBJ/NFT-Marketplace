@@ -53,6 +53,8 @@ const PublishPreview = ({ query }) => {
   const [splitterPercent, setShowSplitterPercent] = useState(0);
   const [nftsHashed, setNFTsHashed] = useState(false);
   const [nftsPublished, setNFTsPublished] = useState([]);
+  const [isRegisterNFTs, setIsRegisterNFTs] = useState(false);
+  const [registeringNFT, setRegisteringNFT] = useState(0);
 
   const dispatch = useDispatch();
   const network = NETWORKS?.[collection?.blockchain];
@@ -63,12 +65,22 @@ const PublishPreview = ({ query }) => {
     status: publishRoyaltySplitterStatus,
     publish: publishRoyaltySplitter,
     contractAddress,
-    // setIsLoading: setPublishingSplitter,
   } = usePublishRoyaltySplitter({
     collection: collection,
     splitters: contributors,
-    // onUpdateStatus: hanldeUpdatePublishStatus,
   });
+
+  useEffect(() => {
+    if (isRegisterNFTs) {
+      let currentNFT = nfts?.[registeringNFT];
+      if (currentNFT && registeringNFT < nfts.length) {
+        handleContractCall(currentNFT, collection?.contract_address);
+      } else {
+        setIsRegisterNFTs(false);
+        setRegisteringNFT(0);
+      }
+    }
+  }, [isRegisterNFTs, registeringNFT]);
 
   useEffect(() => {
     // file upload web socket
@@ -135,7 +147,17 @@ const PublishPreview = ({ query }) => {
     if (publishRoyaltySplitterStatus === 2) {
       moveNFTsToIPFS();
     }
-  }, [publishRoyaltySplitterStatus]);
+    let intervals;
+    if (currentStep === 1) {
+      intervals = setInterval(() => {
+        verifyFileHash();
+      }, 8000);
+    }
+
+    if (currentStep > 1) {
+      clearInterval(intervals);
+    }
+  }, [publishRoyaltySplitterStatus, currentStep]);
 
   const moveNFTsToIPFS = async () => {
     if (nfts?.length) {
@@ -156,19 +178,6 @@ const PublishPreview = ({ query }) => {
                 data: '',
               };
               dispatch(getNotificationData(notificationData));
-              let intervals;
-              if (currentStep === 1) {
-                intervals = setInterval(() => {
-                  verifyFileHash();
-                }, 8000);
-              }
-
-              if (currentStep > 1) {
-                clearInterval(intervals);
-              }
-              return () => {
-                clearInterval(intervals);
-              };
             }
           });
         }
@@ -217,7 +226,6 @@ const PublishPreview = ({ query }) => {
       data?.transactionHash ? payload : null
     )
       .then((res) => {
-        console.log(res);
         if (res.code === 0) {
           if (res?.function?.status === 'success') {
             setCurrentStep(3);
@@ -372,6 +380,7 @@ const PublishPreview = ({ query }) => {
           setShowError(res?.message);
           setShowPublishing(false);
         } else {
+          setRegisteringNFT((prevValue) => prevValue + 1);
           setNFTsPublished((prevValues) => [...prevValues, nftId]);
         }
       })
@@ -384,15 +393,12 @@ const PublishPreview = ({ query }) => {
   const registerToken = async () => {
     try {
       let data = await getCollectionDetailsById({ id: query?.id });
+      setCollection(data?.collection);
       let collectionData = await getCollectionNFTs(query?.id);
-
       if (data?.collection?.contract_address) {
         let nftsRegistering = collectionData?.lnfts;
         if (nftsRegistering?.length) {
-          await nftsRegistering.map(
-            async (nft) =>
-              await handleContractCall(nft, data?.collection?.contract_address)
-          );
+          setIsRegisterNFTs(true);
         }
       }
     } catch (err) {
@@ -402,33 +408,35 @@ const PublishPreview = ({ query }) => {
   };
 
   const handleContractCall = async (nft, collectionAddress) => {
-    let walletType = await ls_GetWalletType();
-    let signer;
-
-    const provider = await createUserProvider();
-    const priceContract = erc1155Instance(collectionAddress, provider);
-    const nftInfo = {
-      price: ethers.utils.parseEther(nft?.more_info?.price.toString()),
-      uri: `${Config.PINATA_URL}${nft?.metadata_url}`,
-      total_supply: nft?.supply,
-    };
-
-    if (walletType === 'metamask') {
-      if (!window.ethereum) throw new Error(`User wallet not found`);
-      await window.ethereum.enable();
-      const userProvider = await new ethers.providers.Web3Provider(
-        window.ethereum
-      );
-      signer = await userProvider.getSigner();
-    } else if (walletType === 'magicwallet') {
-      signer = await etherMagicProvider.getSigner();
-    }
     try {
+      let walletType = await ls_GetWalletType();
+      let signer;
+
+      const provider = await createUserProvider();
+      const priceContract = erc1155Instance(collectionAddress, provider);
+      const nftInfo = {
+        price: ethers.utils.parseEther(nft?.more_info?.price.toString()),
+        uri: `${Config.PINATA_URL}${nft?.metadata_url}`,
+        total_supply: nft?.supply,
+      };
+
+      if (walletType === 'metamask') {
+        if (!window.ethereum) throw new Error(`User wallet not found`);
+        await window.ethereum.enable();
+        const userProvider = await new ethers.providers.Web3Provider(
+          window.ethereum
+        );
+        signer = await userProvider.getSigner();
+      } else if (walletType === 'magicwallet') {
+        signer = await etherMagicProvider.getSigner();
+      }
+
       const response = await priceContract
         .connect(signer)
         .addNewToken(nftInfo.price, nftInfo.uri, nftInfo.total_supply);
 
       if (response?.hash) {
+        console.log('here');
         const tnxHash = await provider.waitForTransaction(response?.hash);
         await verifyTokenId(nft?.id, response?.hash);
       }
