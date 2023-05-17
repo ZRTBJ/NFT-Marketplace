@@ -208,3 +208,8 @@ p {
 .splitter-select-on-collection__control {
   height: 48px;
 }
+.splitter-select__option {
+  cursor: pointer !important;
+  background-color: white !important;
+  color: #7d849d !important;
+}

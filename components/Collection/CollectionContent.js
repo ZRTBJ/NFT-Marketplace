@@ -180,6 +180,7 @@ const CollectionContent = ({ collectionId, userId }) => {
     useState('');
   const [showGlobalErrorModalMessage, setShowGlobalErrorModalMessage] =
     useState('');
+  const [splitterKey, setSplitterKey] = useState(0);
   let walletType = ls_GetWalletType();
   const [nftListSortBy, setNFTListSoryBy] = useState('newer');
   useEffect(() => {
@@ -192,7 +193,7 @@ const CollectionContent = ({ collectionId, userId }) => {
     setSelectedTab(1);
   }, [userId]);
 
-  const getSplitters = async (network) => {
+  const getSplitters = async (network, resetSplitter) => {
     setIsSplitterLoading(true);
     await getSplitterList(payload.page, payload.perPage)
       .then((res) => {
@@ -201,7 +202,7 @@ const CollectionContent = ({ collectionId, userId }) => {
         let filteredSplitters =
           chain &&
           res?.splitters.filter((split) => split?.blockchain === chain);
-        const splitterList = [...options];
+        const splitterList = resetSplitter ? [] : [...options];
         const mergedSplitterList = [...splitterList, ...filteredSplitters];
         const uniqSplitterList = uniqBy(mergedSplitterList, function (e) {
           return e.id;
@@ -310,7 +311,7 @@ const CollectionContent = ({ collectionId, userId }) => {
     });
   };
 
-  const getCollectionDetail = async () => {
+  const getCollectionDetail = async (resetSplitter) => {
     let payload = {
       id: collectionId,
     };
@@ -319,7 +320,7 @@ const CollectionContent = ({ collectionId, userId }) => {
         if (resp?.code === 0) {
           setProjectID(resp?.collection?.project_uid);
           if (resp?.collection?.blockchain) {
-            getSplitters(resp.collection.blockchain);
+            getSplitters(resp.collection.blockchain, resetSplitter);
             setBlockchain(resp.collection.blockchain);
           }
           setCollectionNetwork(resp?.collection?.blockchain);
@@ -719,7 +720,7 @@ const CollectionContent = ({ collectionId, userId }) => {
   };
 
   let validNetworks = NETWORKS
-    ? Object.values(NETWORKS).filter((net) => net.network !== 56)
+    ? Object.values(NETWORKS).filter((net) => net.network)
     : [];
 
   const onConfirmFromModal = async () => {
@@ -730,17 +731,24 @@ const CollectionContent = ({ collectionId, userId }) => {
     if (detachOrDeleteAction === 'detach') {
       await detachSplitterFormCollection(Collection?.id)
         .then(async (resp) => {
-          setDataLoading(false);
           if (resp?.code === 0) {
+            setCreateNewSplitter(false);
             setIsSplitterAdded(false);
+            setOptions([]);
+            setSelectedTab(1);
+            setSplitter(null);
+            setSplitterName('');
+            setRoyalityMembers([]);
+            setSplitterKey((pre) => pre + 1);
             await getCollectionDetail();
             setShowGlobalSuccessModalMessage('Successfully Detached Splitter');
             setShowGlobalSuccessModal(true);
-            setSplitterName('');
-            setRoyalityMembers([]);
+            setDataLoading(false);
+            setSelectedTab(2);
           } else {
             setShowGlobalErrorModalMessage(resp?.message);
             setShowGlobalErrorModal(true);
+            setDataLoading(false);
           }
         })
         .catch((err) => {
@@ -749,26 +757,30 @@ const CollectionContent = ({ collectionId, userId }) => {
     } else if (detachOrDeleteAction === 'delete') {
       await deleteUnpublishedSplitter(Collection?.royalty_splitter?.id)
         .then(async (res) => {
-          setDataLoading(false);
           if (res?.code === 0) {
-            setOptions([]);
-            setSplitter();
             setCreateNewSplitter(false);
             setIsSplitterAdded(false);
-            await getCollectionDetail();
-
-            setShowGlobalSuccessModalMessage('Successfully Deleted Splitter');
-            setShowGlobalSuccessModal(true);
+            setSelectedTab(1);
+            setOptions([]);
+            setSplitter(null);
             setSplitterName('');
             setRoyalityMembers([]);
+            setSplitterKey((pre) => pre + 1);
+            await getCollectionDetail('resetSplitter');
+            setShowGlobalSuccessModalMessage('Successfully Deleted Splitter');
+            setShowGlobalSuccessModal(true);
+            setDataLoading(false);
+            setSelectedTab(2);
+            setSplitterKey((pre) => pre + 1);
           } else {
             setShowGlobalErrorModalMessage(res?.message);
             setShowGlobalErrorModal(true);
+            setDataLoading(false);
           }
         })
         .catch((err) => {
           setDataLoading(false);
-          console.log(er);
+          console.log(err);
         });
     }
   };
@@ -911,7 +923,7 @@ const CollectionContent = ({ collectionId, userId }) => {
               const payload = {
                 id: collectionId,
               };
-              getCollectionDetail(payload);
+              getCollectionDetail();
             }}
             errorClose={(msg) => {
               setErrorMsg(msg);
@@ -1434,6 +1446,7 @@ const CollectionContent = ({ collectionId, userId }) => {
                                   isSearchable
                                   menuShouldScrollIntoView
                                   onMenuScrollToBottom={() => scrolledBottom()}
+                                  splitterKey={splitterKey}
                                 />
                               )}
                               <button
@@ -1618,6 +1631,7 @@ const CollectionContent = ({ collectionId, userId }) => {
                                 : 'Publish to Blockchain'}
                             </button>
                           )}
+
                           {Collection?.status !== 'published' ? (
                             <>
                               {royalitySplitterId && (
@@ -1628,7 +1642,7 @@ const CollectionContent = ({ collectionId, userId }) => {
                                   <div className='opacity-0 text-[14px] visible token-gated-dropdown-menu transition-all duration-300 transform origin-top-right -translate-y-2 scale-95'>
                                     <div className='absolute z-1 right-0 w-[120px]  origin-top-right mt-3 shadow  bg-white border outline-none'>
                                       <ul className='py-3  flex flex-col divide-y gap-4'>
-                                        {Collection?.status === 'draft' && (
+                                        {Collection?.status !== 'published' && (
                                           <li
                                             className='cursor-pointer px-4'
                                             onClick={() => detachSplitter()}

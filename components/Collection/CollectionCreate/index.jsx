@@ -149,6 +149,12 @@ export default function CollectionCreate({ query }) {
   const [isTokenTransferable, setIsTokenTransferable] = useState(false);
   const onTokenTransferableChange = (data) => {
     setIsTokenTransferable((o) => !o);
+    setIsTokenTimebound(false);
+    setTimeBoundDuration({
+      days: null,
+      months: null,
+      years: null,
+    });
   };
   // Token Transferable End
 
@@ -959,11 +965,15 @@ export default function CollectionCreate({ query }) {
                   isMetaDaFreezed={isMetaDaFreezed}
                   showTokenTransferable={true}
                   isTokenTransferable={isTokenTransferable}
+                  isTokenTimebound={isTokenTimebound}
+                  timeboundDuration={timeboundDuration}
                   showRoyaltyPercentage={showRoyalties}
                   royaltyPercentage={royaltyPercentage}
                   showSupplyData={true}
                   supply={supply}
                   network={network}
+                  basePrice={basePrice}
+                  splitter={splitter}
                 />
               )}
             </div>

@@ -113,6 +113,8 @@ export default function CreateNFTContent({ query }) {
   const userinfo = useSelector((state) => state.user.userinfo);
   const [isListUpdate, setIsListUpdate] = useState(false);
   const [showNetworkSwitch, setShowNetworkSwitch] = useState(false);
+  const [updateMode, setUpdateMode] = useState(false);
+  const [collection, setCollection] = useState({});
   const nftList = [
     {
       tierName: '',
@@ -161,14 +163,14 @@ export default function CreateNFTContent({ query }) {
   const [calledIds, setCalledIds] = useState([]);
   const [showDataUploadingModal, setShowDataUploadingModal] = useState(false);
   const [nftItem, setNft] = useState(null);
-  const [updateMode, setUpdateMode] = useState(false);
+
   const [errorTitle, setErrorTitle] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [isNftLoading, setIsNftLoading] = useState(false);
   const [hasNextPageData, setHasNextPageData] = useState(true);
   const [asseteRemoveInUpdateMode, setAsseteRemoveInUpdateMode] =
     useState(false);
-  const [collection, setCollection] = useState({});
+
   const [payload, setPayload] = useState({
     page: 1,
     perPage: 10,
@@ -279,7 +281,7 @@ export default function CreateNFTContent({ query }) {
       isOpen: true,
       blockchainCategory: 'polygon',
       indexId: oldNfts.length + 1,
-      price: 0,
+      price: !updateMode && collection?.price ? collection?.price : 0,
       salesTimeRange: null,
       token_id: null,
     });
@@ -1083,6 +1085,14 @@ export default function CreateNFTContent({ query }) {
       setSelectedCurrency(userWalletBlockchain);
     }
   }, [collection, collection_id]);
+
+  useEffect(() => {
+    if (collection?.price && !updateMode) {
+      let oldNftList = [...nfts];
+      oldNftList[0].price = collection?.price;
+      setNfts(oldNftList);
+    }
+  }, [collection, updateMode]);
 
   const [selectedCurrency, setSelectedCurrency] = useState({
     id: 0,

@@ -724,7 +724,13 @@ export default function DetailsNFT({ type, id }) {
                   (nft?.lnft?.nft_type === 'membership' ||
                     nft?.lnft?.nft_type === 'auto') ? (
                     <Link
-                      href={`/nft/membership/create?collection_id=${nft?.lnft?.collection_uuid}&nftId=${nft?.lnft?.id}`}
+                      href={`/nft${
+                        nft?.lnft?.nft_type === 'membership'
+                          ? '/membership'
+                          : ''
+                      }/create?collection_id=${
+                        nft?.lnft?.collection_uuid
+                      }&nftId=${nft?.lnft?.id}`}
                       className='!no-underline txtblack text-primary-900 ml-auto mr-2 md:mr-0 font-black'
                     >
                       Edit Benefit
