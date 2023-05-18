@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import CollectionPreview from './components/CollectionPreview';
 import PricingRoyalty from './components/PricingRoyalty';
 import NFTList from './components/NFTList';
@@ -55,7 +55,7 @@ const PublishPreview = ({ query }) => {
   const [nftsPublished, setNFTsPublished] = useState([]);
   const [isRegisterNFTs, setIsRegisterNFTs] = useState(false);
   const [registeringNFT, setRegisteringNFT] = useState(0);
-
+  const [someFailed, setSomeFailed] = useState(false);
   const dispatch = useDispatch();
   const network = NETWORKS?.[collection?.blockchain];
   let walletType = ls_GetWalletType();
@@ -111,18 +111,26 @@ const PublishPreview = ({ query }) => {
       if (uploadingNFTs.every((nft) => nft?.status === 'success')) {
         setCurrentStep(2);
         publishTheCollection();
+        clearInterval(intervals);
       }
     }
+    return () => {
+      setSomeFailed(false);
+    };
   }, [uploadingNFTs]);
 
   const verifyFileHash = async () => {
     await getCollectionNFTs(query?.id).then((resp) => {
       if (resp.code === 0) {
+        if (resp?.lnfts?.some((nft) => nft.asset === null)) {
+          setSomeFailed(true);
+        }
         let nftStatus = resp?.lnfts.map((nft) => {
           setUploadedNFTs([...uploadedNFTs, nft?.asset?.id]);
           return {
             ...nft,
-            status: nft?.asset?.hash ? 'success' : 'pending',
+            status:
+              nft?.asset?.hash || nft?.asset === null ? 'success' : 'pending',
           };
         });
         setUploadingNFTs(nftStatus);
@@ -142,12 +150,12 @@ const PublishPreview = ({ query }) => {
     getSplitters();
     getNFTs();
   };
-
+  let intervals;
   useEffect(() => {
     if (publishRoyaltySplitterStatus === 2) {
       moveNFTsToIPFS();
     }
-    let intervals;
+
     if (currentStep === 1) {
       intervals = setInterval(() => {
         verifyFileHash();
@@ -157,7 +165,11 @@ const PublishPreview = ({ query }) => {
     if (currentStep > 1) {
       clearInterval(intervals);
     }
-  }, [publishRoyaltySplitterStatus, currentStep]);
+
+    return () => {
+      clearInterval(intervals);
+    };
+  }, [publishRoyaltySplitterStatus, currentStep, intervals]);
 
   const moveNFTsToIPFS = async () => {
     if (nfts?.length) {
@@ -184,6 +196,7 @@ const PublishPreview = ({ query }) => {
       } else {
         setCurrentStep(2);
         publishTheCollection();
+        clearInterval(intervals);
       }
     }
   };
@@ -332,6 +345,7 @@ const PublishPreview = ({ query }) => {
         } else {
           setCurrentStep(2);
           publishTheCollection();
+          clearInterval(intervals);
         }
       } else {
         if (
@@ -426,7 +440,6 @@ const PublishPreview = ({ query }) => {
         uri: `${Config.PINATA_URL}${nft?.metadata_url}`,
         total_supply: nft?.supply,
       };
-      console.log(nftInfo);
       if (walletType === 'metamask') {
         if (!window.ethereum) throw new Error(`User wallet not found`);
         await window.ethereum.enable();
@@ -491,6 +504,7 @@ const PublishPreview = ({ query }) => {
           nftsHashed={nftsHashed}
           tokenStandard={tokenStandard}
           nftsPublished={nftsPublished}
+          someFailed={someFailed}
         />
       )}
       {showNetworkHandler && (

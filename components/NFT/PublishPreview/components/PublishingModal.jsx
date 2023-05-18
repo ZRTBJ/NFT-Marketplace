@@ -16,6 +16,7 @@ const PublishingModal = ({
   nftsHashed,
   tokenStandard,
   nftsPublished,
+  someFailed,
 }) => {
   const defaultOptions = {
     loop: true,
@@ -39,6 +40,9 @@ const PublishingModal = ({
         nfts?.length || nftsHashed
           ? 'Published NFT to IPFS'
           : 'No NFTs to Publish',
+      subText: someFailed
+        ? 'Some of the nfts to are failed to move to IPFS. Please move it later'
+        : '',
     },
     {
       title: 'Publishing Collection',
@@ -113,6 +117,11 @@ const PublishingModal = ({
                   {currentStep >= index + 1 || currentStep === 3
                     ? step.titleCompleted
                     : step?.title}
+                  {step?.subText ? (
+                    <span className='text-red-400 block text-sm'>
+                      {step?.subText}
+                    </span>
+                  ) : null}
                 </p>
               </div>
             ))}
