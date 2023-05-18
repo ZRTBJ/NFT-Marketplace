@@ -16,7 +16,7 @@ export const address = {
   ProxyManagerERC721Goerli: '0xF94535Af8648ecd62F90a8F99D58488af51118bA',
   ProxyManagerERC1155Goerli: '0x3ed15cDa0E79bde39Cf0880cC3D80F270f6cbDfa',
   CreateCollectionERC721MasterCopyGoerli:
-    '0x988Ea916A856200FF5a63F34E6046375c3613809',
+    '0xd9584dFb78eF83EcaeDf4A533EB0DC970d1e6479',
   CreateCollectionERC1155MasterCopyGoerli:
     '0xcCF52f4362E842ac9f919a6d251F6462e439c2c1',
   PlatformFeeManagerGoerli: '0xce133aD847CAB8430AdA880291C092B22e2fBEdD',
