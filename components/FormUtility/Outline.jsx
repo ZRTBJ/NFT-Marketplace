@@ -232,7 +232,6 @@ export default function Outline({
                 onDrop={(e) => onLogoPhotoSelect(e)}
                 sizePlaceholder=''
                 rounded={true}
-                maxSize={4000000}
               />
               <div className='text-color-ass-8 text-[12px]  mt-[14px]'>
                 Add Image/Drag from
@@ -944,7 +943,6 @@ export default function Outline({
                       type='cover'
                       onDrop={(e) => onCoverPhotoSelect(e)}
                       sizePlaceholder=''
-                      maxSize={4000000}
                     />
                   </>
                 ) : (

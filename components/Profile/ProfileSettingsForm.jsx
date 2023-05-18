@@ -12,6 +12,7 @@ import ErrorModal from 'components/Modals/ErrorModal';
 import Image from 'next/image';
 import { event } from 'nextjs-google-analytics';
 import TagManager from 'react-gtm-module';
+import { imageCompress } from 'util/ImageCompress';
 
 const ProfileSettingsForm = () => {
   const dispatch = useDispatch();
@@ -101,9 +102,15 @@ const ProfileSettingsForm = () => {
     setIsLoading(false);
   }
 
-  function profileImageChangeHandler(images) {
+  async function profileImageChangeHandler(images) {
     const img = images[0];
-    setProfileImage({ image: img, path: URL.createObjectURL(img) });
+    let compressedImage = await imageCompress(img);
+    if (compressedImage) {
+      setProfileImage({
+        image: compressedImage,
+        path: URL.createObjectURL(img),
+      });
+    }
   }
 
   function addMoreWebLink() {
@@ -121,7 +128,13 @@ const ProfileSettingsForm = () => {
 
   async function coverPhotoSelect(params) {
     if (params.length > 0) {
-      setCoverPhoto({ image: params[0], path: URL.createObjectURL(params[0]) });
+      let compressedImage = await imageCompress(params[0]);
+      if (compressedImage) {
+        setCoverPhoto({
+          image: compressedImage,
+          path: URL.createObjectURL(params[0]),
+        });
+      }
     }
   }
 
@@ -233,10 +246,9 @@ const ProfileSettingsForm = () => {
                       {profileImage && profileImage.path.length < 1 && (
                         <div className='w-full md:max-w-[186px]'>
                           <FileDragAndDrop
-                            maxFiles={4}
+                            maxFiles={1}
                             height='158px'
                             onDrop={(e) => profileImageChangeHandler(e)}
-                            sizePlaceholder='Total upto 16MB'
                           />
                         </div>
                       )}
@@ -273,7 +285,6 @@ const ProfileSettingsForm = () => {
                         height='230px'
                         onDrop={(e) => coverPhotoSelect(e)}
                         sizePlaceholder='1300X600'
-                        maxSize={4000000}
                       />
                     ) : (
                       <div className='relative w-full '>

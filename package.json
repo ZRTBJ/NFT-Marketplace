@@ -21,6 +21,7 @@
     "@usedapp/core": "^1.2.2",
     "accounting": "^0.4.1",
     "axios": "^1.2.0",
+    "compressorjs": "^1.2.1",
     "date-fns": "^2.29.3",
     "dayjs": "^1.11.6",
     "eslint": "8.28.0",

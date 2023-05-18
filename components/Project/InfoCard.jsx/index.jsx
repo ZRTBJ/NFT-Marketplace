@@ -35,6 +35,7 @@ const InfoCard = ({
               alt='User profile'
               width={98}
               height={98}
+              unoptimized
             />
             <div className='flex-1 min-w-0  px-4'>
               <div className='flex items-center mb-1 md:mb-2'>
@@ -104,9 +105,7 @@ const InfoCard = ({
               readMoreClassName='font-bold'
               readLessClassName='font-bold'
             >
-              {project?.overview
-                ? project.overview
-                : ''}
+              {project?.overview ? project.overview : ''}
             </ReactReadMoreReadLess>
             <div className={`flex mt-4 mb-4 md:mb-0`}>
               {project?.is_owner && (

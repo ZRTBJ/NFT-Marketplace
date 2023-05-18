@@ -18,6 +18,7 @@ import ConfirmationModal from 'components/Modals/ConfirmationModal';
 import { event } from 'nextjs-google-analytics';
 import TagManager from 'react-gtm-module';
 import WalletConnectModal from 'components/Login/WalletConnectModal';
+import { imageCompress } from 'util/ImageCompress';
 
 export default function Setting({
   show,
@@ -94,18 +95,24 @@ export default function Setting({
   }
   async function coverPhotoSelect(params) {
     if (params.length > 0) {
-      setCoverPhoto({
-        image: params[0],
-        path: URL.createObjectURL(params[0]),
-      });
+      let compressedImage = await imageCompress(params[0]);
+      if (compressedImage) {
+        setCoverPhoto({
+          image: compressedImage,
+          path: URL.createObjectURL(params[0]),
+        });
+      }
     }
   }
   async function projectPhotoSelect(params) {
     if (params.length > 0) {
-      setProjectPhoto({
-        image: params[0],
-        path: URL.createObjectURL(params[0]),
-      });
+      let compressedImage = await imageCompress(params[0]);
+      if (compressedImage) {
+        setProjectPhoto({
+          image: compressedImage,
+          path: URL.createObjectURL(params[0]),
+        });
+      }
     }
   }
   function removeCoverPhoto() {
@@ -282,7 +289,6 @@ export default function Setting({
                         rounded={true}
                         onDrop={(e) => coverPhotoSelect(e)}
                         sizePlaceholder=''
-                        maxSize={4000000}
                         type='logo'
                       />
                       <div className='text-color-ass-8 text-[12px]  mt-[14px]'>
@@ -364,7 +370,6 @@ export default function Setting({
                       height='230px'
                       onDrop={(e) => projectPhotoSelect(e)}
                       sizePlaceholder='1300X600'
-                      maxSize={4000000}
                     />
                   ) : (
                     <div className='relative w-full '>

@@ -32,6 +32,7 @@ import { toast } from 'react-toastify';
 import { addDays } from 'date-fns';
 import getUnixTime from 'date-fns/getUnixTime';
 import { format } from 'date-fns';
+import { imageCompress } from 'util/ImageCompress';
 
 export default function CollectionCreate({ query }) {
   // logo start
@@ -40,15 +41,18 @@ export default function CollectionCreate({ query }) {
   const [showConnectModal, setShowConnectModal] = useState(false);
   const [toCreateCollection, setToCreateCollection] = useState(false);
   const userInfo = useSelector((state) => state.user.userinfo);
-  const onLogoPhotoSelect = useCallback((acceptedFiles) => {
+  const onLogoPhotoSelect = useCallback(async (acceptedFiles) => {
     if (acceptedFiles?.length === 1) {
-      setLogoPhoto(acceptedFiles);
-      let objectUrl = URL.createObjectURL(acceptedFiles[0]);
-      let logoPhotoInfo = {
-        path: objectUrl,
-      };
-      setLogoPhotoUrl(logoPhotoInfo);
-      setoutlineKey(1);
+      let compressedImage = await imageCompress(acceptedFiles[0]);
+      if (compressedImage) {
+        setLogoPhoto([compressedImage]);
+        let objectUrl = URL.createObjectURL(acceptedFiles[0]);
+        let logoPhotoInfo = {
+          path: objectUrl,
+        };
+        setLogoPhotoUrl(logoPhotoInfo);
+        setoutlineKey(1);
+      }
     }
   }, []);
   const onLogoPhotoRemove = async () => {
@@ -323,15 +327,18 @@ export default function CollectionCreate({ query }) {
   const [showCover, setShowCover] = useState(true);
   const [coverPhoto, setCoverPhoto] = useState([]);
   const [coverPhotoUrl, setCoverPhotoUrl] = useState('');
-  const onCoverPhotoSelect = useCallback((acceptedFiles) => {
+  const onCoverPhotoSelect = useCallback(async (acceptedFiles) => {
     if (acceptedFiles.length === 1) {
-      setCoverPhoto(acceptedFiles);
-      let objectUrl = URL.createObjectURL(acceptedFiles[0]);
-      let coverPhotoInfo = {
-        path: objectUrl,
-      };
-      setCoverPhotoUrl(coverPhotoInfo);
-      setoutlineKey(1);
+      let compressedImage = await imageCompress(acceptedFiles[0]);
+      if (compressedImage) {
+        setCoverPhoto([compressedImage]);
+        let objectUrl = URL.createObjectURL(acceptedFiles[0]);
+        let coverPhotoInfo = {
+          path: objectUrl,
+        };
+        setCoverPhotoUrl(coverPhotoInfo);
+        setoutlineKey(1);
+      }
     }
   }, []);
   async function onCoverPhotoRemove() {
