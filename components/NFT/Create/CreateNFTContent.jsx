@@ -1213,6 +1213,10 @@ export default function CreateNFTContent({ query }) {
                       nft.assets.file?.type?.split('/')[0]?.toLowerCase() ===
                       'video'
                         ? ''
+                        : nft.assets.file?.type
+                            ?.split('/')[0]
+                            ?.toLowerCase() === 'movie'
+                        ? ''
                         : 'w-40 h-40'
                     }`}
                   >
@@ -1221,6 +1225,10 @@ export default function CreateNFTContent({ query }) {
                       className={`flex flex-col justify-center items-center w-full  ${
                         nft.assets.file?.type?.split('/')[0]?.toLowerCase() ===
                         'video'
+                          ? ''
+                          : nft.assets.file?.type
+                              ?.split('/')[0]
+                              ?.toLowerCase() === 'movie'
                           ? ''
                           : 'h-40'
                       } ${
@@ -1246,12 +1254,14 @@ export default function CreateNFTContent({ query }) {
                               ?.split('/')[0]
                               ?.toLowerCase() === 'audio' && (
                               <>
-                                <i
-                                  onClick={(e) =>
-                                    nftFileChangeHandler(e, index)
-                                  }
-                                  className='absolute top-0 text-[18px] cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark'
-                                ></i>
+                                {canEdit() ? (
+                                  <i
+                                    onClick={(e) =>
+                                      nftFileChangeHandler(e, index)
+                                    }
+                                    className='absolute top-0 text-[18px] cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark'
+                                  ></i>
+                                ) : null}
                                 <audio
                                   ref={audioRef}
                                   src={nft.assets.path}
@@ -1263,14 +1273,20 @@ export default function CreateNFTContent({ query }) {
                             )}
                             {nft.assets.file?.type
                               ?.split('/')[0]
-                              ?.toLowerCase() === 'video' && (
+                              ?.toLowerCase() === 'video' ||
+                            nft.assets.file?.type
+                              ?.split('/')[0]
+                              ?.toLowerCase() === 'movie' ? (
                               <>
-                                <i
-                                  onClick={(e) =>
-                                    nftFileChangeHandler(e, index)
-                                  }
-                                  className='absolute top-0 text-[18px] cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark'
-                                ></i>
+                                {canEdit() ? (
+                                  <i
+                                    onClick={(e) =>
+                                      nftFileChangeHandler(e, index)
+                                    }
+                                    className='absolute top-0 text-[18px] cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark'
+                                  ></i>
+                                ) : null}
+
                                 <video width='650' height='400' controls>
                                   <source
                                     src={nft.assets.path}
@@ -1278,7 +1294,7 @@ export default function CreateNFTContent({ query }) {
                                   />
                                 </video>
                               </>
-                            )}
+                            ) : null}
                           </>
                         ) : (
                           <>
