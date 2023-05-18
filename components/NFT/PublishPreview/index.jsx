@@ -397,6 +397,13 @@ const PublishPreview = ({ query }) => {
       let collectionData = await getCollectionNFTs(query?.id);
       if (data?.collection?.contract_address) {
         let nftsRegistering = collectionData?.lnfts;
+        let nftStatus = collectionData?.lnfts.map((nft) => {
+          return {
+            ...nft,
+            status: nft?.asset?.hash ? 'success' : 'pending',
+          };
+        });
+        setNFTs(nftStatus);
         if (nftsRegistering?.length) {
           setIsRegisterNFTs(true);
         }
@@ -419,7 +426,7 @@ const PublishPreview = ({ query }) => {
         uri: `${Config.PINATA_URL}${nft?.metadata_url}`,
         total_supply: nft?.supply,
       };
-
+      console.log(nftInfo);
       if (walletType === 'metamask') {
         if (!window.ethereum) throw new Error(`User wallet not found`);
         await window.ethereum.enable();
@@ -436,7 +443,6 @@ const PublishPreview = ({ query }) => {
         .addNewToken(nftInfo.price, nftInfo.uri, nftInfo.total_supply);
 
       if (response?.hash) {
-        console.log('here');
         const tnxHash = await provider.waitForTransaction(response?.hash);
         await verifyTokenId(nft?.id, response?.hash);
       }
