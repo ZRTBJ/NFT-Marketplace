@@ -153,7 +153,9 @@ const PublishPreview = ({ query }) => {
   let intervals;
   useEffect(() => {
     if (publishRoyaltySplitterStatus === 2) {
-      moveNFTsToIPFS();
+      if (currentStep === 0) {
+        moveNFTsToIPFS();
+      }
     }
 
     if (currentStep === 1) {
