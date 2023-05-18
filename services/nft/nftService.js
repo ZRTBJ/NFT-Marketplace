@@ -17,6 +17,9 @@ export async function saveNFT(payload) {
 export async function createMembershipNft(payload) {
   return await client('POST', `/membership-nft`, payload, 'formdata');
 }
+export async function createNft(payload) {
+  return await client('POST', `/lnft`, payload, 'formdata');
+}
 
 export async function generateUploadkey(payload) {
   return await client('POST', `/upload/genKey`, payload, 'formdata');
@@ -36,9 +39,14 @@ export async function getNftDetails(type, id) {
       ? '/membership-nft/'
       : type === 'product'
       ? '/product-nft/'
-      : '/nft/';
+      : '/lnft/';
   return await client('GET', `${typeValue}${id}`);
 }
+
+export async function getNftDetailsAutoType(id) {
+  return await client('GET', `/lnft/${id}`);
+}
+
 export async function getMintedNftDetails(nftId, tokenId) {
   return await client('GET', `/lnft/${nftId}/${tokenId}`);
 }
@@ -59,6 +67,9 @@ export async function updateProductNFT(id, payload) {
 }
 export async function updateMembershipNFT(id, payload) {
   return await client('PUT', `/membership-nft/${id}`, payload, 'formdata');
+}
+export async function updateNft(id, payload) {
+  return await client('PUT', `/lnft/${id}`, payload, 'formdata');
 }
 
 export async function setSalesPage(
@@ -94,7 +105,11 @@ export async function mintRANFT(id) {
 }
 export async function mintProductOrMembershipNft(payload) {
   const url =
-    payload.type === 'membership' ? '/membership-nft' : '/product-nft';
+    payload.type === 'membership'
+      ? '/membership-nft'
+      : payload.type === 'product'
+      ? '/product-nft'
+      : '/lnft';
   return await client(
     'POST',
     `${url}/${payload.id}/mint`,
@@ -128,4 +143,19 @@ export async function refreshNFT(payload) {
 }
 export async function deleteDraftNFT(id) {
   return await client('DELETE', `/lnft/${id}`);
+}
+export const NFTRegisterAfterPublish = async (nftId, tnx) => {
+  let formData = new FormData();
+  formData.append('txn_hash', tnx);
+
+  return await client(
+    'PUT',
+    `/lnft/${nftId}/register-after-publish`,
+    formData,
+    'formdata'
+  );
+};
+
+export async function moveToIPFS(data) {
+  return await client('POST', `/lnft/move-to-ipfs`, data, 'formdata');
 }

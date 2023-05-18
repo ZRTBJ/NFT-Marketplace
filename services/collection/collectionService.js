@@ -53,10 +53,15 @@ export async function updateCollection(payload) {
     bodyFormData.append('logo', payload.logo);
   }
 
-  bodyFormData.append('updatable', payload.isMetaDaFreezed);
+  // bodyFormData.append('updatable', payload.isMetaDaFreezed);
   bodyFormData.append('token_transferable', payload.isTokenTransferable);
   bodyFormData.append('royalty_percent', payload.royaltyPercentage);
   bodyFormData.append('total_supply', payload.total_supply);
+  bodyFormData.append('price', payload.price);
+  bodyFormData.append('splitter_uid', payload.splitterId);
+  if (payload.timebound) {
+    bodyFormData.append('timebound', payload.timebound);
+  }
 
   return await client(
     'PUT',
@@ -118,8 +123,11 @@ export async function getUserCollections(payload) {
   );
 }
 
-export async function getCollectionNFTs(id) {
-  return await client('GET', `/collection/${id}/nft`);
+export async function getCollectionNFTs(id, order_by) {
+  return await client(
+    'GET',
+    `/collection/${id}/nft?order_by=${order_by ? order_by : 'newer'}`
+  );
 }
 
 export async function connectCollection(ranknftid, collectionId) {
@@ -213,4 +221,19 @@ export async function deleteUnpublishedSplitter(id) {
 export async function detachSplitterFormCollection(id) {
   console.log('here');
   return await client('PUT', `/collection/${id}/detach-splitter`);
+}
+
+export async function validateCollectionPublish(id) {
+  return await client('POST', `/collection/${id}/validate-for-publish`);
+}
+
+export async function attachSplitterToCollection(collection_id, splitter_uid) {
+  const bodyFormData = new FormData();
+  bodyFormData.append('splitter_uid', splitter_uid);
+  return await client(
+    'PUT',
+    `/collection/${collection_id}/attach-splitter`,
+    bodyFormData,
+    'formdata'
+  );
 }

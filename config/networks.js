@@ -29,6 +29,13 @@ const TESTNET = {
     icon: Eth,
     forwarder: address.MinimalForwarderGoerli,
     webhook: process.env.NEXT_PUBLIC_WEBHOOK_URL_GOERLI,
+    ProxyManagerERC721: address.ProxyManagerERC721Goerli,
+    ProxyManagerERC1155: address.ProxyManagerERC1155Goerli,
+    CreateCollectionERC721MasterCopy:
+      address.CreateCollectionERC721MasterCopyGoerli,
+    CreateCollectionERC1155MasterCopy:
+      address.CreateCollectionERC1155MasterCopyGoerli,
+    PlatformFeeManager: address.PlatformFeeManagerGoerli,
     genericProxyFacotory: address.GenericProxyFactoryGoerli,
     masterCopyDAO: address.CreatorDAOMasterCopy,
     masterCopyCollection: address.CreateCollectionMasterCopy,
@@ -73,6 +80,13 @@ const TESTNET = {
     masterMembershipCollection:
       address.CreateMembershipCollectionMasterCopyBnbTest,
     masterRoyaltySplitter: address.RoyaltySplitterMasterCopyBnbTest,
+    ProxyManagerERC721: address.ProxyManagerERC721BnbTest,
+    ProxyManagerERC1155: address.ProxyManagerERC1155BnbTest,
+    CreateCollectionERC721MasterCopy:
+      address.CreateCollectionERC721MasterCopyBnbTest,
+    CreateCollectionERC1155MasterCopy:
+      address.CreateCollectionERC1155MasterCopyBnbTest,
+    PlatformFeeManager: address.PlatformFeeManagerBnbTest,
     network: 97,
     gnosis: `${gnosisFundTransferUrl}/bnb`,
     raribleNFTDetailsUrl: raribleNFTDetailsUrl,
@@ -109,6 +123,13 @@ const TESTNET = {
     masterCopyCollection: address.CreateCollectionMasterCopyMumbai,
     masterMembershipCollection:
       address.CreateMembershipCollectionMasterCopyMumbai,
+    ProxyManagerERC721: address.ProxyManagerERC721Mumbai,
+    ProxyManagerERC1155: address.ProxyManagerERC1155Mumbai,
+    CreateCollectionERC721MasterCopy:
+      address.CreateCollectionERC721MasterCopyMumbai,
+    CreateCollectionERC1155MasterCopy:
+      address.CreateCollectionERC1155MasterCopyMumbai,
+    PlatformFeeManager: address.PlatformFeeManagerMumbai,
     masterRoyaltySplitter: address.RoyaltySplitterMasterCopyMumbai,
     network: 80001,
     gnosis: `${gnosisFundTransferUrl}/matic`,

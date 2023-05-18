@@ -9,9 +9,17 @@ export async function getServerSideProps(context) {
       : query.type === 'product'
       ? '/product-nft/'
       : '/nft/';
-  let resp = await fetch(
-    `${process.env.NEXT_PUBLIC_API_ENDPOINT}${typeValue}${query?.id}`
-  );
+
+  let resp = '';
+  if (query?.type === 'membership' || query?.type === 'product') {
+    resp = await fetch(
+      `${process.env.NEXT_PUBLIC_API_ENDPOINT}${typeValue}${query?.id}`
+    );
+  } else if (query?.type === 'auto') {
+    resp = await fetch(
+      `${process.env.NEXT_PUBLIC_API_ENDPOINT}/lnft/${query?.id}`
+    );
+  }
 
   let output = await resp.json();
   let data = {
@@ -19,6 +27,7 @@ export async function getServerSideProps(context) {
     description: output?.lnft?.description ? output.lnft.description : '',
     image: output?.lnft?.asset?.path ? output.lnft.asset.path : '',
   };
+
   return { props: { query, data } };
 }
 

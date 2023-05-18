@@ -339,7 +339,7 @@ const Splitter = ({
                   if (isModal) {
                     createSplitterClose();
                     onGetSplitterList();
-                    onDraftSave();
+                    onDraftSave(resp?.splitter_id);
                   }
                 }
               } else {
@@ -419,9 +419,7 @@ const Splitter = ({
     royalityMembers.slice(indexOfFirstPost, indexOfLastPost);
 
   let validNetworks = NETWORKS
-    ? Object.values(NETWORKS).filter(
-        (net) => net.network !== 97 && net.network !== 56
-      )
+    ? Object.values(NETWORKS).filter((net) => net.network)
     : [];
 
   return (

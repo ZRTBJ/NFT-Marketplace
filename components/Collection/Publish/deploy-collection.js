@@ -1,5 +1,7 @@
 import { ethers } from 'ethers';
 import { createInstance } from 'config/ABI/forwarder';
+import { erc721ProxyInstance } from 'config/ABI/erc721ProxyFactory';
+import { erc1155ProxyInstance } from 'config/ABI/erc1155ProxyFactory';
 import { signMetaTxRequest } from 'util/smartcontract/signer';
 import { NETWORKS } from 'config/networks';
 import { ls_GetChainID, ls_GetWalletType } from 'util/ApplicationStorage';
@@ -14,53 +16,46 @@ async function sendMetaTx(
   type,
   productPrice
 ) {
-  const forwarder = createInstance(provider);
   const from = await signer.getAddress();
+
   let chainId = ls_GetChainID();
-  let minimalForwarder = NETWORKS[chainId]?.forwarder;
-  let masterCopyCollection = NETWORKS[chainId]?.masterCopyCollection;
-  let masterMembershipCollection =
-    NETWORKS[Number(chainId)]?.masterMembershipCollection;
-  let discount = NETWORKS[Number(chainId)]?.discount;
-  let treasury = NETWORKS[Number(chainId)]?.decirTreasury;
 
-  let webhook = NETWORKS[Number(chainId)]?.webhook;
+  let ERC721MasterCopy =
+    NETWORKS[chainId]?.CreateCollectionERC721MasterCopyMumbai;
+  let ERC1155MasterCopy =
+    NETWORKS[chainId]?.CreateCollectionERC1155MasterCopyMumbai;
+  let platformFeeManager = NETWORKS[Number(chainId)]?.PlatformFeeManager;
 
-  const args = {
-    isCollection: true,
-    collection: {
-      deployConfig: {
-        name: config?.deploymentConfig?.name,
-        symbol: config?.deploymentConfig?.symbol,
-        owner: from,
-        masterCopy:
-          type === 'membership'
-            ? masterMembershipCollection
-            : masterCopyCollection,
-      },
-      runConfig: {
-        baseURI: config?.runtimeConfig?.baseURI,
-        royaltiesBps: config?.runtimeConfig?.royaltiesBps,
-        royaltyAddress: config?.runtimeConfig?.royaltiesAddress,
-        maxSupply: type === 'product' ? config?.runtimeConfig?.totalSupply : 0,
-        floorPrice: ethers.utils.parseUnits(
-          type === 'product' ? productPrice.toString() : '0',
-          'ether'
-        ),
-      },
+  const metaArgs = {
+    metadata: {
+      defaultAdmin: from,
+      name: config?.deploymentConfig?.name,
+      symbol: config?.deploymentConfig?.symbol,
+      contractURI: '',
+      baseURI: config?.runtimeConfig?.baseURI,
+      royaltyRecipient: config?.runtimeConfig?.royaltiesAddress,
+      royaltyBps: config?.runtimeConfig?.royaltiesBps,
+      primarySaleRecipient: config?.runtimeConfig?.royaltiesAddress,
+      floorPrice: ethers.utils.parseUnits(
+        config?.runtimeConfig?.basePrice?.toString(),
+        'ether'
+      ),
+      maxSupply: config?.runtimeConfig?.totalSupply,
+      platformFeeManager: platformFeeManager,
     },
-    decirTreasury: treasury,
-    discount: discount,
-    forwarder: minimalForwarder,
+    masterCopy:
+      config?.deploymentConfig?.collection_standard === 'ERC721'
+        ? ERC721MasterCopy
+        : ERC1155MasterCopy,
   };
-
+  console.log(metaArgs);
   const data = collection.interface.encodeFunctionData(
-    type === 'membership' ? 'createMembershipProxy' : 'createCollectionProxy',
-    [args]
+    'DeployERC721',
+    metaArgs
   );
   const to = collection.address;
 
-  const request = await signMetaTxRequest(signer.provider, forwarder, {
+  const request = await signMetaTxRequest(signer.provider, collection, {
     to,
     from,
     data,
@@ -113,12 +108,7 @@ export async function createCollection(
   return output;
 }
 
-export async function createCollectionByCaller(
-  collection,
-  config,
-  type,
-  productPrice
-) {
+export async function createCollectionByCaller(collection, config) {
   let walletType = await ls_GetWalletType();
   let signer;
   if (walletType === 'metamask') {
@@ -130,51 +120,54 @@ export async function createCollectionByCaller(
     signer = etherMagicProvider.getSigner();
   }
   const from = await signer.getAddress();
-  console.log('singer: ', from);
-  let chainId = ls_GetChainID();
-  let minimalForwarder = NETWORKS[chainId]?.forwarder;
-  let masterCopyCollection = NETWORKS[chainId]?.masterCopyCollection;
-  let masterMembershipCollection =
-    NETWORKS[Number(chainId)]?.masterMembershipCollection;
-  let discount = NETWORKS[Number(chainId)]?.discount;
-  let treasury = NETWORKS[Number(chainId)]?.decirTreasury;
 
-  const args = {
-    isCollection: true,
-    collection: {
-      deployConfig: {
-        name: config?.deploymentConfig?.name,
-        symbol: config?.deploymentConfig?.symbol,
-        owner: from,
-        masterCopy:
-          type === 'membership'
-            ? masterMembershipCollection
-            : masterCopyCollection,
-      },
-      runConfig: {
-        baseURI: config?.runtimeConfig?.baseURI,
-        royaltiesBps: config?.runtimeConfig?.royaltiesBps,
-        royaltyAddress: config?.runtimeConfig?.royaltiesAddress,
-        maxSupply: type === 'product' ? config?.runtimeConfig?.totalSupply : 0,
+  let chainId = ls_GetChainID();
+  NETWORKS[Number(chainId)]?.masterMembershipCollection;
+  let ERC721MasterCopy = NETWORKS[chainId]?.CreateCollectionERC721MasterCopy;
+  let ERC1155MasterCopy = NETWORKS[chainId]?.CreateCollectionERC1155MasterCopy;
+  let platformFeeManager = NETWORKS[Number(chainId)]?.PlatformFeeManager;
+
+  const metaArgs = {
+    metadata: {
+      defaultAdmin: from,
+      name: config?.deploymentConfig?.name,
+      symbol: config?.deploymentConfig?.symbol,
+      contractURI: '',
+      baseURI: config?.runtimeConfig?.nftFolderHash
+        ? `${config?.runtimeConfig?.baseURI}${config?.runtimeConfig?.nftFolderHash}/`
+        : '',
+      royaltyRecipient: config?.runtimeConfig?.royaltiesAddress,
+      royaltyBps: config?.runtimeConfig?.royaltiesBps,
+      primarySaleRecipient: from,
+      ...(config?.deploymentConfig?.collection_standard === 'ERC721' && {
         floorPrice: ethers.utils.parseUnits(
-          type === 'product' ? productPrice.toString() : '0',
+          config?.runtimeConfig?.basePrice?.toString(),
           'ether'
         ),
-      },
+        maxSupply: config?.runtimeConfig?.totalSupply,
+        initialSupply: config?.runtimeConfig?.numberOfNFTNow
+          ? config?.runtimeConfig?.numberOfNFTNow
+          : 0,
+      }),
+      platformFeeManager: platformFeeManager,
+      isSoulbound: !config?.runtimeConfig?.tokensTransferable,
+      validity: config?.runtimeConfig?.timeBound,
     },
-    decirTreasury: treasury,
-    discount: discount,
-    forwarder: minimalForwarder,
+    masterCopy:
+      config?.deploymentConfig?.collection_standard === 'ERC721'
+        ? ERC721MasterCopy
+        : ERC1155MasterCopy,
   };
-  console.log('by caller: ', args);
+  console.log(metaArgs);
   let response;
-  if (type === 'membership') {
-    const tx = await collection.connect(signer).createMembershipProxy(args);
-    response = await tx.wait();
-  } else {
-    const tx = await collection.connect(signer).createCollectionProxy(args);
-    response = await tx.wait();
-  }
+
+  let tx;
+  tx =
+    config?.deploymentConfig?.collection_standard === 'ERC721'
+      ? await collection.connect(signer)?.DeployERC721(metaArgs)
+      : await collection.connect(signer)?.DeployERC1155(metaArgs);
+  response = await tx.wait(1);
+
   console.log('Res: ', response);
   return {
     txReceipt: {

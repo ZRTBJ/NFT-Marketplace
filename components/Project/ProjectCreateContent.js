@@ -19,6 +19,7 @@ import { event } from 'nextjs-google-analytics';
 import TagManager from 'react-gtm-module';
 import { useSelector } from 'react-redux';
 import WalletConnectModal from 'components/Login/WalletConnectModal';
+import { imageCompress } from 'util/ImageCompress';
 
 function ProjectCreateContent({ search }) {
   // Logo start
@@ -27,15 +28,18 @@ function ProjectCreateContent({ search }) {
   const [logoPhoto, setLogoPhoto] = useState([]);
   const [logoPhotoUrl, setLogoPhotoUrl] = useState('');
   const [toCreateDAO, setToCreateDAO] = useState(false);
-  const onLogoPhotoSelect = useCallback((acceptedFiles) => {
+  const onLogoPhotoSelect = useCallback(async (acceptedFiles) => {
     if (acceptedFiles.length === 1) {
-      setLogoPhoto(acceptedFiles);
-      let objectUrl = URL.createObjectURL(acceptedFiles[0]);
-      let logoPhotoInfo = {
-        path: objectUrl,
-      };
-      setLogoPhotoUrl(logoPhotoInfo);
-      setoutlineKey((pre) => pre + 1);
+      let compressedImage = await imageCompress(acceptedFiles[0]);
+      if (compressedImage) {
+        setLogoPhoto([compressedImage]);
+        let objectUrl = URL.createObjectURL(acceptedFiles[0]);
+        let logoPhotoInfo = {
+          path: objectUrl,
+        };
+        setLogoPhotoUrl(logoPhotoInfo);
+        setoutlineKey((pre) => pre + 1);
+      }
     }
   }, []);
   async function onLogoPhotoRemove() {

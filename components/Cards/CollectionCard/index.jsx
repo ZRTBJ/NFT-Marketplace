@@ -55,7 +55,7 @@ export default function CollectionCard({ collection }) {
             )}
           </div>
         </div>
-        <div className='flex items-center mb-3'>
+        <div className='flex items-center'>
           {collection?.status === 'published' ? (
             <p className='text-[12px] font-semibold'>
               {parseInt(collection?.total_supply) -
@@ -88,12 +88,15 @@ export default function CollectionCard({ collection }) {
             </div>
           </div>
         </div>
+        {collection?.status === 'published' &&
+          collection?.token_standard &&
+          collection?.type === 'auto' && (
+            <p className='text-primary-900 font-black'>
+              <small>{collection?.token_standard}</small>
+            </p>
+          )}
 
-        <p className='mb-3 truncate text-textSubtle text-[13px]'>
-          {collection?.description}
-        </p>
-
-        <div className='flex items-center'>
+        {/* <div className='flex items-center'>
           {collection?.members &&
             collection?.members?.length > 0 &&
             truncateArray(collection.members).slicedItems.map(
@@ -115,7 +118,7 @@ export default function CollectionCard({ collection }) {
               </p>
             </div>
           )}
-        </div>
+        </div> */}
       </div>
     </div>
   );

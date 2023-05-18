@@ -2,6 +2,18 @@
 import { NETWORKS } from 'config/networks';
 import Image from 'next/image';
 
+const CURRENCY = [
+  { id: 5, value: 'eth', label: 'ETH', icon: Eth },
+  { id: 97, value: 'bnb', label: 'BNB', icon: Bnb },
+  { id: 80001, value: 'matic', label: 'MATIC', icon: Matic },
+  { id: 1, value: 'eth', label: 'ETH', icon: Eth },
+  { id: 137, value: 'matic', label: 'MATIC', icon: Matic },
+  { id: 56, value: 'bnb', label: 'BNB', icon: Bnb },
+];
+import Matic from 'assets/images/polygon.svg';
+import Eth from 'assets/images/eth.svg';
+import Bnb from 'assets/images/bnb.svg';
+
 export default function Outline({
   // logo
   logoLabel,
@@ -48,11 +60,15 @@ export default function Outline({
   isMetaDaFreezed,
   showTokenTransferable,
   isTokenTransferable,
+  isTokenTimebound,
+  timeboundDuration,
   showRoyaltyPercentage,
   royaltyPercentage,
   showSupplyData,
   supply,
   network,
+  basePrice,
+  splitter,
 }) {
   return (
     <>
@@ -238,10 +254,92 @@ export default function Outline({
             </div>
           </div>
           <p className='text-textSubtle'>
-            {isTokenTransferable ? 'Yes' : 'No'}
+            {isTokenTransferable ? 'No' : 'Yes'}
           </p>
         </div>
       )}
+      {showTokenTransferable && (
+        <>
+          {isTokenTransferable ? (
+            <div className='mb-6'>
+              <div className='flex flex-wrap items-center'>
+                {/* <Tooltip></Tooltip> */}
+                <div className='txtblack text-[14px] mb-[6px]'>
+                  NFT having limited time
+                </div>
+              </div>
+              <p className='text-textSubtle'>No</p>
+            </div>
+          ) : (
+            <div className='mb-6'>
+              <div className='flex flex-wrap items-center'>
+                <div className='txtblack text-[14px] mb-[12px]'>
+                  NFT having limited time
+                </div>
+              </div>
+              {isTokenTimebound ? (
+                <div className='flex flex-wrap items-center text-[16px] gap-4'>
+                  {timeboundDuration?.days && (
+                    <div className='text-textSubtle'>
+                      {timeboundDuration?.days} Days
+                    </div>
+                  )}
+                  {timeboundDuration?.months && (
+                    <div className='text-textSubtle '>
+                      {timeboundDuration?.months} Months
+                    </div>
+                  )}
+                  {timeboundDuration?.years && (
+                    <div className='text-textSubtle'>
+                      {timeboundDuration?.years} Years
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <p className='text-textSubtle'>No</p>
+              )}
+            </div>
+          )}
+        </>
+      )}
+      {showTokenTransferable && (
+        <div className='mb-6'>
+          <div className='flex flex-wrap items-center'>
+            {/* <Tooltip></Tooltip> */}
+            <div className='txtblack text-[14px] mb-[6px]'>Base Price</div>
+          </div>
+          <div className='flex flex-wrap text-[16px] items-center gap-2'>
+            <div>
+              {NETWORKS[Number(network)]?.icon && (
+                <Image
+                  src={NETWORKS[Number(network)]?.icon}
+                  height={20}
+                  width={20}
+                  alt='icon'
+                ></Image>
+              )}
+            </div>
+            <div className='text-textSubtle'>{basePrice ? basePrice : '0'}</div>
+            <div className='text-textSubtle'>
+              {NETWORKS[Number(network)].label}
+            </div>
+          </div>
+        </div>
+      )}
+      {showTokenTransferable && (
+        <div className='mb-6'>
+          <div className='flex flex-wrap items-center'>
+            {/* <Tooltip></Tooltip> */}
+            <div className='txtblack text-[14px] mb-[6px]'>
+              Royalty Splitter
+            </div>
+          </div>
+          <p className='text-textSubtle'>
+            {splitter?.name ? splitter?.name : 'Not set'}
+          </p>
+        </div>
+      )}
+
       {network && (
         <div className='mb-6'>
           <div className='flex flex-wrap items-center'>

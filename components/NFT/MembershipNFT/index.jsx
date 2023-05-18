@@ -720,7 +720,7 @@ export default function MembershipNFT({ query }) {
           onTextfieldChange(0, 'properties', nft.attributes);
           onTextfieldChange(0, 'sensitiveContent', nft.sensitive_content);
           onTextfieldChange(0, 'supply', nft.supply);
-
+          setIndexOfNfts(0);
           setIsNftLoading(false);
         } else {
           setIsNftLoading(false);
@@ -741,15 +741,21 @@ export default function MembershipNFT({ query }) {
     });
   };
   function removePropertyOfTier(nft, index) {
-    setIsListUpdate(true);
-    let tempProperty = [...nft.properties];
-    tempProperty = tempProperty.filter((prop) => prop !== tempProperty[index]);
-    let oldNfts = [...nfts];
-    oldNfts[indexOfNfts].properties = tempProperty;
-    setNfts(oldNfts);
-    setTimeout(() => {
-      setIsListUpdate(false);
-    }, 50);
+    try {
+      setIsListUpdate(true);
+      let tempProperty = [...nft.properties];
+      tempProperty = tempProperty.filter(
+        (prop) => prop !== tempProperty[index]
+      );
+      let oldNfts = [...nfts];
+      oldNfts[indexOfNfts].properties = tempProperty;
+      setNfts(oldNfts);
+      setTimeout(() => {
+        setIsListUpdate(false);
+      }, 50);
+    } catch (error) {
+      console.log(error);
+    }
   }
   const deleteMembershipNFT = async () => {
     setIsNftLoading(true);
@@ -771,6 +777,7 @@ export default function MembershipNFT({ query }) {
         setIsNftLoading(false);
       });
   };
+  let canEdit = collection?.status === 'published' && !updateMode;
 
   useEffect(() => {
     // console.log(fileUploadNotification);
@@ -871,7 +878,7 @@ export default function MembershipNFT({ query }) {
                     className={`debounceInput mt-1 ${
                       isPreview ? ' !border-none bg-transparent' : ''
                     } `}
-                    disabled={isPreview}
+                    disabled={isPreview || !canEdit}
                     value={nft.tierName}
                     onChange={(e) =>
                       onTextfieldChange(index, 'tierName', e.target.value)
@@ -897,9 +904,12 @@ export default function MembershipNFT({ query }) {
                   MP3, or MP4. Max 100 MB
                 </p>
                 <div
-                  className={`flex justify-center items-center max-w-full ${
+                  className={`flex justify-center items-center max-w-full  ${
                     nft.assets.file?.type?.split('/')[0]?.toLowerCase() ===
                     'video'
+                      ? ''
+                      : nft.assets.file?.type?.split('/')[0]?.toLowerCase() ===
+                        'movie'
                       ? ''
                       : 'w-40 h-40'
                   }`}
@@ -909,6 +919,10 @@ export default function MembershipNFT({ query }) {
                     className={`flex flex-col justify-center items-center w-full  ${
                       nft.assets.file?.type?.split('/')[0]?.toLowerCase() ===
                       'video'
+                        ? ''
+                        : nft.assets.file?.type
+                            ?.split('/')[0]
+                            ?.toLowerCase() === 'movie'
                         ? ''
                         : 'h-40'
                     } ${
@@ -934,10 +948,14 @@ export default function MembershipNFT({ query }) {
                             ?.split('/')[0]
                             ?.toLowerCase() === 'audio' && (
                             <>
-                              <i
-                                onClick={(e) => nftFileChangeHandler(e, index)}
-                                className='absolute top-0 text-[18px] cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark'
-                              ></i>
+                              {canEdit && (
+                                <i
+                                  onClick={(e) =>
+                                    nftFileChangeHandler(e, index)
+                                  }
+                                  className='absolute top-0 text-[18px] cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark'
+                                ></i>
+                              )}
                               <audio
                                 ref={audioRef}
                                 src={nft.assets.path}
@@ -949,20 +967,27 @@ export default function MembershipNFT({ query }) {
                           )}
                           {nft.assets.file?.type
                             ?.split('/')[0]
-                            ?.toLowerCase() === 'video' && (
+                            ?.toLowerCase() === 'video' ||
+                          nft.assets.file?.type
+                            ?.split('/')[0]
+                            ?.toLowerCase() === 'movie' ? (
                             <>
-                              <i
-                                onClick={(e) => nftFileChangeHandler(e, index)}
-                                className='absolute top-0 text-[18px] cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark'
-                              ></i>
-                              <video width='650' height='400' controls>
+                              {canEdit && (
+                                <i
+                                  onClick={(e) =>
+                                    nftFileChangeHandler(e, index)
+                                  }
+                                  className='absolute top-0 text-[18px] cursor-pointer  text-primary-900 right-0 fa-solid fa-circle-xmark'
+                                ></i>
+                              )}
+                              <video width='650' height='300' controls>
                                 <source
                                   src={nft.assets.path}
                                   type='video/mp4'
                                 />
                               </video>
                             </>
-                          )}
+                          ) : null}
                         </>
                       ) : (
                         <>
@@ -996,7 +1021,7 @@ export default function MembershipNFT({ query }) {
                     </div>
 
                     <input
-                      disabled={isPreview}
+                      disabled={isPreview || !canEdit}
                       key={index}
                       id={`dropzone-file${index}`}
                       type='file'
@@ -1033,7 +1058,7 @@ export default function MembershipNFT({ query }) {
                     className={`debounceInput mt-1 ${
                       isPreview ? ' !border-none bg-transparent' : ''
                     } `}
-                    disabled={isPreview}
+                    disabled={isPreview || !canEdit}
                     value={nft.externalLink}
                     onChange={(e) =>
                       onTextfieldChange(index, 'externalLink', e.target.value)
@@ -1057,7 +1082,7 @@ export default function MembershipNFT({ query }) {
                   className={`mt-1 p-4 ${
                     isPreview ? ' !border-none bg-transparent' : ''
                   } `}
-                  disabled={isPreview}
+                  disabled={isPreview || !canEdit}
                 ></textarea>
               </div>
               {userinfo?.id && typeof window !== 'undefined' && (
@@ -1081,7 +1106,7 @@ export default function MembershipNFT({ query }) {
                           : '1px solid hsl(0, 0%, 80%)',
                       }),
                     }}
-                    isDisabled={query?.collection_id || isPreview}
+                    isDisabled={query?.collection_id || isPreview || !canEdit}
                     menuPortalTarget={document.body}
                     placeholder='Choose Collection'
                     isLoading={isLoading}
@@ -1216,12 +1241,14 @@ export default function MembershipNFT({ query }) {
                               </div>
                               <>
                                 {!isPreview && (
-                                  <i
-                                    className='cursor-pointer fa-solid fa-trash text-danger-1/[0.7]'
+                                  <button
                                     onClick={() => {
                                       removePropertyOfTier(nft, i);
                                     }}
-                                  ></i>
+                                    disabled={!canEdit}
+                                  >
+                                    <i className='fa-solid fa-trash text-danger-1/[0.7]'></i>
+                                  </button>
                                 )}
                               </>
                             </div>
@@ -1239,7 +1266,7 @@ export default function MembershipNFT({ query }) {
                       Specify if your NFT content is rated 18
                     </small>
                   </div>
-                  {isPreview ? (
+                  {isPreview || !canEdit ? (
                     <p className='text-[14px] text-textSubtle'>
                       {nft.sensitiveContent.toString().toLocaleUpperCase()}
                     </p>
@@ -1281,7 +1308,7 @@ export default function MembershipNFT({ query }) {
                     className={`debounceInput mt-1 ${
                       isPreview ? ' !border-none bg-transparent' : ''
                     } `}
-                    disabled={isPreview}
+                    disabled={isPreview || !canEdit}
                     value={nft.supply}
                     type='number'
                     onChange={(e) =>
@@ -1359,6 +1386,7 @@ export default function MembershipNFT({ query }) {
                     <div>
                       <p className='text-[14px] text-txtSubtle'>Attribute</p>
                       <input
+                        disabled={!canEdit}
                         name={`type-${index}`}
                         type={'text'}
                         className='w-32'
@@ -1370,6 +1398,7 @@ export default function MembershipNFT({ query }) {
                     <div className='ml-3'>
                       <p className='text-[14px] text-txtSubtle'>Description</p>
                       <input
+                        disabled={!canEdit}
                         name={`name-${index}`}
                         type={'text'}
                         className=' w-32'
@@ -1378,7 +1407,7 @@ export default function MembershipNFT({ query }) {
                       />
                     </div>
 
-                    {propertyList.length > 1 && (
+                    {propertyList.length > 1 && canEdit && (
                       <i
                         className='cursor-pointer fa-solid fa-trash text-danger-1/[0.7] ml-3'
                         onClick={() => removeProperty(index)}
@@ -1392,6 +1421,7 @@ export default function MembershipNFT({ query }) {
               <button
                 className='text-primary-900 cursor-pointer ml-1'
                 onClick={() => addProperty()}
+                disabled={!canEdit}
               >
                 Add more +
               </button>
@@ -1399,6 +1429,7 @@ export default function MembershipNFT({ query }) {
 
             <div className='mt-5'>
               <button
+                disabled={!canEdit}
                 className='w-[120px] !text-[16px] h-[38px] contained-button'
                 onClick={onSavePropertiesChange}
               >
